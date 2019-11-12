@@ -12,6 +12,9 @@ namespace FintrakBanking.Interfaces.credit
 {
     public interface IProjectSiteReportRepository
     {
+        int AddPsrImage(PsrImagesViewModel model, byte[] buffer);
+        IEnumerable<PsrImagesViewModel> GetPsrImages(int id);
+        PsrImagesViewModel GetPsrImage(int id);
         IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports();
 
         int AddProjectSiteReport(ProjectSiteReportViewModel model);

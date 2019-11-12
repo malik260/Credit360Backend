@@ -173,6 +173,19 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 .ToList();
         }
 
+        public IEnumerable<PsrImagesViewModel> GetPsrImages(int id)
+        {
+            return context.TBL_PSR_IMAGES.Where(x => x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrImagesViewModel
+                {
+                    psrImageId = x.PSRIMAGEID,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    imageCaption = x.IMAGECAPTION,
+                    fileData = x.FILEDATA,
+                })
+                .ToList();
+        }
+
         public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)
         {
             return (from p in context.TBL_PSR_PROJECT_FACILITIES

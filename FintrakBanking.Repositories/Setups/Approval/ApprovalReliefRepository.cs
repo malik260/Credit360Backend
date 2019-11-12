@@ -472,5 +472,69 @@ namespace FintrakBanking.Repositories.Setups.Approval
             }
         }
 
+        public IEnumerable<ApprovalReliefViewModel> GetAllStaffRelief(int companyId, int staffId)
+        {
+
+            return context.TBL_STAFF_RELIEF
+                .Where(x => x.STAFFID == staffId && x.DELETED == false)
+                .OrderByDescending(x => x.RELIEFID)
+                .Select(x => new ApprovalReliefViewModel
+                {
+                    reliefId = x.RELIEFID,
+                    relievedStaffId = x.STAFFID,
+                    reliefStaffId = x.RELIEFSTAFFID,
+                    staffName = context.TBL_STAFF.Where(s => s.STAFFID == x.STAFFID)
+                                                .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
+                                                .FirstOrDefault().name ?? "",
+                    reliefStaffName = context.TBL_STAFF.Where(s => s.STAFFID == x.RELIEFSTAFFID)
+                                                .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
+                                                .FirstOrDefault().name ?? "",
+                    reliefReason = x.RELIEFREASON,
+                    startDate = x.STARTDATE,
+                    endDate = x.ENDDATE,
+                    isActive = x.ISACTIVE,
+                    approvedBy = context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(i => i.LASTNAME + " " + i.MIDDLENAME + " " + i.FIRSTNAME).FirstOrDefault(),
+                });
+        }
+
+        public bool AddStaffRelief(ApprovalReliefViewModel model)
+        {
+            bool output = false;
+            var staffRecord = context.TBL_STAFF.Where(o => o.STAFFID == model.relievedStaffId).Select(i => i.LASTNAME + " " + i.MIDDLENAME + " " + i.FIRSTNAME).FirstOrDefault();
+            var reliefStaffRecord = context.TBL_STAFF.Where(o => o.STAFFID == model.reliefStaffId).Select(i => i.LASTNAME + " " + i.MIDDLENAME + " " + i.FIRSTNAME).FirstOrDefault();
+
+            TBL_STAFF_RELIEF data;
+
+            data = new TBL_STAFF_RELIEF()
+            {
+                STAFFID = model.relievedStaffId,
+                RELIEFSTAFFID = model.reliefStaffId,
+                RELIEFREASON = model.reliefReason,
+                STARTDATE = model.startDate,
+                ENDDATE = model.endDate,
+                ISACTIVE = model.isActive,
+                DATETIMECREATED = general.GetApplicationDate(),
+                CREATEDBY = (int)model.createdBy
+            };
+
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffReliefAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added '{staffRecord}' as Staff Relief for: '{reliefStaffRecord}'",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = model.reliefId
+            };
+
+            context.TBL_STAFF_RELIEF.Add(data);
+            this.auditTrail.AddAuditTrail(audit);
+            return context.SaveChanges() > 0;
+        }
+
     }
 }

@@ -17,5 +17,6 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public bool isActive { get; set; }
+        public string approvedBy { get; set; }
     }
 }

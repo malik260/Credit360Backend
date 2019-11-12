@@ -23,6 +23,7 @@ using System.Net.Http.Headers;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using System.Collections;
+using FintrakBanking.ViewModels.Flexcube;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -59,6 +60,7 @@ namespace FintrakBanking.Repositories.Credit
             emailLogger = _emailLogger;
             offerLetter = _offerLetter;
             loanApp = _loanApp;
+
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -562,6 +564,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Response.isFinal = generateOutPutDocument;
             return workflow.Response;
         }
+
+       
 
         public IQueryable<LoanApplicationViewModel> GetPendingAdhocApplications(int operationId, int companyId, int branchId, int staffId, int? classId)
         {
@@ -2103,7 +2107,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 levelIds.AddRange(general.GetStaffApprovalLevelIds(staffId, operationId).ToList());
             }
-            
+            var staffs = general.GetStaffRlieved(staffId);
             IQueryable<LoanApplicationViewModel> applications = null;
 
             // query
@@ -2121,7 +2125,8 @@ namespace FintrakBanking.Repositories.Credit
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
-                    && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
+                    //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
+                    && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,

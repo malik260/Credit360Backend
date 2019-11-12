@@ -264,7 +264,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         collateralSubTypeId = m.COLLATERALSUBTYPEID,
                         collateralTypeId = m.COLLATERALTYPEID,
                         collateralSubTypeName = m.COLLATERALSUBTYPENAME,
-                        haircut = m.HAIRCUT,
+                        haircut = m.HAIRCUT,  
                         revaluationDuration = m.REVALUATIONDURATION,
                         isLocationBased = m.ISLOCATIONBASED,
                         allowSharing = m.ALLOWSHARING,
