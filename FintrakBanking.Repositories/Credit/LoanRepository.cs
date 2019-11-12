@@ -4064,12 +4064,12 @@ namespace FintrakBanking.Repositories.Credit
 
                     var model = new FlexcubeCreateOverdraftViewModel
                     {
-                        p_account_no = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                        p_collateral_code = systemDate.ToString("dd-MMM-yyyy", null), //revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                        p_collateral_value = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                        p_start_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                        p_end_date = reviewDate.ToString("dd-MMM-yyyy", null),
-                        p_channel_code = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                        p_account_no = "" , // revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                        p_collateral_code = "", //systemDate.ToString("dd-MMM-yyyy", null), //revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                        p_collateral_value = "", //
+                        p_start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                        p_end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                        p_channel_code = "FINTRAK",
 
                     };
 
