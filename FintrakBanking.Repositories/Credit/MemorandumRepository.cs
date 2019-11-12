@@ -3195,36 +3195,38 @@ namespace FintrakBanking.Repositories.Credit
         private string GetEnvironmentalSocialRiskMarkup() // TODO RATINGIS
         {
             var result = String.Empty;
-            var summary = GetEnvironmentalSocialRisk();
+            var summary = GetEnvironmentalSocialRisk().FirstOrDefault();
 
             var n = 0;
-            result = result + $@"
-                <table border=1>
-                    <tr>
-                        <th><b>S/N</b></th>
-                        <th><b>Facility</b></th>
-                        <th><b>Summary</b></th>
-                        <th><b>Rating</b></th>
-                    </tr>
-                 ";
-            foreach (var s in summary)
-            {
-                n++;
-                result = result + $@"
-                    <tr>
-                        <td>{n}</td>
-                        <td>{s.productCustomerName}</td>
-                        <td>{s.comment}</td>
-                        <td>{GetESGRating(s.ratingId)}</td>
-                    </tr>
-                ";
-            }
-            result = result + $"</table>";
+            //result = result + $@"
+            //    <table border=1>
+            //        <tr>
+            //            <th><b>S/N</b></th>
+            //            <th><b>Facility</b></th>
+            //            <th><b>Summary</b></th>
+            //            <th><b>Rating</b></th>
+            //        </tr>
+            //     ";
+            //foreach (var s in summary)
+            //{
+            //    n++;
+            //    result = result + $@"
+            //        <tr>
+            //            <td>{n}</td>
+            //            <td>{s.productCustomerName}</td>
+            //            <td>{s.comment}</td>
+            //            <td>{GetESGRating(s.ratingId)}</td>
+            //        </tr>
+            //    ";
+            //}
+            //result = result + $"</table>";
+            result = result + $@"{ GetESGRating(summary?.ratingId)}";
             return result;
         }
        
-        private string GetESGRating(int ratingId)
+        private string GetESGRating(int? ratingId)
         {
+            if (ratingId == null) return "N/A";
             if (ratingId == 1) return "A";
             if (ratingId == 5) return "B";
             if (ratingId == 6) return "C";

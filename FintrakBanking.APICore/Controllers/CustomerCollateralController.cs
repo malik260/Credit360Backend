@@ -437,7 +437,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut, Route("customer-collateral/{collateralId}")]
-        public async Task<HttpResponseMessage> UpdateCollateral([FromBody] CollateralViewModel entity, int collateralId)
+        public HttpResponseMessage UpdateCollateral([FromBody] CollateralViewModel entity, int collateralId)
         {
             //try
             //{
@@ -447,7 +447,7 @@ namespace FintrakBanking.APICore.Controllers
             entity.applicationUrl = HttpContext.Current.Request.Path;
             entity.companyId = token.GetCompanyId;
 
-            var response = await repo.UpdateCollateral(entity, collateralId);
+            var response = repo.UpdateCollateral(entity, collateralId);
             if (response)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Updated successfully" });
