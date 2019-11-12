@@ -8,6 +8,8 @@
     using FintrakBanking.ViewModels.Finance;
     using FintrakBanking.ViewModels.Flexcube;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -35,6 +37,7 @@
                 APIUrlConfig = context.TBL_API_URL;
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
+
             }
             private void getAPIURLSettings(string typeName = null)
             {
@@ -788,17 +791,28 @@
                     //{
                     //    apiUrl = "FCUBSCreateLoanAccount";
                     //}
-
+                    model.p_account_no = "0739938402";
                     response = client.PostAsync(apiUrl, new StringContent(
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    //var myContent = JsonConvert.SerializeObject(model);
+                    //var buffer = Encoding.UTF8.GetBytes(myContent);
+                    //var byteContent = new ByteArrayContent(buffer);
+                    //byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    //response = client.PostAsync(apiUrl, byteContent).Result;
 
                     responseDateTime = DateTime.Now;
 
 
                     if (response.IsSuccessStatusCode)
                     {
+                        //responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
 
-                        responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+                        var responseData = await response.Content.ReadAsStringAsync();
+                        JObject responseDataJsonString = JObject.Parse(responseData);
+                        var data = responseDataJsonString["data"].ToString();
+                        var apiData = JsonConvert.DeserializeObject<TransactionPostingViewModel>(data);
 
                         var res = new ResponseMessageViewModel
                         {

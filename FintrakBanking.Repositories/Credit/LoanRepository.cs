@@ -1359,7 +1359,7 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
+                //confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
                 entity.feeOverride = true;
 
                 var loan = context.TBL_LOAN.Add(data);
@@ -2080,7 +2080,7 @@ namespace FintrakBanking.Repositories.Credit
                 var facilityDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
                 var casa = context.TBL_CASA.Find(casaAccountId);
                 var customer = context.TBL_CUSTOMER.Find(facilityDetail.CUSTOMERID);
-                var collaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                var collaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId).ToList();
 
                 faciltyCreationModel.p_account_no = casa.PRODUCTACCOUNTNUMBER;
                 faciltyCreationModel.p_limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
@@ -2092,7 +2092,8 @@ namespace FintrakBanking.Repositories.Credit
                 faciltyCreationModel.p_liab_no = customer.LIABILITYLIMITNUMBER;
                 faciltyCreationModel.p_line_code = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
                 faciltyCreationModel.sourceReferenceNumber = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
-                faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x=>x.BALANCEAVAILABLE).ToString() ?? "0";
+                faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x => x.BALANCEAVAILABLE ).ToString() == null ? "0" : collaterals?.Sum(x => x.BALANCEAVAILABLE).ToString();
+                //faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x=>x.BALANCEAVAILABLE).ToString() ?? "0";
                 faciltyCreationModel.p_collateral_code = collaterals.FirstOrDefault()?.TBL_COLLATERAL_CUSTOMER?.COLLATERALCODE.ToString();
                 faciltyCreationModel.p_channel_code = "FINTRAK";
 
