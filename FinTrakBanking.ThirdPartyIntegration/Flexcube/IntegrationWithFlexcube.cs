@@ -23,7 +23,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using FinTrakBanking.ThirdPartyIntegration.StaffInfo;
     using FinTrakBanking.ThirdPartyIntegration.Basel;
     using FintrakBanking.ViewModels.Credit;
-    using FintrakBanking.ViewModels.Flexcube;
 
     public class IntegrationWithFlexcube : IIntegrationWithFinacle
     {
@@ -499,16 +498,22 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public PostingResult PostLoanCreationInputs(FlexcubeCreateFacilityViewModel model)
+        public PostingResult PostLoanCreationInputs(List<LoanCreationViewModel> model)
         {
             {
                 ResponseMessage result = null;
-                Task.Run(async () => result = await transaction.ApiTransactionFacilityCreationPosting(model)).GetAwaiter().GetResult();
+
+                //List<TransactionPostingViewModel> transactionList = TransactionData(model);
+
+                //var curencyTypeCount = model.Select(x => x.currencyId).Distinct().Count();
+
+                Task.Run(async () => result = await transaction.ApiTransactionLoanCreationPosting(model)).GetAwaiter().GetResult();
 
                 if (result.APIResponse != null)
                 {
                     if (result.APIResponse.responseCode == "0")
                     {
+                        // AddCustomTransactions(transactionList);
 
                         string str = result.APIResponse.webRequestStatus;
                         str = str.Replace(":", "");
@@ -517,6 +522,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                         return new PostingResult { posted = true, responseCode = str.Trim() };
                     }
+                    //if (result.APIResponse.webRequestStatus == "SUCCESS+      M18")
+                    //{
+                    //    AddCustomTransactions(transactionList);
+                    //    return true;
+                    //}
                     else
                     {
                         var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
@@ -527,8 +537,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 else
                 {
                     var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    //throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
                     throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
                 }
+
+                //return result.APIStatus;
 
             }
         }
@@ -1163,11 +1176,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
                .GetResult();
 
             return module;
-        }
-
-        public void PostLoanCreationInputs(object loanCreationInputs)
-        {
-            throw new NotImplementedException();
         }
 
 

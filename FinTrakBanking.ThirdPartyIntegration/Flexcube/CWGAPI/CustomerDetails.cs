@@ -760,23 +760,13 @@
                 var endpointUrl = "";
 
                 if (startDate.Month > 9 && currentDate.Month > 9)
-                {
                     endpointUrl = $"GetCustomerTransactions/{accountNumber}/{startDate.Month}/{currentDate.Month}/{startDate.Year}/{currentDate.Year}";
-
-                }
                 else if (startDate.Month > 9 && currentDate.Month < 9)
-                {
                     endpointUrl = $"GetCustomerTransactions/{accountNumber}/{startDate.Month}/0{currentDate.Month}/{startDate.Year}/{currentDate.Year}";
-
-                }
                 else if (startDate.Month < 9 && currentDate.Month > 9)
-                {
                     endpointUrl = $"GetCustomerTransactions/{accountNumber}/0{startDate.Month}/{currentDate.Month}/{startDate.Year}/{currentDate.Year}";
-                }
                 else
-                {
                     endpointUrl = $"GetCustomerTransactions/{accountNumber}/0{startDate.Month}/0{currentDate.Month}/{startDate.Year}/{currentDate.Year}";
-                }
 
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
@@ -807,7 +797,6 @@
                 responseTime = DateTime.Now;
 
                 List<CustomerTurnoverGroupViewModel> result = null;
-
                 List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
                 var responseMessage = await response.Content.ReadAsStringAsync();
@@ -906,8 +895,8 @@
                 var month = DateTime.Now.Month - 1;
                 var year = DateTime.Now.Year;
                 var searchDate = "0"+month + "-" + year;
-                getAPIURLSettings("CustomerTransactions");
-
+                getAPIURLSettings("CustomerLoanInterestDetails");
+                API_URL = "http://10.111.13.47:7002/fintrakapi/v1/";
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 

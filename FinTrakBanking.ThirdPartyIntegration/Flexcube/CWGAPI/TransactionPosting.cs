@@ -485,6 +485,7 @@
 
                 //context.SaveChanges();
             }
+
             public async Task<ResponseMessage> APIProcessLien(CasaLienViewModel model, string lienType)
             {
                 HttpClientHandler handler = new HttpClientHandler();
@@ -750,6 +751,7 @@
 
 
             #region FLEXCUBE POSTING INTEGRATIONS
+
             public async Task<ResponseMessage> ApiTransactionFacilityCreationPosting(FlexcubeCreateFacilityViewModel model)
             {
                 HttpClientHandler handler = new HttpClientHandler();
@@ -866,6 +868,124 @@
 
                 //context.SaveChanges();
             }
+
+            public async Task<ResponseMessage> ApiTransactionLoanCreationPosting(FlexcubeCreateLoanAccountViewModel model)
+            {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+
+                HttpClient client = new HttpClient(handler);
+                var inputJson = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
+                ResponseMessage responseMsg = null;
+                string responseJson = "";
+                getAPIURLSettings("LoanCreation");
+                string apiUrl = "FCUBSCreateLoanAccount";
+                try
+                {
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                    var dta = context.TBL_SETUP_GLOBAL.ToList();
+                    handler.UseDefaultCredentials = true;
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+
+
+                    //if (isCrossCurrency == true)
+                    //{
+                    //    apiUrl = "FCUBSCreateLoanAccount";
+                    //}
+
+                    response = client.PostAsync(apiUrl, new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    responseDateTime = DateTime.Now;
+
+
+                    if (response.IsSuccessStatusCode)
+                    {
+
+                        responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseApi.responseCode,
+                            webRequestDate = responseApi.webRequestDate,
+                            webRequestStatus = responseApi.webRequestStatus,
+
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+
+                    responseJson = await response.Content.ReadAsStringAsync();
+
+                    responseMsg.responseMessage = responseJson;
+                    //handler.Dispose();
+                    //client.Dispose();
+
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+                    //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = apiUrl,
+                        LOGTYPEID = 2,
+                        REFERENCENUMBER = model.sourceReferenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = inputJson,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseJson,
+                    };
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
+                }
+
+
+                //context.SaveChanges();
+            }
+
             #endregion END OF  FLEXCUBE POSTING INTEGRATIONS
 
         }
