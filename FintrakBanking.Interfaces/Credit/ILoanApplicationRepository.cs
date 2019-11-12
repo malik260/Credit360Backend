@@ -82,7 +82,11 @@ namespace FintrakBanking.Interfaces.Credit
         List<FacilityRatingViewModel> GetFacilityRating(int applicationDetailId);
 
         short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
-
+        int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false);
+        bool ArchiveLoanApplication(int loanAppliactionId, int operationId);
+        void ArchiveLoanApplicationDetails(int loanApplicationDetailId);
+        int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, bool next = false);
+        int? GetFirstLevelStaffId(int levelId, int userBranch);
         List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
 
         bool ProductFeesConcession(ProductFeesViewModel fees, UserInfo user);

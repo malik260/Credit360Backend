@@ -23,6 +23,7 @@ using System.Net.Http.Headers;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using System.Collections;
+using FintrakBanking.ViewModels.Flexcube;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -38,7 +39,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICreditLimitValidationsRepository limitValidation;
         private IEmailAlertLogger emailLogger;
         private IOfferLetterAndAvailmentRepository offerLetter;
-        private LoanApplicationRepository loanApp;
+        private ILoanApplicationRepository loanApp;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -48,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
             ICreditLimitValidationsRepository limitValidation,
             IEmailAlertLogger _emailLogger,
             IOfferLetterAndAvailmentRepository _offerLetter,
-            LoanApplicationRepository _loanApp
+            ILoanApplicationRepository _loanApp
             )
         {
             this.context = context;
@@ -59,6 +60,7 @@ namespace FintrakBanking.Repositories.Credit
             emailLogger = _emailLogger;
             offerLetter = _offerLetter;
             loanApp = _loanApp;
+
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -498,6 +500,7 @@ namespace FintrakBanking.Repositories.Credit
                 else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                 {
                     SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
+                    loanApp.ArchiveLoanApplication(model.applicationId, operationId);
                 }
 
                 //applid, 
@@ -561,6 +564,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Response.isFinal = generateOutPutDocument;
             return workflow.Response;
         }
+
+       
 
         public IQueryable<LoanApplicationViewModel> GetPendingAdhocApplications(int operationId, int companyId, int branchId, int staffId, int? classId)
         {

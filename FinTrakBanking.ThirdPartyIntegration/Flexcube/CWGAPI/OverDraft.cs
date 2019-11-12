@@ -13,6 +13,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
     using FintrakBanking.Common.CustomException;
     using FintrakBanking.ViewModels.Finance;
+    using FintrakBanking.ViewModels.Flexcube;
 
     namespace OverDraftTransactions
     {
@@ -166,6 +167,243 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                     logContext.SaveChanges();
                    
+                }
+            }
+
+            public async Task<ResponseMessage> FlexcubeAPIOverDraft(FlexcubeCreateOverdraftViewModel model)
+            {
+                HttpClientHandler _handler = new HttpClientHandler();
+
+                _handler.UseDefaultCredentials = true;
+                HttpClient client = new HttpClient(_handler);
+
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+
+                // HttpClient client = new HttpClient(_handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                //DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
+                getAPIURLSettings("OverDraft");
+
+                try
+                {
+
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+                    client = new HttpClient();
+                    client.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+                    response = client.PostAsync("api/OverDraft/Normal", new StringContent(
+                        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    responseDateTime = DateTime.Now;
+                    responseMsg = null;
+
+                    ResponseMessageOverDraftViewModel responseAPI = new ResponseMessageOverDraftViewModel();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        responseAPI = await response.Content.ReadAsAsync<ResponseMessageOverDraftViewModel>();
+                        var res = new ResponseMessageOverDraftViewModel
+                        {
+                            responseCode = responseAPI.responseCode,
+                            lien_id = responseAPI.lien_id,
+                            collateral_id = responseAPI.collateral_id,
+                            response_message = responseAPI.response_message,
+                            bo_code = responseAPI.bo_code,
+                            bo_message = responseAPI.bo_message
+                        };
+                        var specificRes = new ResponseMessageViewModel
+                        {
+                             message = res.response_message,
+                             responseCode = res.responseCode,
+                             responseStatus = res.responseCode =="00" ? true : false,
+                             APIMessage = response,
+                             webRequestDate = responseAPI.webRequestDate,
+                             webRequestStatus = responseAPI.webRequestStatus,
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = specificRes,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    responseMessage = await response.Content.ReadAsStringAsync();
+                    _handler.Dispose();
+                    client.Dispose();
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                    //throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                }
+                finally
+                {
+                    _handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = "api/OverDraft/Normal",
+                        LOGTYPEID = 11,
+                       // REFERENCENUMBER = model.sanctionReferenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = objData,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
+
+                }
+            }
+
+
+            public async Task<ResponseMessage> FlexcubeCasaLien(FlexcubeLienViewModel model)
+            {
+                HttpClientHandler _handler = new HttpClientHandler();
+
+                _handler.UseDefaultCredentials = true;
+                HttpClient client = new HttpClient(_handler);
+
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+
+                // HttpClient client = new HttpClient(_handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                //DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
+                getAPIURLSettings("OverDraft");
+
+                try
+                {
+
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+                    client = new HttpClient();
+                    client.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+                    response = client.PostAsync("api/OverDraft/Normal", new StringContent(
+                        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    responseDateTime = DateTime.Now;
+                    responseMsg = null;
+
+                    ResponseMessageOverDraftViewModel responseAPI = new ResponseMessageOverDraftViewModel();
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        responseAPI = await response.Content.ReadAsAsync<ResponseMessageOverDraftViewModel>();
+                        var res = new ResponseMessageOverDraftViewModel
+                        {
+                            responseCode = responseAPI.responseCode,
+                            lien_id = responseAPI.lien_id,
+                            collateral_id = responseAPI.collateral_id,
+                            response_message = responseAPI.response_message,
+                            bo_code = responseAPI.bo_code,
+                            bo_message = responseAPI.bo_message
+                        };
+                        var specificRes = new ResponseMessageViewModel
+                        {
+                            message = res.response_message,
+                            responseCode = res.responseCode,
+                            responseStatus = res.responseCode == "00" ? true : false,
+                            APIMessage = response,
+                            webRequestDate = responseAPI.webRequestDate,
+                            webRequestStatus = responseAPI.webRequestStatus,
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = specificRes,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    responseMessage = await response.Content.ReadAsStringAsync();
+                    _handler.Dispose();
+                    client.Dispose();
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                    //throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
+                }
+                finally
+                {
+                    _handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = "api/OverDraft/Normal",
+                        LOGTYPEID = 11,
+                        // REFERENCENUMBER = model.sanctionReferenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = objData,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
+
                 }
             }
 
