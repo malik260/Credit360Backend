@@ -905,24 +905,16 @@ namespace FintrakBanking.Repositories.Credit
                               productAccountName = context.TBL_CASA.Where(o => o.CUSTOMERID == customerId).Select(o => o.PRODUCTACCOUNTNAME).FirstOrDefault(),
                           }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
 
-
             first.Add(new CustomerTransactionsViewModels
             {
-                cust_Id = "",
-                period = "",
-                productName = "",
-                accountNumber = "TOTAL",
-                max_Credit_Balance = first.Sum(O => O.max_Credit_Balance),
-                max_Debit_Balance = first.Sum(O => O.max_Debit_Balance),
-                min_Credit_Balance = first.Sum(O => O.min_Credit_Balance),
-                min_Debit_Balance = first.Sum(O => O.min_Debit_Balance),
-                credit_Turnover = first.Sum(O => O.credit_Turnover),
-                debit_Turnover = first.Sum(O => O.debit_Turnover),
-                month = null,
-                year = null,
-                productAccountName = "",
+                cust_Id = "TOTAL",
+                max_Credit_Balance = first.Sum(t => t.max_Credit_Balance),
+                max_Debit_Balance = first.Sum(t => t.max_Debit_Balance),
+                min_Credit_Balance = first.Sum(t => t.min_Credit_Balance),
+                min_Debit_Balance = first.Sum(t => t.min_Debit_Balance),
+                credit_Turnover = first.Sum(t => t.credit_Turnover),
+                debit_Turnover = first.Sum(t => t.debit_Turnover),
             });
-
             second.Add(new CustomerTransactionsViewModels
             {
                 cust_Id = "TOTAL",
@@ -3595,7 +3587,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             int[] operations = { (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.ContigentLoanBooking ,
            (int)OperationsEnum.ContingentLiabilityRenewal,(int)OperationsEnum.ContingentLiabilityUsage,(int)OperationsEnum.ContingentRequestBooking,
-            (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.LoanAvailment, (int)OperationsEnum.CreditCardsCashBacked};
+            (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.LoanAvailment};
 
             searchString = searchString.Trim().ToLower();
 
@@ -5057,6 +5049,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
+            ArchiveLoanApplication(data.loanApplicationId, (int)OperationsEnum.LoanApplicationCancellation);
         }
 
         private void LaonApplcationCancelllationDisapproved(LoanApplicationViewModel data)
