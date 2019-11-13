@@ -177,7 +177,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
 
-
         }
 
         public ResponseMessageViewModel FlexcubeCasaLien(FlexcubeLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
@@ -218,14 +217,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
-
-
         }
 
 
         public ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
-
             if (USE_TWO_FACTOR_AUTHENTICATION)
             {
                 if (twoFADetails == null)
@@ -238,7 +234,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     if (authenticated.authenticated == false)
                         throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
                 }
-               
             }
 
             ResponseMessage result = null;

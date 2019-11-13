@@ -960,7 +960,7 @@ namespace FintrakBanking.Repositories.Credit
         //    return false;
         //}
 
-        public async Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId)
+        public bool UpdateCollateral(CollateralViewModel entity, int collateralId)
         {
             UpdateCollateralMainForm(entity, collateralId);
 
@@ -988,7 +988,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //if (entity.hasInsurance) { UpdateItemInsurancePolicy(entity); }
 
-            bool saved = await context.SaveChangesAsync() != 0;
+            bool saved = context.SaveChanges() != 0;
 
             if (saved) { return true; } // audit here
 
@@ -1037,7 +1037,7 @@ namespace FintrakBanking.Repositories.Credit
             var collateral = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId);
             collateral.COLLATERALTYPEID = model.collateralTypeId;
             collateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
-            collateral.COLLATERALCODE = model.collateralCode;
+            collateral.COLLATERALCODE = model.collateralCode.Trim();
             collateral.COLLATERALVALUE = (decimal)model.collateralValue;
             collateral.ALLOWSHARING = model.allowSharing;
             collateral.ISLOCATIONBASED = model.isLocationBased;
@@ -3715,6 +3715,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateral = new TBL_COLLATERAL_DOMICILIATION()
                 {
                     CONTRACTDETAILS = entity.contractDetail,
+                    COLLATERALCUSTOMERID = entity.collateralId,
                     EMPLOYER = entity.contractEmployer,
                     CONTRACTVALUE = entity.contractValue,
                     OUTSTANDINGINVOICEAMOUNT = entity.outstandingInvoiceAmount,
