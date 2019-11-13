@@ -196,6 +196,20 @@ namespace FintrakBanking.Repositories.Customer
             }
         }
 
+        private void UpdateCustomerCollateralId(string customerCode)
+        {
+            customerCode = customerCode.Trim();
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) && c.DELETED == false);
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
+            foreach(var c in collaterals)
+            {
+                if (c.CUSTOMERID != customer.CUSTOMERID)
+                {
+
+                }
+            }
+        }
+
         private void fetchCustomerAccountBalance(TBL_CUSTOMER data)
         {
 
