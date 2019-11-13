@@ -179,6 +179,7 @@ namespace FintrakBanking.Repositories.Customer
                 var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
                 if (output == true)
                 {
+                    UpdateCustomerCollateralId(customer.CUSTOMERCODE);
                     fetchCustomerAccountBalance(customer);
                     return result;
                 }
@@ -203,11 +204,9 @@ namespace FintrakBanking.Repositories.Customer
             var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
             foreach(var c in collaterals)
             {
-                if (c.CUSTOMERID != customer.CUSTOMERID)
-                {
-
-                }
+                c.CUSTOMERID = customer.CUSTOMERID;
             }
+            var saved = context.SaveChanges() > 0;
         }
 
         private void fetchCustomerAccountBalance(TBL_CUSTOMER data)
