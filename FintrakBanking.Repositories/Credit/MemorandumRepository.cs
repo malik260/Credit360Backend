@@ -1289,9 +1289,9 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             result = result + $@"
                 <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
-                    < tr>
+                    <tr>
                         <th><b><h2>Facility</h2></b></th>
-                        <th><b><h2>LLL Impact</h2></b></th>
+                        <th><b><h2>LLL Impact(NGN)</h2></b></th>
                         <th><b><h2>Currency</h2></b></th>
                         <th><b><h2>Approved Amount</h2></b></th>
                         <th><b><h2>Proposed Amount</h2></b></th>
@@ -1342,9 +1342,9 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Facility</b></th>
-                        <th><b>LLL Impact</b></th>
+                        <th><b>LLL Impact(NGN)</b></th>
                         <th><b>Currency</b></th>
-                        <th><b>Current Amount</b></th>
+                        <th><b>Approved Amount</b></th>
                         <th><b>Proposed Amount</b></th>
                         <th><b>Change</b></th>
                         <th><b>Tenor</b></th>
