@@ -1359,7 +1359,7 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
+                //confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
                 entity.feeOverride = true;
 
                 var loan = context.TBL_LOAN.Add(data);
@@ -2080,7 +2080,7 @@ namespace FintrakBanking.Repositories.Credit
                 var facilityDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
                 var casa = context.TBL_CASA.Find(casaAccountId);
                 var customer = context.TBL_CUSTOMER.Find(facilityDetail.CUSTOMERID);
-                var collaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                var collaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId).ToList();
 
                 faciltyCreationModel.p_account_no = casa.PRODUCTACCOUNTNUMBER;
                 faciltyCreationModel.p_limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
@@ -2092,7 +2092,8 @@ namespace FintrakBanking.Repositories.Credit
                 faciltyCreationModel.p_liab_no = customer.LIABILITYLIMITNUMBER;
                 faciltyCreationModel.p_line_code = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
                 faciltyCreationModel.sourceReferenceNumber = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
-                faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x=>x.BALANCEAVAILABLE).ToString() ?? "0";
+                faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x => x.BALANCEAVAILABLE ).ToString() == null ? "0" : collaterals?.Sum(x => x.BALANCEAVAILABLE).ToString();
+                //faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x=>x.BALANCEAVAILABLE).ToString() ?? "0";
                 faciltyCreationModel.p_collateral_code = collaterals.FirstOrDefault()?.TBL_COLLATERAL_CUSTOMER?.COLLATERALCODE.ToString();
                 faciltyCreationModel.p_channel_code = "FINTRAK";
 
@@ -4049,10 +4050,11 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
+                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                 totalBookedAmount = (from a in context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == revolvingLoanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.OVERDRAFTLIMIT);
                 if (totalBookedAmount >= revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
                 {
-                    var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+                    
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 }
 
@@ -4062,11 +4064,24 @@ namespace FintrakBanking.Repositories.Credit
                     var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
                     var acctType = "DR";
 
+                    var casa = context.TBL_CASA.Find(revolvingLoanRecord.CASAACCOUNTID);
+                    var collateralMappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationRecord.LOANAPPLICATIONID);
+
+                    List<int> collateralCustomerIds = new List<int>();
+                    foreach (var item in collateralMappings)
+                    {
+                        collateralCustomerIds.Add(item.COLLATERALCUSTOMERID);
+                    }
+                    var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => collateralCustomerIds.Contains(x.COLLATERALCUSTOMERID));
+
+                    string collateralcodes = string.Empty;
+                    foreach(var i in collaterals) { collateralcodes = collateralcodes + i.COLLATERALCODE;  }
+
                     var model = new FlexcubeCreateOverdraftViewModel
                     {
-                        p_account_no = "" , // revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                        p_collateral_code = "", //systemDate.ToString("dd-MMM-yyyy", null), //revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                        p_collateral_value = "", //
+                        p_account_no = casa.PRODUCTACCOUNTNUMBER, 
+                        p_collateral_code = collateralcodes, 
+                        p_collateral_value = collaterals?.Sum(x=>x.COLLATERALVALUE).ToString() ?? null,
                         p_start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                         p_end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                         p_channel_code = "FINTRAK",
