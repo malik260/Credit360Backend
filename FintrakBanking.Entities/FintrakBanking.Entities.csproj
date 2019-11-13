@@ -632,6 +632,7 @@
     <Compile Include="Models\TBL_TEMP_STAFF_RELIEF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TERM_SHEET.cs" />
+    <Compile Include="Models\TBL_THIRDPARTY_LOAN_MAPPING.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_VALUATION_REPORT.cs" />
     <Compile Include="Models\TBL_VALUATION_REQUEST_TYPE.cs" />
