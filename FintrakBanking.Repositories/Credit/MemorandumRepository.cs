@@ -2341,7 +2341,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                exposures = GetGroupExposurebyCustomerId(this.customerId, this.loanApplication.COMPANYID);
+                exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
             }
             //if (exposures.Count() <= 0) return;
 
@@ -3267,7 +3267,7 @@ namespace FintrakBanking.Repositories.Credit
                 details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.PRODUCTID }).ToList();
 
 
-            var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == this.customerId).CUSTOMERCODE.Trim();
+            var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == loanApplication.CUSTOMERID).CUSTOMERCODE.Trim();
             //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
             exposure = (from a in context.TBL_GLOBAL_EXPOSURE
@@ -3279,22 +3279,32 @@ namespace FintrakBanking.Repositories.Credit
                             facilityType = a.ADJFACILITYTYPE,
                             approvedAmount = a.LOANAMOUNYLCY ?? 0,
                             currency = a.CURRENCYNAME,
-                            exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
+                            exposureTypeCode = a.EXPOSURETYPECODE,
                             adjFacilityType = a.ADJFACILITYTYPE,
-                            productId = int.Parse(a.PRODUCTID),
+                            productIdString = a.PRODUCTID,
                             productName = a.PRODUCTNAME,
                             //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                             //proposedLimit = a.LOANAMOUNYLCY ?? 0,
                             outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                             pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                             reviewDate = DateTime.Now,
-                            bookingDate = DateTime.Parse(a.BOOKINGDATE),
-                            maturityDate = DateTime.Parse(a.MATURITYDATE),
+                            bookingDateString = a.BOOKINGDATE,
+                            maturityDateString = a.MATURITYDATE,
                             loanStatus = a.CBNCLASSIFICATION,
                             referenceNumber = a.REFERENCENUMBER,
                         }).ToList();
 
-            if (exposure.Count() > 0) exposures.AddRange(exposure);
+            if (exposure.Count() > 0)
+            {
+                foreach(var e in exposure)
+                {
+                    e.exposureTypeId = int.Parse(e.exposureTypeCode);
+                    e.bookingDate = DateTime.Parse(e.bookingDateString);
+                    e.maturityDate = DateTime.Parse(e.maturityDateString);
+                    e.productId = int.Parse(e.productIdString);
+                }
+                exposures.AddRange(exposure);
+            }
             //foreach (var detail in details)
             //{
             //    exposure = context.TBL_LOAN
