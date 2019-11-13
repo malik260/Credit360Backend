@@ -57,7 +57,6 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository casaLien;
         private IApprovalLevelStaffRepository level;
         private ICustomerRepository customers;
-        private ICustomerGroupRepository groupRepo;
         private IWorkflow workflow;
         private IAuditTrailRepository audit;
         private IOverRideRepository overrider;
@@ -74,7 +73,7 @@ namespace FintrakBanking.Repositories.Credit
         bool USE_THIRD_PARTY_INTEGRATION = false;
         private DateTime? applicationDate = null;
 
-        public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, ICustomerGroupRepository groupRepo,
+        public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
                                         ILoanCovenantRepository _loanCovenant, IAuditTrailRepository _audit,
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
@@ -95,7 +94,6 @@ namespace FintrakBanking.Repositories.Credit
             this.financeTransaction = _financeTransaction;
             this.level = _level;
             this.customers = _customers;
-            this.groupRepo = groupRepo;
             this.workflow = _workflow;
             this.casaLien = _casaLien;
             this.overrider = _overrider;
@@ -8762,7 +8760,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var customerGroupMappings = new List<CustomerGroupMappingViewModel>();
                 var customerId = customer.FirstOrDefault().customerId;
-                var customerGroups = groupRepo.GetCustomerGroupMapping().Where(m => m.customerId == customerId).ToList();
+                var customerGroups = GetCustomerGroupMapping().Where(m => m.customerId == customerId).ToList();
                 foreach(var customerGroup in customerGroups)
                 {
                    var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
@@ -8944,6 +8942,22 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             return exposures;
+        }
+        public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
+        {
+            var customerGroupMapping = from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                       where a.DELETED == false
+                                       select new CustomerGroupMappingViewModel
+                                       {
+                                           customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                           customerGroupId = a.CUSTOMERGROUPID,
+                                           relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                           //createdBy = a.CreatedBy,
+                                           customerId = a.CUSTOMERID,
+                                           //dateTimeCreated = a.DateTimeCreated
+                                       };
+
+            return customerGroupMapping;
         }
 
         public List<CurrentCustomerExposure> GetApplicationFacilitySummary(int applicationId)
