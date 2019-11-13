@@ -2382,23 +2382,22 @@ namespace FintrakBanking.Repositories.Credit
             var company = context.TBL_COMPANY.Find(companyId);
             bool disAllowCollateral = false;
             bool isForiegnCurrencyFacility = false;
-
+            searchParam = searchParam.Trim();
             var collaterals = (
                                // from a in context.TBL_LOAN_COLLATERAL_MAPPING
                                //join l in context.TBL_LOAN on a.LOANID equals l.TERMLOANID
                                //join b in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                //join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                               from d in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals d.COLLATERALCUSTOMERID
-                               where (cus.CUSTOMERCODE == searchParam
-                               || cus.FIRSTNAME.StartsWith(searchParam.ToUpper())
-                               || cus.MIDDLENAME.StartsWith(searchParam.ToUpper())
-                               || cus.LASTNAME.StartsWith(searchParam.ToUpper())
-                               || l.LOANREFERENCENUMBER == searchParam)
-
-
+                               from d in context.TBL_COLLATERAL_CUSTOMER 
+                               join cus in context.TBL_CUSTOMER on d.CUSTOMERID equals cus.CUSTOMERID into cusd
+                                from cus in cusd.DefaultIfEmpty()
+                               where (d.CUSTOMERCODE.Contains(searchParam)
+                               || cus.FIRSTNAME.ToLower().Contains(searchParam.ToLower())
+                               || cus.LASTNAME.ToLower().Contains(searchParam.ToLower())
+                               || cus.MIDDLENAME.ToLower().Contains(searchParam.ToLower()))
                                select new CollateralViewModel
                                {
-                                   collateralId = a.COLLATERALCUSTOMERID,
+                                   collateralId = d.COLLATERALCUSTOMERID,
                                    collateralTypeId = d.COLLATERALTYPEID,
                                    collateralSubTypeId = d.COLLATERALSUBTYPEID,
                                    customerId = d.CUSTOMERID.Value,
@@ -2413,7 +2412,7 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralValue = d.COLLATERALVALUE,
                                    camRefNumber = d.CAMREFNUMBER,
                                    allowSharing = d.ALLOWSHARING,
-                                   isLocationBased = (bool)d.ISLOCATIONBASED,
+                                   isLocationBased = d.ISLOCATIONBASED.HasValue ? (bool)d.ISLOCATIONBASED : d.ISLOCATIONBASED,
                                    valuationCycle = d.VALUATIONCYCLE,
                                    haircut = d.HAIRCUT,
                                    approvalStatusName = d.APPROVALSTATUS,
@@ -2426,7 +2425,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-                               }).ToList().GroupBy(x => x.collateralId).Select(g => g.First());
+                               }).ToList().GroupBy(x => x.collateralId).Select(g => g.First()).ToList();
 
 
             //var collaterals = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
