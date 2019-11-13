@@ -508,7 +508,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
-                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
                 this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
                 this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 this.tenor = loanApplicationDetail.APPROVEDTENOR;
@@ -845,7 +845,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>NAME OF CUSTOMER:</b></th>
                         <th><b>{customerName}</b></th>
                         <th><b>CURRENT/APG A/C NO:</b></th>
-                        <th><b></b></th>
+                        <th>{currentAccountNo}</th>
                     </tr>
                       
                     <tr>
@@ -3195,36 +3195,38 @@ namespace FintrakBanking.Repositories.Credit
         private string GetEnvironmentalSocialRiskMarkup() // TODO RATINGIS
         {
             var result = String.Empty;
-            var summary = GetEnvironmentalSocialRisk();
+            var summary = GetEnvironmentalSocialRisk().FirstOrDefault();
 
             var n = 0;
-            result = result + $@"
-                <table border=1>
-                    <tr>
-                        <th><b>S/N</b></th>
-                        <th><b>Facility</b></th>
-                        <th><b>Summary</b></th>
-                        <th><b>Rating</b></th>
-                    </tr>
-                 ";
-            foreach (var s in summary)
-            {
-                n++;
-                result = result + $@"
-                    <tr>
-                        <td>{n}</td>
-                        <td>{s.productCustomerName}</td>
-                        <td>{s.comment}</td>
-                        <td>{GetESGRating(s.ratingId)}</td>
-                    </tr>
-                ";
-            }
-            result = result + $"</table>";
+            //result = result + $@"
+            //    <table border=1>
+            //        <tr>
+            //            <th><b>S/N</b></th>
+            //            <th><b>Facility</b></th>
+            //            <th><b>Summary</b></th>
+            //            <th><b>Rating</b></th>
+            //        </tr>
+            //     ";
+            //foreach (var s in summary)
+            //{
+            //    n++;
+            //    result = result + $@"
+            //        <tr>
+            //            <td>{n}</td>
+            //            <td>{s.productCustomerName}</td>
+            //            <td>{s.comment}</td>
+            //            <td>{GetESGRating(s.ratingId)}</td>
+            //        </tr>
+            //    ";
+            //}
+            //result = result + $"</table>";
+            result = result + $@"{ GetESGRating(summary?.ratingId)}";
             return result;
         }
        
-        private string GetESGRating(int ratingId)
+        private string GetESGRating(int? ratingId)
         {
+            if (ratingId == null) return "N/A";
             if (ratingId == 1) return "A";
             if (ratingId == 5) return "B";
             if (ratingId == 6) return "C";

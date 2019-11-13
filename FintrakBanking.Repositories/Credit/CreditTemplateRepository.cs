@@ -246,7 +246,7 @@ var qry = Foo.GroupJoin(
         public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId)
         {
             // int staffId, is REDUNDANT!
-
+            var printedDoc = "";
             var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .OrderBy(x => x.POSITION)
@@ -269,8 +269,25 @@ var qry = Foo.GroupJoin(
             {
                 raw.templateDocument = memo.Replace(raw.templateDocument);
                 replacedSections.Add(raw);
+                printedDoc = raw.title;
             }
 
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplatePrinted,
+                STAFFID = staffId,
+                BRANCHID = 1, //(short)model.userBranchId,
+                DETAIL = $"Printed Document Template '{ printedDoc }' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = "localhost",//model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            };
+            this.audit.AddAuditTrail(audit);
+            context.SaveChanges();
+           
             return replacedSections;
         }
 

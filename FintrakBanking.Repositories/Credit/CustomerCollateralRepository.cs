@@ -960,7 +960,7 @@ namespace FintrakBanking.Repositories.Credit
         //    return false;
         //}
 
-        public async Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId)
+        public bool UpdateCollateral(CollateralViewModel entity, int collateralId)
         {
             UpdateCollateralMainForm(entity, collateralId);
 
@@ -988,7 +988,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //if (entity.hasInsurance) { UpdateItemInsurancePolicy(entity); }
 
-            bool saved = await context.SaveChangesAsync() != 0;
+            bool saved = context.SaveChanges() != 0;
 
             if (saved) { return true; } // audit here
 
@@ -1037,7 +1037,7 @@ namespace FintrakBanking.Repositories.Credit
             var collateral = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId);
             collateral.COLLATERALTYPEID = model.collateralTypeId;
             collateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
-            collateral.COLLATERALCODE = model.collateralCode;
+            collateral.COLLATERALCODE = model.collateralCode.Trim();
             collateral.COLLATERALVALUE = (decimal)model.collateralValue;
             collateral.ALLOWSHARING = model.allowSharing;
             collateral.ISLOCATIONBASED = model.isLocationBased;
@@ -1926,7 +1926,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
-                        customerId = (int)c.c.CUSTOMERID,
+                        customerId = c.c.CUSTOMERID,
                         currencyId = c.c.CURRENCYID,
                         currencyCode = c.c.TBL_CURRENCY.CURRENCYCODE,
                         baseCurrencyId = company.CURRENCYID,
@@ -1934,12 +1934,12 @@ namespace FintrakBanking.Repositories.Credit
                         currency = c.c.TBL_CURRENCY.CURRENCYNAME,
                         disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
                         collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                        // collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                        collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
                         collateralCode = c.c.COLLATERALCODE,
                         collateralValue = c.c.COLLATERALVALUE,
                         camRefNumber = c.c.CAMREFNUMBER,
                         allowSharing = c.c.ALLOWSHARING,
-                        isLocationBased = (bool)c.c.ISLOCATIONBASED,
+                        isLocationBased = c.c.ISLOCATIONBASED ?? false,
                         valuationCycle = c.c.VALUATIONCYCLE,
                         haircut = c.c.HAIRCUT,
                         approvalStatusName = c.c.APPROVALSTATUS,
@@ -3715,6 +3715,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateral = new TBL_COLLATERAL_DOMICILIATION()
                 {
                     CONTRACTDETAILS = entity.contractDetail,
+                    COLLATERALCUSTOMERID = entity.collateralId,
                     EMPLOYER = entity.contractEmployer,
                     CONTRACTVALUE = entity.contractValue,
                     OUTSTANDINGINVOICEAMOUNT = entity.outstandingInvoiceAmount,
