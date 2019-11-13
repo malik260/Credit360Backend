@@ -447,6 +447,7 @@ namespace FintrakBanking.Common.Enum
         LcUsanceUpdated = 548,
         LienProposed = 549,
         LienUnproposed = 550,
+        DocumentTemplatePrinted = 551,
     };
     public enum RegulatoryTypeEnum
     {
