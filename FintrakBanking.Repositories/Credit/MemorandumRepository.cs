@@ -508,7 +508,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
-                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
                 this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
                 this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 this.tenor = loanApplicationDetail.APPROVEDTENOR;
@@ -845,7 +845,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>NAME OF CUSTOMER:</b></th>
                         <th><b>{customerName}</b></th>
                         <th><b>CURRENT/APG A/C NO:</b></th>
-                        <th><b></b></th>
+                        <th>{currentAccountNo}</th>
                     </tr>
                       
                     <tr>
