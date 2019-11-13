@@ -57,6 +57,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository casaLien;
         private IApprovalLevelStaffRepository level;
         private ICustomerRepository customers;
+        private ICustomerGroupRepository groupRepo;
         private IWorkflow workflow;
         private IAuditTrailRepository audit;
         private IOverRideRepository overrider;
@@ -73,7 +74,7 @@ namespace FintrakBanking.Repositories.Credit
         bool USE_THIRD_PARTY_INTEGRATION = false;
         private DateTime? applicationDate = null;
 
-        public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
+        public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, ICustomerGroupRepository groupRepo,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
                                         ILoanCovenantRepository _loanCovenant, IAuditTrailRepository _audit,
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
@@ -94,6 +95,7 @@ namespace FintrakBanking.Repositories.Credit
             this.financeTransaction = _financeTransaction;
             this.level = _level;
             this.customers = _customers;
+            this.groupRepo = groupRepo;
             this.workflow = _workflow;
             this.casaLien = _casaLien;
             this.overrider = _overrider;
@@ -8758,22 +8760,30 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
             {
-                var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
-                                            where a.CUSTOMERGROUPID == customer.FirstOrDefault().customerId && a.DELETED == false
-                                            select new CustomerGroupMappingViewModel
-                                            {
-                                                customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
-                                                customerGroupId = a.CUSTOMERGROUPID,
-                                                relationshipTypeId = a.RELATIONSHIPTYPEID,
-                                                relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
-                                                customerId = a.CUSTOMERID,
-                                                customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                                                customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
-                                                customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                                            }).ToList();
-                if (customerGroupMapping.Count() > 0)
+                var customerGroupMappings = new List<CustomerGroupMappingViewModel>();
+                var customerId = customer.FirstOrDefault().customerId;
+                var customerGroups = groupRepo.GetCustomerGroupMapping().Where(m => m.customerId == customerId).ToList();
+                foreach(var customerGroup in customerGroups)
                 {
-                    customer = customerGroupMapping.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                   var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                                where a.CUSTOMERGROUPID == customerGroup.customerGroupId && a.DELETED == false
+                                                select new CustomerGroupMappingViewModel
+                                                {
+                                                    customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                                    customerGroupId = a.CUSTOMERGROUPID,
+                                                    relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                                    relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                                    customerId = a.CUSTOMERID,
+                                                    customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                                    customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                                    customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                                }).ToList();
+                    if (customerGroupMapping.Count() > 0) customerGroupMappings.AddRange(customerGroupMapping);
+                }
+                
+                if (customerGroupMappings.Count() > 0)
+                {
+                    customer = customerGroupMappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
                 }
             }
 
@@ -8786,11 +8796,18 @@ namespace FintrakBanking.Repositories.Credit
                            where a.CUSTOMERID.Contains(customerCode)
                            select new CurrentCustomerExposure
                            {
+                               customerName = a.CUSTOMERNAME,
+                               customerCode = a.CUSTOMERID.Trim(),
                                facilityType = a.ADJFACILITYTYPE,
                                approvedAmount = a.LOANAMOUNYLCY ?? 0,
-                               outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                currency = a.CURRENCYNAME,
-                               //PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
+                               adjFacilityType = a.ADJFACILITYTYPE,
+                               productId = int.Parse(a.PRODUCTID),
+                               productName = a.PRODUCTNAME,
+                               //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                               //proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                               outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                reviewDate = DateTime.Now,
                                bookingDate = DateTime.Parse(a.BOOKINGDATE),
@@ -8866,23 +8883,28 @@ namespace FintrakBanking.Repositories.Credit
 
                 exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
                            join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                            where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                            select new CurrentCustomerExposure
                            {
+                               
+                               applicationStatusId = b.APPLICATIONSTATUSID,
+                               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               customerCode = c.CUSTOMERCODE.Trim(),
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               existingLimit = 0,
-                               proposedLimit = a.PROPOSEDAMOUNT,
                                approvedAmount = a.APPROVEDAMOUNT,
+                               currency = a.TBL_CURRENCY.CURRENCYNAME,
+                               //exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
+                               //adjFacilityType = a.ADJFACILITYTYPE,
+                               productId = a.TBL_PRODUCT.PRODUCTID,
+                               productName = a.TBL_PRODUCT.PRODUCTNAME,
                                outstandings = 0,
-                               PastDueObligationsInterest = 0,
                                pastDueObligationsPrincipal = 0,
+                               reviewDate = DateTime.Now,
                                //bookingDate = DateTime.Parse(a.BOOKINGDATE),
                                //maturityDate = DateTime.Parse(a.MATURITYDATE),
-                               reviewDate = DateTime.Now,
-                               prudentialGuideline = "Processing",
                                loanStatus = "Processing",
-                               referenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                               applicationStatusId = b.APPLICATIONSTATUSID
+                               referenceNumber = b.APPLICATIONREFERENCENUMBER
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);

@@ -1493,7 +1493,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                productName = a.PRODUCTNAME,
                                //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                //proposedLimit = a.LOANAMOUNYLCY ?? 0,
-                               outstandings = a.TOTALEXPOSURE ?? 0,
+                               outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                reviewDate = DateTime.Now,
                                bookingDate = DateTime.Parse(a.BOOKINGDATE),
@@ -1591,26 +1591,31 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
                 //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
-                //exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
-                //           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
-                //           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                //           select new CurrentCustomerExposure
-                //           {
-                //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                //               existingLimit = 0,
-                //               proposedLimit = a.PROPOSEDAMOUNT,
-                //               recommendedLimit = a.APPROVEDAMOUNT,
-                //               outstandings = 0,
-                //               PastDueObligationsInterest = 0,
-                //               PastDueObligationsPrincipal = 0,
-                //               reviewDate = DateTime.Now,
-                //               prudentialGuideline = "Processing",
-                //               loanStatus = "Processing",
-                //               referenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                //               applicationStatusId = b.APPLICATIONSTATUSID
-                //           };
+                exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                           select new CurrentCustomerExposure
+                           {
 
-                //if (exposure.Count() > 0) exposures.AddRange(exposure);
+                               applicationStatusId = b.APPLICATIONSTATUSID,
+                               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               customerCode = c.CUSTOMERCODE.Trim(),
+                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                               approvedAmount = a.APPROVEDAMOUNT,
+                               currency = a.TBL_CURRENCY.CURRENCYNAME,
+                               //exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
+                               //adjFacilityType = a.ADJFACILITYTYPE,
+                               productId = a.TBL_PRODUCT.PRODUCTID,
+                               productName = a.TBL_PRODUCT.PRODUCTNAME,
+                               outstandings = 0,
+                               pastDueObligationsPrincipal = 0,
+                               reviewDate = DateTime.Now,
+                               loanStatus = "Processing",
+                               referenceNumber = b.APPLICATIONREFERENCENUMBER
+                           };
+
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
 
 
                 //var staggingLoan = from a in stgCon.STG_LOAN_MART
