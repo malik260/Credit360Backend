@@ -809,7 +809,7 @@
                             serialNumber = responseApi.bo_code,
                             webRequestDate = DateTime.Now,
                             webRequestStatus = responseApi.bo_message,
-
+                            responseStatus = responseApi.response_code == "00" ? true : false,
                         };
 
                         responseMsg = new ResponseMessage

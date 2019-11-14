@@ -4115,16 +4115,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     var model = new FlexcubeCreateOverdraftViewModel
                     {
-                        p_account_no = casa.PRODUCTACCOUNTNUMBER, 
-                        p_collateral_code = collateralcodes, 
-                        p_collateral_value = collaterals?.Sum(x=>x.COLLATERALVALUE).ToString() ?? null,
-                        p_start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                        p_end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                        p_channel_code = "FINTRAK",
+                        account_no = casa.PRODUCTACCOUNTNUMBER, 
+                        collateral_code = collateralcodes, 
+                        collateral_value = collaterals.ToList().Count == 0 ? null : collaterals.Sum(x => x.COLLATERALVALUE).ToString(),
+                        start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                        end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                        channel_code = "FINTRAK",
+                        loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
                     };
 
-                    integration.FlexcubeOverDraft(model);
+                    integration.FlexcubeOverDraft(model, revolvingLoanRecord.LOANSYSTEMTYPEID);
 
                     //if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
                     //{
@@ -8833,7 +8834,8 @@ namespace FintrakBanking.Repositories.Credit
                                 customerName = a.CUSTOMERNAME,
                                 customerCode = a.CUSTOMERID.Trim(),
                                 facilityType = a.ADJFACILITYTYPE,
-                                approvedAmount = a.LOANAMOUNYLCY ?? 0,
+                                approvedAmount = a.LOANAMOUNYTCY ?? 0,
+                                approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
                                 currency = a.CURRENCYNAME,
                                 exposureTypeCode = a.EXPOSURETYPECODE,
                                 adjFacilityType = a.ADJFACILITYTYPE,
@@ -8841,7 +8843,8 @@ namespace FintrakBanking.Repositories.Credit
                                 productName = a.PRODUCTNAME,
                                 //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 //proposedLimit = a.LOANAMOUNYLCY ?? 0,
-                                outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
+                                outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                 reviewDate = DateTime.Now,
                                 bookingDateString = a.BOOKINGDATE,
@@ -8980,6 +8983,9 @@ namespace FintrakBanking.Repositories.Credit
                 facilityType = "TOTAL",
                 existingLimit = exposures.Sum(t => t.existingLimit),
                 proposedLimit = exposures.Sum(t => t.proposedLimit),
+                bookingDate = exposures.Max(t => t.bookingDate),
+                maturityDate = exposures.Max(t => t.maturityDate),
+                //approvedAmount = exposures.Sum(t => t.approvedAmount),
                 recommendedLimit = exposures.Sum(t => t.recommendedLimit),
                 outstandings = exposures.Sum(t => t.outstandings),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),

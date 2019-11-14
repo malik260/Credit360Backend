@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("TBL_ALERT_LEVEL")]
-    public partial class TBL_ALERT_LEVEL
+    [Table("TBL_ALERT_ROLE_GROUP")]
+    public partial class TBL_ALERT_ROLE_GROUP
     {
         [Key]
-        public int ALERTLEVELID { get; set; }
-        public string EMAILLIST { get; set; }
-        public string LEVELCODE { get; set; }
-        public int LEVELGROUPID { get; set; }
+        public int ALERTLEVELGROUPID { get; set; }
+        public string LEVELGROUPNAME { get; set; }
+        public string DESCRIPTION { get; set; }
     }
 }
