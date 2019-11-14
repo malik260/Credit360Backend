@@ -109,10 +109,10 @@ namespace FintrakBanking.Repositories.Credit
            return content;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure(string referenceNumber)
+        public IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure()
         {
             
-            return context.TBL_GLOBAL_EXPOSURE.Where(x => x.TOTALEXPOSURE < 100)
+            return context.TBL_GLOBAL_EXPOSURE
             .Select(d => new GlobalExposureViewModel
             {
                 customerName = d.CUSTOMERNAME,

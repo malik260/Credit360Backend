@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
                               templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS",
-                              //bindingType = a.BINDINGTYPE,
+                              defaultEmail = a.DEFAULTEMAIL,
                               //lastSentDate = a.LASTSENTDATE,
                               //source = a.SOURECE,
                           });
@@ -110,6 +110,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
                               templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
+                              defaultEmail = a.DEFAULTEMAIL,
                               //bindingType = a.BINDINGTYPE,
                               //lastSentDate = a.LASTSENTDATE,
                               //source = a.SOURECE,
@@ -130,6 +131,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              senderEmail = a.SENDEREMAIL,
                              senderName = a.SENDERNAME,
                              templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
+                             defaultEmail = a.DEFAULTEMAIL,
                              //bindingType = a.BINDINGTYPE,
                              //lastSentDate = a.LASTSENTDATE,
                              //source = a.SOURECE,
@@ -147,6 +149,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 SENDEREMAIL = model.senderEmail,
                 SENDERNAME = model.senderName,
                 TEMPLATETYPE = model.templateType,
+                DEFAULTEMAIL = model.defaultEmail,
                 //BINDINGTYPE = model.bindingType,
                 //LASTSENTDATE = general.GetApplicationDate(),
                 //SOURECE = model.source,
@@ -183,6 +186,7 @@ namespace FintrakBanking.Repositories.Setups.General
             entity.SENDERNAME = model.senderName;
             entity.SENDEREMAIL = model.senderEmail;
             entity.TEMPLATETYPE = model.templateType;
+            entity.DEFAULTEMAIL = model.defaultEmail;
             //entity.BINDINGTYPE = model.bindingType;
             //entity.LASTSENTDATE = general.GetApplicationDate();
             //entity.SOURECE = model.source;
