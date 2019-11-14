@@ -345,6 +345,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -1976,7 +1977,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!projectSum.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2041,7 +2044,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!initialProjectSum.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2112,7 +2117,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!initialProjectSum.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2183,7 +2190,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!pmuAssessed.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2319,7 +2328,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!costVariation.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2829,12 +2840,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.84999in</Width>
+              <Width>3.99248in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.29167in</Height>
+              <Height>0.44584in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2869,7 +2880,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.25in</Height>
+              <Height>2.35721in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2877,7 +2888,7 @@
                       <Source>Database</Source>
                       <Value>=Fields!fileData.Value</Value>
                       <MIMEType>image/png</MIMEType>
-                      <Sizing>FitProportional</Sizing>
+                      <Sizing>Fit</Sizing>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -2909,8 +2920,8 @@
         <DataSetName>supportImages</DataSetName>
         <Top>13.80778in</Top>
         <Left>0.23167in</Left>
-        <Height>0.54167in</Height>
-        <Width>6.84999in</Width>
+        <Height>2.80305in</Height>
+        <Width>3.99248in</Width>
         <ZIndex>21</ZIndex>
         <Style>
           <Border>
@@ -2919,10 +2930,10 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>15.01916in</Height>
+    <Height>16.61083in</Height>
     <Style />
   </Body>
-  <Width>11.08167in</Width>
+  <Width>11.09833in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>

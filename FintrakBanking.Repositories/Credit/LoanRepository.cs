@@ -798,7 +798,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //if (!model.feeOverride) { PostLoanFees(model); }
 
-                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE);
+                    //CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE);
 
                     context.SaveChanges();
 
@@ -1035,7 +1035,7 @@ namespace FintrakBanking.Repositories.Credit
                         PostBandGFacilityFees(entity);
                     }
 
-                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE);
+                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.ContingentLiability);
 
                     context.SaveChanges();
 
@@ -1359,7 +1359,7 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
+                //confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
                 entity.feeOverride = true;
 
                 var loan = context.TBL_LOAN.Add(data);
@@ -1410,7 +1410,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
 
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE);
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility);
 
                         //if (!entity.feeOverride) PostLoanFees(entity);
                         context.SaveChanges();
@@ -2068,7 +2068,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        private void CreateFacilityOnThirdParty(int productID, int loanApplicationDetailId, int casaAccountId, DateTime effectiveDate, DateTime expiryDate)
+        private void CreateFacilityOnThirdParty(int productID, int loanApplicationDetailId, int casaAccountId, DateTime effectiveDate, DateTime expiryDate, short loanSystemTypeId)
         {
             if (USE_THIRD_PARTY_INTEGRATION)
             {
@@ -2080,7 +2080,7 @@ namespace FintrakBanking.Repositories.Credit
                 var facilityDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
                 var casa = context.TBL_CASA.Find(casaAccountId);
                 var customer = context.TBL_CUSTOMER.Find(facilityDetail.CUSTOMERID);
-                var collaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                var collaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId).ToList();
 
                 faciltyCreationModel.p_account_no = casa.PRODUCTACCOUNTNUMBER;
                 faciltyCreationModel.p_limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
@@ -2092,11 +2092,14 @@ namespace FintrakBanking.Repositories.Credit
                 faciltyCreationModel.p_liab_no = customer.LIABILITYLIMITNUMBER;
                 faciltyCreationModel.p_line_code = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
                 faciltyCreationModel.sourceReferenceNumber = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
-                faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x=>x.BALANCEAVAILABLE).ToString() ?? "0";
+                faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x => x.BALANCEAVAILABLE ).ToString() == null ? "0" : collaterals?.Sum(x => x.BALANCEAVAILABLE).ToString();
+                //faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x=>x.BALANCEAVAILABLE).ToString() ?? "0";
                 faciltyCreationModel.p_collateral_code = collaterals.FirstOrDefault()?.TBL_COLLATERAL_CUSTOMER?.COLLATERALCODE.ToString();
                 faciltyCreationModel.p_channel_code = "FINTRAK";
+                faciltyCreationModel.loanApplicationId = facilityDetail.TBL_LOAN_APPLICATION.LOANAPPLICATIONID;
 
-                integration.PostFacilityCreationInputs(faciltyCreationModel);
+
+                integration.PostFacilityCreationInputs(faciltyCreationModel, loanSystemTypeId);
             }
           
         }
@@ -8791,22 +8794,30 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
             {
-                var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
-                                            where a.CUSTOMERGROUPID == customer.FirstOrDefault().customerId && a.DELETED == false
-                                            select new CustomerGroupMappingViewModel
-                                            {
-                                                customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
-                                                customerGroupId = a.CUSTOMERGROUPID,
-                                                relationshipTypeId = a.RELATIONSHIPTYPEID,
-                                                relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
-                                                customerId = a.CUSTOMERID,
-                                                customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                                                customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
-                                                customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                                            }).ToList();
-                if (customerGroupMapping.Count() > 0)
+                var customerGroupMappings = new List<CustomerGroupMappingViewModel>();
+                var customerId = customer.FirstOrDefault().customerId;
+                var customerGroups = GetCustomerGroupMapping().Where(m => m.customerId == customerId).ToList();
+                foreach(var customerGroup in customerGroups)
                 {
-                    customer = customerGroupMapping.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                   var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                                where a.CUSTOMERGROUPID == customerGroup.customerGroupId && a.DELETED == false
+                                                select new CustomerGroupMappingViewModel
+                                                {
+                                                    customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                                    customerGroupId = a.CUSTOMERGROUPID,
+                                                    relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                                    relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                                    customerId = a.CUSTOMERID,
+                                                    customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                                    customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                                    customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                                }).ToList();
+                    if (customerGroupMapping.Count() > 0) customerGroupMappings.AddRange(customerGroupMapping);
+                }
+                
+                if (customerGroupMappings.Count() > 0)
+                {
+                    customer = customerGroupMappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
                 }
             }
 
@@ -8816,23 +8827,40 @@ namespace FintrakBanking.Repositories.Credit
                 //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
                 exposure = (from a in context.TBL_GLOBAL_EXPOSURE
-                           where a.CUSTOMERID.Contains(customerCode)
-                           select new CurrentCustomerExposure
-                           {
-                               facilityType = a.ADJFACILITYTYPE,
-                               approvedAmount = a.LOANAMOUNYLCY ?? 0,
-                               outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                               currency = a.CURRENCYNAME,
-                               //PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
-                               reviewDate = DateTime.Now,
-                               bookingDate = DateTime.Parse(a.BOOKINGDATE),
-                               maturityDate = DateTime.Parse(a.MATURITYDATE),
-                               loanStatus = a.CBNCLASSIFICATION,
-                               referenceNumber = a.REFERENCENUMBER,
-                           }).ToList();
+                            where a.CUSTOMERID.Contains(customerCode)
+                            select new CurrentCustomerExposure
+                            {
+                                customerName = a.CUSTOMERNAME,
+                                customerCode = a.CUSTOMERID.Trim(),
+                                facilityType = a.ADJFACILITYTYPE,
+                                approvedAmount = a.LOANAMOUNYLCY ?? 0,
+                                currency = a.CURRENCYNAME,
+                                exposureTypeCode = a.EXPOSURETYPECODE,
+                                adjFacilityType = a.ADJFACILITYTYPE,
+                                productIdString = a.PRODUCTID,
+                                productName = a.PRODUCTNAME,
+                                //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                //proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                                outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
+                                reviewDate = DateTime.Now,
+                                bookingDateString = a.BOOKINGDATE,
+                                maturityDateString = a.MATURITYDATE,
+                                loanStatus = a.CBNCLASSIFICATION,
+                                referenceNumber = a.REFERENCENUMBER,
+                            }).ToList();
 
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
+                if (exposure.Count() > 0)
+                {
+                    foreach (var e in exposure)
+                    {
+                        e.exposureTypeId = int.Parse(e.exposureTypeCode);
+                        e.bookingDate = DateTime.Parse(e.bookingDateString);
+                        e.maturityDate = DateTime.Parse(e.maturityDateString);
+                        e.productId = int.Parse(e.productIdString);
+                    }
+                    exposures.AddRange(exposure);
+                }
 
                 //exposure = from a in context.TBL_LOAN
                 //           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -8899,23 +8927,28 @@ namespace FintrakBanking.Repositories.Credit
 
                 exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
                            join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                            where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                            select new CurrentCustomerExposure
                            {
+                               
+                               applicationStatusId = b.APPLICATIONSTATUSID,
+                               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               customerCode = c.CUSTOMERCODE.Trim(),
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               existingLimit = 0,
-                               proposedLimit = a.PROPOSEDAMOUNT,
                                approvedAmount = a.APPROVEDAMOUNT,
+                               currency = a.TBL_CURRENCY.CURRENCYNAME,
+                               //exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
+                               //adjFacilityType = a.ADJFACILITYTYPE,
+                               productId = a.TBL_PRODUCT.PRODUCTID,
+                               productName = a.TBL_PRODUCT.PRODUCTNAME,
                                outstandings = 0,
-                               PastDueObligationsInterest = 0,
                                pastDueObligationsPrincipal = 0,
+                               reviewDate = DateTime.Now,
                                //bookingDate = DateTime.Parse(a.BOOKINGDATE),
                                //maturityDate = DateTime.Parse(a.MATURITYDATE),
-                               reviewDate = DateTime.Now,
-                               prudentialGuideline = "Processing",
                                loanStatus = "Processing",
-                               referenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                               applicationStatusId = b.APPLICATIONSTATUSID
+                               referenceNumber = b.APPLICATIONREFERENCENUMBER
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
@@ -8955,6 +8988,22 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             return exposures;
+        }
+        public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
+        {
+            var customerGroupMapping = from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                       where a.DELETED == false
+                                       select new CustomerGroupMappingViewModel
+                                       {
+                                           customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                           customerGroupId = a.CUSTOMERGROUPID,
+                                           relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                           //createdBy = a.CreatedBy,
+                                           customerId = a.CUSTOMERID,
+                                           //dateTimeCreated = a.DateTimeCreated
+                                       };
+
+            return customerGroupMapping;
         }
 
         public List<CurrentCustomerExposure> GetApplicationFacilitySummary(int applicationId)
