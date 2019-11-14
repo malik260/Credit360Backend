@@ -8,6 +8,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        //bool InitializeAlertProperties();
         string Replace(string content);
     }
 }

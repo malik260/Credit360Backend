@@ -8115,7 +8115,7 @@ namespace FintrakBanking.Repositories.Credit
                 targetId = collateral.COLLATERALCUSTOMERID;
                 jobReQuestCode = collateral.COLLATERALCODE;
                 alertSubject = "Collateral isitation reminder from FINTRAK 360(TEST ALERT)";
-                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com,tajudeen.onikoyi@fintraksoftware.com";
                 messageBody = $"Hello, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
                                $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
@@ -8150,7 +8150,7 @@ namespace FintrakBanking.Repositories.Credit
                 targetId = collateral.COLLATERALCUSTOMERID;
                 jobReQuestCode = collateral.COLLATERALCODE;
                 alertSubject = "Collateral Valuation Reminder from FINTRAK 360(TEST ALERT)";
-                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com,tajudeen.onikoyi@fintraksoftware.com";
                 messageBody = $"Hello, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
                                $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
@@ -8179,7 +8179,7 @@ namespace FintrakBanking.Repositories.Credit
                     perfectionStatus = context.TBL_COLLATERAL_PERFECTN_STAT.FirstOrDefault(s => s.PERFECTIONSTATUSID == perfectionStatusId).PERFECTIONSTATUSNAME;
                 }
                 alertSubject = "Collateral Status Update from FINTRAK 360(TEST ALERT)";
-                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com,tajudeen.onikoyi@fintraksoftware.com";
                 messageBody = $"Hello, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
                                $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
@@ -8199,7 +8199,7 @@ namespace FintrakBanking.Repositories.Credit
             targetId = collateral.COLLATERALCUSTOMERID;
             jobReQuestCode = collateral.COLLATERALCODE;
             alertSubject = "Collateral Validity Update from FINTRAK 360(TEST ALERT)";
-            recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com";
+            recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com,tajudeen.onikoyi@fintraksoftware.com";
             messageBody = $"Hello, <br /><br />" +
                            $"This is to inform you that, <br /><br />" +
                            $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
