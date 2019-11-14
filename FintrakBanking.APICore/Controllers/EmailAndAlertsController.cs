@@ -29,7 +29,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-              //  repo.SendAlertsForCovenantsApproachingDueDate();
+              // repo.SendAlertsForCovenantsApproachingDueDate();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }

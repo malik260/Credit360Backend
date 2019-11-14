@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string senderName { get; set; }
         public string senderEmail { get; set; }
         public string templateType { get; set; }
-        //public int bindingType { get; set; }
+        public string defaultEmail { get; set; }
         //public DateTime lastSentDate { get; set; }
         //public int source { get; set; }
     }

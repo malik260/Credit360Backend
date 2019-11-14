@@ -147,9 +147,7 @@ namespace FintrakBanking.MonitoringMessagesSender
         {
             try
             {
-                _log.Info("");
-                _log.Info("==================================================================");
-                _log.Info("I have entered inside the method");
+                
 
                 using (SmtpClient client = new SmtpClient())
                 {
@@ -175,20 +173,13 @@ namespace FintrakBanking.MonitoringMessagesSender
                     var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending 
                     || o.MESSAGESTATUSID == (short)MessageStatusEnum.Attempted).ToList();
 
-                    _log.Info("");
-                    _log.Info("==================================================================");
-                    _log.Info("LIST OF MESSAGES : " + listOfMails.Count());
 
                     if (listOfMails !=null)
                     {
                         foreach (var newMail in listOfMails)
                         {
-                            _log.Info("");
-                            _log.Info("==================================================================");
-                            _log.Info("LIST OF MAILS : " + newMail);
 
                             MailMessage mail = new MailMessage();
-
                             mail.From = new MailAddress(userName, displayName);
                            
                             if (newMail.TOADDRESS != null && newMail.TOADDRESS != string.Empty)
@@ -219,26 +210,11 @@ namespace FintrakBanking.MonitoringMessagesSender
                                     }
                                 }
                             }
-                                _log.Info("");
-                                _log.Info("==================================================================");
-                                _log.Info("MESSAGESUBJECTSSSSS : " + RemoveSpecial(newMail.MESSAGESUBJECT));
-
-                                _log.Info("");
-                                _log.Info("==================================================================");
-                                _log.Info("MESSAGEBODY : " + RemoveSpecial(newMail.MESSAGEBODY));
-
+                               
                                 mail.IsBodyHtml = true;
                                 mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
                                 mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
                                 mailId = newMail.MESSAGEID;
-
-                                _log.Info("");
-                                _log.Info("==================================================================");
-                                _log.Info("MESSAGESUBJECT====================== : " + RemoveSpecial(newMail.MESSAGESUBJECT));
-
-                                _log.Info("");
-                                _log.Info("==================================================================");
-                                _log.Info("MESSAGEBODY====================== : " + RemoveSpecial(newMail.MESSAGEBODY));
 
                             if (newMail.ATTACHMENTTYPEID != null)
                             {
@@ -266,7 +242,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                                     foreach (var binaryFile in requestDoc)
                                     {
                                        MemoryStream memoryStream = new MemoryStream(binaryFile.FILEDATA);
-                                        Attachment attachment = new Attachment(memoryStream, binaryFile.FILENAME);
+                                       Attachment attachment = new Attachment(memoryStream, binaryFile.FILENAME);
                                        mail.Attachments.Add(attachment);
 
                                     }
@@ -275,7 +251,7 @@ namespace FintrakBanking.MonitoringMessagesSender
     
 
                             }
-                           
+                            
                             client.Send(mail);
                             UpdateMailDeliveryStatus(newMail.MESSAGEID, (short)MessageStatusEnum.Sent, "Email Sent Successfully");
                         }
