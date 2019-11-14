@@ -306,7 +306,7 @@ public class LienProcessViewModel //: GeneralEntity
         public string webRequestStatus { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public DateTime webRequestDate { get; set; }
-        public string responseCode { get; set; }
+        public string response_code { get; set; }
         public string bo_code { get; set; }
         public string bo_message { get; set; }
         public string lien_id { get; set; }
