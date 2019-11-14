@@ -25,23 +25,19 @@
         {
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
-            private IEnumerable<TBL_API_URL> APIUrlConfig;
+            private List<TBL_API_URL> APIUrlConfig;
 
-            //private static HttpClient httpClientInstance;
-            //private HttpClientHandler handler = new HttpClientHandler();
 
             public CustomerDetails(FinTrakBankingContext _context)
             {
                 this.context = _context;
-                var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
-                APIUrlConfig = context.TBL_API_URL;
-                API_KEY = configdata.APIKEY;
-                API_URL = configdata.APIURL;
-                //staffRepo = _staffRepo;
+                APIUrlConfig = new List<TBL_API_URL>();
+
             }
 
             private void getAPIURLSettings(string typeName = null)
             {
+                APIUrlConfig = context.TBL_API_URL.ToList();
                 var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
                 if (apiConfig != null)
                 {
