@@ -15,7 +15,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal change { get { return (proposedLimit - recommendedLimit); } }
         //public decimal outstandings { get { return proposedLimit; } }
         public decimal outstandings { get; set; }
+        public decimal outstandingsLcy { get; set; }
         public decimal approvedAmount { get; set; }
+        public decimal approvedAmountLcy { get; set; }
         public int exposureTypeId { get; set; }
         public string exposureTypeCode { get; set; }
         public string adjFacilityType { get; set; }
