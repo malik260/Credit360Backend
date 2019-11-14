@@ -21,23 +21,18 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
         {
             private FinTrakBankingContext _context;
             private string API_KEY, API_URL = string.Empty;
-            private IEnumerable<TBL_API_URL> APIUrlConfig;
+            private List<TBL_API_URL> APIUrlConfig;
 
             public OverDraft(FinTrakBankingContext context)
             {
                 _context = context;
 
-                var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
-                APIUrlConfig = context.TBL_API_URL;
-                if (configdata != null)
-                {
-                    API_KEY = configdata.APIKEY;
-                    API_URL = configdata.APIURL;
-                }
+                APIUrlConfig = new List<TBL_API_URL>();
             }
 
             private void getAPIURLSettings(string typeName = null)
             {
+                APIUrlConfig = _context.TBL_API_URL.ToList();
                 var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
                 if (apiConfig != null)
                 {
@@ -52,8 +47,6 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 }
             }
 
-            //FinTrakBankingContext logContext = new FinTrakBankingContext();
-            //private HttpClientHandler _handler = new HttpClientHandler();
             private static HttpClient _httpClientInstance;
 
             private ResponseMessageViewModel responseAPI;
@@ -295,12 +288,9 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 _handler.UseDefaultCredentials = true;
                 HttpClient client = new HttpClient(_handler);
-
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
 
-                // HttpClient client = new HttpClient(_handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
-                //DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
@@ -308,7 +298,6 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                 try
                 {
-
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                     client = new HttpClient();
@@ -322,7 +311,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = client.PostAsync("api/OverDraft/Normal", new StringContent(
+                    response = client.PostAsync("FCUBSCreateOverdraft", new StringContent(
                         new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
                     responseDateTime = DateTime.Now;
@@ -388,7 +377,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = "api/OverDraft/Normal",
+                        APIURL = API_URL+"FCUBSCreateOverdraft",
                         LOGTYPEID = 11,
                         // REFERENCENUMBER = model.sanctionReferenceNumber,
                         REQUESTDATETIME = requestDatetime,

@@ -262,7 +262,7 @@ namespace FintrakBanking.MonitoringMessagesSender
             }
             catch (Exception ex)
             {
-
+                throw new SecureException("Failed with error sending mail: " + ex.Message);
                 UpdateMailDeliveryStatus(mailId, (short)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
                 //throw new SecureException("Failed with error : " + ex.Message);
                 return false;
