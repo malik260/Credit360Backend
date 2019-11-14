@@ -316,6 +316,14 @@ public class LienProcessViewModel //: GeneralEntity
         // public bool responseStatus { get; set; }
     }
 
+    public class ResponseMessageFacilityViewModel
+    {
+        public string response_code { get; set; }
+        public string response_message { get; set; }
+        public string facility_id { get; set; }
+        public string bo_code { get; set; }
+        public string bo_message { get; set; }
+    }
 
 
 }

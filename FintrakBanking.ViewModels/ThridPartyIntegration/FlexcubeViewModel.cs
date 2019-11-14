@@ -71,6 +71,9 @@ namespace FintrakBanking.ViewModels.Flexcube
         public string p_interest_rate { get; set; }
         public string p_channel_code { get; set; }
         public string sourceReferenceNumber { get; set; }
+        public int loanApplicationId { get; set; }
+
+
     }
 
 
