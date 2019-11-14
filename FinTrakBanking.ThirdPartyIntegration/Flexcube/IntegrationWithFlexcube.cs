@@ -579,22 +579,23 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public PostingResult PostFacilityCreationInputs(FlexcubeCreateFacilityViewModel model)
+        public PostingResult PostFacilityCreationInputs(FlexcubeCreateFacilityViewModel model, short loanSystemTypeId)
         {
             {
                 ResponseMessage result = null;
-                Task.Run(async () => result = await transaction.ApiTransactionFacilityCreationPosting(model)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await transaction.ApiTransactionFacilityCreationPosting(model, loanSystemTypeId)).GetAwaiter().GetResult();
 
                 if (result.APIResponse != null)
                 {
-                    if (result.APIResponse.responseCode == "0")
+                    if (result.APIResponse.responseCode == "00")
                     {
                         string str = result.APIResponse.webRequestStatus;
-                        str = str.Replace(":", "");
-                        str = str.Replace("FAILURE", "");
-                        str = str.Replace("SUCCESS+", "");
+                        //str = str.Replace(":", "");
+                        //str = str.Replace("FAILURE", "");
+                        //str = str.Replace("SUCCESS+", "");
 
-                        return new PostingResult { posted = true, responseCode = str.Trim() };
+                        //return new PostingResult { posted = true, responseCode = str.Trim() };
+                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode };
                     }
                     else
                     {

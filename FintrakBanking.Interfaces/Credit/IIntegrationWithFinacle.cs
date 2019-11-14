@@ -30,7 +30,7 @@ namespace FintrakBanking.Interfaces.Credit
         GLAccountDetailsViewModel ValidateGLNumber(string glNumber);
         TDAccountRecordViewModel ValidateTDAccountNumber(string teamDepositAccountNumber);
         PostingResult PostTransactions(List<FinanceTransactionViewModel> model);
-        PostingResult PostFacilityCreationInputs(FlexcubeCreateFacilityViewModel model);
+        PostingResult PostFacilityCreationInputs(FlexcubeCreateFacilityViewModel model, short loanSystemTypeId);
 
         CasaBalanceViewModel GetCustomerAccountBalance(string customerAccoun);
         List<CustomerViewModels> GetCustomerByAccountsNumber(string customerAccount);
