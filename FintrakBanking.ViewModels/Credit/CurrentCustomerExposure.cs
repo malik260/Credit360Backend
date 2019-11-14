@@ -5,6 +5,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class CurrentCustomerExposure
     {
         public DateTime bookingDate { get; set; }
+        public string bookingDateString { get; set; }
+        public string maturityDateString { get; set; }
 
         public string customerName { get; set; }
         public string facilityType { get; set; }
@@ -13,8 +15,11 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal change { get { return (proposedLimit - recommendedLimit); } }
         //public decimal outstandings { get { return proposedLimit; } }
         public decimal outstandings { get; set; }
+        public decimal outstandingsLcy { get; set; }
         public decimal approvedAmount { get; set; }
+        public decimal approvedAmountLcy { get; set; }
         public int exposureTypeId { get; set; }
+        public string exposureTypeCode { get; set; }
         public string adjFacilityType { get; set; }
         public string customerCode { get; set; }
 
@@ -29,6 +34,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string referenceNumber { get; set; }
         public int productTypeId { get; set; }
         public int productId { get; set; }
+        public string productIdString { get; set; }
         public string productName { get; set; }
         public int loanId { get; set; }
         public short applicationStatusId { get; set; }

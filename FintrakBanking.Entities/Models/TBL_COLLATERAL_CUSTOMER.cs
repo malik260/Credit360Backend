@@ -42,6 +42,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string COLLATERALCODE { get; set; }
+        public string CUSTOMERCODE { get; set; }
 
         public short CURRENCYID { get; set; }
 

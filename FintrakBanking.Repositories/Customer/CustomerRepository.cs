@@ -179,6 +179,7 @@ namespace FintrakBanking.Repositories.Customer
                 var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
                 if (output == true)
                 {
+                    UpdateCustomerCollateralId(customer.CUSTOMERCODE);
                     fetchCustomerAccountBalance(customer);
                     return result;
                 }
@@ -194,6 +195,18 @@ namespace FintrakBanking.Repositories.Customer
                     ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
                 throw new DbEntityValidationException(errorMessages);
             }
+        }
+
+        public void UpdateCustomerCollateralId(string customerCode)
+        {
+            customerCode = customerCode.Trim();
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
+            foreach(var c in collaterals)
+            {
+                c.CUSTOMERID = customer.CUSTOMERID;
+            }
+            var saved = context.SaveChanges() > 0;
         }
 
         private void fetchCustomerAccountBalance(TBL_CUSTOMER data)
@@ -2842,7 +2855,7 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.DATETIMEUPDATED = DateTime.Now;
                 customerMain.LASTUPDATEDBY = entity.deletedBy;
 
-
+                UpdateCustomerCollateralId(customerMain.CUSTOMERCODE);
                 return context.SaveChanges() != 0;
             }
             else
@@ -4581,6 +4594,7 @@ namespace FintrakBanking.Repositories.Customer
                 entity.RELATIONSHIPOFFICERID = temp.RELATIONSHIPOFFICERID;
             }
 
+            UpdateCustomerCollateralId(entity.CUSTOMERCODE);
             //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
             temp.ISCURRENT = false;
             temp.APPROVALSTATUSID = approvalStatusId;

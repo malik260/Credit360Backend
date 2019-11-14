@@ -102,6 +102,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (saveIndividualCustomerInformation(model))
             {
+                customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
                 return fireResponse("Success","00",model.request_Id);
             }
             else { return fireResponse("Unresolved error: could not save customer information","99",""); }
@@ -124,7 +125,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (saveCorporateCustomerInformation(model))
             {
-                
+                customer.UpdateCustomerCollateralId(model.corporateCustomerInformation.customerCode);
                 return fireResponse("Success", "00",model.request_Id);
             }
             else { return fireResponse("Unresolved error: could not save customer information", "99",""); }

@@ -149,5 +149,6 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerViewModels> SearchRandomSingleCorporateCustomersBySearchQuery(string searchQuery);
         IEnumerable<CustomerViewModels> SearchRandomGroupCustomersBySearchQuery(string searchQuery);
         bool GetPoliticallyExposedPerson(string customerCode);
+        void UpdateCustomerCollateralId(string customerCode);
     }
 }
