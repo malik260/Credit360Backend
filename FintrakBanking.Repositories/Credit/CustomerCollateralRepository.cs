@@ -26,6 +26,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using Newtonsoft.Json;
 using System.ServiceModel;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Setups.General;
+using System.Configuration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -45,6 +47,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository lien;
         private ICasaRepository casa;
         private IIntegrationWithFinacle finacle;
+        //private IAlertRepository alert;
 
         public string collateralReleaseStatusName { get; private set; }
 
@@ -62,6 +65,7 @@ namespace FintrakBanking.Repositories.Credit
             ICasaLienRepository _lien,
             ICasaRepository _casa,
             IIntegrationWithFinacle _finacle
+            //IAlertRepository _alert
             )
         {
             this.context = _context;
@@ -78,6 +82,7 @@ namespace FintrakBanking.Repositories.Credit
             this.lien = _lien;
             this.casa = _casa;
             this.finacle = _finacle;
+            //this.alert = _alert;
         }
 
 
@@ -7447,6 +7452,17 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (property != null)
                 {
+                    if (property.PERFECTIONSTATUSID != entity.perfectionStatusId)
+                    {
+                        var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
+                        NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
+                    }
+                    if (property.LASTVALUATIONDATE != entity.lastValuationDate)
+                    {
+                        var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
+                        NotifyForCollateralRevaluation(collateral, entity.lastValuationDate);
+                        NotifyForCollateralVisitation(collateral);
+                    }
                     property.CITYID = entity.cityId;
                     property.COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount;
                     property.CONSTRUCTIONDATE = entity.constructionDate;
@@ -7492,7 +7508,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(new TBL_COLLATERAL_IMMOVE_PROPERTY
+                    var prop = new TBL_COLLATERAL_IMMOVE_PROPERTY
                     {
 
                         CITYID = entity.cityId,
@@ -7534,8 +7550,12 @@ namespace FintrakBanking.Repositories.Credit
                         VALUERNAME = entity.valuerName,
                         VALUERACCOUNTNUMBER = entity.valuerAccountNumber,
 
-                    });
+                    };
+                    context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(prop);
                     comment = $"New property collateral type has been created through loan application by {entity.createdBy} staffid";
+                    var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
+                    NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
+                   
                 }
             }
             else
@@ -7934,6 +7954,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (mainCollateral != null)
                 {
+                    if (mainCollateral.VALIDTILL != model.validTill)
+                    {
+                        NotifyForCollateralValidity(mainCollateral, model.validTill);
+                    }
                     mainCollateral.COLLATERALCODE = model.collateralCode;
                     mainCollateral.COLLATERALTYPEID = model.collateralTypeId;
                     mainCollateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
@@ -8004,6 +8028,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (context.SaveChanges() > 0)
                         {
+                            NotifyForCollateralValidity(mainCollateral, model.validTill);
                             return collateral.COLLATERALCUSTOMERID;
                         }
                     }
@@ -8071,8 +8096,170 @@ namespace FintrakBanking.Repositories.Credit
             return 0;
         }
 
+        public void NotifyForCollateralVisitation(TBL_COLLATERAL_CUSTOMER collateral)
+        {
+            string messageBody;
+            string alertSubject;
+            string recipients;
+            string jobReQuestCode;
+            int targetId;
+            if (collateral.COLLATERALTYPEID != (int)CollateralTypeEnum.Property) return;
+            var property = context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+            if (property != null)
+            {
+                var visitation = context.TBL_COLLATERAL_VISITATION.Where(v => v.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID).OrderByDescending(v => v.COLLATERALVISITATIONID).FirstOrDefault();
+                if (visitation == null) return;
+                var lastVisit = visitation.VISITATIONDATE;
+                var nextVisit = visitation.NEXTVISITATIONDATE.Value;
+                var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == visitation.CREATEDBY);
+                targetId = collateral.COLLATERALCUSTOMERID;
+                jobReQuestCode = collateral.COLLATERALCODE;
+                alertSubject = "Collateral isitation reminder from FINTRAK 360(TEST ALERT)";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com";
+                messageBody = $"Hello, <br /><br />" +
+                               $"This is to inform you that, <br /><br />" +
+                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                               $"was visited on {lastVisit} by {staff.TBL_STAFF_ROLE.STAFFROLENAME + ", " + staff.FIRSTNAME + " " + staff.LASTNAME} and is due for the next visitation on {nextVisit}"
+                               ;
+                LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
+            }
+        }
 
+        public void NotifyForCollateralRevaluation(TBL_COLLATERAL_CUSTOMER collateral, DateTime lastValuationDate)
+        {
+            string messageBody;
+            string alertSubject;
+            string recipients;
+            string jobReQuestCode;
+            int targetId;
+            DateTime valuationDate;
+            if (collateral.COLLATERALTYPEID != (int)CollateralTypeEnum.Property) return;
+            var property = context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+            if (property != null)
+            {
+                valuationDate = lastValuationDate.AddDays((double)collateral.VALUATIONCYCLE);
 
+                //if (collateral.COLLATERALTYPEID == (int)CollateralTypeEnum.PlantAndMachinery)
+                //{
+                //    var property = context.TBL_COLLATERAL_PLANT_AND_EQUIP.FirstOrDefault(p => p.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+                //    if (property != null)
+                //    {
+                //        valuationDate = property.AddDays((double)collateral.VALUATIONCYCLE);//not complete!!!
+                //    }
+                //}
+                targetId = collateral.COLLATERALCUSTOMERID;
+                jobReQuestCode = collateral.COLLATERALCODE;
+                alertSubject = "Collateral Valuation Reminder from FINTRAK 360(TEST ALERT)";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com";
+                messageBody = $"Hello, <br /><br />" +
+                               $"This is to inform you that, <br /><br />" +
+                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                               $" is due for the next Valuation on {valuationDate.ToShortDateString()}"
+                               ;
+                LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
+            }
+        }
+
+        public void NotifyForCollateralStatusUpdate(TBL_COLLATERAL_CUSTOMER collateral, byte? perfectionStatusId)
+        {
+            string messageBody;
+            string alertSubject;
+            string recipients;
+            string jobReQuestCode;
+            if (collateral.COLLATERALTYPEID != (int)CollateralTypeEnum.Property) return;
+            var property = context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+            if (property != null)
+            {
+                int targetId;
+                targetId = collateral.COLLATERALCUSTOMERID;
+                jobReQuestCode = collateral.COLLATERALCODE;
+                var perfectionStatus = "N/A";
+                if (perfectionStatusId != null)
+                {
+                    perfectionStatus = context.TBL_COLLATERAL_PERFECTN_STAT.FirstOrDefault(s => s.PERFECTIONSTATUSID == perfectionStatusId).PERFECTIONSTATUSNAME;
+                }
+                alertSubject = "Collateral Status Update from FINTRAK 360(TEST ALERT)";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com";
+                messageBody = $"Hello, <br /><br />" +
+                               $"This is to inform you that, <br /><br />" +
+                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                               $" has it's perfection status updated as {perfectionStatus}"
+                               ;
+                LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
+            }
+        }
+
+        public void NotifyForCollateralValidity(TBL_COLLATERAL_CUSTOMER collateral, DateTime? newValidityDate)
+        {
+            string messageBody;
+            string alertSubject;
+            string recipients;
+            string jobReQuestCode;
+            int targetId;
+            targetId = collateral.COLLATERALCUSTOMERID;
+            jobReQuestCode = collateral.COLLATERALCODE;
+            alertSubject = "Collateral Validity Update from FINTRAK 360(TEST ALERT)";
+            recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com";
+            messageBody = $"Hello, <br /><br />" +
+                           $"This is to inform you that, <br /><br />" +
+                           $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                           $"now has a validity period that lasts till {newValidityDate.Value}"
+                           ;
+            LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
+
+        }
+
+        private void LogEmailAlert(string messageBody, string alertSubject, string recipients, string jobReQuestCode, int targetId)
+        {
+            try
+            {
+                string recipient = recipients.Trim();
+
+                string messageSubject = alertSubject;
+                string messageContent = messageBody;
+                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = jobReQuestCode,
+                    targetId = targetId,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+        private void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+
+        }
 
         public int GoForApproval(ApprovalViewModel model)
         {
