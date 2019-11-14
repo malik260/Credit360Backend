@@ -572,6 +572,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual DbSet<TBL_FACILITY_RATING> TBL_FACILITY_RATING { get; set; }
         public virtual DbSet<TBL_THIRDPARTY_LOAN_MAPPING> TBL_THIRDPARTY_LOAN_MAPPING { get; set; }
+        public virtual DbSet<TBL_CUSTOMER_RATIO_CATEGORY> TBL_CUSTOMER_RATIO_CATEGORY { get; set; }
 
 
 
