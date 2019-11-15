@@ -5631,7 +5631,8 @@ namespace FintrakBanking.Repositories.Credit
 
 
                         pastDue.LOANID = item.loanId;
-                        pastDue.PARENT_PASTDUECODE = PastDueCode;
+                        //pastDue.PARENT_PASTDUECODE = PastDueCode;
+                        pastDue.PASTDUECODE = PastDueCode;
                         pastDue.CREDITAMOUNT = 0;
                         pastDue.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
                         pastDue.DEBITAMOUNT = Math.Abs(principalAmountNotCollected);
