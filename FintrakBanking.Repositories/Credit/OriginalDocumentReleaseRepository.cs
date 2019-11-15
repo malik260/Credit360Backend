@@ -42,7 +42,14 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var mod in model)
             {
-                
+
+                //check if part of the documents for a collateral is not being released...
+                var docCheck = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.ORIGINALDOCUMENTAPPROVALID == mod.originalDocumentApprovalId
+                                                                                && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                                                                     .Any();
+
+                if(docCheck) throw new SecureException("Collateral Documents is currently undergoing Approval");
+
                 //check if the document was added to TBL_ORIGINAL_DOCUMENT_RELEASE but not sent for approval
                 var resultCheck = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == mod.documentUploadId
                                                                                 && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
@@ -225,8 +232,15 @@ namespace FintrakBanking.Repositories.Credit
 
             if(rejected != null)
             {
+
+                var documentUploadIds = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(odr => odr.ORIGINALDOCUMENTAPPROVALID == rejected.ORIGINALDOCUMENTAPPROVALID
+                                                                                    && odr.DELETED == true
+                                                                                    && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                                                                          .Select(odr => odr.DOCUMENTUPLOADID).DefaultIfEmpty().ToList();
+
                 var rejectedDocumentList = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(odr => odr.ORIGINALDOCUMENTAPPROVALID == rejected.ORIGINALDOCUMENTAPPROVALID
-                                                                                            && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).ToList(); 
+                                                                                            && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved
+                                                                                            && !documentUploadIds.Contains(rejected.DOCUMENTUPLOADID)).ToList(); 
                 foreach(var rej in rejectedDocumentList)
                 {
                     
@@ -475,6 +489,74 @@ namespace FintrakBanking.Repositories.Credit
 
             return documents;
         }
-    
+
+        public IEnumerable<DocumentUploadViewModel> GetAvailableDocumentsForReleease(int operationId, int targetId, int staffId)
+        {
+            
+            var documentUploadIds = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(odr => odr.ORIGINALDOCUMENTAPPROVALID == targetId
+                                                                                    && odr.DELETED == true
+                                                                                    && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                                                                          .Select(odr => odr.DOCUMENTUPLOADID).DefaultIfEmpty().ToList();
+
+
+            var documents = _docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+               .Join(_docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
+               , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
+                   new {
+                       documentUploadId = up.DOCUMENTUPLOADID,
+                       fileName = up.FILENAME,
+                       fileExtension = up.FILEEXTENSION,
+                       fileSize = up.FILESIZE,
+                       fileSizeUnit = up.FILESIZEUNIT,
+                       fileData = up.FILEDATA,
+                       companyId = up.COMPANYID,
+                       issueDate = up.ISSUEDATE,
+                       expiryDate = up.EXPIRYDATE,
+                       physicalFilenumber = up.PHYSICALFILENUMBER,
+                       physicalLocation = up.PHYSICALLOCATION,
+                       documentTypeId = up.DOCUMENTTYPEID,
+                       documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                       documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                       documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                       owner = us.CREATEDBY == staffId,
+                       dateTimeCreated = us.DATETIMECREATED,
+                       dateTimeUpdated = us.DATETIMEUPDATED,
+                       createdBy = us.CREATEDBY.Value,
+                   }
+           ).AsEnumerable()
+           .Where(x => !documentUploadIds.Contains(x.documentUploadId))
+           .Select(up => new DocumentUploadViewModel
+           {
+               documentUploadId = up.documentUploadId,
+               fileName = up.fileName,
+               fileExtension = up.fileExtension,
+               fileSize = up.fileSize,
+               fileSizeUnit = up.fileSizeUnit,
+               fileData = up.fileData,
+               companyId = up.companyId,
+               issueDate = up.issueDate,
+               expiryDate = up.expiryDate,
+               physicalFilenumber = up.physicalFilenumber,
+               physicalLocation = up.physicalLocation,
+               documentTypeId = up.documentTypeId,
+               documentTypeName = up.documentTypeName,
+               documentCategoryId = up.documentCategoryId,
+               documentCategoryName = up.documentCategoryName,
+               owner = up.owner,
+               dateTimeCreated = up.dateTimeCreated,
+               dateTimeUpdated = up.dateTimeUpdated,
+               createdBy = up.createdBy,
+               uploadedBy = _context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
+
+           })
+           .OrderBy(x => x.dateTimeCreated)
+           .ThenBy(x => x.documentCategoryId)
+           .ThenBy(x => x.documentTypeId)
+           .ToList();
+
+            return documents;
+        }
+        
+
     }
 }

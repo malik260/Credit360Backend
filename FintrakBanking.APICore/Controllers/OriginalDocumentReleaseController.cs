@@ -204,5 +204,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("security-release/{operationId}/available-documents/{targetId}")]
+        public HttpResponseMessage GetAvailableDocumentsForReleease(int operationId, int targetId)
+        {
+            try
+            {
+                var response = _repo.GetAvailableDocumentsForReleease(operationId, targetId, token.GetStaffId);
+                if (response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error Occurred, Please Contact the System Administrator" });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }

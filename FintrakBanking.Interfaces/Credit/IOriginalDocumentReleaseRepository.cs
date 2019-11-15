@@ -28,5 +28,6 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<OriginalDocumentReleaseViewModel> GetRejectedAndReferredSecurityRelease(int staffId);
         bool reinitiateSecurityRelease(int id, int staffId, int companyId);
         IEnumerable<DocumentUploadViewModel> GetReleasedDocUploadIds(int operationId, int targetId, int staffId);
+        IEnumerable<DocumentUploadViewModel> GetAvailableDocumentsForReleease(int operationId, int targetId, int staffId);
     }
 }
