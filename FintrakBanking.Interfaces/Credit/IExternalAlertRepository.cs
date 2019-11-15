@@ -9,6 +9,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        IEnumerable<GlobalExposureViewModel> GetLoanExpirationReminder();
+        IEnumerable<GlobalExposureViewModel> GetExpiringFacilityReport();
         IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure();
         IEnumerable<GlobalExposureViewModel> GetImminentMaturities();
         IEnumerable<GlobalExposureViewModel> GetCreditCardMaturingObligations();

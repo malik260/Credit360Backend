@@ -69,8 +69,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class GlobalExposureViewModel
     {
-        public short id { get; set; }
+        public int id { get; set; }
         public string customerId { get; set; }
+        public string date { get; set; }
         public string customerName { get; set; }
         public string groupObligorName { get; set; }
         public string referenceNumber { get; set; }
@@ -113,7 +114,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? loanAmounyLcy { get; set; }
         public string cardLimit { get; set; }
         public string fxrate { get; set; }
-        public float shf { get; set; }
+        public float? shf { get; set; }
         public decimal? sectionedLoanLimitDirectFcy { get; set; }
         public decimal? sectionedLoanLimitDirectLcy { get; set; }
         public decimal? totalExposuLcyPreviousYear { get; set; }
