@@ -26,15 +26,14 @@ namespace FintrakBanking.ViewModels.Flexcube
 
     public class FlexcubeCreateOverdraftViewModel //: GeneralEntity
     {
-        public string p_account_no { get; set; }
+        public string account_no { get; set; }
+        public string collateral_code { get; set; }
+        public string collateral_value { get; set; }
+        public string start_date { get; set; }
+        public string end_date { get; set; }
+        public string channel_code { get; set; }
+        public int loanApplicationId { get; set; }
 
-        public string p_collateral_code { get; set; }
-
-        public string p_collateral_value { get; set; }
-
-        public string p_start_date { get; set; }
-        public string p_end_date { get; set; }
-        public string p_channel_code { get; set; }
     }
 
     public class FlexcubeCreateOverdraftWithoutLienViewModel : GeneralEntity
@@ -72,8 +71,6 @@ namespace FintrakBanking.ViewModels.Flexcube
         public string p_channel_code { get; set; }
         public string sourceReferenceNumber { get; set; }
         public int loanApplicationId { get; set; }
-
-
     }
 
 
