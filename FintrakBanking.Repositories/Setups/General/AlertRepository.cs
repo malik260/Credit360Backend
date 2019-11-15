@@ -884,7 +884,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (alertcategory != null)
                 {
                     alert.alertTitle = alertcategory.TITLE;
-                    alert.template = externalAlertRepository.Replace(alertcategory.TEMPLATE);
+                    //alert.template = externalAlertRepository.Replace(alertcategory.TEMPLATE);
 
                     if (validateConditionTrigger(i.FREQUENCYID, i.CONDITIONID ?? 0))
                     {

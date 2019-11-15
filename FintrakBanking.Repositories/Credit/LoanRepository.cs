@@ -7207,12 +7207,14 @@ namespace FintrakBanking.Repositories.Credit
             List<int> collateralTypesIds = new List<int>();
             collateralTypesIds.Add((int)CollateralTypeEnum.CASA);
             collateralTypesIds.Add((int)CollateralTypeEnum.TermDeposit);
-            collateralTypesIds.Add((int)CollateralTypeEnum.DomiciliationContract);
+            //collateralTypesIds.Add((int)CollateralTypeEnum.DomiciliationContract);
+            collateralTypesIds.Add((int)CollateralTypeEnum.TreasuryBillsAndBonds);
 
-            var collateralMappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == app.LOANAPPLICATIONID);
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => collateralTypesIds.Contains(x.COLLATERALTYPEID));
-
-            foreach(var item in collaterals)
+            var collateralMappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId && x.DELETED == false).ToList();
+            var mappedCollateralIds = collateralMappings.Select(m => m.COLLATERALCUSTOMERID).ToList();
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => mappedCollateralIds.Contains(x.COLLATERALCUSTOMERID) && collateralTypesIds.Contains(x.COLLATERALTYPEID));
+            
+            foreach (var item in collaterals)
             {
                 TBL_CASA casa = new TBL_CASA();
                 if (item.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
@@ -8877,7 +8879,8 @@ namespace FintrakBanking.Repositories.Credit
                                 pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                 reviewDate = DateTime.Now,
                                 bookingDateString = a.BOOKINGDATE,
-                                maturityDateString = a.MATURITYDATE,
+                                maturityDate = a.MATURITYDATE,
+                                //maturityDateString = a.MATURITYDATE,
                                 loanStatus = a.CBNCLASSIFICATION,
                                 referenceNumber = a.REFERENCENUMBER,
                             }).ToList();
@@ -8888,7 +8891,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCode);
                         e.bookingDate = DateTime.Parse(e.bookingDateString);
-                        e.maturityDate = DateTime.Parse(e.maturityDateString);
+                        //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         e.productId = int.Parse(e.productIdString);
                     }
                     exposures.AddRange(exposure);
