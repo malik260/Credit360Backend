@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("TBL_ALERT_LEVEL_GRP_MAPPING")]
-    public partial class TBL_ALERT_LEVEL_GRP_MAPPING
+    [Table("TBL_ALERT_ROLE_GRP_MAPPING")]
+    public partial class TBL_ALERT_ROLE_GRP_MAPPING
     {
         [Key]
         public int ALERTLEVELGROUPMAPID { get; set; }

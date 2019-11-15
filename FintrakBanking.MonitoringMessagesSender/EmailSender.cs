@@ -147,6 +147,7 @@ namespace FintrakBanking.MonitoringMessagesSender
         {
             try
             {
+                
 
                 using (SmtpClient client = new SmtpClient())
                 {
@@ -171,6 +172,7 @@ namespace FintrakBanking.MonitoringMessagesSender
 
                     var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending 
                     || o.MESSAGESTATUSID == (short)MessageStatusEnum.Attempted).ToList();
+
 
                     if (listOfMails !=null)
                     {
@@ -208,7 +210,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                                     }
                                 }
                             }
-
+                               
                                 mail.IsBodyHtml = true;
                                 mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
                                 mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
@@ -240,7 +242,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                                     foreach (var binaryFile in requestDoc)
                                     {
                                        MemoryStream memoryStream = new MemoryStream(binaryFile.FILEDATA);
-                                        Attachment attachment = new Attachment(memoryStream, binaryFile.FILENAME);
+                                       Attachment attachment = new Attachment(memoryStream, binaryFile.FILENAME);
                                        mail.Attachments.Add(attachment);
 
                                     }

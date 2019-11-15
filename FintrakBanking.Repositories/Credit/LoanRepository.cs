@@ -4115,16 +4115,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     var model = new FlexcubeCreateOverdraftViewModel
                     {
-                        p_account_no = casa.PRODUCTACCOUNTNUMBER, 
-                        p_collateral_code = collateralcodes, 
-                        p_collateral_value = collaterals?.Sum(x=>x.COLLATERALVALUE).ToString() ?? null,
-                        p_start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                        p_end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                        p_channel_code = "FINTRAK",
+                        account_no = casa.PRODUCTACCOUNTNUMBER, 
+                        collateral_code = collateralcodes, 
+                        collateral_value = collaterals.ToList().Count == 0 ? null : collaterals.Sum(x => x.COLLATERALVALUE).ToString(),
+                        start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                        end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                        channel_code = "FINTRAK",
+                        loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
                     };
 
-                    integration.FlexcubeOverDraft(model);
+                    integration.FlexcubeOverDraft(model, revolvingLoanRecord.LOANSYSTEMTYPEID);
 
                     //if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
                     //{

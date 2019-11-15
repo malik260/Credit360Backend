@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
 {
-   public class ExternalAlertRepository : IExternalAlertRepository
+    public class ExternalAlertRepository : IExternalAlertRepository
     {
         // dependencies
         private FinTrakBankingContext context;
@@ -51,6 +51,7 @@ namespace FintrakBanking.Repositories.Credit
             this.collateralRepo = collateralRepo;
             this._genSetup = genSetup;
         }
+
         // place holders
         private readonly string customerNameHolder = "@{{customerName}}";
         private readonly string branchNameHolder = "@{{branchName}}";
@@ -61,8 +62,9 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string dueDateHolder = "@{{dueDate}}";
         private readonly string accountNumberHolder = "@{{accountNumber}}";
         private readonly string accountOfficerNameHolder = "@{{accountOfficerName}}";
-        
-        
+        private readonly string referenceNumberHolder = "@{{referenceNumber}}";
+
+
         // properties to have getter methods for interfacing
         private string customerName;
         private string branchName;
@@ -73,24 +75,25 @@ namespace FintrakBanking.Repositories.Credit
         private string dueDate;
         private string accountNumber;
         private string accountOfficerName;
+        private string referenceNumber;
 
-        private bool InitializeDrawdownMemoProperties() // feeder
+        private bool InitializeAlertProperties() // feeder
         {
-            //var debitPosition = context.EXTERNAL_ALERT.Where(x => x.LastCreditAmount < 100);
-            //foreach (var d in debitPosition)
-            //{
-            //    this.customerName = d.CustomerName;
-            //    this.accountOfficerName = d.AccountOfficerName;
-            //    this.accountNumber = d.AccountNumber;
-            //    this.branchName = d.GroupHeadName;
-            //    this.dueDate = d.MaturityDate;
-            //    this.description = "N/A";
-            //    this.provider = "N/A";
-            //    this.meetingDate = DateTime.Now.ToShortDateString();
-            
-            //}
-                return true;
+            var debitPosition = context.TBL_GLOBAL_EXPOSURE.Where(x => x.TOTALEXPOSURE < 100);
+            foreach (var d in debitPosition)
+            {
+                this.customerName = d.CUSTOMERNAME;
+                this.accountOfficerName = d.ACCOUNTOFFICERNAME;
+                this.accountNumber = d.ACCOUNTNUMBER;
+                this.branchName = d.GROUPOBLIGORNAME;
+                this.dueDate = d.MATURITYDATE;
+                this.description = "N/A";
+                this.provider = "N/A";
+                this.meetingDate = DateTime.Now.ToShortDateString();
+            }
+            return true;
         }
+
 
         public string Replace(string content) // placeholders replace
         {
@@ -104,9 +107,578 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(accountNumberHolder, accountNumber);
             content = content.Replace(accountOfficerNameHolder, accountOfficerName);
 
-           return content;
+            return content;
         }
+
+        public IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure()
+        {
+            return context.TBL_GLOBAL_EXPOSURE
+            .Select(d => new GlobalExposureViewModel
+            {
+                customerName = d.CUSTOMERNAME,
+                accountOfficerName = d.ACCOUNTOFFICERNAME,
+                accountNumber = d.ACCOUNTNUMBER,
+                branchName = d.GROUPOBLIGORNAME,
+                maturityDate = d.MATURITYDATE,
+                id = (short)d.ID,
+                customerId = d.CUSTOMERID,
+                groupObligorName = d.GROUPOBLIGORNAME,
+                referenceNumber = d.REFERENCENUMBER,
+                accountOfficerCode = d.ACCOUNTOFFICERCODE,
+                alphaCode = d.ALPHACODE,
+                productCode = d.PRODUCTCODE,
+                currencyName = d.CURRENCYNAME,
+                productName = d.PRODUCTNAME,
+                facilityType = d.FACILITYTYPE,
+                adjFacilityType = d.ADJFACILITYTYPE,
+                adjFacilityTypeId = d.ADJFACILITYTYPEid,
+                odStatus = d.ODSTATUS,
+                currencyType = d.CURRENCYTYPE,
+                cbnSector = d.CBNSECTOR,
+                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
+                cbnClassification = d.CBNCLASSIFICATION,
+                pwcClassification = d.PWCCLASSIFICATION,
+                ifrsClassification = d.IFRSCLASSIFICATION,
+                tenor = d.TENOR,
+                location = d.LOCATION,
+                bookingDate = d.BOOKINGDATE,
+                valueDate = d.VALUEDATE,
+                maturityBand = d.MATURITYBAND,
+                customerType = d.CUSTOMERTYPE,
+                branchCode = d.BRANCHCODE,
+                obligorRiskRating = d.OBLIGORRISKRATING,
+                lastCrDate = d.LASTCRDATE,
+                productId = d.PRODUCTID,
+                exposureType = d.EXPOSURETYPE,
+                exposureTypeCode = d.EXPOSURETYPECODE,
+                teamCode = d.TEAMCODE,
+                lastCreditAmount = d.LASTCREDITAMOUNT,
+                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
+                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
+                loanAmounyLcy = d.LOANAMOUNYLCY,
+                loanAmounyTcy = d.LOANAMOUNYTCY,
+                cardLimit = d.CARDLIMIT,
+                fxrate = d.FXRATE,
+                shf = d.SHF,
+                interestrate = d.INTERESTRATE,
+                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
+                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
+                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
+                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
+                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
+                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
+                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
+                totalExposure = d.TOTALEXPOSURE,
+                impairmentAmount = d.IMPAIRMENTAMOUNT,
+                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
+                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
+                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                amountDue = d.AMOUNTDUE,
+            }).ToList();
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetImminentMaturities()
+        {
+            return null;
+        }
+
+
+        public IEnumerable<GlobalExposureViewModel> GetCreditCardMaturingObligations()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetPastDueObligationsReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportOne()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportTwo()
+        {
+            return null;
+        }
+
+
+        public IEnumerable<GlobalExposureViewModel> GetNplOnCreditPortfolio()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetOverlineCreditCardPosition()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetDashboardReportNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetDashboardReportReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCACReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetSignificantMovementInDailyRiskAsset()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetUSDCreditCardReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetNairaCreditCardReport()
+        {
+            return null;
+        }
+        public IEnumerable<GlobalExposureViewModel> GetCreditProgramsLimits()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetSchemePerformanceReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetExpiredValuationReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetExtentionReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCustomerStockTaking()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCustomerStockTakingReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetTranchPaymentReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetValuationReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetInsuranceReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetExtendedFacilityNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetEnhancedDisbursementToDirectorsNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetFacilityRestructuredNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetMccAndPpmcDeliverables()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetMccAndPpmcDeliverablesReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetPastDueMccAndPpmcDeliverablesReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetDSRAReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetSLAReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetOutstandingCreditDocumentation()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetSiteVisitationCustomerReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetPastDueDeferredDocuments()
+        {
+            return null;
+        }
+        public IEnumerable<GlobalExposureViewModel> GetExpiredInsurancePolicies()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetAMCONCollectionAndStatusReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetSiteVisitationAccountReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetEAndSRiskCategorisationDashboard()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetBankExposureEAndSExclusionListReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetGreenBondProceedsUtilizationReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetEandSConditionsPrecedentConfirmationReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetEandSConditionsSubsequentMonitoringReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetEandSCovenantDefaultReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetInvoiceConfirmationReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetStaockValuationReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetEndUseOfFundsReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCollateralVerificationReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCallMemoReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCreditFileChecklistReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetPendingCreditApprovalReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetEmployerDeliquencyReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetFacilitiesWithMissedPaymentReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetRunoffs()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCashFlowMonitoringReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetSalaryBackedLoans()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetTODStatusReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCreditFileWithIncompleteDocumentationReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetOutstandingCollateralDocumentation()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetAccountDeferralReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetContigentLiabilityReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetProcessedTransactionReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetPendingAndDeclinedTransactionReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetLoanCovenantsReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetVisitationAndSiteInspectionReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCollateralReleaseAndAccountDeclassification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetStockMonitoringReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetDSRAReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetPostDisbursementReview()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetMeetUpMonthlyTurnoverRequrements()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetMeetUpMonthlyTurnoverRequrementSMS()
+        {
+            return null;
+        }
+
+
+        public IEnumerable<GlobalExposureViewModel> GetBreachInCreditKeyMetricsNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetBreachInCreditKeyMetricsNotificationReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetAssignedDeliverableFromCACMeeting()
+        {
+            return null;
+        }
+        public IEnumerable<GlobalExposureViewModel> GetExpiredFacilityNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetLargeExposureAbove18PercentNotification()
+        {
+            return null;
+        }
+        public IEnumerable<GlobalExposureViewModel> GetBreachInGeographyLimitNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetBreachInORRLimitNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetBreachInSectorLimitNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetImminentObligationRentalScheduleNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetImminentObligationMaturityFacilityNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetOverlineFacilityNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetPastDueFacilitiesNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetLoanRepaymentReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetOverlineReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetMaturingObligationsReport()
+        {
+            return null;
+        }
+        public IEnumerable<GlobalExposureViewModel> GetLargeExposureMonitoring()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetUnpaidObligationReminder()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetStaffLoanPortfolioReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetExStaffLoanPortfolioReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetDigitalLoansReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetImminentMaturitiesAlertSMS()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetImminentMaturitiesAlertEmail()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetDelinquentCustomersAlertEmail()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetDelinquentCustomersAlertSMS()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCoreExposureForOneYearPeriodNotification()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetPotentialAndPipelineAssetToBeFinance()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCashBuildupReport()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCustomersWithNoInflows()
+        {
+            return null;
+        }
+
+        public IEnumerable<GlobalExposureViewModel> GetCustomersWithTurnoverLessthan100()
+        {
+            return null;
+        }
+
     }
-
-
 }
