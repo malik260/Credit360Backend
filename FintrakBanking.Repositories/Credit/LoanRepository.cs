@@ -8859,7 +8859,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCode);
                         e.bookingDate = DateTime.Parse(e.bookingDateString);
-                        e.maturityDate = DateTime.Parse(e.maturityDateString);
+                        e.maturityDate = e.maturityDateString;
                         e.productId = int.Parse(e.productIdString);
                     }
                     exposures.AddRange(exposure);
