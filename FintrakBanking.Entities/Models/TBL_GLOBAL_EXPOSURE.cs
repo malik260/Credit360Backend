@@ -39,6 +39,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string IFRSCLASSIFICATION { get; set; }
         public string TENOR { get; set; }
         public DateTime MATURITYDATE { get; set; }
+        //public string MATURITYDATE { get; set; }
         public string LOCATION { get; set; }
         public string BOOKINGDATE { get; set; }
         public string VALUEDATE { get; set; }
