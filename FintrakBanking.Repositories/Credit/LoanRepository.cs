@@ -2494,6 +2494,16 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (operationId > 0) LogApproval(approvalModel, operationId, true, (short)ApprovalStatusEnum.Pending);
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+                    var loanLienDetail = context.TBL_APPLICATIONDETAIL_LIEN.FirstOrDefault(l => l.APPLICATIONDETAILID == request.LOANAPPLICATIONDETAILID && l.DELETED == false && l.ISRELEASED == false);
+                    if (loanLienDetail != null)
+                    {
+                        var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                        {
+                            username = "model.username",//for test, real value to be passed!!!
+                            passcode = "model.passCode"
+                        };
+                        PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails);
+                    }
                     context.SaveChanges();
                     trans.Commit();
                     return 0;
@@ -7177,15 +7187,15 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (!AddLoanBookingRequests(applicationStatusId, model))
                         {
-                            if (model.isLienPlacementForLoan)
-                            {
-                                var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
-                                {
-                                    username = model.username,
-                                    passcode = model.passCode
-                                };
-                                PlaceLien(model.loanApplicationDetailId, twoFactorAuthDetails);
-                            }
+                            //if (model.isLienPlacementForLoan)
+                            //{
+                            //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                            //    {
+                            //        username = model.username,
+                            //        passcode = model.passCode
+                            //    };
+                            //    PlaceLien(model.loanApplicationDetailId, twoFactorAuthDetails);
+                            //}
                             trans.Rollback();
                             return false;
                         }
@@ -7225,12 +7235,17 @@ namespace FintrakBanking.Repositories.Credit
             List<int> collateralTypesIds = new List<int>();
             collateralTypesIds.Add((int)CollateralTypeEnum.CASA);
             collateralTypesIds.Add((int)CollateralTypeEnum.TermDeposit);
-            collateralTypesIds.Add((int)CollateralTypeEnum.DomiciliationContract);
+            //collateralTypesIds.Add((int)CollateralTypeEnum.DomiciliationContract);
+            collateralTypesIds.Add((int)CollateralTypeEnum.TreasuryBillsAndBonds);
 
-            var collateralMappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == app.LOANAPPLICATIONID);
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => collateralTypesIds.Contains(x.COLLATERALTYPEID));
+            //var collateralMappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId && x.DELETED == false).ToList();
+            //var mappedCollateralIds = collateralMappings.Select(m => m.COLLATERALCUSTOMERID).ToList();
+            //var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => mappedCollateralIds.Contains(x.COLLATERALCUSTOMERID) && collateralTypesIds.Contains(x.COLLATERALTYPEID));
+            var loanLienDetail = context.TBL_APPLICATIONDETAIL_LIEN.Where(l => l.APPLICATIONDETAILID == loanApplicationDetailId && l.DELETED == false && l.ISRELEASED == false).ToList();
+            var mappedCollateralIds = loanLienDetail.Select(m => m.COLLATERALCUSTOMERID).ToList();
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => mappedCollateralIds.Contains(x.COLLATERALCUSTOMERID) && collateralTypesIds.Contains(x.COLLATERALTYPEID));
 
-            foreach(var item in collaterals)
+            foreach (var item in collaterals)
             {
                 TBL_CASA casa = new TBL_CASA();
                 if (item.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
@@ -8897,7 +8912,8 @@ namespace FintrakBanking.Repositories.Credit
                                 pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                 reviewDate = DateTime.Now,
                                 bookingDateString = a.BOOKINGDATE,
-                                maturityDateString = a.MATURITYDATE,
+                                maturityDate = a.MATURITYDATE,
+                                //maturityDateString = a.MATURITYDATE,
                                 loanStatus = a.CBNCLASSIFICATION,
                                 referenceNumber = a.REFERENCENUMBER,
                             }).ToList();
@@ -8908,7 +8924,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCode);
                         e.bookingDate = DateTime.Parse(e.bookingDateString);
-                        e.maturityDate = DateTime.Parse(e.maturityDateString);
+                        //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         e.productId = int.Parse(e.productIdString);
                     }
                     exposures.AddRange(exposure);
