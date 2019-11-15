@@ -26,15 +26,14 @@ namespace FintrakBanking.ViewModels.Flexcube
 
     public class FlexcubeCreateOverdraftViewModel //: GeneralEntity
     {
-        public string p_account_no { get; set; }
+        public string account_no { get; set; }
+        public string collateral_code { get; set; }
+        public string collateral_value { get; set; }
+        public string start_date { get; set; }
+        public string end_date { get; set; }
+        public string channel_code { get; set; }
+        public int loanApplicationId { get; set; }
 
-        public string p_collateral_code { get; set; }
-
-        public string p_collateral_value { get; set; }
-
-        public string p_start_date { get; set; }
-        public string p_end_date { get; set; }
-        public string p_channel_code { get; set; }
     }
 
     public class FlexcubeCreateOverdraftWithoutLienViewModel : GeneralEntity
@@ -52,28 +51,26 @@ namespace FintrakBanking.ViewModels.Flexcube
 
     public class FlexcubeCreateFacilityViewModel : GeneralEntity
     {
-        public string p_account_no { get; set; }
+        public string account_no { get; set; }
 
-        public string p_liab_no { get; set; }
+        //public string p_liab_no { get; set; }
 
-        public string p_line_code { get; set; }
+        public string line_code { get; set; }
 
-        public string p_line_serial { get; set; }
-        public string p_start_date { get; set; }
-        public string p_expiry_date { get; set; }
+        //public string p_line_serial { get; set; }
+        public string start_date { get; set; }
+        public string expiry_date { get; set; }
 
-        public string p_limit_amount { get; set; }
-        public string p_collateral_amount { get; set; }
-        public string p_facility_description { get; set; }
+        public string limit_amount { get; set; }
+        //public string p_collateral_amount { get; set; }
+        //public string p_facility_description { get; set; }
 
-        public string p_effective_date { get; set; }
-        public string p_collateral_code { get; set; }
-        public string p_interest_rate { get; set; }
-        public string p_channel_code { get; set; }
+        //public string p_effective_date { get; set; }
+        //public string p_collateral_code { get; set; }
+        //public string p_interest_rate { get; set; }
+        public string channel_code { get; set; }
         public string sourceReferenceNumber { get; set; }
         public int loanApplicationId { get; set; }
-
-
     }
 
 
@@ -128,7 +125,9 @@ namespace FintrakBanking.ViewModels.Flexcube
 
         public string disbursement_type { get; set; }
 
-        public string sourceReferenceNumber { get; set; }
+        public string sourceReferenceNumber { get; set; }//
+        public int loanApplicationId { get; set; }
+
     }
 
     public class LoanCreationViewModel

@@ -138,7 +138,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public ResponseMessageViewModel FlexcubeOverDraft(FlexcubeCreateOverdraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
+        public ResponseMessageViewModel FlexcubeOverDraft(FlexcubeCreateOverdraftViewModel model, short loanSystemTypeId, TwoFactorAutheticationViewModel twoFADetails = null)
         {
             if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
             {
@@ -149,7 +149,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 {
                     var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-
                     if (authenticated.authenticated == false)
                         throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
                 }
@@ -158,19 +157,19 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             ResponseMessage result = null;
             // if( LogOverDraftNormal(model))
-            Task.Run(async () => result = await overDraft.FlexcubeAPIOverDraft(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.FlexcubeAPIOverDraft(model, loanSystemTypeId)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
-                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
-                {
-                    throw new SecureException(result.APIResponse.message);
-                }
-                else
-                {
+                //if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                //{
+                //    throw new SecureException(result.APIResponse.message);
+                //}
+                //else
+                //{
                     LogOverDraft(model);
                     return result.APIResponse;
-                }
+                //}
             }
             else
             {
@@ -614,11 +613,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
 
-        public PostingResult PostLoanCreationInputs(FlexcubeCreateLoanAccountViewModel model)
+        public PostingResult PostLoanCreationInputs(FlexcubeCreateLoanAccountViewModel model, short loanSystemTypeId)
         {
              {
                 ResponseMessage result = null;
-                Task.Run(async () => result = await transaction.ApiTransactionLoanCreationPosting(model)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await transaction.ApiTransactionLoanCreationPosting(model, loanSystemTypeId)).GetAwaiter().GetResult();
 
                 if (result.APIResponse != null)
                 {
@@ -857,38 +856,49 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             List<CustomerViewModels> cust = new List<CustomerViewModels>();
 
-            Task.Run(async () => cust = await customer.GetCustomerByAccountsNumber(customerAccount)).GetAwaiter()
-                .GetResult();
-            return cust;
+            try
+            {
+                Task.Run(async () => cust = await customer.GetCustomerByAccountsNumber(customerAccount)).GetAwaiter().GetResult();
+                return cust;
+            }
+            catch (Exception ex)
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
         public CasaBalanceViewModel GetCustomerAccountBalance(string customerAccount)
         {
             CasaBalanceViewModel accountOutput = null;
 
-            Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
+            try
+            {
+                Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
                 .GetResult();
+                return accountOutput;
+            }
+            catch (Exception ex)
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
 
-          
-
-
-            return accountOutput;
         }
 
         public List<CasaViewModel> GetCustomerAccountsBalanceByCustomerCode(string customerCode)
         {
             List<CasaViewModel> casa = new List<CasaViewModel>();
+
             try
             {
-                Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode))
-                    .GetAwaiter().GetResult();
+                Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode)).GetAwaiter().GetResult();
+                return casa;
             }
             catch (Exception ex)
             {
-                throw;
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
       
-            return casa;
         }
 
         public List<RatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode)

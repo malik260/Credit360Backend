@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\TBL_ALERT_USER_SECURITY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_RATIO_CATEGORY.cs" />
     <Compile Include="Models\TBL_GLOBAL_EXPOSURE.cs" />
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
@@ -89,9 +90,9 @@
     <Compile Include="Models\TBL_ALERT_CONDITION.cs" />
     <Compile Include="Models\TBL_ALERT_DATA_BINDINGTYPE.cs" />
     <Compile Include="Models\TBL_ALERT_FREQUENCY.cs" />
-    <Compile Include="Models\TBL_ALERT_LEVEL.cs" />
-    <Compile Include="Models\TBL_ALERT_LEVEL_GROUP.cs" />
-    <Compile Include="Models\TBL_ALERT_LEVEL_GRP_MAPPING.cs" />
+    <Compile Include="Models\TBL_ALERT_STAFF_ROLE.cs" />
+    <Compile Include="Models\TBL_ALERT_ROLE_GROUP.cs" />
+    <Compile Include="Models\TBL_ALERT_ROLE_GRP_MAPPING.cs" />
     <Compile Include="Models\TBL_ALERT_SETUP.cs" />
     <Compile Include="Models\TBL_ALERT_TEMPLATE_TYPE.cs" />
     <Compile Include="Models\TBL_ALERT_TITLE.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Models\TBL_DAILY_ACCRUAL_TEMP.cs" />
     <Compile Include="Models\TBL_EOD_OPERATION_LOG_DETAIL.cs" />
     <Compile Include="Models\TBL_FACILITY_RATING.cs" />
+    <Compile Include="Models\TBL_INTERNAL_EXPOSURE.cs" />
     <Compile Include="Models\TBL_LOAN_CAMSOL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_MAPPING_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_FULLANDFINAL_STATUS.cs" />

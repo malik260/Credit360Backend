@@ -2428,7 +2428,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                         <td>{currency}</td>
-                        <td>{product.maturityDate.ToShortDateString()}</td>
+                        <td>{product.maturityDate}</td>
                     </tr>
                     ";
                     }
@@ -2486,7 +2486,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                         <td>{currency}</td>
-                        <td>{product.maturityDate.ToShortDateString()}</td>
+                        <td>{product.maturityDate}</td>
                     </tr>
                     ";
                     }
@@ -2548,7 +2548,7 @@ namespace FintrakBanking.Repositories.Credit
                                 <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
                                 <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                                 <td>{currency}</td>
-                                <td>{product.maturityDate.ToShortDateString()}</td>
+                                <td>{product.maturityDate}</td>
                             </tr>
                             ";
                         }
@@ -2608,7 +2608,7 @@ namespace FintrakBanking.Repositories.Credit
                                 <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
                                 <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                                 <td>{currency}</td>
-                                <td>{product.maturityDate.ToShortDateString()}</td>
+                                <td>{product.maturityDate}</td>
                             </tr>
                             ";
                         }
