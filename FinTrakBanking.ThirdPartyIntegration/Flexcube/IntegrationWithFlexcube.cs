@@ -613,11 +613,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
 
-        public PostingResult PostLoanCreationInputs(FlexcubeCreateLoanAccountViewModel model)
+        public PostingResult PostLoanCreationInputs(FlexcubeCreateLoanAccountViewModel model, short loanSystemTypeId)
         {
              {
                 ResponseMessage result = null;
-                Task.Run(async () => result = await transaction.ApiTransactionLoanCreationPosting(model)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await transaction.ApiTransactionLoanCreationPosting(model, loanSystemTypeId)).GetAwaiter().GetResult();
 
                 if (result.APIResponse != null)
                 {
