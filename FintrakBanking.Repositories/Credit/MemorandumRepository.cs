@@ -330,12 +330,12 @@ namespace FintrakBanking.Repositories.Credit
                 //string customerName = String.Empty;
 
                 if (loanApplication != null) {
-                    if (loanApplication.CUSTOMERGROUPID != null)
+                    if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
                     {
                         this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
                         this.customerId = (int)loanApplication.CUSTOMERGROUPID;
                     }
-                    if (loanApplication.CUSTOMERID != null)
+                    if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
                     {
                         this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
                         this.customerId = (int)loanApplication.CUSTOMERID;
@@ -345,7 +345,17 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
                 this.branchName = loanApplication.TBL_BRANCH?.BRANCHNAME;
-                this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
+                if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
+                {
+                    var custId = loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
+                    this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == custId).ADDRESS;
+                }
+                else
+                if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+                {
+                    this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == loanApplication.CUSTOMERID).ADDRESS;
+                }
+                //this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
                 this.isRelatedParty = loanApplication.ISRELATEDPARTY == true ? "Yes" : "No";
                 this.recommendedInterestRate = loanApplication.INTERESTRATE.ToString();
                 this.dateCreated = loanApplication.DATETIMECREATED.ToShortDateString();
@@ -3448,7 +3458,8 @@ namespace FintrakBanking.Repositories.Credit
                             pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                             reviewDate = DateTime.Now,
                             bookingDateString = a.BOOKINGDATE,
-                            maturityDateString = a.MATURITYDATE,
+                            //maturityDateString = a.MATURITYDATE,
+                            maturityDate = a.MATURITYDATE,
                             loanStatus = a.CBNCLASSIFICATION,
                             referenceNumber = a.REFERENCENUMBER,
                         }).ToList();
@@ -3459,7 +3470,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     e.exposureTypeId = int.Parse(e.exposureTypeCode);
                     e.bookingDate = DateTime.Parse(e.bookingDateString);
-                    e.maturityDate = DateTime.Parse(e.maturityDateString);
+                    //e.maturityDate = DateTime.Parse(e.maturityDateString);
                     e.productId = int.Parse(e.productIdString);
                 }
                 exposures.AddRange(exposure);
