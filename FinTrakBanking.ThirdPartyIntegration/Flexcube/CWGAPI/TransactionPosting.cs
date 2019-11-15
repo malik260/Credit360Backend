@@ -792,12 +792,6 @@
                     responseJson = await response.Content.ReadAsStringAsync();
                     responseDateTime = DateTime.Now;
 
-                    //var myContent = JsonConvert.SerializeObject(model);
-                    //var buffer = Encoding.UTF8.GetBytes(myContent);
-                    //var byteContent = new ByteArrayContent(buffer);
-                    //byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    //response = client.PostAsync(apiUrl, byteContent).Result;
-
                     if (response.IsSuccessStatusCode)
                     {
                         responseApi = await response.Content.ReadAsAsync<ResponseMessageFacilityViewModel>();
@@ -877,7 +871,7 @@
                 //context.SaveChanges();
             }
 
-            public async Task<ResponseMessage> ApiTransactionLoanCreationPosting(FlexcubeCreateLoanAccountViewModel model)
+            public async Task<ResponseMessage> ApiTransactionLoanCreationPosting(FlexcubeCreateLoanAccountViewModel model, short loanSystemTypeId)
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
@@ -886,7 +880,7 @@
                 var inputJson = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
+                ResponseMessageLoanCreationViewModel responseApi = new ResponseMessageLoanCreationViewModel();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
                 getAPIURLSettings("LoanCreation");
@@ -908,30 +902,27 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
 
-
-                    //if (isCrossCurrency == true)
-                    //{
-                    //    apiUrl = "FCUBSCreateLoanAccount";
-                    //}
-
+                    model.account_no = "0768140952";
                     response = client.PostAsync(apiUrl, new StringContent(
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
+                    responseJson = await response.Content.ReadAsStringAsync();
                     responseDateTime = DateTime.Now;
-
 
                     if (response.IsSuccessStatusCode)
                     {
-
-                        responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+                        responseApi = await response.Content.ReadAsAsync<ResponseMessageLoanCreationViewModel>();
 
                         var res = new ResponseMessageViewModel
                         {
-                            responseCode = responseApi.responseCode,
-                            webRequestDate = responseApi.webRequestDate,
-                            webRequestStatus = responseApi.webRequestStatus,
-
+                            message = responseApi.response_desc,
+                            responseCode = responseApi.response_code,
+                            responseStatus = responseApi.response_code == "00" ? true : false,
+                            APIMessage = response,
+                            webRequestDate = DateTime.Now,
+                            //webRequestStatus = responseApi.webRequestStatus,
                         };
+
                         responseMsg = new ResponseMessage
                         {
                             APIResponse = res,
@@ -948,8 +939,6 @@
                             Message = response
                         };
                     }
-
-                    responseJson = await response.Content.ReadAsStringAsync();
 
                     responseMsg.responseMessage = responseJson;
                     //handler.Dispose();
@@ -972,6 +961,14 @@
                     handler.Dispose();
                     client.Dispose();
 
+                    var loanMapping = new TBL_THIRDPARTY_LOAN_MAPPING
+                    {
+                        LOANAPPLICATIONID = model.loanApplicationId,
+                        LOANSYSTEMTYPEID = loanSystemTypeId,
+                        FACILITYMAPPINGID = responseApi.reference_no,
+                        BOOKINGCODE = responseApi.bo_code,
+                    };
+
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
                         APIURL = apiUrl,
@@ -985,11 +982,10 @@
 
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
 
+                    logContext.TBL_THIRDPARTY_LOAN_MAPPING.Add(loanMapping);
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
                     logContext.SaveChanges();
                 }
-
 
                 //context.SaveChanges();
             }

@@ -1497,7 +1497,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                 reviewDate = DateTime.Now,
                                 bookingDateString = a.BOOKINGDATE,
-                                maturityDateString = a.MATURITYDATE,
+                                //maturityDateString = a.MATURITYDATE,
+                                maturityDate = a.MATURITYDATE,
                                 loanStatus = a.CBNCLASSIFICATION,
                                 referenceNumber = a.REFERENCENUMBER,
                             }).ToList();
@@ -1508,7 +1509,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCode);
                         e.bookingDate = DateTime.Parse(e.bookingDateString);
-                        e.maturityDate = DateTime.Parse(e.maturityDateString);
+                        //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         e.productId = int.Parse(e.productIdString);
                     }
                     exposures.AddRange(exposure);
