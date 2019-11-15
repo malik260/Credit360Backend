@@ -14,8 +14,9 @@ namespace FintrakBanking.Entities.AlertReportingModels
     {
 
         [Key]
-        public long ID { get; set; }
+        public int ID { get; set; }
         public string CUSTOMERID { get; set; }
+        public string DATE { get; set; }
         public string CUSTOMERNAME { get; set; }
         public string GROUPOBLIGORNAME { get; set; }
         public string REFERENCENUMBER { get; set; }
@@ -59,7 +60,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public decimal? LOANAMOUNYLCY { get; set; }
         public string CARDLIMIT { get; set; }
         public string FXRATE { get; set; }
-        public float SHF { get; set; }
+        public float? SHF { get; set; }
         public string INTERESTRATE { get; set; }
         public decimal? SECTIONEDLOANLIMITDIRECTFCY { get; set; }
         public decimal? SECTIONEDLOANLIMITDIRECTLCY { get; set; }
