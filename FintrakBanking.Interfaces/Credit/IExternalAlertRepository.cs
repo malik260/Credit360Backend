@@ -9,6 +9,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        IEnumerable<GlobalExposureViewModel> GetOverlineMonitoringReport();
+        IEnumerable<GlobalExposureViewModel> GetUnAuthorizedOverdraftReport();
         IEnumerable<GlobalExposureViewModel> GetLoanExpirationReminder();
         IEnumerable<GlobalExposureViewModel> GetExpiringFacilityReport();
         IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure();
@@ -78,7 +80,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetPendingAndDeclinedTransactionReport();
         IEnumerable<GlobalExposureViewModel> GetLoanCovenantsReport();
         IEnumerable<GlobalExposureViewModel> GetVisitationAndSiteInspectionReport();
-        IEnumerable<GlobalExposureViewModel> GetCollateralReleaseAndAccountDeclassification();
+        IEnumerable<GlobalExposureViewModel> GetCollateralReleaseAndAccountDeclassification(); 
         IEnumerable<GlobalExposureViewModel> GetStockMonitoringReport();
         IEnumerable<GlobalExposureViewModel> GetDSRAReport();
         IEnumerable<GlobalExposureViewModel> GetPostDisbursementReview();

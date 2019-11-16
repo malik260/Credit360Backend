@@ -508,8 +508,8 @@ namespace FintrakBanking.Repositories.Credit
                 
                     //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     //this.customerExposure = CustomerExposureMarkup();
-                }
-                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId)?.CHARGEFEEID;
+            }
+                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId).CHARGEFEEID;
             
                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
                 string customerName = String.Empty;
@@ -3457,7 +3457,7 @@ namespace FintrakBanking.Repositories.Credit
                             outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                             pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                             reviewDate = DateTime.Now,
-                            //bookingDateString = a.BOOKINGDATE,
+                            bookingDateString = a.BOOKINGDATE,
                             //maturityDateString = a.MATURITYDATE,
                             maturityDate = a.MATURITYDATE,
                             loanStatus = a.CBNCLASSIFICATION,
@@ -3469,7 +3469,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach(var e in exposure)
                 {
                     e.exposureTypeId = int.Parse(e.exposureTypeCode);
-                    //e.bookingDate = DateTime.Parse(e.bookingDateString);
+                    e.bookingDate = e.bookingDateString;
                     //e.maturityDate = DateTime.Parse(e.maturityDateString);
                     e.productId = int.Parse(e.productIdString);
                 }
