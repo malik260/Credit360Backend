@@ -132,7 +132,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("Error has occured while creating this collateral");
                 }
-                if (saved) { return collateralId; }
+                if (saved)
+                { 
+                    
+                    return collateralId;
+                }
 
             }
 
@@ -1040,6 +1044,11 @@ namespace FintrakBanking.Repositories.Credit
         private void UpdateCollateralMainForm(CollateralViewModel model, int collateralId)
         {
             var collateral = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId);
+            if (collateral.VALIDTILL != model.validTill)
+            {
+                NotifyForCollateralValidity(collateral, model.validTill);
+            }
+            if (collateral == null) return;
             collateral.COLLATERALTYPEID = model.collateralTypeId;
             collateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
             collateral.COLLATERALCODE = model.collateralCode.Trim();
@@ -4546,7 +4555,7 @@ namespace FintrakBanking.Repositories.Credit
                 imCollateral.OPENMARKETVALUE = entity.openMarketValue;
 
                 // imCollateral.COLLATERALVALUE = (decimal)entity.collateralValue;
-
+                imCollateral.COLLATERALCUSTOMERID = entity.collateralId;
                 imCollateral.FORCEDSALEVALUE = entity.forcedSaleValue;
                 imCollateral.STAMPTOCOVER = entity.stampToCover.ToString();
                 //imCollateral.VALUATIONSOURCE = entity.valuationSource;
@@ -4575,7 +4584,26 @@ namespace FintrakBanking.Repositories.Credit
                 imCollateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
                 imCollateral.ESTIMATEDVALUE = entity.estimatedValue;
                 context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(imCollateral);
+                if (context.SaveChanges() != 0)
+                { 
+                    var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == imCollateral.COLLATERALCUSTOMERID);
+                    NotifyForCollateralStatusUpdate(collateralMain, entity.perfectionStatusId);
+                    NotifyForCollateralRevaluation(collateralMain, entity.lastValuationDate);
+                    NotifyForCollateralVisitation(collateralMain);
+                }
+                
                 return;
+            }
+            if ((byte)entity.perfectionStatusId != collateral.PERFECTIONSTATUSID)
+            {
+                var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+                NotifyForCollateralStatusUpdate(collateralMain, entity.perfectionStatusId);
+            }
+            if (entity.lastValuationDate != collateral.LASTVALUATIONDATE)
+            {
+                var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+                NotifyForCollateralRevaluation(collateralMain, entity.lastValuationDate);
+                NotifyForCollateralVisitation(collateralMain);
             }
             collateral.PROPERTYNAME = entity.propertyName;
             collateral.CITYID = (int)entity.cityId;
@@ -4619,6 +4647,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.LOCALGOVERNMENTID = entity.localGovernmentId;
             collateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
             collateral.ESTIMATEDVALUE = entity.estimatedValue;
+            
         }
 
         private CollateralViewModel GetCollateralImmovableProperty(int collateralId)
@@ -7553,8 +7582,14 @@ namespace FintrakBanking.Repositories.Credit
                     };
                     context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(prop);
                     comment = $"New property collateral type has been created through loan application by {entity.createdBy} staffid";
-                    var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
-                    NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
+                    if (context.SaveChanges() != 0)
+                    {
+                        var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
+                        NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
+                        NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
+                        NotifyForCollateralRevaluation(collateral, entity.lastValuationDate);
+                        NotifyForCollateralVisitation(collateral);
+                    }
                    
                 }
             }
@@ -8028,7 +8063,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (context.SaveChanges() > 0)
                         {
-                            NotifyForCollateralValidity(mainCollateral, model.validTill);
+                            NotifyForCollateralValidity(mainCollateral, model.validTill, true);
                             return collateral.COLLATERALCUSTOMERID;
                         }
                     }
@@ -8096,7 +8131,7 @@ namespace FintrakBanking.Repositories.Credit
             return 0;
         }
 
-        public void NotifyForCollateralVisitation(TBL_COLLATERAL_CUSTOMER collateral)
+        public void NotifyForCollateralVisitation(TBL_COLLATERAL_CUSTOMER collateral, bool saveInternally = false)
         {
             string messageBody;
             string alertSubject;
@@ -8123,9 +8158,13 @@ namespace FintrakBanking.Repositories.Credit
                                ;
                 LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
             }
+            if (saveInternally)
+            {
+                context.SaveChanges();
+            }
         }
 
-        public void NotifyForCollateralRevaluation(TBL_COLLATERAL_CUSTOMER collateral, DateTime lastValuationDate)
+        public void NotifyForCollateralRevaluation(TBL_COLLATERAL_CUSTOMER collateral, DateTime lastValuationDate, bool saveInternally = false)
         {
             string messageBody;
             string alertSubject;
@@ -8158,9 +8197,13 @@ namespace FintrakBanking.Repositories.Credit
                                ;
                 LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
             }
+            if (saveInternally)
+            {
+                context.SaveChanges();
+            }
         }
 
-        public void NotifyForCollateralStatusUpdate(TBL_COLLATERAL_CUSTOMER collateral, byte? perfectionStatusId)
+        public void NotifyForCollateralStatusUpdate(TBL_COLLATERAL_CUSTOMER collateral, byte? perfectionStatusId, bool saveInternally = false)
         {
             string messageBody;
             string alertSubject;
@@ -8187,9 +8230,13 @@ namespace FintrakBanking.Repositories.Credit
                                ;
                 LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
             }
+            if (saveInternally)
+            {
+                context.SaveChanges();
+            }
         }
 
-        public void NotifyForCollateralValidity(TBL_COLLATERAL_CUSTOMER collateral, DateTime? newValidityDate)
+        public void NotifyForCollateralValidity(TBL_COLLATERAL_CUSTOMER collateral, DateTime? newValidityDate, bool saveInternally = false)
         {
             string messageBody;
             string alertSubject;
@@ -8207,6 +8254,10 @@ namespace FintrakBanking.Repositories.Credit
                            ;
             LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
 
+            if (saveInternally)
+            {
+                context.SaveChanges();
+            }
         }
 
         private void LogEmailAlert(string messageBody, string alertSubject, string recipients, string jobReQuestCode, int targetId)
@@ -8536,6 +8587,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+        
 
         private int UpdateCollateralMain(int collateralId)
         {
@@ -8552,6 +8604,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (data != null)
                 {
+                    if (mainCollateral.VALIDTILL != data.VALIDTILL)
+                    {
+                        NotifyForCollateralValidity(data, mainCollateral.VALIDTILL);
+                    }
                     data.ACTEDONBY = mainCollateral.ACTEDONBY;
                     data.ALLOWSHARING = mainCollateral.ALLOWSHARING;
                     data.CAMREFNUMBER = mainCollateral.CAMREFNUMBER;
@@ -8571,6 +8627,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.EXCHANGERATE = mainCollateral.EXCHANGERATE;
                     data.APPROVALSTATUS = (int)ApprovalStatusEnum.Approved;
                     data.COLLATERALSUMMARY = mainCollateral.COLLATERALSUMMARY;
+                    data.VALIDTILL = mainCollateral.VALIDTILL;
                     context.SaveChanges();
                     return data.COLLATERALCUSTOMERID;
                 }
@@ -8597,10 +8654,9 @@ namespace FintrakBanking.Repositories.Credit
                         EXCHANGERATE = mainCollateral.EXCHANGERATE,
                         COLLATERALSUMMARY = mainCollateral.COLLATERALSUMMARY,
                         APPROVALSTATUS = (int)ApprovalStatusEnum.Approved
-
-
                     });
                     context.SaveChanges();
+                    NotifyForCollateralValidity(data, mainCollateral.VALIDTILL, true);
                     return returnCollateralId.COLLATERALCUSTOMERID;
                 }
 
@@ -8668,8 +8724,31 @@ namespace FintrakBanking.Repositories.Credit
                     });
                 }
             }
-
         }
+
+        public void UpdatePropertyCollateralNotifications(TBL_TEMP_COLLATERAL_IMMOV_PROP tempCollateral, TBL_COLLATERAL_IMMOVE_PROPERTY collateral, bool saveInternally = false)
+        {
+            if (tempCollateral.PERFECTIONSTATUSID != collateral.PERFECTIONSTATUSID)
+            {
+                var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+                NotifyForCollateralStatusUpdate(collateralMain, tempCollateral.PERFECTIONSTATUSID, saveInternally);
+            }
+            if (tempCollateral.LASTVALUATIONDATE != collateral.LASTVALUATIONDATE)
+            {
+                var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+                NotifyForCollateralRevaluation(collateralMain, tempCollateral.LASTVALUATIONDATE, saveInternally);
+                NotifyForCollateralVisitation(collateralMain, saveInternally);
+            }
+        }
+
+        public void AddPropertyCollateralNotifications(TBL_COLLATERAL_IMMOVE_PROPERTY collateral, bool saveInternally = false)
+        {
+                var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+                NotifyForCollateralStatusUpdate(collateralMain, collateral.PERFECTIONSTATUSID, saveInternally);
+                NotifyForCollateralRevaluation(collateralMain, collateral.LASTVALUATIONDATE, saveInternally);
+                NotifyForCollateralVisitation(collateralMain, saveInternally);
+        }
+
         private void UpdateApprovedImmovableCollateral(int tempCollateralId, string collateralcode, int newCollateralId)
         {
             //get all collateral details from temp
@@ -8684,6 +8763,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (mainProp != null)
                 {
+                    UpdatePropertyCollateralNotifications(tempProp, mainProp);
                     mainProp.CITYID = tempProp.CITYID;
                     mainProp.COLLATERALCUSTOMERID = newCollateralId;
                     mainProp.COLLATERALUSABLEAMOUNT = tempProp.COLLATERALUSABLEAMOUNT;
@@ -8718,11 +8798,10 @@ namespace FintrakBanking.Repositories.Credit
                     mainProp.LOCALGOVERNMENTID = tempProp.LOCALGOVERNMENTID;
                     mainProp.BANKSHAREOFCOLLATERAL = tempProp.BANKSHAREOFCOLLATERAL;
                     mainProp.ESTIMATEDVALUE = tempProp.ESTIMATEDVALUE;
-
                 }
                 else
                 {
-                    context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(new TBL_COLLATERAL_IMMOVE_PROPERTY
+                    var newCollateral = new TBL_COLLATERAL_IMMOVE_PROPERTY
                     {
                         CITYID = tempProp.CITYID,
                         COLLATERALCUSTOMERID = newCollateralId,
@@ -8758,7 +8837,12 @@ namespace FintrakBanking.Repositories.Credit
                         LOCALGOVERNMENTID = tempProp.LOCALGOVERNMENTID,
                         BANKSHAREOFCOLLATERAL = tempProp.BANKSHAREOFCOLLATERAL,
                         ESTIMATEDVALUE = tempProp.ESTIMATEDVALUE
-                    });
+                    };
+                    context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(newCollateral);
+                    if (context.SaveChanges() != 0)
+                    {
+                        AddPropertyCollateralNotifications(newCollateral);
+                    }
                 }
             }
         }
