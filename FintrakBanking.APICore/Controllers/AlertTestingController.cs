@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var alertViewModels = _repo.GetLoanExpirationReminder();
+                var alertViewModels = _repo.GetOverlineMonitoringReport(); 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
             }
             catch (SecureException ex)

@@ -41,7 +41,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public DateTime MATURITYDATE { get; set; }
         //public string MATURITYDATE { get; set; }
         public string LOCATION { get; set; }
-        public string BOOKINGDATE { get; set; }
+        public DateTime BOOKINGDATE { get; set; }
         public string VALUEDATE { get; set; }
         public string MATURITYBAND { get; set; }
         public string CUSTOMERTYPE { get; set; }
