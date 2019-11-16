@@ -1,18 +1,12 @@
-﻿using FintrakBanking.Common.Enum;
-using FintrakBanking.Entities.Models;
-using FintrakBanking.Entities.StagingModels;
+﻿using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels.Setups.Credit;
-using FintrakBanking.ViewModels.Setups.General;
-using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
@@ -483,8 +477,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetOverlineMonitoringReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.FACILITYTYPE == "OVERDRAFT" && DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE)
+             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90) 
             .Select(d => new GlobalExposureViewModel
             {
                 customerName = d.CUSTOMERNAME,
