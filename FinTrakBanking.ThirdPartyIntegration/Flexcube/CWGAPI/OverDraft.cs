@@ -212,7 +212,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                         var res = new ResponseMessageOverDraftViewModel
                         {
                             response_code = responseAPI.response_code,
-                            lien_id = responseAPI.lien_id,
+                            //lien_id = responseAPI.lien_id,
                             collateral_id = responseAPI.collateral_id,
                             response_message = responseAPI.response_message,
                             bo_code = responseAPI.bo_code,
@@ -298,12 +298,14 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 _handler.UseDefaultCredentials = true;
                 HttpClient client = new HttpClient(_handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                var inputJson = new JavaScriptSerializer().Serialize(model);
+                ResponseMessageOverDraftViewModel responseAPI = new ResponseMessageOverDraftViewModel();
 
-                var objData = new JavaScriptSerializer().Serialize(model);
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
-                string responseMessage = "";
+                string responseJson = "";
                 getAPIURLSettings("OverDraft");
+                string apiUrl = "FCUBSCreateLien";
 
                 try
                 {
@@ -320,17 +322,18 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = client.PostAsync("FCUBSCreateOverdraft", new StringContent(
-                        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    response = client.PostAsync(apiUrl, new StringContent(
+                                        new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                    responseJson = await response.Content.ReadAsStringAsync();
 
                     responseDateTime = DateTime.Now;
                     responseMsg = null;
 
-                    ResponseMessageOverDraftViewModel responseAPI = new ResponseMessageOverDraftViewModel();
-
                     if (response.IsSuccessStatusCode)
                     {
                         responseAPI = await response.Content.ReadAsAsync<ResponseMessageOverDraftViewModel>();
+
                         var res = new ResponseMessageOverDraftViewModel
                         {
                             response_code = responseAPI.response_code,
@@ -340,6 +343,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                             bo_code = responseAPI.bo_code,
                             bo_message = responseAPI.bo_message
                         };
+
                         var specificRes = new ResponseMessageViewModel
                         {
                             message = res.response_message,
@@ -349,6 +353,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                             webRequestDate = responseAPI.webRequestDate,
                             webRequestStatus = responseAPI.webRequestStatus,
                         };
+
                         responseMsg = new ResponseMessage
                         {
                             APIResponse = specificRes,
@@ -365,7 +370,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                             Message = response
                         };
                     }
-                    responseMessage = await response.Content.ReadAsStringAsync();
+
                     _handler.Dispose();
                     client.Dispose();
                     return responseMsg;
@@ -384,20 +389,28 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     _handler.Dispose();
                     client.Dispose();
 
+                    var loanMapping = new TBL_THIRDPARTY_LOAN_MAPPING
+                    {
+                        LOANAPPLICATIONID = model.loanApplicationId,
+                        LOANSYSTEMTYPEID = 2, //loanSystemTypeId,
+                        FACILITYMAPPINGID = responseAPI.lien_id,
+                        BOOKINGCODE = responseAPI.bo_code,
+                    };
+
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = API_URL+"FCUBSCreateOverdraft",
+                        APIURL = API_URL+ apiUrl,
                         LOGTYPEID = 11,
                         // REFERENCENUMBER = model.sanctionReferenceNumber,
                         REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = objData,
+                        REQUESTMESSAGE = inputJson,
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = responseMessage,
+                        RESPONSEMESSAGE = responseJson,
                     };
 
 
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
-
+                    logContext.TBL_THIRDPARTY_LOAN_MAPPING.Add(loanMapping);
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                     logContext.SaveChanges();

@@ -33,7 +33,7 @@ namespace FintrakBanking.Repositories.Setups.General
             this.context2 = _context2;
             this.audit = _audit;
             this.general = _general;
-            this.externalAlertRepository = _externalAlertRepository;
+            this.externalAlertRepository = _externalAlertRepository; 
         }
 
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
