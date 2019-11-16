@@ -80,7 +80,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetPendingAndDeclinedTransactionReport();
         IEnumerable<GlobalExposureViewModel> GetLoanCovenantsReport();
         IEnumerable<GlobalExposureViewModel> GetVisitationAndSiteInspectionReport();
-        IEnumerable<GlobalExposureViewModel> GetCollateralReleaseAndAccountDeclassification();
+        IEnumerable<GlobalExposureViewModel> GetCollateralReleaseAndAccountDeclassification(); 
         IEnumerable<GlobalExposureViewModel> GetStockMonitoringReport();
         IEnumerable<GlobalExposureViewModel> GetDSRAReport();
         IEnumerable<GlobalExposureViewModel> GetPostDisbursementReview();
