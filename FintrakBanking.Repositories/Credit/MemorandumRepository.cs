@@ -68,7 +68,8 @@ namespace FintrakBanking.Repositories.Credit
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
         int customerId;
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
-        private long legalLendingLimit = 200000000000;
+        private long legalLendingLimit;
+        //private long legalLendingLimit = 200000000000;
 
         // place holders
         private readonly string customerNameHolder = "@{{CustomerName}}";
@@ -119,6 +120,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string collateralCoverageHolder = "@{{CollateralCoverage}}";
         private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
         private readonly string obligorRiskRatingHolder = "@{{ObligorRiskRating}}";
+        private readonly string obligorClassificationHolder = "@{{ObligorClassification}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -198,6 +200,7 @@ namespace FintrakBanking.Repositories.Credit
         private string collateralCoverage;
         private string allCustomerFacilities;
         private string obligorRiskRating;
+        private string obligorClassification;
         //private string totalGroupExposure;
         // lms
         private string securityType;
@@ -390,7 +393,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
                 this.obligorRiskRating = GetCustomerRiskRating();
-                //this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SHAREHOLDERSFUND;
+                this.obligorClassification = GetObligorClassification();
+                this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
                 this.memoData = MemoMarkupHtml();
@@ -449,6 +453,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.securityAnalysis = this.GetSecurityAnalysisMarkUP();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
+                this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
+                this.obligorClassification = GetObligorClassification();
 
                 // out ducument properties definition
                 /*this.memoData = MemoMarkupHtml();
@@ -727,6 +733,17 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             return result;
+        }
+
+        public string GetObligorClassification()
+        {
+            if (string.IsNullOrEmpty(this.obligorRiskRating))
+            {
+                return null;
+            }
+            this.obligorRiskRating = obligorRiskRating.Trim();
+            var classification = context.TBL_CUSTOMER_RISK_RATING.FirstOrDefault(r => r.RISKRATING.Trim() == obligorRiskRating)?.CLASSIFICATION;
+            return classification;
         }
 
         private List<TotalFacilitiesSummaryViewModel> GetTotalFacilitiesNGNLOS()
@@ -3193,6 +3210,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(collateralCoverageHolder, collateralCoverage);
             content = content.Replace(allCustomerFacilitiesHolder, allCustomerFacilities);
             content = content.Replace(obligorRiskRatingHolder, obligorRiskRating);
+            content = content.Replace(obligorClassificationHolder, obligorClassification);
             //content = content.Replace(totalGroupExposureHolder, totalGroupExposure);
 
             if (content.Contains(customerTurnoverHolder))
