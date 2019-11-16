@@ -331,6 +331,7 @@
     <Compile Include="Controllers\AccreditedConsultantsController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AlertController.cs" />
+    <Compile Include="Controllers\AlertTestingController.cs" />
     <Compile Include="Controllers\APILogController.cs" />
     <Compile Include="Controllers\AppraisalMemorandumController.cs" />
     <Compile Include="Controllers\ApprovalGroupController.cs" />
@@ -642,6 +643,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\ContigentReport.aspx.designer.cs">
       <DependentUpon>ContigentReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CopyOfRiskAssetByIfrsClassification.aspx.cs">
+      <DependentUpon>CopyOfRiskAssetByIfrsClassification.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CopyOfRiskAssetByIfrsClassification.aspx.designer.cs">
+      <DependentUpon>CopyOfRiskAssetByIfrsClassification.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\CopyOfRiskAssetMain.aspx.cs">
       <DependentUpon>CopyOfRiskAssetMain.aspx</DependentUpon>
@@ -1308,6 +1316,7 @@
     <Content Include="Reports\ReportViews\ContigentLiabilityReportMain.aspx" />
     <Content Include="Reports\ReportViews\ContigentLiabilityReportMain1.aspx" />
     <Content Include="Reports\ReportViews\ContigentReport.aspx" />
+    <Content Include="Reports\ReportViews\CopyOfRiskAssetByIfrsClassification.aspx" />
     <Content Include="Reports\ReportViews\CopyOfRiskAssetMain.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />

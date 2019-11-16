@@ -798,7 +798,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //if (!model.feeOverride) { PostLoanFees(model); }
 
-                    //CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE);
+                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
 
                     context.SaveChanges();
 
@@ -1035,7 +1035,7 @@ namespace FintrakBanking.Repositories.Credit
                         PostBandGFacilityFees(entity);
                     }
 
-                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.ContingentLiability);
+                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
 
                     context.SaveChanges();
 
@@ -1684,6 +1684,9 @@ namespace FintrakBanking.Repositories.Credit
 
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                         if (!entity.feeOverride) PostLoanFees(entity);
+
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+
                         context.SaveChanges();
 
                         //.....Commit transaction ............
@@ -1995,6 +1998,9 @@ namespace FintrakBanking.Repositories.Credit
 
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                         if (!entity.feeOverride) PostLoanFees(entity);
+
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+
                         context.SaveChanges();
 
                         //.....Commit transaction ............
@@ -2082,29 +2088,38 @@ namespace FintrakBanking.Repositories.Credit
                 var customer = context.TBL_CUSTOMER.Find(facilityDetail.CUSTOMERID);
                 var collaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId).ToList();
 
-                faciltyCreationModel.p_account_no = casa.PRODUCTACCOUNTNUMBER;
-                faciltyCreationModel.p_limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
-                faciltyCreationModel.p_interest_rate = facilityDetail.APPROVEDINTERESTRATE.ToString();
-                faciltyCreationModel.p_facility_description = product.PRODUCTCODE;
-                faciltyCreationModel.p_expiry_date = expiryDate.ToString();
-                faciltyCreationModel.p_start_date = effectiveDate.ToString();
-                faciltyCreationModel.p_line_serial = facilityDetail.LOANAPPLICATIONDETAILID.ToString();
-                faciltyCreationModel.p_liab_no = customer.LIABILITYLIMITNUMBER;
-                faciltyCreationModel.p_line_code = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+                faciltyCreationModel.account_no = casa.PRODUCTACCOUNTNUMBER;
+                faciltyCreationModel.limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
+                //faciltyCreationModel.p_interest_rate = facilityDetail.APPROVEDINTERESTRATE.ToString();
+                //faciltyCreationModel.p_facility_description = product.PRODUCTCODE;
+                faciltyCreationModel.expiry_date = expiryDate.ToString();
+                faciltyCreationModel.start_date = effectiveDate.ToString();
+                //faciltyCreationModel.p_line_serial = facilityDetail.LOANAPPLICATIONDETAILID.ToString();
+                //faciltyCreationModel.p_liab_no = customer.LIABILITYLIMITNUMBER;
+                faciltyCreationModel.line_code = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
                 faciltyCreationModel.sourceReferenceNumber = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
-                faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x => x.BALANCEAVAILABLE ).ToString() == null ? "0" : collaterals?.Sum(x => x.BALANCEAVAILABLE).ToString();
+                //faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x => x.BALANCEAVAILABLE ).ToString() == null ? "0" : collaterals?.Sum(x => x.BALANCEAVAILABLE).ToString();
                 //faciltyCreationModel.p_collateral_amount = collaterals?.Sum(x=>x.BALANCEAVAILABLE).ToString() ?? "0";
-                faciltyCreationModel.p_collateral_code = collaterals.FirstOrDefault()?.TBL_COLLATERAL_CUSTOMER?.COLLATERALCODE.ToString();
-                faciltyCreationModel.p_channel_code = "FINTRAK";
+                //faciltyCreationModel.p_collateral_code = collaterals.FirstOrDefault()?.TBL_COLLATERAL_CUSTOMER?.COLLATERALCODE.ToString();
+                faciltyCreationModel.channel_code = "FINTRAK";
                 faciltyCreationModel.loanApplicationId = facilityDetail.TBL_LOAN_APPLICATION.LOANAPPLICATIONID;
 
 
-                integration.PostFacilityCreationInputs(faciltyCreationModel, loanSystemTypeId);
+                 var apiResult = new PostingResult();
+
+                if (facilityDetail.ISFACILITYCREATED == null || !(bool)facilityDetail.ISFACILITYCREATED) {
+                    apiResult = integration.PostFacilityCreationInputs(faciltyCreationModel, loanSystemTypeId);
+                }
+
+                if (apiResult.responseCode == "00") {
+                    facilityDetail.ISFACILITYCREATED = true;
+                    context.SaveChanges();
+                }
             }
           
         }
 
-        private void createLoanOnThirdParty(LoanViewModel model, string loanReffernceNumber)
+        private void CreateLoanOnThirdParty(LoanViewModel model, string loanReffernceNumber)
         {
             FlexcubeCreateLoanAccountViewModel loanCreationModel = new FlexcubeCreateLoanAccountViewModel();
             var product = context.TBL_PRODUCT.Find(model.productId);
@@ -2118,43 +2133,53 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.account_no = casa?.PRODUCTACCOUNTNUMBER;
             loanCreationModel.amount_financed = model.principalAmount.ToString();
             loanCreationModel.interest_rate = model.interestRate.ToString();
-            loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME;
-            loanCreationModel.product_code = product.PRODUCTCODE;
+            loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME.ToUpper();
+            loanCreationModel.product_code = "AFLF"; //product.PRODUCTCODE;
             loanCreationModel.product_desc = product.PRODUCTNAME;
-            loanCreationModel.source = "CREDIT360";
+            loanCreationModel.source = "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
-            loanCreationModel.tax_rate = "";
-            loanCreationModel.user_refno = staff.STAFFCODE;
-            loanCreationModel.app_branch_code = app.TBL_BRANCH.BRANCHCODE;
-            loanCreationModel.app_user_id = staff.STAFFCODE;
-            loanCreationModel.book_date = model.bookingDate.ToShortDateString();
-            loanCreationModel.effective_date = model.effectiveDate.ToShortDateString();
-            loanCreationModel.value_date = systemDate.ToShortDateString();
-            loanCreationModel.maturity_date = model.maturityDate.ToShortDateString();
-            loanCreationModel.mgt_rate = "";
-            loanCreationModel.creditlife_rate = "";
-            loanCreationModel.no_of_financials = "";
-            loanCreationModel.due_dateson = "";
-            loanCreationModel.inst_date = "";
-            loanCreationModel.advisory_fee = "";
-            loanCreationModel.anniversary_fee = "";
-            loanCreationModel.appraisal_fee = "";
-            loanCreationModel.committment_fee = "";
-            loanCreationModel.creditlife_fee = "";
-            loanCreationModel.in_odchrg_fee = "";
-            loanCreationModel.mgt_fee = "";
-            loanCreationModel.penal_charge = "";
-            loanCreationModel.prn_odchrg_fee = "";
-            loanCreationModel.processing_fee = "";
-            loanCreationModel.renann_fee = "";
-            loanCreationModel.vehicle_ins = "";
-            loanCreationModel.vehicle_value = "";
-            loanCreationModel.crms_ref_number = "";
-            loanCreationModel.comp_mis8 = "";
-            loanCreationModel.freq_unit = "";
+            loanCreationModel.tax_rate = "5";
+            loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
+            loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
+            loanCreationModel.app_user_id = "FINTRAKUSR"; //staff.STAFFCODE;
+            loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
+            loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
+            loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");
+            loanCreationModel.maturity_date = model.maturityDate.AddYears(1).ToString("yyyy-MM-dd"); //.ToString("yyyy-MM-dd");
+            //loanCreationModel.mgt_rate = "4";
+            //loanCreationModel.creditlife_rate = "0.5";
+            loanCreationModel.no_of_financials = "11";
+            loanCreationModel.due_dateson = "4";
+            loanCreationModel.inst_date = model.bookingDate.AddMonths(1).ToString("yyyy-MM-dd");
+            loanCreationModel.advisory_fee = "10";
+            loanCreationModel.anniversary_fee = "0";
+            loanCreationModel.appraisal_fee = "1";
+            loanCreationModel.committment_fee = "1";
+            loanCreationModel.creditlife_fee = "0.5";
+            loanCreationModel.in_odchrg_fee = "12";
+            loanCreationModel.mgt_fee = "1";
+            loanCreationModel.penal_charge = "1";
+            loanCreationModel.prn_odchrg_fee = "11";
+            loanCreationModel.processing_fee = "1";
+            loanCreationModel.renann_fee = "0.25";
+            loanCreationModel.vehicle_ins = "5";
+            loanCreationModel.vehicle_value = "100";
+            loanCreationModel.crms_ref_number = "00044/20150613/356687";
+            loanCreationModel.comp_mis8 = "596912";
+            loanCreationModel.freq_unit = "M";
             loanCreationModel.disbursement_type = "BOOKING";
+            loanCreationModel.loanApplicationId = facility.LOANAPPLICATIONDETAILID;
 
-            integration.PostLoanCreationInputs(loanCreationModel);
+            var apiResult = new PostingResult();
+
+            if (facility.ISFACILITYCREATED == null || !(bool) facility.ISFACILITYCREATED) {
+                apiResult = integration.PostLoanCreationInputs(loanCreationModel, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+            }
+
+            if (apiResult.responseCode == "00") {
+                facility.ISFACILITYCREATED = true;
+                context.SaveChanges();
+            }
         }
 
 
@@ -2469,6 +2494,19 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (operationId > 0) LogApproval(approvalModel, operationId, true, (short)ApprovalStatusEnum.Pending);
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+                    var loanLienDetail = context.TBL_APPLICATIONDETAIL_LIEN.FirstOrDefault(l => l.APPLICATIONDETAILID == request.LOANAPPLICATIONDETAILID && l.DELETED == false && l.ISRELEASED == false);
+                    //if (loanLienDetail != null)
+                    //{
+                    //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                    //    {
+                    //        username = "model.username",//for test, real value to be passed!!!
+                    //        passcode = "model.passCode"
+                    //    };
+                    //    PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails);
+                    //}
+
+                    PlaceLien(request.LOANAPPLICATIONDETAILID, new TwoFactorAutheticationViewModel() { username = "model.username", passcode = "model.passCode" });
+
                     context.SaveChanges();
                     trans.Commit();
                     return 0;
@@ -4071,6 +4109,28 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 //DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
 
+                LoanViewModel loanApplication = new LoanViewModel()
+                {
+                    bookingDate = loanRecord.BOOKINGDATE,
+                    effectiveDate = loanRecord.EFFECTIVEDATE,
+                    maturityDate = loanRecord.MATURITYDATE,
+                    sourceReferenceNumber = loanRecord.LOANREFERENCENUMBER,
+                    userBranchId = (short) user.BranchId,
+                    branchId = (short) user.BranchId,
+                    companyId = user.companyId,
+                    principalAmount = loanRecord.PRINCIPALAMOUNT,
+                    interestRate = loanRecord.INTERESTRATE,
+                    productId = loanRecord.PRODUCTID,
+                    casaAccountId = loanRecord.CASAACCOUNTID,
+                    loanApplicationDetailId = loanRecord.LOANAPPLICATIONDETAILID,
+                    description = "Loan Creation From Flexcube API Call",
+                    createdBy = user.createdBy,
+                    userIPAddress = user.userIPAddress,
+                    applicationUrl = user.applicationUrl,
+                };
+
+                CreateLoanOnThirdParty(loanApplication, loanReferenceNumber);
+
             }
         }
 
@@ -4116,8 +4176,8 @@ namespace FintrakBanking.Repositories.Credit
                     var model = new FlexcubeCreateOverdraftViewModel
                     {
                         account_no = casa.PRODUCTACCOUNTNUMBER, 
-                        collateral_code = collateralcodes, 
-                        collateral_value = collaterals.ToList().Count == 0 ? null : collaterals.Sum(x => x.COLLATERALVALUE).ToString(),
+                        collateral_code = collateralcodes == "" ? "NOCOLLATERALCODE" : collateralcodes, 
+                        collateral_value = collaterals.ToList().Count == 0 ? "0" : collaterals.Sum(x => x.COLLATERALVALUE).ToString(),
                         start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                         end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                         channel_code = "FINTRAK",
@@ -7130,15 +7190,15 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (!AddLoanBookingRequests(applicationStatusId, model))
                         {
-                            if (model.isLienPlacementForLoan)
-                            {
-                                var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
-                                {
-                                    username = model.username,
-                                    passcode = model.passCode
-                                };
-                                PlaceLien(model.loanApplicationDetailId, twoFactorAuthDetails);
-                            }
+                            //if (model.isLienPlacementForLoan)
+                            //{
+                            //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                            //    {
+                            //        username = model.username,
+                            //        passcode = model.passCode
+                            //    };
+                            //    PlaceLien(model.loanApplicationDetailId, twoFactorAuthDetails);
+                            //}
                             trans.Rollback();
                             return false;
                         }
@@ -7178,12 +7238,17 @@ namespace FintrakBanking.Repositories.Credit
             List<int> collateralTypesIds = new List<int>();
             collateralTypesIds.Add((int)CollateralTypeEnum.CASA);
             collateralTypesIds.Add((int)CollateralTypeEnum.TermDeposit);
-            collateralTypesIds.Add((int)CollateralTypeEnum.DomiciliationContract);
+            //collateralTypesIds.Add((int)CollateralTypeEnum.DomiciliationContract);
+            collateralTypesIds.Add((int)CollateralTypeEnum.TreasuryBillsAndBonds);
 
-            var collateralMappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == app.LOANAPPLICATIONID);
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => collateralTypesIds.Contains(x.COLLATERALTYPEID));
+            //var collateralMappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId && x.DELETED == false).ToList();
+            //var mappedCollateralIds = collateralMappings.Select(m => m.COLLATERALCUSTOMERID).ToList();
+            //var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => mappedCollateralIds.Contains(x.COLLATERALCUSTOMERID) && collateralTypesIds.Contains(x.COLLATERALTYPEID));
+            var loanLienDetail = context.TBL_APPLICATIONDETAIL_LIEN.Where(l => l.APPLICATIONDETAILID == loanApplicationDetailId && l.DELETED == false && l.ISRELEASED == false).ToList();
+            var mappedCollateralIds = loanLienDetail.Select(m => m.COLLATERALCUSTOMERID).ToList();
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => mappedCollateralIds.Contains(x.COLLATERALCUSTOMERID) && collateralTypesIds.Contains(x.COLLATERALTYPEID));
 
-            foreach(var item in collaterals)
+            foreach (var item in collaterals)
             {
                 TBL_CASA casa = new TBL_CASA();
                 if (item.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
@@ -7193,46 +7258,66 @@ namespace FintrakBanking.Repositories.Credit
 
                 var casaBalance = integration.GetCustomerAccountBalance(casa.PRODUCTACCOUNTNUMBER);
 
-                var lienModel = new FlexcubeLienViewModel
-                {
-                    p_account_no = casa.PRODUCTACCOUNTNUMBER,
-                    p_collateral_code = item.COLLATERALCODE,
-                    p_collateral_value = item.COLLATERALVALUE.ToString(),
-                    p_start_date = app.EFFECTIVEDATE.ToString(),
-                    p_end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToShortDateString(),
-                    p_collateral_id = item.COLLATERALCUSTOMERID.ToString(),
-                    p_contract_ref_no = app.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                    p_collateral_contribution = casaBalance.availableBalance.ToString(),
-                    p_branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
-                    p_channel_code = "FINTRAK"
-                };
-                integration.FlexcubeCasaLien(lienModel);
+                //var lienModel = new FlexcubeLienViewModel
+                //{
+                //    account_no = casa.PRODUCTACCOUNTNUMBER,
+                //    collateral_code = item.COLLATERALCODE,
+                //    collateral_value = item.COLLATERALVALUE.ToString(),
+                //    start_date = app.EFFECTIVEDATE.ToString(),
+                //    end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToShortDateString(),
+                //    collateral_id = item.COLLATERALCUSTOMERID.ToString(),
+                //    contract_ref_no = app.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                //    collateral_contribution = casaBalance.availableBalance.ToString(),
+                //    branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
+                //    channel_code = "FINTRAK",
+                //    loanApplicationId = app.LOANAPPLICATIONID
+                //};
+
+                //integration.FlexcubeCasaLien(lienModel);
             }
-    }
 
-    //private void PlaceLienForLoan(LoanBookingRequestViewModel model, TwoFactorAutheticationViewModel twoFactorAuthDetails)
-    //{
-    //    //TODO fetch the AccountBalance for account from the API
-    //    var casa = context.TBL_CASA.Find(model.casaAccountId2);
+            var lienModel = new FlexcubeLienViewModel
+            {
+                account_no = "0704490004",
+                collateral_code = "07044900D11",
+                collateral_value = "100",
+                start_date = app.EFFECTIVEDATE.Value.ToString("ddMMMyyyy"),
+                end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToString("ddMMMyyyy"),
+                collateral_id = "66611",
+                contract_ref_no = "0704490004",
+                collateral_contribution = "200",
+                branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
+                channel_code = "FINTRAK",
+                loanApplicationId = app.LOANAPPLICATIONID
+            };
 
-    //    var lienModel = new CasaLienViewModel
-    //    {
-    //        productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
-    //        sourceReferenceNumber = model.loanApplicationId.ToString(),
-    //        userBranchId = (short)model.userBranchId,
-    //        branchId = (short)model.sourceBranchId,
-    //        companyId = model.companyId,
-    //        lienAmount = model.approvedAmount, //loanRecord.PRINCIPALAMOUNT + loanRecord.OUTSTANDINGINTEREST,
-    //        description = "Lien for Fixed Deposit Collateral",
-    //        lienTypeId = (short)LienTypeEnum.IDFBooking,
-    //        createdBy = model.createdBy,
-    //        userIPAddress = model.userIPAddress,
-    //        applicationUrl = model.applicationUrl,
-    //    };
-    //    //casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
-    //}
+            integration.FlexcubeCasaLien(lienModel);
 
-    private bool UpdateLoanBookingRequests(int applicationStatusId, LoanBookingRequestViewModel model)
+        }
+
+        //private void PlaceLienForLoan(LoanBookingRequestViewModel model, TwoFactorAutheticationViewModel twoFactorAuthDetails)
+        //{
+        //    //TODO fetch the AccountBalance for account from the API
+        //    var casa = context.TBL_CASA.Find(model.casaAccountId2);
+
+        //    var lienModel = new CasaLienViewModel
+        //    {
+        //        productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+        //        sourceReferenceNumber = model.loanApplicationId.ToString(),
+        //        userBranchId = (short)model.userBranchId,
+        //        branchId = (short)model.sourceBranchId,
+        //        companyId = model.companyId,
+        //        lienAmount = model.approvedAmount, //loanRecord.PRINCIPALAMOUNT + loanRecord.OUTSTANDINGINTEREST,
+        //        description = "Lien for Fixed Deposit Collateral",
+        //        lienTypeId = (short)LienTypeEnum.IDFBooking,
+        //        createdBy = model.createdBy,
+        //        userIPAddress = model.userIPAddress,
+        //        applicationUrl = model.applicationUrl,
+        //    };
+        //    //casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
+        //}
+
+        private bool UpdateLoanBookingRequests(int applicationStatusId, LoanBookingRequestViewModel model)
         {
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.loanBookingRequestId);
 
@@ -8848,7 +8933,8 @@ namespace FintrakBanking.Repositories.Credit
                                 pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                 reviewDate = DateTime.Now,
                                 bookingDateString = a.BOOKINGDATE,
-                                maturityDateString = a.MATURITYDATE,
+                                maturityDate = a.MATURITYDATE,
+                                //maturityDateString = a.MATURITYDATE,
                                 loanStatus = a.CBNCLASSIFICATION,
                                 referenceNumber = a.REFERENCENUMBER,
                             }).ToList();
@@ -8858,8 +8944,8 @@ namespace FintrakBanking.Repositories.Credit
                     foreach (var e in exposure)
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCode);
-                        e.bookingDate = DateTime.Parse(e.bookingDateString);
-                        e.maturityDate = DateTime.Parse(e.maturityDateString);
+                        e.bookingDate = e.bookingDateString;
+                        //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         e.productId = int.Parse(e.productIdString);
                     }
                     exposures.AddRange(exposure);

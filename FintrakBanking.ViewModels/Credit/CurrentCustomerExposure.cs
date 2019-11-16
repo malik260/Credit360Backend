@@ -5,8 +5,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class CurrentCustomerExposure
     {
         public DateTime bookingDate { get; set; }
-        public string bookingDateString { get; set; }
-        public string maturityDateString { get; set; }
+        public DateTime bookingDateString { get; set; }
+        public DateTime? maturityDateString { get; set; }
 
         public string customerName { get; set; }
         public string facilityType { get; set; }
@@ -39,7 +39,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public short applicationStatusId { get; set; }
         public string currency { get; set; }
-        public DateTime maturityDate { get; set; }
+        public DateTime? maturityDate { get; set; }
         public decimal? totalBankExposure { get; set; }
         public decimal? companyLimit { get; set; }
     }
@@ -69,9 +69,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class GlobalExposureViewModel
     {
-        public short id { get; set; }
-
+        public int id { get; set; }
         public string customerId { get; set; }
+        public string date { get; set; }
         public string customerName { get; set; }
         public string groupObligorName { get; set; }
         public string referenceNumber { get; set; }
@@ -93,9 +93,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string pwcClassification { get; set; }
         public string ifrsClassification { get; set; }
         public string tenor { get; set; }
-        public string maturityDate { get; set; }
+        public DateTime maturityDate { get; set; }
         public string location { get; set; }
-        public string bookingDate { get; set; }
+        public DateTime bookingDate { get; set; }
         public string valueDate { get; set; }
         public string maturityBand { get; set; }
         public string customerType { get; set; }
@@ -114,7 +114,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? loanAmounyLcy { get; set; }
         public string cardLimit { get; set; }
         public string fxrate { get; set; }
-        public float shf { get; set; }
+        public float? shf { get; set; }
         public decimal? sectionedLoanLimitDirectFcy { get; set; }
         public decimal? sectionedLoanLimitDirectLcy { get; set; }
         public decimal? totalExposuLcyPreviousYear { get; set; }

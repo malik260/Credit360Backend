@@ -322,8 +322,15 @@ public class LienProcessViewModel //: GeneralEntity
         public string response_message { get; set; }
         public string facility_id { get; set; }
         public string bo_code { get; set; }
-        public string bo_message { get; set; }
+        public string bo_message { get; set; } 
     }
 
-
+    public class ResponseMessageLoanCreationViewModel
+    {
+        public string response_code { get; set; }
+        public string response_desc { get; set; }
+        public string reference_no { get; set; }
+        public string bo_code { get; set; }
+        public string bo_message { get; set; } 
+    }
 }
