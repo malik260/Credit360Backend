@@ -5,7 +5,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CurrentCustomerExposure
     {
         public DateTime bookingDate { get; set; }
-        public string bookingDateString { get; set; }
+        public DateTime bookingDateString { get; set; }
         public DateTime? maturityDateString { get; set; }
 
         public string customerName { get; set; }
@@ -95,7 +95,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string tenor { get; set; }
         public DateTime maturityDate { get; set; }
         public string location { get; set; }
-        public string bookingDate { get; set; }
+        public DateTime bookingDate { get; set; }
         public string valueDate { get; set; }
         public string maturityBand { get; set; }
         public string customerType { get; set; }
