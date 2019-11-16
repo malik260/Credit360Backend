@@ -1352,6 +1352,12 @@ namespace FintrakBanking.Repositories.Credit
                              staffId
                         );
 
+                        //creditCommon.LoadCustomerGroupRatios(
+                        //     applicationId,
+                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //     staffId
+                        //);
+
                         creditCommon.GetCorporateCustomerRating(
                              applicationId,
                              loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),

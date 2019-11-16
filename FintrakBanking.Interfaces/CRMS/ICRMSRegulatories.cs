@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Reports;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace FintrakBanking.Interfaces.CRMS
 
         List<LoansCount> LoanCountsByLegalStatus(List<CRMSRegulatoryViewModel> loans);
         CRMSRecord GenerateBatchPosting(DateRange model);
+
+        bool GenerateCRMSCodes(List<string> applicationReferenceNumbers, UserViewModel model);
 
 
     }
