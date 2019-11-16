@@ -202,15 +202,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             if (result.Message.IsSuccessStatusCode)
             {
-                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
-                {
-                    throw new SecureException(result.APIResponse.message);
-                }
-                else
-                {
+                //if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                //{
+                //    throw new SecureException(result.APIResponse.message);
+                //}
+                //else
+                //{
                     //LogOverDraft(model);
                     return result.APIResponse;
-                }
+                //}
             }
             else
             {
@@ -563,8 +563,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 else
                 {
                     var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-
-                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
+                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
                 }
             }
             else
@@ -599,8 +598,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     else
                     {
                         var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-
-                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
                     }
                 }
                 else
@@ -621,20 +619,20 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 if (result.APIResponse != null)
                 {
-                    if (result.APIResponse.responseCode == "0")
+                    if (result.APIResponse.responseCode == "00")
                     {
                         string str = result.APIResponse.webRequestStatus;
-                        str = str.Replace(":", "");
-                        str = str.Replace("FAILURE", "");
-                        str = str.Replace("SUCCESS+", "");
+                        //str = str.Replace(":", "");
+                        //str = str.Replace("FAILURE", "");
+                        //str = str.Replace("SUCCESS+", "");
 
-                        return new PostingResult { posted = true, responseCode = str.Trim() };
+                        //return new PostingResult { posted = true, responseCode = str.Trim() };
+                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode };
                     }
                     else
                     {
                         var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-
-                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
                     }
                 }
                 else
