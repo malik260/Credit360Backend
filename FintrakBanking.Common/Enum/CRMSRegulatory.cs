@@ -24,7 +24,19 @@ namespace FintrakBanking.Common.Enum
         Template400A = 7,
         Template400B = 8,
         Template400C = 9,
+    }
 
-
+    public enum CRMSTypeEnum
+    {
+        LoanType = 1,
+        FeeType = 2,
+        RepaymentAgreementType = 3,
+        SecuredCollateralType = 4,
+        UnsecuredCollateralType = 5,
+        RepaymentSourceType = 6,
+        LegalStatusType = 7,
+        RelationshipType = 9,
+        CompanySize = 10,
+        FundingSource =11
     }
 }

@@ -994,6 +994,122 @@
                 //context.SaveChanges();
             }
 
+            //CRMSCodeGeneration
+            public async Task<ResponseMessage> ApiFetchCBMCRMSCode(CRMSCodeGeneration model, short loanSystemTypeId)
+            {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+
+                HttpClient client = new HttpClient(handler);
+                var inputJson = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageFacilityViewModel responseApi = new ResponseMessageFacilityViewModel();
+                ResponseMessage responseMsg = null;
+                string responseJson = "";
+                getAPIURLSettings("crmsCode"); //Check TBL_API_URL
+                string apiUrl = "submitReturnV2";
+                try
+                {
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                    var dta = context.TBL_SETUP_GLOBAL.ToList();
+                    handler.UseDefaultCredentials = true;
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+
+                    response = client.PostAsync(apiUrl, new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                    responseJson = await response.Content.ReadAsStringAsync();
+                    responseDateTime = DateTime.Now;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        responseApi = await response.Content.ReadAsAsync<ResponseMessageFacilityViewModel>();
+
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseApi.response_code,
+                            message = responseApi.response_message,
+                            serialNumber = responseApi.bo_code,
+                            webRequestDate = DateTime.Now,
+                            webRequestStatus = responseApi.bo_message,
+                            responseStatus = responseApi.response_code == "00" ? true : false,
+                        };
+
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response,
+                            responseMessage = responseJson
+                        };
+                    }
+
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+                    //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var loanMapping = new TBL_THIRDPARTY_LOAN_MAPPING
+                    {
+                        LOANAPPLICATIONID = model.loanApplicationDetailId,
+                        LOANSYSTEMTYPEID = loanSystemTypeId,
+                        FACILITYMAPPINGID = responseApi.facility_id,
+                        BOOKINGCODE = responseApi.bo_code,
+                    };
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = API_URL + apiUrl,
+                        LOGTYPEID = 2,
+                        REFERENCENUMBER = model.sourceReferenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = inputJson,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseJson,
+                    };
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_THIRDPARTY_LOAN_MAPPING.Add(loanMapping);
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
+                }
+
+
+                //context.SaveChanges();
+            }
+
             #endregion END OF  FLEXCUBE POSTING INTEGRATIONS
 
         }
