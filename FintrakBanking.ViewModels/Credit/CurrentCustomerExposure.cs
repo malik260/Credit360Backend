@@ -5,8 +5,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class CurrentCustomerExposure
     {
         public DateTime bookingDate { get; set; }
-        public string bookingDateString { get; set; }
-        public string maturityDateString { get; set; }
+        public DateTime bookingDateString { get; set; }
+        public DateTime? maturityDateString { get; set; }
 
         public string customerName { get; set; }
         public string facilityType { get; set; }
@@ -15,7 +15,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal change { get { return (proposedLimit - recommendedLimit); } }
         //public decimal outstandings { get { return proposedLimit; } }
         public decimal outstandings { get; set; }
+        public decimal outstandingsLcy { get; set; }
         public decimal approvedAmount { get; set; }
+        public decimal approvedAmountLcy { get; set; }
         public int exposureTypeId { get; set; }
         public string exposureTypeCode { get; set; }
         public string adjFacilityType { get; set; }
@@ -37,7 +39,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public short applicationStatusId { get; set; }
         public string currency { get; set; }
-        public DateTime maturityDate { get; set; }
+        public DateTime? maturityDate { get; set; }
         public decimal? totalBankExposure { get; set; }
         public decimal? companyLimit { get; set; }
     }
@@ -63,6 +65,70 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int CUSTOMERID { get; set; }
         public int PRODUCTID { get; set; }
+    }
+
+    public class GlobalExposureViewModel
+    {
+        public int id { get; set; }
+        public string customerId { get; set; }
+        public string date { get; set; }
+        public string customerName { get; set; }
+        public string groupObligorName { get; set; }
+        public string referenceNumber { get; set; }
+        public string accountNumber { get; set; }
+        public string accountOfficerCode { get; set; }
+        public string accountOfficerName { get; set; }
+        public string alphaCode { get; set; }
+        public string productCode { get; set; }
+        public string currencyName { get; set; }
+        public string productName { get; set; }
+        public string facilityType { get; set; }
+        public string adjFacilityType { get; set; }
+        public string adjFacilityTypeId { get; set; }
+        public string odStatus { get; set; }
+        public string currencyType { get; set; }
+        public string cbnSector { get; set; }
+        public string cbnSectorAdjusted { get; set; }
+        public string cbnClassification { get; set; }
+        public string pwcClassification { get; set; }
+        public string ifrsClassification { get; set; }
+        public string tenor { get; set; }
+        public DateTime maturityDate { get; set; }
+        public string location { get; set; }
+        public DateTime bookingDate { get; set; }
+        public string valueDate { get; set; }
+        public string maturityBand { get; set; }
+        public string customerType { get; set; }
+        public string branchName { get; set; }           
+        public string branchCode { get; set; }
+        public string obligorRiskRating { get; set; }
+        public string lastCrDate { get; set; }
+        public string productId { get; set; }
+        public string exposureTypeCode { get; set; }
+        public string exposureType { get; set; }
+        public string teamCode { get; set; }
+        public string lastCreditAmount { get; set; }
+        public decimal? principalOutStandingBaltcy { get; set; }
+        public decimal? principalOutStandingBallcy { get; set; }
+        public decimal? loanAmounyTcy { get; set; }
+        public decimal? loanAmounyLcy { get; set; }
+        public string cardLimit { get; set; }
+        public string fxrate { get; set; }
+        public float? shf { get; set; }
+        public decimal? sectionedLoanLimitDirectFcy { get; set; }
+        public decimal? sectionedLoanLimitDirectLcy { get; set; }
+        public decimal? totalExposuLcyPreviousYear { get; set; }
+        public decimal? totalExposuLcyPrevious6Months { get; set; }
+        public decimal? totalExposuLcyPrevious3Months { get; set; }
+        public decimal? totalExposuLcyPreviousMonths { get; set; }
+        public decimal? totalExposuLcyPreviousDay { get; set; }
+        public decimal? totalExposure { get; set; }
+        public decimal? impairmentAmount { get; set; }
+        public decimal? unpaidObligationAmount { get; set; }
+        public decimal? unpoInterestAmount { get; set; }
+        public decimal? interestReceivableTcy { get; set; }
+        public decimal? amountDue { get; set; }
+        public string interestrate { get; set; }
     }
 }
 

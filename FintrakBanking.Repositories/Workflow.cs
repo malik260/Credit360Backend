@@ -1118,11 +1118,12 @@ namespace FintrakBanking.Repositories.WorkFlow
             
 
             List<WorkflowSetup> grid = new List<WorkflowSetup>();
-
+            //bool canSkipRule = levelBusinessRule.InsiderRelated == true;
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) continue;
+                //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
                 grid.Add(new WorkflowSetup
                 {

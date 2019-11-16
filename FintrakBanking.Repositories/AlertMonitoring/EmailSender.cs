@@ -243,7 +243,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                     foreach (var binaryFile in requestDoc)
                                     {
                                        MemoryStream memoryStream = new MemoryStream(binaryFile.FILEDATA);
-                                        Attachment attachment = new Attachment(memoryStream, binaryFile.FILENAME);
+                                       Attachment attachment = new Attachment(memoryStream, binaryFile.FILENAME);
                                        mail.Attachments.Add(attachment);
 
                                     }
@@ -259,7 +259,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
                             }catch(Exception ex)
                             {
-                              ///  throw new SecureException("Error : " + ex);
+                                throw new SecureException("Error : " + ex);
                             }
 
                             UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");

@@ -197,10 +197,10 @@ namespace FintrakBanking.Repositories.Customer
             }
         }
 
-        private void UpdateCustomerCollateralId(string customerCode)
+        public void UpdateCustomerCollateralId(string customerCode)
         {
             customerCode = customerCode.Trim();
-            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) && c.DELETED == false);
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
             var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
             foreach(var c in collaterals)
             {
@@ -2855,7 +2855,7 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.DATETIMEUPDATED = DateTime.Now;
                 customerMain.LASTUPDATEDBY = entity.deletedBy;
 
-
+                UpdateCustomerCollateralId(customerMain.CUSTOMERCODE);
                 return context.SaveChanges() != 0;
             }
             else
@@ -4594,6 +4594,7 @@ namespace FintrakBanking.Repositories.Customer
                 entity.RELATIONSHIPOFFICERID = temp.RELATIONSHIPOFFICERID;
             }
 
+            UpdateCustomerCollateralId(entity.CUSTOMERCODE);
             //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
             temp.ISCURRENT = false;
             temp.APPROVALSTATUSID = approvalStatusId;
