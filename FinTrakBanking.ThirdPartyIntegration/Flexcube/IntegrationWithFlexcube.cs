@@ -907,6 +907,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return customerRatio;
         } // GetCorporateProbabilityDefaultByCustomerId
 
+        public List<GroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode)
+        {
+            List<GroupRatingAndRatioViewModel> customerGroupRatio = new List<GroupRatingAndRatioViewModel>();
+            Task.Run(async () => customerGroupRatio = await basel.GetAllCustomerRatios(customerCode))
+                .GetAwaiter().GetResult();
+            return customerGroupRatio;
+        } 
+
         public CutomerRatingViewModel GetCorporateCustomerRatingByCustomerCode(string customerCode)
         {
             CutomerRatingViewModel customerRating = new CutomerRatingViewModel();

@@ -194,6 +194,51 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
+        public void LoadCustomerGroupRatios(int applicationId, List<int> customerIds, int staffId)
+        {
+            bool isGroup = false;
+            var apiCustomerRatio = new List<GroupRatingAndRatioViewModel>();
+            var apiTransactionsOthers = new List<GroupRatingAndRatioViewModel>();
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
+
+            if (isGroup)
+            {
+                var ids = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == application.CUSTOMERGROUPID && x.DELETED == false).Select(x => x.CUSTOMERID).ToList();
+                customers = context.TBL_CUSTOMER.Where(x => ids.Contains(x.CUSTOMERID));
+            }
+
+            foreach (var customer in customers)
+            {
+                if (customer.ISPROSPECT == false)
+                {
+                    apiCustomerRatio = integration.GetCustomerGroupRatioByCustomerCode(customer.CUSTOMERCODE);
+
+                    foreach (var item in apiCustomerRatio)
+                    {
+                        for (int i = 0; i < item.ratio.Count - 1; i++) {
+                            context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
+                            {
+                                DESCRIPTION = item.ratio[i].indicatorname,
+                                VALUE = item.ratio[i].indicatorvalue,
+                                CUSTOMERID = customer.CUSTOMERID,
+                                LOANAPPLICATIONID = application.LOANAPPLICATIONID,
+                                CUSTOMERGROUPID = application.CUSTOMERGROUPID,
+                                DATETIMECREATED = DateTime.Now,
+                                CREATEDBY = staffId,
+                                DELETED = false,
+                                CATEGORYID = context.TBL_CUSTOMER_RATIO_CATEGORY.Where(O => item.ratioHeader.Contains(O.CATEGORYNAME)).FirstOrDefault()?.CATEGORYID,
+                            });
+                        }
+                    }
+
+                }
+            }
+
+            context.SaveChanges();
+        }
+
         public void GetCorporateCustomerRating(int applicationId, List<int> customerIds, int staffId)
         {
             var apiCustomerRating = new CutomerRatingViewModel();
