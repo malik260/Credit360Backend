@@ -2129,6 +2129,16 @@ namespace FintrakBanking.Repositories.Credit
             var casa = context.TBL_CASA.Find(model.casaAccountId);
             var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.loanApplicationDetailId);
             var app = facility.TBL_LOAN_APPLICATION;
+            var loanLoanRequest = (from b in context.TBL_LOAN
+                                  join r in context.TBL_LOAN_BOOKING_REQUEST on b.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
+                                  where b.LOANREFERENCENUMBER == loanReffernceNumber
+                                  select r).FirstOrDefault();
+
+            var fee = from lf in context.TBL_LOAN_FEE
+                      join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                      join l in context.TBL_LOAN on lf.LOANID equals l.TERMLOANID
+                      where l.LOANREFERENCENUMBER == loanReffernceNumber
+                      select new { feeShortName = f.SHORTNAME, feeRate = f.RATE };
 
             loanCreationModel.account_no = casa?.PRODUCTACCOUNTNUMBER;
             loanCreationModel.amount_financed = model.principalAmount.ToString();
@@ -2138,7 +2148,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.product_desc = product.PRODUCTNAME;
             loanCreationModel.source = "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
-            loanCreationModel.tax_rate = "5";
+            loanCreationModel.tax_rate = "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
             loanCreationModel.app_user_id = "FINTRAKUSR"; //staff.STAFFCODE;
@@ -2146,25 +2156,24 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
             loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");
             loanCreationModel.maturity_date = model.maturityDate.AddYears(1).ToString("yyyy-MM-dd"); //.ToString("yyyy-MM-dd");
-            //loanCreationModel.mgt_rate = "4";
-            //loanCreationModel.creditlife_rate = "0.5";
+
             loanCreationModel.no_of_financials = "11";
             loanCreationModel.due_dateson = "4";
             loanCreationModel.inst_date = model.bookingDate.AddMonths(1).ToString("yyyy-MM-dd");
-            loanCreationModel.advisory_fee = "10";
-            loanCreationModel.anniversary_fee = "0";
-            loanCreationModel.appraisal_fee = "1";
-            loanCreationModel.committment_fee = "1";
-            loanCreationModel.creditlife_fee = "0.5";
-            loanCreationModel.in_odchrg_fee = "12";
-            loanCreationModel.mgt_fee = "1";
-            loanCreationModel.penal_charge = "1";
-            loanCreationModel.prn_odchrg_fee = "11";
-            loanCreationModel.processing_fee = "1";
-            loanCreationModel.renann_fee = "0.25";
-            loanCreationModel.vehicle_ins = "5";
+            loanCreationModel.advisory_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault()?.feeRate);  //"10";
+            loanCreationModel.anniversary_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault()?.feeRate);  //"0";
+            loanCreationModel.appraisal_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault()?.feeRate);  //"1";
+            loanCreationModel.committment_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault()?.feeRate); //"1";
+            loanCreationModel.creditlife_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault()?.feeRate);  //"0.5";
+            loanCreationModel.in_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault()?.feeRate);  //"12";
+            loanCreationModel.mgt_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault()?.feeRate);  //"1";
+            loanCreationModel.penal_charge = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault()?.feeRate);  //"1";
+            loanCreationModel.prn_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault()?.feeRate);  //"11";
+            loanCreationModel.processing_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault()?.feeRate);  //"1";
+            loanCreationModel.renann_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault()?.feeRate);  //"0.25";
+            loanCreationModel.vehicle_ins = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault()?.feeRate);  //"5";
             loanCreationModel.vehicle_value = "100";
-            loanCreationModel.crms_ref_number = "00044/20150613/356687";
+            loanCreationModel.crms_ref_number = loanLoanRequest.CRMSCODE; // "00044/20150613/356687"; //loanLoanRequest
             loanCreationModel.comp_mis8 = "596912";
             loanCreationModel.freq_unit = "M";
             loanCreationModel.disbursement_type = "BOOKING";

@@ -52,6 +52,7 @@ namespace FintrakBanking.Entities.Models
         public short FEETYPEID { get; set; }
 
         public bool? RECURRING { get; set; }
+        public string SHORTNAME { get; set; }
 
         public int COMPANYID { get; set; }
 
