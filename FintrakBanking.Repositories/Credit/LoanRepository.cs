@@ -2134,7 +2134,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.amount_financed = model.principalAmount.ToString();
             loanCreationModel.interest_rate = model.interestRate.ToString();
             loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME.ToUpper();
-            loanCreationModel.product_code = "AFLF"; //product.PRODUCTCODE;
+            loanCreationModel.product_code = product.PRODUCTCODE; //"AFLF"; //
             loanCreationModel.product_desc = product.PRODUCTNAME;
             loanCreationModel.source = "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
