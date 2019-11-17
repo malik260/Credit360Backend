@@ -567,7 +567,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                //facilityType = d.FACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -612,8 +612,8 @@ namespace FintrakBanking.Repositories.Credit
                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
                 amountDue = d.AMOUNTDUE,
-                expiringBandId = d.EXPIRINGBANDID,
-                expiringBand = d.EXPIRINGBAND,
+                //expiringBandId = d.EXPIRYGBANDID,
+                //expiringBand = d.EXPIRYGBAND,
                 unPoDaysOverdue = d.UNPODAYSOVERDUE,
             }).ToList();
 

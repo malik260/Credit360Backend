@@ -27,7 +27,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string PRODUCTCODE { get; set; }
         public string CURRENCYNAME { get; set; }
         public string PRODUCTNAME { get; set; }
-        public string FACILITYTYPE { get; set; }
+        //public string FACILITYTYPE { get; set; }
         public string ADJFACILITYTYPE { get; set; }
         public string ADJFACILITYTYPEid { get; set; }
         public string ODSTATUS { get; set; }
