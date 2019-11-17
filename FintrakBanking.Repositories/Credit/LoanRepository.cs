@@ -8932,7 +8932,7 @@ namespace FintrakBanking.Repositories.Credit
                                 outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                 reviewDate = DateTime.Now,
-                                bookingDateString = a.BOOKINGDATE,
+                                bookingDate = a.BOOKINGDATE,
                                 maturityDate = a.MATURITYDATE,
                                 //maturityDateString = a.MATURITYDATE,
                                 loanStatus = a.CBNCLASSIFICATION,
@@ -8944,7 +8944,7 @@ namespace FintrakBanking.Repositories.Credit
                     foreach (var e in exposure)
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCode);
-                        e.bookingDate = e.bookingDateString;
+                        //e.bookingDate = e.bookingDateString;
                         //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         e.productId = int.Parse(e.productIdString);
                     }
@@ -9014,33 +9014,33 @@ namespace FintrakBanking.Repositories.Credit
 
                 //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
-                exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
-                           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
-                           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                           select new CurrentCustomerExposure
-                           {
+                //exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                //           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                //           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                //           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                //           select new CurrentCustomerExposure
+                //           {
                                
-                               applicationStatusId = b.APPLICATIONSTATUSID,
-                               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                               customerCode = c.CUSTOMERCODE.Trim(),
-                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               approvedAmount = a.APPROVEDAMOUNT,
-                               currency = a.TBL_CURRENCY.CURRENCYNAME,
-                               //exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
-                               //adjFacilityType = a.ADJFACILITYTYPE,
-                               productId = a.TBL_PRODUCT.PRODUCTID,
-                               productName = a.TBL_PRODUCT.PRODUCTNAME,
-                               outstandings = 0,
-                               pastDueObligationsPrincipal = 0,
-                               reviewDate = DateTime.Now,
-                               //bookingDate = DateTime.Parse(a.BOOKINGDATE),
-                               //maturityDate = DateTime.Parse(a.MATURITYDATE),
-                               loanStatus = "Processing",
-                               referenceNumber = b.APPLICATIONREFERENCENUMBER
-                           };
+                //               applicationStatusId = b.APPLICATIONSTATUSID,
+                //               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                //               customerCode = c.CUSTOMERCODE.Trim(),
+                //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //               approvedAmount = a.APPROVEDAMOUNT,
+                //               currency = a.TBL_CURRENCY.CURRENCYNAME,
+                //               //exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
+                //               //adjFacilityType = a.ADJFACILITYTYPE,
+                //               productId = a.TBL_PRODUCT.PRODUCTID,
+                //               productName = a.TBL_PRODUCT.PRODUCTNAME,
+                //               outstandings = 0,
+                //               pastDueObligationsPrincipal = 0,
+                //               reviewDate = DateTime.Now,
+                //               //bookingDate = DateTime.Parse(a.BOOKINGDATE),
+                //               //maturityDate = DateTime.Parse(a.MATURITYDATE),
+                //               loanStatus = "Processing",
+                //               referenceNumber = b.APPLICATIONREFERENCENUMBER
+                //           };
 
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
 
                 //var staggingLoan = from a in stgCon.STG_LOAN_MART

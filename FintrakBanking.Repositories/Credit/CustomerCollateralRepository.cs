@@ -1910,7 +1910,6 @@ namespace FintrakBanking.Repositories.Credit
             var company = context.TBL_COMPANY.Find(companyId);
             bool disAllowCollateral = false;
             bool isForiegnCurrencyFacility = false;
-
             if (applicationId != null)
             {
                 var productIds = context.TBL_LOAN_APPLICATION_DETAIL
@@ -1974,7 +1973,7 @@ namespace FintrakBanking.Repositories.Credit
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First());
 
-            collaterals = ResolveCollateralValues(collaterals.ToList());
+            collaterals = ResolveCollateralValues(collaterals.ToList(), company);
             return collaterals.OrderByDescending(x => x.collateralId);
         }
         public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral(int? loanApplicationId, int currencyId, int companyId)
@@ -2537,8 +2536,9 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
-        private List<CollateralViewModel> ResolveCollateralValues(List<CollateralViewModel> collaterals)
+        private List<CollateralViewModel> ResolveCollateralValues(List<CollateralViewModel> collaterals, TBL_COMPANY company)
         {
+            var baseCurrencyId = company.TBL_CURRENCY.CURRENCYID;
             decimal usage;
             List<CollateralViewModel> list = new List<CollateralViewModel>();
             foreach (var collateral in collaterals)
@@ -2547,8 +2547,8 @@ namespace FintrakBanking.Repositories.Credit
                 var proposes = context.TBL_LOAN_APPLICATION_COLLATERL.Where(pc => pc.DELETED == false && pc.COLLATERALCUSTOMERID == collateral.collateralId).ToList();
                 usage = proposes.Sum(p => p.COLLATERALCOVERAGE);
                 var exchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, collateral.companyId);
-                collateral.collateralValueLcy = (decimal)collateral.collateralValue * (decimal)exchangeRate.sellingRate;
-                collateral.availableCollateralValue = (decimal)collateral.collateralValueLcy - usage;
+                collateral.collateralValueLcy = (collateral.currencyId == baseCurrencyId) ? 0 : (decimal)collateral.collateralValue * (decimal)exchangeRate.sellingRate;
+                collateral.availableCollateralValue = (collateral.currencyId == baseCurrencyId) ? ((decimal)collateral.collateralValue - usage) : (decimal)collateral.collateralValueLcy - usage;
                 list.Add(collateral);
             }
             return list;
@@ -8150,11 +8150,12 @@ namespace FintrakBanking.Repositories.Credit
                 targetId = collateral.COLLATERALCUSTOMERID;
                 jobReQuestCode = collateral.COLLATERALCODE;
                 alertSubject = "Collateral isitation reminder from FINTRAK 360(TEST ALERT)";
-                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com,tajudeen.onikoyi@fintraksoftware.com";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com," +
+                    "tajudeen.onikoyi@fintraksoftware.com,paul.asiemo@accessbankplc.com,felix.afighi@fintraksoftware.com,augustine.nwaka@fintraksoftware.com";
                 messageBody = $"Hello, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
-                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
-                               $"was visited on {lastVisit} by {staff.TBL_STAFF_ROLE.STAFFROLENAME + ", " + staff.FIRSTNAME + " " + staff.LASTNAME} and is due for the next visitation on {nextVisit}"
+                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                               $" was visited on {lastVisit} by {staff.TBL_STAFF_ROLE.STAFFROLENAME + ", " + staff.FIRSTNAME + " " + staff.LASTNAME} and is due for the next visitation on {nextVisit}"
                                ;
                 LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
             }
@@ -8189,10 +8190,11 @@ namespace FintrakBanking.Repositories.Credit
                 targetId = collateral.COLLATERALCUSTOMERID;
                 jobReQuestCode = collateral.COLLATERALCODE;
                 alertSubject = "Collateral Valuation Reminder from FINTRAK 360(TEST ALERT)";
-                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com,tajudeen.onikoyi@fintraksoftware.com";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com," +
+                    "tajudeen.onikoyi@fintraksoftware.com,paul.asiemo@accessbankplc.com,felix.afighi@fintraksoftware.com,augustine.nwaka@fintraksoftware.com";
                 messageBody = $"Hello, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
-                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
                                $" is due for the next Valuation on {valuationDate.ToShortDateString()}"
                                ;
                 LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
@@ -8222,10 +8224,11 @@ namespace FintrakBanking.Repositories.Credit
                     perfectionStatus = context.TBL_COLLATERAL_PERFECTN_STAT.FirstOrDefault(s => s.PERFECTIONSTATUSID == perfectionStatusId).PERFECTIONSTATUSNAME;
                 }
                 alertSubject = "Collateral Status Update from FINTRAK 360(TEST ALERT)";
-                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com,tajudeen.onikoyi@fintraksoftware.com";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com," +
+                    "tajudeen.onikoyi@fintraksoftware.com,paul.asiemo@accessbankplc.com,felix.afighi@fintraksoftware.com,augustine.nwaka@fintraksoftware.com";
                 messageBody = $"Hello, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
-                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
                                $" has it's perfection status updated as {perfectionStatus}"
                                ;
                 LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
@@ -8246,11 +8249,12 @@ namespace FintrakBanking.Repositories.Credit
             targetId = collateral.COLLATERALCUSTOMERID;
             jobReQuestCode = collateral.COLLATERALCODE;
             alertSubject = "Collateral Validity Update from FINTRAK 360(TEST ALERT)";
-            recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com,tajudeen.onikoyi@fintraksoftware.com";
+            recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com," +
+                "tajudeen.onikoyi@fintraksoftware.com,paul.asiemo@accessbankplc.com,felix.afighi@fintraksoftware.com,augustine.nwaka@fintraksoftware.com";
             messageBody = $"Hello, <br /><br />" +
                            $"This is to inform you that, <br /><br />" +
-                           $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
-                           $"now has a validity period that lasts till {newValidityDate.Value}"
+                           $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                           $" now has a validity period that lasts till {newValidityDate.Value}"
                            ;
             LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
 
@@ -8268,8 +8272,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 string messageSubject = alertSubject;
                 string messageContent = messageBody;
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
-                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                string templateUrl = messageContent;
+                //string templateUrl = "~/EmailTemplates/Monitoring.html";
+                //string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                string mailBody = messageContent;
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
                     MessageSubject = messageSubject,
