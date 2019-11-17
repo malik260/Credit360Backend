@@ -6,7 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.Linq;
     using FintrakBanking.Entities.AlertReportingModels;
 
-    [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
+    //[DbConfigurationType(typeof(OracleDatabaseConfiguration))]
+    [DbConfigurationType(typeof(SqlDatabaseConfiguration))]
     public partial class FinTrakBankingContext : DbContext
     {
         public FinTrakBankingContext()

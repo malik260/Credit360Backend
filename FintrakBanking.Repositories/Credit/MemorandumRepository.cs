@@ -356,7 +356,7 @@ namespace FintrakBanking.Repositories.Credit
                 else
                 if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
                 {
-                    this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == loanApplication.CUSTOMERID).ADDRESS;
+                    this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == loanApplication.CUSTOMERID)?.ADDRESS;
                 }
                 //this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
                 this.isRelatedParty = loanApplication.ISRELATEDPARTY == true ? "Yes" : "No";
@@ -515,7 +515,7 @@ namespace FintrakBanking.Repositories.Credit
                     //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     //this.customerExposure = CustomerExposureMarkup();
             }
-                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId).CHARGEFEEID;
+                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId)?.CHARGEFEEID;
             
                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
                 string customerName = String.Empty;

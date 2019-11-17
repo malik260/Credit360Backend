@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\SqlDatabaseConfiguration.cs" />
     <Compile Include="Models\TBL_ALERT_USER_SECURITY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_RATIO_CATEGORY.cs" />
     <Compile Include="Models\TBL_GLOBAL_EXPOSURE.cs" />
