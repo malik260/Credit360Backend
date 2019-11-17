@@ -20,7 +20,7 @@ namespace FintrakBanking.Interfaces.CRMS
         CRMSRecord GenerateBatchPosting(DateRange model);
 
         bool GenerateCRMSCodes(List<string> applicationReferenceNumbers, UserViewModel model);
-
+        bool GenerateCRMSCode(string applicationReferenceNumber, int loanBookingRequestId, UserViewModel model);
 
     }
 }

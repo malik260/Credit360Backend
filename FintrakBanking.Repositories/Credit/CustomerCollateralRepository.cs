@@ -1910,7 +1910,6 @@ namespace FintrakBanking.Repositories.Credit
             var company = context.TBL_COMPANY.Find(companyId);
             bool disAllowCollateral = false;
             bool isForiegnCurrencyFacility = false;
-
             if (applicationId != null)
             {
                 var productIds = context.TBL_LOAN_APPLICATION_DETAIL
@@ -1974,7 +1973,7 @@ namespace FintrakBanking.Repositories.Credit
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First());
 
-            collaterals = ResolveCollateralValues(collaterals.ToList());
+            collaterals = ResolveCollateralValues(collaterals.ToList(), company);
             return collaterals.OrderByDescending(x => x.collateralId);
         }
         public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral(int? loanApplicationId, int currencyId, int companyId)
@@ -2537,8 +2536,9 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
-        private List<CollateralViewModel> ResolveCollateralValues(List<CollateralViewModel> collaterals)
+        private List<CollateralViewModel> ResolveCollateralValues(List<CollateralViewModel> collaterals, TBL_COMPANY company)
         {
+            var baseCurrencyId = company.TBL_CURRENCY.CURRENCYID;
             decimal usage;
             List<CollateralViewModel> list = new List<CollateralViewModel>();
             foreach (var collateral in collaterals)
@@ -2547,8 +2547,8 @@ namespace FintrakBanking.Repositories.Credit
                 var proposes = context.TBL_LOAN_APPLICATION_COLLATERL.Where(pc => pc.DELETED == false && pc.COLLATERALCUSTOMERID == collateral.collateralId).ToList();
                 usage = proposes.Sum(p => p.COLLATERALCOVERAGE);
                 var exchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, collateral.companyId);
-                collateral.collateralValueLcy = (decimal)collateral.collateralValue * (decimal)exchangeRate.sellingRate;
-                collateral.availableCollateralValue = (decimal)collateral.collateralValueLcy - usage;
+                collateral.collateralValueLcy = (collateral.currencyId == baseCurrencyId) ? 0 : (decimal)collateral.collateralValue * (decimal)exchangeRate.sellingRate;
+                collateral.availableCollateralValue = (collateral.currencyId == baseCurrencyId) ? ((decimal)collateral.collateralValue - usage) : (decimal)collateral.collateralValueLcy - usage;
                 list.Add(collateral);
             }
             return list;

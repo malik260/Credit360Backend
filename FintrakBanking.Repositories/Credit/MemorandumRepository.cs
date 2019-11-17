@@ -2427,7 +2427,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     foreach (var product in cust)
                     {
-                        var facility = product.productName;
+                        var facility = product.facilityType;
                         var currency = product.currency;
                         var currentAmount = product.outstandings;
                         var approvedAmount = product.approvedAmount;
@@ -2485,7 +2485,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     foreach (var product in cust)
                     {
-                        var facility = product.productName;
+                        var facility = product.facilityType;
                         var currency = product.currency;
                         var currentAmount = product.outstandings;
                         var approvedAmount = product.approvedAmount;
@@ -2546,7 +2546,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         foreach (var product in cust)
                         {
-                            var facility = product.productName;
+                            var facility = product.facilityType;
                             var currency = product.currency;
                             var currentAmount = product.outstandings;
                             var approvedAmount = product.approvedAmount;
@@ -2606,7 +2606,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         foreach (var product in cust)
                         {
-                            var facility = product.productName;
+                            var facility = product.facilityType;
                             var currency = product.currency;
                             var currentAmount = product.outstandings;
                             var approvedAmount = product.approvedAmount;
@@ -3475,7 +3475,7 @@ namespace FintrakBanking.Repositories.Credit
                             outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                             pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                             reviewDate = DateTime.Now,
-                            bookingDateString = a.BOOKINGDATE,
+                            bookingDate = a.BOOKINGDATE,
                             //maturityDateString = a.MATURITYDATE,
                             maturityDate = a.MATURITYDATE,
                             loanStatus = a.CBNCLASSIFICATION,
@@ -3487,7 +3487,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach(var e in exposure)
                 {
                     e.exposureTypeId = int.Parse(e.exposureTypeCode);
-                    e.bookingDate = e.bookingDateString;
+                    //e.bookingDate = e.bookingDateString;
                     //e.maturityDate = DateTime.Parse(e.maturityDateString);
                     e.productId = int.Parse(e.productIdString);
                 }

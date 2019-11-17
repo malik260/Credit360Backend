@@ -448,6 +448,7 @@ namespace FintrakBanking.Common.Enum
         LienProposed = 549,
         LienUnproposed = 550,
         DocumentTemplatePrinted = 551,
+        CrmsRecordAdded = 552
     };
     public enum RegulatoryTypeEnum
     {

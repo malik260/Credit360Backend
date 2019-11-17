@@ -2906,6 +2906,27 @@ namespace FintrakBanking.Repositories.CRMS
             return true;
         }
 
+        public bool GenerateCRMSCode(string applicationReferenceNumber, int loanBookingRequestId, UserViewModel model)
+        {
+            int ctr = 1;
+            try
+            {
+                    var crmsModels = GenerateCRMSReport(applicationReferenceNumber, model.companyId, ctr);
+                    foreach (var crmsModel in crmsModels)
+                    {
+                        var result = integration.FetchCBNCRMSCode(crmsModel, crmsModel.loanSystemTypeId);
+
+                        var bookingRequest = context.TBL_LOAN_BOOKING_REQUEST.FirstOrDefault(r => r.LOAN_BOOKING_REQUESTID == loanBookingRequestId);
+                        //TODO method to save CRMSCODE into TBL_LOAN_BOOKING_REQUEST
+                    }
+            }
+            catch(Exception e)
+            {
+                throw new ConditionNotMetException("Automatic CRMS Code Generation Failed." + "Core Banking API error: "+e.Message);
+            }
+            return true;
+        }
+
         private List<CRMSCodeGeneration> GenerateCRMSReport(string applicationReferenceNumber, int companyId, int serial )
         {
             var tLoan = new List<CRMSCodeGeneration>();
