@@ -31,6 +31,8 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string ADJFACILITYTYPE { get; set; }
         public string ADJFACILITYTYPEid { get; set; }
         public string ODSTATUS { get; set; }
+        public string EXPIRINGBAND { get; set; }
+        public string EXPIRYBANDID { get; set; }
         public string CURRENCYTYPE { get; set; }
         public string CBNSECTOR { get; set; }
         public string CBNSECTORADJUSTED { get; set; }
@@ -71,7 +73,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public decimal? TOTAEXPOSURELCYPREVIOUSDAY { get; set; }
         public decimal? TOTALEXPOSURE { get; set; }
         public decimal? IMPAIRMENTAMOUNT { get; set; }
-        public decimal? UNPAIDOBLIGATIONAMOUNT { get; set; }
+        public decimal? TOTALUNPAIDOBLIGATION { get; set; }
         public decimal? UNPOINTERESTAMOUNT { get; set; }
         public decimal? INTERESTRECEIVABLETCY { get; set; }
         public decimal? AMOUNTDUE { get; set; }

@@ -8930,7 +8930,7 @@ namespace FintrakBanking.Repositories.Credit
                                 //proposedLimit = a.LOANAMOUNYLCY ?? 0,
                                 outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
                                 outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                                pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
+                                pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
                                 reviewDate = DateTime.Now,
                                 bookingDate = a.BOOKINGDATE,
                                 maturityDate = a.MATURITYDATE,
