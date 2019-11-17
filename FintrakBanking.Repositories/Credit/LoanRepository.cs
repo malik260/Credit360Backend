@@ -9073,6 +9073,11 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
+            if (exposures.Count() == 0)
+            {
+                return exposures;
+            }
+
             exposures.Add(new CurrentCustomerExposure
             {
                 facilityType = "TOTAL",

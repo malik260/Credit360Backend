@@ -6,7 +6,8 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.Linq;
     using FintrakBanking.Entities.Models;
 
-    [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
+    //[DbConfigurationType(typeof(OracleDatabaseConfiguration))]
+    [DbConfigurationType(typeof(SqlDatabaseConfiguration))]
     public partial class FinTrakBankingDocumentsContext : DbContext
     {
         
