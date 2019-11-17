@@ -17,6 +17,13 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public int loanApplicationId { get; set; }
     }
 
+    public class GroupRatingAndRatioViewModel : GeneralEntity
+    {
+        public string ratioHeader { get; set; }
+        public List<RatingAndRatioViewModel> ratio { get; set; }
+
+    }
+
     public class CutomerRatingViewModel : GeneralEntity
     {
         //public string companYRating { get; set; }

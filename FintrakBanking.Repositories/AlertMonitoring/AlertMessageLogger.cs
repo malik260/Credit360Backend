@@ -2336,10 +2336,6 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         }
 
 
-
-
-
-
         public bool SendAlertOnInsuranceApprochingExpiration(string title, string messageBody)
         {
             var alertSetups = getAlertMessageSetting();

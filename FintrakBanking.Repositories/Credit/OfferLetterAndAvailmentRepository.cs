@@ -5,6 +5,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using FintrakBanking.Interfaces.CRMS;
 using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
@@ -34,6 +35,7 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
         private ICreditLimitValidationsRepository limitValidation;
         private CreditCommonRepository creditCommon;
+        //private ICRMSRegulatories crmsRegulatories;
 
         //private IApprovalLevelStaffRepository approvalLevel;
         //private ILoanRepository loans;
@@ -46,6 +48,7 @@ namespace FintrakBanking.Repositories.Credit
             IWorkflow _workflow,
             ICreditLimitValidationsRepository _limitValidation,
             CreditCommonRepository _creditCommon, IReportRoutes _reportRoutes
+            //ICRMSRegulatories _crmsRegulatories
             //ILoanRepository _loans  
             )
         {
@@ -57,6 +60,7 @@ namespace FintrakBanking.Repositories.Credit
             limitValidation = _limitValidation;
             creditCommon = _creditCommon;
             reportRoutes = _reportRoutes;
+            //crmsRegulatories = _crmsRegulatories;
             //loans = _loans;
         }
 
@@ -74,7 +78,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var auditRec = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.StaffReliefUpdated,
+                AUDITTYPEID = (short)AuditTypeEnum.CrmsRecordAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Record Added For CRMS Collateral On Loan Detail '{model.applicationId}'",

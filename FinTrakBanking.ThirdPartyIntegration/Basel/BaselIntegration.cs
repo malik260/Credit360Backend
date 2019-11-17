@@ -125,6 +125,85 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
+        public async Task<List<GroupRatingAndRatioViewModel>> GetAllCustomerRatios(string customerNumber)
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
+            HttpClient client = new HttpClient(handler);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+            ResponseMessageViewModel res = null;
+            string responseMessage = "";
+            string endPointUrl = $"{API_URL}GetAllCorporateRatios/{customerNumber}?key={API_KEY}";
+            try
+            {
+                handler.UseDefaultCredentials = true;
+
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback +=
+                    (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
+
+                try
+                {
+                    response = await client.GetAsync(endPointUrl);
+                    responseDateTime = DateTime.Now;
+                }
+                catch (Exception e) { throw new ConditionNotMetException(e.Message); }
+
+                responseMessage = await response.Content.ReadAsStringAsync();
+                List<GroupRatingAndRatioViewModel> customerGroupRatios = new List<GroupRatingAndRatioViewModel>();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsAsync<List<GroupRatingAndRatioViewModel>>();
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    customerGroupRatios = result;
+
+                }
+
+                return customerGroupRatios;
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new APIErrorException($"Error" + ex.Message);
+            }
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = endPointUrl,
+                    LOGTYPEID = 3,
+                    REFERENCENUMBER = customerNumber.ToString(),
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = customerNumber,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                logContext.SaveChanges();
+            }
+        }
+
+
         public async Task<CutomerRatingViewModel> GetCorporateCustomerRatingByCustomerCode(string customerNumber)
         {
             HttpClientHandler handler = new HttpClientHandler();

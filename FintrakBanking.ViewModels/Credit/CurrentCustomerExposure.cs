@@ -71,7 +71,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int id { get; set; }
         public string customerId { get; set; }
-        public string date { get; set; }
+        public DateTime date { get; set; }
         public string customerName { get; set; }
         public string groupObligorName { get; set; }
         public string referenceNumber { get; set; }
@@ -96,13 +96,13 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime maturityDate { get; set; }
         public string location { get; set; }
         public DateTime bookingDate { get; set; }
-        public string valueDate { get; set; }
+        public DateTime valueDate { get; set; }
         public string maturityBand { get; set; }
         public string customerType { get; set; }
         public string branchName { get; set; }           
         public string branchCode { get; set; }
         public string obligorRiskRating { get; set; }
-        public string lastCrDate { get; set; }
+        public DateTime lastCrDate { get; set; }
         public string productId { get; set; }
         public string exposureTypeCode { get; set; }
         public string exposureType { get; set; }
