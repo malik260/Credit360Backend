@@ -1494,7 +1494,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 //proposedLimit = a.LOANAMOUNYLCY ?? 0,
                                 outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                                pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
+                                pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
                                 reviewDate = DateTime.Now,
                                 bookingDate = a.BOOKINGDATE,
                                 //maturityDateString = a.MATURITYDATE,
