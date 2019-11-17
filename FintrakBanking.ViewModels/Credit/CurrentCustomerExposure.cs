@@ -129,6 +129,11 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? interestReceivableTcy { get; set; }
         public decimal? amountDue { get; set; }
         public string interestrate { get; set; }
+        public int maturityDays { get; set; }
+        public string expiringBandId { get; set; }
+        public string expiringBand { get; set; }
+        public int unPoDaysOverdue { get; set; }
+        public DateTime scheduleDueDate { get; set; }
     }
 }
 

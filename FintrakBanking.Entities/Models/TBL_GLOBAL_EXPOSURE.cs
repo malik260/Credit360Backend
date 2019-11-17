@@ -75,7 +75,11 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public decimal? UNPOINTERESTAMOUNT { get; set; }
         public decimal? INTERESTRECEIVABLETCY { get; set; }
         public decimal? AMOUNTDUE { get; set; }
-
-        //public string DIVISIONID { get; set; }
+        public string EXPIRINGBANDID { get; set; }
+        public string EXPIRINGBAND { get; set; }
+        public int UNPODAYSOVERDUE { get; set; }
+        public DateTime SCHEDULEDUEDATE { get; set; }
+        public string EXPIRYBANDID { get; set; }
+        public string MATURITYBANDID { get; set; }
     }
 }

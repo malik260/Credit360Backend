@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = context.TBL_GLOBAL_EXPOSURE.Where(d =>
             days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value))
             .Select(d => new GlobalExposureViewModel
-              {
+            {
                 customerName = d.CUSTOMERNAME,
                 accountOfficerName = d.ACCOUNTOFFICERNAME,
                 accountNumber = d.ACCOUNTNUMBER,
@@ -131,6 +131,7 @@ namespace FintrakBanking.Repositories.Credit
                 referenceNumber = d.REFERENCENUMBER,
                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
                 date = d.DATE,
+                maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
                 customerId = d.CUSTOMERID,
                 groupObligorName = d.GROUPOBLIGORNAME,
 
@@ -548,8 +549,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCreditCardDelinquencyMonitoringReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
             .Select(d => new GlobalExposureViewModel
             {
                 customerName = d.CUSTOMERNAME,
@@ -612,6 +612,9 @@ namespace FintrakBanking.Repositories.Credit
                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
                 amountDue = d.AMOUNTDUE,
+                expiringBandId = d.EXPIRINGBANDID,
+                expiringBand = d.EXPIRINGBAND,
+                unPoDaysOverdue = d.UNPODAYSOVERDUE,
             }).ToList();
 
             return data;
@@ -619,8 +622,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetPastDueObligationsReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-                && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
                .Select(d => new GlobalExposureViewModel
                {
                    customerName = d.CUSTOMERNAME,
@@ -669,8 +671,8 @@ namespace FintrakBanking.Repositories.Credit
                    principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                    loanAmounyLcy = d.LOANAMOUNYLCY,
                    loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
+                   //shf = d.SHF,
+                   sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
                    sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
                    totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
                    totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
@@ -683,6 +685,7 @@ namespace FintrakBanking.Repositories.Credit
                    unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
                    interestReceivableTcy = d.INTERESTRECEIVABLETCY,
                    amountDue = d.AMOUNTDUE,
+                   unPoDaysOverdue = d.UNPODAYSOVERDUE,
                }).ToList();
 
             return data;
@@ -690,8 +693,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+             var data = context.TBL_GLOBAL_EXPOSURE.Where(d=>DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value == 30)
              .Select(d => new GlobalExposureViewModel
              {
                  customerName = d.CUSTOMERNAME,
@@ -740,8 +742,8 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
+                 //shf = d.SHF,
+                 sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
                  sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
                  totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
                  totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
