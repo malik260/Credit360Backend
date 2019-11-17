@@ -4,8 +4,10 @@ namespace FintrakBanking.Entities.StagingModels
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
+    using FintrakBanking.Entities.Models;
 
-    [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
+    //[DbConfigurationType(typeof(OracleDatabaseConfiguration))]
+    [DbConfigurationType(typeof(SqlDatabaseConfiguration))]
     public partial class FinTrakBankingStagingContext : DbContext
     {
         public FinTrakBankingStagingContext()
