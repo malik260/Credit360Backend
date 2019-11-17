@@ -64,18 +64,18 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string FXRATE { get; set; }
         public float? SHF { get; set; }
         public string INTERESTRATE { get; set; }
-        public decimal? SECTIONEDLOANLIMITDIRECTFCY { get; set; }
+        //public decimal? SECTIONEDLOANLIMITDIRECTFCY { get; set; }
         public decimal? SECTIONEDLOANLIMITDIRECTLCY { get; set; }
-        public decimal? TOTALEXPOSULCYPREVIOUSYEAR { get; set; }
-        public decimal? TOTAEXPOSURELCYPREVIOUS6MONTHS { get; set; }
-        public decimal? TOTAEXPOSURELCYPREVIOUS3MONTHS { get; set; }
-        public decimal? TOTAEXPOSURELCYPREVIOUSMONTHS { get; set; }
-        public decimal? TOTAEXPOSURELCYPREVIOUSDAY { get; set; }
+        //public decimal? TOTALEXPOSULCYPREVIOUSYEAR { get; set; }
+        //public decimal? TOTAEXPOSURELCYPREVIOUS6MONTHS { get; set; }
+        //public decimal? TOTAEXPOSURELCYPREVIOUS3MONTHS { get; set; }
+        //public decimal? TOTAEXPOSURELCYPREVIOUSMONTHS { get; set; }
+        //public decimal? TOTAEXPOSURELCYPREVIOUSDAY { get; set; }
         public decimal? TOTALEXPOSURE { get; set; }
         public decimal? IMPAIRMENTAMOUNT { get; set; }
         public decimal? TOTALUNPAIDOBLIGATION { get; set; }
         public decimal? UNPOINTERESTAMOUNT { get; set; }
-        public decimal? INTERESTRECEIVABLETCY { get; set; }
+        public decimal? INTERESTRECIEVABLETCY { get; set; }
         public decimal? AMOUNTDUE { get; set; }
         public int UNPODAYSOVERDUE { get; set; }
 
