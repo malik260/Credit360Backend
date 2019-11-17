@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,54 +51,14 @@ namespace FintrakBanking.Repositories.Setups.General
                               senderName = a.SENDERNAME,
                               templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS",
                               defaultEmail = a.DEFAULTEMAIL,
-                              //lastSentDate = a.LASTSENTDATE,
-                              //source = a.SOURECE,
+                              lastSentDate = a.LASTSENTDATE,
+                              actionStatus = a.ACTIONSTATUS,
+                              bindingMethod = a.BINDINGMETHOD,
                           });
             return alerts;
         }
 
-        public IEnumerable<ExternalAlertViewModel> GetAllExternalAlerts()
-        {
-            var alerts = (from a in context.TBL_GLOBAL_EXPOSURE
-                          select new ExternalAlertViewModel
-                          {
-                              //id = a.id,
-                              //accountName = a.AccountName,
-                              //accountNumber = a.AccountNumber,
-                              //accountStatus = a.AccountStatus,
-                              //accountOfficerName = a.AccountOfficerName,
-                              //accountType = a.AccountType,
-                              //cbnClassification = a.CBNClassification,
-                              //customerName = a.CustomerName,
-                              //dormancyDays = a.DormancyDays,
-                              //ifrsClassification = a.IFRSClassification,
-                              //divisionName = a.DivisionName,
-                              //groupHeadName = a.GroupHeadName,
-                              //groupObligorName = a.GroupObligorName,
-                              //date = a.Date,
-                              //expiringBand = a.ExpiringBand,
-                              //ageLastCreditDate = a.AgeLastCreditDate,
-                              //bookingDate = a.BookingDate,
-                              //npl = a.npl,
-                              //originalAmountDisbursed = a.OriginalAmountDisbursed,
-                              //totalExposureLcy = a.TotalExposureLCY,
-                              //loanAmountLcy = a.LoanAmountLCY,
-                              //lastCreditAmount = a.LastCreditAmount,
-                              //principalBalance = a.PrincipalBalance,
-                              //shareOfShf = a.ShareOfSHF,
-                              //principalOutstandingBalanceFcy = a.PrincipalOutstandingBalanceFCY,
-                              //unpoDaysOverdue = a.UNPODaysOverdue,
-                              //averageBalance = a.AverageBalance,
-                              //amountDue = a.AmountDue,
-                              //totalUnpaidObligation = a.TotalUnpaidObligation,
-                              //maturityDate = a.MaturityDate,
-                              //scheduleDueDate = a.ScheduleDueDate,
-                             // divisionId = a.DIVISIONID 
-                          });
-            return alerts;
-        }
-
-        public IEnumerable<AlertTitleViewModel> GetAlerts()
+       public IEnumerable<AlertTitleViewModel> GetAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE
                           select new AlertTitleViewModel
@@ -111,9 +72,9 @@ namespace FintrakBanking.Repositories.Setups.General
                               senderName = a.SENDERNAME,
                               templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
                               defaultEmail = a.DEFAULTEMAIL,
-                              //bindingType = a.BINDINGTYPE,
-                              //lastSentDate = a.LASTSENTDATE,
-                              //source = a.SOURECE,
+                              lastSentDate = a.LASTSENTDATE,
+                              actionStatus = a.ACTIONSTATUS,
+                              bindingMethod = a.BINDINGMETHOD,
                           });
             return alerts;
         }
@@ -132,9 +93,9 @@ namespace FintrakBanking.Repositories.Setups.General
                              senderName = a.SENDERNAME,
                              templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
                              defaultEmail = a.DEFAULTEMAIL,
-                             //bindingType = a.BINDINGTYPE,
-                             //lastSentDate = a.LASTSENTDATE,
-                             //source = a.SOURECE,
+                             lastSentDate = a.LASTSENTDATE,
+                             actionStatus = a.ACTIONSTATUS,
+                             bindingMethod = a.BINDINGMETHOD,
                          }).FirstOrDefault();
             return alert;
         }
@@ -150,9 +111,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 SENDERNAME = model.senderName,
                 TEMPLATETYPE = model.templateType,
                 DEFAULTEMAIL = model.defaultEmail,
-                //BINDINGTYPE = model.bindingType,
+                BINDINGMETHOD = model.bindingMethod,
                 //LASTSENTDATE = general.GetApplicationDate(),
-                //SOURECE = model.source,
+                ACTIONSTATUS = 1,
             };
 
             context.TBL_ALERT_TITLE.Add(entity);
@@ -187,9 +148,9 @@ namespace FintrakBanking.Repositories.Setups.General
             entity.SENDEREMAIL = model.senderEmail;
             entity.TEMPLATETYPE = model.templateType;
             entity.DEFAULTEMAIL = model.defaultEmail;
-            //entity.BINDINGTYPE = model.bindingType;
+            entity.BINDINGMETHOD = model.bindingMethod;
             //entity.LASTSENTDATE = general.GetApplicationDate();
-            //entity.SOURECE = model.source;
+            entity.ACTIONSTATUS = 1;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -866,43 +827,81 @@ namespace FintrakBanking.Repositories.Setups.General
 
         //var cause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
         //cause = cause.Replace("{@RelationshipManagerName}", "");
-        //        cause = cause.Replace("{@BusinessManagerName}", "");
+        //      cause = cause.Replace("{@BusinessManagerName}", "");
 
 
         #region ALERT ENGINE
         public void validateAlertCheck()
         {
-            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            GetImminentMaturities();
+        }
 
-            var alertSuject = context.TBL_ALERT_TITLE;
-            var alertSetup = context.TBL_ALERT_SETUP;
-            foreach (var i in alertSetup)
+        public void GetImminentMaturities()
+        {
+            // GetImminentMaturities method
+            var imminentMaturities = externalAlertRepository.GetImminentMaturities();
+            var alertTitle = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities").Select(a => a.TITLE).FirstOrDefault();
+            var alertTemplate = context.TBL_ALERT_TITLE.Where(b => b.BINDINGMETHOD == "GetImminentMaturities").Select(b => b.TEMPLATE).FirstOrDefault();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            foreach (var i in imminentMaturities)
             {
                 AlertsViewModel alert = new AlertsViewModel();
+                var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
 
-                var alertcategory = context.TBL_ALERT_TITLE.Where(x => x.ALERTTITLEID == i.TITLEID).FirstOrDefault();
-                if (alertcategory != null)
-                {
-                    alert.alertTitle = alertcategory.TITLE;
-                    //alert.template = externalAlertRepository.Replace(alertcategory.TEMPLATE);
+                List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+                var accountNumbers = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == i.accountOfficerCode).ToList();
+                
+                alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
+                alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", accountNumbers.ToString());
+                alertTemplate = alertTemplate.Replace("@{{days}}", i.maturityDays.ToString());
 
-                    if (validateConditionTrigger(i.FREQUENCYID, i.CONDITIONID ?? 0))
-                    {
-                        alert.canFire = true;
-                        var levels = GetReceivergroup(i.LEVELGROUPID);
-                        foreach (var level in levels)
-                        {
-                            var levelRecord = context.TBL_ALERT_STAFF_ROLE.Where(x => x.LEVELCODE == level.levelCode).ToList();
-                            alert.receiverEmailList.AddRange(levelRecord.Select(x => x.EMAILLIST));
-                        }
-                    }
-                    else { alert.canFire = false; }
-                }
+                var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL;
+                alert.receiverEmailList.Add(emailList);
+                alert.template = alertTemplate;
+                alert.alertTitle = alertTitle;
+                alert.canFire = true;
 
                 alerts.Add(alert);
             }
             postAlertNotification(alerts);
         }
+
+
+        //public void validateAlertCheck()
+        //{
+        //    List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+
+        //    var alertSuject = context.TBL_ALERT_TITLE;
+        //    var alertSetup = context.TBL_ALERT_SETUP;
+        //    foreach (var i in alertSetup)
+        //    {
+        //        AlertsViewModel alert = new AlertsViewModel();
+
+        //        var alertcategory = context.TBL_ALERT_TITLE.Where(x => x.ALERTTITLEID == i.TITLEID).FirstOrDefault();
+        //        if (alertcategory != null)
+        //        {
+        //            alert.alertTitle = alertcategory.TITLE;
+        //            // alert.template = externalAlertRepository.GetAccountDeferralReport();
+
+        //            if (validateConditionTrigger(i.FREQUENCYID, i.CONDITIONID ?? 0))
+        //            {
+        //                alert.canFire = true;
+        //                var levels = GetReceivergroup(i.LEVELGROUPID);
+        //                foreach (var level in levels)
+        //                {
+        //                    var levelRecord = context.TBL_ALERT_STAFF_ROLE.Where(x => x.LEVELCODE == level.levelCode).ToList();
+        //                    alert.receiverEmailList.AddRange(levelRecord.Select(x => x.EMAILLIST));
+        //                }
+        //            }
+        //            else { alert.canFire = false; }
+        //        }
+
+        //        alerts.Add(alert);
+        //    }
+        //    postAlertNotification(alerts);
+        //}
 
         private void postAlertNotification(List<AlertsViewModel> alerts)
         {

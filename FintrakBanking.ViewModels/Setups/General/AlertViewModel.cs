@@ -20,6 +20,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string senderEmail { get; set; }
         public string templateType { get; set; }
         public string defaultEmail { get; set; }
+        public string bindingMethod { get; set; }
+        public DateTime? lastSentDate { get; set; }
+        public int? actionStatus { get; set; }
+
         //public DateTime lastSentDate { get; set; }
         //public int source { get; set; }
     }
@@ -72,6 +76,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string template { get; set; }
         public bool canFire { get; set; }
         public int alertTitleId { get; set; }
+        public string accountOfficerEmail { get; set; }
     }
 
     public class AlertMisViewModel : GeneralEntity
