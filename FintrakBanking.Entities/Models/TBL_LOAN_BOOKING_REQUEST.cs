@@ -40,6 +40,8 @@ namespace FintrakBanking.Entities.Models
         public int? CASAACCOUNTID2 { get; set; }
         public short PRODUCTID { get; set; }
 
+        public string CRMSCODE { get; set; }
+
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF { get; set; }
