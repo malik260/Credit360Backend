@@ -39,7 +39,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CASAACCOUNTID2 { get; set; }
         public short PRODUCTID { get; set; }
-
+        [StringLength(50)]
         public string CRMSCODE { get; set; }
 
         public bool? SECUREDBYCOLLATERAL { get; set; }
