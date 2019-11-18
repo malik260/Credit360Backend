@@ -114,7 +114,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? loanAmounyLcy { get; set; }
         public string cardLimit { get; set; }
         public string fxrate { get; set; }
-        public float? shf { get; set; }
+        public decimal? shf { get; set; }
         public decimal? sectionedLoanLimitDirectFcy { get; set; }
         public decimal? sectionedLoanLimitDirectLcy { get; set; }
         public decimal? totalExposuLcyPreviousYear { get; set; }

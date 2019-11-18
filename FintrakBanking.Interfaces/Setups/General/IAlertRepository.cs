@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IAlertRepository
     {
+        void GetImminentMaturities();
         void LogEmailAlert(string messageBody, string alertSubject, string recipients, string referenceCode, int targetId);
         IEnumerable<AlertTitleViewModel> GetAllAlerts();
         bool AddAlertTitle(AlertTitleViewModel model);

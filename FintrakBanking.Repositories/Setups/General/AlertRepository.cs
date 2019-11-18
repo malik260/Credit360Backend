@@ -37,6 +37,8 @@ namespace FintrakBanking.Repositories.Setups.General
             this.externalAlertRepository = _externalAlertRepository; 
         }
 
+        public AlertRepository() {}
+
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE                  
@@ -826,14 +828,12 @@ namespace FintrakBanking.Repositories.Setups.General
         #region ALERT ENGINE
         public void validateAlertCheck()
         {
-            //GetImminentMaturities();
+            GetImminentMaturities();
             //GetCreditCardMaturingObligations();
         }
 
         public void GetImminentMaturities()
         {
-            try
-            {
                 // GetImminentMaturities method
                 var imminentMaturities = externalAlertRepository.GetImminentMaturities();
                 var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities").FirstOrDefault();
@@ -849,9 +849,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 foreach (var i in imminentMaturities)
                 {
                     AlertsViewModel alert = new AlertsViewModel();
-                    var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
-                    var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
-                    var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+                    //alert.receiverEmailList = new List<string>();
+                    //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                    //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
 
                     List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
                     var accountNumbers = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == i.accountOfficerCode).ToList();
@@ -890,10 +891,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     alerts.Add(alert);
                 }
                 postAlertNotification(alerts);
-            }catch(Exception e)
-            {
-                throw e;
-            }
         }
 
 

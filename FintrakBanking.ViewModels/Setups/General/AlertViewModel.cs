@@ -71,6 +71,11 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class AlertsViewModel : GeneralEntity
     {
+        public AlertsViewModel()
+        {
+            receiverEmailList = new List<string>();
+        }
+
         public string alertTitle { get; set; }
         public string frequencyMode { get; set; }
         public List<string> receiverEmailList { get; set; }

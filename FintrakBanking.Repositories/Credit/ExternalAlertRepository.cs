@@ -58,7 +58,7 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = d.ACCOUNTNUMBER,
                 branchName = d.GROUPOBLIGORNAME,
                 maturityDate = d.MATURITYDATE,
-                id = (short)d.ID,
+                id = d.ID,
                 customerId = d.CUSTOMERID,
                 groupObligorName = d.GROUPOBLIGORNAME,
                 referenceNumber = d.REFERENCENUMBER,
