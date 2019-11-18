@@ -42,6 +42,24 @@ namespace FintrakBanking.Entities.Models
 
         public string CRMSCODE { get; set; }
 
+        public bool? SECUREDBYCOLLATERAL { get; set; }
+        public int? CRMSCOLLATERALTYPEID { get; set; }
+        public int? MORATORIUMDURATION { get; set; }
+
+        public int? CRMSFUNDINGSOURCEID { get; set; }
+
+        public int? CRMSREPAYMENTSOURCEID { get; set; }
+        [StringLength(50)]
+        public string CRMSFUNDINGSOURCECATEGORY { get; set; }
+        [StringLength(50)]
+        public string CRMS_ECCI_NUMBER { get; set; }
+        [StringLength(50)]
+
+        public short? CRMSREPAYMENTAGREEMENTID { get; set; }
+        public bool? CRMSVALIDATED { get; set; }
+
+        public DateTime? CRMSDATE { get; set; }
+
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF { get; set; }
