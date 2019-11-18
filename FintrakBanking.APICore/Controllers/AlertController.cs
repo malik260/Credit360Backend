@@ -62,23 +62,6 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("load-alert-external")]
-        public HttpResponseMessage GetExternalAlerts()
-        {
-            try
-            {
-                var alertViewModels = _repo.GetAllExternalAlerts();
-                var totalRecords = alertViewModels.Count();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
-        [ClaimsAuthorization]
         [Route("alert-title/{id}")]
         public HttpResponseMessage GetAlertTitleById([FromUri] int id)
         {

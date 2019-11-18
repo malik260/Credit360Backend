@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var alertViewModels = _repo.GetOverlineMonitoringReport(); 
+                var alertViewModels = _repo.GetCreditCardDelinquencyMonitoringReport(); 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
             }
             catch (SecureException ex)

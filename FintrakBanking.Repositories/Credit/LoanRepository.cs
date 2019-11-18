@@ -2129,16 +2129,26 @@ namespace FintrakBanking.Repositories.Credit
             var casa = context.TBL_CASA.Find(model.casaAccountId);
             var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.loanApplicationDetailId);
             var app = facility.TBL_LOAN_APPLICATION;
+            var loanLoanRequest = (from b in context.TBL_LOAN
+                                  join r in context.TBL_LOAN_BOOKING_REQUEST on b.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
+                                  where b.LOANREFERENCENUMBER == loanReffernceNumber
+                                  select r).FirstOrDefault();
+
+            var fee = from lf in context.TBL_LOAN_FEE
+                      join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                      join l in context.TBL_LOAN on lf.LOANID equals l.TERMLOANID
+                      where l.LOANREFERENCENUMBER == loanReffernceNumber
+                      select new { feeShortName = f.SHORTNAME, feeRate = f.RATE };
 
             loanCreationModel.account_no = casa?.PRODUCTACCOUNTNUMBER;
             loanCreationModel.amount_financed = model.principalAmount.ToString();
             loanCreationModel.interest_rate = model.interestRate.ToString();
             loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME.ToUpper();
-            loanCreationModel.product_code = "AFLF"; //product.PRODUCTCODE;
+            loanCreationModel.product_code = product.PRODUCTCODE; //"AFLF"; //
             loanCreationModel.product_desc = product.PRODUCTNAME;
             loanCreationModel.source = "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
-            loanCreationModel.tax_rate = "5";
+            loanCreationModel.tax_rate = "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
             loanCreationModel.app_user_id = "FINTRAKUSR"; //staff.STAFFCODE;
@@ -2146,25 +2156,24 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
             loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");
             loanCreationModel.maturity_date = model.maturityDate.AddYears(1).ToString("yyyy-MM-dd"); //.ToString("yyyy-MM-dd");
-            //loanCreationModel.mgt_rate = "4";
-            //loanCreationModel.creditlife_rate = "0.5";
+
             loanCreationModel.no_of_financials = "11";
             loanCreationModel.due_dateson = "4";
             loanCreationModel.inst_date = model.bookingDate.AddMonths(1).ToString("yyyy-MM-dd");
-            loanCreationModel.advisory_fee = "10";
-            loanCreationModel.anniversary_fee = "0";
-            loanCreationModel.appraisal_fee = "1";
-            loanCreationModel.committment_fee = "1";
-            loanCreationModel.creditlife_fee = "0.5";
-            loanCreationModel.in_odchrg_fee = "12";
-            loanCreationModel.mgt_fee = "1";
-            loanCreationModel.penal_charge = "1";
-            loanCreationModel.prn_odchrg_fee = "11";
-            loanCreationModel.processing_fee = "1";
-            loanCreationModel.renann_fee = "0.25";
-            loanCreationModel.vehicle_ins = "5";
+            loanCreationModel.advisory_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault()?.feeRate);  //"10";
+            loanCreationModel.anniversary_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault()?.feeRate);  //"0";
+            loanCreationModel.appraisal_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault()?.feeRate);  //"1";
+            loanCreationModel.committment_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault()?.feeRate); //"1";
+            loanCreationModel.creditlife_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault()?.feeRate);  //"0.5";
+            loanCreationModel.in_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault()?.feeRate);  //"12";
+            loanCreationModel.mgt_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault()?.feeRate);  //"1";
+            loanCreationModel.penal_charge = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault()?.feeRate);  //"1";
+            loanCreationModel.prn_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault()?.feeRate);  //"11";
+            loanCreationModel.processing_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault()?.feeRate);  //"1";
+            loanCreationModel.renann_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault()?.feeRate);  //"0.25";
+            loanCreationModel.vehicle_ins = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault()?.feeRate);  //"5";
             loanCreationModel.vehicle_value = "100";
-            loanCreationModel.crms_ref_number = "00044/20150613/356687";
+            loanCreationModel.crms_ref_number = loanLoanRequest.CRMSCODE; // "00044/20150613/356687"; //loanLoanRequest
             loanCreationModel.comp_mis8 = "596912";
             loanCreationModel.freq_unit = "M";
             loanCreationModel.disbursement_type = "BOOKING";
@@ -2495,15 +2504,18 @@ namespace FintrakBanking.Repositories.Credit
                     if (operationId > 0) LogApproval(approvalModel, operationId, true, (short)ApprovalStatusEnum.Pending);
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
                     var loanLienDetail = context.TBL_APPLICATIONDETAIL_LIEN.FirstOrDefault(l => l.APPLICATIONDETAILID == request.LOANAPPLICATIONDETAILID && l.DELETED == false && l.ISRELEASED == false);
-                    if (loanLienDetail != null)
-                    {
-                        var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
-                        {
-                            username = "model.username",//for test, real value to be passed!!!
-                            passcode = "model.passCode"
-                        };
-                        PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails);
-                    }
+                    //if (loanLienDetail != null)
+                    //{
+                    //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                    //    {
+                    //        username = "model.username",//for test, real value to be passed!!!
+                    //        passcode = "model.passCode"
+                    //    };
+                    //    PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails);
+                    //}
+
+                    PlaceLien(request.LOANAPPLICATIONDETAILID, new TwoFactorAutheticationViewModel() { username = "model.username", passcode = "model.passCode" });
+
                     context.SaveChanges();
                     trans.Commit();
                     return 0;
@@ -7255,48 +7267,66 @@ namespace FintrakBanking.Repositories.Credit
 
                 var casaBalance = integration.GetCustomerAccountBalance(casa.PRODUCTACCOUNTNUMBER);
 
-                var lienModel = new FlexcubeLienViewModel
-                {
-                    account_no = casa.PRODUCTACCOUNTNUMBER,
-                    collateral_code = item.COLLATERALCODE,
-                    collateral_value = item.COLLATERALVALUE.ToString(),
-                    start_date = app.EFFECTIVEDATE.ToString(),
-                    end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToShortDateString(),
-                    collateral_id = item.COLLATERALCUSTOMERID.ToString(),
-                    contract_ref_no = app.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                    collateral_contribution = casaBalance.availableBalance.ToString(),
-                    branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
-                    channel_code = "FINTRAK",
-                    loanApplicationId = app.LOANAPPLICATIONID
-                };
+                //var lienModel = new FlexcubeLienViewModel
+                //{
+                //    account_no = casa.PRODUCTACCOUNTNUMBER,
+                //    collateral_code = item.COLLATERALCODE,
+                //    collateral_value = item.COLLATERALVALUE.ToString(),
+                //    start_date = app.EFFECTIVEDATE.ToString(),
+                //    end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToShortDateString(),
+                //    collateral_id = item.COLLATERALCUSTOMERID.ToString(),
+                //    contract_ref_no = app.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                //    collateral_contribution = casaBalance.availableBalance.ToString(),
+                //    branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
+                //    channel_code = "FINTRAK",
+                //    loanApplicationId = app.LOANAPPLICATIONID
+                //};
 
-                integration.FlexcubeCasaLien(lienModel);
+                //integration.FlexcubeCasaLien(lienModel);
             }
-    }
 
-    //private void PlaceLienForLoan(LoanBookingRequestViewModel model, TwoFactorAutheticationViewModel twoFactorAuthDetails)
-    //{
-    //    //TODO fetch the AccountBalance for account from the API
-    //    var casa = context.TBL_CASA.Find(model.casaAccountId2);
+            var lienModel = new FlexcubeLienViewModel
+            {
+                account_no = "0704490004",
+                collateral_code = "07044900D11",
+                collateral_value = "100",
+                start_date = app.EFFECTIVEDATE.Value.ToString("ddMMMyyyy"),
+                end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToString("ddMMMyyyy"),
+                collateral_id = "66611",
+                contract_ref_no = "0704490004",
+                collateral_contribution = "200",
+                branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
+                channel_code = "FINTRAK",
+                loanApplicationId = app.LOANAPPLICATIONID
+            };
 
-    //    var lienModel = new CasaLienViewModel
-    //    {
-    //        productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
-    //        sourceReferenceNumber = model.loanApplicationId.ToString(),
-    //        userBranchId = (short)model.userBranchId,
-    //        branchId = (short)model.sourceBranchId,
-    //        companyId = model.companyId,
-    //        lienAmount = model.approvedAmount, //loanRecord.PRINCIPALAMOUNT + loanRecord.OUTSTANDINGINTEREST,
-    //        description = "Lien for Fixed Deposit Collateral",
-    //        lienTypeId = (short)LienTypeEnum.IDFBooking,
-    //        createdBy = model.createdBy,
-    //        userIPAddress = model.userIPAddress,
-    //        applicationUrl = model.applicationUrl,
-    //    };
-    //    //casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
-    //}
+            integration.FlexcubeCasaLien(lienModel);
 
-    private bool UpdateLoanBookingRequests(int applicationStatusId, LoanBookingRequestViewModel model)
+        }
+
+        //private void PlaceLienForLoan(LoanBookingRequestViewModel model, TwoFactorAutheticationViewModel twoFactorAuthDetails)
+        //{
+        //    //TODO fetch the AccountBalance for account from the API
+        //    var casa = context.TBL_CASA.Find(model.casaAccountId2);
+
+        //    var lienModel = new CasaLienViewModel
+        //    {
+        //        productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+        //        sourceReferenceNumber = model.loanApplicationId.ToString(),
+        //        userBranchId = (short)model.userBranchId,
+        //        branchId = (short)model.sourceBranchId,
+        //        companyId = model.companyId,
+        //        lienAmount = model.approvedAmount, //loanRecord.PRINCIPALAMOUNT + loanRecord.OUTSTANDINGINTEREST,
+        //        description = "Lien for Fixed Deposit Collateral",
+        //        lienTypeId = (short)LienTypeEnum.IDFBooking,
+        //        createdBy = model.createdBy,
+        //        userIPAddress = model.userIPAddress,
+        //        applicationUrl = model.applicationUrl,
+        //    };
+        //    //casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
+        //}
+
+        private bool UpdateLoanBookingRequests(int applicationStatusId, LoanBookingRequestViewModel model)
         {
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.loanBookingRequestId);
 
@@ -8909,9 +8939,9 @@ namespace FintrakBanking.Repositories.Credit
                                 //proposedLimit = a.LOANAMOUNYLCY ?? 0,
                                 outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
                                 outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                                pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
+                                pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
                                 reviewDate = DateTime.Now,
-                                bookingDateString = a.BOOKINGDATE,
+                                bookingDate = a.BOOKINGDATE,
                                 maturityDate = a.MATURITYDATE,
                                 //maturityDateString = a.MATURITYDATE,
                                 loanStatus = a.CBNCLASSIFICATION,
@@ -8923,7 +8953,7 @@ namespace FintrakBanking.Repositories.Credit
                     foreach (var e in exposure)
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCode);
-                        e.bookingDate = e.bookingDateString;
+                        //e.bookingDate = e.bookingDateString;
                         //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         e.productId = int.Parse(e.productIdString);
                     }
@@ -8993,33 +9023,33 @@ namespace FintrakBanking.Repositories.Credit
 
                 //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
-                exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
-                           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
-                           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                           select new CurrentCustomerExposure
-                           {
+                //exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                //           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                //           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                //           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                //           select new CurrentCustomerExposure
+                //           {
                                
-                               applicationStatusId = b.APPLICATIONSTATUSID,
-                               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                               customerCode = c.CUSTOMERCODE.Trim(),
-                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               approvedAmount = a.APPROVEDAMOUNT,
-                               currency = a.TBL_CURRENCY.CURRENCYNAME,
-                               //exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
-                               //adjFacilityType = a.ADJFACILITYTYPE,
-                               productId = a.TBL_PRODUCT.PRODUCTID,
-                               productName = a.TBL_PRODUCT.PRODUCTNAME,
-                               outstandings = 0,
-                               pastDueObligationsPrincipal = 0,
-                               reviewDate = DateTime.Now,
-                               //bookingDate = DateTime.Parse(a.BOOKINGDATE),
-                               //maturityDate = DateTime.Parse(a.MATURITYDATE),
-                               loanStatus = "Processing",
-                               referenceNumber = b.APPLICATIONREFERENCENUMBER
-                           };
+                //               applicationStatusId = b.APPLICATIONSTATUSID,
+                //               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                //               customerCode = c.CUSTOMERCODE.Trim(),
+                //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //               approvedAmount = a.APPROVEDAMOUNT,
+                //               currency = a.TBL_CURRENCY.CURRENCYNAME,
+                //               //exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
+                //               //adjFacilityType = a.ADJFACILITYTYPE,
+                //               productId = a.TBL_PRODUCT.PRODUCTID,
+                //               productName = a.TBL_PRODUCT.PRODUCTNAME,
+                //               outstandings = 0,
+                //               pastDueObligationsPrincipal = 0,
+                //               reviewDate = DateTime.Now,
+                //               //bookingDate = DateTime.Parse(a.BOOKINGDATE),
+                //               //maturityDate = DateTime.Parse(a.MATURITYDATE),
+                //               loanStatus = "Processing",
+                //               referenceNumber = b.APPLICATIONREFERENCENUMBER
+                //           };
 
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
 
                 //var staggingLoan = from a in stgCon.STG_LOAN_MART
@@ -9041,6 +9071,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 //exposures.Union(staggingLoan);
 
+            }
+
+            if (exposures.Count() == 0)
+            {
+                return exposures;
             }
 
             exposures.Add(new CurrentCustomerExposure

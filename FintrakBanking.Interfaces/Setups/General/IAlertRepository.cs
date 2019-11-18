@@ -47,6 +47,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateAlertCondition(int id, AlertConditionViewModel model, UserInfo user);
         bool DeleteAlertCondition(int id, UserInfo user);
         IEnumerable<TblOperationsViewModel> GetAllOperations();
-        IEnumerable<ExternalAlertViewModel> GetAllExternalAlerts();
+      
     }
 }

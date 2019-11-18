@@ -178,6 +178,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
+
         public ResponseMessageViewModel FlexcubeCasaLien(FlexcubeLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
             if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
@@ -562,7 +563,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 //}
                 else
                 {
-                    var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
                     throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
                 }
             }
@@ -597,8 +598,38 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     }
                     else
                     {
-                        var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                        //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
                         throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
+                    }
+                }
+                else
+                {
+                    //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+                }
+
+            }
+        }
+
+        public PostingResult FetchCBNCRMSCode(CRMSCodeGeneration model, short loanSystemTypeId)
+        {
+            {
+                ResponseMessage result = null;
+                Task.Run(async () => result = await transaction.ApiFetchCBMCRMSCode(model, loanSystemTypeId)).GetAwaiter().GetResult();
+
+                if (result.APIResponse != null)
+                {
+                    if (result.APIResponse.responseCode == "00")
+                    {
+                        string str = result.APIResponse.webRequestStatus;
+
+                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode };
+                    }
+                    else
+                    {
+                        var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
                     }
                 }
                 else
@@ -906,6 +937,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 .GetAwaiter().GetResult();
             return customerRatio;
         } // GetCorporateProbabilityDefaultByCustomerId
+
+        public List<GroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode)
+        {
+            List<GroupRatingAndRatioViewModel> customerGroupRatio = new List<GroupRatingAndRatioViewModel>();
+            Task.Run(async () => customerGroupRatio = await basel.GetAllCustomerRatios(customerCode))
+                .GetAwaiter().GetResult();
+            return customerGroupRatio;
+        } 
 
         public CutomerRatingViewModel GetCorporateCustomerRatingByCustomerCode(string customerCode)
         {
