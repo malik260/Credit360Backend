@@ -47,7 +47,7 @@ namespace FintrakBanking.Repositories.Credit
             //IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
             ICreditLimitValidationsRepository _limitValidation,
-            CreditCommonRepository _creditCommon, IReportRoutes _reportRoutes
+            CreditCommonRepository _creditCommon, IReportRoutes _reportRoutes,
             ICRMSRegulatories _crmsRegulatories
             //ILoanRepository _loans  
             )
@@ -80,7 +80,7 @@ namespace FintrakBanking.Repositories.Credit
             bookingRequest.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
             bookingRequest.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
             bookingRequest.MORATORIUMDURATION = model.moratoriumPeriod;
-            var crmsRecordGenerated = crmsRegulatories.GenerateCRMSCode(refNumber, bookingRequest.LOAN_BOOKING_REQUESTID, userModel);
+            var crmsRecordGenerated = crmsRegulatories.GenerateCRMSCode(bookingRequest.LOAN_BOOKING_REQUESTID, userModel);
             //var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
             //LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
             //LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;

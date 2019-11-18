@@ -444,10 +444,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return new CurrencyExchangeRateViewModel
             {
                 // baseCurrencyId = baseCurrency,
+                fromCurrencyCode = data.fromCurrencyCode,
+                toCurrencyCode = data.toCurrencyCode,
                 currencyId = data.currencyId,
                 buyingRate = data.buyingRate,
                 sellingRate = data.sellingRate,
-                date = data.date,
+                exchangeRate = data.exchangeRate,
+                date = DateTime.Now,
                 isBaseCurrency = false
             };
         }

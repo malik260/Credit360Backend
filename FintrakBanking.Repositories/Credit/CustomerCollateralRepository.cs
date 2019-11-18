@@ -1944,7 +1944,7 @@ namespace FintrakBanking.Repositories.Credit
                         currencyId = c.c.CURRENCYID,
                         currencyCode = c.c.TBL_CURRENCY.CURRENCYCODE,
                         baseCurrencyId = company.CURRENCYID,
-                        baseCurrencyCode = (c.c.CURRENCYID == baseCurrencyId) ? "" : company.TBL_CURRENCY.CURRENCYCODE,
+                        baseCurrencyCode = (c.c.CURRENCYID == baseCurrencyId) ? "" : company.TBL_CURRENCY.CURRENCYCODE,//so that only fcy will show
                         currency = c.c.TBL_CURRENCY.CURRENCYNAME,
                         disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
                         collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
