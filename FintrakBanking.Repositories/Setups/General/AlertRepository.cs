@@ -834,6 +834,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void validateAlertCheck()
         {
             GetImminentMaturities();
+            GetCreditCardMaturingObligations();
         }
 
         public void GetImminentMaturities()
@@ -852,9 +853,84 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
                 var accountNumbers = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == i.accountOfficerCode).ToList();
-                
+                var n = 0;
+                var result = $@"
+                    <table border=1>
+                        <tr>
+                            <th><b>S/N</b></th>
+                            <th><b>Customer Name</b></th>
+                            <th><b>Account Number</b></th>
+                        </tr>
+                     ";
+                foreach (var t in accountNumbers)
+                {
+                    n++;
+                    result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{t.CUSTOMERNAME}</td>
+                            <td>{t.ACCOUNTNUMBER}</td>
+                        </tr>
+                    ";
+                }
+                result = result + $"</table>";
+
                 alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
-                alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", accountNumbers.ToString());
+                alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+                alertTemplate = alertTemplate.Replace("@{{days}}", i.maturityDays.ToString());
+
+                var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL;
+                alert.receiverEmailList.Add(emailList);
+                alert.template = alertTemplate;
+                alert.alertTitle = alertTitle;
+                alert.canFire = true;
+
+                alerts.Add(alert);
+            }
+            postAlertNotification(alerts);
+        }
+
+
+        public void GetCreditCardMaturingObligations()
+        {
+            // GetCreditCardMaturingObligations method
+            var imminentMaturities = externalAlertRepository.GetCreditCardMaturingObligations();
+            var alertTitle = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetCreditCardMaturingObligations").Select(a => a.TITLE).FirstOrDefault();
+            var alertTemplate = context.TBL_ALERT_TITLE.Where(b => b.BINDINGMETHOD == "GetCreditCardMaturingObligations").Select(b => b.TEMPLATE).FirstOrDefault();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            foreach (var i in imminentMaturities)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                List<int> days = new List<int> { 60, 89 };
+                var accountNumbers = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == i.accountOfficerCode).ToList();
+                var n = 0;
+                var result = $@"
+                    <table border=1>
+                        <tr>
+                            <th><b>S/N</b></th>
+                            <th><b>Customer Name</b></th>
+                            <th><b>Account Number</b></th>
+                        </tr>
+                     ";
+                foreach (var t in accountNumbers)
+                {
+                    n++;
+                    result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{t.CUSTOMERNAME}</td>
+                            <td>{t.ACCOUNTNUMBER}</td>
+                        </tr>
+                    ";
+                }
+                result = result + $"</table>";
+
+                alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
+                alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
                 alertTemplate = alertTemplate.Replace("@{{days}}", i.maturityDays.ToString());
 
                 var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL;
