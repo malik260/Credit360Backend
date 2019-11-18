@@ -2933,7 +2933,8 @@ namespace FintrakBanking.Repositories.CRMS
             var revolving = new List<CRMSTemplateViewModel>();
             var contingent = new List<CRMSTemplateViewModel>();
 
-            tLoan = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+            tLoan = (from r in context.TBL_LOAN_BOOKING_REQUEST
+                     join a in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                      join l in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                      join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                      join p in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals p.PRODUCTID
@@ -2950,8 +2951,10 @@ namespace FintrakBanking.Repositories.CRMS
 
                      where l.APPLICATIONREFERENCENUMBER == applicationReferenceNumber && a.STATUSID == (int)ApprovalStatusEnum.Approved && c.COMPANYID == companyId
 
-                     let loanSystemTypeId = a.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? (short)LoanProductTypeEnum.RevolvingLoan
-                     : a.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability ? (short)LoanProductTypeEnum.ContingentLiability
+                     let product = context.TBL_PRODUCT.Where(x => x.PRODUCTID == r.PRODUCTID).FirstOrDefault()
+
+                     let loanSystemTypeId = product.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? (short)LoanProductTypeEnum.RevolvingLoan
+                     : product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability ? (short)LoanProductTypeEnum.ContingentLiability
                      : (short)LoanProductTypeEnum.TermLoan
 
                      select new CRMSCodeGeneration
@@ -2971,7 +2974,7 @@ namespace FintrakBanking.Repositories.CRMS
                          credit_purpose_by_businesslines = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SECTORID).Select(o => o.CODE).FirstOrDefault(),
                          credit_purpose_by_businesslines_sub = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                          credit_limit = String.Format("{0:0.00}", a.APPROVEDAMOUNT),
-                         outstanding_amount = String.Format("{0:0.00}", a.APPROVEDAMOUNT),
+                         outstanding_amount = String.Format("{0:0.00}", a.APPROVEDAMOUNT), //TODO: Display existing outstanding balance
                          fee_type = "F0003",
                          fee_amount = "300",
                          tenor = a.PROPOSEDTENOR.ToString(),
@@ -2983,7 +2986,7 @@ namespace FintrakBanking.Repositories.CRMS
                          relationship_types = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                          company_size = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                          funding_source_category = co.CURRENCYID == a.CURRENCYID ? "LCY" : "FCY",
-                         funding_sources = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
+                         funding_sources = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == r.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                          ecci_number = a.CRMS_ECCI_NUMBER,
                          legal_status = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
                          classification_by_business_lines = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
