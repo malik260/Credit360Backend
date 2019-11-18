@@ -53,7 +53,6 @@ namespace FintrakBanking.Entities.Models
         public string CRMSFUNDINGSOURCECATEGORY { get; set; }
         [StringLength(50)]
         public string CRMS_ECCI_NUMBER { get; set; }
-        [StringLength(50)]
 
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
         public bool? CRMSVALIDATED { get; set; }

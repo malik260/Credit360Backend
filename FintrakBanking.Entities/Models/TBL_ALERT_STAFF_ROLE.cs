@@ -12,9 +12,8 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_ALERT_STAFF_ROLE
     {
         [Key]
-        public int ALERTLEVELID { get; set; }
-        public string EMAILLIST { get; set; }
-        public string LEVELCODE { get; set; }
-        public int LEVELGROUPID { get; set; }
+        public int ALERTSTAFFROLEID { get; set; }
+        public int ALERTTITLEID { get; set; }
+        public int STAFFROLEID { get; set; }
     }
 }

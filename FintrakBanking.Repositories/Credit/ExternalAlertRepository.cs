@@ -167,7 +167,7 @@ namespace FintrakBanking.Repositories.Credit
                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
-            }).ToList();
+            }).Distinct().Take(20).ToList();
 
             return data;
         }
