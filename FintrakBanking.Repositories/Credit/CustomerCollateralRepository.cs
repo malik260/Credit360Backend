@@ -1908,6 +1908,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var typeIds = new List<int>();
             var company = context.TBL_COMPANY.Find(companyId);
+            var baseCurrencyId = company.TBL_CURRENCY.CURRENCYID;
             bool disAllowCollateral = false;
             bool isForiegnCurrencyFacility = false;
             if (applicationId != null)
@@ -1943,7 +1944,7 @@ namespace FintrakBanking.Repositories.Credit
                         currencyId = c.c.CURRENCYID,
                         currencyCode = c.c.TBL_CURRENCY.CURRENCYCODE,
                         baseCurrencyId = company.CURRENCYID,
-                        baseCurrencyCode = company.TBL_CURRENCY.CURRENCYCODE,
+                        baseCurrencyCode = (c.c.CURRENCYID == baseCurrencyId) ? "" : company.TBL_CURRENCY.CURRENCYCODE,
                         currency = c.c.TBL_CURRENCY.CURRENCYNAME,
                         disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
                         collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
