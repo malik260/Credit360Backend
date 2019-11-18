@@ -39,7 +39,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CASAACCOUNTID2 { get; set; }
         public short PRODUCTID { get; set; }
-
+        [StringLength(50)]
         public string CRMSCODE { get; set; }
 
         public bool? SECUREDBYCOLLATERAL { get; set; }
@@ -53,7 +53,6 @@ namespace FintrakBanking.Entities.Models
         public string CRMSFUNDINGSOURCECATEGORY { get; set; }
         [StringLength(50)]
         public string CRMS_ECCI_NUMBER { get; set; }
-
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
         public bool? CRMSVALIDATED { get; set; }
 

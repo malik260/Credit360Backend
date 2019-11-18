@@ -173,7 +173,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                //throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+
             }
 
         }
@@ -215,7 +217,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                //throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+
             }
         }
 
@@ -440,10 +444,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return new CurrencyExchangeRateViewModel
             {
                 // baseCurrencyId = baseCurrency,
+                fromCurrencyCode = data.fromCurrencyCode,
+                toCurrencyCode = data.toCurrencyCode,
                 currencyId = data.currencyId,
                 buyingRate = data.buyingRate,
                 sellingRate = data.sellingRate,
-                date = data.date,
+                exchangeRate = data.exchangeRate,
+                date = DateTime.Now,
                 isBaseCurrency = false
             };
         }
@@ -662,13 +669,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     }
                     else
                     {
-                        var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
+                        //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
                     }
                 }
                 else
                 {
-                    var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
                     throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
                 }
 
