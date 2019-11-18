@@ -1573,7 +1573,7 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data });  //Ok(accounts);
+                    new { success = true, result = data });  
             }
             catch (SecureException ex)
             {
