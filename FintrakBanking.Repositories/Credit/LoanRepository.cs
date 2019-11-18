@@ -8891,7 +8891,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var customerGroupMappings = new List<CustomerGroupMappingViewModel>();
                 var customerId = customer.FirstOrDefault().customerId;
-                var customerGroups = GetCustomerGroupMapping().Where(m => m.customerId == customerId).ToList();
+                var customerGroups = GetCustomerGroupMapping().Where(m => m.customerGroupId == customerId).ToList();
                 foreach(var customerGroup in customerGroups)
                 {
                    var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
@@ -8934,6 +8934,7 @@ namespace FintrakBanking.Repositories.Credit
                                 exposureTypeCode = a.EXPOSURETYPECODE,
                                 adjFacilityType = a.ADJFACILITYTYPE,
                                 productIdString = a.PRODUCTID,
+                                productCode = a.PRODUCTCODE,
                                 productName = a.PRODUCTNAME,
                                 //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 //proposedLimit = a.LOANAMOUNYLCY ?? 0,

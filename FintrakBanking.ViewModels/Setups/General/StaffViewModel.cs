@@ -214,4 +214,5 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int supervisorStaffId { get; set; }
         public string staffCode { get; set; }
     }
+
 }

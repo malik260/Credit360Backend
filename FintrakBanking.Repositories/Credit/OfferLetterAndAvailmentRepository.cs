@@ -35,7 +35,7 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
         private ICreditLimitValidationsRepository limitValidation;
         private CreditCommonRepository creditCommon;
-        //private ICRMSRegulatories crmsRegulatories;
+        private ICRMSRegulatories crmsRegulatories;
 
         //private IApprovalLevelStaffRepository approvalLevel;
         //private ILoanRepository loans;
@@ -47,8 +47,8 @@ namespace FintrakBanking.Repositories.Credit
             //IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
             ICreditLimitValidationsRepository _limitValidation,
-            CreditCommonRepository _creditCommon, IReportRoutes _reportRoutes
-            //ICRMSRegulatories _crmsRegulatories
+            CreditCommonRepository _creditCommon, IReportRoutes _reportRoutes,
+            ICRMSRegulatories _crmsRegulatories
             //ILoanRepository _loans  
             )
         {
@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.Credit
             limitValidation = _limitValidation;
             creditCommon = _creditCommon;
             reportRoutes = _reportRoutes;
-            //crmsRegulatories = _crmsRegulatories;
+            crmsRegulatories = _crmsRegulatories;
             //loans = _loans;
         }
 
@@ -68,13 +68,26 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCRMSCollateralType(int applicationId, ApprovedLoanDetailViewModel model)
         {
+            
             bool output = false;
-            var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
-            LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
-            LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
-            LoanDetails.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
-            LoanDetails.ISSPECIALISED = model.isSpecialised;
-            LoanDetails.MORATORIUMDURATION = model.moratoriumPeriod;
+            var bookingRequest = context.TBL_LOAN_BOOKING_REQUEST.FirstOrDefault(r => r.LOAN_BOOKING_REQUESTID == applicationId && r.DELETED == false);
+            var refNumber = bookingRequest.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+            var userModel = new UserViewModel()
+            {
+                companyId = bookingRequest.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.COMPANYID
+            };
+            bookingRequest.SECUREDBYCOLLATERAL = model.securedByCollateral;
+            bookingRequest.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            bookingRequest.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
+            bookingRequest.MORATORIUMDURATION = model.moratoriumPeriod;
+            bookingRequest.TBL_LOAN_APPLICATION_DETAIL.ISSPECIALISED = model.isSpecialised;
+            var crmsRecordGenerated = crmsRegulatories.GenerateCRMSCode(bookingRequest.LOAN_BOOKING_REQUESTID, userModel);
+            //var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
+            //LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
+            //LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            //LoanDetails.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
+            //LoanDetails.ISSPECIALISED = model.isSpecialised;
+            //LoanDetails.MORATORIUMDURATION = model.moratoriumPeriod;
 
             var auditRec = new TBL_AUDIT
             {

@@ -19,8 +19,8 @@ namespace FintrakBanking.Interfaces.CRMS
         List<LoansCount> LoanCountsByLegalStatus(List<CRMSRegulatoryViewModel> loans);
         CRMSRecord GenerateBatchPosting(DateRange model);
 
-        bool GenerateCRMSCodes(List<string> applicationReferenceNumbers, UserViewModel model);
-        bool GenerateCRMSCode(string applicationReferenceNumber, int loanBookingRequestId, UserViewModel model);
+        bool GenerateCRMSCodes(List<int> loanBookingRequestIds, UserViewModel model);
+        bool GenerateCRMSCode(int loanBookingRequestId, UserViewModel model);
 
     }
 }

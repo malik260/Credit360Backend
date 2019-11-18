@@ -62,7 +62,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public decimal? LOANAMOUNYLCY { get; set; }
         public string CARDLIMIT { get; set; }
         public string FXRATE { get; set; }
-        public float? SHF { get; set; }
+        public decimal? SHF { get; set; }
         public string INTERESTRATE { get; set; }
         //public decimal? SECTIONEDLOANLIMITDIRECTFCY { get; set; }
         //public decimal? SECTIONEDLOANLIMITDIRECTLCY { get; set; }

@@ -2880,14 +2880,14 @@ namespace FintrakBanking.Repositories.CRMS
             return excel;
         }
 
-        public bool GenerateCRMSCodes(List<string> applicationReferenceNumbers, UserViewModel model)
+        public bool GenerateCRMSCodes(List<int> loanBookingRequestIds, UserViewModel model)
         {
             int ctr = 1;
             try
             {
-                foreach (var applicationReferenceNumber in applicationReferenceNumbers)
+                foreach (var requestId in loanBookingRequestIds)
                 {
-                    var crmsModels = GenerateCRMSReport(applicationReferenceNumber, model.companyId, ctr);
+                    var crmsModels = GenerateCRMSReport(requestId, model.companyId, ctr);
                     ctr = ctr + 1;
                     foreach (var crmsModel in crmsModels)
                     {
@@ -2906,34 +2906,35 @@ namespace FintrakBanking.Repositories.CRMS
             return true;
         }
 
-        public bool GenerateCRMSCode(string applicationReferenceNumber, int loanBookingRequestId, UserViewModel model)
+        public bool GenerateCRMSCode(int loanBookingRequestId, UserViewModel model)
         {
             int ctr = 1;
             try
             {
-                    var crmsModels = GenerateCRMSReport(applicationReferenceNumber, model.companyId, ctr);
-                    foreach (var crmsModel in crmsModels)
-                    {
+                    var crmsModel = GenerateCRMSReport(loanBookingRequestId, model.companyId, ctr).FirstOrDefault();
+                    //foreach (var crmsModel in crmsModels)
+                    //{
                         var result = integration.FetchCBNCRMSCode(crmsModel, crmsModel.loanSystemTypeId);
 
                         var bookingRequest = context.TBL_LOAN_BOOKING_REQUEST.FirstOrDefault(r => r.LOAN_BOOKING_REQUESTID == loanBookingRequestId);
                         //TODO method to save CRMSCODE into TBL_LOAN_BOOKING_REQUEST
-                    }
+                    //}
             }
             catch(Exception e)
             {
-                throw new ConditionNotMetException("Automatic CRMS Code Generation Failed." + "Core Banking API error: "+e.Message);
+                throw new ConditionNotMetException("Automatic CRMS Code Generation Failed." + "Core Banking API error: "+ " Please Try Again or Choose to add the CRMS code Manually");
             }
             return true;
         }
 
-        private List<CRMSCodeGeneration> GenerateCRMSReport(string applicationReferenceNumber, int companyId, int serial )
+        private List<CRMSCodeGeneration> GenerateCRMSReport(int loanBookingRequestId, int companyId, int serial )
         {
             var tLoan = new List<CRMSCodeGeneration>();
             var revolving = new List<CRMSTemplateViewModel>();
             var contingent = new List<CRMSTemplateViewModel>();
 
-            tLoan = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+            tLoan = (from r in context.TBL_LOAN_BOOKING_REQUEST
+                     join a in context.TBL_LOAN_APPLICATION_DETAIL on r.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                      join l in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                      join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                      join p in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals p.PRODUCTID
@@ -2948,80 +2949,149 @@ namespace FintrakBanking.Repositories.CRMS
 
                      let collateralGuarantee = context.TBL_COLLATERAL_GAURANTEE.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
 
-                     where l.APPLICATIONREFERENCENUMBER == applicationReferenceNumber && a.STATUSID == (int)ApprovalStatusEnum.Approved && c.COMPANYID == companyId
+                     where r.LOAN_BOOKING_REQUESTID == loanBookingRequestId && a.STATUSID == (int)ApprovalStatusEnum.Approved && c.COMPANYID == companyId
+                     //where l.APPLICATIONREFERENCENUMBER == applicationReferenceNumber && a.STATUSID == (int)ApprovalStatusEnum.Approved && c.COMPANYID == companyId
 
-                     let loanSystemTypeId = a.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? (short)LoanProductTypeEnum.RevolvingLoan
-                     : a.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability ? (short)LoanProductTypeEnum.ContingentLiability
+                     let product = context.TBL_PRODUCT.Where(x => x.PRODUCTID == r.PRODUCTID).FirstOrDefault()
+
+                     let loanSystemTypeId = product.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? (short)LoanProductTypeEnum.RevolvingLoan
+                     : product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability ? (short)LoanProductTypeEnum.ContingentLiability
                      : (short)LoanProductTypeEnum.TermLoan
 
                      select new CRMSCodeGeneration
                      {
-                         loanSystemTypeId = loanSystemTypeId,
-                         sourceReferenceNumber = l.APPLICATIONREFERENCENUMBER,
+                        callreport_id = "CRMS300",
+                        callreport_desc = "Rendition of Borrower Credit Details (Individual and Non-Individual)",
+                        inst_code = "00044",
+                        inst_name = "Access Bank Plc",
+                        sl_no = "1",
+                        unique_identification_type = "BVN",
+                        unique_identification_no = "22142765072",
+                        credit_type = "40030",
+                        credit_purpose_by_businesslines = "41000",
+                        credit_purpose_by_businesslines_sub = "41020",
+                        credit_limit = "1",
+                        outstanding_amount = "0",
+                        fee_type = "F0003",
+                        fee_amount = "300",
+                        tenor = "12",
+                        repayment_mode = "100",
+                        interest_rate = "3",
+                        beneficiary_account_no = "0034989438",
+                        beneficiary_location = "015",
+                        prepared_date = "01-01-1900",
+                        relationship_types = "RT001",
+                        company_size = "NIL",
+                        funding_source_category = "LCY",
+                        funding_sources = "FS1000",
+                        ecci_number = "0",
+                        legal_status = "40001",
+                        classification_by_business_lines = "41000",
+                        classification_by_business_lines_sub = "41020",
+                        specialized_loan = "NO",
+                        specialized_loan_moratorium = "0",
+                        syndication = "NO",
+                        syndication_status = "NIL",
+                        syndication_ref_number = "NIL",
+                        collateral_present = "YES",
+                        collateral_secure = "YES",
+                        security_type = "SEC011",
+                        security_address = "NIL",
+                        security_owner = "OKOROAFOR HENRY DIKE",
+                        securityowner_uniqueid_type = "BVN",
+                        securityowner_uniqueid = "22142765072",
+                        guarantee = "NO",
+                        signatory_name = "a",
+                        signatory_designation = "SBO",
+                        signatory_position = "a",
+                        signatory_phone = "a",
+                        sig_extn = "a",
+                        contact_name = "",
+                        contact_designation = "",
+                        contact_phone = "",
+                        contact_extn = "",
+                        description = "",
+                        prepared_by = "a",
+                        auth_by = "",
+                        mlr_officer_code = "",
+                        headoffice_address = "a",
+                        headoffice_tel = "a",
+                        credit_officer = "",
+                        branch_manager = "",
+                        checked_by = "a",
+                        as_at = "11-10-2019",
+                        channel_code = "PDL",
+                        token = "1234",
+                         //loanSystemTypeId = loanSystemTypeId,
+                         //sourceReferenceNumber = l.APPLICATIONREFERENCENUMBER,
                          loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
-                         customerId = c.CUSTOMERID,
-                         callreport_id = "CRMS300",
-                         callreport_desc = "Rendition of Borrower Credit Details (Individual and Non-Individual)",
-                         inst_code = "00044",
-                         inst_name = "Access Bank Plc",
-                         sl_no = serial.ToString(),
-                         unique_identification_type = c.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual ? "BVN" : "TIN",
-                         unique_identification_no = c.TAXNUMBER != null ? c.TAXNUMBER : c.CUSTOMERBVN,
-                         credit_type = context.TBL_CRMS_REGULATORY.Where(s => s.CRMSREGULATORYID == p.TBL_PRODUCT_BEHAVIOUR.Where(o => o.PRODUCTID == p.PRODUCTID).Select(o => o.CRMSREGULATORYID).FirstOrDefault()).Select(s => s.CODE).FirstOrDefault(),
-                         credit_purpose_by_businesslines = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SECTORID).Select(o => o.CODE).FirstOrDefault(),
-                         credit_purpose_by_businesslines_sub = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
-                         credit_limit = String.Format("{0:0.00}", a.APPROVEDAMOUNT),
-                         outstanding_amount = String.Format("{0:0.00}", a.APPROVEDAMOUNT),
-                         fee_type = "F0003",
-                         fee_amount = "300",
-                         tenor = a.PROPOSEDTENOR.ToString(),
-                         repayment_mode = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
-                         interest_rate = String.Format("{0:0.00}", a.APPROVEDINTERESTRATE),
-                         beneficiary_account_no = (from i in context.TBL_CASA where i.CASAACCOUNTID == a.CASAACCOUNTID select i.PRODUCTACCOUNTNUMBER).FirstOrDefault() ?? "",
-                         beneficiary_location = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == c.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
-                         prepared_date = DateTime.Now.ToString("dd-MMM-yyyy", null),
-                         relationship_types = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
-                         company_size = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                         funding_source_category = co.CURRENCYID == a.CURRENCYID ? "LCY" : "FCY",
-                         funding_sources = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                         ecci_number = a.CRMS_ECCI_NUMBER,
-                         legal_status = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
-                         classification_by_business_lines = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
-                         classification_by_business_lines_sub = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
-                         specialized_loan = a.ISSPECIALISED ? "YES" : "NO",
-                         specialized_loan_moratorium = "0",
-                         syndication = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "YES" : "NO",
-                         syndication_status = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "MEMBER" : "NIL",
-                         syndication_ref_number = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",
-                         collateral_present = collateralMpping != null ? "YES" : "NO",
-                         collateral_secure = a.SECUREDBYCOLLATERAL ? "YES" : "NO",
-                         security_type = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
-                         security_address = collateralMpping.PROPERTYADDRESS,
-                         security_owner = securityOwnerCustomerDetal.FIRSTNAME + " " + securityOwnerCustomerDetal.MIDDLENAME + " " + securityOwnerCustomerDetal.LASTNAME,
-                         securityowner_uniqueid_type = securityOwnerCustomerDetal.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual ? "BVN" : "TIN",
-                         securityowner_uniqueid = securityOwnerCustomerDetal.CUSTOMERBVN,
-                         guarantee = collateralGuarantee != null ? "YES" : "NO",
-                         signatory_name = "",
-                         signatory_designation = "",
-                         signatory_position = "",
-                         signatory_phone = "",
-                         sig_extn = "",
-                         contact_name = "",
-                         contact_designation = "",
-                         contact_phone = "",
-                         contact_extn = "",
-                         description = "",
-                         prepared_by = "",
-                         auth_by = "",
-                         mlr_officer_code = "",
-                         headoffice_address = "",
-                         headoffice_tel = "",
-                         credit_officer = "",
-                         branch_manager = "",
-                         checked_by = "",
-                         as_at = "",
-                         channel_code = "",
-                         token = "1234"
+                         //customerId = c.CUSTOMERID,
+                         //callreport_id = "CRMS300",
+                         //callreport_desc = "Rendition of Borrower Credit Details (Individual and Non-Individual)",
+                         //inst_code = "00044",
+                         //inst_name = "Access Bank Plc",
+                         //sl_no = serial.ToString(),
+                         //unique_identification_type = c.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual ? "BVN" : "TIN",
+                         //unique_identification_no = c.TAXNUMBER != null ? c.TAXNUMBER : c.CUSTOMERBVN,
+                         //credit_type = context.TBL_CRMS_REGULATORY.Where(s => s.CRMSREGULATORYID == p.TBL_PRODUCT_BEHAVIOUR.Where(o => o.PRODUCTID == p.PRODUCTID).Select(o => o.CRMSREGULATORYID).FirstOrDefault()).Select(s => s.CODE).FirstOrDefault(),
+                         //credit_purpose_by_businesslines = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SECTORID).Select(o => o.CODE).FirstOrDefault(),
+                         //credit_purpose_by_businesslines_sub = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
+                         //credit_limit = r.AMOUNT_REQUESTED.ToString(),
+                         ////credit_limit = String.Format("{0:0.00}", a.APPROVEDAMOUNT),
+                         //outstanding_amount = "0", //TODO: Display existing outstanding balance
+                         ////outstanding_amount = String.Format("{0:0.00}", a.APPROVEDAMOUNT), //TODO: Display existing outstanding balance
+                         //fee_type = "F0003",
+                         //fee_amount = "300",
+                         //tenor = a.PROPOSEDTENOR.ToString(),
+                         //repayment_mode = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                         //interest_rate = a.APPROVEDINTERESTRATE.ToString(),
+                         ////interest_rate = String.Format("{0:0.00}", a.APPROVEDINTERESTRATE),
+                         //beneficiary_account_no = (from i in context.TBL_CASA where i.CASAACCOUNTID == a.CASAACCOUNTID select i.PRODUCTACCOUNTNUMBER).FirstOrDefault() ?? "",
+                         //beneficiary_location = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == c.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                         //prepared_date = DateTime.Now.ToString(),
+                         ////prepared_date = DateTime.Now.ToString("dd-MMM-yyyy", null),
+                         //relationship_types = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
+                         //company_size = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
+                         //funding_source_category = co.CURRENCYID == a.CURRENCYID ? "LCY" : "FCY",
+                         //funding_sources = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == r.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
+                         //ecci_number = a.CRMS_ECCI_NUMBER,
+                         //legal_status = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
+                         //classification_by_business_lines = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
+                         //classification_by_business_lines_sub = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
+                         //specialized_loan = a.ISSPECIALISED ? "YES" : "NO",
+                         //specialized_loan_moratorium = "0",
+                         //syndication = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "YES" : "NO",
+                         //syndication_status = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "MEMBER" : "NIL",
+                         //syndication_ref_number = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",
+                         //collateral_present = collateralMpping != null ? "YES" : "NO",
+                         //collateral_secure = a.SECUREDBYCOLLATERAL ? "YES" : "NO",
+                         //security_type = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
+                         //security_address = collateralMpping.PROPERTYADDRESS,
+                         //security_owner = securityOwnerCustomerDetal.FIRSTNAME + " " + securityOwnerCustomerDetal.MIDDLENAME + " " + securityOwnerCustomerDetal.LASTNAME,
+                         //securityowner_uniqueid_type = securityOwnerCustomerDetal.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual ? "BVN" : "TIN",
+                         //securityowner_uniqueid = securityOwnerCustomerDetal.CUSTOMERBVN,
+                         //guarantee = collateralGuarantee != null ? "YES" : "NO",
+                         //signatory_name = "a",
+                         //signatory_designation = "SBO",
+                         //signatory_position = "a",
+                         //signatory_phone = "a",
+                         //sig_extn = "a",
+                         //contact_name = "",
+                         //contact_designation = "",
+                         //contact_phone = "",
+                         //contact_extn = "",
+                         //description = "",
+                         //prepared_by = "a",
+                         //auth_by = "",
+                         //mlr_officer_code = "",
+                         //headoffice_address = "a",
+                         //headoffice_tel = "a",
+                         //credit_officer = "",
+                         //branch_manager = "",
+                         //checked_by = "a",
+                         //as_at = "11-10-2019",
+                         //channel_code = "PDL",
+                         //token = "1234",
 
                      }).OrderBy(a => a.loanApplicationDetailId).ToList();
 

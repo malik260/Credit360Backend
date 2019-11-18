@@ -197,7 +197,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
 
-                    model.account_no = "0704490004";
+                    //model.account_no = "0704490004";
                     response = client.PostAsync(apiUrl, new StringContent(
                                                 new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
                     responseJson = await response.Content.ReadAsStringAsync();
