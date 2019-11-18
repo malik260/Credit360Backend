@@ -697,7 +697,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts()
         {
             var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value == 30)
              .Select(d => new GlobalExposureViewModel
              {
                  customerName = d.CUSTOMERNAME,
@@ -768,7 +768,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportOne()
         {
             var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+             )
              .Select(d => new GlobalExposureViewModel
              {
                  customerName = d.CUSTOMERNAME,
@@ -838,6 +838,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportTwo()
         {
+            //List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
             var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
