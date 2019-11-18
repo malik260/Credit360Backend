@@ -901,7 +901,7 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
 
-                    model.account_no = "0768140952";
+                    //model.account_no = "0768140952";
                     //model.amount_financed = "1000";
                     response = client.PostAsync(apiUrl, new StringContent(
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;

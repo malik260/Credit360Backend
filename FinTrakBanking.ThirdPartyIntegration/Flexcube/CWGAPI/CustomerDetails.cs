@@ -339,8 +339,8 @@
                 }
                 catch (Exception ex)
                 {
-
-                    throw new APIErrorException("Core Banking API Error - " +ex.Message);
+                    throw new APIErrorException("Core Banking API Error - " + ex.Message);
+                    //throw new APIErrorException("Core Banking API Error - " + response.RequestMessage);
                 }
 
                 finally
@@ -890,9 +890,9 @@
 
                 var month = DateTime.Now.Month - 1;
                 var year = DateTime.Now.Year;
-                var searchDate = "0"+month + "-" + year;
+                var searchDate = "0" + month + "-" + year;
                 getAPIURLSettings("CustomerLoanInterestDetails");
-                API_URL = "http://10.111.13.47:7002/fintrakapi/v1/";
+                //API_URL = "http://10.111.13.47:7002/fintrakapi/v1/";
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
