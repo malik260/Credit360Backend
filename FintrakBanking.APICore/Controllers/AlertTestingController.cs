@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var alertViewModels = _repo.GetUnpaidObligationReminder(); 
+                var alertViewModels = _repo.GetImminentMaturities(); 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
             }
             catch (SecureException ex)

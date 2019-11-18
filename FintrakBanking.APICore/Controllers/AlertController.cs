@@ -46,6 +46,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("load-staff-role")]
+        public HttpResponseMessage GetAlertStaffRoles()
+        {
+            try
+            {
+                var staffRoleInfo = _repo.GetAllStaffRoles();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffRoleInfo, count = staffRoleInfo.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("load-alert-title")]
         public HttpResponseMessage GetAlerts()
         {
@@ -508,22 +524,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("alert-level/{id}")]
-        public HttpResponseMessage GetAlertLevelById([FromUri] int id)
-        {
-            try
-            {
-                var alertViewModels = _repo.GetAlertLevelById(id);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -537,7 +537,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = _token.GetStaffId;
 
-                var data = _repo.AddAlertLevel(entity);
+                var data = _repo.AddAlertStaffRole(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
