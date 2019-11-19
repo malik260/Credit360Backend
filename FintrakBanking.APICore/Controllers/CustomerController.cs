@@ -276,24 +276,26 @@ namespace FintrakBanking.APICore.Controllers
         [Route("customer-staging/")]
         public HttpResponseMessage GetStagedCustomer(string searchTerm)
         {
+            var data2 = new CustomerViewModels();
+            return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = data2 });
+            //try
+            //{
+            //    var data = stagingRepo.GetIntegratedCustomerInformation(searchTerm);
+            //    if (data != null && data.Count == 0)
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK,
+            //           new { success = false, message = "No record found" });
+            //    }
 
-            try
-            {
-                var data = stagingRepo.GetIntegratedCustomerInformation(searchTerm);
-                if (data != null && data.Count == 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, result = data });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $" {e.Message}" });
-            }
+            //    return Request.CreateResponse(HttpStatusCode.OK,
+            //       new { success = true, result = data });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK,
+            //       new { success = false, message = $" {e.Message}" });
+            //}
         }
 
         [HttpGet]
