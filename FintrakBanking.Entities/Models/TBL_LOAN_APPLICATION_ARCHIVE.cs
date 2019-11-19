@@ -91,7 +91,7 @@ namespace FintrakBanking.Entities.Models
         public short? REQUIRECOLLATERALTYPEID { get; set; }
         public string RELATEDREFERENCENUMBER { get; set; }
         public bool? ISCHECKLISTLOADED { get; set; }
-        public bool? ISADHOCAPPLICATION { get; set; }
+        public bool ISADHOCAPPLICATION { get; set; }
         public decimal? LOANSWITHOTHERS { get; set; }
         public string OWNERSHIPSTRUCTURE { get; set; }
         public int? LOANAPPROVEDLIMITID { get; set; }
