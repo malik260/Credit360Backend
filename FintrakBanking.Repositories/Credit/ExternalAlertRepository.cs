@@ -1,18 +1,12 @@
-﻿using FintrakBanking.Common.Enum;
-using FintrakBanking.Entities.Models;
-using FintrakBanking.Entities.StagingModels;
+﻿using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels.Setups.Credit;
-using FintrakBanking.ViewModels.Setups.General;
-using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
@@ -64,7 +58,7 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = d.ACCOUNTNUMBER,
                 branchName = d.GROUPOBLIGORNAME,
                 maturityDate = d.MATURITYDATE,
-                id = (short)d.ID,
+                id = d.ID,
                 customerId = d.CUSTOMERID,
                 groupObligorName = d.GROUPOBLIGORNAME,
                 referenceNumber = d.REFERENCENUMBER,
@@ -73,7 +67,6 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -105,18 +98,11 @@ namespace FintrakBanking.Repositories.Credit
                 fxrate = d.FXRATE,
                 shf = d.SHF,
                 interestrate = d.INTERESTRATE,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
         }
@@ -127,7 +113,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = context.TBL_GLOBAL_EXPOSURE.Where(d =>
             days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value))
             .Select(d => new GlobalExposureViewModel
-              {
+            {
                 customerName = d.CUSTOMERNAME,
                 accountOfficerName = d.ACCOUNTOFFICERNAME,
                 accountNumber = d.ACCOUNTNUMBER,
@@ -137,6 +123,7 @@ namespace FintrakBanking.Repositories.Credit
                 referenceNumber = d.REFERENCENUMBER,
                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
                 date = d.DATE,
+                maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
                 customerId = d.CUSTOMERID,
                 groupObligorName = d.GROUPOBLIGORNAME,
 
@@ -144,7 +131,6 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -175,21 +161,13 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
-            }).ToList();
+            }).Distinct().Take(20).ToList();
 
             return data;
         }
@@ -217,7 +195,6 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -248,19 +225,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -289,7 +258,6 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -320,19 +288,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -361,7 +321,6 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -392,19 +351,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -413,7 +364,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetUnAuthorizedOverdraftReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE=="OVERDRAFT")
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE=="OVERDRAFT")
             .Select(d => new GlobalExposureViewModel
             {
                 customerName = d.CUSTOMERNAME,
@@ -431,7 +382,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -462,19 +413,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -483,8 +426,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetOverlineMonitoringReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.ADJFACILITYTYPE == "OVERDRAFT" && DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE)
+             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90) 
             .Select(d => new GlobalExposureViewModel
             {
                 customerName = d.CUSTOMERNAME,
@@ -502,7 +445,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -533,19 +476,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -554,8 +489,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCreditCardDelinquencyMonitoringReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
             .Select(d => new GlobalExposureViewModel
             {
                 customerName = d.CUSTOMERNAME,
@@ -573,7 +507,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                //facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -604,20 +538,15 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
+                //expiringBandId = d.EXPIRYGBANDID,
+                //expiringBand = d.EXPIRYGBAND,
+                unPoDaysOverdue = d.UNPODAYSOVERDUE,
             }).ToList();
 
             return data;
@@ -625,8 +554,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetPastDueObligationsReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-                && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
                .Select(d => new GlobalExposureViewModel
                {
                    customerName = d.CUSTOMERNAME,
@@ -644,7 +572,7 @@ namespace FintrakBanking.Repositories.Credit
                    productCode = d.PRODUCTCODE,
                    currencyName = d.CURRENCYNAME,
                    productName = d.PRODUCTNAME,
-                   facilityType = d.FACILITYTYPE,
+                   facilityType = d.ADJFACILITYTYPE,
                    adjFacilityType = d.ADJFACILITYTYPE,
                    adjFacilityTypeId = d.ADJFACILITYTYPEid,
                    odStatus = d.ODSTATUS,
@@ -675,29 +603,21 @@ namespace FintrakBanking.Repositories.Credit
                    principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                    loanAmounyLcy = d.LOANAMOUNYLCY,
                    loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                   sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                   totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                   totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                   totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                   totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                   totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                    totalExposure = d.TOTALEXPOSURE,
                    impairmentAmount = d.IMPAIRMENTAMOUNT,
                    unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                   unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                   interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                   unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                   interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                    amountDue = d.AMOUNTDUE,
+                   unPoDaysOverdue = d.UNPODAYSOVERDUE,
                }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts()
+        public IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+             var data = context.TBL_GLOBAL_EXPOSURE.Where(d=>DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value == 30)
              .Select(d => new GlobalExposureViewModel
              {
                  customerName = d.CUSTOMERNAME,
@@ -715,7 +635,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -746,28 +666,20 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportOne()
+        public IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportOne() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -786,7 +698,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -817,28 +729,20 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportTwo()
+        public IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportTwo() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -857,7 +761,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -888,19 +792,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -908,9 +804,9 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IEnumerable<GlobalExposureViewModel> GetNplOnCreditPortfolio()
+        public IEnumerable<GlobalExposureViewModel> GetNplOnCreditPortfolio() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -929,7 +825,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -960,19 +856,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -981,8 +869,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetOverlineCreditCardPosition()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) 
+                                                         && d.ADJFACILITYTYPE == "OVERDRAFT")
              .Select(d => new GlobalExposureViewModel
              {
                  customerName = d.CUSTOMERNAME,
@@ -1000,7 +888,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1031,28 +919,20 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
-             }).ToList();
+             }).Distinct().ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportNotification()
+        public IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportNotification() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1071,7 +951,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1102,28 +982,20 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportReminder()
+        public IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportReminder() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -1142,7 +1014,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -1173,28 +1045,20 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetDashboardReportNotification()
+        public IEnumerable<GlobalExposureViewModel> GetDashboardReportNotification() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1213,7 +1077,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1244,28 +1108,20 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetDashboardReportReminder()
+        public IEnumerable<GlobalExposureViewModel> GetDashboardReportReminder() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -1284,7 +1140,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -1315,28 +1171,20 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetCACReport()
+        public IEnumerable<GlobalExposureViewModel> GetCACReport() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1355,7 +1203,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1386,28 +1234,20 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetSignificantMovementInDailyRiskAsset()
+        public IEnumerable<GlobalExposureViewModel> GetSignificantMovementInDailyRiskAsset() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1426,7 +1266,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1457,28 +1297,20 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetUSDCreditCardReport()
+        public IEnumerable<GlobalExposureViewModel> GetUSDCreditCardReport() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1497,7 +1329,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1528,28 +1360,20 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetNairaCreditCardReport()
+        public IEnumerable<GlobalExposureViewModel> GetNairaCreditCardReport() //pending
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1568,7 +1392,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1599,19 +1423,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -1619,7 +1435,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<GlobalExposureViewModel> GetCreditProgramsLimits()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -1638,7 +1454,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -1669,19 +1485,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -1690,7 +1498,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetSchemePerformanceReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1709,7 +1517,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1740,19 +1548,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -1761,7 +1561,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetExpiredValuationReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1780,7 +1580,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1811,19 +1611,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -1832,7 +1624,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetExtentionReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1851,7 +1643,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1882,19 +1674,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -1903,7 +1687,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCustomerStockTaking()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -1922,7 +1706,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -1953,19 +1737,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -1974,7 +1750,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCustomerStockTakingReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
                && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
               .Select(d => new GlobalExposureViewModel
               {
@@ -1993,7 +1769,7 @@ namespace FintrakBanking.Repositories.Credit
                   productCode = d.PRODUCTCODE,
                   currencyName = d.CURRENCYNAME,
                   productName = d.PRODUCTNAME,
-                  facilityType = d.FACILITYTYPE,
+                  facilityType = d.ADJFACILITYTYPE,
                   adjFacilityType = d.ADJFACILITYTYPE,
                   adjFacilityTypeId = d.ADJFACILITYTYPEid,
                   odStatus = d.ODSTATUS,
@@ -2024,19 +1800,11 @@ namespace FintrakBanking.Repositories.Credit
                   principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                   loanAmounyLcy = d.LOANAMOUNYLCY,
                   loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                  sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                  totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                  totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                  totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                  totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                  totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                   totalExposure = d.TOTALEXPOSURE,
                   impairmentAmount = d.IMPAIRMENTAMOUNT,
                   unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                  unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                  interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                  unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                  interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                   amountDue = d.AMOUNTDUE,
               }).ToList();
 
@@ -2045,7 +1813,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetTranchPaymentReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2064,7 +1832,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2095,19 +1863,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2116,7 +1876,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetValuationReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2135,7 +1895,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2166,19 +1926,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2187,7 +1939,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetInsuranceReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2206,7 +1958,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2237,19 +1989,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2258,7 +2002,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetExtendedFacilityNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2277,7 +2021,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2308,19 +2052,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2329,7 +2065,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetEnhancedDisbursementToDirectorsNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2348,7 +2084,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2379,19 +2115,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2400,7 +2128,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetFacilityRestructuredNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2419,7 +2147,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2450,19 +2178,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2471,7 +2191,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetMccAndPpmcDeliverables()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
                 && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
                .Select(d => new GlobalExposureViewModel
                {
@@ -2490,7 +2210,7 @@ namespace FintrakBanking.Repositories.Credit
                    productCode = d.PRODUCTCODE,
                    currencyName = d.CURRENCYNAME,
                    productName = d.PRODUCTNAME,
-                   facilityType = d.FACILITYTYPE,
+                   facilityType = d.ADJFACILITYTYPE,
                    adjFacilityType = d.ADJFACILITYTYPE,
                    adjFacilityTypeId = d.ADJFACILITYTYPEid,
                    odStatus = d.ODSTATUS,
@@ -2521,28 +2241,20 @@ namespace FintrakBanking.Repositories.Credit
                    principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                    loanAmounyLcy = d.LOANAMOUNYLCY,
                    loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                   sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                   totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                   totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                   totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                   totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                   totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                    totalExposure = d.TOTALEXPOSURE,
                    impairmentAmount = d.IMPAIRMENTAMOUNT,
                    unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                   unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                   interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                   unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                   interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                    amountDue = d.AMOUNTDUE,
                }).ToList();
 
-            return data; return null;
+            return data;
         }
 
         public IEnumerable<GlobalExposureViewModel> GetMccAndPpmcDeliverablesReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -2561,7 +2273,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -2592,19 +2304,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -2613,7 +2317,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetPastDueMccAndPpmcDeliverablesReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -2632,7 +2336,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -2663,19 +2367,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -2684,7 +2380,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetDSRAReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2703,7 +2399,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2734,19 +2430,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2755,7 +2443,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetSLAReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2774,7 +2462,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2805,19 +2493,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2826,7 +2506,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetOutstandingCreditDocumentation()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2845,7 +2525,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2876,19 +2556,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2897,7 +2569,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetSiteVisitationCustomerReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -2916,7 +2588,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -2947,19 +2619,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -2968,7 +2632,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetPastDueDeferredDocuments()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -2987,7 +2651,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -3018,19 +2682,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -3038,7 +2694,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<GlobalExposureViewModel> GetExpiredInsurancePolicies()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3057,7 +2713,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3088,19 +2744,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3109,7 +2757,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetAMCONCollectionAndStatusReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3128,7 +2776,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3159,19 +2807,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3180,7 +2820,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetSiteVisitationAccountReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3199,7 +2839,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3230,19 +2870,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3251,7 +2883,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetEAndSRiskCategorisationDashboard()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -3270,7 +2902,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -3301,19 +2933,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -3322,7 +2946,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetBankExposureEAndSExclusionListReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3341,7 +2965,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3372,19 +2996,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3393,7 +3009,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetGreenBondProceedsUtilizationReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3412,7 +3028,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3443,19 +3059,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3464,7 +3072,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetEandSConditionsPrecedentConfirmationReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -3483,7 +3091,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -3514,19 +3122,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -3535,7 +3135,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetEandSConditionsSubsequentMonitoringReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3554,7 +3154,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3585,19 +3185,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3606,7 +3198,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetEandSCovenantDefaultReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3625,7 +3217,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3656,19 +3248,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3677,7 +3261,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetInvoiceConfirmationReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3696,7 +3280,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3727,19 +3311,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3748,7 +3324,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetStaockValuationReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3767,7 +3343,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3798,19 +3374,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3819,7 +3387,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetEndUseOfFundsReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3838,7 +3406,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -3869,19 +3437,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -3890,7 +3450,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCollateralVerificationReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -3909,7 +3469,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -3940,19 +3500,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -3961,7 +3513,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCallMemoReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -3980,7 +3532,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -4011,19 +3563,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -4032,7 +3576,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCreditFileChecklistReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -4051,7 +3595,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -4082,19 +3626,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -4103,7 +3639,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetPendingCreditApprovalReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -4122,7 +3658,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -4153,19 +3689,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -4174,7 +3702,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetEmployerDeliquencyReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -4193,7 +3721,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -4224,19 +3752,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -4245,7 +3765,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetFacilitiesWithMissedPaymentReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -4264,7 +3784,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -4295,19 +3815,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -4316,7 +3828,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetRunoffs()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -4335,7 +3847,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -4366,19 +3878,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -4387,7 +3891,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCashFlowMonitoringReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -4406,7 +3910,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -4437,19 +3941,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -4458,7 +3954,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetSalaryBackedLoans()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -4477,7 +3973,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -4508,19 +4004,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -4529,7 +4017,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetTODStatusReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -4548,7 +4036,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -4579,19 +4067,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -4600,7 +4080,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCreditFileWithIncompleteDocumentationReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -4619,7 +4099,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -4650,19 +4130,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -4671,7 +4143,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetOutstandingCollateralDocumentation()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -4690,7 +4162,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -4721,19 +4193,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -4742,7 +4206,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetAccountDeferralReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -4761,7 +4225,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -4792,19 +4256,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -4813,7 +4269,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetContigentLiabilityReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
                && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
               .Select(d => new GlobalExposureViewModel
               {
@@ -4832,7 +4288,7 @@ namespace FintrakBanking.Repositories.Credit
                   productCode = d.PRODUCTCODE,
                   currencyName = d.CURRENCYNAME,
                   productName = d.PRODUCTNAME,
-                  facilityType = d.FACILITYTYPE,
+                  facilityType = d.ADJFACILITYTYPE,
                   adjFacilityType = d.ADJFACILITYTYPE,
                   adjFacilityTypeId = d.ADJFACILITYTYPEid,
                   odStatus = d.ODSTATUS,
@@ -4863,19 +4319,11 @@ namespace FintrakBanking.Repositories.Credit
                   principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                   loanAmounyLcy = d.LOANAMOUNYLCY,
                   loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                  sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                  totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                  totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                  totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                  totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                  totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                   totalExposure = d.TOTALEXPOSURE,
                   impairmentAmount = d.IMPAIRMENTAMOUNT,
                   unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                  unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                  interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                  unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                  interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                   amountDue = d.AMOUNTDUE,
               }).ToList();
 
@@ -4884,7 +4332,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetProcessedTransactionReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -4903,7 +4351,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -4934,19 +4382,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -4955,7 +4395,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetPendingAndDeclinedTransactionReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -4974,7 +4414,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -5005,19 +4445,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -5026,7 +4458,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetLoanCovenantsReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -5045,7 +4477,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -5076,19 +4508,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -5097,7 +4521,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetVisitationAndSiteInspectionReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -5116,7 +4540,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -5147,19 +4571,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -5168,7 +4584,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCollateralReleaseAndAccountDeclassification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -5187,7 +4603,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -5218,19 +4634,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -5239,7 +4647,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetStockMonitoringReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -5258,7 +4666,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -5289,19 +4697,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -5310,7 +4710,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetDSRAReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -5329,7 +4729,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -5360,19 +4760,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -5381,7 +4773,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetPostDisbursementReview()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -5400,7 +4792,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -5431,19 +4823,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -5452,7 +4836,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetMeetUpMonthlyTurnoverRequrements()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -5471,7 +4855,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -5502,19 +4886,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -5523,7 +4899,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetMeetUpMonthlyTurnoverRequrementSMS()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -5542,7 +4918,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -5573,19 +4949,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -5595,7 +4963,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetBreachInCreditKeyMetricsNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -5614,7 +4982,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -5645,19 +5013,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -5666,7 +5026,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetBreachInCreditKeyMetricsNotificationReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -5685,7 +5045,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -5716,19 +5076,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -5737,7 +5089,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetAssignedDeliverableFromCACMeeting()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -5756,7 +5108,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -5787,19 +5139,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -5807,7 +5151,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<GlobalExposureViewModel> GetExpiredFacilityNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -5826,7 +5170,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -5857,19 +5201,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -5878,7 +5214,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetLargeExposureAbove18PercentNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
                 && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
                .Select(d => new GlobalExposureViewModel
                {
@@ -5897,7 +5233,7 @@ namespace FintrakBanking.Repositories.Credit
                    productCode = d.PRODUCTCODE,
                    currencyName = d.CURRENCYNAME,
                    productName = d.PRODUCTNAME,
-                   facilityType = d.FACILITYTYPE,
+                   facilityType = d.ADJFACILITYTYPE,
                    adjFacilityType = d.ADJFACILITYTYPE,
                    adjFacilityTypeId = d.ADJFACILITYTYPEid,
                    odStatus = d.ODSTATUS,
@@ -5928,19 +5264,11 @@ namespace FintrakBanking.Repositories.Credit
                    principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                    loanAmounyLcy = d.LOANAMOUNYLCY,
                    loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                   sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                   totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                   totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                   totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                   totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                   totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                    totalExposure = d.TOTALEXPOSURE,
                    impairmentAmount = d.IMPAIRMENTAMOUNT,
                    unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                   unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                   interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                   unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                   interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                    amountDue = d.AMOUNTDUE,
                }).ToList();
 
@@ -5948,7 +5276,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<GlobalExposureViewModel> GetBreachInGeographyLimitNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -5967,7 +5295,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -5998,19 +5326,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -6019,7 +5339,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetBreachInORRLimitNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -6038,7 +5358,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -6069,19 +5389,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -6090,7 +5402,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetBreachInSectorLimitNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -6109,7 +5421,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -6140,19 +5452,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -6161,7 +5465,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetImminentObligationRentalScheduleNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
                && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
               .Select(d => new GlobalExposureViewModel
               {
@@ -6180,7 +5484,7 @@ namespace FintrakBanking.Repositories.Credit
                   productCode = d.PRODUCTCODE,
                   currencyName = d.CURRENCYNAME,
                   productName = d.PRODUCTNAME,
-                  facilityType = d.FACILITYTYPE,
+                  facilityType = d.ADJFACILITYTYPE,
                   adjFacilityType = d.ADJFACILITYTYPE,
                   adjFacilityTypeId = d.ADJFACILITYTYPEid,
                   odStatus = d.ODSTATUS,
@@ -6211,19 +5515,11 @@ namespace FintrakBanking.Repositories.Credit
                   principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                   loanAmounyLcy = d.LOANAMOUNYLCY,
                   loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                  sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                  totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                  totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                  totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                  totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                  totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                   totalExposure = d.TOTALEXPOSURE,
                   impairmentAmount = d.IMPAIRMENTAMOUNT,
                   unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                  unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                  interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                  unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                  interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                   amountDue = d.AMOUNTDUE,
               }).ToList();
 
@@ -6232,7 +5528,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetImminentObligationMaturityFacilityNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -6251,7 +5547,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -6282,19 +5578,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -6303,7 +5591,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetOverlineFacilityNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -6322,7 +5610,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -6353,19 +5641,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -6374,7 +5654,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetPastDueFacilitiesNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -6393,7 +5673,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -6424,19 +5704,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -6445,7 +5717,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetLoanRepaymentReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -6464,7 +5736,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -6495,19 +5767,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -6516,7 +5780,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetOverlineReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -6535,7 +5799,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -6566,19 +5830,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -6587,7 +5843,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetMaturingObligationsReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
                && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
               .Select(d => new GlobalExposureViewModel
               {
@@ -6606,7 +5862,7 @@ namespace FintrakBanking.Repositories.Credit
                   productCode = d.PRODUCTCODE,
                   currencyName = d.CURRENCYNAME,
                   productName = d.PRODUCTNAME,
-                  facilityType = d.FACILITYTYPE,
+                  facilityType = d.ADJFACILITYTYPE,
                   adjFacilityType = d.ADJFACILITYTYPE,
                   adjFacilityTypeId = d.ADJFACILITYTYPEid,
                   odStatus = d.ODSTATUS,
@@ -6637,19 +5893,11 @@ namespace FintrakBanking.Repositories.Credit
                   principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                   loanAmounyLcy = d.LOANAMOUNYLCY,
                   loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                  sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                  totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                  totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                  totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                  totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                  totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                   totalExposure = d.TOTALEXPOSURE,
                   impairmentAmount = d.IMPAIRMENTAMOUNT,
                   unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                  unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                  interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                  unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                  interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                   amountDue = d.AMOUNTDUE,
               }).ToList();
 
@@ -6657,7 +5905,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<GlobalExposureViewModel> GetLargeExposureMonitoring()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -6676,7 +5924,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -6707,29 +5955,20 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetUnpaidObligationReminder()
+        public IEnumerable<GlobalExposureViewModel> GetUnpaidObligationReminder() // done
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
-             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.TOTALUNPAIDOBLIGATION > 0)
             .Select(d => new GlobalExposureViewModel
             {
                 customerName = d.CUSTOMERNAME,
@@ -6741,13 +5980,14 @@ namespace FintrakBanking.Repositories.Credit
                 referenceNumber = d.REFERENCENUMBER,
                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
                 date = d.DATE,
+                maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
                 customerId = d.CUSTOMERID,
                 groupObligorName = d.GROUPOBLIGORNAME,
+
                 alphaCode = d.ALPHACODE,
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -6774,23 +6014,15 @@ namespace FintrakBanking.Repositories.Credit
                 cardLimit = d.CARDLIMIT,
                 fxrate = d.FXRATE,
                 interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
+                //principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
+                //principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -6799,7 +6031,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetStaffLoanPortfolioReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -6818,7 +6050,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -6849,19 +6081,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -6870,7 +6094,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetExStaffLoanPortfolioReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -6889,7 +6113,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -6920,19 +6144,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -6941,7 +6157,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetDigitalLoansReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -6960,7 +6176,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -6991,19 +6207,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -7012,7 +6220,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetImminentMaturitiesAlertSMS()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -7031,7 +6239,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -7062,19 +6270,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -7083,7 +6283,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetImminentMaturitiesAlertEmail()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -7102,7 +6302,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -7133,19 +6333,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -7154,7 +6346,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetDelinquentCustomersAlertEmail()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -7173,7 +6365,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -7204,19 +6396,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 
@@ -7225,7 +6409,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetDelinquentCustomersAlertSMS()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -7244,7 +6428,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -7275,19 +6459,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -7296,7 +6472,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCoreExposureForOneYearPeriodNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -7315,7 +6491,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -7346,19 +6522,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -7367,7 +6535,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetPotentialAndPipelineAssetToBeFinance()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -7386,7 +6554,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -7417,19 +6585,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -7438,7 +6598,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCashBuildupReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -7457,7 +6617,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -7488,19 +6648,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -7509,7 +6661,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCustomersWithNoInflows()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
             .Select(d => new GlobalExposureViewModel
             {
@@ -7528,7 +6680,7 @@ namespace FintrakBanking.Repositories.Credit
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
                 productName = d.PRODUCTNAME,
-                facilityType = d.FACILITYTYPE,
+                facilityType = d.ADJFACILITYTYPE,
                 adjFacilityType = d.ADJFACILITYTYPE,
                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
                 odStatus = d.ODSTATUS,
@@ -7559,19 +6711,11 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                 totalExposure = d.TOTALEXPOSURE,
                 impairmentAmount = d.IMPAIRMENTAMOUNT,
                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
             }).ToList();
 
@@ -7580,7 +6724,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetCustomersWithTurnoverLessthan100()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.FACILITYTYPE == "OVERDRAFT"
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
               && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
              .Select(d => new GlobalExposureViewModel
              {
@@ -7599,7 +6743,7 @@ namespace FintrakBanking.Repositories.Credit
                  productCode = d.PRODUCTCODE,
                  currencyName = d.CURRENCYNAME,
                  productName = d.PRODUCTNAME,
-                 facilityType = d.FACILITYTYPE,
+                 facilityType = d.ADJFACILITYTYPE,
                  adjFacilityType = d.ADJFACILITYTYPE,
                  adjFacilityTypeId = d.ADJFACILITYTYPEid,
                  odStatus = d.ODSTATUS,
@@ -7630,19 +6774,11 @@ namespace FintrakBanking.Repositories.Credit
                  principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                  loanAmounyLcy = d.LOANAMOUNYLCY,
                  loanAmounyTcy = d.LOANAMOUNYTCY,
-                //shf = d.SHF,
-                sectionedLoanLimitDirectFcy = d.SECTIONEDLOANLIMITDIRECTFCY,
-                 sectionedLoanLimitDirectLcy = d.SECTIONEDLOANLIMITDIRECTLCY,
-                 totalExposuLcyPreviousYear = d.TOTALEXPOSULCYPREVIOUSYEAR,
-                 totalExposuLcyPrevious6Months = d.TOTAEXPOSURELCYPREVIOUS6MONTHS,
-                 totalExposuLcyPrevious3Months = d.TOTAEXPOSURELCYPREVIOUS3MONTHS,
-                 totalExposuLcyPreviousMonths = d.TOTAEXPOSURELCYPREVIOUSMONTHS,
-                 totalExposuLcyPreviousDay = d.TOTAEXPOSURELCYPREVIOUSDAY,
                  totalExposure = d.TOTALEXPOSURE,
                  impairmentAmount = d.IMPAIRMENTAMOUNT,
                  unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.UNPAIDOBLIGATIONAMOUNT,
-                 interestReceivableTcy = d.INTERESTRECEIVABLETCY,
+                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
+                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
              }).ToList();
 

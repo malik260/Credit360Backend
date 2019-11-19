@@ -18,7 +18,7 @@ namespace FintrakBanking.MonitoringMessagesSender
         private Timer _syncTimer;
         private static object s_lock = new object();
         EmailSender emailSender = new EmailSender();
-        private AlertRepository alert;
+        private AlertRepository alert = new AlertRepository();
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string slaEscalationIntervalInHours = ConfigurationManager.AppSettings["SLAEscalationIntervalInHours"];
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
@@ -63,7 +63,7 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
-                   alert.validateAlertCheck();
+                   //alert.validateAlertCheck();
                    // SEND EMAILS
                     bool response = emailSender.SendEmails();
                     if (response == true)

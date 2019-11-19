@@ -88,24 +88,35 @@
                     requestDatetime = DateTime.Now;
                     //HttpResponseMessage response = await client.GetAsync($"api/ExchangeRate/GetExchangeRateProduct?rateProduct.fromCurrencyCode={fromCurrencyCode}&rateProduct.toCurrencyCode={toCurrencyCode}&rateProduct.rateCode={rateCode}");
                     response = await client.GetAsync(
-                    $"GetExchangeRateWithDate/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}/{DateTime.Now.Date}");
+                    //$"GetExchangeRateWithDate/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}/{DateTime.Now.Date}");
+                    $"GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}");
                     //$"api/ExchangeRate/GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}"); GetExchangeRateWithDate
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
-                        exchangeRateAPI = await response.Content.ReadAsAsync<CurrencyExchangeRateIntegrationViewModel>();
+                        var rep = await response.Content.ReadAsAsync<ExchangeRateViewModel>();
+                        //exchangeRateAPI = await response.Content.ReadAsAsync<CurrencyExchangeRateIntegrationViewModel>();
 
-                        if (exchangeRateAPI.webRequestStatus != "SUCCESS")
+                        //if (exchangeRateAPI.webRequestStatus != "SUCCESS")
+                        //{
+                        //    throw new APIErrorException("Core Banking API error - "+exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
+                        //}
+
+                        if (!rep.responseMessage.ToLower().Contains("success"))
                         {
-                            throw new APIErrorException("Core Banking API error - "+exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
+                            throw new APIErrorException("Core Banking API error - " + exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
                         }
 
-                        var currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).Select(x=>x.CURRENCYID).FirstOrDefault();
-                        exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
-                        exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
+                        var currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == rep.data.fromCurrencyCode).Select(x=>x.CURRENCYID).FirstOrDefault();
+                        //var currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).Select(x=>x.CURRENCYID).FirstOrDefault();
+                        exchangeRateOutput.sellingRate = rep.data.exchangeRate;
+                        exchangeRateOutput.buyingRate = rep.data.exchangeRate;
+                        exchangeRateOutput.exchangeRate = rep.data.exchangeRate;
+                        exchangeRateOutput.fromCurrencyCode = rep.data.fromCurrencyCode;
+                        exchangeRateOutput.toCurrencyCode = rep.data.toCurrencyCode;
                         exchangeRateOutput.currencyId = (short)currencyId;
-                        exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
-                        exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
+                        exchangeRateOutput.date = DateTime.Now;
+                        exchangeRateOutput.webRequestStatus = rep.responseMessage;
 
                     }
 
@@ -989,6 +1000,122 @@
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
                     logContext.SaveChanges();
                 }
+
+                //context.SaveChanges();
+            }
+
+            //CRMSCodeGeneration
+            public async Task<ResponseMessage> ApiFetchCBMCRMSCode(CRMSCodeGeneration model, short loanSystemTypeId)
+            {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+
+                HttpClient client = new HttpClient(handler);
+                var inputJson = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessageFacilityViewModel responseApi = new ResponseMessageFacilityViewModel();
+                ResponseMessage responseMsg = null;
+                string responseJson = "";
+                getAPIURLSettings("crmsCode"); //Check TBL_API_URL
+                string apiUrl = "submitReturnV2";
+                try
+                {
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                    var dta = context.TBL_SETUP_GLOBAL.ToList();
+                    handler.UseDefaultCredentials = true;
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+
+                    response = client.PostAsync(apiUrl, new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                    responseJson = await response.Content.ReadAsStringAsync();
+                    responseDateTime = DateTime.Now;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        responseApi = await response.Content.ReadAsAsync<ResponseMessageFacilityViewModel>();
+
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseApi.response_code,
+                            message = responseApi.response_message,
+                            serialNumber = responseApi.bo_code,
+                            webRequestDate = DateTime.Now,
+                            webRequestStatus = responseApi.bo_message,
+                            responseStatus = responseApi.response_code == "00" ? true : false,
+                        };
+
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response,
+                            responseMessage = responseJson
+                        };
+                    }
+
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+                    //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var loanMapping = new TBL_THIRDPARTY_LOAN_MAPPING
+                    {
+                        LOANAPPLICATIONID = model.loanApplicationDetailId,
+                        LOANSYSTEMTYPEID = loanSystemTypeId,
+                        FACILITYMAPPINGID = responseApi.facility_id,
+                        BOOKINGCODE = responseApi.bo_code,
+                    };
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = API_URL + apiUrl,
+                        LOGTYPEID = 2,
+                        REFERENCENUMBER = model.sourceReferenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = inputJson,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseJson,
+                    };
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_THIRDPARTY_LOAN_MAPPING.Add(loanMapping);
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
+                }
+
 
                 //context.SaveChanges();
             }

@@ -683,14 +683,15 @@ namespace FintrakBanking.Repositories.Finance
                 {
                     var toCurrencyCode = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == baseCurrency).CURRENCYCODE;
                     var fromCurrencyCode = this.context.TBL_CURRENCY.Where(x => x.CURRENCYID == currencyId).Select(f => f.CURRENCYCODE).FirstOrDefault();
-                    var rateCode = "TTB";
+                    var rateCode = "TT";
 
                     // integration.
                     var rate = integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
                     if (rate.sellingRate <= 0)
                     {
-                        return GetExchangeRateStaging(date, currencyId, baseCurrency);
+                        return GetExchangeRateStaging(date, currencyId, baseCurrency, rateCode);
                     }
+                    UpdateExchangeRate(rate, currencyId, rateCode, baseCurrency);
                     return rate;
                 }
 
@@ -698,11 +699,11 @@ namespace FintrakBanking.Repositories.Finance
             }
             else
             {
-
+                var rateCode = "TT";
                 //var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
 
                 //CurrencyExchangeRateViewModel rateInfo = new CurrencyExchangeRateViewModel();
-                return GetExchangeRateStaging(date, currencyId, baseCurrency);
+                return GetExchangeRateStaging(date, currencyId, baseCurrency, rateCode);
                 //if (currencyId == baseCurrency)
                 //{
                 //    return new CurrencyExchangeRateViewModel { baseCurrencyId = baseCurrency, currencyId = currencyId, buyingRate = 1, sellingRate = 1, date = date, isBaseCurrency = true };
@@ -731,8 +732,9 @@ namespace FintrakBanking.Repositories.Finance
             }
         }
 
-        private CurrencyExchangeRateViewModel GetExchangeRateStaging(DateTime date, short currencyId, short baseCurrency)
+        private CurrencyExchangeRateViewModel GetExchangeRateStaging(DateTime date, short currencyId, short baseCurrency, string rateCode)
         {
+            var exchangeRateCode = context.TBL_CURRENCY_RATECODE.FirstOrDefault(r => r.RATECODE.Trim() == rateCode);
             var systemDate = generalSetup.GetApplicationDate();
             if (currencyId == baseCurrency)
             {
@@ -743,7 +745,7 @@ namespace FintrakBanking.Repositories.Finance
                 //DateTime systemDate = generalSetup.GetApplicationDate();
                 //DateTime date = generalSetup.GetApplicationDate().Date;
                 var rateInfo = (from x in this.context.TBL_CURRENCY_EXCHANGERATE
-                                where x.CURRENCYID == currencyId && x.DATE == systemDate && x.RATECODEID == 1
+                                where x.CURRENCYID == currencyId && x.DATE == systemDate && x.RATECODEID == exchangeRateCode.RATECODEID
                                 select x).FirstOrDefault();
 
                 if (rateInfo == null)
@@ -761,6 +763,36 @@ namespace FintrakBanking.Repositories.Finance
             }
         }
 
+        private bool UpdateExchangeRate(CurrencyExchangeRateViewModel rate, short currencyId, string rateCode, short baseCurrency)
+        {
+            var exchangeRateCode = context.TBL_CURRENCY_RATECODE.FirstOrDefault(r => r.RATECODE.Trim() == rateCode);
+            var currencyRate = context.TBL_CURRENCY_EXCHANGERATE.FirstOrDefault(r => r.CURRENCYID == currencyId && r.RATECODEID == exchangeRateCode.RATECODEID && r.DELETED == false);
+            if (currencyRate != null)
+            {
+                currencyRate.DATE = generalSetup.GetApplicationDate();
+                currencyRate.CURRENCYID = currencyId;
+                currencyRate.EXCHANGERATE = rate.sellingRate;
+                currencyRate.BASECURRENCYID = baseCurrency;
+                currencyRate.DATETIMEUPDATED = generalSetup.GetApplicationDate();
+                currencyRate.RATECODEID = exchangeRateCode.RATECODEID;
+            }else
+            {
+                var newRate = new TBL_CURRENCY_EXCHANGERATE()
+                {
+                    DATE = generalSetup.GetApplicationDate(),
+                    CURRENCYID = currencyId,
+                    EXCHANGERATE = rate.exchangeRate,
+                    BASECURRENCYID = baseCurrency,
+                    DATETIMECREATED = generalSetup.GetApplicationDate(),
+                    RATECODEID = exchangeRateCode.RATECODEID,
+                    CREATEDBY = 0,
+                    DELETED = false
+
+                };
+                context.TBL_CURRENCY_EXCHANGERATE.Add(newRate);
+            }
+            return context.SaveChanges() > 0;
+        }
 
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool PostDailyWriteoffLoansInterestAccrual(DailyInterestAccrualViewModel model)

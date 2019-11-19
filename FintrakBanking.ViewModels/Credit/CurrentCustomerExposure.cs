@@ -35,6 +35,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int productTypeId { get; set; }
         public int productId { get; set; }
         public string productIdString { get; set; }
+        public string productCode { get; set; }
         public string productName { get; set; }
         public int loanId { get; set; }
         public short applicationStatusId { get; set; }
@@ -71,7 +72,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int id { get; set; }
         public string customerId { get; set; }
-        public string date { get; set; }
+        public DateTime date { get; set; }
         public string customerName { get; set; }
         public string groupObligorName { get; set; }
         public string referenceNumber { get; set; }
@@ -96,13 +97,13 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime maturityDate { get; set; }
         public string location { get; set; }
         public DateTime bookingDate { get; set; }
-        public string valueDate { get; set; }
+        public DateTime valueDate { get; set; }
         public string maturityBand { get; set; }
         public string customerType { get; set; }
         public string branchName { get; set; }           
         public string branchCode { get; set; }
         public string obligorRiskRating { get; set; }
-        public string lastCrDate { get; set; }
+        public DateTime lastCrDate { get; set; }
         public string productId { get; set; }
         public string exposureTypeCode { get; set; }
         public string exposureType { get; set; }
@@ -114,7 +115,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? loanAmounyLcy { get; set; }
         public string cardLimit { get; set; }
         public string fxrate { get; set; }
-        public float? shf { get; set; }
+        public decimal? shf { get; set; }
         public decimal? sectionedLoanLimitDirectFcy { get; set; }
         public decimal? sectionedLoanLimitDirectLcy { get; set; }
         public decimal? totalExposuLcyPreviousYear { get; set; }
@@ -129,6 +130,11 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? interestReceivableTcy { get; set; }
         public decimal? amountDue { get; set; }
         public string interestrate { get; set; }
+        public int maturityDays { get; set; }
+        public string expiringBandId { get; set; }
+        public string expiringBand { get; set; }
+        public int unPoDaysOverdue { get; set; }
+        public DateTime scheduleDueDate { get; set; }
     }
 }
 

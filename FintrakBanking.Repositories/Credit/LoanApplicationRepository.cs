@@ -5441,7 +5441,7 @@ namespace FintrakBanking.Repositories.Credit
                            outstandings = a.TOTALEXPOSURE ?? 0,
                            recommendedLimit = 0,
                            //PastDueObligationsInterest = a.PASTDUEINTEREST,
-                           pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
+                           pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
                            reviewDate = DateTime.Now,
                            //prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                            loanStatus = a.CBNCLASSIFICATION,
