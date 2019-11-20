@@ -14,23 +14,20 @@ namespace FintrakBanking.MonitoringMessagesSender
         //private static readonly LogWriter _log = HostLogger.Get<WindowService>();
         static void Main(string[] args)
         {
-            //Logger _log = LogManager.GetCurrentClassLogger();
+            Logger _log = LogManager.GetCurrentClassLogger();
             var kernel = new StandardKernel();
             kernel.Load(Assembly.GetExecutingAssembly());
 
-
-
-
-            //_log.Info("");
-            //_log.Info("==================================================================");
-            //_log.Info("About startting GetImminentMaturities : " + DateTime.Now);
+            _log.Info("");
+            _log.Info("==================================================================");
+            _log.Info("About startting GetImminentMaturities : " + DateTime.Now);
 
             var alert = kernel.Get<IAlertRepository>();
-            alert.GetImminentMaturities();
+            alert.validateAlertCheck();
 
-            //_log.Info("");
-            //_log.Info("==================================================================");
-            //_log.Info("Started GetImminentMaturities : " + DateTime.Now);
+            _log.Info("");
+            _log.Info("==================================================================");
+            _log.Info("Started GetImminentMaturities : " + DateTime.Now);
 
 
             //HostFactory.Run(serviceConfig =>

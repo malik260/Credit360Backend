@@ -829,7 +829,9 @@ namespace FintrakBanking.Repositories.Setups.General
         public void validateAlertCheck()
         {
             GetImminentMaturities();
-            //GetCreditCardMaturingObligations();
+            GetCreditCardMaturingObligations();
+            GetUnpaidObligationReminder();
+            GetExpiringFacilityReport();
         }
 
         public void GetImminentMaturities()
@@ -849,12 +851,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 foreach (var i in imminentMaturities)
                 {
                     AlertsViewModel alert = new AlertsViewModel();
-                    //alert.receiverEmailList = new List<string>();
-                    //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
-                    //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
-                    //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
 
-                    List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
                     var accountNumbers = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == i.accountOfficerCode).ToList();
                     var n = 0;
                     var result = $@"
@@ -880,11 +882,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
-                    alertTemplate = alertTemplate.Replace("@{{days}}", i.maturityDays.ToString());
-                    var emailList = "benjamin.gbaaikye@fintraksoftware.com";
-                    //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL+";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+defaultEmail;
+                    //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+                    var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
+                    //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
                     alert.receiverEmailList.Add(emailList);
-                    alert.template = alertTemplate;
+                        alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
 
@@ -912,9 +914,9 @@ namespace FintrakBanking.Repositories.Setups.General
             foreach (var i in imminentMaturities)
             {
                 AlertsViewModel alert = new AlertsViewModel();
-                var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
-                var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
-                var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
 
                 List<int> days = new List<int> { 60, 89 };
                 var accountNumbers = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == i.accountOfficerCode).ToList();
@@ -942,7 +944,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
                 alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
-                var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+                //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+
+                var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
                 //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
                 alert.receiverEmailList.Add(emailList);
                 alert.template = alertTemplate;
@@ -953,6 +957,133 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             postAlertNotification(alerts);
         }
+
+        public void GetUnpaidObligationReminder()
+        {
+            // GetUnpaidObligationReminder method
+            var unpaidObligationReminder = externalAlertRepository.GetUnpaidObligationReminder();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetUnpaidObligationReminder").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            var alertTitle = alertTitleInfo.TITLE;
+            var alertTemplate = alertTitleInfo.TEMPLATE;
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            foreach (var i in unpaidObligationReminder)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
+                alertTemplate = alertTemplate.Replace("@{{facilityName}}", i.adjFacilityType);
+                alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", i.referenceNumber);
+                //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+                var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
+                //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
+                alert.receiverEmailList.Add(emailList);
+                alert.template = alertTemplate;
+                alert.alertTitle = alertTitle;
+                alert.canFire = true;
+
+                alerts.Add(alert);
+            }
+            postAlertNotification(alerts);
+        }
+
+        public void GetExpiringFacilityReport()
+        {
+            // GetExpiringFacilityReport method
+            var expiringFacilityReport = externalAlertRepository.GetExpiringFacilityReport();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetExpiringFacilityReport").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            var alertTitle = alertTitleInfo.TITLE;
+            var alertTemplate = alertTitleInfo.TEMPLATE;
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            foreach (var i in expiringFacilityReport)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+                
+                alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
+                alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
+                alertTemplate = alertTemplate.Replace("@{{facilityName}}", i.adjFacilityType);
+
+                //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+
+                var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
+                //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
+                alert.receiverEmailList.Add(emailList);
+                alert.template = alertTemplate;
+                alert.alertTitle = alertTitle;
+                alert.canFire = true;
+
+                alerts.Add(alert);
+            }
+            postAlertNotification(alerts);
+        }
+
+        public void GetLoanExpirationReminder()
+        {
+            // GetLoanExpirationReminder method
+            var loanExpirationReminder = externalAlertRepository.GetLoanExpirationReminder();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanExpirationReminder").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            var alertTitle = alertTitleInfo.TITLE;
+            var alertTemplate = alertTitleInfo.TEMPLATE;
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            foreach (var i in loanExpirationReminder)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
+
+                //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+
+                var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
+                //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
+                alert.receiverEmailList.Add(emailList);
+                alert.template = alertTemplate;
+                alert.alertTitle = alertTitle;
+                alert.canFire = true;
+
+                alerts.Add(alert);
+            }
+            postAlertNotification(alerts);
+        }
+
+
+
+
+
+
+
+
+
+
+
 
 
         //public void validateAlertCheck()
@@ -991,16 +1122,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private void postAlertNotification(List<AlertsViewModel> alerts)
         {
-            try
-            {
+           
                 foreach (var alert in alerts)
                 {
-                    if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList.ToString(), "100442", 0);
+                    if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0);
                 }
-            }catch(Exception ex)
-            {
-                throw ex;
-            }
+            
         }
 
         private bool validateConditionTrigger(short frequencyId, short conditionId)
@@ -1103,15 +1230,15 @@ namespace FintrakBanking.Repositories.Setups.General
             return list;
         }
 
-        public void LogEmailAlert(string messageBody, string alertSubject, string recipients, string referenceCode, int targetId)
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId)
         {
             try
             {
-                string recipient = recipients.Trim();
+                string recipient = string.Join("", recipients.ToArray());
                 string messageSubject = alertSubject;
                 string messageContent = messageBody;
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
-                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
+                string mailBody = templateUrl.Replace("{Description}", messageContent); //EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
                     MessageSubject = messageSubject,
@@ -1129,7 +1256,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             catch (Exception ex)
             {
-                throw ex;//new SecureException(ex.Message);
+                new SecureException(ex.ToString());
             }
         }
 
