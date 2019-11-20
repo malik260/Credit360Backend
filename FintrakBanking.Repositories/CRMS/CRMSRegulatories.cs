@@ -3051,7 +3051,7 @@ namespace FintrakBanking.Repositories.CRMS
                          //interest_rate = String.Format("{0:0.00}", a.APPROVEDINTERESTRATE),
                          beneficiary_account_no = (from i in context.TBL_CASA where i.CASAACCOUNTID == a.CASAACCOUNTID select i.PRODUCTACCOUNTNUMBER).FirstOrDefault() ?? "",
                          beneficiary_location = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == c.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
-                         prepared_date = DateTime.Now.ToString(),
+                         prepared_date = DateTime.Now.ToString("dd-MM-yyyy"),
                          //prepared_date = DateTime.Now.ToString("dd-MMM-yyyy", null),
                          relationship_types = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                          company_size = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == c.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
