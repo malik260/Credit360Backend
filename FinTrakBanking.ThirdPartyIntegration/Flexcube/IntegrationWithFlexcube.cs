@@ -439,6 +439,10 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
         {
+            if (string.IsNullOrEmpty(fromCurrencyCode))
+            {
+                return new CurrencyExchangeRateViewModel();
+            }
             var data = new CurrencyExchangeRateViewModel();
             Task.Run(async () => { data = await transaction.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode); }).GetAwaiter().GetResult();
             return new CurrencyExchangeRateViewModel

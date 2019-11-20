@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("TBL_ALERT_STAFF_ROLE")]
-    public partial class TBL_ALERT_STAFF_ROLE
+    [Table("TBL_ALERT_GENERAL_TEMPLATE")]
+    public partial class TBL_ALERT_GENERAL_TEMPLATE
     {
         [Key]
-        public int ALERTSTAFFROLEID { get; set; }
-        public int ALERTTITLEID { get; set; }
-        public int STAFFROLEID { get; set; }
+        public int TEMPLATEID { get; set; }
+        public string TEMPLATEBODY { get; set; }
     }
 }

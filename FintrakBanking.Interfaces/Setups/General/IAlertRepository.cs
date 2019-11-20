@@ -11,7 +11,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IAlertRepository
     {
-        void LogEmailAlert(string messageBody, string alertSubject, string recipients, string referenceCode, int targetId);
+        void GetImminentMaturities();
+        void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId);
         IEnumerable<AlertTitleViewModel> GetAllAlerts();
         bool AddAlertTitle(AlertTitleViewModel model);
         bool DeleteAlertTitle(int id, UserInfo user);
@@ -33,8 +34,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateAlertLevelGroup(int id, AlertLevelGroupViewModel model, UserInfo user);
         bool DeleteAlertLevelGroup(int id, UserInfo user);
         IEnumerable<AlertLevelViewModel> GetAllAlertLevel();
-        AlertLevelViewModel GetAlertLevelById(int id);
-        bool AddAlertLevel(AlertLevelViewModel model);
+        bool AddAlertStaffRole(AlertLevelViewModel model);
         bool UpdateAlertLevel(int id, AlertLevelViewModel model, UserInfo user);
         bool DeleteAlertLevel(int id, UserInfo user);
         IEnumerable<AlertMisViewModel> GetAllUserMisCode();
@@ -47,6 +47,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateAlertCondition(int id, AlertConditionViewModel model, UserInfo user);
         bool DeleteAlertCondition(int id, UserInfo user);
         IEnumerable<TblOperationsViewModel> GetAllOperations();
-      
+        IEnumerable<StaffRoleViewModel> GetAllStaffRoles();
     }
 }

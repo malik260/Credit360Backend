@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetUnAuthorizedOverdraftReport();
         IEnumerable<GlobalExposureViewModel> GetLoanExpirationReminder();
         IEnumerable<GlobalExposureViewModel> GetExpiringFacilityReport();
-        IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure();
+        //IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure();
         IEnumerable<GlobalExposureViewModel> GetImminentMaturities();
         IEnumerable<GlobalExposureViewModel> GetCreditCardMaturingObligations();
         IEnumerable<GlobalExposureViewModel> GetPastDueObligationsReminder();

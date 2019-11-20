@@ -276,7 +276,9 @@ namespace FintrakBanking.APICore.Controllers
         [Route("customer-staging/")]
         public HttpResponseMessage GetStagedCustomer(string searchTerm)
         {
-
+            //var data2 = new CustomerViewModels();
+            //return Request.CreateResponse(HttpStatusCode.OK,
+            //      new { success = true, result = data2 });
             try
             {
                 var data = stagingRepo.GetIntegratedCustomerInformation(searchTerm);

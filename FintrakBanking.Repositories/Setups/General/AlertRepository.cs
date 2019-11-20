@@ -37,6 +37,8 @@ namespace FintrakBanking.Repositories.Setups.General
             this.externalAlertRepository = _externalAlertRepository; 
         }
 
+        public AlertRepository() {}
+
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE                  
@@ -58,7 +60,19 @@ namespace FintrakBanking.Repositories.Setups.General
             return alerts;
         }
 
-       public IEnumerable<AlertTitleViewModel> GetAlerts()
+        public IEnumerable<StaffRoleViewModel> GetAllStaffRoles()
+        {
+            var staffRoles = (from a in context.TBL_STAFF_ROLE
+                          select new StaffRoleViewModel
+                          {
+                              staffRoleId = a.STAFFROLEID,
+                              staffRoleCode = a.STAFFROLECODE,
+                              staffRoleName = a.STAFFROLENAME,
+                          });
+            return staffRoles;
+        }
+
+        public IEnumerable<AlertTitleViewModel> GetAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE
                           select new AlertTitleViewModel
@@ -203,7 +217,6 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var alerts = (from a in context.TBL_ALERT_SETUP
                           join c in context.TBL_ALERT_ROLE_GROUP on a.LEVELGROUPID equals c.ALERTLEVELGROUPID
-                          join d in context.TBL_ALERT_STAFF_ROLE on c.ALERTLEVELGROUPID equals d.LEVELGROUPID
                           join x in context.TBL_ALERT_CONDITION on (int)a.CONDITIONID equals x.ALERTCONDITIONID
                           join f in context.TBL_OPERATIONS on (int)x.OPERATIONID equals f.OPERATIONID
                           select new AlertSetupViewModel
@@ -212,7 +225,6 @@ namespace FintrakBanking.Repositories.Setups.General
                               titleId = a.TITLEID,
                               levelGroupId = a.LEVELGROUPID,
                               frequencyId = a.FREQUENCYID,
-                              levelCode = d.LEVELCODE,
                               operationName = f.OPERATIONNAME,
                               formular = x.FORMULAR,
                               title = context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault(),
@@ -539,39 +551,27 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<AlertLevelViewModel> GetAllAlertLevel()
         {
-            var alerts = (from a in context.TBL_ALERT_STAFF_ROLE
+            var alerts = (from a in context.TBL_ALERT_STAFF_ROLE 
+                          join b in context.TBL_STAFF_ROLE on a.STAFFROLEID equals b.STAFFROLEID
+                          join c in context.TBL_ALERT_TITLE on a.ALERTTITLEID equals c.ALERTTITLEID
                           select new AlertLevelViewModel
                           {
-                              alertLevelId = a.ALERTLEVELID,
-                              emailList = a.EMAILLIST,
-                              levelCode = a.LEVELCODE,
-                              levelGroupId = a.LEVELGROUPID,
-                              levelGroupName = context.TBL_ALERT_ROLE_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_ROLE_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault()
+                              alertStaffRoleId = a.ALERTSTAFFROLEID,
+                              alertTitleId = a.ALERTTITLEID,
+                              staffRoleId = a.STAFFROLEID,
+                              title = c.TITLE == null ? "N/A" : c.TITLE,
+                              staffRoleCode = b.STAFFROLECODE == null ? "N/A" : b.STAFFROLECODE,
+                              staffRoleName = b.STAFFROLENAME == null ? "N/A" : b.STAFFROLENAME,
                           });
             return alerts;
         }
 
-        public AlertLevelViewModel GetAlertLevelById(int id)
-        {
-            var alert = (from a in context.TBL_ALERT_STAFF_ROLE.Where(x => x.ALERTLEVELID == id)
-                         select new AlertLevelViewModel
-                         {
-                             alertLevelId = a.ALERTLEVELID,
-                             emailList = a.EMAILLIST,
-                             levelCode = a.LEVELCODE,
-                             levelGroupId = a.LEVELGROUPID,
-                             levelGroupName = context.TBL_ALERT_ROLE_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_ROLE_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault()
-                         }).FirstOrDefault();
-            return alert;
-        }
-
-        public bool AddAlertLevel(AlertLevelViewModel model)
+        public bool AddAlertStaffRole(AlertLevelViewModel model)
         {
             var entity = new TBL_ALERT_STAFF_ROLE
             {
-                EMAILLIST = model.emailList,
-                LEVELCODE = model.levelCode,
-                LEVELGROUPID = model.levelGroupId
+                ALERTTITLEID = model.alertTitleId,
+                STAFFROLEID = model.staffRoleId,
             };
 
             context.TBL_ALERT_STAFF_ROLE.Add(entity);
@@ -599,9 +599,8 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool UpdateAlertLevel(int id, AlertLevelViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_STAFF_ROLE.Find(id);
-            entity.EMAILLIST = model.emailList;
-            entity.LEVELCODE = model.levelCode;
-            entity.LEVELGROUPID = model.levelGroupId;
+            entity.ALERTTITLEID = model.alertTitleId;
+            entity.STAFFROLEID = model.staffRoleId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -615,7 +614,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.ALERTLEVELID,
+                TARGETID = entity.ALERTSTAFFROLEID,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
             });
@@ -640,7 +639,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.ALERTLEVELID,
+                TARGETID = entity.ALERTSTAFFROLEID,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
             });
@@ -825,36 +824,42 @@ namespace FintrakBanking.Repositories.Setups.General
             return opeartion;
         }
 
-        //var cause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
-        //cause = cause.Replace("{@RelationshipManagerName}", "");
-        //      cause = cause.Replace("{@BusinessManagerName}", "");
-
 
         #region ALERT ENGINE
         public void validateAlertCheck()
         {
             GetImminentMaturities();
             GetCreditCardMaturingObligations();
+            GetUnpaidObligationReminder();
+            GetExpiringFacilityReport();
         }
 
         public void GetImminentMaturities()
         {
-            // GetImminentMaturities method
-            var imminentMaturities = externalAlertRepository.GetImminentMaturities();
-            var alertTitle = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities").Select(a => a.TITLE).FirstOrDefault();
-            var alertTemplate = context.TBL_ALERT_TITLE.Where(b => b.BINDINGMETHOD == "GetImminentMaturities").Select(b => b.TEMPLATE).FirstOrDefault();
-            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
-            foreach (var i in imminentMaturities)
-            {
-                AlertsViewModel alert = new AlertsViewModel();
-                var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
-                var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
-                var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+                // GetImminentMaturities method
+                var imminentMaturities = externalAlertRepository.GetImminentMaturities();
+                var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities").FirstOrDefault();
+
+                var defaultEmail = "";
+                if (alertTitleInfo.DEFAULTEMAIL != null)
+                {
+                    defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+                }
+                var alertTitle = alertTitleInfo.TITLE;
+                var alertTemplate = alertTitleInfo.TEMPLATE;
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var i in imminentMaturities)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
 
                 List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
-                var accountNumbers = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == i.accountOfficerCode).ToList();
-                var n = 0;
-                var result = $@"
+                    var accountNumbers = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == i.accountOfficerCode).ToList();
+                    var n = 0;
+                    var result = $@"
                     <table border=1>
                         <tr>
                             <th><b>S/N</b></th>
@@ -862,32 +867,32 @@ namespace FintrakBanking.Repositories.Setups.General
                             <th><b>Account Number</b></th>
                         </tr>
                      ";
-                foreach (var t in accountNumbers)
-                {
-                    n++;
-                    result = result + $@"
+                    foreach (var t in accountNumbers)
+                    {
+                        n++;
+                        result = result + $@"
                         <tr>
                             <td>{n}</td>
                             <td>{t.CUSTOMERNAME}</td>
                             <td>{t.ACCOUNTNUMBER}</td>
                         </tr>
                     ";
+                    }
+                    result = result + $"</table>";
+
+                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
+                    alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+                    //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+                    var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
+                    //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
+                    alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                    alert.alertTitle = alertTitle;
+                    alert.canFire = true;
+
+                    alerts.Add(alert);
                 }
-                result = result + $"</table>";
-
-                alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
-                alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
-                alertTemplate = alertTemplate.Replace("@{{days}}", i.maturityDays.ToString());
-
-                var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL;
-                alert.receiverEmailList.Add(emailList);
-                alert.template = alertTemplate;
-                alert.alertTitle = alertTitle;
-                alert.canFire = true;
-
-                alerts.Add(alert);
-            }
-            postAlertNotification(alerts);
+                postAlertNotification(alerts);
         }
 
 
@@ -895,15 +900,23 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             // GetCreditCardMaturingObligations method
             var imminentMaturities = externalAlertRepository.GetCreditCardMaturingObligations();
-            var alertTitle = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetCreditCardMaturingObligations").Select(a => a.TITLE).FirstOrDefault();
-            var alertTemplate = context.TBL_ALERT_TITLE.Where(b => b.BINDINGMETHOD == "GetCreditCardMaturingObligations").Select(b => b.TEMPLATE).FirstOrDefault();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetCreditCardMaturingObligations").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            var alertTitle = alertTitleInfo.TITLE;
+            var alertTemplate = alertTitleInfo.TEMPLATE;
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
             foreach (var i in imminentMaturities)
             {
                 AlertsViewModel alert = new AlertsViewModel();
-                var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
-                var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
-                var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
 
                 List<int> days = new List<int> { 60, 89 };
                 var accountNumbers = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == i.accountOfficerCode).ToList();
@@ -931,9 +944,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
                 alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
-                alertTemplate = alertTemplate.Replace("@{{days}}", i.maturityDays.ToString());
+                //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
 
-                var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL;
+                var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
+                //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
                 alert.receiverEmailList.Add(emailList);
                 alert.template = alertTemplate;
                 alert.alertTitle = alertTitle;
@@ -943,6 +957,133 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             postAlertNotification(alerts);
         }
+
+        public void GetUnpaidObligationReminder()
+        {
+            // GetUnpaidObligationReminder method
+            var unpaidObligationReminder = externalAlertRepository.GetUnpaidObligationReminder();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetUnpaidObligationReminder").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            var alertTitle = alertTitleInfo.TITLE;
+            var alertTemplate = alertTitleInfo.TEMPLATE;
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            foreach (var i in unpaidObligationReminder)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
+                alertTemplate = alertTemplate.Replace("@{{facilityName}}", i.adjFacilityType);
+                alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", i.referenceNumber);
+                //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+                var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
+                //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
+                alert.receiverEmailList.Add(emailList);
+                alert.template = alertTemplate;
+                alert.alertTitle = alertTitle;
+                alert.canFire = true;
+
+                alerts.Add(alert);
+            }
+            postAlertNotification(alerts);
+        }
+
+        public void GetExpiringFacilityReport()
+        {
+            // GetExpiringFacilityReport method
+            var expiringFacilityReport = externalAlertRepository.GetExpiringFacilityReport();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetExpiringFacilityReport").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            var alertTitle = alertTitleInfo.TITLE;
+            var alertTemplate = alertTitleInfo.TEMPLATE;
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            foreach (var i in expiringFacilityReport)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+                
+                alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
+                alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
+                alertTemplate = alertTemplate.Replace("@{{facilityName}}", i.adjFacilityType);
+
+                //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+
+                var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
+                //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
+                alert.receiverEmailList.Add(emailList);
+                alert.template = alertTemplate;
+                alert.alertTitle = alertTitle;
+                alert.canFire = true;
+
+                alerts.Add(alert);
+            }
+            postAlertNotification(alerts);
+        }
+
+        public void GetLoanExpirationReminder()
+        {
+            // GetLoanExpirationReminder method
+            var loanExpirationReminder = externalAlertRepository.GetLoanExpirationReminder();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanExpirationReminder").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            var alertTitle = alertTitleInfo.TITLE;
+            var alertTemplate = alertTitleInfo.TEMPLATE;
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            foreach (var i in loanExpirationReminder)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+
+                //var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE == i.accountOfficerCode).FirstOrDefault();
+                //var rm = context.TBL_STAFF.Where(x => x.STATEID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                //var groupHead = context.TBL_STAFF.Where(x => x.STATEID == rm.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
+
+                //var emailList = "benjamin.gbaaikye@fintraksoftware.com";
+
+                var emailList = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com;TAORIDI.ALAO@accessbankplc.com;OLUKAYODE.AJAYI@ACCESSBANKPLC.com;Fayokemi.Akintunde@ACCESSBANKPLC.com;tajudeen.onikoyi@fintraksoftware.com;felix.afighi@fintraksoftware.com";
+                //var emailList = accountOfficer.EMAIL + ";" + rm.EMAIL + ";" + groupHead.EMAIL + ";" + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID)+ defaultEmail;
+                alert.receiverEmailList.Add(emailList);
+                alert.template = alertTemplate;
+                alert.alertTitle = alertTitle;
+                alert.canFire = true;
+
+                alerts.Add(alert);
+            }
+            postAlertNotification(alerts);
+        }
+
+
+
+
+
+
+
+
+
+
+
 
 
         //public void validateAlertCheck()
@@ -981,10 +1122,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private void postAlertNotification(List<AlertsViewModel> alerts)
         {
-            foreach (var alert in alerts)
-            {
-                if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList.ToString(), "100442", 0);
-            }
+           
+                foreach (var alert in alerts)
+                {
+                    if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0);
+                }
+            
         }
 
         private bool validateConditionTrigger(short frequencyId, short conditionId)
@@ -1050,30 +1193,52 @@ namespace FintrakBanking.Repositories.Setups.General
             return false;
         }
 
-        private List<AlertLevelViewModel> GetReceivergroup(int levelGroupId)
-        {
-            var levels = (from g in context.TBL_ALERT_ROLE_GROUP
-                          join m in context.TBL_ALERT_ROLE_GRP_MAPPING on g.ALERTLEVELGROUPID equals m.LEVELGROUPID
-                          join l in context.TBL_ALERT_STAFF_ROLE on m.LEVELCODE equals l.LEVELCODE
-                          where g.ALERTLEVELGROUPID == levelGroupId
-                          select new AlertLevelViewModel
-                          {
-                              levelCode = l.LEVELCODE,
-                              levelGroupId = l.LEVELGROUPID
-                          }).ToList();
+        //private List<AlertLevelViewModel> GetReceivergroup(int levelGroupId)
+        //{
+        //    var levels = (from g in context.TBL_ALERT_ROLE_GROUP
+        //                  join m in context.TBL_ALERT_ROLE_GRP_MAPPING on g.ALERTLEVELGROUPID equals m.LEVELGROUPID
+        //                  join l in context.TBL_ALERT_STAFF_ROLE on m.LEVELCODE equals l.STAFFROLEID
+        //                  where g.ALERTLEVELGROUPID == levelGroupId
+        //                  select new AlertLevelViewModel
+        //                  {
+        //                      levelCode = l.LEVELCODE,
+        //                      levelGroupId = l.LEVELGROUPID
+        //                  }).ToList();
 
-            return levels;
+        //    return levels;
+        //}
+
+
+        public string GetAllStaffRoleEmails(int alerttitleId)
+        {
+            var list = "";
+            var roleEmail = (from r in context.TBL_STAFF_ROLE
+                            join s in context.TBL_STAFF on r.STAFFROLEID equals s.STAFFROLEID
+                            join t in context.TBL_ALERT_STAFF_ROLE on r.STAFFROLEID equals t.STAFFROLEID
+                            where t.ALERTTITLEID == alerttitleId
+                              select new simpleStaffModel
+                              {
+                                   staffCode= s.STAFFCODE,
+                                   staffRoleId = s.STAFFROLEID,
+                                   email = s.EMAIL,
+                              }).ToList();
+
+            foreach (var t in roleEmail)
+            {
+                list = list+";"+t.email;
+            }
+            return list;
         }
 
-        public void LogEmailAlert(string messageBody, string alertSubject, string recipients, string referenceCode, int targetId)
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId)
         {
             try
             {
-                string recipient = recipients.Trim();
+                string recipient = string.Join("", recipients.ToArray());
                 string messageSubject = alertSubject;
                 string messageContent = messageBody;
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
-                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
+                string mailBody = templateUrl.Replace("{Description}", messageContent); //EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
                     MessageSubject = messageSubject,
@@ -1091,7 +1256,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             catch (Exception ex)
             {
-                throw ex;//new SecureException(ex.Message);
+                new SecureException(ex.ToString());
             }
         }
 
@@ -1114,6 +1279,7 @@ namespace FintrakBanking.Repositories.Setups.General
             };
 
             context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
 
         }
 

@@ -687,7 +687,7 @@ namespace FintrakBanking.Repositories.Finance
 
                     // integration.
                     var rate = integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
-                    if (rate.exchangeRate <= 0)
+                    if (rate.sellingRate <= 0)
                     {
                         return GetExchangeRateStaging(date, currencyId, baseCurrency, rateCode);
                     }
@@ -775,21 +775,22 @@ namespace FintrakBanking.Repositories.Finance
                 currencyRate.BASECURRENCYID = baseCurrency;
                 currencyRate.DATETIMEUPDATED = generalSetup.GetApplicationDate();
                 currencyRate.RATECODEID = exchangeRateCode.RATECODEID;
-                return true;
-            }
-            var newRate = new TBL_CURRENCY_EXCHANGERATE()
+            }else
             {
-                DATE = generalSetup.GetApplicationDate(),
-                CURRENCYID = currencyId,
-                EXCHANGERATE = rate.exchangeRate,
-                BASECURRENCYID = baseCurrency,
-                DATETIMECREATED = generalSetup.GetApplicationDate(),
-                RATECODEID = exchangeRateCode.RATECODEID,
-                CREATEDBY = 0,
-                DELETED = false
+                var newRate = new TBL_CURRENCY_EXCHANGERATE()
+                {
+                    DATE = generalSetup.GetApplicationDate(),
+                    CURRENCYID = currencyId,
+                    EXCHANGERATE = rate.exchangeRate,
+                    BASECURRENCYID = baseCurrency,
+                    DATETIMECREATED = generalSetup.GetApplicationDate(),
+                    RATECODEID = exchangeRateCode.RATECODEID,
+                    CREATEDBY = 0,
+                    DELETED = false
 
-        };
-            context.TBL_CURRENCY_EXCHANGERATE.Add(newRate);
+                };
+                context.TBL_CURRENCY_EXCHANGERATE.Add(newRate);
+            }
             return context.SaveChanges() > 0;
         }
 

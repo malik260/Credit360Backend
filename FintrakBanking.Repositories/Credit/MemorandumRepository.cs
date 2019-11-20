@@ -384,8 +384,10 @@ namespace FintrakBanking.Repositories.Credit
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLOS();
                 this.exchangeRate = GetAllExchangeRates();
-                this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
-                this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();
+                this.obligorRiskRating = GetCustomerRiskRating();
+                this.obligorClassification = GetObligorClassification();
+                this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
+                //this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();
                 //this.contingentFacilities = GetContingentFacilitiesMarkupLOS();
                 //this.totalContingentFacilities = GetTotalContingentFacilitiesMarkupLOS();
                 //ImportFinanceFinance;
@@ -405,9 +407,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
-                this.obligorRiskRating = GetCustomerRiskRating();
-                this.obligorClassification = GetObligorClassification();
-                this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
+                this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
+
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
                 this.memoData = MemoMarkupHtml();
@@ -447,8 +448,11 @@ namespace FintrakBanking.Repositories.Credit
                 //this.preparedBy = this.lmsrAppllication.TBL_STAFF.FIRSTNAME + " " + this.lmsrAppllication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLMS();
                 //this.exchangeRate = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().EXCHANGERATE.ToString();
-                this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
-                this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();//this.directFacilities = GetDirectFacilitiesMarkupLMS();
+                this.obligorRiskRating = GetCustomerRiskRating();
+                this.obligorClassification = GetObligorClassification();
+                this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
+                this.exchangeRate = GetAllExchangeRates();
+                //this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();//this.directFacilities = GetDirectFacilitiesMarkupLMS();
                 //this.totalDirectFacilities = GetTotalDirectFacilitiesMarkupLMS();
                 //this.contingentFacilities = GetContingentFacilitiesMarkupLMS();
                 //this.totalContingentFacilities = GetTotalContingentFacilitiesMarkupLMS();
@@ -466,8 +470,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.securityAnalysis = this.GetSecurityAnalysisMarkUP();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
-                this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
-                this.obligorClassification = GetObligorClassification();
+                this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
+
 
                 // out ducument properties definition
                 /*this.memoData = MemoMarkupHtml();
@@ -508,6 +512,7 @@ namespace FintrakBanking.Repositories.Credit
             this.conditionsPrecedenceList = GetConditionsMarkUp();
             this.dynamicsList = GetDynamicsMarkUp();
             this.monitoringTriggers = MonitoringTriggersMarkup();
+            
             //this.customerTurnover = CustomerTurnoverMarkup(); // lazy loaded
 
             return true;
@@ -1183,7 +1188,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetAllExchangeRates()
         {
             var result = String.Empty;
-            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.ToList();
+            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).ToList();
             foreach (var x in exchangeRates)
             {
                 result = result + $@"
@@ -1432,6 +1437,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetDirectFacilitiesMarkupLOS()
         {
             var result = String.Empty;
+            var exposures = GetExposures();
             var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
             var loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                                                 && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
@@ -1457,6 +1463,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var facility = group.Key;
                 var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
+                //var sameProductExposures
                 var currentAmount = group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
                 //var currentAmount = group.Sum(p => p.OUTSTANDINGPRINCIPAL) + group.Sum(p => p.OUTSTANDINGINTEREST);
                 // checks each loan detail.
@@ -2684,6 +2691,25 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        public List<CurrentCustomerExposure> GetExposures()
+        {
+            var exposures = new List<CurrentCustomerExposure>();
+            var customerIds = new List<CustomerExposure>();
+            if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERID });
+                exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
+                //exposures = GetCurrentSingleCustomerExposures();
+            }
+            else
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.TBL_CUSTOMER_GROUP.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault().CUSTOMERID });
+                exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
+                //exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
+            }
+            return exposures;
+        }
+
         private string GetTotalGroupExposureMarkup()
         {
             var result = String.Empty;
@@ -3510,6 +3536,7 @@ namespace FintrakBanking.Repositories.Credit
                             currency = a.CURRENCYNAME,
                             exposureTypeCode = a.EXPOSURETYPECODE,
                             adjFacilityType = a.ADJFACILITYTYPE,
+                            productCode = a.PRODUCTCODE,
                             productIdString = a.PRODUCTID,
                             productName = a.PRODUCTNAME,
                             //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
