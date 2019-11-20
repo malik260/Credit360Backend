@@ -226,7 +226,20 @@ namespace FintrakBanking.Repositories.Credit
         //private string branchName;
         private string facilityType;
         private string drawdownAmount;
-        private int tenor;
+        public int tenor;
+
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = tenor == 1 ? " day" : " days";
+                if (tenor < 15) return tenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(tenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+
         private int? moratorium;
         private string principalRepayment;
         private string interestRepayment;
@@ -532,9 +545,9 @@ namespace FintrakBanking.Repositories.Credit
                 this.principalRepayment = "";
                 this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
                 this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-                this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
-                this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
-                this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); 
+                //this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
+                //this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
+                //this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); 
                 this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
                 this.effectiveDate = loanApplication.APPROVEDDATE;
                 this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
@@ -860,10 +873,15 @@ namespace FintrakBanking.Repositories.Credit
 
 
         //markups
-        
+
         public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
         {
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+            var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID).ToList();
+            managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[0]).FirstOrDefault().VALUE;
+            processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[1]).FirstOrDefault().VALUE;
+            commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[2]).FirstOrDefault().VALUE;
+
 
             var result = String.Empty;
             result = result + $@"
@@ -895,7 +913,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                         <td>TENOR:</td>
-                        <td>{tenor}</td>
+                        <td>{approvedTenorString}</td>
                         <td>MGT FEE:</td>
                         <td>{managementFee}</td>
                     </tr>

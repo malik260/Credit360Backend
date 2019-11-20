@@ -233,4 +233,9 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string channel_code { get; set; }
         public int token { get; set; }
     }
+
+    public class ResponseMessageCreditCheckViewModel
+    {
+        public string creditCheck { get; set; }
+    }
 }

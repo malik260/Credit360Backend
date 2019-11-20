@@ -682,6 +682,29 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
         }
 
+        public PostingResult GetCreditCheck(CreditCheckViewModel model)
+        {
+            ResponseMessage result = null;
+            Task.Run(async () => result = await transaction.FlexcubeCreditCheck(model)).GetAwaiter().GetResult();
+
+            if (result.APIResponse != null)
+            {
+                if (result.APIResponse.responseStatus)
+                {
+                    return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode, responseMessage = result.responseMessage };
+                }
+                else
+                {
+                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+                }
+            }
+            else
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
+        }
+
         //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
         //{
         //    ResponseMessage result = null;
@@ -897,7 +920,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 Task.Run(async () => cust = await customer.GetCustomerByAccountsNumber(customerAccount)).GetAwaiter().GetResult();
                 return cust;
             }
-            catch (Exception ex)
+            catch (APIErrorException ex)
             {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
@@ -914,7 +937,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 .GetResult();
                 return accountOutput;
             }
-            catch (Exception ex)
+            catch (APIErrorException ex)
             {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
@@ -930,7 +953,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode)).GetAwaiter().GetResult();
                 return casa;
             }
-            catch (Exception ex)
+            catch (APIErrorException ex)
             {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
@@ -940,9 +963,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public List<RatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode)
         {
             List<RatingAndRatioViewModel> customerRatio = new List<RatingAndRatioViewModel>();
-            Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode))
-                .GetAwaiter().GetResult();
-            return customerRatio;
+
+            try {
+                Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode)).GetAwaiter().GetResult();
+                return customerRatio;
+            }
+            catch (APIErrorException)
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         } // GetCorporateProbabilityDefaultByCustomerId
 
         public List<GroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode)
@@ -956,34 +986,61 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public CutomerRatingViewModel GetCorporateCustomerRatingByCustomerCode(string customerCode)
         {
             CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
-            Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
+
+            try {
+                Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return customerRating;
+                return customerRating;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
         }
 
         public FacilityRatingViewModel GetAutoLoanRetailByCustomerCode(string customerCode)
         {
             FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
-            Task.Run(async () => autoLoan = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
+
+            try {
+                Task.Run(async () => autoLoan = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return autoLoan;
+                return autoLoan;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+            
         }
 
 
         public FacilityRatingViewModel GetPersonalLoanRetailByCustomerCode(string customerCode)
         {
             FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
-            Task.Run(async () => personalLoan = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
-                .GetAwaiter().GetResult();
-            return personalLoan;
+
+            try {
+                Task.Run(async () => personalLoan = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
+               .GetAwaiter().GetResult();
+                return personalLoan;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
         public FacilityRatingViewModel GetCreditCardRetailByCustomerCode(string customerCode)
         {
             FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
-            Task.Run(async () => creditCard = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
+
+            try {
+                Task.Run(async () => creditCard = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return creditCard;
+                return creditCard;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
         //public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)
@@ -1000,9 +1057,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
-            Task.Run(async () => accounts = await customer.GetCustomerTransactions(accountNumber, durationInMonths))?.GetAwaiter().GetResult();
-
-            return accounts;
+            try {
+                Task.Run(async () => accounts = await customer.GetCustomerTransactions(accountNumber, durationInMonths))?.GetAwaiter().GetResult();
+                return accounts;
+            }
+            catch (Exception) {
+                throw new ConditionNotMetException("Core Banking API error, Kindly contact system administartor!");
+            }
         }
 
         public List<CustomerTurnoverViewModel> GetCustomerAccountInterestTransactions(string customerCode, int durationInMonths)

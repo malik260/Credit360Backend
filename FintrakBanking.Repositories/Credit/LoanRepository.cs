@@ -7267,40 +7267,40 @@ namespace FintrakBanking.Repositories.Credit
 
                 var casaBalance = integration.GetCustomerAccountBalance(casa.PRODUCTACCOUNTNUMBER);
 
-                //var lienModel = new FlexcubeLienViewModel
-                //{
-                //    account_no = casa.PRODUCTACCOUNTNUMBER,
-                //    collateral_code = item.COLLATERALCODE,
-                //    collateral_value = item.COLLATERALVALUE.ToString(),
-                //    start_date = app.EFFECTIVEDATE.ToString(),
-                //    end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToShortDateString(),
-                //    collateral_id = item.COLLATERALCUSTOMERID.ToString(),
-                //    contract_ref_no = app.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                //    collateral_contribution = casaBalance.availableBalance.ToString(),
-                //    branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
-                //    channel_code = "FINTRAK",
-                //    loanApplicationId = app.LOANAPPLICATIONID
-                //};
+                var lienModel = new FlexcubeLienViewModel
+                {
+                    account_no = casa.PRODUCTACCOUNTNUMBER,
+                    collateral_code = item.COLLATERALCODE,
+                    collateral_value = item.COLLATERALVALUE.ToString(),
+                    start_date = app.EFFECTIVEDATE.Value.ToString("ddMMMyyyy"),
+                    end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToString("ddMMMyyyy"),
+                    collateral_id = item.COLLATERALCUSTOMERID.ToString(),
+                    contract_ref_no = app.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                    collateral_contribution = casaBalance.availableBalance.ToString(),
+                    branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
+                    channel_code = "FINTRAK",
+                    loanApplicationId = app.LOANAPPLICATIONID
+                };
 
-                //integration.FlexcubeCasaLien(lienModel);
+                integration.FlexcubeCasaLien(lienModel);
             }
 
-            var lienModel = new FlexcubeLienViewModel
-            {
-                account_no = "0704490004",
-                collateral_code = "07044900D11",
-                collateral_value = "100",
-                start_date = app.EFFECTIVEDATE.Value.ToString("ddMMMyyyy"),
-                end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToString("ddMMMyyyy"),
-                collateral_id = "66611",
-                contract_ref_no = "0704490004",
-                collateral_contribution = "200",
-                branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
-                channel_code = "FINTRAK",
-                loanApplicationId = app.LOANAPPLICATIONID
-            };
+            //var lienModel = new FlexcubeLienViewModel
+            //{
+            //    account_no = "0704490004",
+            //    collateral_code = "1000010", //"07044900D11",
+            //    collateral_value = "100",
+            //    start_date = app.EFFECTIVEDATE.Value.ToString("ddMMMyyyy"),
+            //    end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToString("ddMMMyyyy"),
+            //    collateral_id = "10",
+            //    contract_ref_no = "1255966785711",
+            //    collateral_contribution = "200",
+            //    branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
+            //    channel_code = "FINTRAK",
+            //    loanApplicationId = app.LOANAPPLICATIONID
+            //};
 
-            integration.FlexcubeCasaLien(lienModel);
+            //integration.FlexcubeCasaLien(lienModel);
 
         }
 
