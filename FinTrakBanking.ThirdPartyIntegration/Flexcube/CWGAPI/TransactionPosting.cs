@@ -88,24 +88,35 @@
                     requestDatetime = DateTime.Now;
                     //HttpResponseMessage response = await client.GetAsync($"api/ExchangeRate/GetExchangeRateProduct?rateProduct.fromCurrencyCode={fromCurrencyCode}&rateProduct.toCurrencyCode={toCurrencyCode}&rateProduct.rateCode={rateCode}");
                     response = await client.GetAsync(
-                    $"GetExchangeRateWithDate/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}/{DateTime.Now.Date}");
+                    //$"GetExchangeRateWithDate/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}/{DateTime.Now.Date}");
+                    $"GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}");
                     //$"api/ExchangeRate/GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}"); GetExchangeRateWithDate
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
-                        exchangeRateAPI = await response.Content.ReadAsAsync<CurrencyExchangeRateIntegrationViewModel>();
+                        var rep = await response.Content.ReadAsAsync<ExchangeRateViewModel>();
+                        //exchangeRateAPI = await response.Content.ReadAsAsync<CurrencyExchangeRateIntegrationViewModel>();
 
-                        if (exchangeRateAPI.webRequestStatus != "SUCCESS")
+                        //if (exchangeRateAPI.webRequestStatus != "SUCCESS")
+                        //{
+                        //    throw new APIErrorException("Core Banking API error - "+exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
+                        //}
+
+                        if (!rep.responseMessage.ToLower().Contains("success"))
                         {
-                            throw new APIErrorException("Core Banking API error - "+exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
+                            throw new APIErrorException("Core Banking API error - " + exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
                         }
 
-                        var currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).Select(x=>x.CURRENCYID).FirstOrDefault();
-                        exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
-                        exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
+                        var currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == rep.data.fromCurrencyCode).Select(x=>x.CURRENCYID).FirstOrDefault();
+                        //var currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).Select(x=>x.CURRENCYID).FirstOrDefault();
+                        exchangeRateOutput.sellingRate = rep.data.exchangeRate;
+                        exchangeRateOutput.buyingRate = rep.data.exchangeRate;
+                        exchangeRateOutput.exchangeRate = rep.data.exchangeRate;
+                        exchangeRateOutput.fromCurrencyCode = rep.data.fromCurrencyCode;
+                        exchangeRateOutput.toCurrencyCode = rep.data.toCurrencyCode;
                         exchangeRateOutput.currencyId = (short)currencyId;
-                        exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
-                        exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
+                        exchangeRateOutput.date = DateTime.Now;
+                        exchangeRateOutput.webRequestStatus = rep.responseMessage;
 
                     }
 

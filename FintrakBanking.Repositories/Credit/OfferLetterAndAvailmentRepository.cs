@@ -80,6 +80,7 @@ namespace FintrakBanking.Repositories.Credit
             bookingRequest.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
             bookingRequest.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
             bookingRequest.MORATORIUMDURATION = model.moratoriumPeriod;
+            bookingRequest.TBL_LOAN_APPLICATION_DETAIL.ISSPECIALISED = model.isSpecialised;
             var crmsRecordGenerated = crmsRegulatories.GenerateCRMSCode(bookingRequest.LOAN_BOOKING_REQUESTID, userModel);
             //var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
             //LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;

@@ -23,4 +23,11 @@ namespace FintrakBanking.ViewModels.Finance
         public string toCurrencyCode { get; set; }
         public double exchangeRate { get; set; }
     }
+
+    public partial class ExchangeRateViewModel
+    {
+        public string responseCode { get; set; }
+        public string responseMessage { get; set; }
+        public CurrencyExchangeRateViewModel data { get; set; }
+    }
 }

@@ -35,6 +35,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int productTypeId { get; set; }
         public int productId { get; set; }
         public string productIdString { get; set; }
+        public string productCode { get; set; }
         public string productName { get; set; }
         public int loanId { get; set; }
         public short applicationStatusId { get; set; }
