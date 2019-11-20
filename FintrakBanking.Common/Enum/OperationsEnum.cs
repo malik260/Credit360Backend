@@ -148,6 +148,49 @@
 
 }
 
+public enum LoanReviewWorkflowEnum
+{
+    OverdraftInterestRateChangeApproval = 211,
+	ChangeRepaymentAccountApproval = 212,
+	LoanRecapitalizationApproval = 213,
+	LoanTerminationApproval = 214,
+	FullAndFinalApproval = 215,
+	BulkLiquidationApproval = 216,
+	RenewalApproval = 217,
+    PaymentDateChangeApproval = 218,
+	InterestAndPrincipalFrequencyChangeApproval = 219,
+	TenorExtensionApproval = 220,
+	WriteoffApproval = 221,
+	OverdraftRenewalApproval = 222,
+	OverdraftTenorExtensionApproval = 223,
+	OverdraftTopUpApproval = 224, 
+	OverdraftSubAllocationApproval = 225,
+	APSReleaseApproval = 226,
+	CancelContingentLiabilityApproval = 227,
+	CancelInactiveContigentLiabilityApproval = 228,
+	ContingentLiabilityAmountAdditionApproval = 229,
+	ContingentLiabilityAmountReductionApproval = 230,
+	ContingentTerminateApproval = 231,
+	ContingentRebookApproval = 232,
+	ContingentLiabilityTenorExtensionApproval = 233,
+	ContingentLiabilityTerminationApproval = 234,
+	ContingentLiabilityRenewalApproval = 235,
+	ContingentLiabilityUsageApproval = 236,
+	ExpiredContigentLiabilityApproval = 237,
+	LCAmountModificationApproval = 238,
+	LCTerminationApproval = 239,
+	GlobalInterestRateChangeApproval = 240,
+	LoanReversalRepaymentApproval = 241,
+	LoanReversalFeeApproval = 242,
+	ManualFeeChargeCollectionApproval = 243,
+	PrepaymentManualLiquidationApproval = 244,
+	ReversalOfPrepaymentManualLiquidationApproval = 245,
+	FacilityLineLimitChangeApproval = 246,
+	FacilityLineTenorChangeApproval = 247,
+	LoanRecoveryApproval = 248,
+	AnnualReviewApproval = 249
+}
+
 public enum LCFundSource
 {
     Cash = 1,

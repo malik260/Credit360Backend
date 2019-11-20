@@ -136,7 +136,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string cancellationReason { get; set; }
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
-        public bool? isadhocapplication { get; set; }
+        public bool isadhocapplication { get; set; }
         public int? exclusiveOperationId { get; set; }
         public int? flowchangeId { get; set; }
         public int? loanApprovedLimitId { get; set; }

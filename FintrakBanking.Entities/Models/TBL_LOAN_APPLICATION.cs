@@ -157,7 +157,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISCHECKLISTLOADED { get; set; }
 
-        public bool? ISADHOCAPPLICATION { get; set; }
+        public bool ISADHOCAPPLICATION { get; set; }
 
         public decimal? LOANSWITHOTHERS { get; set; }
 

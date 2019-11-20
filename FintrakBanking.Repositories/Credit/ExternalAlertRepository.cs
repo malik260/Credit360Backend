@@ -48,66 +48,7 @@ namespace FintrakBanking.Repositories.Credit
             this._genSetup = genSetup;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure()
-        {
-            return context.TBL_GLOBAL_EXPOSURE
-            .Select(d => new GlobalExposureViewModel
-            {
-                customerName = d.CUSTOMERNAME,
-                accountOfficerName = d.ACCOUNTOFFICERNAME,
-                accountNumber = d.ACCOUNTNUMBER,
-                branchName = d.GROUPOBLIGORNAME,
-                maturityDate = d.MATURITYDATE,
-                id = d.ID,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                referenceNumber = d.REFERENCENUMBER,
-                accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                shf = d.SHF,
-                interestrate = d.INTERESTRATE,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-            }).ToList();
-        }
-
-        public IEnumerable<GlobalExposureViewModel> GetImminentMaturities()
+        public IEnumerable<GlobalExposureViewModel> GetImminentMaturities() //done
         {
             List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
             var data = context.TBL_GLOBAL_EXPOSURE.Where(d =>
@@ -167,13 +108,16 @@ namespace FintrakBanking.Repositories.Credit
                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
-            }).Distinct().Take(20).ToList();
+                unPoDaysOverdue = d.UNPODAYSOVERDUE,
+            }).GroupBy(d => d.accountOfficerCode)
+                   .Select(g => g.FirstOrDefault())
+                   .ToList();
 
             return data;
         }
 
 
-        public IEnumerable<GlobalExposureViewModel> GetCreditCardMaturingObligations()
+        public IEnumerable<GlobalExposureViewModel> GetCreditCardMaturingObligations() //done
         {
             List<int> days = new List<int> { 60, 89 };
             var data = context.TBL_GLOBAL_EXPOSURE.Where(d =>
@@ -231,12 +175,15 @@ namespace FintrakBanking.Repositories.Credit
                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
-            }).ToList();
+                unPoDaysOverdue = d.UNPODAYSOVERDUE,
+            }).GroupBy(d => d.accountOfficerCode)
+                   .Select(g => g.FirstOrDefault())
+                   .ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetExpiringFacilityReport()
+        public IEnumerable<GlobalExposureViewModel> GetExpiringFacilityReport() //done
         {
             List<int> days = new List<int> { 90 };
             var data = context.TBL_GLOBAL_EXPOSURE.Where(d =>
@@ -252,6 +199,7 @@ namespace FintrakBanking.Repositories.Credit
                 referenceNumber = d.REFERENCENUMBER,
                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
                 date = d.DATE,
+                maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
                 customerId = d.CUSTOMERID,
                 groupObligorName = d.GROUPOBLIGORNAME,
                 alphaCode = d.ALPHACODE,
@@ -294,7 +242,10 @@ namespace FintrakBanking.Repositories.Credit
                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
-            }).ToList();
+                unPoDaysOverdue = d.UNPODAYSOVERDUE,
+            }).GroupBy(d => d.accountOfficerCode)
+                   .Select(d => d.FirstOrDefault())
+                   .ToList();
 
             return data;
         }
@@ -315,6 +266,7 @@ namespace FintrakBanking.Repositories.Credit
                 referenceNumber = d.REFERENCENUMBER,
                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
                 date = d.DATE,
+                maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
                 customerId = d.CUSTOMERID,
                 groupObligorName = d.GROUPOBLIGORNAME,
                 alphaCode = d.ALPHACODE,
@@ -357,6 +309,7 @@ namespace FintrakBanking.Repositories.Credit
                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
+                unPoDaysOverdue = d.UNPODAYSOVERDUE,
             }).ToList();
 
             return data;
@@ -5983,7 +5936,6 @@ namespace FintrakBanking.Repositories.Credit
                 maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
                 customerId = d.CUSTOMERID,
                 groupObligorName = d.GROUPOBLIGORNAME,
-
                 alphaCode = d.ALPHACODE,
                 productCode = d.PRODUCTCODE,
                 currencyName = d.CURRENCYNAME,
@@ -6014,8 +5966,8 @@ namespace FintrakBanking.Repositories.Credit
                 cardLimit = d.CARDLIMIT,
                 fxrate = d.FXRATE,
                 interestrate = d.INTERESTRATE,
-                //principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                //principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
+                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
+                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
                 loanAmounyLcy = d.LOANAMOUNYLCY,
                 loanAmounyTcy = d.LOANAMOUNYTCY,
                 totalExposure = d.TOTALEXPOSURE,
@@ -6024,7 +5976,10 @@ namespace FintrakBanking.Repositories.Credit
                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                 amountDue = d.AMOUNTDUE,
-            }).ToList();
+                unPoDaysOverdue = d.UNPODAYSOVERDUE,
+            }).GroupBy(d => d.accountOfficerCode)
+                   .Select(g => g.FirstOrDefault())
+                   .ToList();
 
             return data;
         }
