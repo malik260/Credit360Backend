@@ -125,4 +125,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string operationName { get; set; }
     }
 
+    public class GeneralTempateViewModel
+    {
+        public int templateId { get; set; }
+        public string templateBody { get; set; }
+    }
+
 }

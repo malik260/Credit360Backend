@@ -333,4 +333,6 @@ public class LienProcessViewModel //: GeneralEntity
         public string bo_code { get; set; }
         public string bo_message { get; set; } 
     }
+
+   
 }
