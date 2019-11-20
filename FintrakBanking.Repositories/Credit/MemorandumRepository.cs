@@ -883,9 +883,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
             var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID).ToList();
-            managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[0]).FirstOrDefault().VALUE;
-            processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[1]).FirstOrDefault().VALUE;
-            commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[2]).FirstOrDefault().VALUE;
+            //managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[0]).FirstOrDefault().VALUE;
+            //processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[1]).FirstOrDefault().VALUE;
+            //commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[2]).FirstOrDefault().VALUE;
 
 
             var result = String.Empty;

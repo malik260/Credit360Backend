@@ -633,14 +633,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     if (result.APIResponse.responseCode == "00")
                     {
                         string str = result.APIResponse.webRequestStatus;
-
                         return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode };
                     }
                     else
                     {
-                        var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-
-                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
+                        //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
                     }
                 }
                 else
