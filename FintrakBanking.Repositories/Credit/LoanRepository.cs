@@ -2504,17 +2504,17 @@ namespace FintrakBanking.Repositories.Credit
                     if (operationId > 0) LogApproval(approvalModel, operationId, true, (short)ApprovalStatusEnum.Pending);
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
                     var loanLienDetail = context.TBL_APPLICATIONDETAIL_LIEN.FirstOrDefault(l => l.APPLICATIONDETAILID == request.LOANAPPLICATIONDETAILID && l.DELETED == false && l.ISRELEASED == false);
-                    //if (loanLienDetail != null)
-                    //{
-                    //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
-                    //    {
-                    //        username = "model.username",//for test, real value to be passed!!!
-                    //        passcode = "model.passCode"
-                    //    };
-                    //    PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails);
-                    //}
+                    if (loanLienDetail != null)
+                    {
+                        var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                        {
+                            username = "model.username",//for test, real value to be passed!!!
+                            passcode = "model.passCode"
+                        };
+                        PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails);
+                    }
 
-                    PlaceLien(request.LOANAPPLICATIONDETAILID, new TwoFactorAutheticationViewModel() { username = "model.username", passcode = "model.passCode" });
+                    //PlaceLien(request.LOANAPPLICATIONDETAILID, new TwoFactorAutheticationViewModel() { username = "model.username", passcode = "model.passCode" });
 
                     context.SaveChanges();
                     trans.Commit();
@@ -2676,6 +2676,7 @@ namespace FintrakBanking.Repositories.Credit
                             productTypeName = p.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                             productName = p.PRODUCTNAME,
                             productClassId = p.PRODUCTCLASSID,
+                            productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             productClassProcessId = m.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             misCode = m.MISCODE,
                             teamMisCode = m.TEAMMISCODE,
@@ -7733,7 +7734,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
                                    //&& ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                                    && operationIds.Contains(atrail.OPERATIONID)
-                                   && atrail.RESPONSESTAFFID == null && (d.CRMSVALIDATED == false || d.CRMSVALIDATED == null)
+                                   && atrail.RESPONSESTAFFID == null && (s.CRMSVALIDATED == false || s.CRMSVALIDATED == null)
                                    orderby s.LOAN_BOOKING_REQUESTID descending
                                    select new CamProcessedLoanViewModel()
                                    {
@@ -7860,7 +7861,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                                    && operationIds.Contains(atrail.OPERATIONID)
                                    && atrail.RESPONSESTAFFID == null
-                                   && d.CRMSVALIDATED == true
+                                   && s.CRMSVALIDATED == true
 
                                    orderby s.LOAN_BOOKING_REQUESTID descending
                                    select new CamProcessedLoanViewModel()
