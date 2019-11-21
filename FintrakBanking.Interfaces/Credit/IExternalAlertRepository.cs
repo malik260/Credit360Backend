@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,15 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturities();
         IEnumerable<GlobalExposureViewModel> GetCreditCardDelinquencyMonitoringReport();
         IEnumerable<GlobalExposureViewModel> GetOverlineMonitoringReport();
         IEnumerable<GlobalExposureViewModel> GetUnAuthorizedOverdraftReport();
         IEnumerable<GlobalExposureViewModel> GetLoanExpirationReminder();
         IEnumerable<GlobalExposureViewModel> GetExpiringFacilityReport();
         //IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure();
-        IEnumerable<GlobalExposureViewModel> GetImminentMaturities();
-        IEnumerable<GlobalExposureViewModel> GetCreditCardMaturingObligations();
+        //IEnumerable<GlobalExposureViewModel> GetImminentMaturities();
+        IEnumerable<StaffInfoViewModel> GetCreditCardMaturingObligations();
         IEnumerable<GlobalExposureViewModel> GetPastDueObligationsReminder();
         IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts();
         IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportOne();
