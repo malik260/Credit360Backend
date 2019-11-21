@@ -337,10 +337,10 @@
 
                     return casa;
                 }
-                catch (Exception ex)
+                catch (APIErrorException ex)
                 {
-                    throw new APIErrorException("Core Banking API Error - " + ex.Message);
-                    //throw new APIErrorException("Core Banking API Error - " + response.RequestMessage);
+                    //throw new APIErrorException("Core Banking API Error - " + ex.Message);
+                    throw new APIErrorException("Core Banking API Error - " + response.RequestMessage);
                 }
 
                 finally
