@@ -508,26 +508,17 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
         {
-            try
-            {
-                var responseMessage = string.Empty;
+            var responseMessage = string.Empty;
 
-                //model.applicationUrl = HttpContext.Current.Request.Path;
-                //model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                //model.userBranchId = (short)token.GetBranchId;
-                //model.createdBy = token.GetStaffId;
-                //model.companyId = token.GetCompanyId;
-                //model.branchId = (short)token.GetBranchId;
+            //model.applicationUrl = HttpContext.Current.Request.Path;
+            //model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            //model.userBranchId = (short)token.GetBranchId;
+            //model.createdBy = token.GetStaffId;
+            //model.companyId = token.GetCompanyId;
+            //model.branchId = (short)token.GetBranchId;
 
-                var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
-            }
+            var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
         [HttpGet]
