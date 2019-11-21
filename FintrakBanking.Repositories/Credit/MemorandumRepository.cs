@@ -1190,7 +1190,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetAllExchangeRates()
         {
             var result = String.Empty;
-            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).Take(4).ToList();
+            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).Take(3).ToList();
             foreach (var x in exchangeRates)
             {
                 result = result + $@"
