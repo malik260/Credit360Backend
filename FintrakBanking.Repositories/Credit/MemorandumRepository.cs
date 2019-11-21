@@ -121,6 +121,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
         private readonly string obligorRiskRatingHolder = "@{{ObligorRiskRating}}";
         private readonly string obligorClassificationHolder = "@{{ObligorClassification}}";
+        private readonly string ownerShipHolder = "@{{OwnerShip}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
