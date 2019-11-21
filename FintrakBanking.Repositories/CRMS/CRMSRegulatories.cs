@@ -460,7 +460,7 @@ namespace FintrakBanking.Repositories.CRMS
                     ws.Cells[1, 41].Value = "AMOUNT_GUARANTEED";
                     ws.Cells[1, 42].Value = "LOAN_REFERENCE_NUMBER";
 
-                    var rowCount = 1;
+                    var rowCount = 0;
                     foreach(var param in paramx)
                     {
                         rowCount++;
