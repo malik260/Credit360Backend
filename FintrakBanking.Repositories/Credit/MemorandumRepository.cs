@@ -121,6 +121,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
         private readonly string obligorRiskRatingHolder = "@{{ObligorRiskRating}}";
         private readonly string obligorClassificationHolder = "@{{ObligorClassification}}";
+        private readonly string ownerShipHolder = "@{{OwnerShip}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -1189,7 +1190,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetAllExchangeRates()
         {
             var result = String.Empty;
-            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).ToList();
+            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).Take(4).ToList();
             foreach (var x in exchangeRates)
             {
                 result = result + $@"
