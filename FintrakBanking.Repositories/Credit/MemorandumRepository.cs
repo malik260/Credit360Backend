@@ -121,6 +121,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
         private readonly string obligorRiskRatingHolder = "@{{ObligorRiskRating}}";
         private readonly string obligorClassificationHolder = "@{{ObligorClassification}}";
+        private readonly string ownerShipHolder = "@{{OwnerShip}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -883,9 +884,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
             var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID).ToList();
-            //managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[0]).FirstOrDefault().VALUE;
-            //processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[1]).FirstOrDefault().VALUE;
-            //commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == chargeFeeIds[2]).FirstOrDefault().VALUE;
+            int managementFeeId = chargeFeeIds[0], processingFeeId = chargeFeeIds[1], commitmentFeeId = chargeFeeIds[2];
+            managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == managementFeeId).FirstOrDefault().VALUE;
+            processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == processingFeeId).FirstOrDefault().VALUE;
+            commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == commitmentFeeId).FirstOrDefault().VALUE;
 
 
             var result = String.Empty;
@@ -1188,7 +1190,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetAllExchangeRates()
         {
             var result = String.Empty;
-            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).ToList();
+            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).Take(4).ToList();
             foreach (var x in exchangeRates)
             {
                 result = result + $@"
