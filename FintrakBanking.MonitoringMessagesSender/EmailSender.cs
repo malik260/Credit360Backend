@@ -147,7 +147,6 @@ namespace FintrakBanking.MonitoringMessagesSender
         {
             try
             {
-                
 
                 using (SmtpClient client = new SmtpClient())
                 {

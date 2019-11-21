@@ -133,7 +133,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int maturityDays { get; set; }
         public string expiringBandId { get; set; }
         public string expiringBand { get; set; }
-        public int unPoDaysOverdue { get; set; }
+        public int? unPoDaysOverdue { get; set; }
         public DateTime scheduleDueDate { get; set; }
     }
 }
