@@ -110,7 +110,6 @@ namespace FintrakBanking.Repositories.Credit
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
 
-
         }
 
         public int DateDiff(DateTime startDate, DateTime endDate)
