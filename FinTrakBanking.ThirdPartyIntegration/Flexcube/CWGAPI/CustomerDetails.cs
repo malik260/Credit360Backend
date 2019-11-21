@@ -125,7 +125,7 @@
 
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
-                    APIURL = $"GetCustomerByAccountNumber/{customerAccount}",
+                    APIURL = $"{API_URL}GetCustomerByAccountNumber/{customerAccount}",
                     LOGTYPEID = 4,
                     REFERENCENUMBER = customerAccount,
                     REQUESTDATETIME = requestDatetime,
@@ -337,10 +337,10 @@
 
                     return casa;
                 }
-                catch (Exception ex)
+                catch (APIErrorException ex)
                 {
-                    throw new APIErrorException("Core Banking API Error - " + ex.Message);
-                    //throw new APIErrorException("Core Banking API Error - " + response.RequestMessage);
+                    //throw new APIErrorException("Core Banking API Error - " + ex.Message);
+                    throw new APIErrorException("Core Banking API Error - " + response.RequestMessage);
                 }
 
                 finally
@@ -350,7 +350,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"GetCustomerAccountsBalance/{customerCode}",
+                        APIURL = $"{API_URL}GetCustomerAccountsBalance/{customerCode}",
                         LOGTYPEID = 5,
                         REFERENCENUMBER = customerCode,
                         REQUESTDATETIME = requestDatetime,
@@ -422,7 +422,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"ExposePerson/Get?customerCode={customerCode}",
+                        APIURL = $"{API_URL}ExposePerson/Get?customerCode={customerCode}",
                         LOGTYPEID = 6,
                         REFERENCENUMBER = customerCode,
                         REQUESTDATETIME = requestDatetime,
@@ -499,7 +499,7 @@
 
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
-                    APIURL = $"api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}",
+                    APIURL = $"{API_URL}api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}",
                     LOGTYPEID = 7,
                     REFERENCENUMBER = customerCode,
                     REQUESTDATETIME = requestDatetime,
