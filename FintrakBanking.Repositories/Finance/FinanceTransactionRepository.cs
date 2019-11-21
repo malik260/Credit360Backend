@@ -668,6 +668,10 @@ namespace FintrakBanking.Repositories.Finance
 
         public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId)
         {
+            if (currencyId == 0)
+            {
+                return null;
+            }
             var systemDate = generalSetup.GetApplicationDate();
             var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
 
@@ -769,21 +773,21 @@ namespace FintrakBanking.Repositories.Finance
             var currencyRate = context.TBL_CURRENCY_EXCHANGERATE.FirstOrDefault(r => r.CURRENCYID == currencyId && r.RATECODEID == exchangeRateCode.RATECODEID && r.DELETED == false);
             if (currencyRate != null)
             {
-                currencyRate.DATE = generalSetup.GetApplicationDate();
+                currencyRate.DATE = DateTime.Now;
                 currencyRate.CURRENCYID = currencyId;
                 currencyRate.EXCHANGERATE = rate.sellingRate;
                 currencyRate.BASECURRENCYID = baseCurrency;
-                currencyRate.DATETIMEUPDATED = generalSetup.GetApplicationDate();
+                currencyRate.DATETIMEUPDATED = DateTime.Now;
                 currencyRate.RATECODEID = exchangeRateCode.RATECODEID;
             }else
             {
                 var newRate = new TBL_CURRENCY_EXCHANGERATE()
                 {
-                    DATE = generalSetup.GetApplicationDate(),
+                    DATE = DateTime.Now,
                     CURRENCYID = currencyId,
                     EXCHANGERATE = rate.exchangeRate,
                     BASECURRENCYID = baseCurrency,
-                    DATETIMECREATED = generalSetup.GetApplicationDate(),
+                    DATETIMECREATED = DateTime.Now,
                     RATECODEID = exchangeRateCode.RATECODEID,
                     CREATEDBY = 0,
                     DELETED = false
