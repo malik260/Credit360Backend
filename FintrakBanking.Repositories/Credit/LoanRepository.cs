@@ -797,7 +797,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     //if (!model.feeOverride) { PostLoanFees(model); }
 
-                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                    if (product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
+                    {
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                    }
 
                     context.SaveChanges();
 
@@ -4182,19 +4185,25 @@ namespace FintrakBanking.Repositories.Credit
                     string collateralcodes = string.Empty;
                     foreach(var i in collaterals) { collateralcodes = collateralcodes + i.COLLATERALCODE;  }
 
-                    var model = new FlexcubeCreateOverdraftViewModel
+
+                    var product = context.TBL_PRODUCT.Find(revolvingLoanRecord.PRODUCTID);
+                    if(product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
                     {
-                        account_no = casa.PRODUCTACCOUNTNUMBER, 
-                        collateral_code = collateralcodes == "" ? "NOCOLLATERALCODE" : collateralcodes, 
-                        collateral_value = collaterals.ToList().Count == 0 ? "0" : collaterals.Sum(x => x.COLLATERALVALUE).ToString(),
-                        start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                        end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                        channel_code = "FINTRAK",
-                        loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                        var model = new FlexcubeCreateOverdraftViewModel
+                        {
+                            account_no = casa.PRODUCTACCOUNTNUMBER,
+                            collateral_code = collateralcodes == "" ? "NOCOLLATERALCODE" : collateralcodes,
+                            collateral_value = collaterals.ToList().Count == 0 ? "0" : collaterals.Sum(x => x.COLLATERALVALUE).ToString(),
+                            start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                            end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                            channel_code = "FINTRAK",
+                            loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
-                    };
+                        };
 
-                    integration.FlexcubeOverDraft(model, revolvingLoanRecord.LOANSYSTEMTYPEID);
+                        integration.FlexcubeOverDraft(model, revolvingLoanRecord.LOANSYSTEMTYPEID);
+                    }
+                   
 
                     //if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
                     //{
