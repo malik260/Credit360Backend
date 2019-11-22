@@ -8931,6 +8931,7 @@ namespace FintrakBanking.Repositories.Credit
                                 approvedAmount = a.LOANAMOUNYTCY ?? 0,
                                 approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
                                 currency = a.CURRENCYNAME,
+                                currencyType = a.CURRENCYTYPE,
                                 exposureTypeCode = a.EXPOSURETYPECODE,
                                 adjFacilityType = a.ADJFACILITYTYPE,
                                 productIdString = a.PRODUCTID,
