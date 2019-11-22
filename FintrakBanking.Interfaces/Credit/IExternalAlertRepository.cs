@@ -11,25 +11,21 @@ namespace FintrakBanking.Interfaces.Credit
     public interface IExternalAlertRepository
     {
         IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturities();
-        IEnumerable<GlobalExposureViewModel> GetCreditCardDelinquencyMonitoringReport();
-        IEnumerable<GlobalExposureViewModel> GetOverlineMonitoringReport();
+        IEnumerable<StaffInfoViewModel> GetCreditCardDelinquencyMonitoringReport();
+        IEnumerable<StaffInfoViewModel> GetOverlineMonitoringReport();
         IEnumerable<GlobalExposureViewModel> GetUnAuthorizedOverdraftReport();
         IEnumerable<GlobalExposureViewModel> GetLoanExpirationReminder();
-        IEnumerable<GlobalExposureViewModel> GetExpiringFacilityReport();
-        //IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure();
-        //IEnumerable<GlobalExposureViewModel> GetImminentMaturities();
+        IEnumerable<StaffInfoViewModel> GetExpiringFacilityReport();
         IEnumerable<StaffInfoViewModel> GetCreditCardMaturingObligations();
-        IEnumerable<GlobalExposureViewModel> GetPastDueObligationsReminder();
+        IEnumerable<StaffInfoViewModel> GetPastDueObligationsReminder();
         IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts();
         IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportOne();
         IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportTwo();
         IEnumerable<GlobalExposureViewModel> GetNplOnCreditPortfolio();
-        IEnumerable<GlobalExposureViewModel> GetOverlineCreditCardPosition();
-        IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportNotification();
-        IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportReminder();
-        IEnumerable<GlobalExposureViewModel> GetDashboardReportNotification();
-        IEnumerable<GlobalExposureViewModel> GetDashboardReportReminder();
-        IEnumerable<GlobalExposureViewModel> GetCACReport();
+        IEnumerable<StaffInfoViewModel> GetOverlineCreditCardPosition();
+        bool GetRiskAssetsReportNotification();
+        bool GetDashboardReportNotification();
+        bool GetCACReport();
         IEnumerable<GlobalExposureViewModel> GetSignificantMovementInDailyRiskAsset();
         IEnumerable<GlobalExposureViewModel> GetUSDCreditCardReport();
         IEnumerable<GlobalExposureViewModel> GetNairaCreditCardReport();

@@ -145,6 +145,15 @@ namespace FintrakBanking.ViewModels.Credit
         //    }
         //}
     }
+
+    public class AlertDailyReportViewModel
+    {
+        public int id { get; set; }
+        public DateTime processingStartDate { get; set; }
+        public DateTime processingEndDate { get; set; }
+        public DateTime processingDate { get; set; }
+        public string successfulProcessingInd { get; set; }
+    }
 }
 
 /*

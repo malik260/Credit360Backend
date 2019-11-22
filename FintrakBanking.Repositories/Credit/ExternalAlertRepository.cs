@@ -90,71 +90,23 @@ namespace FintrakBanking.Repositories.Credit
             return staffList;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetExpiringFacilityReport() //done
+        public IEnumerable<StaffInfoViewModel> GetExpiringFacilityReport() //done
         {
             List<int> days = new List<int> { 90 };
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d =>
+            var query = context.TBL_GLOBAL_EXPOSURE.Where(d =>
             days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value))
-            .Select(d => new GlobalExposureViewModel
-            {
-                customerName = d.CUSTOMERNAME,
-                accountOfficerName = d.ACCOUNTOFFICERNAME,
-                accountNumber = d.ACCOUNTNUMBER,
-                branchName = d.GROUPOBLIGORNAME,
-                maturityDate = d.MATURITYDATE,
-                id = d.ID,
-                referenceNumber = d.REFERENCENUMBER,
-                accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
-                maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-                unPoDaysOverdue = d.UNPODAYSOVERDUE,
-            }).GroupBy(d => d.customerId)
-                   .Select(d => d.FirstOrDefault())
-                   .ToList();
+            .Select(d => d.ACCOUNTOFFICERCODE).ToList();
+            var staffList = (from s in context.TBL_STAFF
+                             where query.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
 
-            return data;
+            return staffList;
         }
 
         public IEnumerable<GlobalExposureViewModel> GetLoanExpirationReminder() //done
@@ -167,62 +119,14 @@ namespace FintrakBanking.Repositories.Credit
                 customerName = d.CUSTOMERNAME,
                 accountOfficerName = d.ACCOUNTOFFICERNAME,
                 accountNumber = d.ACCOUNTNUMBER,
-                branchName = d.GROUPOBLIGORNAME,
-                maturityDate = d.MATURITYDATE,
-                id = d.ID,
                 referenceNumber = d.REFERENCENUMBER,
                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
-                maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-                unPoDaysOverdue = d.UNPODAYSOVERDUE,
             }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetUnAuthorizedOverdraftReport()
+        public IEnumerable<GlobalExposureViewModel> GetUnAuthorizedOverdraftReport() // done
         {
             var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE=="OVERDRAFT")
             .Select(d => new GlobalExposureViewModel
@@ -235,245 +139,64 @@ namespace FintrakBanking.Repositories.Credit
                 id = d.ID,
                 referenceNumber = d.REFERENCENUMBER,
                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
-                maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-                unPoDaysOverdue = d.UNPODAYSOVERDUE,
             }).ToList();
 
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetOverlineMonitoringReport()
+        public IEnumerable<StaffInfoViewModel> GetOverlineMonitoringReport() // done
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.ADJFACILITYTYPE == "OVERDRAFT" && DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE)
+            var query = context.TBL_GLOBAL_EXPOSURE.Where(d => d.ADJFACILITYTYPE == "OVERDRAFT" && DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE)
              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90) 
-            .Select(d => new GlobalExposureViewModel
-            {
-                customerName = d.CUSTOMERNAME,
-                accountOfficerName = d.ACCOUNTOFFICERNAME,
-                accountNumber = d.ACCOUNTNUMBER,
-                branchName = d.GROUPOBLIGORNAME,
-                maturityDate = d.MATURITYDATE,
-                id = d.ID,
-                referenceNumber = d.REFERENCENUMBER,
-                accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                facilityType = d.ADJFACILITYTYPE,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-            }).ToList();
+            .Select(d => d.ACCOUNTOFFICERCODE).ToList();
 
-            return data;
+            var staffList = (from s in context.TBL_STAFF
+                             where query.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
+
+            return staffList;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetCreditCardDelinquencyMonitoringReport()
+        public IEnumerable<StaffInfoViewModel> GetCreditCardDelinquencyMonitoringReport() // done
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
-            .Select(d => new GlobalExposureViewModel
-            {
-                customerName = d.CUSTOMERNAME,
-                accountOfficerName = d.ACCOUNTOFFICERNAME,
-                accountNumber = d.ACCOUNTNUMBER,
-                branchName = d.GROUPOBLIGORNAME,
-                maturityDate = d.MATURITYDATE,
-                id = d.ID,
-                referenceNumber = d.REFERENCENUMBER,
-                accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                //facilityType = d.ADJFACILITYTYPE,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-                //expiringBandId = d.EXPIRYGBANDID,
-                //expiringBand = d.EXPIRYGBAND,
-                unPoDaysOverdue = d.UNPODAYSOVERDUE,
-            }).ToList();
+            var query = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
+            .Select(d => d.ACCOUNTOFFICERCODE).ToList();
 
-            return data;
+            var staffList = (from s in context.TBL_STAFF
+                             where query.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
+
+            return staffList;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetPastDueObligationsReminder()
+        public IEnumerable<StaffInfoViewModel> GetPastDueObligationsReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
-               .Select(d => new GlobalExposureViewModel
-               {
-                   customerName = d.CUSTOMERNAME,
-                   accountOfficerName = d.ACCOUNTOFFICERNAME,
-                   accountNumber = d.ACCOUNTNUMBER,
-                   branchName = d.GROUPOBLIGORNAME,
-                   maturityDate = d.MATURITYDATE,
-                   id = d.ID,
-                   referenceNumber = d.REFERENCENUMBER,
-                   accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                   date = d.DATE,
-                   customerId = d.CUSTOMERID,
-                   groupObligorName = d.GROUPOBLIGORNAME,
-                   alphaCode = d.ALPHACODE,
-                   productCode = d.PRODUCTCODE,
-                   currencyName = d.CURRENCYNAME,
-                   productName = d.PRODUCTNAME,
-                   facilityType = d.ADJFACILITYTYPE,
-                   adjFacilityType = d.ADJFACILITYTYPE,
-                   adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                   odStatus = d.ODSTATUS,
-                   currencyType = d.CURRENCYTYPE,
-                   cbnSector = d.CBNSECTOR,
-                   cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                   cbnClassification = d.CBNCLASSIFICATION,
-                   pwcClassification = d.PWCCLASSIFICATION,
-                   ifrsClassification = d.IFRSCLASSIFICATION,
-                   tenor = d.TENOR,
-                   location = d.LOCATION,
-                   bookingDate = d.BOOKINGDATE,
-                   valueDate = d.VALUEDATE,
-                   maturityBand = d.MATURITYBAND,
-                   customerType = d.CUSTOMERTYPE,
-                   branchCode = d.BRANCHCODE,
-                   obligorRiskRating = d.OBLIGORRISKRATING,
-                   lastCrDate = d.LASTCRDATE,
-                   productId = d.PRODUCTID,
-                   exposureType = d.EXPOSURETYPE,
-                   exposureTypeCode = d.EXPOSURETYPECODE,
-                   teamCode = d.TEAMCODE,
-                   lastCreditAmount = d.LASTCREDITAMOUNT,
-                   cardLimit = d.CARDLIMIT,
-                   fxrate = d.FXRATE,
-                   interestrate = d.INTERESTRATE,
-                   principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                   principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                   loanAmounyLcy = d.LOANAMOUNYLCY,
-                   loanAmounyTcy = d.LOANAMOUNYTCY,
-                   totalExposure = d.TOTALEXPOSURE,
-                   impairmentAmount = d.IMPAIRMENTAMOUNT,
-                   unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                   unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                   interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                   amountDue = d.AMOUNTDUE,
-                   unPoDaysOverdue = d.UNPODAYSOVERDUE,
-               }).ToList();
+            var query = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
+               .Select(d => d.ACCOUNTOFFICERCODE).ToList();
 
-            return data;
+            var staffList = (from s in context.TBL_STAFF
+                             where query.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
+
+            return staffList;
         }
 
         public IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts() //pending
@@ -728,382 +451,74 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetOverlineCreditCardPosition()
+        public IEnumerable<StaffInfoViewModel> GetOverlineCreditCardPosition()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) 
+            var query = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE)
                                                          && d.ADJFACILITYTYPE == "OVERDRAFT")
-             .Select(d => new GlobalExposureViewModel
-             {
-                 customerName = d.CUSTOMERNAME,
-                 accountOfficerName = d.ACCOUNTOFFICERNAME,
-                 accountNumber = d.ACCOUNTNUMBER,
-                 branchName = d.GROUPOBLIGORNAME,
-                 maturityDate = d.MATURITYDATE,
-                 id = d.ID,
-                 referenceNumber = d.REFERENCENUMBER,
-                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                 date = d.DATE,
-                 customerId = d.CUSTOMERID,
-                 groupObligorName = d.GROUPOBLIGORNAME,
-                 alphaCode = d.ALPHACODE,
-                 productCode = d.PRODUCTCODE,
-                 currencyName = d.CURRENCYNAME,
-                 productName = d.PRODUCTNAME,
-                 facilityType = d.ADJFACILITYTYPE,
-                 adjFacilityType = d.ADJFACILITYTYPE,
-                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                 odStatus = d.ODSTATUS,
-                 currencyType = d.CURRENCYTYPE,
-                 cbnSector = d.CBNSECTOR,
-                 cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                 cbnClassification = d.CBNCLASSIFICATION,
-                 pwcClassification = d.PWCCLASSIFICATION,
-                 ifrsClassification = d.IFRSCLASSIFICATION,
-                 tenor = d.TENOR,
-                 location = d.LOCATION,
-                 bookingDate = d.BOOKINGDATE,
-                 valueDate = d.VALUEDATE,
-                 maturityBand = d.MATURITYBAND,
-                 customerType = d.CUSTOMERTYPE,
-                 branchCode = d.BRANCHCODE,
-                 obligorRiskRating = d.OBLIGORRISKRATING,
-                 lastCrDate = d.LASTCRDATE,
-                 productId = d.PRODUCTID,
-                 exposureType = d.EXPOSURETYPE,
-                 exposureTypeCode = d.EXPOSURETYPECODE,
-                 teamCode = d.TEAMCODE,
-                 lastCreditAmount = d.LASTCREDITAMOUNT,
-                 cardLimit = d.CARDLIMIT,
-                 fxrate = d.FXRATE,
-                 interestrate = d.INTERESTRATE,
-                 principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                 loanAmounyLcy = d.LOANAMOUNYLCY,
-                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                 totalExposure = d.TOTALEXPOSURE,
-                 impairmentAmount = d.IMPAIRMENTAMOUNT,
-                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                 amountDue = d.AMOUNTDUE,
-             }).Distinct().ToList();
+             .Select(d => d.ACCOUNTOFFICERCODE).ToList();
+            var staffList = (from s in context.TBL_STAFF
+                             where query.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
 
-            return data;
+            return staffList;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportNotification() //pending
+        public bool GetRiskAssetsReportNotification() //Done
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-             .Select(d => new GlobalExposureViewModel
-             {
-                 customerName = d.CUSTOMERNAME,
-                 accountOfficerName = d.ACCOUNTOFFICERNAME,
-                 accountNumber = d.ACCOUNTNUMBER,
-                 branchName = d.GROUPOBLIGORNAME,
-                 maturityDate = d.MATURITYDATE,
-                 id = d.ID,
-                 referenceNumber = d.REFERENCENUMBER,
-                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                 date = d.DATE,
-                 customerId = d.CUSTOMERID,
-                 groupObligorName = d.GROUPOBLIGORNAME,
-                 alphaCode = d.ALPHACODE,
-                 productCode = d.PRODUCTCODE,
-                 currencyName = d.CURRENCYNAME,
-                 productName = d.PRODUCTNAME,
-                 facilityType = d.ADJFACILITYTYPE,
-                 adjFacilityType = d.ADJFACILITYTYPE,
-                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                 odStatus = d.ODSTATUS,
-                 currencyType = d.CURRENCYTYPE,
-                 cbnSector = d.CBNSECTOR,
-                 cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                 cbnClassification = d.CBNCLASSIFICATION,
-                 pwcClassification = d.PWCCLASSIFICATION,
-                 ifrsClassification = d.IFRSCLASSIFICATION,
-                 tenor = d.TENOR,
-                 location = d.LOCATION,
-                 bookingDate = d.BOOKINGDATE,
-                 valueDate = d.VALUEDATE,
-                 maturityBand = d.MATURITYBAND,
-                 customerType = d.CUSTOMERTYPE,
-                 branchCode = d.BRANCHCODE,
-                 obligorRiskRating = d.OBLIGORRISKRATING,
-                 lastCrDate = d.LASTCRDATE,
-                 productId = d.PRODUCTID,
-                 exposureType = d.EXPOSURETYPE,
-                 exposureTypeCode = d.EXPOSURETYPECODE,
-                 teamCode = d.TEAMCODE,
-                 lastCreditAmount = d.LASTCREDITAMOUNT,
-                 cardLimit = d.CARDLIMIT,
-                 fxrate = d.FXRATE,
-                 interestrate = d.INTERESTRATE,
-                 principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                 loanAmounyLcy = d.LOANAMOUNYLCY,
-                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                 totalExposure = d.TOTALEXPOSURE,
-                 impairmentAmount = d.IMPAIRMENTAMOUNT,
-                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                 amountDue = d.AMOUNTDUE,
-             }).ToList();
-
-            return data;
-        }
-
-        public IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportReminder() //pending
-        {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-            .Select(d => new GlobalExposureViewModel
+            var query = context.TBL_ALERT_DAILYREPORT.Where(d => DbFunctions.TruncateTime(d.PROCESSINGDATE) == DbFunctions.TruncateTime(DateTime.UtcNow)).FirstOrDefault();
+            if(query == null)
             {
-                customerName = d.CUSTOMERNAME,
-                accountOfficerName = d.ACCOUNTOFFICERNAME,
-                accountNumber = d.ACCOUNTNUMBER,
-                branchName = d.GROUPOBLIGORNAME,
-                maturityDate = d.MATURITYDATE,
-                id = d.ID,
-                referenceNumber = d.REFERENCENUMBER,
-                accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                facilityType = d.ADJFACILITYTYPE,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-            }).ToList();
-
-            return data;
-        }
-
-        public IEnumerable<GlobalExposureViewModel> GetDashboardReportNotification() //pending
-        {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-             .Select(d => new GlobalExposureViewModel
-             {
-                 customerName = d.CUSTOMERNAME,
-                 accountOfficerName = d.ACCOUNTOFFICERNAME,
-                 accountNumber = d.ACCOUNTNUMBER,
-                 branchName = d.GROUPOBLIGORNAME,
-                 maturityDate = d.MATURITYDATE,
-                 id = d.ID,
-                 referenceNumber = d.REFERENCENUMBER,
-                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                 date = d.DATE,
-                 customerId = d.CUSTOMERID,
-                 groupObligorName = d.GROUPOBLIGORNAME,
-                 alphaCode = d.ALPHACODE,
-                 productCode = d.PRODUCTCODE,
-                 currencyName = d.CURRENCYNAME,
-                 productName = d.PRODUCTNAME,
-                 facilityType = d.ADJFACILITYTYPE,
-                 adjFacilityType = d.ADJFACILITYTYPE,
-                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                 odStatus = d.ODSTATUS,
-                 currencyType = d.CURRENCYTYPE,
-                 cbnSector = d.CBNSECTOR,
-                 cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                 cbnClassification = d.CBNCLASSIFICATION,
-                 pwcClassification = d.PWCCLASSIFICATION,
-                 ifrsClassification = d.IFRSCLASSIFICATION,
-                 tenor = d.TENOR,
-                 location = d.LOCATION,
-                 bookingDate = d.BOOKINGDATE,
-                 valueDate = d.VALUEDATE,
-                 maturityBand = d.MATURITYBAND,
-                 customerType = d.CUSTOMERTYPE,
-                 branchCode = d.BRANCHCODE,
-                 obligorRiskRating = d.OBLIGORRISKRATING,
-                 lastCrDate = d.LASTCRDATE,
-                 productId = d.PRODUCTID,
-                 exposureType = d.EXPOSURETYPE,
-                 exposureTypeCode = d.EXPOSURETYPECODE,
-                 teamCode = d.TEAMCODE,
-                 lastCreditAmount = d.LASTCREDITAMOUNT,
-                 cardLimit = d.CARDLIMIT,
-                 fxrate = d.FXRATE,
-                 interestrate = d.INTERESTRATE,
-                 principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                 loanAmounyLcy = d.LOANAMOUNYLCY,
-                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                 totalExposure = d.TOTALEXPOSURE,
-                 impairmentAmount = d.IMPAIRMENTAMOUNT,
-                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                 amountDue = d.AMOUNTDUE,
-             }).ToList();
-
-            return data;
-        }
-
-        public IEnumerable<GlobalExposureViewModel> GetDashboardReportReminder() //pending
-        {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-            .Select(d => new GlobalExposureViewModel
+                return false;
+            }
+            else if (query.SUCCESSFULPROCESSINGIND == "Y")
             {
-                customerName = d.CUSTOMERNAME,
-                accountOfficerName = d.ACCOUNTOFFICERNAME,
-                accountNumber = d.ACCOUNTNUMBER,
-                branchName = d.GROUPOBLIGORNAME,
-                maturityDate = d.MATURITYDATE,
-                id = d.ID,
-                referenceNumber = d.REFERENCENUMBER,
-                accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                facilityType = d.ADJFACILITYTYPE,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-            }).ToList();
+                return true;
+            }
+            else
+            {
+              return false;
+            }
 
-            return data;
+        }
+        
+        public bool GetDashboardReportNotification() //Done
+        {
+            var query = context.TBL_ALERT_DAILYREPORT.Where(d => DbFunctions.TruncateTime(d.PROCESSINGDATE) == DbFunctions.TruncateTime(DateTime.UtcNow)).FirstOrDefault();
+            if (query == null)
+            {
+                return false;
+            }
+            else if (query.SUCCESSFULPROCESSINGIND == "Y")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetCACReport() //pending
+        public bool GetCACReport() //done
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-             .Select(d => new GlobalExposureViewModel
-             {
-                 customerName = d.CUSTOMERNAME,
-                 accountOfficerName = d.ACCOUNTOFFICERNAME,
-                 accountNumber = d.ACCOUNTNUMBER,
-                 branchName = d.GROUPOBLIGORNAME,
-                 maturityDate = d.MATURITYDATE,
-                 id = d.ID,
-                 referenceNumber = d.REFERENCENUMBER,
-                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                 date = d.DATE,
-                 customerId = d.CUSTOMERID,
-                 groupObligorName = d.GROUPOBLIGORNAME,
-                 alphaCode = d.ALPHACODE,
-                 productCode = d.PRODUCTCODE,
-                 currencyName = d.CURRENCYNAME,
-                 productName = d.PRODUCTNAME,
-                 facilityType = d.ADJFACILITYTYPE,
-                 adjFacilityType = d.ADJFACILITYTYPE,
-                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                 odStatus = d.ODSTATUS,
-                 currencyType = d.CURRENCYTYPE,
-                 cbnSector = d.CBNSECTOR,
-                 cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                 cbnClassification = d.CBNCLASSIFICATION,
-                 pwcClassification = d.PWCCLASSIFICATION,
-                 ifrsClassification = d.IFRSCLASSIFICATION,
-                 tenor = d.TENOR,
-                 location = d.LOCATION,
-                 bookingDate = d.BOOKINGDATE,
-                 valueDate = d.VALUEDATE,
-                 maturityBand = d.MATURITYBAND,
-                 customerType = d.CUSTOMERTYPE,
-                 branchCode = d.BRANCHCODE,
-                 obligorRiskRating = d.OBLIGORRISKRATING,
-                 lastCrDate = d.LASTCRDATE,
-                 productId = d.PRODUCTID,
-                 exposureType = d.EXPOSURETYPE,
-                 exposureTypeCode = d.EXPOSURETYPECODE,
-                 teamCode = d.TEAMCODE,
-                 lastCreditAmount = d.LASTCREDITAMOUNT,
-                 cardLimit = d.CARDLIMIT,
-                 fxrate = d.FXRATE,
-                 interestrate = d.INTERESTRATE,
-                 principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                 loanAmounyLcy = d.LOANAMOUNYLCY,
-                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                 totalExposure = d.TOTALEXPOSURE,
-                 impairmentAmount = d.IMPAIRMENTAMOUNT,
-                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                 amountDue = d.AMOUNTDUE,
-             }).ToList();
-
-            return data;
+            var query = context.TBL_ALERT_DAILYREPORT.Where(d => DbFunctions.TruncateTime(d.PROCESSINGDATE) == DbFunctions.TruncateTime(DateTime.UtcNow)).FirstOrDefault();
+            if (query == null)
+            {
+                return false;
+            }
+            else if (query.SUCCESSFULPROCESSINGIND == "Y")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public IEnumerable<GlobalExposureViewModel> GetSignificantMovementInDailyRiskAsset() //pending
@@ -5840,54 +5255,13 @@ namespace FintrakBanking.Repositories.Credit
                 id = d.ID,
                 referenceNumber = d.REFERENCENUMBER,
                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
                 maturityDays = DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value,
                 customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
+                adjFacilityType = d.ADJFACILITYTYPE,
                 amountDue = d.AMOUNTDUE,
                 unPoDaysOverdue = d.UNPODAYSOVERDUE,
-            }).GroupBy(d => d.accountOfficerCode)
-                   .Select(g => g.FirstOrDefault())
-                   .ToList();
+            }).ToList();
 
             return data;
         }
