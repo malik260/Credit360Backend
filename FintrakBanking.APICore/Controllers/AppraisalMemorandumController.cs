@@ -32,30 +32,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("appraisal-memorandum/loan-application/{loanApplicationId}")]
         public HttpResponseMessage GetAppraisalMemorandumByLoanApplicationId(int loanApplicationId)
         {
-            try
-            {
-                var data = repo.GetAppraisalMemorandum(loanApplicationId, token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var data = repo.GetAppraisalMemorandum(loanApplicationId, token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
         [Route("appraisal-memorandum/loan-application/{loanApplicationId}/documentation")]
         public HttpResponseMessage GetAppraisalMemorandumDocumentation(int loanApplicationId)
         {
-            try
-            {
-                var data = repo.GetAllDocumentation(loanApplicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var data = repo.GetAllDocumentation(loanApplicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpPost]
@@ -112,22 +98,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("appraisal-memorandum/forward")]
         public HttpResponseMessage ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
+            WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+          
         }
 
         [HttpPost]
