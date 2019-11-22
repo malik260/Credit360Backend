@@ -508,26 +508,17 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
         {
-            try
-            {
-                var responseMessage = string.Empty;
+            var responseMessage = string.Empty;
 
-                //model.applicationUrl = HttpContext.Current.Request.Path;
-                //model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                //model.userBranchId = (short)token.GetBranchId;
-                //model.createdBy = token.GetStaffId;
-                //model.companyId = token.GetCompanyId;
-                //model.branchId = (short)token.GetBranchId;
+            //model.applicationUrl = HttpContext.Current.Request.Path;
+            //model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            //model.userBranchId = (short)token.GetBranchId;
+            //model.createdBy = token.GetStaffId;
+            //model.companyId = token.GetCompanyId;
+            //model.branchId = (short)token.GetBranchId;
 
-                var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
-            }
+            var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
         [HttpGet]
@@ -666,21 +657,14 @@ namespace FintrakBanking.APICore.Controllers
             //if( entity.LoanApplicationDetail.Count == 0)
             //     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No facility detail is provided" });
 
-            try
+            var response = repo.AddLoanApplication(entity);
+            if (response != null)
             {
-                var response = repo.AddLoanApplication(entity);
-                if (response != null)
-                {
-                    if (response.jumpedDestination) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully. proceeds to drawdown." }); }
+                if (response.jumpedDestination) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully. proceeds to drawdown." }); }
 
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
             }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
 
