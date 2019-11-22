@@ -202,6 +202,8 @@ namespace FintrakBanking.Repositories.Credit
         private string allCustomerFacilities;
         private string obligorRiskRating;
         private string obligorClassification;
+       
+        
         //private string totalGroupExposure;
         // lms
         private string securityType;
