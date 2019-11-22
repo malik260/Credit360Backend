@@ -3372,6 +3372,8 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
                             customerRating = a.CUSTOMERRATING,
+                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                            businessUnitId = a.BUSINESSUNTID,
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
