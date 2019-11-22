@@ -1264,9 +1264,7 @@ namespace FintrakBanking.APICore.Controllers
 
               return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
 
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found"});
-            }
+            
             
             
         }
@@ -1280,9 +1278,6 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.LoanSearch(searchString);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found"});
-            }
             
             
         }
@@ -1296,9 +1291,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetLoanApplicationDetailsByReference(model.searchString, token.GetCompanyId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found"});
-            }
+           
             
         }
 
@@ -1310,9 +1303,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.SearchApprovedLoanApplicationDetails(model.searchString, token.GetCompanyId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+           
            
         }
 
@@ -1324,9 +1315,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetTotalBankExposure();
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+           
             
         }
 
@@ -1338,9 +1327,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetAllRequestsForLoanCancellation(token.GetStaffId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }  
+           
         }
 
         [HttpPost]
@@ -1386,9 +1373,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             var response = repo.SearchForLoan(searchString);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+            
            
         }
 
@@ -1410,9 +1395,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.CommitteeCreditApplications(applicationType, token.GetStaffId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+            
            
         }
         [HttpGet]
@@ -1423,9 +1406,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetLoanApplication(searchValue);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+            
            
         }
 
@@ -1511,9 +1492,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.ViewLaonApplicationCancellationDetails(data);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+            
             
         }
 
@@ -1528,9 +1507,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GoForLoanApplicationCancellationApproval(data);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+            
             
         }
 
@@ -1542,9 +1519,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetTrnasactionDynamics(loanApplicationId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+            
            
         }
 
@@ -1556,9 +1531,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetTrnasactionDynamics(loanApplicationId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+           
            
         }
         [HttpGet]
@@ -1569,9 +1542,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetConditionPrecidents(loanApplicationId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+            
             
         }
         [HttpGet]
@@ -1582,9 +1553,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetLMSConditionPrecidents(loanApplicationId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+            
            
         }
 
@@ -1641,9 +1610,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetAllCRMSRepaymentAgreementType();
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+           
             
         }
 
@@ -1655,9 +1622,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.GetAllSyndicationType();
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+            
             
         }
 
@@ -1806,20 +1771,10 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("loan-application-flow-change")]
         public HttpResponseMessage LoanApplicationFlowChange()
-        {
-            
-            
+        {          
                  var response = repo.GetLoanApplicationFlowChange();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-            
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-            
-           
-           
-
         }
 
         [HttpGet]

@@ -40,6 +40,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public short applicationStatusId { get; set; }
         public string currency { get; set; }
+        public string currencyType { get; set; }
         public DateTime? maturityDate { get; set; }
         public decimal? totalBankExposure { get; set; }
         public decimal? companyLimit { get; set; }
