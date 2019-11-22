@@ -209,6 +209,12 @@ namespace FintrakBanking.Repositories.Customer
             var saved = context.SaveChanges() > 0;
         }
 
+        public void refreshCustomerAccount(int customerId)
+        {
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
+
+            if (customer != null) fetchCustomerAccountBalance(customer);
+        }
         private void fetchCustomerAccountBalance(TBL_CUSTOMER data)
         {
 

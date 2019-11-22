@@ -854,7 +854,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower())?
                     .ACCOUNTSTATUSID;
 
-                if(item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
+                TBL_CASA result = (from p in context.TBL_CASA
+                                   where p.CUSTOMERID == item.customerId && p.PRODUCTACCOUNTNUMBER == item.productAccountNumber
+                                   select p).SingleOrDefault();
+
+                if (item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
                 TBL_CASA addCustomerAcct = new TBL_CASA();
                 addCustomerAcct.CUSTOMERID = customerId;
                 addCustomerAcct.AVAILABLEBALANCE = item.availableBalance;
@@ -872,7 +876,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.POSTNOSTATUSID = 1;
                 addCustomerAcct.DELETED = false;
 
-                customerAcct.Add(addCustomerAcct);
+                if (result != null) customerAcct.Add(addCustomerAcct);
+                else continue;
             }
             var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
             if (customerExist == null)
@@ -880,30 +885,30 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 this.context.TBL_CASA.AddRange(customerAcct);
                 context.SaveChanges();
             }
-            else
-            {
-                foreach (var a in customerAcct)
-                {
+            //else
+            //{
+            //    foreach (var a in customerAcct)
+            //    {
 
-                    TBL_CASA result = (from p in context.TBL_CASA
-                                       where p.CUSTOMERID == a.CUSTOMERID && p.PRODUCTACCOUNTNUMBER == a.PRODUCTACCOUNTNUMBER
-                                       select p).SingleOrDefault();
+            //        TBL_CASA result = (from p in context.TBL_CASA
+            //                           where p.CUSTOMERID == a.CUSTOMERID && p.PRODUCTACCOUNTNUMBER == a.PRODUCTACCOUNTNUMBER
+            //                           select p).SingleOrDefault();
 
-                    if (result == null)
-                    {
-                        this.context.TBL_CASA.Add(a);
-                        context.SaveChanges();
-                    }
-                    else
-                    {
-                        result.AVAILABLEBALANCE = a.AVAILABLEBALANCE;
-                        result.ACCOUNTSTATUSID = a.ACCOUNTSTATUSID;
-                        result.LEDGERBALANCE = a.LEDGERBALANCE;
-                        context.SaveChanges();
-                    }
-                }
+            //        if (result == null)
+            //        {
+            //            this.context.TBL_CASA.Add(a);
+            //            context.SaveChanges();
+            //        }
+            //        else
+            //        {
+            //            result.AVAILABLEBALANCE = a.AVAILABLEBALANCE;
+            //            result.ACCOUNTSTATUSID = a.ACCOUNTSTATUSID;
+            //            result.LEDGERBALANCE = a.LEDGERBALANCE;
+            //            context.SaveChanges();
+            //        }
+            //    }
 
-            }
+            //}
 
             //context.SaveChanges();
             //context.SaveChangesAsync();
