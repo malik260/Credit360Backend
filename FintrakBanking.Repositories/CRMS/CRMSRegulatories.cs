@@ -56,6 +56,7 @@ namespace FintrakBanking.Repositories.CRMS
             if (loan == null)
                 throw new ConditionNotMetException("This Booking Request does not exist");
 
+            param.crmsCode = param.crmsCode.Trim();
             var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE == param.crmsCode).Any();
             if (codeExist == true)
                 throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
