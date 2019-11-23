@@ -798,6 +798,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return result;
         }
 
+
+
         public IQueryable<WorkflowTrackerViewModel> GetAllRecordsOnApprovalTrail(int companyId)
         {
             var result = GetApprovalTrail(companyId).OrderByDescending(c => c.systemArrivalDate);

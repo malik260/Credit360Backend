@@ -66,6 +66,7 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingStagingContext stgCon;
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
+        private IApprovalLevelRepository approvalLevelStaff;
 
         //private CreditCommonRepository creditCommon;
 
@@ -81,7 +82,8 @@ namespace FintrakBanking.Repositories.Credit
                                         IChartOfAccountRepository _chartOfAccount, IFinanceTransactionRepository _transRepo,
                                         //IOverRideRepository _overrider, IntegrationWithFlexcube _integration, ILoanApplicationRepository _loanRepo,
                                         IOverRideRepository _overrider, IntegrationWithFlexcube _integration,
-            IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin//, CreditCommonRepository creditCommon
+            IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin,//, CreditCommonRepository creditCommon
+            IApprovalLevelRepository _approvalLevelStaff
 
             )
         {
@@ -104,6 +106,7 @@ namespace FintrakBanking.Repositories.Credit
             this.stgCon = _stgCon;
             this.transRepo = _transRepo;
             this.admin = _admin;
+            this.approvalLevelStaff = _approvalLevelStaff;
             //this.creditCommon = creditCommon;
 
 
@@ -15434,7 +15437,28 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
+        {
+            TBL_LOAN_BOOKING_REQUEST bookingRequestRecord = new TBL_LOAN_BOOKING_REQUEST();
+            var result1 = approvalLevelStaff.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, companyId).ToList();
+            var results2 = new List<WorkflowTrackerViewModel>();
 
+            if (operationId == ((short)OperationsEnum.TermLoanBooking))
+            {
+                bookingRequestRecord = (from l in context.TBL_LOAN
+                                            join r in context.TBL_LOAN_BOOKING_REQUEST on l.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
+                                            where l.TERMLOANID == targetId
+                                            select r).FirstOrDefault();
+
+
+            }
+
+            if (bookingRequestRecord != null) {
+                results2 = approvalLevelStaff.GetApprovalTrailByOperationIdAndTargetId(bookingRequestRecord.OPERATIONID ?? 0, bookingRequestRecord.LOAN_BOOKING_REQUESTID, companyId).ToList();
+            }
+
+            return result1.Union(results2);
+        }
         //private 
         //public bool getNextApprovalLevel(ApprovalViewModel model)
         //{
