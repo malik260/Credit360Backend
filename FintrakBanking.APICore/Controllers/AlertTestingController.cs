@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var alertViewModels = _repo.GetImminentMaturities(); 
+                var alertViewModels = _repo.GetAccountOfficersWithImminentMaturities(); 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
             }
             catch (SecureException ex)

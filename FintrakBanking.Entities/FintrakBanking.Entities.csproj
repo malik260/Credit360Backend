@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\SqlDatabaseConfiguration.cs" />
+    <Compile Include="Models\TBL_ALERT_DAILYREPORT.cs" />
     <Compile Include="Models\TBL_ALERT_GENERAL_TEMPLATE.cs" />
     <Compile Include="Models\TBL_ALERT_USER_SECURITY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_RATIO_CATEGORY.cs" />

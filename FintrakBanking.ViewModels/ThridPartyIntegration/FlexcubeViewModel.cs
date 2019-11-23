@@ -20,6 +20,8 @@ namespace FintrakBanking.ViewModels.Flexcube
         public string branch_code { get; set; }
 
         public string channel_code { get; set; }
+        public string checker_id { get; set; }
+        public string maker_id { get; set; }
         public int loanApplicationId { get; set; }
 
 
@@ -33,6 +35,8 @@ namespace FintrakBanking.ViewModels.Flexcube
         public string start_date { get; set; }
         public string end_date { get; set; }
         public string channel_code { get; set; }
+        public string checker_id { get; set; }
+        public string maker_id { get; set; }
         public int loanApplicationId { get; set; }
 
     }
@@ -70,6 +74,8 @@ namespace FintrakBanking.ViewModels.Flexcube
         //public string p_collateral_code { get; set; }
         //public string p_interest_rate { get; set; }
         public string channel_code { get; set; }
+        public string checker_id { get; set; }
+        public string maker_id { get; set; }
         public string sourceReferenceNumber { get; set; }
         public int loanApplicationId { get; set; }
     }
