@@ -630,10 +630,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 if (result.APIResponse != null)
                 {
-                    if (result.APIResponse.responseCode == "00")
+                    //if (result.APIResponse.responseCode == "00")
+                    if (result.APIStatus)
                     {
                         string str = result.APIResponse.webRequestStatus;
-                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode };
+                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode, responseMessage = result.responseMessage };
                     }
                     else
                     {

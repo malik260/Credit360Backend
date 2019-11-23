@@ -1014,7 +1014,7 @@
                 var inputJson = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageFacilityViewModel responseApi = new ResponseMessageFacilityViewModel();
+                ResponseMessageCRMSCodeViewModel responseApi = new ResponseMessageCRMSCodeViewModel();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
                 getAPIURLSettings("crmsCode"); //Check TBL_API_URL
@@ -1043,16 +1043,16 @@
 
                     if (response.IsSuccessStatusCode)
                     {
-                        responseApi = await response.Content.ReadAsAsync<ResponseMessageFacilityViewModel>();
+                        responseApi = await response.Content.ReadAsAsync<ResponseMessageCRMSCodeViewModel>();
 
                         var res = new ResponseMessageViewModel
                         {
-                            responseCode = responseApi.response_code,
-                            message = responseApi.response_message,
-                            serialNumber = responseApi.bo_code,
+                            //responseCode = responseApi.response_code,
+                            message = responseApi.submit_return,
+                            //serialNumber = responseApi.bo_code,
                             webRequestDate = DateTime.Now,
-                            webRequestStatus = responseApi.bo_message,
-                            responseStatus = responseApi.response_code == "00" ? true : false,
+                            //webRequestStatus = responseApi.bo_message,
+                            responseStatus = responseApi.submit_return.ToLower().Contains("successful") == true ? true : false,
                         };
 
                         responseMsg = new ResponseMessage
@@ -1069,7 +1069,7 @@
                             APIResponse = null,
                             APIStatus = response.IsSuccessStatusCode,
                             Message = response,
-                            responseMessage = responseJson
+                            responseMessage = responseApi.submit_return
                         };
                     }
 
@@ -1094,8 +1094,8 @@
                     {
                         LOANAPPLICATIONID = model.loanApplicationDetailId,
                         LOANSYSTEMTYPEID = loanSystemTypeId,
-                        FACILITYMAPPINGID = responseApi.facility_id,
-                        BOOKINGCODE = responseApi.bo_code,
+                        FACILITYMAPPINGID = null,
+                        BOOKINGCODE = null,
                     };
 
                     var logs = new TBL_CUSTOM_API_LOGS
