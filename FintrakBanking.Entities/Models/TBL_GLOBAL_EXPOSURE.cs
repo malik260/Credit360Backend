@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string ADJFACILITYTYPEid { get; set; }
         public string ODSTATUS { get; set; }
         public string EXPIRINGBAND { get; set; }
-        public string EXPIRYBANDID { get; set; }
+        public int? EXPIRYBANDID { get; set; }
         public string CURRENCYTYPE { get; set; }
         public string CBNSECTOR { get; set; }
         public string CBNSECTORADJUSTED { get; set; }
@@ -46,6 +46,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public DateTime BOOKINGDATE { get; set; }
         public DateTime VALUEDATE { get; set; }
         public string MATURITYBAND { get; set; }
+        public int? MATURITYBANDID { get; set; }
         public string CUSTOMERTYPE { get; set; }
         public string BRANCHNAME { get; set; }
         public string BRANCHCODE { get; set; }
@@ -78,6 +79,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public decimal? INTERESTRECIEVABLETCY { get; set; }
         public decimal? AMOUNTDUE { get; set; }
         public int? UNPODAYSOVERDUE { get; set; }
+        public DateTime SCHEDULEDUEDATE { get; set; }
 
         //public string DIVISIONID { get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -136,6 +137,23 @@ namespace FintrakBanking.ViewModels.Credit
         public string expiringBand { get; set; }
         public int? unPoDaysOverdue { get; set; }
         public DateTime scheduleDueDate { get; set; }
+
+        //public int maturityDateEx
+        //{
+        //    get
+        //    {
+        //        return DbFunctions.DiffDays(DateTime.UtcNow, maturityDate).Value;
+        //    }
+        //}
+    }
+
+    public class AlertDailyReportViewModel
+    {
+        public int id { get; set; }
+        public DateTime processingStartDate { get; set; }
+        public DateTime processingEndDate { get; set; }
+        public DateTime processingDate { get; set; }
+        public string successfulProcessingInd { get; set; }
     }
 }
 
