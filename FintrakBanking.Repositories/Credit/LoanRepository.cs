@@ -2089,7 +2089,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 faciltyCreationModel.account_no = casa.PRODUCTACCOUNTNUMBER;
                 faciltyCreationModel.limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
-                //faciltyCreationModel.p_interest_rate = facilityDetail.APPROVEDINTERESTRATE.ToString();
+                faciltyCreationModel. = facilityDetail.APPROVEDINTERESTRATE.ToString();
                 //faciltyCreationModel.p_facility_description = product.PRODUCTCODE;
                 faciltyCreationModel.expiry_date = expiryDate.ToString();
                 faciltyCreationModel.start_date = effectiveDate.ToString();
@@ -7785,10 +7785,7 @@ namespace FintrakBanking.Repositories.Credit
                                        // isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                    }).ToList();
 
-
-
             return bookingRequestLoans; // allLoans;
-
 
         }
 
@@ -7870,6 +7867,7 @@ namespace FintrakBanking.Repositories.Credit
                                        bookingRequestStatusId = s.APPROVALSTATUSID,
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
+                                       crmsCode = s.CRMSCODE,
                                        requestedAmount = s.AMOUNT_REQUESTED,
                                        requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
                                        approvalStatusId = atrail.APPROVALSTATUSID,
