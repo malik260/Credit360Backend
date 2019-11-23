@@ -52,11 +52,12 @@ namespace FintrakBanking.Repositories.CRMS
         {
             //if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             //{
-            var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == param.loanId).Select(x => x).FirstOrDefault();
+            var loan = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == param.loanId).Select(x => x).FirstOrDefault();
             if (loan == null)
-                throw new ConditionNotMetException("This Facility does not exist");
+                throw new ConditionNotMetException("This Booking Request does not exist");
 
-            var codeExist = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CRMSCODE == param.crmsCode).Any();
+            param.crmsCode = param.crmsCode.Trim();
+            var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE == param.crmsCode).Any();
             if (codeExist == true)
                 throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
 
@@ -64,6 +65,18 @@ namespace FintrakBanking.Repositories.CRMS
             loan.CRMSDATE = DateTime.Now;
             loan.CRMSVALIDATED = true;
 
+
+            //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == param.loanId).Select(x => x).FirstOrDefault();
+            //if (loan == null)
+            //    throw new ConditionNotMetException("This Facility does not exist");
+
+            //var codeExist = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CRMSCODE == param.crmsCode).Any();
+            //if (codeExist == true)
+            //    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+            //loan.CRMSCODE = param.crmsCode;
+            //loan.CRMSDATE = DateTime.Now;
+            //loan.CRMSVALIDATED = true;
             //}
 
             //else if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)

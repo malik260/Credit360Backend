@@ -209,6 +209,12 @@ namespace FintrakBanking.Repositories.Customer
             var saved = context.SaveChanges() > 0;
         }
 
+        public void refreshCustomerAccount(int customerId)
+        {
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
+
+            if (customer != null) fetchCustomerAccountBalance(customer);
+        }
         private void fetchCustomerAccountBalance(TBL_CUSTOMER data)
         {
 
@@ -3372,6 +3378,8 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
                             customerRating = a.CUSTOMERRATING,
+                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                            businessUnitId = a.BUSINESSUNTID,
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
