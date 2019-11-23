@@ -2557,5 +2557,27 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("work-flow-tracker-booking/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetApprovalTrailByOperationIdAndTargetIdBooking(int operationId, int targetId)
+        {
+            try
+            {
+                var data = repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, count = data.Count() });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
     }
 }
