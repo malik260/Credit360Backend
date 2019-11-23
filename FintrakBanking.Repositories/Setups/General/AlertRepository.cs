@@ -37,6 +37,7 @@ namespace FintrakBanking.Repositories.Setups.General
             this.externalAlertRepository = _externalAlertRepository; 
         }
 
+        #region other code logic
         public AlertRepository() {}
 
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
@@ -824,8 +825,8 @@ namespace FintrakBanking.Repositories.Setups.General
             return opeartion;
         }
 
+        #endregion end of code logic
 
-        
         public void validateAlertCheck()
         {
             /* GetLoanExpirationReminder();

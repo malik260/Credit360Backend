@@ -8064,7 +8064,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (context.SaveChanges() > 0)
                         {
-                            NotifyForCollateralValidity(mainCollateral, model.validTill, true);
+                            NotifyForCollateralValidity(collateral, model.validTill, true);
                             return collateral.COLLATERALCUSTOMERID;
                         }
                     }
@@ -8109,10 +8109,10 @@ namespace FintrakBanking.Repositories.Credit
                     VALIDTILL = model.validTill,
                 });
 
-                if (model.customerId == 1)
+                if (model.customerId > 0)
                     //if (model.loanTypeId == 1)
                     collateral.CUSTOMERID = model.customerId;
-                else if (model.loanTypeId == 2)
+                else if (model.customerGroupId > 0)
                 //else if (model.loanTypeId == 2)
                         collateral.CUSTOMERGROUPID = model.customerGroupId;
                 else
@@ -8247,6 +8247,7 @@ namespace FintrakBanking.Repositories.Credit
             string recipients;
             string jobReQuestCode;
             int targetId;
+            var currency = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == collateral.CURRENCYID);
             targetId = collateral.COLLATERALCUSTOMERID;
             jobReQuestCode = collateral.COLLATERALCODE;
             alertSubject = "Collateral Validity Update from FINTRAK 360(TEST ALERT)";
@@ -8254,7 +8255,7 @@ namespace FintrakBanking.Repositories.Credit
                 "tajudeen.onikoyi@fintraksoftware.com,paul.asiemo@accessbankplc.com,felix.afighi@fintraksoftware.com,augustine.nwaka@fintraksoftware.com";
             messageBody = $"Hello, <br /><br />" +
                            $"This is to inform you that, <br /><br />" +
-                           $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                           $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {currency.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
                            $" now has a validity period that lasts till {newValidityDate.Value}"
                            ;
             LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);

@@ -630,17 +630,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 if (result.APIResponse != null)
                 {
-                    if (result.APIResponse.responseCode == "00")
+                    //if (result.APIResponse.responseCode == "00")
+                    if (result.APIStatus)
                     {
                         string str = result.APIResponse.webRequestStatus;
-
-                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode };
+                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode, responseMessage = result.responseMessage };
                     }
                     else
                     {
-                        var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-
-                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
+                        //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
                     }
                 }
                 else
@@ -684,6 +683,29 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 }
 
             }
+        }
+
+        public PostingResult GetCreditCheck(CreditCheckViewModel model)
+        {
+            ResponseMessage result = null;
+            Task.Run(async () => result = await transaction.FlexcubeCreditCheck(model)).GetAwaiter().GetResult();
+
+            if (result.APIResponse != null)
+            {
+                if (result.APIResponse.responseStatus)
+                {
+                    return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode, responseMessage = result.responseMessage };
+                }
+                else
+                {
+                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+                }
+            }
+            else
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
         //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
@@ -833,7 +855,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower())?
                     .ACCOUNTSTATUSID;
 
-                if(item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
+                TBL_CASA result = (from p in context.TBL_CASA
+                                   where p.CUSTOMERID == item.customerId && p.PRODUCTACCOUNTNUMBER == item.productAccountNumber
+                                   select p).SingleOrDefault();
+
+                if (item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
                 TBL_CASA addCustomerAcct = new TBL_CASA();
                 addCustomerAcct.CUSTOMERID = customerId;
                 addCustomerAcct.AVAILABLEBALANCE = item.availableBalance;
@@ -851,7 +877,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.POSTNOSTATUSID = 1;
                 addCustomerAcct.DELETED = false;
 
-                customerAcct.Add(addCustomerAcct);
+                if (result != null) customerAcct.Add(addCustomerAcct);
+                else continue;
             }
             var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
             if (customerExist == null)
@@ -859,30 +886,30 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 this.context.TBL_CASA.AddRange(customerAcct);
                 context.SaveChanges();
             }
-            else
-            {
-                foreach (var a in customerAcct)
-                {
+            //else
+            //{
+            //    foreach (var a in customerAcct)
+            //    {
 
-                    TBL_CASA result = (from p in context.TBL_CASA
-                                       where p.CUSTOMERID == a.CUSTOMERID && p.PRODUCTACCOUNTNUMBER == a.PRODUCTACCOUNTNUMBER
-                                       select p).SingleOrDefault();
+            //        TBL_CASA result = (from p in context.TBL_CASA
+            //                           where p.CUSTOMERID == a.CUSTOMERID && p.PRODUCTACCOUNTNUMBER == a.PRODUCTACCOUNTNUMBER
+            //                           select p).SingleOrDefault();
 
-                    if (result == null)
-                    {
-                        this.context.TBL_CASA.Add(a);
-                        context.SaveChanges();
-                    }
-                    else
-                    {
-                        result.AVAILABLEBALANCE = a.AVAILABLEBALANCE;
-                        result.ACCOUNTSTATUSID = a.ACCOUNTSTATUSID;
-                        result.LEDGERBALANCE = a.LEDGERBALANCE;
-                        context.SaveChanges();
-                    }
-                }
+            //        if (result == null)
+            //        {
+            //            this.context.TBL_CASA.Add(a);
+            //            context.SaveChanges();
+            //        }
+            //        else
+            //        {
+            //            result.AVAILABLEBALANCE = a.AVAILABLEBALANCE;
+            //            result.ACCOUNTSTATUSID = a.ACCOUNTSTATUSID;
+            //            result.LEDGERBALANCE = a.LEDGERBALANCE;
+            //            context.SaveChanges();
+            //        }
+            //    }
 
-            }
+            //}
 
             //context.SaveChanges();
             //context.SaveChangesAsync();
@@ -901,7 +928,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 Task.Run(async () => cust = await customer.GetCustomerByAccountsNumber(customerAccount)).GetAwaiter().GetResult();
                 return cust;
             }
-            catch (Exception ex)
+            catch (APIErrorException ex)
             {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
@@ -918,7 +945,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 .GetResult();
                 return accountOutput;
             }
-            catch (Exception ex)
+            catch (APIErrorException ex)
             {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
@@ -934,7 +961,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode)).GetAwaiter().GetResult();
                 return casa;
             }
-            catch (Exception ex)
+            catch (APIErrorException ex)
             {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
@@ -944,9 +971,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public List<RatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode)
         {
             List<RatingAndRatioViewModel> customerRatio = new List<RatingAndRatioViewModel>();
-            Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode))
-                .GetAwaiter().GetResult();
-            return customerRatio;
+
+            try {
+                Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode)).GetAwaiter().GetResult();
+                return customerRatio;
+            }
+            catch (APIErrorException)
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         } // GetCorporateProbabilityDefaultByCustomerId
 
         public List<GroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode)
@@ -960,34 +994,61 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public CutomerRatingViewModel GetCorporateCustomerRatingByCustomerCode(string customerCode)
         {
             CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
-            Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
+
+            try {
+                Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return customerRating;
+                return customerRating;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
         }
 
         public FacilityRatingViewModel GetAutoLoanRetailByCustomerCode(string customerCode)
         {
             FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
-            Task.Run(async () => autoLoan = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
+
+            try {
+                Task.Run(async () => autoLoan = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return autoLoan;
+                return autoLoan;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+            
         }
 
 
         public FacilityRatingViewModel GetPersonalLoanRetailByCustomerCode(string customerCode)
         {
             FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
-            Task.Run(async () => personalLoan = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
-                .GetAwaiter().GetResult();
-            return personalLoan;
+
+            try {
+                Task.Run(async () => personalLoan = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
+               .GetAwaiter().GetResult();
+                return personalLoan;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
         public FacilityRatingViewModel GetCreditCardRetailByCustomerCode(string customerCode)
         {
             FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
-            Task.Run(async () => creditCard = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
+
+            try {
+                Task.Run(async () => creditCard = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return creditCard;
+                return creditCard;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
         //public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)
@@ -1004,9 +1065,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
-            Task.Run(async () => accounts = await customer.GetCustomerTransactions(accountNumber, durationInMonths))?.GetAwaiter().GetResult();
-
-            return accounts;
+            try {
+                Task.Run(async () => accounts = await customer.GetCustomerTransactions(accountNumber, durationInMonths))?.GetAwaiter().GetResult();
+                return accounts;
+            }
+            catch (Exception) {
+                throw new ConditionNotMetException("Core Banking API error, Kindly contact system administartor!");
+            }
         }
 
         public List<CustomerTurnoverViewModel> GetCustomerAccountInterestTransactions(string customerCode, int durationInMonths)

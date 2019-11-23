@@ -121,6 +121,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
         private readonly string obligorRiskRatingHolder = "@{{ObligorRiskRating}}";
         private readonly string obligorClassificationHolder = "@{{ObligorClassification}}";
+        private readonly string ownerShipHolder = "@{{OwnerShip}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -201,6 +202,8 @@ namespace FintrakBanking.Repositories.Credit
         private string allCustomerFacilities;
         private string obligorRiskRating;
         private string obligorClassification;
+       
+        
         //private string totalGroupExposure;
         // lms
         private string securityType;
@@ -226,7 +229,20 @@ namespace FintrakBanking.Repositories.Credit
         //private string branchName;
         private string facilityType;
         private string drawdownAmount;
-        private int tenor;
+        public int tenor;
+
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = tenor == 1 ? " day" : " days";
+                if (tenor < 15) return tenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(tenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+
         private int? moratorium;
         private string principalRepayment;
         private string interestRepayment;
@@ -537,9 +553,9 @@ namespace FintrakBanking.Repositories.Credit
                 this.principalRepayment = "";
                 this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
                 this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-                this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
-                this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
-                this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); 
+                //this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
+                //this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
+                //this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); 
                 this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
                 this.effectiveDate = loanApplication.APPROVEDDATE;
                 this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
@@ -865,10 +881,16 @@ namespace FintrakBanking.Repositories.Credit
 
 
         //markups
-        
+
         public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
         {
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+            var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID).ToList();
+            int managementFeeId = chargeFeeIds[0], processingFeeId = chargeFeeIds[1], commitmentFeeId = chargeFeeIds[2];
+            managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == managementFeeId).FirstOrDefault().VALUE;
+            processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == processingFeeId).FirstOrDefault().VALUE;
+            commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == commitmentFeeId).FirstOrDefault().VALUE;
+
 
             var result = String.Empty;
             result = result + $@"
@@ -900,7 +922,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                         <td>TENOR:</td>
-                        <td>{tenor}</td>
+                        <td>{approvedTenorString}</td>
                         <td>MGT FEE:</td>
                         <td>{managementFee}</td>
                     </tr>
@@ -1170,7 +1192,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetAllExchangeRates()
         {
             var result = String.Empty;
-            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).ToList();
+            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).Take(3).ToList();
             foreach (var x in exchangeRates)
             {
                 result = result + $@"
@@ -1419,12 +1441,17 @@ namespace FintrakBanking.Repositories.Credit
         private string GetDirectFacilitiesMarkupLOS()
         {
             var result = String.Empty;
-            var exposures = GetExposures();
+            var exposures = GetExposures().Where(e => e.currencyType.ToLower().Contains("lcy"));
             var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
             var loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                                                 && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
                                                 && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-
+            //var productCodesInLoans = loans.Select(l => l.TBL_PRODUCT1.PRODUCTCODE.ToLower().Trim()).ToList();
+            //var directs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityType.Contains("LC") && !e.adjFacilityType.Contains("TRADE LOAN")).ToList();
+            ////var directsNotInLoans = directs.Where(e => !productCodesInLoans.Contains(e.productCode));
+            //var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityType.Contains("LC") && !e.adjFacilityType.Contains("TRADE LOAN")).ToList();
+            //var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityType.Contains("LC")).ToList();
+            //var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityType.Contains("TRADE LOAN")).ToList();
             //var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
             //                                                    && l.ISDISBURSED == true).ToList();
             //var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
@@ -1444,10 +1471,12 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var group in loanGroups)
             {
                 var facility = group.Key;
+                var first = group.First();
                 var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
                 //var sameProductExposures
-                var currentAmount = group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
-                //var currentAmount = group.Sum(p => p.OUTSTANDINGPRINCIPAL) + group.Sum(p => p.OUTSTANDINGINTEREST);
+                //var exposure = directs.Where(d => d.productCode.ToLower() == first.TBL_PRODUCT1.PRODUCTCODE.ToLower()).ToList();
+                var currentAmount = (group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE));
+                //var currentAmount = (group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE) + exposure.Sum(e => e.approvedAmount));
                 // checks each loan detail.
                 var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID == 
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;

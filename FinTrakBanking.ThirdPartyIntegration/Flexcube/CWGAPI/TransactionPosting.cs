@@ -912,7 +912,7 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
 
-                    model.account_no = "0768140952";
+                    //model.account_no = "0768140952";
                     //model.amount_financed = "1000";
                     response = client.PostAsync(apiUrl, new StringContent(
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
@@ -1014,7 +1014,7 @@
                 var inputJson = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageFacilityViewModel responseApi = new ResponseMessageFacilityViewModel();
+                ResponseMessageCRMSCodeViewModel responseApi = new ResponseMessageCRMSCodeViewModel();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
                 getAPIURLSettings("crmsCode"); //Check TBL_API_URL
@@ -1026,7 +1026,7 @@
                     handler.UseDefaultCredentials = true;
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.Timeout = TimeSpan.FromSeconds(1800);
                     client.DefaultRequestHeaders.Authorization = token;
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
@@ -1043,16 +1043,16 @@
 
                     if (response.IsSuccessStatusCode)
                     {
-                        responseApi = await response.Content.ReadAsAsync<ResponseMessageFacilityViewModel>();
+                        responseApi = await response.Content.ReadAsAsync<ResponseMessageCRMSCodeViewModel>();
 
                         var res = new ResponseMessageViewModel
                         {
-                            responseCode = responseApi.response_code,
-                            message = responseApi.response_message,
-                            serialNumber = responseApi.bo_code,
+                            //responseCode = responseApi.response_code,
+                            message = responseApi.submit_return,
+                            //serialNumber = responseApi.bo_code,
                             webRequestDate = DateTime.Now,
-                            webRequestStatus = responseApi.bo_message,
-                            responseStatus = responseApi.response_code == "00" ? true : false,
+                            //webRequestStatus = responseApi.bo_message,
+                            responseStatus = responseApi.submit_return.ToLower().Contains("successful") == true ? true : false,
                         };
 
                         responseMsg = new ResponseMessage
@@ -1069,7 +1069,7 @@
                             APIResponse = null,
                             APIStatus = response.IsSuccessStatusCode,
                             Message = response,
-                            responseMessage = responseJson
+                            responseMessage = responseApi.submit_return
                         };
                     }
 
@@ -1094,8 +1094,8 @@
                     {
                         LOANAPPLICATIONID = model.loanApplicationDetailId,
                         LOANSYSTEMTYPEID = loanSystemTypeId,
-                        FACILITYMAPPINGID = responseApi.facility_id,
-                        BOOKINGCODE = responseApi.bo_code,
+                        FACILITYMAPPINGID = null,
+                        BOOKINGCODE = null,
                     };
 
                     var logs = new TBL_CUSTOM_API_LOGS
@@ -1119,6 +1119,109 @@
 
                 //context.SaveChanges();
             }
+
+            // CreditCheck
+            public async Task<ResponseMessage> FlexcubeCreditCheck(CreditCheckViewModel model)
+            {
+                var API_URL = "http://10.111.13.47:7002/crms/v1/";
+                HttpClientHandler _handler = new HttpClientHandler();
+
+                _handler.UseDefaultCredentials = true;
+                HttpClient client = new HttpClient(_handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                // HttpClient client = new HttpClient(_handler);
+                var inputJson = new JavaScriptSerializer().Serialize(model);
+                ResponseMessageCreditCheckViewModel responseAPI = new ResponseMessageCreditCheckViewModel();
+                //string responseAPI = "";
+                //DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseJson = "";
+                //getAPIURLSettings("CreditCheck");
+                string apiUrl = "creditCheck";
+
+                try
+                {
+
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+                    client = new HttpClient();
+                    client.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+
+                    response = client.PostAsync(apiUrl, new StringContent(
+                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+                    responseJson = await response.Content.ReadAsStringAsync();
+
+                    responseDateTime = DateTime.Now;
+                    responseMsg = null;
+
+                    if (response.IsSuccessStatusCode && responseJson.Contains("\"creditCheck\":"))
+                    {
+                        responseAPI = await response.Content.ReadAsAsync<ResponseMessageCreditCheckViewModel>();
+                        //responseAPI = await response.Content.ReadAsStringAsync();
+
+                        responseMsg = new ResponseMessage
+                        {
+                            //APIResponse = specificRes,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response,
+                            responseMessage = responseJson
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = false, //response.IsSuccessStatusCode,
+                            Message = response,
+                            responseMessage = responseJson
+                        };
+                    }
+                    _handler.Dispose();
+                    client.Dispose();
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+                finally
+                {
+                    _handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = API_URL + apiUrl,
+                        LOGTYPEID = 11,
+                        // REFERENCENUMBER = model.sanctionReferenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = inputJson,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseJson,
+                    };
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
+                }
+            }
+
 
             #endregion END OF  FLEXCUBE POSTING INTEGRATIONS
 

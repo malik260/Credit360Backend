@@ -175,6 +175,16 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("refresh-customer-account/{customerId}")]
+        public HttpResponseMessage RefreshCustomerAccount(int customerId)
+        {
+            repo.refreshCustomerAccount(customerId);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]

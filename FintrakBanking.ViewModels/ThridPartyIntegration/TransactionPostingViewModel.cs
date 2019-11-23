@@ -312,8 +312,9 @@ public class LienProcessViewModel //: GeneralEntity
         public string lien_id { get; set; }
         public string response_message { get; set; }
         public string collateral_id { get; set; }
+
         // public HttpResponseMessage APIMessage { get; set; }
-        // public bool responseStatus { get; set; }
+        // public bool responseStatus { get; set; }crmsCode
     }
 
     public class ResponseMessageFacilityViewModel
@@ -333,4 +334,12 @@ public class LienProcessViewModel //: GeneralEntity
         public string bo_code { get; set; }
         public string bo_message { get; set; } 
     }
+
+    public class ResponseMessageCRMSCodeViewModel
+    {
+        public string submit_return { get; set; }
+     
+    }
+
+
 }

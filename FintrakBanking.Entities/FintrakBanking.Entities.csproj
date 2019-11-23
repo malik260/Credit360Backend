@@ -81,6 +81,7 @@
     <Compile Include="Models\TBL_ALERT_GENERAL_TEMPLATE.cs" />
     <Compile Include="Models\TBL_ALERT_USER_SECURITY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_RATIO_CATEGORY.cs" />
+    <Compile Include="Models\TBL_DOC_TEMPLATE_SAVED.cs" />
     <Compile Include="Models\TBL_GLOBAL_EXPOSURE.cs" />
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />

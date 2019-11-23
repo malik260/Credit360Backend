@@ -80,7 +80,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string firstChildName { get; set; }
         public DateTime childDateOfBirth { get; set; }
         public string occupation { get; set; }
-        public short customerTypeId { get; set; }
+        public short? customerTypeId { get; set; }
         public int? relationshipOfficerId { get; set; }
         public string relationshipOfficerCode { get; set; }
         public string relationshipOfficerName { get; set; }

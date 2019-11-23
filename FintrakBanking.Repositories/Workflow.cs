@@ -810,14 +810,25 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private int? GetReportingLineStaffId() // if workflow is forced to use organogram
         {
+            var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
             if (next == null) { return null; }
-            if (this.toStaffId != null) { return null; }
+            if (this.toStaffId != null) { return toStaffId; }
+            //if (this.toStaffId != null) { return null; }
             if (this.externalInitialization == true) { return null; }
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
+            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || this.fromLevelId == null)
+            {
+                return null;
+            }
             ReportingLine super = line.FirstOrDefault(x => x.levelRoleId == next.DefaultRoleId && x.levelIds.Contains(next.ApprovalLevelId));
-            if (super == null) return null;
+            if (super == null)
+            {
+                throw new ConditionNotMetException("No Staff Was Setup as Your Supervisor!");
+                //return null;
+            }
+
             return super.staffId;
         }
 

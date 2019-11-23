@@ -57,5 +57,7 @@ namespace FintrakBanking.Interfaces.Credit
         FacilityRatingViewModel GetPersonalLoanRetailByCustomerCode(string customerCode);
         FacilityRatingViewModel GetCreditCardRetailByCustomerCode(string customerCode);
 
+        PostingResult GetCreditCheck(CreditCheckViewModel model);
+
     }
 }

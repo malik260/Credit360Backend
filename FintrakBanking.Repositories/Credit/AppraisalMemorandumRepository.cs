@@ -1096,7 +1096,6 @@ namespace FintrakBanking.Repositories.Credit
             var usTotalAmount = usList.Sum(l => l.USSANCEAMOUNT);
             if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
             // WORKFLOW
-            //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
             workflow.OperationId = operationId;
             workflow.StaffId = model.createdBy;
             workflow.TargetId = model.lcUssanceId;
@@ -2126,7 +2125,7 @@ namespace FintrakBanking.Repositories.Credit
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                    && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
+                    && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID)) && x.REQUESTSTAFFID == staffId)
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
