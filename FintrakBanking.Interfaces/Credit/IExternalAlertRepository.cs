@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,25 +10,24 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
-        IEnumerable<GlobalExposureViewModel> GetCreditCardDelinquencyMonitoringReport();
-        IEnumerable<GlobalExposureViewModel> GetOverlineMonitoringReport();
+        
+        IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturities();
+        IEnumerable<StaffInfoViewModel> GetCreditCardDelinquencyMonitoringReport();
+        IEnumerable<StaffInfoViewModel> GetOverlineMonitoringReport();
         IEnumerable<GlobalExposureViewModel> GetUnAuthorizedOverdraftReport();
         IEnumerable<GlobalExposureViewModel> GetLoanExpirationReminder();
-        IEnumerable<GlobalExposureViewModel> GetExpiringFacilityReport();
-        //IEnumerable<GlobalExposureViewModel> GetAllGlobalExposure();
-        IEnumerable<GlobalExposureViewModel> GetImminentMaturities();
-        IEnumerable<GlobalExposureViewModel> GetCreditCardMaturingObligations();
-        IEnumerable<GlobalExposureViewModel> GetPastDueObligationsReminder();
+        IEnumerable<StaffInfoViewModel> GetLoanExpirationReminderAccountOfficer();
+        IEnumerable<StaffInfoViewModel> GetExpiringFacilityReport();
+        IEnumerable<StaffInfoViewModel> GetCreditCardMaturingObligations();
+        IEnumerable<StaffInfoViewModel> GetPastDueObligationsReminder();
         IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts();
         IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportOne();
         IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportTwo();
-        IEnumerable<GlobalExposureViewModel> GetNplOnCreditPortfolio();
-        IEnumerable<GlobalExposureViewModel> GetOverlineCreditCardPosition();
-        IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportNotification();
-        IEnumerable<GlobalExposureViewModel> GetRiskAssetsReportReminder();
-        IEnumerable<GlobalExposureViewModel> GetDashboardReportNotification();
-        IEnumerable<GlobalExposureViewModel> GetDashboardReportReminder();
-        IEnumerable<GlobalExposureViewModel> GetCACReport();
+        IEnumerable<StaffInfoViewModel> GetNplOnCreditPortfolio();
+        IEnumerable<StaffInfoViewModel> GetOverlineCreditCardPosition();
+        bool GetRiskAssetsReportNotification();
+        bool GetDashboardReportNotification();
+        bool GetCACReport();
         IEnumerable<GlobalExposureViewModel> GetSignificantMovementInDailyRiskAsset();
         IEnumerable<GlobalExposureViewModel> GetUSDCreditCardReport();
         IEnumerable<GlobalExposureViewModel> GetNairaCreditCardReport();
@@ -90,18 +90,20 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetBreachInCreditKeyMetricsNotification();
         IEnumerable<GlobalExposureViewModel> GetBreachInCreditKeyMetricsNotificationReminder();
         IEnumerable<GlobalExposureViewModel> GetAssignedDeliverableFromCACMeeting();
-        IEnumerable<GlobalExposureViewModel> GetExpiredFacilityNotification();
+        IEnumerable<StaffInfoViewModel> GetExpiredFacilityNotification();
+        IEnumerable<StaffInfoViewModel> GetLoanRepaymentReminderAccountOfficer();
         IEnumerable<GlobalExposureViewModel> GetLargeExposureAbove18PercentNotification();
         IEnumerable<GlobalExposureViewModel> GetBreachInGeographyLimitNotification();
         IEnumerable<GlobalExposureViewModel> GetBreachInORRLimitNotification();
         IEnumerable<GlobalExposureViewModel> GetBreachInSectorLimitNotification();
         IEnumerable<GlobalExposureViewModel> GetImminentObligationRentalScheduleNotification();
-        IEnumerable<GlobalExposureViewModel> GetImminentObligationMaturityFacilityNotification();
-        IEnumerable<GlobalExposureViewModel> GetOverlineFacilityNotification();
-        IEnumerable<GlobalExposureViewModel> GetPastDueFacilitiesNotification();
+        IEnumerable<StaffInfoViewModel> GetImminentObligationMaturityFacilityNotification();
+        IEnumerable<StaffInfoViewModel> GetOverlineFacilityNotification();
+        IEnumerable<StaffInfoViewModel> GetPastDueFacilitiesNotification();
         IEnumerable<GlobalExposureViewModel> GetLoanRepaymentReminder();
-        IEnumerable<GlobalExposureViewModel> GetOverlineReminder();
-        IEnumerable<GlobalExposureViewModel> GetMaturingObligationsReport();
+        IEnumerable<StaffInfoViewModel> GetOverlineReminder();
+        IEnumerable<StaffInfoViewModel> GetUnpaidObligationReminderAccountOfficer();
+        IEnumerable<StaffInfoViewModel> GetMaturingObligationsReport();
         IEnumerable<GlobalExposureViewModel> GetLargeExposureMonitoring();
         IEnumerable<GlobalExposureViewModel> GetUnpaidObligationReminder();
         IEnumerable<GlobalExposureViewModel> GetStaffLoanPortfolioReport();

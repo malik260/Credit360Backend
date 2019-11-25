@@ -22,12 +22,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("alert-imminentMaturit")]
+        [Route("alert-imminent-maturit")]
         public HttpResponseMessage GetAlertImminentMaturity()
         {
             try
             {
-                var alertViewModels = _repo.GetImminentMaturities(); 
+                var alertViewModels = _repo.GetScheduleOfDirectorsAccounts(); 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
             }
             catch (SecureException ex)

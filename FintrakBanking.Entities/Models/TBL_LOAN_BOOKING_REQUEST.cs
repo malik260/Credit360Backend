@@ -42,6 +42,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string CRMSCODE { get; set; }
 
+        public int? OPERATIONID { get; set; }
+
         public bool? SECUREDBYCOLLATERAL { get; set; }
         public int? CRMSCOLLATERALTYPEID { get; set; }
         public int? MORATORIUMDURATION { get; set; }

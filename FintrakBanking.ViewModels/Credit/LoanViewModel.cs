@@ -678,6 +678,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public string crmsCode { get; set; }
+
         public double approvedInterestRate { get; set; }
         public List<feeDetails> fees { get; set; }
 

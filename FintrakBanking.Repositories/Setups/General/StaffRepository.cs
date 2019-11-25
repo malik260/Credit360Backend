@@ -444,7 +444,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         EMAILOFNOK = staffModel.EmailOfNok,
                         GENDER = staffModel.Gender,
                         GENDEROFNOK = staffModel.GenderOfNok,
-                        MISINFOID = staffModel.MisinfoId,
+                        //MISINFOID = staffModel.MisinfoId,
                         NAMEOFNOK = staffModel.NameOfNok,
                         NOKRELATIONSHIP = staffModel.NokrelationShip,
                         PHONE = staffModel.Phone,

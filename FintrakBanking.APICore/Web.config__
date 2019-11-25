@@ -11,19 +11,16 @@ PublicKeyToken=89b483f429c47342" />-->
 
 PublicKeyToken=89b483f429c47342"/>
   </configSections>
+  
   <connectionStrings>
-    <add name="FinTrakBankingContext" connectionString="DATA SOURCE=localhost:1521/pdb01;PASSWORD=Password10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKBANKING" providerName="Oracle.ManagedDataAccess.Client" />
-    <add name="FinTrakBankingDocumentsContext" connectionString="DATA SOURCE=localhost:1521/pdb01;PASSWORD=Password10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKBANKINGDOCUMENTS" providerName="Oracle.ManagedDataAccess.Client" />
-    <add name="FinTrakBankingStagingContext" connectionString="DATA SOURCE=localhost:1521/pdb01;PASSWORD=Password10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKSTAGING" providerName="Oracle.ManagedDataAccess.Client" />
+    <add name="FinTrakBankingContext" connectionString="Data Source=.\;Initial Catalog=FINTRAKBANKINGAccess;MultipleActiveResultSets=true;Integrated Security=true;" providerName="System.Data.SqlClient" />
+     <add name="FinTrakBankingDocumentsContext" connectionString="Data Source=.\;Initial Catalog=FINTRAKBANKINGDOCUMENTSAccess;MultipleActiveResultSets=true;Integrated Security=true;" providerName="System.Data.SqlClient" />
+     <add name="FinTrakBankingStagingContext" connectionString="Data Source=.\;Initial Catalog=FINTRAKSTAGINGAccess;MultipleActiveResultSets=true;Integrated Security=true;" providerName="System.Data.SqlClient" />
 
-
-
-    <!-- <add name="FinTrakBankingContext" connectionString="DATA SOURCE=FTTRAK360;PASSWORD=sqluser10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKBANKING" 
-
-providerName="Oracle.ManagedDataAccess.Client"/>
+   <!-- <add name="FinTrakBankingContext" connectionString="DATA SOURCE=FTTRAK360;PASSWORD=sqluser10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKBANKING" 
+                 providerName="Oracle.ManagedDataAccess.Client"/>
     <add name="FinTrakBankingDocumentsContext" connectionString="DATA SOURCE=FTTRAK360;PASSWORD=sqluser10$;PERSIST SECURITY INFO=True;USER ID=FINTRAKBANKINGDOCUMENTS" 
-
-providerName="Oracle.ManagedDataAccess.Client"/>-->
+                         providerName="Oracle.ManagedDataAccess.Client"/>-->
  
     <add name="OracleDbContext" providerName="Oracle.ManagedDataAccess.Client" connectionString="User Id=oracle_user;Password=oracle_user_password;Data 
 

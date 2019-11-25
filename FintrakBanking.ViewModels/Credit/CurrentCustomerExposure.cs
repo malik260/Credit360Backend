@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -19,8 +20,11 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal approvedAmount { get; set; }
         public decimal approvedAmountLcy { get; set; }
         public int exposureTypeId { get; set; }
-        public string exposureTypeCode { get; set; }
-        public string adjFacilityType { get; set; }
+        public string exposureTypeCodeString { get; set; }
+        public int exposureTypeCode { get; set; }
+        public string adjFacilityTypeString { get; set; }
+        public string adjFacilityTypeCode { get; set; }
+        public int adjFacilityType { get; set; }
         public string customerCode { get; set; }
 
         public decimal pastDueObligationsPrincipal { get; set; }
@@ -40,7 +44,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public short applicationStatusId { get; set; }
         public string currency { get; set; }
+        public string currencyType { get; set; }
+        public string currencyCode { get; set; }
         public DateTime? maturityDate { get; set; }
+        public int tenor { get; set; }
+        public string tenorString { get; set; }
         public decimal? totalBankExposure { get; set; }
         public decimal? companyLimit { get; set; }
     }
@@ -135,6 +143,23 @@ namespace FintrakBanking.ViewModels.Credit
         public string expiringBand { get; set; }
         public int? unPoDaysOverdue { get; set; }
         public DateTime scheduleDueDate { get; set; }
+
+        //public int maturityDateEx
+        //{
+        //    get
+        //    {
+        //        return DbFunctions.DiffDays(DateTime.UtcNow, maturityDate).Value;
+        //    }
+        //}
+    }
+
+    public class AlertDailyReportViewModel
+    {
+        public int id { get; set; }
+        public DateTime processingStartDate { get; set; }
+        public DateTime processingEndDate { get; set; }
+        public DateTime processingDate { get; set; }
+        public string successfulProcessingInd { get; set; }
     }
 }
 
