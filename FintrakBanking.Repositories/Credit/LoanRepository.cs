@@ -2095,7 +2095,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 faciltyCreationModel.account_no = casa.PRODUCTACCOUNTNUMBER;
                 faciltyCreationModel.limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
-                faciltyCreationModel. = facilityDetail.APPROVEDINTERESTRATE.ToString();
+                //faciltyCreationModel.= facilityDetail.APPROVEDINTERESTRATE.ToString();
                 //faciltyCreationModel.p_facility_description = product.PRODUCTCODE;
                 faciltyCreationModel.expiry_date = expiryDate.ToString();
                 faciltyCreationModel.start_date = effectiveDate.ToString();
