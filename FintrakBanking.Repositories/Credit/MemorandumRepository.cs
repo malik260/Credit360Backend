@@ -2843,7 +2843,6 @@ namespace FintrakBanking.Repositories.Credit
                             </tr>
                             ";
                         }
-
                     }
                 }
 
