@@ -40,7 +40,6 @@ namespace FintrakBanking.Repositories.Credit
         private IEmailAlertLogger emailLogger;
         private IOfferLetterAndAvailmentRepository offerLetter;
         private ILoanApplicationRepository loanApp;
-        ICreditTemplateRepository creditTemplateRepo;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -50,8 +49,7 @@ namespace FintrakBanking.Repositories.Credit
             ICreditLimitValidationsRepository limitValidation,
             IEmailAlertLogger _emailLogger,
             IOfferLetterAndAvailmentRepository _offerLetter,
-            ILoanApplicationRepository _loanApp, 
-            ICreditTemplateRepository _creditTemplateRepo
+            ILoanApplicationRepository _loanApp
             )
         {
             this.context = context;
@@ -59,10 +57,9 @@ namespace FintrakBanking.Repositories.Credit
             this.audit = audit;
             this.workflow = workflow;
             this.limitValidation = limitValidation;
-            emailLogger = _emailLogger;
-            offerLetter = _offerLetter;
-            loanApp = _loanApp;
-            creditTemplateRepo = _creditTemplateRepo;
+            this.emailLogger = _emailLogger;
+            this.offerLetter = _offerLetter;
+            this.loanApp = _loanApp;
 
         }
 
@@ -494,7 +491,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //Send Email to Customer
                     SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
-                    creditTemplateRepo.SaveApprovedDocumentation(model.createdBy, 6, model.applicationId);
+                    //SaveApprovedDocumentation(model.createdBy, 6, model.applicationId);
                     //generate offer letter doc
                     //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
 
@@ -568,7 +565,72 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
-       
+        //public bool SaveApprovedDocumentation(int staffId, int operationId, int targetId)
+        //{
+        //    // int staffId, is REDUNDANT!
+        //    var printedDoc = "";
+        //    var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
+        //        .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+        //        .OrderBy(x => x.POSITION)
+        //        .Select(x => new LoadedDocumentSectionViewModel
+        //        {
+        //            position = x.POSITION,
+        //            sectionId = x.DOCUMENTDETAILID,
+        //            title = x.TITLE,
+        //            description = x.DESCRIPTION,
+        //            canEdit = x.CANEDIT, // system
+        //            // editable = sectionIds.Contains(x.TEMPLATESECTIONID),
+        //            templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
+        //        })
+        //        .ToList();
+
+        //    List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
+
+        //    memo.Init(operationId, targetId); //content = memo.Replace(content);
+        //    foreach (var raw in rawSections)
+        //    {
+        //        raw.templateDocument = memo.Replace(raw.templateDocument);
+        //        replacedSections.Add(raw);
+        //        printedDoc = raw.title;
+        //    }
+
+        //    var docsToSave = new List<TBL_DOC_TEMPLATE_SAVED>();
+        //    foreach (var section in replacedSections)
+        //    {
+        //        TBL_DOC_TEMPLATE_SAVED docToSave = new TBL_DOC_TEMPLATE_SAVED();
+        //        var sect = context.TBL_DOC_TEMPLATE_DETAIL.Find(section.sectionId);
+        //        docToSave.OPERATIONID = sect.OPERATIONID;
+        //        docToSave.DOCUMENTDETAILID = sect.DOCUMENTDETAILID;
+        //        docToSave.TARGETID = sect.TARGETID;
+        //        docToSave.TEMPLATESECTIONID = sect.TEMPLATESECTIONID;
+        //        docToSave.TITLE = sect.TITLE;
+        //        docToSave.DESCRIPTION = sect.DESCRIPTION;
+        //        docToSave.TEMPLATEDOCUMENT = section.templateDocument;
+        //        docToSave.POSITION = sect.POSITION;
+        //        docToSave.CANEDIT = sect.CANEDIT;
+        //        docToSave.CREATEDBY = sect.CREATEDBY;
+        //        docToSave.DATETIMECREATED = DateTime.Now;
+        //        docsToSave.Add(docToSave);
+        //    }
+
+        //    context.TBL_DOC_TEMPLATE_SAVED.AddRange(docsToSave);
+
+        //    //var audit = new TBL_AUDIT
+        //    //{
+        //    //    AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplatePrinted,
+        //    //    STAFFID = staffId,
+        //    //    BRANCHID = 1, //(short)model.userBranchId,
+        //    //    DETAIL = $"Printed Document Template '{ printedDoc }' ",
+        //    //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+        //    //    URL = "localhost",//model.applicationUrl,
+        //    //    APPLICATIONDATE = general.GetApplicationDate(),
+        //    //    SYSTEMDATETIME = DateTime.Now,
+        //    //    DEVICENAME = CommonHelpers.GetDeviceName(),
+        //    //    OSNAME = CommonHelpers.FriendlyName()
+        //    //};
+        //    //this.audit.AddAuditTrail(audit);
+        //    return context.SaveChanges() > 0;
+        //}
 
         public IQueryable<LoanApplicationViewModel> GetPendingAdhocApplications(int operationId, int companyId, int branchId, int staffId, int? classId)
         {
@@ -2131,8 +2193,8 @@ namespace FintrakBanking.Repositories.Credit
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
-                    //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                    && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID)) && x.REQUESTSTAFFID == staffId)
+                    && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
+                //&& ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID)) && x.REQUESTSTAFFID == staffId)
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
