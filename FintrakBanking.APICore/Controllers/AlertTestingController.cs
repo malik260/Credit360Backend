@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("alert-imminentMaturit")]
+        [Route("alert-imminent-maturit")]
         public HttpResponseMessage GetAlertImminentMaturity()
         {
             try
