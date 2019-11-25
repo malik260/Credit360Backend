@@ -20,8 +20,10 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal approvedAmount { get; set; }
         public decimal approvedAmountLcy { get; set; }
         public int exposureTypeId { get; set; }
-        public string exposureTypeCode { get; set; }
-        public string adjFacilityType { get; set; }
+        public string exposureTypeCodeString { get; set; }
+        public int exposureTypeCode { get; set; }
+        public string adjFacilityTypeString { get; set; }
+        public int adjFacilityType { get; set; }
         public string customerCode { get; set; }
 
         public decimal pastDueObligationsPrincipal { get; set; }
@@ -42,6 +44,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short applicationStatusId { get; set; }
         public string currency { get; set; }
         public string currencyType { get; set; }
+        public string currencyCode { get; set; }
         public DateTime? maturityDate { get; set; }
         public int tenor { get; set; }
         public string tenorString { get; set; }
