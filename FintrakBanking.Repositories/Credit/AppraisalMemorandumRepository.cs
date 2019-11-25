@@ -40,6 +40,7 @@ namespace FintrakBanking.Repositories.Credit
         private IEmailAlertLogger emailLogger;
         private IOfferLetterAndAvailmentRepository offerLetter;
         private ILoanApplicationRepository loanApp;
+        ICreditTemplateRepository creditTemplateRepo;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -49,7 +50,8 @@ namespace FintrakBanking.Repositories.Credit
             ICreditLimitValidationsRepository limitValidation,
             IEmailAlertLogger _emailLogger,
             IOfferLetterAndAvailmentRepository _offerLetter,
-            ILoanApplicationRepository _loanApp
+            ILoanApplicationRepository _loanApp, 
+            ICreditTemplateRepository _creditTemplateRepo
             )
         {
             this.context = context;
@@ -60,6 +62,7 @@ namespace FintrakBanking.Repositories.Credit
             emailLogger = _emailLogger;
             offerLetter = _offerLetter;
             loanApp = _loanApp;
+            creditTemplateRepo = _creditTemplateRepo;
 
         }
 
@@ -491,7 +494,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //Send Email to Customer
                     SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
-
+                    creditTemplateRepo.SaveApprovedDocumentation(model.createdBy, 6, model.applicationId);
                     //generate offer letter doc
                     //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
 

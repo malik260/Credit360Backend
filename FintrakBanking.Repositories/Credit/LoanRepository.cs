@@ -8949,6 +8949,7 @@ namespace FintrakBanking.Repositories.Credit
                                 reviewDate = DateTime.Now,
                                 bookingDate = a.BOOKINGDATE,
                                 maturityDate = a.MATURITYDATE,
+                                tenorString = a.TENOR,
                                 //maturityDateString = a.MATURITYDATE,
                                 loanStatus = a.CBNCLASSIFICATION,
                                 referenceNumber = a.REFERENCENUMBER,
@@ -8959,8 +8960,7 @@ namespace FintrakBanking.Repositories.Credit
                     foreach (var e in exposure)
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCode);
-                        //e.bookingDate = e.bookingDateString;
-                        //e.maturityDate = DateTime.Parse(e.maturityDateString);
+                        e.tenor = int.Parse(e.tenorString);
                         e.productId = int.Parse(e.productIdString);
                     }
                     exposures.AddRange(exposure);
@@ -9084,20 +9084,20 @@ namespace FintrakBanking.Repositories.Credit
                 return exposures;
             }
 
-            exposures.Add(new CurrentCustomerExposure
-            {
-                facilityType = "TOTAL",
-                existingLimit = exposures.Sum(t => t.existingLimit),
-                proposedLimit = exposures.Sum(t => t.proposedLimit),
-                bookingDate = exposures.Max(t => t.bookingDate),
-                maturityDate = exposures.Max(t => t.maturityDate),
-                //approvedAmount = exposures.Sum(t => t.approvedAmount),
-                recommendedLimit = exposures.Sum(t => t.recommendedLimit),
-                outstandings = exposures.Sum(t => t.outstandings),
-                PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
-                pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
-                reviewDate = DateTime.Now,
-            });
+            //exposures.Add(new CurrentCustomerExposure
+            //{
+            //    facilityType = "TOTAL",
+            //    existingLimit = exposures.Sum(t => t.existingLimit),
+            //    proposedLimit = exposures.Sum(t => t.proposedLimit),
+            //    bookingDate = exposures.Max(t => t.bookingDate),
+            //    maturityDate = exposures.Max(t => t.maturityDate),
+            //    //approvedAmount = exposures.Sum(t => t.approvedAmount),
+            //    recommendedLimit = exposures.Sum(t => t.recommendedLimit),
+            //    outstandings = exposures.Sum(t => t.outstandings),
+            //    PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
+            //    pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
+            //    reviewDate = DateTime.Now,
+            //});
 
             return exposures;
         }
