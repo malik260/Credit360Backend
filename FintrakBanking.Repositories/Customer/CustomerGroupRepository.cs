@@ -1487,8 +1487,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 facilityType = a.ADJFACILITYTYPE,
                                 approvedAmount = a.LOANAMOUNYLCY ?? 0,
                                 currency = a.CURRENCYNAME,
-                                exposureTypeCode = a.EXPOSURETYPECODE,
-                                adjFacilityType = a.ADJFACILITYTYPE,
+                                exposureTypeCodeString = a.EXPOSURETYPECODE,
+                                adjFacilityTypeString = a.ADJFACILITYTYPE,
                                 productIdString = a.PRODUCTID,
                                 productCode = a.PRODUCTCODE,
                                 productName = a.PRODUCTNAME,
@@ -1508,7 +1508,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 {
                     foreach (var e in exposure)
                     {
-                        e.exposureTypeId = int.Parse(e.exposureTypeCode);
+                        e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         //e.bookingDate = e.bookingDateString;
                         //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         e.productId = int.Parse(e.productIdString);

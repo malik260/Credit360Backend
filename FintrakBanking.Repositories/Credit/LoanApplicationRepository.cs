@@ -1733,8 +1733,8 @@ namespace FintrakBanking.Repositories.Credit
                                 approvedAmount = a.LOANAMOUNYTCY ?? 0,
                                 approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
                                 currency = a.CURRENCYNAME,
-                                exposureTypeCode = a.EXPOSURETYPECODE,
-                                adjFacilityType = a.ADJFACILITYTYPE,
+                                exposureTypeCodeString = a.EXPOSURETYPECODE,
+                                adjFacilityTypeString = a.ADJFACILITYTYPE,
                                 productIdString = a.PRODUCTID,
                                 productCode = a.PRODUCTCODE,
                                 productName = a.PRODUCTNAME,
@@ -1755,7 +1755,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     foreach (var e in exposure)
                     {
-                        e.exposureTypeId = int.Parse(e.exposureTypeCode);
+                        e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         //e.bookingDate = e.bookingDateString;
                         //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         e.productId = int.Parse(e.productIdString);

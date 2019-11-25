@@ -2095,7 +2095,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 faciltyCreationModel.account_no = casa.PRODUCTACCOUNTNUMBER;
                 faciltyCreationModel.limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
-                faciltyCreationModel. = facilityDetail.APPROVEDINTERESTRATE.ToString();
+                //faciltyCreationModel. = facilityDetail.APPROVEDINTERESTRATE.ToString();
                 //faciltyCreationModel.p_facility_description = product.PRODUCTCODE;
                 faciltyCreationModel.expiry_date = expiryDate.ToString();
                 faciltyCreationModel.start_date = effectiveDate.ToString();
@@ -8942,11 +8942,12 @@ namespace FintrakBanking.Repositories.Credit
                                 approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
                                 currency = a.CURRENCYNAME,
                                 currencyType = a.CURRENCYTYPE,
-                                exposureTypeCode = a.EXPOSURETYPECODE,
-                                adjFacilityType = a.ADJFACILITYTYPE,
+                                exposureTypeCodeString = a.EXPOSURETYPECODE,
+                                adjFacilityTypeString = a.ADJFACILITYTYPE,
                                 productIdString = a.PRODUCTID,
                                 productCode = a.PRODUCTCODE,
                                 productName = a.PRODUCTNAME,
+                                currencyCode = a.ALPHACODE,
                                 //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 //proposedLimit = a.LOANAMOUNYLCY ?? 0,
                                 outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
@@ -8965,13 +8966,16 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     foreach (var e in exposure)
                     {
-                        e.exposureTypeId = int.Parse(e.exposureTypeCode);
+                        e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         e.tenor = int.Parse(e.tenorString);
                         e.productId = int.Parse(e.productIdString);
+                        e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
+                        e.adjFacilityType = int.Parse(e.adjFacilityTypeString);
                     }
                     exposures.AddRange(exposure);
                 }
 
+                
                 //exposure = from a in context.TBL_LOAN
                 //           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                 //           join b in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -9041,7 +9045,7 @@ namespace FintrakBanking.Repositories.Credit
                 //           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                 //           select new CurrentCustomerExposure
                 //           {
-                               
+
                 //               applicationStatusId = b.APPLICATIONSTATUSID,
                 //               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                 //               customerCode = c.CUSTOMERCODE.Trim(),
