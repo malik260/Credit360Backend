@@ -167,6 +167,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("revolving-types")]
         public HttpResponseMessage GetRevolvingLoanTypes()
         {
@@ -190,6 +191,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-transaction-dynamics/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanTransactionDynamics(int loanApplicationDetailId)
         {
@@ -214,6 +216,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("temporary-overdraft-revolving-types")]
         public HttpResponseMessage GetTemporaryOverdrafts()
         {
@@ -238,6 +241,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application-types")]
         public HttpResponseMessage GetLoanApplicationTypes()
         {
@@ -266,6 +270,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application-detail-covenant/{applicationDetailId}")]
         public HttpResponseMessage GetLoanApplicationDetailCovenantById(int applicationDetailId)
         {
@@ -294,6 +299,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-product-fees/booking-request/{loanBookingRequestId}")]
         public HttpResponseMessage GetLoanProductFees(int loanBookingRequestId)
         {
@@ -309,6 +315,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
        
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-schedule-category")]
         public HttpResponseMessage GetAllLoanScheduleCategory()
         {
@@ -337,6 +344,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-schedule-types")]
         public HttpResponseMessage GetAllLoanScheduleType()
         {
@@ -365,6 +373,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-schedule-types/{productTypeId}")]
         public HttpResponseMessage GetAllLoanScheduleType(short? productTypeId)
         {
@@ -393,6 +402,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-schedule-types/category/{categoryId}")]
         public HttpResponseMessage GetLoanScheduleTypeByCategory(short categoryId)
         {
@@ -491,6 +501,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-customer-accounts/{customerId}/application-detail/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanCustomerAccounts(int customerId, int loanApplicationDetailId)
         {
@@ -519,6 +530,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-tranches/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanByApplicationDetailId(int loanApplicationDetailId)
         {
@@ -2564,7 +2576,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         {
             try
             {
-                var data = repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId, token.GetStaffId);
+                var data = repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId);
 
                 if (data == null)
                 {

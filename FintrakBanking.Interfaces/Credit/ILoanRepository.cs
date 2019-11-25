@@ -242,7 +242,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         Tuple<List<multipleDisbursementOutputViewModel>, bool> preBulkLoanDisbursement(byte[] file, UserInfo user, bool isFinal);
 
-       // IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId);
+        IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId);
 
         List<multipleDisbursementOutputViewModel> startBulkLoanDisbursement(List<multipleDisbursementOutputViewModel> models, UserInfo user);
         bool saveBulkLoanDisbursementEntries(List<multipleDisbursementOutputViewModel> models, UserInfo user);
