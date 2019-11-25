@@ -28,7 +28,7 @@ namespace FintrakBanking.Repositories.Credit
             this.general = general;
             this.audit = audit;
             this.loan = loan;
-            this.memo = memo;
+           this.memo = memo;
         }
 
         #region DOCUMENT TEMPLATE OLD
@@ -261,7 +261,7 @@ var qry = Foo.GroupJoin(
                 .ToList();
 
             List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
-
+            
             memo.Init(operationId, targetId); //content = memo.Replace(content);
             foreach (var raw in rawSections)
             {

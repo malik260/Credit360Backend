@@ -66,7 +66,7 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingStagingContext stgCon;
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
-        private IApprovalLevelRepository approvalLevelRepo;
+        private IApprovalLevelRepository approvalLevelStaff;
 
         //private CreditCommonRepository creditCommon;
 
@@ -82,7 +82,8 @@ namespace FintrakBanking.Repositories.Credit
                                         IChartOfAccountRepository _chartOfAccount, IFinanceTransactionRepository _transRepo,
                                         //IOverRideRepository _overrider, IntegrationWithFlexcube _integration, ILoanApplicationRepository _loanRepo,
                                         IOverRideRepository _overrider, IntegrationWithFlexcube _integration,
-            IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin, IApprovalLevelRepository _approvalLevelRepo//, CreditCommonRepository creditCommon
+            IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin,//, CreditCommonRepository creditCommon
+            IApprovalLevelRepository _approvalLevelStaff
 
             )
         {
@@ -105,9 +106,8 @@ namespace FintrakBanking.Repositories.Credit
             this.stgCon = _stgCon;
             this.transRepo = _transRepo;
             this.admin = _admin;
+            this.approvalLevelStaff = _approvalLevelStaff;
             //this.creditCommon = creditCommon;
-            this.approvalLevelRepo = _approvalLevelRepo;
-
 
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -800,7 +800,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     //if (!model.feeOverride) { PostLoanFees(model); }
 
-                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                    if (product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
+                    {
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                    }
 
                     context.SaveChanges();
 
@@ -4185,19 +4188,25 @@ namespace FintrakBanking.Repositories.Credit
                     string collateralcodes = string.Empty;
                     foreach(var i in collaterals) { collateralcodes = collateralcodes + i.COLLATERALCODE;  }
 
-                    var model = new FlexcubeCreateOverdraftViewModel
+
+                    var product = context.TBL_PRODUCT.Find(revolvingLoanRecord.PRODUCTID);
+                    if(product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
                     {
-                        account_no = casa.PRODUCTACCOUNTNUMBER, 
-                        collateral_code = collateralcodes == "" ? "NOCOLLATERALCODE" : collateralcodes, 
-                        collateral_value = collaterals.ToList().Count == 0 ? "0" : collaterals.Sum(x => x.COLLATERALVALUE).ToString(),
-                        start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                        end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                        channel_code = "FINTRAK",
-                        loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                        var model = new FlexcubeCreateOverdraftViewModel
+                        {
+                            account_no = casa.PRODUCTACCOUNTNUMBER,
+                            collateral_code = collateralcodes == "" ? "NOCOLLATERALCODE" : collateralcodes,
+                            collateral_value = collaterals.ToList().Count == 0 ? "0" : collaterals.Sum(x => x.COLLATERALVALUE).ToString(),
+                            start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                            end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                            channel_code = "FINTRAK",
+                            loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
-                    };
+                        };
 
-                    integration.FlexcubeOverDraft(model, revolvingLoanRecord.LOANSYSTEMTYPEID);
+                        integration.FlexcubeOverDraft(model, revolvingLoanRecord.LOANSYSTEMTYPEID);
+                    }
+                   
 
                     //if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
                     //{
@@ -7437,25 +7446,18 @@ namespace FintrakBanking.Repositories.Credit
 
             if (requestedFacility.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
             {
-                request.OPERATIONID = (short)OperationsEnum.CreditCardDrawdownRequest;
                 LogApproval(approvalModel, (short)OperationsEnum.CreditCardDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
             }
             else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
             {
                 if (requestedFacility.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
                 {
-                    request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
                     LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
                 }
-                else
-                {
-                    request.OPERATIONID = (short)OperationsEnum.IndividualDrawdownRequest;
-                    LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
-                }
+                else LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
             }
             else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
             {
-                request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
                 LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
             }
 
@@ -8939,11 +8941,14 @@ namespace FintrakBanking.Repositories.Credit
                                 approvedAmount = a.LOANAMOUNYTCY ?? 0,
                                 approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
                                 currency = a.CURRENCYNAME,
-                                exposureTypeCode = a.EXPOSURETYPECODE,
-                                adjFacilityType = a.ADJFACILITYTYPE,
+                                currencyType = a.CURRENCYTYPE,
+                                exposureTypeCodeString = a.EXPOSURETYPECODE,
+                                adjFacilityTypeString = a.ADJFACILITYTYPE,
+                                adjFacilityTypeCode = a.ADJFACILITYTYPEid,
                                 productIdString = a.PRODUCTID,
                                 productCode = a.PRODUCTCODE,
                                 productName = a.PRODUCTNAME,
+                                currencyCode = a.ALPHACODE,
                                 //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 //proposedLimit = a.LOANAMOUNYLCY ?? 0,
                                 outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
@@ -8962,13 +8967,16 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     foreach (var e in exposure)
                     {
-                        e.exposureTypeId = int.Parse(e.exposureTypeCode);
+                        e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         e.tenor = int.Parse(e.tenorString);
-                        e.productId = int.Parse(e.productIdString);
+                        //e.productId = int.Parse(e.productIdString);
+                        e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
+                        e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
                     }
                     exposures.AddRange(exposure);
                 }
 
+                
                 //exposure = from a in context.TBL_LOAN
                 //           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                 //           join b in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -9038,7 +9046,7 @@ namespace FintrakBanking.Repositories.Credit
                 //           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                 //           select new CurrentCustomerExposure
                 //           {
-                               
+
                 //               applicationStatusId = b.APPLICATIONSTATUSID,
                 //               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                 //               customerCode = c.CUSTOMERCODE.Trim(),
@@ -15435,22 +15443,21 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
             TBL_LOAN_BOOKING_REQUEST bookingRequestRecord = new TBL_LOAN_BOOKING_REQUEST();
-            var result1 = approvalLevelRepo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, companyId).ToList();
+            var result1 = approvalLevelStaff.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, companyId).ToList();
             var results2 = new List<WorkflowTrackerViewModel>();
 
             if (operationId == ((short)OperationsEnum.TermLoanBooking))
             {
                 bookingRequestRecord = (from l in context.TBL_LOAN
-                                        join r in context.TBL_LOAN_BOOKING_REQUEST on l.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
-                                        where l.TERMLOANID == targetId
-                                        select r).FirstOrDefault();
+                                            join r in context.TBL_LOAN_BOOKING_REQUEST on l.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
+                                            where l.TERMLOANID == targetId
+                                            select r).FirstOrDefault();
 
 
             }
 
-            if (bookingRequestRecord != null)
-            {
-                results2 = approvalLevelRepo.GetApprovalTrailByOperationIdAndTargetId(bookingRequestRecord.OPERATIONID ?? 0, bookingRequestRecord.LOAN_BOOKING_REQUESTID, companyId).ToList();
+            if (bookingRequestRecord != null) {
+                results2 = approvalLevelStaff.GetApprovalTrailByOperationIdAndTargetId(bookingRequestRecord.OPERATIONID ?? 0, bookingRequestRecord.LOAN_BOOKING_REQUESTID, companyId).ToList();
             }
 
             return result1.Union(results2);
