@@ -7,6 +7,7 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -75,6 +76,8 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string customerNameHolder = "@{{CustomerName}}";
         private readonly string branchNameHolder = "@{{Branch}}";
         private readonly string locationNameHolder = "@{{Location}}";
+        private readonly string managementProfileHolder = "@{{ManagementProfile}}";
+        private readonly string ownershipHolder = "@{{Ownership}}";
         private readonly string customerExposureHolder = "@{{CustomerExposure}}";
         private readonly string recommendedInterestRateHolder = "@{{RecommendedInterest}}";
         private readonly string isRelatedPartyHolder = "@{{IsRelatedParty}}";
@@ -121,7 +124,6 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
         private readonly string obligorRiskRatingHolder = "@{{ObligorRiskRating}}";
         private readonly string obligorClassificationHolder = "@{{ObligorClassification}}";
-        private readonly string ownerShipHolder = "@{{OwnerShip}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -156,6 +158,8 @@ namespace FintrakBanking.Repositories.Credit
         private string customerName;
         private string branchName;
         private string locationName;
+        private string managementProfile;
+        private string ownership;
         private string customerExposure;
         private string recommendedInterestRate;
         private string isRelatedParty;
@@ -202,8 +206,6 @@ namespace FintrakBanking.Repositories.Credit
         private string allCustomerFacilities;
         private string obligorRiskRating;
         private string obligorClassification;
-       
-        
         //private string totalGroupExposure;
         // lms
         private string securityType;
@@ -382,7 +384,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.conditionsPrecedentToDrawdown = GetConditionsPrecedentToDrawdownMarkup();
                 this.transactionsDynamics = GetTransactionsDynamicsMarkup();
                 this.rmCountry = this.loanApplication.TBL_BRANCH?.TBL_STATE?.TBL_COUNTRY?.NAME;
-                this.misCode = this.loanApplication.MISCODE;
+                this.misCode = this.loanApplication.TBL_STAFF.MISCODE;
                 this.reviewType = "Initial";
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLOS();
@@ -515,7 +517,9 @@ namespace FintrakBanking.Repositories.Credit
             this.conditionsPrecedenceList = GetConditionsMarkUp();
             this.dynamicsList = GetDynamicsMarkUp();
             this.monitoringTriggers = MonitoringTriggersMarkup();
-            
+            this.managementProfile = GetManagementProfileMarkup();
+            this.ownership = GetOwnershipMarkup();
+
             //this.customerTurnover = CustomerTurnoverMarkup(); // lazy loaded
 
             return true;
@@ -559,7 +563,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
                 this.effectiveDate = loanApplication.APPROVEDDATE;
                 this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
-                this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
+                this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.TBL_STAFF.MISCODE;
                 this.currentDate = DateTime.Now.ToShortDateString();
                 this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
                 this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
@@ -767,6 +771,16 @@ namespace FintrakBanking.Repositories.Credit
             return classification;
         }
 
+        public string GetManagementProfileMarkup()
+        {
+            return loanApplication.LOANINFORMATION;
+        }
+
+        public string GetOwnershipMarkup()
+        {
+            return loanApplication.OWNERSHIPSTRUCTURE;
+        }
+
         private List<TotalFacilitiesSummaryViewModel> GetTotalFacilitiesNGNLOS()
         {
             var totalSummary = new List<TotalFacilitiesSummaryViewModel>();
@@ -795,7 +809,21 @@ namespace FintrakBanking.Repositories.Credit
 
         private string getIsDirectorRelated()
         {
-            if (this.loanApplication.ISRELATEDPARTY)
+
+            var related = (from a in context.TBL_CUSTOMER_RELATED_PARTY
+                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                           join c in context.TBL_COMPANY_DIRECTOR on a.COMPANYDIRECTORID equals c.COMPANYDIRECTORID
+                           where a.CUSTOMERID == customerId && a.DELETED == false
+                           select new CustomerRelatedPartyViewModel
+                           {
+                               customerName = b.FIRSTNAME + " " + b.MIDDLENAME + " " + b.LASTNAME,
+                               directorName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               relationshipType = a.RELATIONSHIPTYPE,
+                               relatedPartyId = a.RELATEDPARTYID,
+                               customerId = b.CUSTOMERID,
+                               companyDirectorId = c.COMPANYDIRECTORID
+                           }).ToList();
+            if (related.Count > 0)
             {
                 return "Yes";
             }
@@ -1446,12 +1474,9 @@ namespace FintrakBanking.Repositories.Credit
             var loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                                                 && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
                                                 && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-            //var productCodesInLoans = loans.Select(l => l.TBL_PRODUCT1.PRODUCTCODE.ToLower().Trim()).ToList();
-            //var directs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityType.Contains("LC") && !e.adjFacilityType.Contains("TRADE LOAN")).ToList();
-            ////var directsNotInLoans = directs.Where(e => !productCodesInLoans.Contains(e.productCode));
-            //var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityType.Contains("LC") && !e.adjFacilityType.Contains("TRADE LOAN")).ToList();
-            //var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityType.Contains("LC")).ToList();
-            //var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityType.Contains("TRADE LOAN")).ToList();
+            var productCodesInLoans = loans.Select(l => l.TBL_PRODUCT1.PRODUCTCODE.ToLower().Trim()).ToList();
+            var directs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityType.Contains("LC") && !e.adjFacilityType.Contains("TRADE LOAN")).ToList();
+            var directsNotInLoans = directs.Where(e => !productCodesInLoans.Contains(e.productCode)).ToList();
             //var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
             //                                                    && l.ISDISBURSED == true).ToList();
             //var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
@@ -1463,7 +1488,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                  d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
                                                                                  d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             //if (loans.Count() > 0 || overdrafts.Count() > 0 || details.Count() > 0)
-            if (loans.Count() > 0 || details.Count() > 0)
+            if (loans.Count() > 0 || details.Count() > 0 || directsNotInLoans.Count() > 0)
             {
                 result = result + $@"<tr><td>Direct Facilities (NGN):</td></tr>";
             }
@@ -1474,9 +1499,8 @@ namespace FintrakBanking.Repositories.Credit
                 var first = group.First();
                 var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
                 //var sameProductExposures
-                //var exposure = directs.Where(d => d.productCode.ToLower() == first.TBL_PRODUCT1.PRODUCTCODE.ToLower()).ToList();
-                var currentAmount = (group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE));
-                //var currentAmount = (group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE) + exposure.Sum(e => e.approvedAmount));
+                var directExposures = directs.Where(d => d.productCode.ToLower() == first.TBL_PRODUCT1.PRODUCTCODE.ToLower()).ToList();
+                var currentAmount = (group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE) + directExposures.Sum(e => e.approvedAmount));
                 // checks each loan detail.
                 var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID == 
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
@@ -1528,6 +1552,31 @@ namespace FintrakBanking.Repositories.Credit
             //        </tr>
             //        ";
             //}
+
+            foreach (var d in directsNotInLoans)
+            {
+                {
+                    var facility = d.productName;
+                    var currency = d.currency;
+                    var currentAmount = d.approvedAmount;
+                    var proposedAmount = currentAmount;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = d.tenor;
+
+                    result = result + $@"
+                     <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                     ";
+                }
+            }
 
             foreach (var d in details)
             {
@@ -2112,6 +2161,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var directSummary = new TotalFacilitiesSummaryViewModel();
             int numberOfNewFacilities = 0;
+            var exposures = GetExposures().Where(e => e.currencyType.ToLower().Contains("lcy"));
             //var loans = new List<TBL_LOAN>();
             var loans = new List<TBL_LOAN_APPLICATION_DETAIL>();
             //var overdrafts = new List<TBL_LOAN_REVOLVING>();
@@ -2122,6 +2172,8 @@ namespace FintrakBanking.Repositories.Credit
                 loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                                                     && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
                                                     && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+
+                var lcyDirectExposures = 
                 //loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
                 //                                && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
                 //overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
@@ -3246,6 +3298,8 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(isRelatedPartyHolder, isRelatedParty);
             content = content.Replace(dateCreatedHolder, dateCreated);
             content = content.Replace(locationNameHolder, locationName);
+            content = content.Replace(managementProfileHolder, managementProfile);
+            content = content.Replace(ownershipHolder, ownership);
             content = content.Replace(approvalLevelHolder, approvalLevel);
             content = content.Replace(accountNumbersHolder, accountNumbers);
             content = content.Replace(proposedConditionsHolder, proposedConditions);
