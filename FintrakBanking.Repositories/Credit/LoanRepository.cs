@@ -66,7 +66,7 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingStagingContext stgCon;
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
-        private ILoanRepository loanRepository;
+        private IApprovalLevelRepository approvalLevelRepo;
 
         //private CreditCommonRepository creditCommon;
 
@@ -82,7 +82,7 @@ namespace FintrakBanking.Repositories.Credit
                                         IChartOfAccountRepository _chartOfAccount, IFinanceTransactionRepository _transRepo,
                                         //IOverRideRepository _overrider, IntegrationWithFlexcube _integration, ILoanApplicationRepository _loanRepo,
                                         IOverRideRepository _overrider, IntegrationWithFlexcube _integration,
-            IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin, ILoanRepository _loanRepository//, CreditCommonRepository creditCommon
+            IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin, IApprovalLevelRepository _approvalLevelRepo//, CreditCommonRepository creditCommon
 
             )
         {
@@ -106,7 +106,7 @@ namespace FintrakBanking.Repositories.Credit
             this.transRepo = _transRepo;
             this.admin = _admin;
             //this.creditCommon = creditCommon;
-            this.loanRepository = _loanRepository;
+            this.approvalLevelRepo = _approvalLevelRepo;
 
 
 
@@ -15435,7 +15435,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
             TBL_LOAN_BOOKING_REQUEST bookingRequestRecord = new TBL_LOAN_BOOKING_REQUEST();
-            var result1 = loanRepository.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, companyId).ToList();
+            var result1 = approvalLevelRepo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, companyId).ToList();
             var results2 = new List<WorkflowTrackerViewModel>();
 
             if (operationId == ((short)OperationsEnum.TermLoanBooking))
@@ -15450,7 +15450,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (bookingRequestRecord != null)
             {
-                results2 = loanRepository.GetApprovalTrailByOperationIdAndTargetId(bookingRequestRecord.OPERATIONID ?? 0, bookingRequestRecord.LOAN_BOOKING_REQUESTID, companyId).ToList();
+                results2 = approvalLevelRepo.GetApprovalTrailByOperationIdAndTargetId(bookingRequestRecord.OPERATIONID ?? 0, bookingRequestRecord.LOAN_BOOKING_REQUESTID, companyId).ToList();
             }
 
             return result1.Union(results2);
