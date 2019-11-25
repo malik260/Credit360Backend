@@ -2327,13 +2327,13 @@ namespace FintrakBanking.Repositories.Setups.General
                         sumTotal = sumTotal + Convert.ToDecimal(t.NPL);
                         innerPercent = (Convert.ToDecimal((t.NPL / sumTotal) * 100)).ToString("0.00%");
                         percentage = ((sumTotal / overallTotal) * 100).ToString("0.00%");
-                        
+
                         result = result + $@"
                         <tr>
                             <td>{n}</td>
                             <td>{t.CUSTOMERNAME}</td>
                             <td>{t.REFERENCENUMBER}</td>
-                            <td>{innerPercent}%</td>
+                            <td>{t.NPL}</td>
                         </tr>
                         ";
                     }
