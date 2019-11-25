@@ -1756,9 +1756,12 @@ namespace FintrakBanking.Repositories.Credit
                     foreach (var e in exposure)
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
+                        e.tenor = int.Parse(e.tenorString);
+                        e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
+                        e.adjFacilityType = int.Parse(e.adjFacilityTypeString);
                         //e.bookingDate = e.bookingDateString;
                         //e.maturityDate = DateTime.Parse(e.maturityDateString);
-                        e.productId = int.Parse(e.productIdString);
+                        //e.productId = int.Parse(e.productIdString);
                     }
                     exposures.AddRange(exposure);
                 }

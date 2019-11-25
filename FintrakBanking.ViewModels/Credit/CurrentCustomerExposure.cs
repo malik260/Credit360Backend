@@ -23,6 +23,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string exposureTypeCodeString { get; set; }
         public int exposureTypeCode { get; set; }
         public string adjFacilityTypeString { get; set; }
+        public string adjFacilityTypeCode { get; set; }
         public int adjFacilityType { get; set; }
         public string customerCode { get; set; }
 

@@ -1489,6 +1489,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 currency = a.CURRENCYNAME,
                                 exposureTypeCodeString = a.EXPOSURETYPECODE,
                                 adjFacilityTypeString = a.ADJFACILITYTYPE,
+                                adjFacilityTypeCode = a.ADJFACILITYTYPEid,
                                 productIdString = a.PRODUCTID,
                                 productCode = a.PRODUCTCODE,
                                 productName = a.PRODUCTNAME,
@@ -1509,9 +1510,12 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     foreach (var e in exposure)
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
+                        e.tenor = int.Parse(e.tenorString);
+                        e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
+                        e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
                         //e.bookingDate = e.bookingDateString;
                         //e.maturityDate = DateTime.Parse(e.maturityDateString);
-                        e.productId = int.Parse(e.productIdString);
+                        //e.productId = int.Parse(e.productIdString);
                     }
                     exposures.AddRange(exposure);
                 }

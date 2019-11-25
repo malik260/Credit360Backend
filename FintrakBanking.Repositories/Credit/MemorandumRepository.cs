@@ -2671,7 +2671,7 @@ namespace FintrakBanking.Repositories.Credit
                 var customers = directs.GroupBy(e => e.customerCode);
                 foreach(var cust in customers)
                 {
-                    var directsGroup = cust.GroupBy(f => f.productId);
+                    var directsGroup = cust.GroupBy(f => f.productCode.Trim());
                     //foreach (var product in directsGroup)
                     //{
                     //    var facility = product.productName;
@@ -2732,7 +2732,7 @@ namespace FintrakBanking.Repositories.Credit
                 var customers = contingents.GroupBy(e => e.customerCode);
                 foreach (var cust in customers)
                 {
-                    var contingentsGroup = cust.GroupBy(f => f.productId);
+                    var contingentsGroup = cust.GroupBy(f => f.productCode.Trim());
                     //foreach (var product in contingentsGroup)
                     //{
                     //    var facility = product.FirstOrDefault().productName;
@@ -2793,7 +2793,7 @@ namespace FintrakBanking.Repositories.Credit
                     var customers = lcs.GroupBy(e => e.customerCode);
                     foreach (var cust in customers)
                     {
-                        var contingentsGroup = cust.GroupBy(f => f.productId);
+                        var contingentsGroup = cust.GroupBy(f => f.productCode.Trim());
                         //foreach (var product in contingentsGroup)
                         //{
                         //    var facility = product.FirstOrDefault().productName;
@@ -2853,7 +2853,7 @@ namespace FintrakBanking.Repositories.Credit
                     var customers = tradeLoans.GroupBy(e => e.customerCode);
                     foreach (var cust in customers)
                     {
-                        var directsGroup = cust.GroupBy(f => f.productId);
+                        var directsGroup = cust.GroupBy(f => f.productCode.Trim());
                         //foreach (var product in directsGroup)
                         //{
                         //    var facility = product.FirstOrDefault().productName;
@@ -3780,9 +3780,11 @@ namespace FintrakBanking.Repositories.Credit
                             currency = a.CURRENCYNAME,
                             exposureTypeCodeString = a.EXPOSURETYPECODE,
                             adjFacilityTypeString = a.ADJFACILITYTYPE,
+                            adjFacilityTypeCode = a.ADJFACILITYTYPEid,
                             productCode = a.PRODUCTCODE,
                             productIdString = a.PRODUCTID,
                             productName = a.PRODUCTNAME,
+                            tenorString = a.TENOR,
                             //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                             //proposedLimit = a.LOANAMOUNYLCY ?? 0,
                             outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
@@ -3801,9 +3803,10 @@ namespace FintrakBanking.Repositories.Credit
                 foreach(var e in exposure)
                 {
                     e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
-                    //e.bookingDate = e.bookingDateString;
-                    //e.maturityDate = DateTime.Parse(e.maturityDateString);
-                    e.productId = int.Parse(e.productIdString);
+                    e.tenor = int.Parse(e.tenorString);
+                    //e.productId = int.Parse(e.productIdString);
+                    e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
+                    e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
                 }
                 exposures.AddRange(exposure);
             }
