@@ -1737,6 +1737,7 @@ namespace FintrakBanking.Repositories.Credit
                                 adjFacilityTypeString = a.ADJFACILITYTYPE,
                                 productIdString = a.PRODUCTID,
                                 productCode = a.PRODUCTCODE,
+                                tenorString = a.TENOR,
                                 productName = a.PRODUCTNAME,
                                 //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 //proposedLimit = a.LOANAMOUNYLCY ?? 0,
@@ -1884,20 +1885,20 @@ namespace FintrakBanking.Repositories.Credit
                 return exposures;
             }
 
-            exposures.Add(new CurrentCustomerExposure
-            {
-                facilityType = "TOTAL",
-                existingLimit = exposures.Sum(t => t.existingLimit),
-                proposedLimit = exposures.Sum(t => t.proposedLimit),
-                bookingDate = exposures.Max(t => t.bookingDate),
-                maturityDate = exposures.Max(t => t.maturityDate),
-                //approvedAmount = exposures.Sum(t => t.approvedAmount),
-                recommendedLimit = exposures.Sum(t => t.recommendedLimit),
-                outstandings = exposures.Sum(t => t.outstandings),
-                PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
-                pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
-                reviewDate = DateTime.Now,
-            });
+            //exposures.Add(new CurrentCustomerExposure
+            //{
+            //    facilityType = "TOTAL",
+            //    existingLimit = exposures.Sum(t => t.existingLimit),
+            //    proposedLimit = exposures.Sum(t => t.proposedLimit),
+            //    bookingDate = exposures.Max(t => t.bookingDate),
+            //    maturityDate = exposures.Max(t => t.maturityDate),
+            //    //approvedAmount = exposures.Sum(t => t.approvedAmount),
+            //    recommendedLimit = exposures.Sum(t => t.recommendedLimit),
+            //    outstandings = exposures.Sum(t => t.outstandings),
+            //    PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
+            //    pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
+            //    reviewDate = DateTime.Now,
+            //});
 
             return exposures;
         }
