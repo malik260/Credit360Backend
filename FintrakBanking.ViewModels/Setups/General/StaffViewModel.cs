@@ -62,7 +62,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public decimal? loanLimit { get; set; }
         public string StaffFullName { get { return this.FirstName + " " + this.MiddleName + " " + this.LastName; } }
 
-        public string staffFullName { get; set; }
+        //public string staffFullName { get; set; }
         public string JobTitleName { get; set; }
         public string documentTitle { get; set; }
         public byte[] fileData { get; set; }
