@@ -64,9 +64,9 @@ namespace FintrakBanking.MonitoringMessagesSender
         public bool SendEmailOfException(string body)
         {
 
-            Console.WriteLine("");
-            Console.WriteLine("Send Exception Email");
-            Console.WriteLine("");
+            //Console.WriteLine("");
+            //Console.WriteLine("Send Exception Email");
+            //Console.WriteLine("");
             
 
 
@@ -91,9 +91,9 @@ namespace FintrakBanking.MonitoringMessagesSender
 
                 }
 
-                Console.WriteLine("");
-                Console.WriteLine("Log all app settings for exception email");
-                Console.WriteLine("");
+                //Console.WriteLine("");
+                //Console.WriteLine("Log all app settings for exception email");
+                //Console.WriteLine("");
 
 
                 MailMessage mail = new MailMessage();
@@ -264,7 +264,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                 //throw new SecureException("Failed with error sending mail: " + ex);
                 UpdateMailDeliveryStatus(mailId, (short)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
                 throw new SecureException("Failed with error sending mail: " + ex);
-                return false;
+                //return false;
             }
         }
 
