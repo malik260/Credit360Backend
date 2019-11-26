@@ -209,16 +209,37 @@ namespace FintrakBanking.Repositories.Customer
             var saved = context.SaveChanges() > 0;
         }
 
-        public void refreshCustomerAccount(int customerId)
+        public void UpdateCustomerCollateralId(string customerCode)
         {
+            customerCode = customerCode.Trim();
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
+            foreach(var c in collaterals)
+            {
+                c.CUSTOMERID = customer.CUSTOMERID;
+            }
+            var saved = context.SaveChanges() > 0;
+        }
+
+        public bool refreshCustomerAccount(int customerId)
+        {
+            bool result = false;
+
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
 
-            if (customer != null) fetchCustomerAccountBalance(customer);
-        }
-        private void fetchCustomerAccountBalance(TBL_CUSTOMER data)
-        {
+            if (customer != null)
+            {
+                result = fetchCustomerAccountBalance(customer);
+            }
 
-            integration.AddCustomerAccounts(data.CUSTOMERCODE);
+            return result;    
+        }
+        private bool fetchCustomerAccountBalance(TBL_CUSTOMER data)
+        {
+            bool result;
+            result = integration.AddCustomerAccounts(data.CUSTOMERCODE);
+
+            return result;
         }
 
         public bool GetPoliticallyExposedPerson(string customerCode)

@@ -223,6 +223,91 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
         }
 
+        public ResponseMessageViewModel FlexcubeOverDraft(FlexcubeCreateOverdraftViewModel model, short loanSystemTypeId, TwoFactorAutheticationViewModel twoFADetails = null)
+        {
+            if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+
+            }
+
+            ResponseMessage result = null;
+            // if( LogOverDraftNormal(model))
+            Task.Run(async () => result = await overDraft.FlexcubeAPIOverDraft(model, loanSystemTypeId)).GetAwaiter().GetResult();
+
+            if (result.Message.IsSuccessStatusCode)
+            {
+                //if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                //{
+                //    throw new SecureException(result.APIResponse.message);
+                //}
+                //else
+                //{
+                    LogOverDraft(model);
+                    return result.APIResponse;
+                //}
+            }
+            else
+            {
+                //throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+
+            }
+
+        }
+
+
+        public ResponseMessageViewModel FlexcubeCasaLien(FlexcubeLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
+        {
+            if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+
+            }
+
+            ResponseMessage result = null;
+            // if( LogOverDraftNormal(model))
+            Task.Run(async () => result = await overDraft.FlexcubeCasaLien(model)).GetAwaiter().GetResult();
+
+            if (result.Message.IsSuccessStatusCode)
+            {
+                //if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                //{
+                //    throw new SecureException(result.APIResponse.message);
+                //}
+                //else
+                //{
+                    //LogOverDraft(model);
+                    return result.APIResponse;
+                //}
+            }
+            else
+            {
+                //throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+
+            }
+        }
+
 
         public ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
@@ -839,6 +924,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             var customerId = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).Select(b => b.CUSTOMERID).FirstOrDefault();
             //var customerId = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERCODE == customerCode).CUSTOMERID;
             bool output = false;
+            bool outcome = false;
             var data = new List<CasaViewModel>();
             List<TBL_CASA> customerAcct = new List<TBL_CASA>();
 
@@ -880,9 +966,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (result != null) customerAcct.Add(addCustomerAcct);
                 else continue;
             }
-            var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
-            if (customerExist == null)
-            {
+            //var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
+            //if (customerExist == null)
+            //{
                 this.context.TBL_CASA.AddRange(customerAcct);
                 context.SaveChanges();
             }
@@ -911,12 +997,18 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             //}
 
-            //context.SaveChanges();
-            //context.SaveChangesAsync();
+            
+            if (item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
 
-            output = true;
+            if (Casa != null)
+            {
+                Casa.AVAILABLEBALANCE = item.availableBalance;
+                Casa.ACCOUNTSTATUSID = (short)accountStatusId;
+                Casa.LEDGERBALANCE = item.ledgerBalance;
+                Casa.DATETIMEUPDATED = DateTime.Now;
+            }
 
-            return output;
+            return context.SaveChanges() > 0;
         }
 
         public List<CustomerViewModels> GetCustomerByAccountsNumber(string customerAccount)
