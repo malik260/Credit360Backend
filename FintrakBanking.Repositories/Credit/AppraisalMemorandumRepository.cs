@@ -2185,6 +2185,7 @@ namespace FintrakBanking.Repositories.Credit
                     && x.COMPANYID == companyId
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                     && x.ISADHOCAPPLICATION != true
+                    && x.CREATEDBY == staffId
                 )
             .OrderByDescending(x => x.LOANAPPLICATIONID)
             .Join(
@@ -2194,7 +2195,7 @@ namespace FintrakBanking.Repositories.Credit
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID)) && x.REQUESTSTAFFID == staffId)
+                && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID)))
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
