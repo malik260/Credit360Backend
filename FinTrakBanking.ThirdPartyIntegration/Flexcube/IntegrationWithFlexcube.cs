@@ -839,6 +839,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             var customerId = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).Select(b => b.CUSTOMERID).FirstOrDefault();
             //var customerId = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERCODE == customerCode).CUSTOMERID;
             bool output = false;
+            bool outcome = false;
             var data = new List<CasaViewModel>();
             List<TBL_CASA> customerAcct = new List<TBL_CASA>();
 
@@ -856,8 +857,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     .ACCOUNTSTATUSID;
 
                 TBL_CASA result = (from p in context.TBL_CASA
-                                   where p.CUSTOMERID == item.customerId && p.PRODUCTACCOUNTNUMBER == item.productAccountNumber
+                                   where p.CUSTOMERID == customerId && p.PRODUCTACCOUNTNUMBER == item.productAccountNumber
                                    select p).SingleOrDefault();
+
+                if(result != null)
+                {
+                    outcome = updateAccountBalance(item, result.CASAACCOUNTID, accountStatusId);
+                    continue;
+                }
 
                 if (item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
                 TBL_CASA addCustomerAcct = new TBL_CASA();
@@ -877,15 +884,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.POSTNOSTATUSID = 1;
                 addCustomerAcct.DELETED = false;
 
-                if (result != null) customerAcct.Add(addCustomerAcct);
+                if (result == null) customerAcct.Add(addCustomerAcct);
                 else continue;
             }
-            var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
-            if (customerExist == null)
-            {
+            //var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
+            //if (customerExist == null)
+            //{
                 this.context.TBL_CASA.AddRange(customerAcct);
-                context.SaveChanges();
-            }
+                output = context.SaveChanges() > 0 ;
+            //}
             //else
             //{
             //    foreach (var a in customerAcct)
@@ -914,9 +921,34 @@ namespace FinTrakBanking.ThirdPartyIntegration
             //context.SaveChanges();
             //context.SaveChangesAsync();
 
-            output = true;
+            //output = true;
 
-            return output;
+            if(output == true || outcome == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool updateAccountBalance(CasaViewModel item, int CASAACCOUNTID, short? accountStatusId)
+        {
+            var Casa = context.TBL_CASA.Find(CASAACCOUNTID);
+
+            
+            if (item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
+
+            if (Casa != null)
+            {
+                Casa.AVAILABLEBALANCE = item.availableBalance;
+                Casa.ACCOUNTSTATUSID = (short)accountStatusId;
+                Casa.LEDGERBALANCE = item.ledgerBalance;
+                Casa.DATETIMEUPDATED = DateTime.Now;
+            }
+
+            return context.SaveChanges() > 0;
         }
 
         public List<CustomerViewModels> GetCustomerByAccountsNumber(string customerAccount)

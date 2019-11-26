@@ -57,7 +57,6 @@ namespace FintrakBanking.MonitoringMessagesSender
         private void RunJob(object state, ElapsedEventArgs elapsedEventArgs)
         {
 
-
             //Prevents the job firing until it finishes its job
             if (Monitor.TryEnter(s_lock))
             {
