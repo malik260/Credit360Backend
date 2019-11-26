@@ -1735,6 +1735,7 @@ namespace FintrakBanking.Repositories.Credit
                                 currency = a.CURRENCYNAME,
                                 exposureTypeCodeString = a.EXPOSURETYPECODE,
                                 adjFacilityTypeString = a.ADJFACILITYTYPE,
+                                adjFacilityTypeCode = a.ADJFACILITYTYPEid,
                                 productIdString = a.PRODUCTID,
                                 productCode = a.PRODUCTCODE,
                                 tenorString = a.TENOR,
@@ -1759,7 +1760,7 @@ namespace FintrakBanking.Repositories.Credit
                         e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         e.tenor = int.Parse(e.tenorString);
                         e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
-                        e.adjFacilityType = int.Parse(e.adjFacilityTypeString);
+                        e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
                         //e.bookingDate = e.bookingDateString;
                         //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         //e.productId = int.Parse(e.productIdString);
