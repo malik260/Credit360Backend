@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("TBL_ALERT_LEVEL_GRP_MAPPING")]
-    public partial class TBL_ALERT_LEVEL_GRP_MAPPING
+    [Table("TBL_CUSTOMER_RATIO_CATEGORY")]
+    public partial class TBL_CUSTOMER_RATIO_CATEGORY
     {
         [Key]
-        public int ALERTLEVELGROUPMAPID { get; set; }
-        public string LEVELCODE { get; set; }
-        public int LEVELGROUPID { get; set; }
+        public int CATEGORYID { get; set; }
+        public string CATEGORYNAME { get; set; }
+        public bool SHOWATFAM { get; set; }
+
     }
 }

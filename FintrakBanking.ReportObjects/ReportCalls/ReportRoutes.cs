@@ -1109,25 +1109,32 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        //public string RiskAssetCalcCombinedReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
-        //{
-        //    HashProperty hashValue = GetHashedDateValue(dateInfor);
+        public string RiskAssetCalcCombinedReportTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
 
-        //    string path = string.Empty;
-        //    path = reportPath + "ReportViews/RiskAssetCalcCombinedReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
-        //    return path;
-        //}
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetCalcCombinedReportTeam.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
 
-        //public string RiskAssetCalcCombinedReportTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
-        //{
-        //    HashProperty hashValue = GetHashedDateValue(dateInfor);
+        public string RiskAssetsContigentReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
 
-        //    string path = string.Empty;
-        //    path = reportPath + "ReportViews/RiskAssetCalcCombinedReportTeam.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
-        //    return path;
-        //}
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetContigentReportMain.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
 
+        public string RiskAssetCalcCombinedReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
 
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetCalcCombinedReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
 
         public string ContigentReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
         {
@@ -1244,6 +1251,17 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string CopyOfRiskAssetByIfrsClassification(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CopyOfRiskAssetByIfrsClassification.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        
+
 
         public string RiskAssetMain1Report(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
         {
@@ -1269,6 +1287,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
             string path = string.Empty;
             path = reportPath + "ReportViews/UnpaidObligationReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string RiskAssetContigentReportMain(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetContigentReportMain.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
             return path;
         }
 

@@ -172,13 +172,13 @@ namespace FintrakBanking.MonitoringMessagesSender
                     var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending 
                     || o.MESSAGESTATUSID == (short)MessageStatusEnum.Attempted).ToList();
 
-                   if (listOfMails !=null)
+
+                    if (listOfMails !=null)
                     {
                         foreach (var newMail in listOfMails)
                         {
 
                             MailMessage mail = new MailMessage();
-
                             mail.From = new MailAddress(userName, displayName);
                            
                             if (newMail.TOADDRESS != null && newMail.TOADDRESS != string.Empty)
@@ -209,15 +209,11 @@ namespace FintrakBanking.MonitoringMessagesSender
                                     }
                                 }
                             }
-
+                               
                                 mail.IsBodyHtml = true;
-                                mail.Subject = newMail.MESSAGESUBJECT.Replace("\"", string.Empty);
-                                mail.Body = newMail.MESSAGEBODY.Replace("\"", string.Empty);
+                                mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
+                                mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
                                 mailId = newMail.MESSAGEID;
-
-                                _log.Info("");
-                                _log.Info("==================================================================");
-                                _log.Info("MESSAGESUBJECT : " + newMail.MESSAGESUBJECT.Replace("\"", string.Empty));
 
                             if (newMail.ATTACHMENTTYPEID != null)
                             {
@@ -237,8 +233,6 @@ namespace FintrakBanking.MonitoringMessagesSender
 
                                 }
 
-
-
                                 if (newMail?.ATTACHMENTTYPEID == (short)AttachementTypeEnum.JobRequest)
                                 {
                                     List<TBL_MEDIA_JOB_REQUEST_DOCUMENT> requestDoc = new List<TBL_MEDIA_JOB_REQUEST_DOCUMENT>();
@@ -247,7 +241,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                                     foreach (var binaryFile in requestDoc)
                                     {
                                        MemoryStream memoryStream = new MemoryStream(binaryFile.FILEDATA);
-                                        Attachment attachment = new Attachment(memoryStream, binaryFile.FILENAME);
+                                       Attachment attachment = new Attachment(memoryStream, binaryFile.FILENAME);
                                        mail.Attachments.Add(attachment);
 
                                     }
@@ -256,7 +250,7 @@ namespace FintrakBanking.MonitoringMessagesSender
     
 
                             }
-                           
+                            
                             client.Send(mail);
                             UpdateMailDeliveryStatus(newMail.MESSAGEID, (short)MessageStatusEnum.Sent, "Email Sent Successfully");
                         }
@@ -267,9 +261,9 @@ namespace FintrakBanking.MonitoringMessagesSender
             }
             catch (Exception ex)
             {
-
+                //throw new SecureException("Failed with error sending mail: " + ex);
                 UpdateMailDeliveryStatus(mailId, (short)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
-                //throw new SecureException("Failed with error : " + ex.Message);
+                throw new SecureException("Failed with error sending mail: " + ex);
                 return false;
             }
         }
@@ -331,5 +325,21 @@ namespace FintrakBanking.MonitoringMessagesSender
 
             }
         }
+
+        public string RemoveSpecial(string evalstr)
+        {
+            StringBuilder finalstr = new StringBuilder();
+            foreach (char c in evalstr)
+            {
+                int charassci = Convert.ToInt16(c);
+                if (!(charassci >= 33 && charassci <= 47))// special char ???
+                    finalstr.Append(c);
+            }
+            return finalstr.ToString();
+        }
+
+
+
+
     }
 }

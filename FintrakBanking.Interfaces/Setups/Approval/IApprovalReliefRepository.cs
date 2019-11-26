@@ -16,6 +16,8 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         Task<bool> UpdateApprovalRelief(int reliefId, ApprovalReliefViewModel model);
         IEnumerable<ApprovalReliefViewModel> GetApprovalReliefAwaitingApprovals(int staffId, int companyId);
         bool GoForApproval(ApprovalViewModel entity);
+        IEnumerable<ApprovalReliefViewModel> GetAllStaffRelief(int companyId, int staffId);
+        bool AddStaffRelief(ApprovalReliefViewModel model);
 
 
     }

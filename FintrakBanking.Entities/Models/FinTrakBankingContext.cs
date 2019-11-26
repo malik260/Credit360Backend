@@ -6,7 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.Linq;
     using FintrakBanking.Entities.AlertReportingModels;
 
-    [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
+    //[DbConfigurationType(typeof(OracleDatabaseConfiguration))]
+    [DbConfigurationType(typeof(SqlDatabaseConfiguration))]
     public partial class FinTrakBankingContext : DbContext
     {
         public FinTrakBankingContext()
@@ -15,8 +16,14 @@ namespace FintrakBanking.Entities.Models
             Database.SetInitializer<FinTrakBankingContext>(null);
         }
 
-        //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }
+
+        //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; } 
         //public virtual DbSet<TBL_ENDOFDAY_MONITORING> TBL_ENDOFDAY_MONITORING { get; set; } 
+        public virtual DbSet<TBL_DOC_TEMPLATE_SAVED> TBL_DOC_TEMPLATE_SAVED { get; set; }
+        public virtual DbSet<TBL_ALERT_DAILYREPORT> TBL_ALERT_DAILYREPORT { get; set; }
+        public virtual DbSet<TBL_ALERT_GENERAL_TEMPLATE> TBL_ALERT_GENERAL_TEMPLATE { get; set; }
+        public virtual DbSet<TBL_INTERNAL_EXPOSURE> TBL_INTERNAL_EXPOSURE { get; set; }
+        public virtual DbSet<TBL_PSR_IMAGES> TBL_PSR_IMAGES { get; set; }
         public virtual DbSet<TBL_CREDIT_OFFICER_STAFFROLE> TBL_CREDIT_OFFICER_STAFFROLE { get; set; }
         public virtual DbSet<TBL_GLOBAL_EXPOSURE> TBL_GLOBAL_EXPOSURE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_DEPOSIT_ARCHV> TBL_COLLATERAL_DEPOSIT_ARCHV { get; set; }
@@ -560,15 +567,18 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ALERT_TITLE> TBL_ALERT_TITLE { get; set; } 
         public virtual DbSet<TBL_ALERT_DATA_BINDINGTYPE> TBL_ALERT_DATA_BINDINGTYPE { get; set; }
         public virtual DbSet<TBL_ALERT_SETUP> TBL_ALERT_SETUP { get; set; }
-        public virtual DbSet<TBL_ALERT_LEVEL_GRP_MAPPING> TBL_ALERT_LEVEL_GRP_MAPPING { get; set; }
-        public virtual DbSet<TBL_ALERT_LEVEL_GROUP> TBL_ALERT_LEVEL_GROUP { get; set; }
-        public virtual DbSet<TBL_ALERT_LEVEL> TBL_ALERT_LEVEL { get; set; } 
+        public virtual DbSet<TBL_ALERT_ROLE_GRP_MAPPING> TBL_ALERT_ROLE_GRP_MAPPING { get; set; }
+        public virtual DbSet<TBL_ALERT_ROLE_GROUP> TBL_ALERT_ROLE_GROUP { get; set; }
+        public virtual DbSet<TBL_ALERT_STAFF_ROLE> TBL_ALERT_STAFF_ROLE { get; set; } 
         public virtual DbSet<TBL_ALERT_FREQUENCY> TBL_ALERT_FREQUENCY { get; set; } 
         public virtual DbSet<TBL_ALERT_CONDITION> TBL_ALERT_CONDITION { get; set; }
         public virtual DbSet<TBL_COLLATERAL_SWAP_REQUEST> TBL_COLLATERAL_SWAP_REQUEST { get; set; }
         public virtual DbSet<TBL_COLLATERAL_MAPPING_ARCHIVE> TBL_COLLATERAL_MAPPING_ARCHIVE { get; set; }
 
         public virtual DbSet<TBL_FACILITY_RATING> TBL_FACILITY_RATING { get; set; }
+        public virtual DbSet<TBL_THIRDPARTY_LOAN_MAPPING> TBL_THIRDPARTY_LOAN_MAPPING { get; set; }
+        public virtual DbSet<TBL_CUSTOMER_RATIO_CATEGORY> TBL_CUSTOMER_RATIO_CATEGORY { get; set; }
+
 
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }

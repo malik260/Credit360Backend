@@ -179,6 +179,7 @@ namespace FintrakBanking.Repositories.Customer
                 var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
                 if (output == true)
                 {
+                    UpdateCustomerCollateralId(customer.CUSTOMERCODE);
                     fetchCustomerAccountBalance(customer);
                     return result;
                 }
@@ -196,10 +197,37 @@ namespace FintrakBanking.Repositories.Customer
             }
         }
 
-        private void fetchCustomerAccountBalance(TBL_CUSTOMER data)
+        public void UpdateCustomerCollateralId(string customerCode)
         {
+            customerCode = customerCode.Trim();
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
+            foreach(var c in collaterals)
+            {
+                c.CUSTOMERID = customer.CUSTOMERID;
+            }
+            var saved = context.SaveChanges() > 0;
+        }
 
-            integration.AddCustomerAccounts(data.CUSTOMERCODE);
+        public bool refreshCustomerAccount(int customerId)
+        {
+            bool result = false;
+
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
+
+            if (customer != null)
+            {
+                result = fetchCustomerAccountBalance(customer);
+            }
+
+            return result;    
+        }
+        private bool fetchCustomerAccountBalance(TBL_CUSTOMER data)
+        {
+            bool result;
+            result = integration.AddCustomerAccounts(data.CUSTOMERCODE);
+
+            return result;
         }
 
         public bool GetPoliticallyExposedPerson(string customerCode)
@@ -2842,7 +2870,7 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.DATETIMEUPDATED = DateTime.Now;
                 customerMain.LASTUPDATEDBY = entity.deletedBy;
 
-
+                UpdateCustomerCollateralId(customerMain.CUSTOMERCODE);
                 return context.SaveChanges() != 0;
             }
             else
@@ -3359,6 +3387,8 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
                             customerRating = a.CUSTOMERRATING,
+                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                            businessUnitId = a.BUSINESSUNTID,
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
@@ -4581,6 +4611,7 @@ namespace FintrakBanking.Repositories.Customer
                 entity.RELATIONSHIPOFFICERID = temp.RELATIONSHIPOFFICERID;
             }
 
+            UpdateCustomerCollateralId(entity.CUSTOMERCODE);
             //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
             temp.ISCURRENT = false;
             temp.APPROVALSTATUSID = approvalStatusId;

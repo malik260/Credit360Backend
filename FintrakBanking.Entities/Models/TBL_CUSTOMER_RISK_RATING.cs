@@ -33,6 +33,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISINVESTMENTGRADE { get; set; }
 
         public double MAX_SHAREHOLDER_FUND_PERCENTAG { get; set; }
+        public string CLASSIFICATION { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 

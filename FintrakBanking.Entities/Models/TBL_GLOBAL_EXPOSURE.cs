@@ -14,8 +14,9 @@ namespace FintrakBanking.Entities.AlertReportingModels
     {
 
         [Key]
-        public long ID { get; set; }
+        public int ID { get; set; }
         public string CUSTOMERID { get; set; }
+        public DateTime DATE { get; set; }
         public string CUSTOMERNAME { get; set; }
         public string GROUPOBLIGORNAME { get; set; }
         public string REFERENCENUMBER { get; set; }
@@ -26,10 +27,12 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string PRODUCTCODE { get; set; }
         public string CURRENCYNAME { get; set; }
         public string PRODUCTNAME { get; set; }
-        public string FACILITYTYPE { get; set; }
+        //public string FACILITYTYPE { get; set; }
         public string ADJFACILITYTYPE { get; set; }
         public string ADJFACILITYTYPEid { get; set; }
         public string ODSTATUS { get; set; }
+        public string EXPIRINGBAND { get; set; }
+        public int? EXPIRYBANDID { get; set; }
         public string CURRENCYTYPE { get; set; }
         public string CBNSECTOR { get; set; }
         public string CBNSECTORADJUSTED { get; set; }
@@ -37,16 +40,18 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string PWCCLASSIFICATION { get; set; }
         public string IFRSCLASSIFICATION { get; set; }
         public string TENOR { get; set; }
-        public string MATURITYDATE { get; set; }
+        public DateTime MATURITYDATE { get; set; }
+        //public string MATURITYDATE { get; set; }
         public string LOCATION { get; set; }
-        public string BOOKINGDATE { get; set; }
-        public string VALUEDATE { get; set; }
+        public DateTime BOOKINGDATE { get; set; }
+        public DateTime VALUEDATE { get; set; }
         public string MATURITYBAND { get; set; }
+        public int? MATURITYBANDID { get; set; }
         public string CUSTOMERTYPE { get; set; }
         public string BRANCHNAME { get; set; }
         public string BRANCHCODE { get; set; }
         public string OBLIGORRISKRATING { get; set; }
-        public string LASTCRDATE { get; set; }
+        public DateTime LASTCRDATE { get; set; }
         public string PRODUCTID { get; set; }
         public string EXPOSURETYPECODE { get; set; }
         public string EXPOSURETYPE { get; set; }
@@ -58,21 +63,24 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public decimal? LOANAMOUNYLCY { get; set; }
         public string CARDLIMIT { get; set; }
         public string FXRATE { get; set; }
-        public float SHF { get; set; }
+        public decimal? SHF { get; set; }
         public string INTERESTRATE { get; set; }
-        public decimal? SECTIONEDLOANLIMITDIRECTFCY { get; set; }
-        public decimal? SECTIONEDLOANLIMITDIRECTLCY { get; set; }
-        public decimal? TOTALEXPOSULCYPREVIOUSYEAR { get; set; }
-        public decimal? TOTAEXPOSURELCYPREVIOUS6MONTHS { get; set; }
-        public decimal? TOTAEXPOSURELCYPREVIOUS3MONTHS { get; set; }
-        public decimal? TOTAEXPOSURELCYPREVIOUSMONTHS { get; set; }
-        public decimal? TOTAEXPOSURELCYPREVIOUSDAY { get; set; }
+        //public decimal? SECTIONEDLOANLIMITDIRECTFCY { get; set; }
+        //public decimal? SECTIONEDLOANLIMITDIRECTLCY { get; set; }
+        //public decimal? TOTALEXPOSULCYPREVIOUSYEAR { get; set; }
+        //public decimal? TOTAEXPOSURELCYPREVIOUS6MONTHS { get; set; }
+        //public decimal? TOTAEXPOSURELCYPREVIOUS3MONTHS { get; set; }
+        //public decimal? TOTAEXPOSURELCYPREVIOUSMONTHS { get; set; }
+        //public decimal? TOTAEXPOSURELCYPREVIOUSDAY { get; set; }
         public decimal? TOTALEXPOSURE { get; set; }
         public decimal? IMPAIRMENTAMOUNT { get; set; }
-        public decimal? UNPAIDOBLIGATIONAMOUNT { get; set; }
+        public decimal? TOTALUNPAIDOBLIGATION { get; set; }
         public decimal? UNPOINTERESTAMOUNT { get; set; }
-        public decimal? INTERESTRECEIVABLETCY { get; set; }
+        public decimal? INTERESTRECIEVABLETCY { get; set; }
         public decimal? AMOUNTDUE { get; set; }
+        public decimal? NPL { get; set; }
+        public int? UNPODAYSOVERDUE { get; set; }
+        public DateTime SCHEDULEDUEDATE { get; set; }
 
         //public string DIVISIONID { get; set; }
     }

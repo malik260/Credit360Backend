@@ -633,7 +633,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>i. NEXT INSPECTION DATE:</Value>
+                              <Value>i. NEXT INSPECTION DATE</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -746,7 +746,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>4.7275in</Top>
+        <Top>4.8525in</Top>
         <Left>0.26333in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -826,10 +826,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>16.20639in</Top>
+        <Top>15.32166in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
-        <Width>3.58333in</Width>
+        <Width>3.65in</Width>
         <ZIndex>6</ZIndex>
         <Style>
           <Border>
@@ -859,10 +859,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>11.64666in</Top>
-        <Left>0.155in</Left>
+        <Top>11.52166in</Top>
+        <Left>0.21333in</Left>
         <Height>0.25in</Height>
-        <Width>3.58333in</Width>
+        <Width>3.65in</Width>
         <ZIndex>7</ZIndex>
         <Style>
           <Border>
@@ -892,10 +892,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>12.56306in</Top>
-        <Left>0.155in</Left>
+        <Top>12.31306in</Top>
+        <Left>0.205in</Left>
         <Height>0.25in</Height>
-        <Width>3.58333in</Width>
+        <Width>3.65833in</Width>
         <ZIndex>8</ZIndex>
         <Style>
           <Border>
@@ -914,7 +914,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>7. TASK FOR NEXT INSPECTION:</Value>
+                <Value>6. TASK FOR NEXT INSPECTION:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -925,10 +925,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>14.24125in</Top>
-        <Left>0.17583in</Left>
+        <Top>13.61625in</Top>
+        <Left>0.21333in</Left>
         <Height>0.25in</Height>
-        <Width>3.58333in</Width>
+        <Width>3.67083in</Width>
         <ZIndex>9</ZIndex>
         <Style>
           <Border>
@@ -955,10 +955,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox91</rd:DefaultName>
-        <Top>15.28417in</Top>
-        <Left>0.17583in</Left>
+        <Top>14.53417in</Top>
+        <Left>0.205in</Left>
         <Height>0.25in</Height>
-        <Width>6.695in</Width>
+        <Width>6.79083in</Width>
         <ZIndex>10</ZIndex>
         <Style>
           <Border>
@@ -985,10 +985,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox92</rd:DefaultName>
-        <Top>15.8175in</Top>
-        <Left>0.17583in</Left>
+        <Top>14.9425in</Top>
+        <Left>0.205in</Left>
         <Height>0.25in</Height>
-        <Width>6.695in</Width>
+        <Width>6.79083in</Width>
         <ZIndex>11</ZIndex>
         <Style>
           <Border>
@@ -1004,7 +1004,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.73251in</Width>
+              <Width>6.80751in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1059,10 +1059,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>observation</DataSetName>
-        <Top>12.10375in</Top>
-        <Left>0.155in</Left>
+        <Top>11.85375in</Top>
+        <Left>0.205in</Left>
         <Height>0.25in</Height>
-        <Width>6.73251in</Width>
+        <Width>6.80751in</Width>
         <ZIndex>12</ZIndex>
         <Style>
           <Border>
@@ -1074,7 +1074,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.73251in</Width>
+              <Width>6.80751in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1129,10 +1129,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>13.0075in</Top>
-        <Left>0.155in</Left>
+        <Top>12.6325in</Top>
+        <Left>0.205in</Left>
         <Height>0.25in</Height>
-        <Width>6.73251in</Width>
+        <Width>6.80751in</Width>
         <ZIndex>13</ZIndex>
         <Style>
           <Border>
@@ -1144,7 +1144,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.7325in</Width>
+              <Width>6.79917in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1199,10 +1199,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>nextInspection</DataSetName>
-        <Top>14.60931in</Top>
-        <Left>0.155in</Left>
+        <Top>13.98431in</Top>
+        <Left>0.21333in</Left>
         <Height>0.25in</Height>
-        <Width>6.7325in</Width>
+        <Width>6.79917in</Width>
         <ZIndex>14</ZIndex>
         <Style>
           <Border>
@@ -2640,7 +2640,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>analysis</DataSetName>
-        <Top>5.005in</Top>
+        <Top>5.13in</Top>
         <Left>0.28in</Left>
         <Height>2.6452in</Height>
         <Width>6.67833in</Width>
@@ -2655,16 +2655,16 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.70833in</Width>
+              <Width>1.72708in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.71667in</Width>
+              <Width>1.73542in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.43333in</Width>
+              <Width>1.45208in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.87418in</Width>
+              <Width>1.89293in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -2811,10 +2811,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>13.59931in</Top>
-        <Left>0.155in</Left>
+        <Top>13.09931in</Top>
+        <Left>0.205in</Left>
         <Height>0.25in</Height>
-        <Width>6.73251in</Width>
+        <Width>6.80751in</Width>
         <ZIndex>17</ZIndex>
         <Style>
           <Border>
@@ -2934,7 +2934,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.61458in</Width>
+              <Width>6.68125in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -2988,10 +2988,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>comment</DataSetName>
-        <Top>16.52583in</Top>
-        <Left>0.17583in</Left>
+        <Top>15.69667in</Top>
+        <Left>0.21333in</Left>
         <Height>0.25in</Height>
-        <Width>6.61458in</Width>
+        <Width>6.68125in</Width>
         <ZIndex>19</ZIndex>
         <Style>
           <Border>
@@ -2999,11 +2999,136 @@
           </Border>
         </Style>
       </Tablix>
+      <Textbox Name="Textbox16">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>PICTURES</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox16</rd:DefaultName>
+        <Top>16.04042in</Top>
+        <Left>0.21333in</Left>
+        <Height>0.25in</Height>
+        <Width>3.65in</Width>
+        <ZIndex>20</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Tablix Name="Tablix7">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>4.18778in</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.4375in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="imageCaption">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!imageCaption.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>imageCaption</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>2.80417in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Image Name="fileData">
+                      <Source>Database</Source>
+                      <Value>=Fields!fileData.Value</Value>
+                      <MIMEType>image/png</MIMEType>
+                      <Sizing>Fit</Sizing>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </Image>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="Details9" />
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>supportImages</DataSetName>
+        <Top>16.35292in</Top>
+        <Left>0.155in</Left>
+        <Height>3.24167in</Height>
+        <Width>4.18778in</Width>
+        <ZIndex>21</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Tablix>
     </ReportItems>
-    <Height>17.0675in</Height>
+    <Height>19.73626in</Height>
     <Style />
   </Body>
-  <Width>9.1875in</Width>
+  <Width>7.27083in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -3461,6 +3586,34 @@
         <rd:DataSetName>PSR</rd:DataSetName>
         <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>ANALYSIS</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="supportImages">
+      <Query>
+        <DataSourceName>PSR</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="imageCaption">
+          <DataField>imageCaption</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="fileData">
+          <DataField>fileData</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="fileName">
+          <DataField>fileName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>PSR</rd:DataSetName>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:TableName>SUPPORTIMAGES</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />

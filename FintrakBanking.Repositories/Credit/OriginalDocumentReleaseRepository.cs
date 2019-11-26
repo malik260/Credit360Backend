@@ -7,6 +7,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Repositories.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace FintrakBanking.Repositories.Credit
             _context = context;
             _workflow = workflow;
             _general = general;
+            _docContext = docContext;
         }
 
         public bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
@@ -40,7 +42,14 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var mod in model)
             {
-                
+
+                //check if part of the documents for a collateral is not being released...
+                var docCheck = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.ORIGINALDOCUMENTAPPROVALID == mod.originalDocumentApprovalId
+                                                                                && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                                                                     .Any();
+
+                if(docCheck) throw new SecureException("Collateral Documents is currently undergoing Approval");
+
                 //check if the document was added to TBL_ORIGINAL_DOCUMENT_RELEASE but not sent for approval
                 var resultCheck = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == mod.documentUploadId
                                                                                 && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
@@ -56,7 +65,7 @@ namespace FintrakBanking.Repositories.Credit
                 //check if the document was referred
                 var resultReferred =    (from odr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
                                         join atrail in _context.TBL_APPROVAL_TRAIL on odr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
-                                        where atrail.OPERATIONID == (short)OperationsEnum.SecurityRelease
+                                        where atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
                                             && atrail.TARGETID == odr.ORIGINALDOCUMENTAPPROVALID
                                             && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                                             && odr.DOCUMENTUPLOADID == mod.documentUploadId
@@ -73,7 +82,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                             && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                                                    .Any();
 
-                if (result == true) throw new SecureException("One of the Selected Documents is currently Undergoing Approval");
+                    if (result == true) throw new SecureException("One of the Selected Documents is currently Undergoing Approval");
 
                 var entity = new TBL_ORIGINAL_DOCUMENT_RELEASE
                 {
@@ -82,7 +91,7 @@ namespace FintrakBanking.Repositories.Credit
                     ORIGINALDOCUMENTAPPROVALID = mod.originalDocumentApprovalId,
                     DOCUMENTUPLOADID = mod.documentUploadId,
                     DOCSUBMISSIONOPERATIONID = (int)OperationsEnum.OriginalDocumentApproval,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                     COMPANYID = mod.companyId,
                     CREATEDBY = mod.createdBy,
                     DATETIMECREATED = DateTime.Now,
@@ -136,7 +145,7 @@ namespace FintrakBanking.Repositories.Credit
                          join cc in _context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
-                         where dr.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                         where dr.DELETED == false && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                          && atrail.RESPONSESTAFFID == null
                          && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                          && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
@@ -223,8 +232,15 @@ namespace FintrakBanking.Repositories.Credit
 
             if(rejected != null)
             {
+
+                var documentUploadIds = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(odr => odr.ORIGINALDOCUMENTAPPROVALID == rejected.ORIGINALDOCUMENTAPPROVALID
+                                                                                    && odr.DELETED == true
+                                                                                    && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                                                                          .Select(odr => odr.DOCUMENTUPLOADID).DefaultIfEmpty().ToList();
+
                 var rejectedDocumentList = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(odr => odr.ORIGINALDOCUMENTAPPROVALID == rejected.ORIGINALDOCUMENTAPPROVALID
-                                                                                            && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).ToList(); 
+                                                                                            && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved
+                                                                                            && !documentUploadIds.Contains(rejected.DOCUMENTUPLOADID)).ToList(); 
                 foreach(var rej in rejectedDocumentList)
                 {
                     
@@ -238,7 +254,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     _workflow.StaffId = staffId;
                     _workflow.CompanyId = companyId;
-                    _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                     _workflow.TargetId = rejected.ORIGINALDOCUMENTAPPROVALID;
                     _workflow.Comment = "Request for security release approval";
                     _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
@@ -298,7 +314,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         _workflow.StaffId = x.createdBy;
                         _workflow.CompanyId = x.companyId;
-                        _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                        _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                         _workflow.TargetId = x.originalDocumentApprovalId;
                         _workflow.Comment = "Update has been applied, Request for Security Release Approval";
                         _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
@@ -329,7 +345,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                      .ToList();
                     _workflow.StaffId = x.createdBy;
                     _workflow.CompanyId = x.companyId;
-                    _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                     _workflow.TargetId = x.originalDocumentApprovalId;
                     _workflow.Comment = "Request for security release approval";
                     _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
@@ -368,7 +384,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (_workflow.NewState == (int)ApprovalState.Ended)
                     {
+
                         var documents = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == model.originalDocumentApprovalId
+                                                                                        && o.DELETED == false
                                                                                         && o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                                                               .ToList();
                         if (documents != null)
@@ -377,6 +395,13 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 x.APPROVALSTATUSID = model.approvalStatusId;
                                 x.APPROVALDATE = _general.GetApplicationDate();
+                                if(model.approvalStatusId == (short)ApprovalStatusEnum.Approved)
+                                {
+                                    x.DELETED = true;
+                                    x.DELETEDBY = model.createdBy;
+                                    x.DATETIMEDELETED = _general.GetApplicationDate();
+                                }
+                                
                             }
                         }
 
@@ -398,5 +423,140 @@ namespace FintrakBanking.Repositories.Credit
                 //return false;
             }
         }
+
+        public IEnumerable<DocumentUploadViewModel> GetReleasedDocUploadIds(int operationId, int targetId, int staffId)
+        {
+            
+            var documentUploadIds = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(odr => odr.ORIGINALDOCUMENTAPPROVALID == targetId
+                                                                                    && odr.DELETED == false
+                                                                                    && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                                                                          .Select(odr => odr.DOCUMENTUPLOADID).ToList();
+
+             var documents = _docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+               .Join(_docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
+               , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
+                   new {
+                       documentUploadId = up.DOCUMENTUPLOADID,
+                       fileName = up.FILENAME,
+                       fileExtension = up.FILEEXTENSION,
+                       fileSize = up.FILESIZE,
+                       fileSizeUnit = up.FILESIZEUNIT,
+                       fileData = up.FILEDATA,
+                       companyId = up.COMPANYID,
+                       issueDate = up.ISSUEDATE,
+                       expiryDate = up.EXPIRYDATE,
+                       physicalFilenumber = up.PHYSICALFILENUMBER,
+                       physicalLocation = up.PHYSICALLOCATION,
+                       documentTypeId = up.DOCUMENTTYPEID,
+                       documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                       documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                       documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                       owner = us.CREATEDBY == staffId,
+                       dateTimeCreated = us.DATETIMECREATED,
+                       dateTimeUpdated = us.DATETIMEUPDATED,
+                       createdBy = us.CREATEDBY.Value,
+                   }
+           ).AsEnumerable()
+           .Where(x => documentUploadIds.Contains(x.documentUploadId))
+           .Select(up => new DocumentUploadViewModel
+           {
+               documentUploadId = up.documentUploadId,
+               fileName = up.fileName,
+               fileExtension = up.fileExtension,
+               fileSize = up.fileSize,
+               fileSizeUnit = up.fileSizeUnit,
+               fileData = up.fileData,
+               companyId = up.companyId,
+               issueDate = up.issueDate,
+               expiryDate = up.expiryDate,
+               physicalFilenumber = up.physicalFilenumber,
+               physicalLocation = up.physicalLocation,
+               documentTypeId = up.documentTypeId,
+               documentTypeName = up.documentTypeName,
+               documentCategoryId = up.documentCategoryId,
+               documentCategoryName = up.documentCategoryName,
+               owner = up.owner,
+               dateTimeCreated = up.dateTimeCreated,
+               dateTimeUpdated = up.dateTimeUpdated,
+               createdBy = up.createdBy,
+               uploadedBy = _context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
+
+           })
+           .OrderBy(x => x.dateTimeCreated)
+           .ThenBy(x => x.documentCategoryId)
+           .ThenBy(x => x.documentTypeId)
+           .ToList();
+
+            return documents;
+        }
+
+        public IEnumerable<DocumentUploadViewModel> GetAvailableDocumentsForReleease(int operationId, int targetId, int staffId)
+        {
+            
+            var documentUploadIds = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(odr => odr.ORIGINALDOCUMENTAPPROVALID == targetId
+                                                                                    && odr.DELETED == true
+                                                                                    && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+                                                                          .Select(odr => odr.DOCUMENTUPLOADID).DefaultIfEmpty().ToList();
+
+
+            var documents = _docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+               .Join(_docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
+               , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
+                   new {
+                       documentUploadId = up.DOCUMENTUPLOADID,
+                       fileName = up.FILENAME,
+                       fileExtension = up.FILEEXTENSION,
+                       fileSize = up.FILESIZE,
+                       fileSizeUnit = up.FILESIZEUNIT,
+                       fileData = up.FILEDATA,
+                       companyId = up.COMPANYID,
+                       issueDate = up.ISSUEDATE,
+                       expiryDate = up.EXPIRYDATE,
+                       physicalFilenumber = up.PHYSICALFILENUMBER,
+                       physicalLocation = up.PHYSICALLOCATION,
+                       documentTypeId = up.DOCUMENTTYPEID,
+                       documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                       documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                       documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                       owner = us.CREATEDBY == staffId,
+                       dateTimeCreated = us.DATETIMECREATED,
+                       dateTimeUpdated = us.DATETIMEUPDATED,
+                       createdBy = us.CREATEDBY.Value,
+                   }
+           ).AsEnumerable()
+           .Where(x => !documentUploadIds.Contains(x.documentUploadId))
+           .Select(up => new DocumentUploadViewModel
+           {
+               documentUploadId = up.documentUploadId,
+               fileName = up.fileName,
+               fileExtension = up.fileExtension,
+               fileSize = up.fileSize,
+               fileSizeUnit = up.fileSizeUnit,
+               fileData = up.fileData,
+               companyId = up.companyId,
+               issueDate = up.issueDate,
+               expiryDate = up.expiryDate,
+               physicalFilenumber = up.physicalFilenumber,
+               physicalLocation = up.physicalLocation,
+               documentTypeId = up.documentTypeId,
+               documentTypeName = up.documentTypeName,
+               documentCategoryId = up.documentCategoryId,
+               documentCategoryName = up.documentCategoryName,
+               owner = up.owner,
+               dateTimeCreated = up.dateTimeCreated,
+               dateTimeUpdated = up.dateTimeUpdated,
+               createdBy = up.createdBy,
+               uploadedBy = _context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
+
+           })
+           .OrderBy(x => x.dateTimeCreated)
+           .ThenBy(x => x.documentCategoryId)
+           .ThenBy(x => x.documentTypeId)
+           .ToList();
+
+            return documents;
+        }
+        
+
     }
 }

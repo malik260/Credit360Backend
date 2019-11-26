@@ -444,7 +444,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         EMAILOFNOK = staffModel.EmailOfNok,
                         GENDER = staffModel.Gender,
                         GENDEROFNOK = staffModel.GenderOfNok,
-                        MISINFOID = staffModel.MisinfoId,
+                        //MISINFOID = staffModel.MisinfoId,
                         NAMEOFNOK = staffModel.NameOfNok,
                         NOKRELATIONSHIP = staffModel.NokrelationShip,
                         PHONE = staffModel.Phone,
@@ -2339,8 +2339,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (rowSuccess && excelRowPosition > 1)
                 {
                     staffRowData.customerSensitivityLevelId = (short)CustomerSensitivityLevelENum.Negligible;
-                    staffRowData.JobTitleId = jobTitle.JOBTITLEID;
-                    staffRowData.JobTitleName = jobTitle.JOBTITLENAME;
+                    //staffRowData.JobTitleId = jobTitle.JOBTITLEID;
+                    //staffRowData.JobTitleName = jobTitle.JOBTITLENAME;
                     staffRowData.message = "Success";
                     staffInfo.Add(staffRowData);
                 }
