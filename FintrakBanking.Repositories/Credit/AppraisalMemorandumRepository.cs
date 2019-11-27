@@ -2195,7 +2195,6 @@ namespace FintrakBanking.Repositories.Credit
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID)))
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,

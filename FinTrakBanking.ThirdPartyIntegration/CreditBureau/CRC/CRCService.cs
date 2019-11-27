@@ -16,7 +16,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
    public  class CRCService
     {
         const string DATA_PACKET = "DATAPACKET";
-        const string ERROR = "ERROR_LIST";
+        const string ERROR = "ERROR-LIST";
 
         public CRCSearchResult CRCSearchRequest(CRCRequestViewModel request)
         {
@@ -126,7 +126,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
                      {
                         SearchCompleted = (int)SearchCompletedStatusEnum.SearchIncomplete,
                         SearchResult = new CreditBureauHelp().ConvertXmlToJson(xdoc)
-                };
+                    };
                 }
                 else
                 {
