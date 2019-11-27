@@ -6815,7 +6815,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = a.OPERATIONID,
                             isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                             isInvestmentGrade = a.ISINVESTMENTGRADE,
-
+                            productClassName = d.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             companyId = a.COMPANYID,
                             branchId = a.BRANCHID,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -6902,6 +6902,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = m.OPERATIONID,
                             isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                             isInvestmentGrade = m.ISINVESTMENTGRADE,
+                            productClassName = d.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
                             companyId = m.COMPANYID,
                             branchId = m.BRANCHID,
@@ -7046,7 +7047,7 @@ namespace FintrakBanking.Repositories.Credit
             return operationId;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId) 
+        public IEnumerable<CamProcessedLoanViewModel>  GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId) 
         {
             //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
             var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).ToList();
