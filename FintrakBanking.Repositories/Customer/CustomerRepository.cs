@@ -209,6 +209,18 @@ namespace FintrakBanking.Repositories.Customer
             var saved = context.SaveChanges() > 0;
         }
 
+        //public void UpdateCustomerCollateralId(string customerCode)
+        //{
+        //    customerCode = customerCode.Trim();
+        //    var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+        //    var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
+        //    foreach(var c in collaterals)
+        //    {
+        //        c.CUSTOMERID = customer.CUSTOMERID;
+        //    }
+        //    var saved = context.SaveChanges() > 0;
+        //}
+
         public bool refreshCustomerAccount(int customerId)
         {
             bool result = false;
