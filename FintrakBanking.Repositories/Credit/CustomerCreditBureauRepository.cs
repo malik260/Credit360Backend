@@ -768,7 +768,10 @@ namespace FintrakBanking.Repositories.Credit
                 else
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException("Search Response -  error occured during search");
+                    var errorCode = searchResponse.SearchResult.Split(new string[] { "<ERROR-CODE>" }, StringSplitOptions.None)[1].Split('<')[0];
+                    var errorDescription = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(O => O.ERRORCODE == errorCode).FirstOrDefault().DESCRIPTION;
+
+                    throw new ConditionNotMetException($"Search Response - ERRORCODE: {errorCode} ERRORMESSAGE: {errorDescription}");
                 }
                 //}
                 //else
