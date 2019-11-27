@@ -12,6 +12,7 @@
     using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -1164,7 +1165,7 @@
                     responseDateTime = DateTime.Now;
                     responseMsg = null;
 
-                    if (response.IsSuccessStatusCode && responseJson.Contains("\"creditCheck\":"))
+                    if (response.IsSuccessStatusCode) //&& responseJson.Contains("\"creditCheck\":"))
                     {
                         responseAPI = await response.Content.ReadAsAsync<ResponseMessageCreditCheckViewModel>();
                         //responseAPI = await response.Content.ReadAsStringAsync();
@@ -1176,6 +1177,15 @@
                             Message = response,
                             responseMessage = responseJson
                         };
+
+                        // save file
+                        var data = "<INFO>Number of Records in Return file: 1.</INFO><INFO>Credit Profile successfully created for Borrower with Unique Identification Number: |22184798858|. Assigned Credit Reference Number is: |00044/20191113/24424880|.</INFO>";
+                        var dataArray = Convert.FromBase64String(data);
+
+                        var stream = new MemoryStream();
+                        byte[] buffer = new byte[dataArray.Length];
+                        stream.Read(buffer, 0, buffer.Length);
+                        File.WriteAllBytes("CreditCheck.pdf", buffer);
                     }
                     else
                     {

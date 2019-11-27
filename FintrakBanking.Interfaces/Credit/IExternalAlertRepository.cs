@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts();
         IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportOne();
         IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportTwo();
-        IEnumerable<GlobalExposureViewModel> GetNplOnCreditPortfolio();
+        IEnumerable<StaffInfoViewModel> GetNplOnCreditPortfolio();
         IEnumerable<StaffInfoViewModel> GetOverlineCreditCardPosition();
         bool GetRiskAssetsReportNotification();
         bool GetDashboardReportNotification();
