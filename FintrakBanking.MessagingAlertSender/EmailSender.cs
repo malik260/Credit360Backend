@@ -13,7 +13,7 @@ using System.IO;
 using FintrakBanking.Entities.DocumentModels;
 using Topshelf.Logging;
 
-namespace FintrakBanking.MonitoringMessagesSender
+namespace FintrakBanking.MessagingAlertSender
 {
     public class EmailSender 
     {

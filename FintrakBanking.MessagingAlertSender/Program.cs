@@ -7,7 +7,7 @@ using Topshelf;
 using Topshelf.Logging;
 using Topshelf.Ninject;
 
-namespace FintrakBanking.MonitoringMessagesSender
+namespace FintrakBanking.MessagingAlertSender
 {
     class Program
     {
@@ -20,14 +20,14 @@ namespace FintrakBanking.MonitoringMessagesSender
 
             _log.Info("");
             _log.Info("==================================================================");
-            _log.Info("About startting GetImminentMaturities : " + DateTime.Now);
+            _log.Info("About starting email sender : " + DateTime.Now);
 
-            var alert = kernel.Get<IAlertRepository>();
-            alert.validateAlertCheck();
+            EmailSender emailSender = new EmailSender();
+            emailSender.SendEmails();
 
             _log.Info("");
             _log.Info("==================================================================");
-            _log.Info("Started GetImminentMaturities : " + DateTime.Now);
+            _log.Info("Started email sender : " + DateTime.Now);
 
 
             //HostFactory.Run(serviceConfig =>
@@ -45,7 +45,7 @@ namespace FintrakBanking.MonitoringMessagesSender
 
             //        serviceConfig.RunAsLocalSystem();
 
-            //        serviceConfig.SetDescription("Fintrak Credit 360 General Email Alert Monitoring Sender");
+            //        serviceConfig.SetDescription("Fintrak Credit 360 General Email Alert Sender");
             //        serviceConfig.SetDisplayName("Fintrak Credit 360 Email Sender");
             //        serviceConfig.SetServiceName("FintrakCredit360EmailSender");
             //    });

@@ -829,10 +829,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public void validateAlertCheck()
         {
-            /* GetLoanExpirationReminder();
+            GetLoanExpirationReminder(); 
+            GetUnpaidObligationReminder();
+            GetLoanRepaymentReminder();
+            GetImminentMaturitiesAlertEmail();
+
             GetImminentMaturities();
             GetCreditCardMaturingObligations();
-            GetUnpaidObligationReminder();
             GetExpiringFacilityReport();
             GetUnAuthorizedOverdraftReport();
             GetOverlineMonitoringReport();
@@ -844,7 +847,6 @@ namespace FintrakBanking.Repositories.Setups.General
             GetOverlineCreditCardPosition();
             GetPastDueFacilitiesNotification();
             GetExpiredFacilityNotification();
-            GetLoanRepaymentReminder();
             GetLoanExpirationReminderAccountOfficer();
             GetLoanRepaymentReminderAccountOfficer();
             GetUnpaidObligationReminderAccountOfficer();
@@ -853,8 +855,6 @@ namespace FintrakBanking.Repositories.Setups.General
             GetOverlineFacilityNotification();
             GetImminentObligationMaturityFacilityNotification();
             GetNplOnCreditPortfolio();
-            GetImminentMaturitiesAlertEmail();*/
-
         }
 
         private string GetBusinessUsersEmails(string accountOfficerMIsCode)
