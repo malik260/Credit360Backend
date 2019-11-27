@@ -3852,7 +3852,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             int[] operations = { (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.ContigentLoanBooking ,
            (int)OperationsEnum.ContingentLiabilityRenewal,(int)OperationsEnum.ContingentLiabilityUsage,(int)OperationsEnum.ContingentRequestBooking,
-            (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.LoanAvailment};
+            (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.LoanAvailment, (int)OperationsEnum.CreditCardsCashBacked, (int)OperationsEnum.CreditCardsCleanCards,
+            (int)OperationsEnum.CreditCardsSalaryBacked, (int)OperationsEnum.TemporaryOverdraftRequest, (int)OperationsEnum.CashCollaterizedRequest};
 
             searchString = searchString.Trim().ToLower();
 
@@ -3868,7 +3869,7 @@ namespace FintrakBanking.Repositories.Credit
                                 || c.FIRSTNAME.ToLower().Contains(searchString)
                                 || c.LASTNAME.ToLower().Contains(searchString)
                                 || c.MIDDLENAME.ToLower().Contains(searchString)
-                                || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                                || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower() == searchString.ToLower()).Select(o => o.STAFFID).FirstOrDefault())
                                 select new LoanApplicationViewModel
                                 {
                                     firstName = c.FIRSTNAME,
@@ -6051,6 +6052,33 @@ namespace FintrakBanking.Repositories.Credit
                 productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.PROPOSEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                 facilityAmount = x.APPROVEDAMOUNT,
                 loanApplicationId = x.LOANAPPLICATIONID,
+                currencyName = x.TBL_CURRENCY.CURRENCYNAME,
+                exchangeRate = x.EXCHANGERATE,
+                customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME,
+                approvedProductId = x.APPROVEDPRODUCTID,
+                proposedProductName = x.TBL_PRODUCT.PRODUCTNAME,
+                proposedTenor = x.PROPOSEDTENOR,
+                proposedInterestRate = x.PROPOSEDINTERESTRATE,
+                proposedAmount = x.PROPOSEDAMOUNT,
+                sectorId = (short)x.TBL_SUB_SECTOR.SECTORID,
+                subSectorId = x.SUBSECTORID,
+                approvedProductName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                currencyId = x.CURRENCYID,
+                repaymentScheduleId = x.REPAYMENTSCHEDULEID.Value,
+                isTakeOverApplication = x.ISTAKEOVERAPPLICATION,
+                repaymentTerm = x.REPAYMENTTERMS,
+                applicationReferenceNumber = x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                customerId = x.CUSTOMERID,
+                firstName = x.TBL_CUSTOMER.FIRSTNAME,
+                middleName = x.TBL_CUSTOMER.MIDDLENAME,
+                lastName = x.TBL_CUSTOMER.LASTNAME,
+                customerCode = x.TBL_CUSTOMER.CUSTOMERCODE,
+                proposedProductId = x.PROPOSEDPRODUCTID,
+                productClassProcessId = x.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                productClassId = x.TBL_PRODUCT.PRODUCTCLASSID,
+                customerType = x.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                customerGroupId = x.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                customerGroupName = x.TBL_LOAN_APPLICATION.CUSTOMERGROUPID.HasValue ? x.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : "",
             })).ToList();
         }
 

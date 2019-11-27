@@ -76,7 +76,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int sectorId { get; set; }
         public string sectorName { get; set; }
         public bool isInvestmentGrade { set; get; }
+        public int? loantermSheetId { get; set; }
         public string customerName { get; set; }
+        public int customerTypeId { get; set; }
         public string branchName { get; set; }
         public string productName { get; set; }
         public string customerGroupName { get; set; }
@@ -121,6 +123,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string customerCode { get; set; }
+        public int proposedProductId { get; set; }
+        public string repaymentTerm { get; set; }
+        public bool? isTakeOverApplication { get; set; }
+        public int? repaymentScheduleId { get; set; }
+        public double proposedInterestRate { get; set; }
+        public string proposedProductName { get; set; }
+        public int approvedProductId { get; set; }
+        public string currencyName { get; set; }
         public string lastName { get; set; }
         public int groupRoleId { get; set; }
         public string accountNumber { get; set; }

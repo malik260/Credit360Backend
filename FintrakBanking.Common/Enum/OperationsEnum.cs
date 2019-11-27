@@ -136,9 +136,10 @@
     CreditCardsCleanCards = 146,
     SecurityRelease = 147,
     WaivedChecklistApproval = 148,
+    TemporaryOverdraftRequest = 149,
     //InitiationLevelAppraisal = 148,   //this has to be changed, using an existing enum
     CallMemo = 150,
-
+    CashCollaterizedRequest = 153,
     //New Id's for existing Enumn that were edited
 
     AnnualReview = 200, //formerly id= 114
