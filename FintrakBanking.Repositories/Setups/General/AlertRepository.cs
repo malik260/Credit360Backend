@@ -829,32 +829,34 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public void validateAlertCheck()
         {
-            GetLoanExpirationReminder(); 
+            /*GetLoanExpirationReminder(); 
             GetUnpaidObligationReminder();
             GetLoanRepaymentReminder();
-            GetImminentMaturitiesAlertEmail();
+            GetImminentMaturitiesAlertEmail();*/
 
-            GetImminentMaturities();
-            GetCreditCardMaturingObligations();
-            GetExpiringFacilityReport();
-            GetUnAuthorizedOverdraftReport();
-            GetOverlineMonitoringReport();
-            GetCreditCardDelinquencyMonitoringReport();
-            GetPastDueObligationsReminder();
-            GetRiskAssetsReportNotification();
-            GetDashboardReportNotification();
-            GetCACReport();
-            GetOverlineCreditCardPosition();
-            GetPastDueFacilitiesNotification();
-            GetExpiredFacilityNotification();
+            //GetImminentMaturities();
+            //GetCreditCardMaturingObligations();
+            //GetExpiringFacilityReport();
+            //GetUnAuthorizedOverdraftReport();
+            //GetOverlineMonitoringReport();
+            //GetCreditCardDelinquencyMonitoringReport();
+            //GetPastDueObligationsReminder();
+            //GetRiskAssetsReportNotification();
+            //GetDashboardReportNotification();
+            //GetCACReport();
+            //GetOverlineCreditCardPosition();
+            //GetPastDueFacilitiesNotification();
+            //GetExpiredFacilityNotification();
+            //GetLoanExpirationReminderAccountOfficer();
+            //GetLoanRepaymentReminderAccountOfficer();
+            //GetUnpaidObligationReminderAccountOfficer();
+            //GetOverlineReminder();
+            //GetMaturingObligationsReport();
+            //GetOverlineFacilityNotification();
+            //GetImminentObligationMaturityFacilityNotification();
+            //GetNplOnCreditPortfolio();
             GetLoanExpirationReminderAccountOfficer();
-            GetLoanRepaymentReminderAccountOfficer();
-            GetUnpaidObligationReminderAccountOfficer();
-            GetOverlineReminder();
-            GetMaturingObligationsReport();
-            GetOverlineFacilityNotification();
-            GetImminentObligationMaturityFacilityNotification();
-            GetNplOnCreditPortfolio();
+
         }
 
         private string GetBusinessUsersEmails(string accountOfficerMIsCode)
@@ -1234,10 +1236,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     result = result + $"</table>";
 
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
-                    alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+                    alertTemplate = alertTemplate.Replace("@{{accountNumber}}", result);
 
-                    var emailList2 = "benjamin.gbaaikye@fintraksoftware.com";// emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                    alert.receiverEmailList.Add(emailList2);
+                    emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                    alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
