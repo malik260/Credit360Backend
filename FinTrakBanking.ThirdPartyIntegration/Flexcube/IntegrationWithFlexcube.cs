@@ -507,8 +507,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     return result;
                 }
             }
-            catch
-            {
+            catch {
                 throw new APIErrorException(result.errorDesc);
             }
             return result;
@@ -1005,8 +1004,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             List<RatingAndRatioViewModel> customerRatio = new List<RatingAndRatioViewModel>();
 
-            try
-            {
+            try {
                 Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode)).GetAwaiter().GetResult();
                 return customerRatio;
             }
@@ -1029,14 +1027,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
 
-            try
-            {
+            try {
                 Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
                 return customerRating;
             }
-            catch (APIErrorException)
-            {
+            catch (APIErrorException) {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
         }
@@ -1045,14 +1041,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
 
-            try
-            {
+            try {
                 Task.Run(async () => autoLoan = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
                 return autoLoan;
             }
-            catch (APIErrorException)
-            {
+            catch (APIErrorException) {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
 
@@ -1063,14 +1057,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
 
-            try
-            {
+            try {
                 Task.Run(async () => personalLoan = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
                .GetAwaiter().GetResult();
                 return personalLoan;
             }
-            catch (APIErrorException)
-            {
+            catch (APIErrorException) {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
 
@@ -1080,14 +1072,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
 
-            try
-            {
+            try {
                 Task.Run(async () => creditCard = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
                 return creditCard;
             }
-            catch (APIErrorException)
-            {
+            catch (APIErrorException) {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
 
@@ -1107,13 +1097,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
-            try
-            {
+            try {
                 Task.Run(async () => accounts = await customer.GetCustomerTransactions(accountNumber, durationInMonths))?.GetAwaiter().GetResult();
                 return accounts;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 throw new ConditionNotMetException("Core Banking API error, Kindly contact system administartor!");
             }
         }
