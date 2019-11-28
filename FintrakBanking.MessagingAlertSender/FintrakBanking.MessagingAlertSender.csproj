@@ -118,7 +118,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ServiceEngine.cs" />
+    <Compile Include="ServiceEngine.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ServiceEngine.Designer.cs">
       <DependentUpon>ServiceEngine.cs</DependentUpon>
     </Compile>

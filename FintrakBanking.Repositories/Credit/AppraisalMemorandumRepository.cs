@@ -2176,7 +2176,6 @@ namespace FintrakBanking.Repositories.Credit
 
             var query = new List<LoanApplicationViewModel>();
             var loggedOnStaff = context.TBL_STAFF.Find(staffId);
-
             // query
             if (loggedOnStaff.STAFFROLEID == 6) {
                 query = context.TBL_LOAN_APPLICATION.Where(x =>
@@ -2253,9 +2252,20 @@ namespace FintrakBanking.Repositories.Credit
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                 customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                 customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+                customerTypeId = x.a.LOANAPPLICATIONTYPEID,
                 operationId = x.a.OPERATIONID,
+                customerAccount = "N/A",
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
                 tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
+                loanTermSheetId = x.a.LOANTERMSHEETID,
+                ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
+                loansWithOthers = x.a.LOANSWITHOTHERS,
+                requireCollateral = x.a.REQUIRECOLLATERAL,
+                requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
+                isadhocapplication = x.a.ISADHOCAPPLICATION,
+                //loanApprovedLimitId = x.a.APPLICATIONAMOUNT,
+                regionId = x.a.CAPREGIONID,
+                collateralDetail = x.a.COLLATERALDETAIL,
                 //jumpedDestination = x.b.OPERATIONID == (short)OperationsEnum.InitiationLevelAppraisal,
                 globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
@@ -2340,6 +2350,16 @@ namespace FintrakBanking.Repositories.Credit
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                 customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                 customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+                customerTypeId = x.a.LOANAPPLICATIONTYPEID,
+                isInvestmentGrade = x.a.ISINVESTMENTGRADE,
+                loantermSheetId = x.a.LOANTERMSHEETID,
+                loansWithOthers = x.a.LOANSWITHOTHERS,
+                ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
+                requireCollateral = x.a.REQUIRECOLLATERAL,
+                regionId = x.a.CAPREGIONID,
+                collateralDetail = x.a.COLLATERALDETAIL,
+                isadhocapplication = x.a.ISADHOCAPPLICATION,
+                requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
                 operationId = x.a.OPERATIONID,
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
                 tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,

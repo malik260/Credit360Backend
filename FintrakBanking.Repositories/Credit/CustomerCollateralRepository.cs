@@ -3280,54 +3280,53 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
-                var collateral = (from x in context.TBL_COLLATERAL_INDEMNITY
+                var collateral = (from x in context.TBL_COLLATERAL_DOMICILIATION
                                   where x.COLLATERALCUSTOMERID == collateralId
                                   select (x)).FirstOrDefault();
-
                 if (collateral != null)
                 {
+                    collateral.COLLATERALCUSTOMERID = collateralId;
+                    collateral.CONTRACTDETAILS = entity.contractDetail;
+                    collateral.EMPLOYER = entity.contractEmployer;
+                    collateral.CONTRACTVALUE = entity.contractValue;
+                    collateral.OUTSTANDINGINVOICEAMOUNT = entity.outstandingInvoiceAmount;
+                    collateral.ACCOUNTNAMETODEBIT = entity.accountNameToDebit;
+                    collateral.PAYER = entity.payer;
+                    collateral.ACCOUNTNUMBERTODEBIT = entity.accountNumberToDebit;
+                    collateral.REGULARPAYMENTAMOUNT = entity.regularPaymentAmount;
+                    collateral.FREQUENCYTYPEID = entity.renewalFrequencyTypeId;
+                    collateral.INVOICENUMBER = entity.invoiceNumber;
                     collateral.SECURITYVALUE = entity.securityValue;
+                    collateral.INVOICEDATE = entity.invoiceDate;
+                    //APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing,
                     collateral.REMARK = entity.remark;
-                    collateral.ADDRESS = entity.address;
-                    collateral.BVN = entity.bvn;
-                    collateral.EMAILADRRESS = entity.emailAddress;
-                    collateral.ENDDATE = entity.endDate;
-                    collateral.STARTDATE = entity.startDate;
-                    collateral.FIRSTNAME = entity.firstName;
-                    collateral.MIDDLENAME = entity.middleName;
-                    collateral.LASTNAME = entity.lastName;
-                    collateral.PHONENUMBER1 = entity.phoneNumber1;
-                    collateral.PHONENUMBER2 = entity.phoneNumber2;
-                    collateral.RELATIONSHIPDURATION = entity.relationshipDuration;
-                    collateral.RELATIONSHIP = entity.relationship;
-                    collateral.TAXNUMBER = entity.taxNumber;
                     collateral.DESCRIPTION = entity.description;
-                    comment = $"New domiciliation contract collateral type has been created through loan application by {entity.createdBy} staffid";
+                    comment = $"New Salary Domiciliation collateral type has been update through loan application by {entity.createdBy} staffid";
+
                 }
                 else
                 {
-                    context.TBL_COLLATERAL_INDEMNITY.Add(new TBL_COLLATERAL_INDEMNITY
+                    context.TBL_COLLATERAL_DOMICILIATION.Add(new TBL_COLLATERAL_DOMICILIATION
                     {
                         COLLATERALCUSTOMERID = collateralId,
+                        CONTRACTDETAILS = entity.contractDetail,
+                        EMPLOYER = entity.contractEmployer,
+                        CONTRACTVALUE = entity.contractValue,
+                        OUTSTANDINGINVOICEAMOUNT = entity.outstandingInvoiceAmount,
+                        ACCOUNTNAMETODEBIT = entity.accountNameToDebit,
+                        PAYER = entity.payer,
+                        ACCOUNTNUMBERTODEBIT = entity.accountNumberToDebit,
+                        REGULARPAYMENTAMOUNT = entity.regularPaymentAmount,
+                        FREQUENCYTYPEID = entity.renewalFrequencyTypeId,
+                        INVOICENUMBER = entity.invoiceNumber,
                         SECURITYVALUE = entity.securityValue,
-                        ADDRESS = entity.address,
-                        BVN = entity.bvn,
-                        EMAILADRRESS = entity.emailAddress,
-                        ENDDATE = entity.endDate,
-                        STARTDATE = entity.startDate,
-                        FIRSTNAME = entity.firstName,
-                        MIDDLENAME = entity.middleName,
-                        LASTNAME = entity.lastName,
-                        PHONENUMBER1 = entity.phoneNumber1,
-                        PHONENUMBER2 = entity.phoneNumber2,
-                        RELATIONSHIPDURATION = entity.relationshipDuration,
-                        RELATIONSHIP = entity.relationship,
-                        TAXNUMBER = entity.taxNumber,
+                        INVOICEDATE = entity.invoiceDate,
                         REMARK = entity.remark,
-                        DESCRIPTION = entity.description
-                    });
+                        DESCRIPTION = entity.description,
 
-                    comment = $"New domiciliation contract collateral type has been created through loan application by {entity.createdBy} staffid";
+                    });
+                    comment = $"New Salary Domiciliation collateral type has been created through loan application by {entity.createdBy} staffid";
+
                 }
             }
             else
@@ -3960,6 +3959,7 @@ namespace FintrakBanking.Repositories.Credit
                 outstandingInvoiceAmount = collateral.OUTSTANDINGINVOICEAMOUNT,
                 accountNameToDebit = collateral.ACCOUNTNAMETODEBIT,
                 payer = collateral.PAYER,
+                renewalFrequencyTypeId = collateral.FREQUENCYTYPEID,
                 accountNumberToDebit = collateral.ACCOUNTNUMBERTODEBIT,
                 regularPaymentAmount = collateral.REGULARPAYMENTAMOUNT,
                 interval = collateral.TBL_FREQUENCY_TYPE.MODE,

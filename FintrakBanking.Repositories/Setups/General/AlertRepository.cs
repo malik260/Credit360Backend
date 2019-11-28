@@ -829,31 +829,33 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public void validateAlertCheck()
         {
-            /* GetLoanExpirationReminder();
-            GetImminentMaturities();
-            GetCreditCardMaturingObligations();
+            /*GetLoanExpirationReminder(); 
             GetUnpaidObligationReminder();
-            GetExpiringFacilityReport();
-            GetUnAuthorizedOverdraftReport();
-            GetOverlineMonitoringReport();
-            GetCreditCardDelinquencyMonitoringReport();
-            GetPastDueObligationsReminder();
-            GetRiskAssetsReportNotification();
-            GetDashboardReportNotification();
-            GetCACReport();
-            GetOverlineCreditCardPosition();
-            GetPastDueFacilitiesNotification();
-            GetExpiredFacilityNotification();
             GetLoanRepaymentReminder();
-            GetLoanExpirationReminderAccountOfficer();
-            GetLoanRepaymentReminderAccountOfficer();
-            GetUnpaidObligationReminderAccountOfficer();
-            GetOverlineReminder();
-            GetMaturingObligationsReport();
-            GetOverlineFacilityNotification();
-            GetImminentObligationMaturityFacilityNotification();
-            GetNplOnCreditPortfolio();
             GetImminentMaturitiesAlertEmail();*/
+
+            //GetImminentMaturities();
+            //GetCreditCardMaturingObligations();
+            //GetExpiringFacilityReport();
+            //GetUnAuthorizedOverdraftReport();
+            //GetOverlineMonitoringReport();
+            //GetCreditCardDelinquencyMonitoringReport();
+            //GetPastDueObligationsReminder();
+            //GetRiskAssetsReportNotification();
+            //GetDashboardReportNotification();
+            //GetCACReport();
+            //GetOverlineCreditCardPosition();
+            //GetPastDueFacilitiesNotification();
+            //GetExpiredFacilityNotification();
+            //GetLoanExpirationReminderAccountOfficer();
+            //GetLoanRepaymentReminderAccountOfficer();
+            //GetUnpaidObligationReminderAccountOfficer();
+            //GetOverlineReminder();
+            //GetMaturingObligationsReport();
+            //GetOverlineFacilityNotification();
+            //GetImminentObligationMaturityFacilityNotification();
+            //GetNplOnCreditPortfolio();
+            GetLoanExpirationReminderAccountOfficer();
 
         }
 
@@ -1234,10 +1236,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     result = result + $"</table>";
 
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
-                    alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+                    alertTemplate = alertTemplate.Replace("@{{accountNumber}}", result);
 
-                    var emailList2 = "benjamin.gbaaikye@fintraksoftware.com";// emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                    alert.receiverEmailList.Add(emailList2);
+                    emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                    alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
@@ -2327,13 +2329,13 @@ namespace FintrakBanking.Repositories.Setups.General
                         sumTotal = sumTotal + Convert.ToDecimal(t.NPL);
                         innerPercent = (Convert.ToDecimal((t.NPL / sumTotal) * 100)).ToString("0.00%");
                         percentage = ((sumTotal / overallTotal) * 100).ToString("0.00%");
-                        
+
                         result = result + $@"
                         <tr>
                             <td>{n}</td>
                             <td>{t.CUSTOMERNAME}</td>
                             <td>{t.REFERENCENUMBER}</td>
-                            <td>{innerPercent}%</td>
+                            <td>{t.NPL}</td>
                         </tr>
                         ";
                     }

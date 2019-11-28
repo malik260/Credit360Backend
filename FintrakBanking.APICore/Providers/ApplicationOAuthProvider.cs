@@ -581,9 +581,37 @@ namespace FintrakBanking.APICore.Providers
                         identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
                         identity.AddClaim(new Claim(ClaimTypes.Name, userName));
 
+                        var logs = new TBL_CUSTOM_API_LOGS
+                        {
+                            APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
+                            LOGTYPEID = 4,
+                            REFERENCENUMBER = "",
+                            REQUESTDATETIME = DateTime.UtcNow,
+                            REQUESTMESSAGE = "AD Login Success",
+                            RESPONSEDATETIME = DateTime.UtcNow,
+                            RESPONSEMESSAGE = "AD Login from "+ userName +" was successful",
+                        };
+
+                        FinTrakBankingContext logContext = new FinTrakBankingContext();
+                        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                        logContext.SaveChanges();
                     }
                     else
                     {
+                        var logs = new TBL_CUSTOM_API_LOGS
+                        {
+                            APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
+                            LOGTYPEID = 4,
+                            REFERENCENUMBER = "",
+                            REQUESTDATETIME = DateTime.UtcNow,
+                            REQUESTMESSAGE = "AD Login Failed",
+                            RESPONSEDATETIME = DateTime.UtcNow,
+                            RESPONSEMESSAGE = "AD Login from " + userName + " was not successful",
+                        };
+
+                        FinTrakBankingContext logContext = new FinTrakBankingContext();
+                        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                        logContext.SaveChanges();
                         identity = null;
                     }
 
@@ -600,10 +628,40 @@ namespace FintrakBanking.APICore.Providers
                         {
                             identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
                             identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+
+                            var logs = new TBL_CUSTOM_API_LOGS
+                            {
+                                APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
+                                LOGTYPEID = 4,
+                                REFERENCENUMBER = "",
+                                REQUESTDATETIME = DateTime.UtcNow,
+                                REQUESTMESSAGE = "AD Login Success",
+                                RESPONSEDATETIME = DateTime.UtcNow,
+                                RESPONSEMESSAGE = "AD Login from " + userName + " was successful",
+                            };
+
+                            FinTrakBankingContext logContext = new FinTrakBankingContext();
+                            logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                            logContext.SaveChanges();
                         }
                         else
                         {
                             identity = null;
+
+                            var logs = new TBL_CUSTOM_API_LOGS
+                            {
+                                APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
+                                LOGTYPEID = 4,
+                                REFERENCENUMBER = "",
+                                REQUESTDATETIME = DateTime.UtcNow,
+                                REQUESTMESSAGE = "AD Login Failed",
+                                RESPONSEDATETIME = DateTime.UtcNow,
+                                RESPONSEMESSAGE = "AD Login from " + userName + " was not successful",
+                            };
+
+                            FinTrakBankingContext logContext = new FinTrakBankingContext();
+                            logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                            logContext.SaveChanges();
                         }
 
                         return isValid;

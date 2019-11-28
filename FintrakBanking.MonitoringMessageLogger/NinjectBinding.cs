@@ -66,7 +66,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
-namespace FintrakBanking.MonitoringMessagesSender
+namespace FintrakBanking.MonitoringMessageLogger
 {
     public class NinjectBinding : NinjectModule
     {
