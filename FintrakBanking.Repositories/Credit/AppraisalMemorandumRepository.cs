@@ -2176,7 +2176,6 @@ namespace FintrakBanking.Repositories.Credit
 
             var query = new List<LoanApplicationViewModel>();
             var loggedOnStaff = context.TBL_STAFF.Find(staffId);
-
             // query
             if (loggedOnStaff.STAFFROLEID == 6) {
                 query = context.TBL_LOAN_APPLICATION.Where(x =>
