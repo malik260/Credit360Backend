@@ -25,7 +25,6 @@ namespace FintrakBanking.MessagingAlertSender
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
         AlertMessageLogger logger = new AlertMessageLogger();
         
-        // CurrencyAndRateUpdate currencyAndRateUpdate = new CurrencyAndRateUpdate();
         public WindowService()
         {
         }
