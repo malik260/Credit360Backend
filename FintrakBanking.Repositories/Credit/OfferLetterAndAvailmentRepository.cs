@@ -3295,7 +3295,8 @@ namespace FintrakBanking.Repositories.Credit
                 else
                 {
                     TBL_LOAN_OFFER_LETTER offerLetterExists = new TBL_LOAN_OFFER_LETTER();
-                    offerLetterExists = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId && o.ISLMS == isLMS).FirstOrDefault();
+                    //offerLetterExists = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId && o.ISLMS == isLMS).FirstOrDefault();
+                    offerLetterExists = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).FirstOrDefault();
                     offerLetterExists.OFFERLETTERACCEPTANCE = detail.offerLetteracceptance;
                     offerLetterExists.OFFERLETTERCLAUSES = detail.offerLetterClauses;
                     offerLetterExists.LASTUPDATEDBY = staffId;

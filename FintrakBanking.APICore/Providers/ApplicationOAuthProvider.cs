@@ -585,11 +585,11 @@ namespace FintrakBanking.APICore.Providers
                         {
                             APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
                             LOGTYPEID = 4,
-                            REFERENCENUMBER = "",
+                            REFERENCENUMBER = userName,
                             REQUESTDATETIME = DateTime.UtcNow,
-                            REQUESTMESSAGE = "AD Login Success",
+                            REQUESTMESSAGE = userName,
                             RESPONSEDATETIME = DateTime.UtcNow,
-                            RESPONSEMESSAGE = "AD Login from "+ userName +" was successful",
+                            RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Success!",
                         };
 
                         FinTrakBankingContext logContext = new FinTrakBankingContext();
@@ -602,11 +602,11 @@ namespace FintrakBanking.APICore.Providers
                         {
                             APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
                             LOGTYPEID = 4,
-                            REFERENCENUMBER = "",
+                            REFERENCENUMBER = userName,
                             REQUESTDATETIME = DateTime.UtcNow,
-                            REQUESTMESSAGE = "AD Login Failed",
+                            REQUESTMESSAGE = userName,
                             RESPONSEDATETIME = DateTime.UtcNow,
-                            RESPONSEMESSAGE = "AD Login from " + userName + " was not successful",
+                            RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Failed!",
                         };
 
                         FinTrakBankingContext logContext = new FinTrakBankingContext();
@@ -633,11 +633,11 @@ namespace FintrakBanking.APICore.Providers
                             {
                                 APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
                                 LOGTYPEID = 4,
-                                REFERENCENUMBER = "",
+                                REFERENCENUMBER = userName,
                                 REQUESTDATETIME = DateTime.UtcNow,
-                                REQUESTMESSAGE = "AD Login Success",
+                                REQUESTMESSAGE = userName,
                                 RESPONSEDATETIME = DateTime.UtcNow,
-                                RESPONSEMESSAGE = "AD Login from " + userName + " was successful",
+                                RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Success!",
                             };
 
                             FinTrakBankingContext logContext = new FinTrakBankingContext();
@@ -652,11 +652,11 @@ namespace FintrakBanking.APICore.Providers
                             {
                                 APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
                                 LOGTYPEID = 4,
-                                REFERENCENUMBER = "",
+                                REFERENCENUMBER = userName,
                                 REQUESTDATETIME = DateTime.UtcNow,
-                                REQUESTMESSAGE = "AD Login Failed",
+                                REQUESTMESSAGE = userName,
                                 RESPONSEDATETIME = DateTime.UtcNow,
-                                RESPONSEMESSAGE = "AD Login from " + userName + " was not successful",
+                                RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Failed!",
                             };
 
                             FinTrakBankingContext logContext = new FinTrakBankingContext();
