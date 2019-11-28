@@ -3891,11 +3891,10 @@ namespace FintrakBanking.Repositories.Credit
             var applications = (from x in context.TBL_LOAN_APPLICATION
                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                 join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                               // join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
-                                where 
+                                // join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
                                 //y.RESPONSESTAFFID == null && operations.Contains(y.OPERATIONID)
                                 //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
-                                && (x.APPLICATIONREFERENCENUMBER == searchString
+                                where (x.APPLICATIONREFERENCENUMBER == searchString
                                 || c.FIRSTNAME.ToLower().Contains(searchString)
                                 || c.LASTNAME.ToLower().Contains(searchString)
                                 || c.MIDDLENAME.ToLower().Contains(searchString)
@@ -3928,11 +3927,14 @@ namespace FintrakBanking.Repositories.Credit
                                     approvalStatusId = (short)x.APPROVALSTATUSID,
                                     approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
 
-                                    currentApprovalLevel = (from t in context.TBL_APPROVAL_TRAIL join al in context.TBL_APPROVAL_LEVEL on t.TOAPPROVALLEVELID equals al.APPROVALLEVELID where t.TARGETID == x.LOANAPPLICATIONID && t.OPERATIONID ==x.OPERATIONID select al.LEVELNAME).LastOrDefault(), //y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
-                                    approvalTrailId = (from t in context.TBL_APPROVAL_TRAIL join al in context.TBL_APPROVAL_LEVEL on t.FROMAPPROVALLEVELID equals al.APPROVALLEVELID where t.TARGETID == x.LOANAPPLICATIONID && t.OPERATIONID == x.OPERATIONID select t.APPROVALTRAILID).LastOrDefault(),
-                                   // y.APPROVALTRAILID,
+                                    currentApprovalLevel = (from t in context.TBL_APPROVAL_TRAIL join al in context.TBL_APPROVAL_LEVEL on t.TOAPPROVALLEVELID equals al.APPROVALLEVELID where t.TARGETID == x.LOANAPPLICATIONID && t.OPERATIONID ==x.OPERATIONID orderby t.APPROVALTRAILID descending select al.LEVELNAME).FirstOrDefault(), //y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                                    approvalTrailId = (from t in context.TBL_APPROVAL_TRAIL join al in context.TBL_APPROVAL_LEVEL on t.FROMAPPROVALLEVELID equals al.APPROVALLEVELID where t.TARGETID == x.LOANAPPLICATIONID && t.OPERATIONID == x.OPERATIONID orderby t.APPROVALTRAILID descending select t.APPROVALTRAILID).FirstOrDefault(),
+
+                                    //currentApprovalLevel = context.TBL_APPROVAL_TRAIL.Join(context.TBL_APPROVAL_LEVEL, at => at.TOAPPROVALLEVELID, al => al.APPROVALLEVELID, (at, al) => new { al.LEVELNAME }).Where(o => o.TARGETID == x.LOANAPPLICATIONID && o.OPERATIONID == x.OPERATIONID), //y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+
+                                    // y.APPROVALTRAILID,
                                     //responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
-                                    responsiblePerson = (from t in context.TBL_APPROVAL_TRAIL join al in context.TBL_APPROVAL_LEVEL on t.FROMAPPROVALLEVELID equals al.APPROVALLEVELID join st in context.TBL_STAFF on t.TOSTAFFID equals st.STAFFID where t.TARGETID == x.LOANAPPLICATIONID && t.OPERATIONID == x.OPERATIONID select $"{st.FIRSTNAME} {st.MIDDLENAME} {st.LASTNAME}  ").LastOrDefault() ?? "n/a",
+                                    responsiblePerson = (from t in context.TBL_APPROVAL_TRAIL join al in context.TBL_APPROVAL_LEVEL on t.FROMAPPROVALLEVELID equals al.APPROVALLEVELID join st in context.TBL_STAFF on t.TOSTAFFID equals st.STAFFID where t.TARGETID == x.LOANAPPLICATIONID && t.OPERATIONID == x.OPERATIONID orderby t.APPROVALTRAILID descending select  st.FIRSTNAME + " " + st.LASTNAME).FirstOrDefault() ?? "n/a",
                                    // y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
 
                                     applicationStatusId = x.APPLICATIONSTATUSID,
