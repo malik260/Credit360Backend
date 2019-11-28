@@ -3859,8 +3859,7 @@ namespace FintrakBanking.Repositories.Credit
                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                 join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                 join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
-                                where y.RESPONSESTAFFID == null
-                                && operations.Contains(y.OPERATIONID)
+                                where y.RESPONSESTAFFID == null && operations.Contains(y.OPERATIONID)
                                 //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
                                 && (x.APPLICATIONREFERENCENUMBER == searchString
                                 || c.FIRSTNAME.ToLower().Contains(searchString)
