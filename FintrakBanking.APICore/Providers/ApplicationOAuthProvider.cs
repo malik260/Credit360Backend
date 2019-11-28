@@ -28,6 +28,7 @@ namespace FintrakBanking.APICore.Providers
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
+        private IAuditTrailRepository auditTrail;
         //private readonly FinTrakBankingContext _bankingContext;
         private TBL_SETUP_GLOBAL appSetup;
         private const string HttpContext = "MS_HttpContext";
@@ -581,38 +582,12 @@ namespace FintrakBanking.APICore.Providers
                         identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
                         identity.AddClaim(new Claim(ClaimTypes.Name, userName));
 
-                        var logs = new TBL_CUSTOM_API_LOGS
-                        {
-                            APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
-                            LOGTYPEID = 4,
-                            REFERENCENUMBER = userName,
-                            REQUESTDATETIME = DateTime.UtcNow,
-                            REQUESTMESSAGE = userName,
-                            RESPONSEDATETIME = DateTime.UtcNow,
-                            RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Success!",
-                        };
-
-                        FinTrakBankingContext logContext = new FinTrakBankingContext();
-                        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-                        logContext.SaveChanges();
+                        SaveToAPIlogSuccess(appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, userName, isValid);
                     }
                     else
                     {
-                        var logs = new TBL_CUSTOM_API_LOGS
-                        {
-                            APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
-                            LOGTYPEID = 4,
-                            REFERENCENUMBER = userName,
-                            REQUESTDATETIME = DateTime.UtcNow,
-                            REQUESTMESSAGE = userName,
-                            RESPONSEDATETIME = DateTime.UtcNow,
-                            RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Failed!",
-                        };
-
-                        FinTrakBankingContext logContext = new FinTrakBankingContext();
-                        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-                        logContext.SaveChanges();
                         identity = null;
+                        SaveToAPIlogFail(appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, userName, isValid);
                     }
 
                     return isValid;
@@ -629,39 +604,12 @@ namespace FintrakBanking.APICore.Providers
                             identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
                             identity.AddClaim(new Claim(ClaimTypes.Name, userName));
 
-                            var logs = new TBL_CUSTOM_API_LOGS
-                            {
-                                APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
-                                LOGTYPEID = 4,
-                                REFERENCENUMBER = userName,
-                                REQUESTDATETIME = DateTime.UtcNow,
-                                REQUESTMESSAGE = userName,
-                                RESPONSEDATETIME = DateTime.UtcNow,
-                                RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Success!",
-                            };
-
-                            FinTrakBankingContext logContext = new FinTrakBankingContext();
-                            logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-                            logContext.SaveChanges();
+                            SaveToAPIlogSuccess(appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, userName, isValid);
                         }
                         else
                         {
                             identity = null;
-
-                            var logs = new TBL_CUSTOM_API_LOGS
-                            {
-                                APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
-                                LOGTYPEID = 4,
-                                REFERENCENUMBER = userName,
-                                REQUESTDATETIME = DateTime.UtcNow,
-                                REQUESTMESSAGE = userName,
-                                RESPONSEDATETIME = DateTime.UtcNow,
-                                RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Failed!",
-                            };
-
-                            FinTrakBankingContext logContext = new FinTrakBankingContext();
-                            logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-                            logContext.SaveChanges();
+                            SaveToAPIlogFail(appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, userName, isValid);
                         }
 
                         return isValid;
@@ -671,7 +619,42 @@ namespace FintrakBanking.APICore.Providers
             return false;
         }
 
+     public void SaveToAPIlogSuccess(string domain, string userName, bool isValid)
+        {
+            var logs = new TBL_CUSTOM_API_LOGS
+            {
+                APIURL = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME,
+                LOGTYPEID = 4,
+                REFERENCENUMBER = userName,
+                REQUESTDATETIME = DateTime.UtcNow,
+                REQUESTMESSAGE = userName,
+                RESPONSEDATETIME = DateTime.UtcNow,
+                RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Success!",
+            };
 
+            FinTrakBankingContext logContext = new FinTrakBankingContext();
+            logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+            logContext.SaveChanges();
+        }
+
+        public void SaveToAPIlogFail(string domain, string userName, bool isValid)
+        {
+            var logs = new TBL_CUSTOM_API_LOGS
+            {
+                APIURL = domain,
+                LOGTYPEID = 4,
+                REFERENCENUMBER = userName,
+                REQUESTDATETIME = DateTime.UtcNow,
+                REQUESTMESSAGE = userName,
+                RESPONSEDATETIME = DateTime.UtcNow,
+                RESPONSEMESSAGE = $"{isValid.ToString()}; AD Login Failed!",
+            };
+            
+            FinTrakBankingContext logContext = new FinTrakBankingContext();
+            logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+            logContext.SaveChanges();
+
+        }
     }
 }
 
