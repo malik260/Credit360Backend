@@ -11,7 +11,7 @@ using Topshelf.Logging;
 using Timer = System.Timers.Timer;
 
 
-namespace FintrakBanking.MonitoringMessagesSender
+namespace FintrakBanking.MessagingAlertSender
 {
     public class WindowService : ServiceControl
     {
@@ -62,7 +62,6 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
-                   //alert.validateAlertCheck();
                    // SEND EMAILS
                     bool response = emailSender.SendEmails();
                     if (response == true)

@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Topshelf.Logging;
 
-namespace FintrakBanking.MonitoringMessagesSender
+namespace FintrakBanking.MessagingAlertSender
 {
     partial class ServiceEngine : ServiceBase
     {
