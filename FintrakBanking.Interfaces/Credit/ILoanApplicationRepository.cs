@@ -53,7 +53,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId);
 
-        IEnumerable<LoanApplicationViewModel> Search(string searchString);
+        //IEnumerable<LoanApplicationViewModel> Search(string searchString);
+
+        List<LoanApplicationViewModel> Search(string searchString, int staffId = 0);
+
 
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
         string GetRefrenceNumber();
