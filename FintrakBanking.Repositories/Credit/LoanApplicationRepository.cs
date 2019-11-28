@@ -668,6 +668,36 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public bool SendApplicationToEdit(int loanApplicationId, int operationId, int accountOfficerId)
+        {
+            var loan = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
+            if (loan == null)
+            {
+                throw new SecureException("This Loan doesn't exist on the System");
+            }
+
+            if (loan.CREATEDBY != accountOfficerId)
+            {
+                throw new SecureException("You cannot modify a Loan you didn't initiate!");
+            }
+
+            var trail = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == loanApplicationId && t.OPERATIONID == operationId).OrderByDescending(t => t.APPROVALTRAILID).FirstOrDefault();
+            if (trail != null)
+            {
+                trail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                trail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                trail.VOTE = (int)ApprovalStatusEnum.Referred;
+                trail.COMMENT = "Sent to Applications to edit Application with loan Referrence Id: " + loan.APPLICATIONREFERENCENUMBER;
+                trail.SYSTEMRESPONSEDATETIME = DateTime.Now;
+                trail.RESPONSEDATE = DateTime.Now;
+                trail.RESPONSESTAFFID = accountOfficerId;
+            }
+
+            loan.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress;
+            loan.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+            return context.SaveChanges() > 0;
+        }
+
         public IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId)
         {
             var data = from a in context.TBL_LOAN_APPLICATION

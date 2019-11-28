@@ -43,6 +43,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId);
 
         IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId);
+        bool SendApplicationToEdit(int loanApplicationId, int operationId, int accountOfficerId);
 
         IEnumerable<LoanApplicationViewModel> FindLoanApplication(string referenceNumberOrName, int companyId);
 
