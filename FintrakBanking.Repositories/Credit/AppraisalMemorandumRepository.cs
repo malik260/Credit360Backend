@@ -1492,25 +1492,26 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool getAll = false)
         {
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
-            var staffs = context.TBL_STAFF.ToList(); 
-             int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.InterestPastDueLoanRepayment,
-                    (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-                (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
-                (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.BondsAndGuarantees,
-                    (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
-                ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval, (int)OperationsEnum.SecurityRelease,
-                (int)OperationsEnum.AtcReleaseApproval, (int)OperationsEnum.AtcLodgementApproval, (int)OperationsEnum.OriginalDocumentApproval,
-                (int)OperationsEnum.ProjectSiteReportApproval};
+            var staffs = from s in context.TBL_STAFF select s; 
+             //int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.InterestPastDueLoanRepayment,
+             //       (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
+             //   (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
+             //   (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.BondsAndGuarantees,
+             //       (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
+             //   ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval, (int)OperationsEnum.SecurityRelease,
+             //   (int)OperationsEnum.AtcReleaseApproval, (int)OperationsEnum.AtcLodgementApproval, (int)OperationsEnum.OriginalDocumentApproval,
+             //   (int)OperationsEnum.ProjectSiteReportApproval, (int) OperationsEnum.TemporaryOverdraftRequest };
             
             var allstaff = this.GetAllStaffNames();
 
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
            // List<TBL_APPROVAL_TRAIL> trail = new List<TBL_APPROVAL_TRAIL>();
 
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId ).ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.OPERATIONID && x.TARGETID == applicationId ).ToList();
             }
 
             var data =  trail.Select(x => new ApprovalTrailViewModel
