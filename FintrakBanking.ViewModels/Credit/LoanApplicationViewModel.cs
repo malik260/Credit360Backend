@@ -23,6 +23,9 @@ namespace FintrakBanking.ViewModels.Credit
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
 
+        public bool owner { get; set; }
+        public int currentOperationId { get; set; }
+
         public bool jumpedDestination { get; set; }
         public bool failedRacStartCam { get; set; }
         public bool isNewApplication { get; set; }

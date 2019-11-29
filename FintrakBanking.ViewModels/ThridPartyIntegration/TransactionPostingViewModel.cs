@@ -275,6 +275,9 @@ public class LienProcessViewModel //: GeneralEntity
         public bool TransactionIsSuccessfull { get; set; }
         public string TransactionMessage { get; set; }
         public string responseMessage { get; set; }
+
+        public CRMSCreditCheckViewModel responseObject { get; set; }
+
     }
 
 
@@ -285,6 +288,8 @@ public class LienProcessViewModel //: GeneralEntity
         
         public string responseMessage { get; set; }
         public string responseCode { get; set; }
+
+        public CRMSCreditCheckViewModel responseObject { get; set; }
     }
 
     public class AccountCreationRespones

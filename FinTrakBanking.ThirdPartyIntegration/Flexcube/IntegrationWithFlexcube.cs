@@ -690,11 +690,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
             ResponseMessage result = null;
             Task.Run(async () => result = await transaction.FlexcubeCreditCheck(model)).GetAwaiter().GetResult();
 
-            if (result.APIResponse != null)
+            if (result.responseMessage != null)
             {
-                if (result.APIResponse.responseStatus)
+                if (result.APIStatus)
                 {
-                    return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode, responseMessage = result.responseMessage };
+                    return new PostingResult { posted = true, responseCode = "0", responseMessage = result.responseMessage, responseObject = result.responseObject };
                 }
                 else
                 {
