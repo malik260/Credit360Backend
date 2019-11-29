@@ -64,53 +64,59 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId, int operationId, int targetId)
         {
-            return docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
-                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
-                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => 
-                    new {
-                        documentUploadId = up.DOCUMENTUPLOADID,
-                        fileName = up.FILENAME,
-                        fileExtension = up.FILEEXTENSION,
-                        fileSize = up.FILESIZE,
-                        fileSizeUnit = up.FILESIZEUNIT,
-                        fileData = up.FILEDATA,
-                        companyId = up.COMPANYID,
-                        issueDate = up.ISSUEDATE,
-                        expiryDate = up.EXPIRYDATE,
-                        physicalFilenumber = up.PHYSICALFILENUMBER,
-                        physicalLocation = up.PHYSICALLOCATION,
-                        documentTypeId = up.DOCUMENTTYPEID,
-                        documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
-                        documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
-                        documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                        owner = us.CREATEDBY == staffId,
-                        dateTimeCreated = us.DATETIMECREATED,
-                        dateTimeUpdated = us.DATETIMEUPDATED,
-                        createdBy = us.CREATEDBY.Value,
+            //return docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+            //    .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
+            //    , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => 
+               return (from x in docContext.TBL_DOCUMENT_USAGE 
+                       join b in docContext.TBL_DOCUMENT_UPLOAD on x.DOCUMENTUPLOADID equals b.DOCUMENTUPLOADID
+                       join c in context.TBL_CUSTOMER on x.CUSTOMERCODE equals c.CUSTOMERCODE
+                       join cb in context.TBL_CUSTOMER_CREDIT_BUREAU on c.CUSTOMERID equals cb.CUSTOMERID
+                       where (x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId && b.DELETED == false)
+                    select new {
+                        documentUploadId = b.DOCUMENTUPLOADID,
+                        fileName = b.FILENAME,
+                        fileExtension = b.FILEEXTENSION,
+                        fileSize = b.FILESIZE,
+                        fileSizeUnit = b.FILESIZEUNIT,
+                        fileData = b.FILEDATA,
+                        companyId = b.COMPANYID,
+                        issueDate = b.ISSUEDATE,
+                        expiryDate = b.EXPIRYDATE,
+                        physicalFilenumber = b.PHYSICALFILENUMBER,
+                        physicalLocation = b.PHYSICALLOCATION,
+                        documentTypeId = b.DOCUMENTTYPEID,
+                        documentTypeName = b.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                        documentCategoryId = b.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                        documentCategoryName = b.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                        owner = b.CREATEDBY == staffId,
+                        dateTimeCreated = x.DATETIMECREATED,
+                        dateTimeUpdated = x.DATETIMEUPDATED,
+                        createdBy = x.CREATEDBY.Value,
                     }
-            ).AsEnumerable()
-            .Select(up => new DocumentUploadViewModel
+            )
+            .AsEnumerable()
+            .Select(b => new DocumentUploadViewModel
             {
-                documentUploadId = up.documentUploadId,
-                fileName = up.fileName,
-                fileExtension = up.fileExtension,
-                fileSize = up.fileSize,
-                fileSizeUnit = up.fileSizeUnit,
-                fileData = up.fileData,
-                companyId = up.companyId,
-                issueDate = up.issueDate,
-                expiryDate = up.expiryDate,
-                physicalFilenumber = up.physicalFilenumber,
-                physicalLocation = up.physicalLocation,
-                documentTypeId = up.documentTypeId,
-                documentTypeName = up.documentTypeName,
-                documentCategoryId = up.documentCategoryId,
-                documentCategoryName = up.documentCategoryName,
-                owner = up.owner,
-                dateTimeCreated = up.dateTimeCreated,
-                dateTimeUpdated = up.dateTimeUpdated,
-                createdBy = up.createdBy,
-                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
+                documentUploadId = b.documentUploadId,
+                fileName = b.fileName,
+                fileExtension = b.fileExtension,
+                fileSize = b.fileSize,
+                fileSizeUnit = b.fileSizeUnit,
+                fileData = b.fileData,
+                companyId = b.companyId,
+                issueDate = b.issueDate,
+                expiryDate = b.expiryDate,
+                physicalFilenumber = b.physicalFilenumber,
+                physicalLocation = b.physicalLocation,
+                documentTypeId = b.documentTypeId,
+                documentTypeName = b.documentTypeName,
+                documentCategoryId = b.documentCategoryId,
+                documentCategoryName = b.documentCategoryName,
+                owner = b.owner,
+                dateTimeCreated = b.dateTimeCreated,
+                dateTimeUpdated = b.dateTimeUpdated,
+                createdBy = b.createdBy,
+                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == b.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
 
             })
             .OrderBy(x => x.dateTimeCreated)
