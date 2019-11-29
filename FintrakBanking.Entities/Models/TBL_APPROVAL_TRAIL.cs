@@ -44,7 +44,7 @@ namespace FintrakBanking.Entities.Models
 
         public int OPERATIONID { get; set; }
 
-        //[StringLength(700), Column(name: "COMMENT_")]
+        [Column(name: "COMMENT_")]
         public string COMMENT { get; set; }
 
         public short? VOTE { get; set; }
