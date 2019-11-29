@@ -238,6 +238,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
 
         [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application-types")]
         public HttpResponseMessage GetLoanApplicationTypes()
         {
