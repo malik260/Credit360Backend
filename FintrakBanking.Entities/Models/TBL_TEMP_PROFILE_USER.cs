@@ -7,7 +7,7 @@ namespace FintrakBanking.Entities.Models
     using System.Data.Entity.Spatial;
 
     [Table("TBL_TEMP_PROFILE_USER")]
-    public partial class TBL_TEMP_PROFILE_USER
+    public partial class TBL_TEMP_PROFILE_USER 
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_TEMP_PROFILE_USER()
