@@ -680,6 +680,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string crmsCode { get; set; }
 
+        public string productClassName { get;set;}
+
         public double approvedInterestRate { get; set; }
         public List<feeDetails> fees { get; set; }
 

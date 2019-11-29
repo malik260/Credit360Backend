@@ -209,16 +209,37 @@ namespace FintrakBanking.Repositories.Customer
             var saved = context.SaveChanges() > 0;
         }
 
-        public void refreshCustomerAccount(int customerId)
+        //public void UpdateCustomerCollateralId(string customerCode)
+        //{
+        //    customerCode = customerCode.Trim();
+        //    var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+        //    var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
+        //    foreach(var c in collaterals)
+        //    {
+        //        c.CUSTOMERID = customer.CUSTOMERID;
+        //    }
+        //    var saved = context.SaveChanges() > 0;
+        //}
+
+        public bool refreshCustomerAccount(int customerId)
         {
+            bool result = false;
+
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
 
-            if (customer != null) fetchCustomerAccountBalance(customer);
-        }
-        private void fetchCustomerAccountBalance(TBL_CUSTOMER data)
-        {
+            if (customer != null)
+            {
+                result = fetchCustomerAccountBalance(customer);
+            }
 
-            integration.AddCustomerAccounts(data.CUSTOMERCODE);
+            return result;    
+        }
+        private bool fetchCustomerAccountBalance(TBL_CUSTOMER data)
+        {
+            bool result;
+            result = integration.AddCustomerAccounts(data.CUSTOMERCODE);
+
+            return result;
         }
 
         public bool GetPoliticallyExposedPerson(string customerCode)
@@ -4628,6 +4649,7 @@ namespace FintrakBanking.Repositories.Customer
 
         private bool ApproveCompanyInformation(int modifiedId, int targetId, short approvalStatusId, UserInfo user)
         {
+            var customer = context.TBL_CUSTOMER.Find(targetId);
             var detail = string.Empty;
             var staff = context.TBL_STAFF.Find(user.staffId);
             TBL_CUSTOMER_COMPANYINFOMATION entity = null;
@@ -4646,10 +4668,7 @@ namespace FintrakBanking.Repositories.Customer
 
             if (entity != null) //Update existing customer company information with temp record
             {
-
-
-                detail = $"Approved Company Information for customer with code: : {entity.TBL_CUSTOMER.CUSTOMERCODE} has been updated by {staff.FIRSTNAME} {staff.LASTNAME} ({staff.STAFFCODE})";
-
+                detail = $"Approved Company Information for customer with code: : {customer.CUSTOMERCODE} has been updated by {staff.FIRSTNAME} {staff.LASTNAME} ({staff.STAFFCODE})";
                 entity.ANNUALTURNOVER = temp.ANNUALTURNOVER;
                 entity.COMPANYEMAIL = temp.COMPANYEMAIL;
                 entity.COMPANYNAME = temp.COMPANYNAME;
@@ -4661,6 +4680,23 @@ namespace FintrakBanking.Repositories.Customer
                 entity.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
                 entity.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
                 entity.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+            }
+            else
+            {
+                detail = $"Approved Company Information for customer with code: : {customer.CUSTOMERCODE} has been updated by {staff.FIRSTNAME} {staff.LASTNAME} ({staff.STAFFCODE})";
+                var corporateInfo = new TBL_CUSTOMER_COMPANYINFOMATION();
+                corporateInfo.ANNUALTURNOVER = temp.ANNUALTURNOVER;
+                corporateInfo.COMPANYEMAIL = temp.COMPANYEMAIL;
+                corporateInfo.COMPANYNAME = temp.COMPANYNAME;
+                corporateInfo.COMPANYWEBSITE = temp.COMPANYWEBSITE;
+                corporateInfo.CORPORATEBUSINESSCATEGORY = temp.CORPORATEBUSINESSCATEGORY;
+                corporateInfo.CUSTOMERID = temp.CUSTOMERID;
+                corporateInfo.REGISTEREDOFFICE = temp.REGISTEREDOFFICE;
+                corporateInfo.REGISTRATIONNUMBER = temp.REGISTRATIONNUMBER;
+                corporateInfo.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
+                corporateInfo.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
+                corporateInfo.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+                context.TBL_CUSTOMER_COMPANYINFOMATION.Add(corporateInfo);
             }
 
             //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
@@ -4974,15 +5010,18 @@ namespace FintrakBanking.Repositories.Customer
                     var saved = context.SaveChanges() > 0;
                 }
             }
-            else if (modified.MODIFICATIONTYPEID ==
-                     (int)CustomerInformationTrackerEnum.Employment_History_Modification)
-            {
-                temp = context.TBL_TEMP_CUSTOMEREMPLOYMENT.FirstOrDefault(x => x.TEMPPLACEOFWORKID == targetId);
-                if (temp != null) //If temp record is not null select the information from the main table
-                {
-                    entity = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.FirstOrDefault(x =>
-                        x.PLACEOFWORKID == temp.PLACEOFWORKID);
-                    entity.ACTIVE = temp.ACTIVE;
+            else if 
+                
+                
+                       (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Employment_History_Modification)
+
+                 {
+                               temp = context.TBL_TEMP_CUSTOMEREMPLOYMENT.FirstOrDefault(x => x.TEMPPLACEOFWORKID == targetId);
+                       if (temp != null) //If temp record is not null select the information from the main table
+                 {
+                              entity = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.FirstOrDefault(x =>
+                              x.PLACEOFWORKID == temp.PLACEOFWORKID);
+                              entity.ACTIVE = temp.ACTIVE;
                     entity.CUSTOMERID = temp.CUSTOMERID;
                     entity.EMPLOYDATE = temp.EMPLOYDATE;
                     entity.EMPLOYERADDRESS = temp.EMPLOYERADDRESS;

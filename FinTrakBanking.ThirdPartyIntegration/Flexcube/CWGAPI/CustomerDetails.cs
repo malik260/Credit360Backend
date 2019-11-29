@@ -905,7 +905,7 @@
                     accountNumber,
                     requestTime,
                     responseTime,
-                    "Cif_Id={cifid}&Month={month}",
+                    $"Account Number: {accountNumber}, Duration In Months: {durationInMonths}", //"Cif_Id={cifid}&Month={month}",
                     responseMessage
                 );
 
@@ -998,7 +998,7 @@
                     customerCode,
                     requestTime,
                     responseTime,
-                    "Cif_Id={cifid}&Month={month}",
+                    $"Customer Code: {customerCode}, Duration In Months: {durationInMonths}", //"Cif_Id={cifid}&Month={month}",
                     responseMessage
                 );
 

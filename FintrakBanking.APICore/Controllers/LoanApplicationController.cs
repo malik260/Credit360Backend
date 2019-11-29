@@ -228,6 +228,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("send-to-edit/{loanApplicationId}/{operationId}")]
+        public HttpResponseMessage SendApplicationToEdit(int loanApplicationId, int operationId)
+        {
+            //try
+            //{
+                var data = repo.SendApplicationToEdit(loanApplicationId, operationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Sent To Applications List For Modifications" });
+            //}
+
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            //}
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application-info/application/{id}")]
         public HttpResponseMessage GetLoanApplicationInfo(int id)
         {

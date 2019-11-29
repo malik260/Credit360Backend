@@ -12,6 +12,7 @@
     using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -1142,7 +1143,6 @@
 
                 try
                 {
-
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                     client = new HttpClient();
@@ -1164,17 +1164,26 @@
                     responseDateTime = DateTime.Now;
                     responseMsg = null;
 
-                    if (response.IsSuccessStatusCode && responseJson.Contains("\"creditCheck\":"))
+                    if (response.IsSuccessStatusCode) //&& responseJson.Contains("\"creditCheck\":"))
                     {
-                        responseAPI = await response.Content.ReadAsAsync<ResponseMessageCreditCheckViewModel>();
-                        //responseAPI = await response.Content.ReadAsStringAsync();
+                        //responseAPI = await response.Content.ReadAsAsync<ResponseMessageCreditCheckViewModel>();
+
+                        // save file
+                        var data = "<CreditCheck><Credit><CRMSRefNumber>00082/20080104/89141</CRMSRefNumber><CreditType>Advances/ Overdraft</CreditType><CreditLimit>5000</CreditLimit><OutstandingAmount>0</OutstandingAmount><EffectiveDate>13-11-2007</EffectiveDate><Tenor>null</Tenor><ExpiryDate>01-01-1900</ExpiryDate><GrantingInstitution>Keystone Bank Limited</GrantingInstitution><PerformanceStatus>GOOD</PerformanceStatus></Credit><Credit><CRMSRefNumber>00011/20151211/433391</CRMSRefNumber><CreditType>Advances/ Overdraft</CreditType><CreditLimit>0</CreditLimit><OutstandingAmount>11903.08</OutstandingAmount><EffectiveDate>31-12-1999</EffectiveDate><Tenor>null</Tenor><ExpiryDate>04-04-2015</ExpiryDate><GrantingInstitution>First Bank Plc</GrantingInstitution><PerformanceStatus>BAD</PerformanceStatus></Credit><Credit><CRMSRefNumber>00011/20161007/560963</CRMSRefNumber><CreditType>Fixed Term Loan</CreditType><CreditLimit>9036744.86</CreditLimit><OutstandingAmount>4.06</OutstandingAmount><EffectiveDate>29-09-2016</EffectiveDate><Tenor>null</Tenor><ExpiryDate>28-04-2018</ExpiryDate><GrantingInstitution>First Bank Plc</GrantingInstitution><PerformanceStatus>BAD</PerformanceStatus></Credit><Summary>Total Number of Credits: 3 | Total Number of Performing Credits: 1 | Total Number of Non-Performing Credits: 2</Summary></CreditCheck>";
+
+                        var dataArray = Encoding.ASCII.GetBytes(data);
+                        System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof (CRMSCreditCheckViewModel));
+                        StringReader rdr = new StringReader(data);
+                        CRMSCreditCheckViewModel responseObject = (CRMSCreditCheckViewModel) serializer.Deserialize(rdr);
 
                         responseMsg = new ResponseMessage
                         {
                             //APIResponse = specificRes,
                             APIStatus = response.IsSuccessStatusCode,
                             Message = response,
-                            responseMessage = responseJson
+                            responseMessage = responseJson,
+                            responseObject = responseObject,
+
                         };
                     }
                     else
@@ -1197,7 +1206,8 @@
                     if (ex.InnerException != null)
                         innerExceptionMessage = ex.InnerException.Message;
 
-                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                    throw new APIErrorException($"Core Banking API Error - Kindly Contact the System Administrator!");
+                    //throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
                 }
                 finally
                 {

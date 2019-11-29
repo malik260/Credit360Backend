@@ -43,6 +43,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId);
 
         IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId);
+        bool SendApplicationToEdit(int loanApplicationId, int operationId, int accountOfficerId);
 
         IEnumerable<LoanApplicationViewModel> FindLoanApplication(string referenceNumberOrName, int companyId);
 
@@ -52,7 +53,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId);
 
-        IEnumerable<LoanApplicationViewModel> Search(string searchString);
+        //IEnumerable<LoanApplicationViewModel> Search(string searchString);
+
+        List<LoanApplicationViewModel> Search(string searchString, int staffId = 0);
+
 
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
         string GetRefrenceNumber();
@@ -85,7 +89,7 @@ namespace FintrakBanking.Interfaces.Credit
         int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false);
         bool ArchiveLoanApplication(int loanAppliactionId, int operationId);
         void ArchiveLoanApplicationDetails(int loanApplicationDetailId);
-        int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, bool next = false);
+        int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, int? exclusiveFlowChangeId, bool next = false);
         int? GetFirstLevelStaffId(int levelId, int userBranch);
         List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
 

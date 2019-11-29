@@ -78,6 +78,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public decimal? UNPOINTERESTAMOUNT { get; set; }
         public decimal? INTERESTRECIEVABLETCY { get; set; }
         public decimal? AMOUNTDUE { get; set; }
+        public decimal? NPL { get; set; }
         public int? UNPODAYSOVERDUE { get; set; }
         public DateTime SCHEDULEDUEDATE { get; set; }
 
