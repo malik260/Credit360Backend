@@ -698,12 +698,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 }
                 else
                 {
-                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+                    throw new ConditionNotMetException("Core Banking API Error - Kindly Contact System Administrator!");
+                    //throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+                throw new APIErrorException("Core Banking API Error - Kindly Contact System Administrator!");
             }
 
         }

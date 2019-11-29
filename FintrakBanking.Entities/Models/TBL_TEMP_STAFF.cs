@@ -113,7 +113,8 @@ namespace FintrakBanking.Entities.Models
 
         public decimal? WORKSTARTDURATION { get; set; }
 
-        public decimal? WORKENDDURATION { get; set; }
+        public decimal? WORKENDDURATION { get; set; } 
+        public string MISCODE { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
