@@ -1505,7 +1505,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = appl.OPERATIONID; // (int)OperationsEnum.CreditAppraisal;
                 workflow.OperationId = operationId;
                 appl.OPERATIONID = operationId;
-                receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
+                receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID, appl.FLOWCHANGEID);
                 workflow.NextLevelId = receiverLevelId; // BREAKING!
             }
 
@@ -1546,12 +1546,72 @@ namespace FintrakBanking.Repositories.Credit
             return requests.Count() > 0;
         }
 
-        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, bool next = false)
+        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, int? exclusiveFlowChangeId, bool next = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
-                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+            var mappingsOnProducts = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == operationId
+                               && (x.PRODUCTCLASSID == productClassId && x.PRODUCTCLASSID != null)
+                               && (x.PRODUCTID == productId && x.PRODUCTID != null)
+                           )
+                           .ToList();
+
+            var mappingsOnProductClass = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == operationId
+                               && (x.PRODUCTCLASSID == productClassId && x.PRODUCTCLASSID != null)
+                               && x.PRODUCTID == null
+                           )
+                           .ToList();
+
+            var mappingsOnOperations = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == operationId
+                               && x.PRODUCTCLASSID == null
+                               && x.PRODUCTID == null
+                           )
+                           .ToList();
+
+            List<TBL_APPROVAL_GROUP_MAPPING> mappingsOnExclusiveOperations = new List<TBL_APPROVAL_GROUP_MAPPING>();
+
+            if (exclusiveFlowChangeId > 0)
+            {
+                var flowChangePartern = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(exclusiveFlowChangeId);
+
+                if (flowChangePartern != null)
+                {
+                    mappingsOnExclusiveOperations = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == flowChangePartern.OPERATIONID
+                               && x.PRODUCTCLASSID == null
+                               && x.PRODUCTID == null
+                           )
+                           .ToList();
+                }
+            }
+
+            List<TBL_APPROVAL_GROUP_MAPPING> mappings = new List<TBL_APPROVAL_GROUP_MAPPING>();
+
+            if (mappingsOnOperations.Any()) mappings = mappingsOnOperations;
+
+            if (mappingsOnProductClass.Any()) mappings = mappingsOnProductClass;
+
+            if (mappingsOnProducts.Any()) mappings = mappingsOnProducts;
+
+            if (mappingsOnExclusiveOperations.Any()) mappings = mappingsOnExclusiveOperations;
+
+            if (mappingsOnProducts.Any() == false && mappingsOnProductClass.Any() == false && mappingsOnOperations.Any() == false && mappingsOnExclusiveOperations.Any() == false)
+            {
+                var operation = context.TBL_OPERATIONS.Find(operationId);
+                if (operation == null) throw new SecureException("Operation ID didn't match");
+                if (productClassId != null)
+                {
+                    var productClass = context.TBL_PRODUCT_CLASS.Find(productClassId);
+                    throw new SecureException("There is no approval workflow setup for the OPERATION: " + operation.OPERATIONNAME + ", PRODUCT CLASS: " + productClass.PRODUCTCLASSNAME);
+                }
+                throw new SecureException("There is no approval workflow setup for the OPERATION: " + operation.OPERATIONNAME);
+            }
+
+            //var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
+            var levels = mappings.Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                     .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
                         {
@@ -1565,6 +1625,7 @@ namespace FintrakBanking.Repositories.Credit
                         .ThenBy(x => x.levelPosition)
                         .ToList()
                         ;
+
 
             var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
             var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId).ToList();
@@ -1935,7 +1996,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
         {
-            var customerGroupMapping = from a in context.TBL_CUSTOMER_GROUP_MAPPING
+            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
                                        where a.DELETED == false
                                        select new CustomerGroupMappingViewModel
                                        {
@@ -1945,7 +2006,7 @@ namespace FintrakBanking.Repositories.Credit
                                            //createdBy = a.CreatedBy,
                                            customerId = a.CUSTOMERID,
                                            //dateTimeCreated = a.DateTimeCreated
-                                       };
+                                       }).ToList();
 
             return customerGroupMapping;
         }
@@ -1966,7 +2027,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.TBL_CUSTOMER_GROUP.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault().CUSTOMERID });
+                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERGROUPID });
                 exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID, loanApplication.LOANAPPLICATIONTYPEID);
             }
             return exposures;

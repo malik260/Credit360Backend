@@ -520,9 +520,15 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
+        //private void ResolveFlowChangeInitiatorLevel()
+        //{
+        //    if(this.ExclusiveFlowChangeId > 0 and this.ExclusiveFlowChangeId == (oper))
+        //}
+
         private bool ResolveLevelConfigurations() // REFACTOR!!!
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
+            
             approvalGrid = approvalLevels;
             next = approvalLevels.FirstOrDefault();
 
