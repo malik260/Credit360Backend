@@ -796,7 +796,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.CompanyId = model.companyId;
                 //workflow.Vote = model.vote;
                 var test4 = model.receiverLevelId;
-                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, true);
+                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, null, true);
                 var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
                 workflow.NextLevelId = nextLevel;
                 //workflow.ToStaffId = nextStaff;
@@ -936,7 +936,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.LcIssuanceId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
+            var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, null, true);
             //var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0; //0
@@ -1048,9 +1048,9 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Vote = model.vote;
             if (model.forwardAction == (int)ApprovalStatusEnum.Reroute)
             {
-                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
+                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null,null, true);
                 var nextLvlStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-                var secondLvl = loanApp.GetFirstReceiverLevel((int)nextLvlStaff, operationId, null, null, true);
+                var secondLvl = loanApp.GetFirstReceiverLevel((int)nextLvlStaff, operationId, null, null,null, true);
                 workflow.NextLevelId = secondLvl;
                 var testStaff = loanApp.GetFirstLevelStaffId((int)secondLvl, model.userBranchId);
                 workflow.ToStaffId = testStaff;
@@ -1059,7 +1059,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var test4 = model.receiverLevelId;
-                var test6 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null);
+                var test6 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null,null);
                 var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
                 var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
                 //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
@@ -2291,7 +2291,7 @@ namespace FintrakBanking.Repositories.Credit
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                    && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
+                    && ( staffs.Contains((int)x.TOSTAFFID))  //x.TOSTAFFID == null ||
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,

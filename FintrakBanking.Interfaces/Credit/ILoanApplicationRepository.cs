@@ -86,7 +86,7 @@ namespace FintrakBanking.Interfaces.Credit
         int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false);
         bool ArchiveLoanApplication(int loanAppliactionId, int operationId);
         void ArchiveLoanApplicationDetails(int loanApplicationDetailId);
-        int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, bool next = false);
+        int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, int? exclusiveFlowChangeId, bool next = false);
         int? GetFirstLevelStaffId(int levelId, int userBranch);
         List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
 
