@@ -345,7 +345,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     this.loanApplication = context.TBL_LOAN_APPLICATION.Find(targetId);
                     this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
-                    this.customerExposure = CustomerExposureMarkup();
+                    //this.customerExposure = CustomerExposureMarkup();
                 }
 
                 //string customerName = String.Empty;
@@ -383,7 +383,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.environmentalSocialRisk = GetEnvironmentalSocialRiskMarkup();
                 this.conditionsPrecedentToDrawdown = GetConditionsPrecedentToDrawdownMarkup();
                 this.transactionsDynamics = GetTransactionsDynamicsMarkup();
-                this.rmCountry = this.loanApplication.TBL_BRANCH?.TBL_STATE?.TBL_COUNTRY?.NAME;
+                this.rmCountry = this.loanApplication.TBL_COMPANY.TBL_COUNTRY.NAME;
                 this.misCode = this.loanApplication.TBL_STAFF.MISCODE;
                 this.reviewType = "Initial";
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
@@ -412,6 +412,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
+                this.managementProfile = GetManagementProfileMarkup();
+                this.ownership = GetOwnershipMarkup();
                 this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
 
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
@@ -435,7 +437,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     this.lmsrApplication = context.TBL_LMSR_APPLICATION.Find(targetId);
                     this.customerIds = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
-                    this.customerExposure = CustomerExposureMarkup();
+                    //this.customerExposure = CustomerExposureMarkup();
                 }
 
                 //string customerName = String.Empty;
@@ -447,7 +449,7 @@ namespace FintrakBanking.Repositories.Credit
                 //this.isRelatedParty = lmsrAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 //this.recommendedInterestRate = lmsrAppllication.INTERESTRATE.ToString();
                 this.dateCreated = lmsrApplication.DATETIMECREATED.ToShortDateString();
-                this.rmCountry = this.lmsrApplication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
+                this.rmCountry = context.TBL_COMPANY.Find(this.lmsrApplication.COMPANYID).TBL_COUNTRY.NAME;
                 //this.misCode = this.lmsrAppllication.MISCODE;
                 this.reviewType = "Annual";
                 //this.preparedBy = this.lmsrAppllication.TBL_STAFF.FIRSTNAME + " " + this.lmsrAppllication.TBL_STAFF.LASTNAME;
@@ -475,6 +477,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.securityAnalysis = this.GetSecurityAnalysisMarkUP();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
+                this.managementProfile = GetManagementProfileMarkup();
+                this.ownership = GetOwnershipMarkup();
                 this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
 
 
@@ -517,8 +521,7 @@ namespace FintrakBanking.Repositories.Credit
             this.conditionsPrecedenceList = GetConditionsMarkUp();
             this.dynamicsList = GetDynamicsMarkUp();
             this.monitoringTriggers = MonitoringTriggersMarkup();
-            this.managementProfile = GetManagementProfileMarkup();
-            this.ownership = GetOwnershipMarkup();
+            
 
             //this.customerTurnover = CustomerTurnoverMarkup(); // lazy loaded
 
@@ -875,7 +878,7 @@ namespace FintrakBanking.Repositories.Credit
             });
         }
 
-        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId)
         {
                //int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
                //        (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
@@ -885,7 +888,7 @@ namespace FintrakBanking.Repositories.Credit
 
                var allstaff = this.GetAllStaffNames();
 
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId);
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId && x.OPERATIONID == operationId);
 
             //if (getAll)
             //{
@@ -2964,9 +2967,9 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.TBL_CUSTOMER_GROUP.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault().CUSTOMERID });
+                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERGROUPID });
                 exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
-                //exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
+                exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
             }
 
             var currentAmount = new decimal();
@@ -3035,9 +3038,20 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        private int GetCurrentOperationId()
+        {
+            if (operationId == (int)OperationsEnum.CreditAppraisal)
+            {
+                return this.loanApplication.OPERATIONID;
+            }else
+            {
+                return this.lmsrApplication.OPERATIONID;
+            }
+        }
+
         private string GetApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
                 <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
@@ -3069,7 +3083,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetDrawdownApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
                 <table border=1 width=900 cellpadding=15 cellspacing=0>
@@ -8699,7 +8713,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetCashBackApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
                 <table border=1 width=900 cellpadding=10 cellspacing=0>
