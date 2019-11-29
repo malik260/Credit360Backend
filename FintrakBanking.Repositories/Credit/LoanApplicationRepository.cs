@@ -1996,7 +1996,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
         {
-            var customerGroupMapping = from a in context.TBL_CUSTOMER_GROUP_MAPPING
+            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
                                        where a.DELETED == false
                                        select new CustomerGroupMappingViewModel
                                        {
@@ -2006,7 +2006,7 @@ namespace FintrakBanking.Repositories.Credit
                                            //createdBy = a.CreatedBy,
                                            customerId = a.CUSTOMERID,
                                            //dateTimeCreated = a.DateTimeCreated
-                                       };
+                                       }).ToList();
 
             return customerGroupMapping;
         }
@@ -2027,7 +2027,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.TBL_CUSTOMER_GROUP.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault().CUSTOMERID });
+                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERGROUPID });
                 exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID, loanApplication.LOANAPPLICATIONTYPEID);
             }
             return exposures;
