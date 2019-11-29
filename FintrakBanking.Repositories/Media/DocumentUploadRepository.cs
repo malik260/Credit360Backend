@@ -64,31 +64,32 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId, int operationId, int targetId)
         {
-            return docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+            var firstQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
-                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => 
-                    new {
-                        documentUploadId = up.DOCUMENTUPLOADID,
-                        fileName = up.FILENAME,
-                        fileExtension = up.FILEEXTENSION,
-                        fileSize = up.FILESIZE,
-                        fileSizeUnit = up.FILESIZEUNIT,
-                        fileData = up.FILEDATA,
-                        companyId = up.COMPANYID,
-                        issueDate = up.ISSUEDATE,
-                        expiryDate = up.EXPIRYDATE,
-                        physicalFilenumber = up.PHYSICALFILENUMBER,
-                        physicalLocation = up.PHYSICALLOCATION,
-                        documentTypeId = up.DOCUMENTTYPEID,
-                        documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
-                        documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
-                        documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                        owner = us.CREATEDBY == staffId,
-                        dateTimeCreated = us.DATETIMECREATED,
-                        dateTimeUpdated = us.DATETIMEUPDATED,
-                        createdBy = us.CREATEDBY.Value,
-                    }
-            ).AsEnumerable()
+                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
+               new {
+                   documentUploadId = up.DOCUMENTUPLOADID,
+                   fileName = up.FILENAME,
+                   fileExtension = up.FILEEXTENSION,
+                   fileSize = up.FILESIZE,
+                   fileSizeUnit = up.FILESIZEUNIT,
+                   fileData = up.FILEDATA,
+                   companyId = up.COMPANYID,
+                   issueDate = up.ISSUEDATE,
+                   expiryDate = up.EXPIRYDATE,
+                   physicalFilenumber = up.PHYSICALFILENUMBER,
+                   physicalLocation = up.PHYSICALLOCATION,
+                   documentTypeId = up.DOCUMENTTYPEID,
+                   documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                   documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                   documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                   owner = up.CREATEDBY == staffId,
+                   dateTimeCreated = us.DATETIMECREATED,
+                   dateTimeUpdated = us.DATETIMEUPDATED,
+                   createdBy = us.CREATEDBY.Value,
+               }
+            )
+            .AsEnumerable()
             .Select(up => new DocumentUploadViewModel
             {
                 documentUploadId = up.documentUploadId,
@@ -117,6 +118,29 @@ namespace FintrakBanking.Repositories.Media
             .ThenBy(x => x.documentCategoryId)
             .ThenBy(x => x.documentTypeId)
             .ToList();
+
+            var customerCreditBureau = (from ccb in context.TBL_CUSTOMER_CREDIT_BUREAU
+                                        join app in context.TBL_LOAN_APPLICATION_DETAIL on ccb.CUSTOMERID equals app.CUSTOMERID
+                                        where app.LOANAPPLICATIONID == targetId
+                                        select ccb.CUSTOMERCREDITBUREAUID).ToList();
+
+            var secondQuery = (//from c in context.TBL_CUSTOMER
+                               //join d in context.TBL_CUSTOMER_CREDIT_BUREAU on c.CUSTOMERID equals d.CUSTOMERID
+                               from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
+                               where customerCreditBureau.Contains(d.CUSTOMERCREDITBUREAUID)  
+                               select new DocumentUploadViewModel
+                               {
+                                  // documentId = c.DOCUMENTID,
+                                  // customerCreditBureauId = d.CUSTOMERCREDITBUREAUID,
+                                   documentTitle = d.DOCUMENT_TITLE,
+                                   fileName = d.FILENAME,
+                                   fileExtension = d.FILEEXTENSION,
+                                   fileData = d.FILEDATA,
+                               }).ToList();
+
+            var output = firstQuery.Union(secondQuery);
+
+            return output;
         }
 
         public IEnumerable<DocumentUploadViewModel> GetDocumentDeleted(int staffId, int operationId, int targetId)
