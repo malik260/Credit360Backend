@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace FintrakBanking.APICore.Reports.Credit {
+namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
     
     
     /// <summary>
