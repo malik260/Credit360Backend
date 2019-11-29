@@ -1,4 +1,4 @@
-﻿namespace FintrakBanking.MonitoringMessagesSender
+﻿namespace FintrakBanking.MonitoringMessageLogger
 {
     partial class ServiceEngine
     {

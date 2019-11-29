@@ -11,7 +11,7 @@ using Topshelf.Logging;
 using Timer = System.Timers.Timer;
 
 
-namespace FintrakBanking.MonitoringMessagesSender
+namespace FintrakBanking.MessagingAlertSender
 {
     public class WindowService : ServiceControl
     {
@@ -25,7 +25,6 @@ namespace FintrakBanking.MonitoringMessagesSender
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
         AlertMessageLogger logger = new AlertMessageLogger();
         
-        // CurrencyAndRateUpdate currencyAndRateUpdate = new CurrencyAndRateUpdate();
         public WindowService()
         {
         }
@@ -57,13 +56,11 @@ namespace FintrakBanking.MonitoringMessagesSender
         private void RunJob(object state, ElapsedEventArgs elapsedEventArgs)
         {
 
-
             //Prevents the job firing until it finishes its job
             if (Monitor.TryEnter(s_lock))
             {
                 try
                 {
-                   //alert.validateAlertCheck();
                    // SEND EMAILS
                     bool response = emailSender.SendEmails();
                     if (response == true)

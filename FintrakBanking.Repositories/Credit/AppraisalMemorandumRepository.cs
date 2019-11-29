@@ -1492,25 +1492,26 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool getAll = false)
         {
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
-            var staffs = context.TBL_STAFF.ToList(); 
-             int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.InterestPastDueLoanRepayment,
-                    (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-                (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
-                (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.BondsAndGuarantees,
-                    (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
-                ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval, (int)OperationsEnum.SecurityRelease,
-                (int)OperationsEnum.AtcReleaseApproval, (int)OperationsEnum.AtcLodgementApproval, (int)OperationsEnum.OriginalDocumentApproval,
-                (int)OperationsEnum.ProjectSiteReportApproval};
+            var staffs = from s in context.TBL_STAFF select s; 
+             //int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.InterestPastDueLoanRepayment,
+             //       (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
+             //   (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
+             //   (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.BondsAndGuarantees,
+             //       (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
+             //   ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval, (int)OperationsEnum.SecurityRelease,
+             //   (int)OperationsEnum.AtcReleaseApproval, (int)OperationsEnum.AtcLodgementApproval, (int)OperationsEnum.OriginalDocumentApproval,
+             //   (int)OperationsEnum.ProjectSiteReportApproval, (int) OperationsEnum.TemporaryOverdraftRequest };
             
             var allstaff = this.GetAllStaffNames();
 
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
            // List<TBL_APPROVAL_TRAIL> trail = new List<TBL_APPROVAL_TRAIL>();
 
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId ).ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.OPERATIONID && x.TARGETID == applicationId ).ToList();
             }
 
             var data =  trail.Select(x => new ApprovalTrailViewModel
@@ -2176,7 +2177,6 @@ namespace FintrakBanking.Repositories.Credit
 
             var query = new List<LoanApplicationViewModel>();
             var loggedOnStaff = context.TBL_STAFF.Find(staffId);
-
             // query
             if (loggedOnStaff.STAFFROLEID == 6) {
                 query = context.TBL_LOAN_APPLICATION.Where(x =>
@@ -2253,9 +2253,20 @@ namespace FintrakBanking.Repositories.Credit
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                 customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                 customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+                customerTypeId = x.a.LOANAPPLICATIONTYPEID,
                 operationId = x.a.OPERATIONID,
+                customerAccount = "N/A",
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
                 tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
+                loanTermSheetId = x.a.LOANTERMSHEETID,
+                ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
+                loansWithOthers = x.a.LOANSWITHOTHERS,
+                requireCollateral = x.a.REQUIRECOLLATERAL,
+                requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
+                isadhocapplication = x.a.ISADHOCAPPLICATION,
+                //loanApprovedLimitId = x.a.APPLICATIONAMOUNT,
+                regionId = x.a.CAPREGIONID,
+                collateralDetail = x.a.COLLATERALDETAIL,
                 //jumpedDestination = x.b.OPERATIONID == (short)OperationsEnum.InitiationLevelAppraisal,
                 globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
@@ -2340,6 +2351,16 @@ namespace FintrakBanking.Repositories.Credit
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                 customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                 customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+                customerTypeId = x.a.LOANAPPLICATIONTYPEID,
+                isInvestmentGrade = x.a.ISINVESTMENTGRADE,
+                loantermSheetId = x.a.LOANTERMSHEETID,
+                loansWithOthers = x.a.LOANSWITHOTHERS,
+                ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
+                requireCollateral = x.a.REQUIRECOLLATERAL,
+                regionId = x.a.CAPREGIONID,
+                collateralDetail = x.a.COLLATERALDETAIL,
+                isadhocapplication = x.a.ISADHOCAPPLICATION,
+                requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
                 operationId = x.a.OPERATIONID,
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
                 tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,

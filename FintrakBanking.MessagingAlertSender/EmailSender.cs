@@ -13,7 +13,7 @@ using System.IO;
 using FintrakBanking.Entities.DocumentModels;
 using Topshelf.Logging;
 
-namespace FintrakBanking.MonitoringMessagesSender
+namespace FintrakBanking.MessagingAlertSender
 {
     public class EmailSender 
     {
@@ -64,9 +64,9 @@ namespace FintrakBanking.MonitoringMessagesSender
         public bool SendEmailOfException(string body)
         {
 
-            Console.WriteLine("");
-            Console.WriteLine("Send Exception Email");
-            Console.WriteLine("");
+            //Console.WriteLine("");
+            //Console.WriteLine("Send Exception Email");
+            //Console.WriteLine("");
             
 
 
@@ -91,9 +91,9 @@ namespace FintrakBanking.MonitoringMessagesSender
 
                 }
 
-                Console.WriteLine("");
-                Console.WriteLine("Log all app settings for exception email");
-                Console.WriteLine("");
+                //Console.WriteLine("");
+                //Console.WriteLine("Log all app settings for exception email");
+                //Console.WriteLine("");
 
 
                 MailMessage mail = new MailMessage();
@@ -212,7 +212,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                                
                                 mail.IsBodyHtml = true;
                                 mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
-                                mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
+                                mail.Body = newMail.MESSAGEBODY;
                                 mailId = newMail.MESSAGEID;
 
                             if (newMail.ATTACHMENTTYPEID != null)
@@ -264,7 +264,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                 //throw new SecureException("Failed with error sending mail: " + ex);
                 UpdateMailDeliveryStatus(mailId, (short)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
                 throw new SecureException("Failed with error sending mail: " + ex);
-                return false;
+                //return false;
             }
         }
 
