@@ -8902,28 +8902,28 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var customerGroupMappings = new List<CustomerGroupMappingViewModel>();
                 var customerId = customer.FirstOrDefault().customerId;
-                var customerGroups = GetCustomerGroupMapping().Where(m => m.customerGroupId == customerId).ToList();
-                foreach(var customerGroup in customerGroups)
-                {
-                   var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
-                                                where a.CUSTOMERGROUPID == customerGroup.customerGroupId && a.DELETED == false
-                                                select new CustomerGroupMappingViewModel
-                                                {
-                                                    customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
-                                                    customerGroupId = a.CUSTOMERGROUPID,
-                                                    relationshipTypeId = a.RELATIONSHIPTYPEID,
-                                                    relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
-                                                    customerId = a.CUSTOMERID,
-                                                    customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                                                    customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
-                                                    customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                                                }).ToList();
-                    if (customerGroupMapping.Count() > 0) customerGroupMappings.AddRange(customerGroupMapping);
-                }
+                var mappings = GetCustomerGroupMapping().Where(m => m.customerGroupId == customerId).ToList();
+                //foreach(var customerGroup in customerGroups)
+                //{
+                //   var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                //                                where a.CUSTOMERGROUPID == customerGroup.customerGroupId && a.DELETED == false
+                //                                select new CustomerGroupMappingViewModel
+                //                                {
+                //                                    customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                //                                    customerGroupId = a.CUSTOMERGROUPID,
+                //                                    relationshipTypeId = a.RELATIONSHIPTYPEID,
+                //                                    relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                //                                    customerId = a.CUSTOMERID,
+                //                                    customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                //                                    customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                //                                    customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                //                                }).ToList();
+                //    if (customerGroupMapping.Count() > 0) customerGroupMappings.AddRange(customerGroupMapping);
+                //}
                 
-                if (customerGroupMappings.Count() > 0)
+                if (mappings.Count() > 0)
                 {
-                    customer = customerGroupMappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                    customer = mappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
                 }
             }
 
