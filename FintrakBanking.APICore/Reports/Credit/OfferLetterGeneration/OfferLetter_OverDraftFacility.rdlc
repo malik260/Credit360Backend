@@ -371,7 +371,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc ("the Lender") has approved a term loan ("facility") under the following terms and conditions:</Value>
+                    <Value>Further to your application for a credit facility to and our subsequent discussions, we are pleased to inform you that  Access Bank Plc (“the Lender”) is pleased to offer  to you an Overdraft facility under the following terms and conditions</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -744,7 +744,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>COLLATERAL SECURITY / SUPPORT</Value>
+                    <Value>SECURITY / SUPPORT</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -1284,8 +1284,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>1.45042in</Top>
-            <Left>0.20361in</Left>
+            <Top>1.49209in</Top>
+            <Left>0.18628in</Left>
             <Height>1.25248in</Height>
             <Width>6.60606in</Width>
             <ZIndex>8</ZIndex>

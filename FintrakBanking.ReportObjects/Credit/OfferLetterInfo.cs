@@ -117,14 +117,13 @@ namespace FintrakBanking.ReportObjects.Credit
             FinTrakBankingContext context = new FinTrakBankingContext();
             try
             {
-                var collateral  = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
-                       join b in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                       where b.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                       select new LoanApplicationCollateralViewModel
+                var loanAppId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(c => c.LOANAPPLICATIONID).FirstOrDefault();
+                var collateral  = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                       join b in context.TBL_COLLATERAL_CUSTOMER  on x.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                       where b.LOANAPPLICATIONID == loanAppId
+                                   select new LoanApplicationCollateralViewModel
                        {
-                           collateralDetail = x.COLLATERALDETAIL,
-                           collateralValue = x.COLLATERALVALUE,
-                           stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT
+                           collateralDetail = b.COLLATERALSUMMARY,
                        }).ToList();
 
                 if (collateral != null)

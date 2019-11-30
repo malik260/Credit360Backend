@@ -476,11 +476,11 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!currentDate.Value</Value>
+                    <Value>=CDate(Today()).ToString("MM/dd/yyyy")</Value>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
-                      <Format>d MMM yyyy</Format>
+                      <Format>d</Format>
                     </Style>
                   </TextRun>
                 </TextRuns>
