@@ -796,7 +796,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.CompanyId = model.companyId;
                 //workflow.Vote = model.vote;
                 var test4 = model.receiverLevelId;
-                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, true);
+                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, null, true);
                 var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
                 workflow.NextLevelId = nextLevel;
                 //workflow.ToStaffId = nextStaff;
@@ -936,7 +936,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.LcIssuanceId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
+            var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, null, true);
             //var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0; //0
@@ -1048,9 +1048,9 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Vote = model.vote;
             if (model.forwardAction == (int)ApprovalStatusEnum.Reroute)
             {
-                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
+                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null,null, true);
                 var nextLvlStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-                var secondLvl = loanApp.GetFirstReceiverLevel((int)nextLvlStaff, operationId, null, null, true);
+                var secondLvl = loanApp.GetFirstReceiverLevel((int)nextLvlStaff, operationId, null, null,null, true);
                 workflow.NextLevelId = secondLvl;
                 var testStaff = loanApp.GetFirstLevelStaffId((int)secondLvl, model.userBranchId);
                 workflow.ToStaffId = testStaff;
@@ -1059,7 +1059,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var test4 = model.receiverLevelId;
-                var test6 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null);
+                var test6 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null,null);
                 var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
                 var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
                 //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
@@ -1492,25 +1492,26 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool getAll = false)
         {
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
-            var staffs = context.TBL_STAFF.ToList(); 
-             int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.InterestPastDueLoanRepayment,
-                    (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-                (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
-                (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.BondsAndGuarantees,
-                    (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
-                ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval, (int)OperationsEnum.SecurityRelease,
-                (int)OperationsEnum.AtcReleaseApproval, (int)OperationsEnum.AtcLodgementApproval, (int)OperationsEnum.OriginalDocumentApproval,
-                (int)OperationsEnum.ProjectSiteReportApproval};
+            var staffs = from s in context.TBL_STAFF select s; 
+             //int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.InterestPastDueLoanRepayment,
+             //       (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
+             //   (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
+             //   (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.BondsAndGuarantees,
+             //       (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
+             //   ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval, (int)OperationsEnum.SecurityRelease,
+             //   (int)OperationsEnum.AtcReleaseApproval, (int)OperationsEnum.AtcLodgementApproval, (int)OperationsEnum.OriginalDocumentApproval,
+             //   (int)OperationsEnum.ProjectSiteReportApproval, (int) OperationsEnum.TemporaryOverdraftRequest };
             
             var allstaff = this.GetAllStaffNames();
 
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
            // List<TBL_APPROVAL_TRAIL> trail = new List<TBL_APPROVAL_TRAIL>();
 
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId ).ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.OPERATIONID && x.TARGETID == applicationId ).ToList();
             }
 
             var data =  trail.Select(x => new ApprovalTrailViewModel
@@ -2176,7 +2177,6 @@ namespace FintrakBanking.Repositories.Credit
 
             var query = new List<LoanApplicationViewModel>();
             var loggedOnStaff = context.TBL_STAFF.Find(staffId);
-
             // query
             if (loggedOnStaff.STAFFROLEID == 6) {
                 query = context.TBL_LOAN_APPLICATION.Where(x =>
@@ -2293,6 +2293,7 @@ namespace FintrakBanking.Repositories.Credit
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
                     && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
+                   // && ( staffs.Contains((int)x.TOSTAFFID) )  //x.TOSTAFFID == null ||
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,

@@ -1485,7 +1485,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 customerName = a.CUSTOMERNAME,
                                 customerCode = a.CUSTOMERID.Trim(),
                                 facilityType = a.ADJFACILITYTYPE,
-                                approvedAmount = a.LOANAMOUNYLCY ?? 0,
+                                approvedAmount = a.LOANAMOUNYTCY ?? 0,
+                                approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
                                 currency = a.CURRENCYNAME,
                                 exposureTypeCodeString = a.EXPOSURETYPECODE,
                                 adjFacilityTypeString = a.ADJFACILITYTYPE,
@@ -1495,10 +1496,12 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 productName = a.PRODUCTNAME,
                                 //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 //proposedLimit = a.LOANAMOUNYLCY ?? 0,
-                                outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
+                                outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                 pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
                                 reviewDate = DateTime.Now,
                                 bookingDate = a.BOOKINGDATE,
+                                tenorString = a.TENOR,
                                 //maturityDateString = a.MATURITYDATE,
                                 maturityDate = a.MATURITYDATE,
                                 loanStatus = a.CBNCLASSIFICATION,
@@ -1783,7 +1786,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         public List<CurrentCustomerExposure> GetGroupExposureByCustomerId(int customerId, int companyId)
         {
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
-            var customerGroups = GetCustomerGroupMapping().Where(m => m.customerId == customerId).ToList();
+            var customerGroups = GetCustomerGroupMapping().Where(m => m.customerGroupId == customerId).ToList();
             //var customers = GetGroupMembersByGroupId(customerGroup.customerGroupId, companyId).Select(c => new { c.customerName, c.customerId });
             foreach (var group in customerGroups)
             {

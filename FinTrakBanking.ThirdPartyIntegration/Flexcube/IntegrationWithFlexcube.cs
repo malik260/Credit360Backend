@@ -690,20 +690,21 @@ namespace FinTrakBanking.ThirdPartyIntegration
             ResponseMessage result = null;
             Task.Run(async () => result = await transaction.FlexcubeCreditCheck(model)).GetAwaiter().GetResult();
 
-            if (result.APIResponse != null)
+            if (result.responseMessage != null)
             {
-                if (result.APIResponse.responseStatus)
+                if (result.APIStatus)
                 {
-                    return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode, responseMessage = result.responseMessage };
+                    return new PostingResult { posted = true, responseCode = "0", responseMessage = result.responseMessage, responseObject = result.responseObject };
                 }
                 else
                 {
-                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+                    throw new ConditionNotMetException("Core Banking API Error - Kindly Contact System Administrator!");
+                    //throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+                throw new APIErrorException("Core Banking API Error - Kindly Contact System Administrator!");
             }
 
         }
