@@ -446,11 +446,11 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!currentDate.Value</Value>
+                    <Value>=CDate(Today()).ToString("MM/dd/yyyy")</Value>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
-                      <Format>d MMM yyyy</Format>
+                      <Format>d</Format>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -1284,8 +1284,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>1.49209in</Top>
-            <Left>0.18628in</Left>
+            <Top>1.45042in</Top>
+            <Left>0.20361in</Left>
             <Height>1.25248in</Height>
             <Width>6.60606in</Width>
             <ZIndex>8</ZIndex>
