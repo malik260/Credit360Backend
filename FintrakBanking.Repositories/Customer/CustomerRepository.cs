@@ -180,7 +180,7 @@ namespace FintrakBanking.Repositories.Customer
                 if (output == true)
                 {
                     UpdateCustomerCollateralId(customer.CUSTOMERCODE);
-                    //fetchCustomerAccountBalance(customer);
+                    fetchCustomerAccountBalance(customer);
                     return result;
                 }
                 else
