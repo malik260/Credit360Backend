@@ -1132,6 +1132,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 targetStaff.DELETED = false;
                 targetStaff.WORKSTARTDURATION = tempStaff.WORKSTARTDURATION;
                 targetStaff.WORKENDDURATION = tempStaff.WORKENDDURATION;
+                targetStaff.MISCODE = tempStaff.MISCODE;
             }
             else //Insert a new staff record into the real staff table
             {
@@ -1170,7 +1171,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     WORKSTARTDURATION = tempStaff.WORKSTARTDURATION,
                     WORKENDDURATION = tempStaff.WORKENDDURATION,
                     BUSINESSUNITID = tempStaff.BUSINESSUNITID,
-                };
+                    MISCODE = tempStaff.MISCODE,
+            };
                 if (tempStaff.CUSTOMERSENSITIVITYLEVELID >= 1) targetStaff.CUSTOMERSENSITIVITYLEVELID = tempStaff.CUSTOMERSENSITIVITYLEVELID;
                 context.TBL_STAFF.Add(targetStaff);
                 var test = context.SaveChanges() > 0;
@@ -1453,6 +1455,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     entity.WORKSTARTDURATION = temp.WORKSTARTDURATION;
                     entity.WORKENDDURATION = temp.WORKENDDURATION;
                     entity.BUSINESSUNITID = temp.BUSINESSUNITID;
+                    entity.MISCODE = temp.MISCODE;
                 }
                 else
                 {
@@ -1489,7 +1492,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         LOAN_LIMIT = temp.LOAN_LIMIT,
                         WORKSTARTDURATION = temp.WORKSTARTDURATION,
                         BUSINESSUNITID = temp.BUSINESSUNITID,
-                    WORKENDDURATION = temp.WORKENDDURATION
+                        WORKENDDURATION = temp.WORKENDDURATION,
+                        MISCODE = temp.MISCODE,
                 };
                     if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                     context.TBL_STAFF.Add(entity);

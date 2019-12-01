@@ -934,6 +934,7 @@ namespace FintrakBanking.Repositories.Customer
                             temp.ACTIVE = entity.active;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.NEXTOFKINID = entity.nextOfKinId;
                             context.TBL_TEMP_CUSTOMER_NEXTOFKIN.Add(temp);
                             //  var res = context.SaveChanges() > 0;
 
@@ -2008,6 +2009,9 @@ namespace FintrakBanking.Repositories.Customer
                             existingTempAddress.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             existingTempAddress.ISCURRENT = true;
                             modifiedTargetId = temp.TEMPPLACEOFWORKID;
+
+                            auditDetail = "Added Customer Employment History for customer ID: + (" + entity.customerId + ") ";
+                            auditType = (short)AuditTypeEnum.CustomerDetailAdded;
                         }
                         else //if customer employment information has no existing record being modified and approved, insert new row
                         {
@@ -2038,6 +2042,7 @@ namespace FintrakBanking.Repositories.Customer
                             temp.ANNUALINCOME = entity.annualIncome;
                             temp.MONTHLYINCOME = entity.monthlyIncome;
                             temp.EXPENDITURE = entity.expenditure;
+                            temp.PLACEOFWORKID = entity.placeOfWorkId;
                             context.TBL_TEMP_CUSTOMEREMPLOYMENT.Add(temp);
 
                             auditDetail = "Added Customer Employment History for customer ID: + (" + entity.customerId + ") ";
@@ -2882,8 +2887,11 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.DATETIMEUPDATED = DateTime.Now;
                 customerMain.LASTUPDATEDBY = entity.deletedBy;
 
+                var saved = context.SaveChanges() != 0;
+
                 UpdateCustomerCollateralId(customerMain.CUSTOMERCODE);
-                return context.SaveChanges() != 0;
+
+                return saved;
             }
             else
             {
@@ -3000,6 +3008,7 @@ namespace FintrakBanking.Repositories.Customer
                     customer.CORR = entity.corr;
                     customer.BUSINESSUNTID = entity.businessUnitId;
                     customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
+                    customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
 
                     context.TBL_TEMP_CUSTOMER.Add(customer);
 
@@ -3381,7 +3390,7 @@ namespace FintrakBanking.Repositories.Customer
                             gender = a.GENDER,
                             lastName = a.LASTNAME,
                             maidenName = a.MAIDENNAME,
-                            //maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
+                            maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
                             customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
