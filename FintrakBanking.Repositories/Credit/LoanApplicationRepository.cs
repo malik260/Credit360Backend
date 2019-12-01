@@ -749,6 +749,11 @@ namespace FintrakBanking.Repositories.Credit
                            collateralDetail = a.COLLATERALDETAIL,
                            loanInformation = a.LOANINFORMATION,
                            productClassId = a.PRODUCTCLASSID,
+                           loantermSheetId = a.LOANTERMSHEETID,
+                           ownershipStructure = a.OWNERSHIPSTRUCTURE,
+                           loansWithOthers = a.LOANSWITHOTHERS,
+                           isAdHocApplication = a.ISADHOCAPPLICATION,
+                           approvedLimitId = a.LOANAPPROVEDLIMITID
                        };
             return data.ToList();
         }

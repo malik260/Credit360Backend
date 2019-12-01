@@ -4169,7 +4169,8 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<GroupCustomerMembersViewModel> GetCustomerAndType(int custormerId)
         {
             List<GroupCustomerMembersViewModel> lstCustomer = new List<GroupCustomerMembersViewModel>();
-            var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId && c.ACCOUNTCREATIONCOMPLETE == true)
+            var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId)
+            //var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId && c.ACCOUNTCREATIONCOMPLETE == true)
                 .Select(c => new GroupCustomerMembersViewModel()
                 {
                     customerId = c.CUSTOMERID,
