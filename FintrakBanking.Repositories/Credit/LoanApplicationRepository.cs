@@ -1505,6 +1505,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = appl.OPERATIONID; // (int)OperationsEnum.CreditAppraisal;
                 workflow.OperationId = operationId;
                 appl.OPERATIONID = operationId;
+                workflow.ToStaffId = staffId;
                 receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID, appl.FLOWCHANGEID);
                 workflow.NextLevelId = receiverLevelId; // BREAKING!
             }
