@@ -21,11 +21,11 @@ namespace FintrakBanking.Repositories.Credit
     {
         // dependencies
         private FinTrakBankingContext context;
-        private IAppraisalMemorandumRepository memo;
+        //private IAppraisalMemorandumRepository memo;
         private ICreditLimitValidationsRepository limitValidation;
         private ILoanRepository loanRepo;
         private IFinanceTransactionRepository financeTransaction;
-        private ICustomerGroupRepository groupRepo;
+        //private ICustomerGroupRepository groupRepo;
         private ITransactionDynamicsRepository transactionsRepo;
         private IConditionPrecedentRepository conditionsRepo;
         private ICustomerCollateralRepository collateralRepo;
@@ -34,11 +34,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public MemorandumRepository(
             FinTrakBankingContext context, 
-            IAppraisalMemorandumRepository memo, 
+            //IAppraisalMemorandumRepository memo, 
             ICreditLimitValidationsRepository limitValidation,
             ILoanRepository loanRepo,
             IFinanceTransactionRepository financeTransaction,
-            ICustomerGroupRepository groupRepo, 
+            //ICustomerGroupRepository groupRepo, 
             ITransactionDynamicsRepository transactionsRepo,
             IConditionPrecedentRepository conditionsRepo,
             ICustomerCollateralRepository collateralRepo,
@@ -46,11 +46,11 @@ namespace FintrakBanking.Repositories.Credit
             )
         {
             this.context = context;
-            this.memo = memo;
+            //this.memo = memo;
             this.limitValidation = limitValidation;
             this.loanRepo = loanRepo;
             this.financeTransaction = financeTransaction;
-            this.groupRepo = groupRepo;
+            //this.groupRepo = groupRepo;
             this.transactionsRepo = transactionsRepo;
             this.conditionsRepo = conditionsRepo;
             this.collateralRepo = collateralRepo;
@@ -927,7 +927,33 @@ namespace FintrakBanking.Repositories.Credit
             return ((getTotalLLLImpact() > legalLendingLimit) ? true : false);
         }
 
+        private IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                .Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId && x.DELETED == false)
+                .Select(x => new MonitoringTriggersViewModel
+                {
+                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    monitoringTriggerId = x.MONITORING_TRIGGERID,
+                    monitoringTrigger = x.MONITORING_TRIGGER,
+                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+                })
+                .ToList();
+        }
 
+        private IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersLms(int applicationId)
+        {
+            return context.TBL_LMSR_APPLICATN_DETL_MTRIG
+                .Where(x => x.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
+                .Select(x => new MonitoringTriggersViewModel
+                {
+                    applicationDetailId = x.LOANREVIEWAPPLICATIONID,
+                    monitoringTriggerId = x.MONITORING_TRIGGERID,
+                    monitoringTrigger = x.MONITORING_TRIGGER,
+                    productCustomerName = x.TBL_LMSR_APPLICATION_DETAIL.TBL_OPERATIONS.OPERATIONNAME
+                })
+                .ToList();
+        }
         //markups
 
         public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
@@ -1494,9 +1520,6 @@ namespace FintrakBanking.Repositories.Credit
             var directExposures = new List<CurrentCustomerExposure>();
             var overdraftExposures = new List<CurrentCustomerExposure>();
             exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("lcy")).ToList();
-            //var loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
-            //                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
-            //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             //var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
             //                                                    && l.ISDISBURSED == true).ToList();
             //var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
@@ -3109,7 +3132,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private int GetCurrentOperationId()
         {
-            if (operationId == (int)OperationsEnum.CreditAppraisal)
+            if (this.loanApplication.OPERATIONID > 0)
             {
                 return this.loanApplication.OPERATIONID;
             }else
@@ -3734,8 +3757,8 @@ namespace FintrakBanking.Repositories.Credit
         // monitoring triggers
         public IEnumerable<MonitoringTriggersViewModel> GetMonitoringTriggers()
         {
-            if (operationId == (int)OperationsEnum.CreditAppraisal) return memo.GetApplicationMonitoringTriggers(targetId);
-            return memo.GetApplicationMonitoringTriggersLms(targetId);
+            if (operationId == (int)OperationsEnum.CreditAppraisal) return GetApplicationMonitoringTriggers(targetId);
+            return GetApplicationMonitoringTriggersLms(targetId);
         }
 
         private string MonitoringTriggersMarkup()
