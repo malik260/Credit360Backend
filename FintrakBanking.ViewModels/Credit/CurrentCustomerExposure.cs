@@ -46,7 +46,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currency { get; set; }
         public string currencyType { get; set; }
         public string currencyCode { get; set; }
-        public DateTime? maturityDate { get; set; }
+        public DateTime maturityDate { get; set; }
         public int tenor { get; set; }
         public string tenorString { get; set; }
         public decimal? totalBankExposure { get; set; }
