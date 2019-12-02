@@ -159,6 +159,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                             ).ToList();
 
+            if(this.referredLog.FirstOrDefault()?.BASEOPERATIONID != null) { this.operationId = this.referredLog.FirstOrDefault().BASEOPERATIONID ?? this.operationId; }
+
+
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
 
             if (request == null)

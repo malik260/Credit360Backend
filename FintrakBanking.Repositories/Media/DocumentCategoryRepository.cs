@@ -43,8 +43,8 @@ namespace FintrakBanking.Repositories.Media
                 {
                     documentCategoryId = x.DOCUMENTCATEGORYID,
                     documentCategoryName = x.DOCUMENTCATEGORYNAME,
-                }).OrderBy(l => l.documentCategoryName)
-                .ToList();
+                })?.OrderBy(l => l.documentCategoryName)
+                ?.ToList();
         }
 
         public DocumentCategoryViewModel GetDocumentCategory(int id)

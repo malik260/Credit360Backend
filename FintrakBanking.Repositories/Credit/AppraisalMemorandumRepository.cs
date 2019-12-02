@@ -1540,25 +1540,25 @@ namespace FintrakBanking.Repositories.Credit
                 })?.OrderByDescending(x => x.approvalTrailId).ToList();
           
             //var data2 = data;
-            var testData = data;
-           IList selectedApprovalTrailIds = new List<int>();
-            foreach (var t in data.ToList())
-            {
-                if (data.FindAll(d => d?.fromApprovalLevelId == t?.fromApprovalLevelId).Count() > 1)
-                {
-                    if(selectedApprovalTrailIds.IndexOf(t.fromApprovalLevelId) == -1)
-                    {
-                        if (t.fromApprovalLevelId != null)
-                            selectedApprovalTrailIds.Add(t.fromApprovalLevelId);
-                    }
-                    else
-                    {
-                        var tr = data.FirstOrDefault(d => d.approvalTrailId == t.approvalTrailId);
-                        data.Remove(tr);
-                    }
+          ///  var testData = data;
+          // IList selectedApprovalTrailIds = new List<int>();
+            //foreach (var t in data.ToList())
+            //{
+            //    if (data.FindAll(d => d?.fromApprovalLevelId == t?.fromApprovalLevelId).Count() > 1)
+            //    {
+            //        if(selectedApprovalTrailIds.IndexOf(t.fromApprovalLevelId) == -1)
+            //        {
+            //            if (t.fromApprovalLevelId != null)
+            //                selectedApprovalTrailIds.Add(t.fromApprovalLevelId);
+            //        }
+            //        else
+            //        {
+            //            var tr = data.FirstOrDefault(d => d.approvalTrailId == t.approvalTrailId);
+            //            data.Remove(tr);
+            //        }
                     
-                }
-            }
+            //    }
+            //}
 
             data.OrderByDescending(d => d.approvalTrailId);
             return data;
