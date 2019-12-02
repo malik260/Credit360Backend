@@ -831,7 +831,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             ReportingLine super = line.FirstOrDefault(x => x.levelRoleId == next.DefaultRoleId && x.levelIds.Contains(next.ApprovalLevelId));
             if (super == null)
             {
-                throw new ConditionNotMetException("No Staff Was Setup as Your Supervisor!");
+                throw new SecureException("No Staff Was Setup as Your Supervisor!");
                 //return null;
             }
 
@@ -845,7 +845,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return;
             }
-
+            +-
             if (this.skipLimitsCheck == true || IsPresetFinalLevel()) { return; }
             //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
             if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision())

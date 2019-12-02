@@ -137,6 +137,7 @@ namespace FintrakBanking.Repositories.Media
                                {
                                    // documentId = c.DOCUMENTID,
                                    // customerCreditBureauId = d.CUSTOMERCREDITBUREAUID,
+                                   documentUploadId = d.DOCUMENTID,
                                    documentTypeName = "CREDIT BUREAU",
                                    documentCategoryName = "CREDIT BUREAU",
                                    dateTimeCreated = d.DATETIMECREATED,
@@ -145,6 +146,7 @@ namespace FintrakBanking.Repositories.Media
                                    fileName = d.FILENAME,
                                    fileExtension = d.FILEEXTENSION,
                                    fileData = d.FILEDATA,
+                                   //fileSize = d.fileSize,
                                }).ToList();
 
             var output = firstQuery.Union(secondQuery);
@@ -536,6 +538,20 @@ namespace FintrakBanking.Repositories.Media
                     select new DocumentUploadViewModel
                     {
                         documentTypeId = x.DOCUMENTTYPEID,
+                        fileData = x.FILEDATA,
+                        fileName = x.FILENAME,
+                        fileExtension = x.FILEEXTENSION,
+                    })
+                         .FirstOrDefault();
+        }
+
+        public DocumentUploadViewModel GetDocumentCreditBereau(int documentId)
+        {
+            return (from x in docContext.TBL_CUSTOMER_CREDIT_BUREAU
+                    where x.DOCUMENTID == documentId
+                    select new DocumentUploadViewModel
+                    {
+
                         fileData = x.FILEDATA,
                         fileName = x.FILENAME,
                         fileExtension = x.FILEEXTENSION,

@@ -5464,7 +5464,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveCancelledApplcation(LoanApplicationViewModel data)
         {
-            var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
+            var appl = context.TBL_LOAN_APPLICATION.Find(data.loanApplicationId);
+            var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId(appl.OPERATIONID, data.loanApplicationId, data.companyId, data.createdBy);
+            //var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
             var ApprovalStaffCount = ApprovalTrail.Where(a => a.requestStaffId != data.createdBy).Count();
             if (ApprovalStaffCount == 0)
             {
@@ -5683,7 +5685,25 @@ namespace FintrakBanking.Repositories.Credit
         {
             var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
+            val.LASTUPDATEDBY = data.createdBy;
+            val.DATETIMEUPDATED = DateTime.Now;
             ArchiveLoanApplication(data.loanApplicationId, (int)OperationsEnum.LoanApplicationCancellation);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationCancellation,
+                STAFFID = data.createdBy,
+                BRANCHID = (short)data.userBranchId,
+                DETAIL = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been completed. Reason being : {data.cancellationReason} ",
+                IPADDRESS = data.userIPAddress,
+                URL = data.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = val.LOANAPPLICATIONID,
+            };
+
+
+            this.auditTrail.AddAuditTrail(audit);
         }
 
         private void LaonApplcationCancelllationDisapproved(LoanApplicationViewModel data)
