@@ -13690,7 +13690,7 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            string WorkflowStageName = "";
+            /*string WorkflowStageName = "";
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
             if(WorkflowStage == "RM")
             {
@@ -13721,7 +13721,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
                 }
-            }
+            }*/
             
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT
