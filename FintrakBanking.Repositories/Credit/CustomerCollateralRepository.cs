@@ -4913,9 +4913,17 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
-                var mainPolicy = (from x in context.TBL_COLLATERAL_POLICY
-                                  where x.COLLATERALCUSTOMERID == collateralId
-                                  select (x)).FirstOrDefault();
+                //try
+                //{
+                    var mainPolicy = (from x in context.TBL_COLLATERAL_POLICY
+                                      where x.COLLATERALCUSTOMERID == collateralId
+                                      select (x)).FirstOrDefault();
+                //}
+                //catch(Exception ex)
+                //{
+                //    throw ex;
+                //}
+
 
                 if (mainPolicy != null)
                 {

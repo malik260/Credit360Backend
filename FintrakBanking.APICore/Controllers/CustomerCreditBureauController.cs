@@ -189,7 +189,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (!data.posted)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, responseMessage = data.responseMessage });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.responseMessage, credits = data.responseObject.Credits.ToList(), summary = data.responseObject.Summary });

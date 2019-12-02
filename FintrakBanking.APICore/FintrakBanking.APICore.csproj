@@ -444,11 +444,6 @@
     <Compile Include="Filters\SecureExceptionFilterAttribute.cs" />
     <Compile Include="Providers\ReportServerCredentials.cs" />
     <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
-    <Compile Include="Reports\Credit\Credit.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Credit.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\CFLOfferLetter.aspx.cs">
       <DependentUpon>CFLOfferLetter.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -462,6 +457,11 @@
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx.designer.cs">
       <DependentUpon>ClassifiedAssetManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\Credit.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Credit.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS.aspx.cs">
       <DependentUpon>FORM3800B_LMS.aspx</DependentUpon>
@@ -1451,15 +1451,15 @@
     <Content Include="Reports\ReportDataset\DeferralWaiver.xsc">
       <DependentUpon>DeferralWaiver.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\Credit\Credit.xsc">
+    <Content Include="Reports\Credit\OfferLetterGeneration\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
-    <None Include="Reports\Credit\Credit.xsd">
+    <None Include="Reports\Credit\OfferLetterGeneration\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Reports\Credit\Credit.xss">
+    <Content Include="Reports\Credit\OfferLetterGeneration\Credit.xss">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\DeferralWaiver.xsd">
@@ -1657,6 +1657,8 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_ImportFinance.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_LeaseFacility.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_OtherGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_OverDraftFacility.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />

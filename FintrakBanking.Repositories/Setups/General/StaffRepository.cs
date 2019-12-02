@@ -1132,6 +1132,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 targetStaff.DELETED = false;
                 targetStaff.WORKSTARTDURATION = tempStaff.WORKSTARTDURATION;
                 targetStaff.WORKENDDURATION = tempStaff.WORKENDDURATION;
+                targetStaff.MISCODE = tempStaff.MISCODE;
             }
             else //Insert a new staff record into the real staff table
             {
@@ -1170,7 +1171,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     WORKSTARTDURATION = tempStaff.WORKSTARTDURATION,
                     WORKENDDURATION = tempStaff.WORKENDDURATION,
                     BUSINESSUNITID = tempStaff.BUSINESSUNITID,
-                };
+                    MISCODE = tempStaff.MISCODE,
+            };
                 if (tempStaff.CUSTOMERSENSITIVITYLEVELID >= 1) targetStaff.CUSTOMERSENSITIVITYLEVELID = tempStaff.CUSTOMERSENSITIVITYLEVELID;
                 context.TBL_STAFF.Add(targetStaff);
                 var test = context.SaveChanges() > 0;
@@ -1453,6 +1455,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     entity.WORKSTARTDURATION = temp.WORKSTARTDURATION;
                     entity.WORKENDDURATION = temp.WORKENDDURATION;
                     entity.BUSINESSUNITID = temp.BUSINESSUNITID;
+                    entity.MISCODE = temp.MISCODE;
                 }
                 else
                 {
@@ -1489,7 +1492,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         LOAN_LIMIT = temp.LOAN_LIMIT,
                         WORKSTARTDURATION = temp.WORKSTARTDURATION,
                         BUSINESSUNITID = temp.BUSINESSUNITID,
-                    WORKENDDURATION = temp.WORKENDDURATION
+                        WORKENDDURATION = temp.WORKENDDURATION,
+                        MISCODE = temp.MISCODE,
                 };
                     if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                     context.TBL_STAFF.Add(entity);
@@ -2313,6 +2317,15 @@ namespace FintrakBanking.Repositories.Setups.General
                             }
                             break;
                         case "J":
+                            ////var unit = context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTUNITNAME.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
+
+                            //if (unit != null) staffRowData.departmentUnitId = unit.DEPARTMENTUNITID;
+                            ////else
+                            //{
+                                staffRowData.misCode = cell.Value.ToString();
+                            ////}
+                            break;
+                        case "K":
                             var unit = context.TBL_DEPARTMENT_UNIT.Where(x => x.DEPARTMENTUNITNAME.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
 
                             if (unit != null) staffRowData.departmentUnitId = unit.DEPARTMENTUNITID;
@@ -2321,6 +2334,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 staffRowData.departmentUnitId = 10;
                             }
                             break;
+
                             //case "M":
                             //    var state = context.TBL_STATE.Where(x => x.STATECODE.ToLower() == cell.Value.ToString().ToLower()).FirstOrDefault();
 
@@ -2440,7 +2454,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 ISCURRENT = true,
                 BUSINESSUNITID = staffModel.businessUnitId,
-                TBL_TEMP_PROFILE_USER = userInfo
+                TBL_TEMP_PROFILE_USER = userInfo,
+                MISCODE = staffModel.misCode
             };
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
