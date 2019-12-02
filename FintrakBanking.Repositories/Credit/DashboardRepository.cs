@@ -54,7 +54,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<DashboardViewModel> result = new List<DashboardViewModel>();
-            if (data != null)
+            if (data != null && data.Count() > 0)
             {
                 result = (from res in data
                           group res by new { res.s.SECTORID, res.s.NAME } into gg
@@ -90,7 +90,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<DashboardReportItem> loanDetails = new List<DashboardReportItem>();
-            if (data != null)
+            if (data != null && data.Count() > 0)
             {
                 loanDetails = (from rec in data
                                group rec by new { rec.a.USER_PRUDENTIAL_GUIDE_STATUSID } into gg
@@ -124,7 +124,7 @@ namespace FintrakBanking.Repositories.Credit
                                a.EFFECTIVEDATE >= startDate && a.EFFECTIVEDATE <= endDate && a.COMPANYID == companyId
                               select new LoanViewModel { relationshipManagerId = a.RELATIONSHIPMANAGERID, loanSystemTypeId = a.LOANSYSTEMTYPEID, branchId = a.BRANCHID, })?.ToList();
 
-            var data = loanDetails.Union(od).Union(contingent).ToList();
+            var data = loanDetails.Union(od).Union(contingent)?.ToList();
 
             if (staff?.TBL_STAFF_ROLE.STAFFROLECODE == "RM")
             {
@@ -136,7 +136,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<LoanDisburseByType> result = new List<LoanDisburseByType>();
-            if (data != null)
+            if (data != null && data.Count() > 0)
             {
                  result = (from rec in data
                               group rec by new { rec.loanSystemTypeId } into gg
@@ -178,7 +178,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<DashboardViewModel> result = new List<DashboardViewModel>();
-            if (data != null)
+            if (data != null && data.Count() > 0)
             {
                 result = (from rec in data
                           group rec by new { rec.l.COMPANYID } into gg
@@ -214,7 +214,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<DashboardViewModel> result = new List<DashboardViewModel>();
-            if (data != null)
+            if (data != null && data.Count()>0)
             {
                 result = (from rec in data
                           group rec by new { rec.l.RISKRATINGID } into gg
@@ -270,7 +270,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<DashboardViewModel> result = new List<DashboardViewModel>();
-            if (collaterals != null)
+            if (collaterals != null && collaterals.Count() > 0)
             {
                 result = (from rec in collaterals
                           group rec by new { rec.collateralCustomerId, rec.note } into gg
@@ -325,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<DashboardViewModel> termLaon = new List<DashboardViewModel>();
-            if (data != null)
+            if (data != null && data.Count() > 0)
             {
                 termLaon = (from rec in data
                             group rec by new { rec.a.COMPANYID } into gg
@@ -369,7 +369,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<DashboardViewModel> result = new List<DashboardViewModel>();
-            if (data != null)
+            if (data != null && data.Count() > 0)
             {
                 result = (from rec in data
                           group rec by new { rec.companyId } into gg
