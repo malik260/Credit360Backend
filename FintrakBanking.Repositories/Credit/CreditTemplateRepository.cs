@@ -536,7 +536,7 @@ var qry = Foo.GroupJoin(
                 isDisabled = x.ISDISABLED,
                 canEdit = x.CANEDIT,
                 description = x.DESCRIPTION,
-            });
+            }).OrderBy(t => t.position);
         }
         public IEnumerable<DocumentTemplateSectionRoleViewModel> GetAllDocumentTemplateSectionRoleSetup(int templateSectionId)
         {
