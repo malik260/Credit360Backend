@@ -2415,6 +2415,8 @@ namespace FintrakBanking.Repositories.Credit
                    var sendOfferLetter = reportRoutes.GetProductSpecificTemplateCFL(null, appl.PRODUCTCLASSID, model.applicationReferenceNumber, "90", appl.APIREQUESTID, "14", model.comment, fullNames);
                    if(sendOfferLetter != "")
                     {
+                        var successCashFlow = context.SaveChanges() > 0;
+                        workflow.Response.success = successCashFlow;
                         return workflow.Response;
                     }
                 }

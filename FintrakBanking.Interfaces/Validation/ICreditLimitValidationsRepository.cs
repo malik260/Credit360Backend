@@ -22,7 +22,7 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         //IEnumerable<CustomerEligibilityViewModel> ValidateCamsol(string customerCode);
         CreditLimitValidationsModel ValidateNPLByInsiderCustomer();
         IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode);
-
+        bool ValidateIsInsiderCustomer(int customerId);
         CreditLimitValidationsModel ValidateAmountByBranch(short branchId);
         CreditLimitValidationsModel ValidateNPLByBranch(short branchId);
         CreditLimitValidationsModel ValidateAmountBySector(int customerId);
