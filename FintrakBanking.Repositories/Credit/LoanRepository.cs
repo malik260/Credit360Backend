@@ -802,7 +802,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
                     {
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                        var staffCode = context.TBL_STAFF.Find(model.createdBy).STAFFCODE;
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
                     }
 
                     context.SaveChanges();
@@ -1040,7 +1041,8 @@ namespace FintrakBanking.Repositories.Credit
                         PostBandGFacilityFees(entity);
                     }
 
-                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                    var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
+                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                     context.SaveChanges();
 
@@ -1415,7 +1417,8 @@ namespace FintrakBanking.Repositories.Credit
 
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
 
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility);
+                        var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility, staffCode, staffCode);
 
                         //if (!entity.feeOverride) PostLoanFees(entity);
                         context.SaveChanges();
@@ -1690,7 +1693,8 @@ namespace FintrakBanking.Repositories.Credit
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                         if (!entity.feeOverride) PostLoanFees(entity);
 
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                        var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                         context.SaveChanges();
 
@@ -2004,7 +2008,8 @@ namespace FintrakBanking.Repositories.Credit
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                         if (!entity.feeOverride) PostLoanFees(entity);
 
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                        var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == entity.createdBy).FirstOrDefault().STAFFCODE;
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                         context.SaveChanges();
 
@@ -2079,7 +2084,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        private void CreateFacilityOnThirdParty(int productID, int loanApplicationDetailId, int casaAccountId, DateTime effectiveDate, DateTime expiryDate, short loanSystemTypeId)
+        private void CreateFacilityOnThirdParty(int productID, int loanApplicationDetailId, int casaAccountId, DateTime effectiveDate, DateTime expiryDate, short loanSystemTypeId, string makerStaffCode, string checkerStaffCode)
         {
             if (USE_THIRD_PARTY_INTEGRATION)
             {
@@ -2095,10 +2100,12 @@ namespace FintrakBanking.Repositories.Credit
 
                 faciltyCreationModel.account_no = casa.PRODUCTACCOUNTNUMBER;
                 faciltyCreationModel.limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
+                faciltyCreationModel.checker_id = checkerStaffCode;
+                faciltyCreationModel.maker_id = makerStaffCode;
                 //faciltyCreationModel.= facilityDetail.APPROVEDINTERESTRATE.ToString();
                 //faciltyCreationModel.p_facility_description = product.PRODUCTCODE;
-                faciltyCreationModel.expiry_date = expiryDate.ToString();
-                faciltyCreationModel.start_date = effectiveDate.ToString();
+                faciltyCreationModel.expiry_date = expiryDate.ToString("dd-MM-yyyy");
+                faciltyCreationModel.start_date = effectiveDate.ToString("dd-MM-yyyy");
                 //faciltyCreationModel.p_line_serial = facilityDetail.LOANAPPLICATIONDETAILID.ToString();
                 //faciltyCreationModel.p_liab_no = customer.LIABILITYLIMITNUMBER;
                 faciltyCreationModel.line_code = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
@@ -8986,6 +8993,8 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         e.tenor = int.Parse(e.tenorString);
+                        e.bookingDate = e.bookingDate.Date;
+                        e.maturityDate = e.maturityDate.Date;
                         //e.productId = int.Parse(e.productIdString);
                         e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
                         e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
@@ -13690,7 +13699,7 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            string WorkflowStageName = "";
+            /*string WorkflowStageName = "";
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
             if(WorkflowStage == "RM")
             {
@@ -13721,7 +13730,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
                 }
-            }
+            }*/
             
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT

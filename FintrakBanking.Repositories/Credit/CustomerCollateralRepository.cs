@@ -2141,6 +2141,7 @@ namespace FintrakBanking.Repositories.Credit
                                join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
                                join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
+                               let isProperty = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Any(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
                                where c.CUSTOMERID == customerId && x.DELETED == false
 
@@ -2159,6 +2160,8 @@ namespace FintrakBanking.Repositories.Credit
                                    facilityAmount = f.APPROVEDAMOUNT,
                                    customerId = (int)x.CUSTOMERID,
                                    collateralOwnerId = (int)c.CUSTOMERID,
+                                   omv = (isProperty) ? context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).OPENMARKETVALUE ?? 0 : c.COLLATERALVALUE,
+                                   fsv = (isProperty) ? context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).FORCEDSALEVALUE ?? 0 : c.COLLATERALVALUE,
                                    //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
                                    facilityCurrencyId = f.CURRENCYID,
                                }).ToList();
@@ -2170,6 +2173,7 @@ namespace FintrakBanking.Repositories.Credit
                                join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
                                join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
+                               let isProperty = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Any(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID)
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
                                where f.CUSTOMERID == customerId && x.DELETED == false
 
@@ -2187,6 +2191,8 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralSummary = c.COLLATERALSUMMARY,
                                    customerId = (int)x.CUSTOMERID,
                                    collateralOwnerId = (int)c.CUSTOMERID,
+                                   omv = (isProperty) ? context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).OPENMARKETVALUE ?? 0 : c.COLLATERALVALUE,
+                                   fsv = (isProperty) ? context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).FORCEDSALEVALUE ?? 0 : c.COLLATERALVALUE,
                                    facilityAmount = f.APPROVEDAMOUNT,
                                    //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
                                    facilityCurrencyId = f.CURRENCYID,
@@ -2271,6 +2277,8 @@ namespace FintrakBanking.Repositories.Credit
                     availableCollateralValue = availableCollateralValue,
                     actualCollateralCoverage = actualCollateralCoverage,
                     approvalStatusId = collateral.approvalStatusId,
+                    omv = collateral.omv * (decimal)collateralExchangeRate.sellingRate,
+                    fsv = collateral.fsv * (decimal)collateralExchangeRate.sellingRate,
                     //productAccNumber = context.
                     referenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                     productName = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_PRODUCT.PRODUCTNAME).FirstOrDefault(),

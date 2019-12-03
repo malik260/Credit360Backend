@@ -3493,16 +3493,38 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_TRA);
                 }
 
+                if (data.TBL_LOAN_APPLICATION_DETL_LOG.Any())
+                {
+                    context.TBL_LOAN_APPLICATION_DETL_LOG.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_LOG);
+                }
+
+                if (data.TBL_LOAN_APPLICATION_DETL_CON.Any())
+                {
+                    context.TBL_LOAN_APPLICATION_DETL_CON.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_CON);
+                }
+
+                if (context.TBL_LOAN_APPLICATION_DETL_SYN.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var syndications = context.TBL_LOAN_APPLICATION_DETL_SYN.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_APPLICATION_DETL_SYN.RemoveRange(syndications);
+                }
+
+                if (context.TBL_LOAN_APPLICATION_DETL_TRA.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var tradders = context.TBL_LOAN_APPLICATION_DETL_TRA.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(tradders);
+                }
+
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Remove(data);
-                loanApplicationId = data.LOANAPPLICATIONID;
+                //loanApplicationId = data.LOANAPPLICATIONID;
 
-                var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationDetailId).ToList();
-                if (loan.Count() == 1)
-                {
-                    var loanApp = context.TBL_LOAN_APPLICATION.Where(la => la.LOANAPPLICATIONID == loanApplicationId);
-                    context.TBL_LOAN_APPLICATION.Remove(loanApp.FirstOrDefault());
-                }
+                //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationDetailId).ToList();
+                //if (loan.Count() == 1)
+                //{
+                //    var loanApp = context.TBL_LOAN_APPLICATION.Where(la => la.LOANAPPLICATIONID == loanApplicationId);
+                //    context.TBL_LOAN_APPLICATION.Remove(loanApp.FirstOrDefault());
+                //}
 
             }
             return context.SaveChanges() > 0;
@@ -5464,7 +5486,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveCancelledApplcation(LoanApplicationViewModel data)
         {
-            var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
+            var appl = context.TBL_LOAN_APPLICATION.Find(data.loanApplicationId);
+            var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId(appl.OPERATIONID, data.loanApplicationId, data.companyId, data.createdBy);
+            //var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
             var ApprovalStaffCount = ApprovalTrail.Where(a => a.requestStaffId != data.createdBy).Count();
             if (ApprovalStaffCount == 0)
             {
@@ -5683,7 +5707,25 @@ namespace FintrakBanking.Repositories.Credit
         {
             var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
+            val.LASTUPDATEDBY = data.createdBy;
+            val.DATETIMEUPDATED = DateTime.Now;
             ArchiveLoanApplication(data.loanApplicationId, (int)OperationsEnum.LoanApplicationCancellation);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationCancellation,
+                STAFFID = data.createdBy,
+                BRANCHID = (short)data.userBranchId,
+                DETAIL = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been completed. Reason being : {data.cancellationReason} ",
+                IPADDRESS = data.userIPAddress,
+                URL = data.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = val.LOANAPPLICATIONID,
+            };
+
+
+            this.auditTrail.AddAuditTrail(audit);
         }
 
         private void LaonApplcationCancelllationDisapproved(LoanApplicationViewModel data)
