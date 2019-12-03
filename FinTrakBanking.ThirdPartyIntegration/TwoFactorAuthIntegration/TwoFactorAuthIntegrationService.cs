@@ -60,7 +60,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = $"CustId : {staffCode} , PassCode : {passCode}",
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = output.message //authResponse.Message,
+                        RESPONSEMESSAGE = res, //output.message //authResponse.Message,
                     };
 
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
