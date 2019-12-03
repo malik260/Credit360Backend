@@ -3270,12 +3270,12 @@ namespace FintrakBanking.Repositories.Credit
         private string GetCollateralCoverageMarkupLOS()
         {
             var custFacilitiesAmount = new decimal();
-            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId, false);
+            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId, true);
             var result = String.Empty;
             if (collaterals.Count() < 1) return result;
             decimal actualCollateralCoverageSum = 0;
             actualCollateralCoverageSum = collaterals.Where(c => c.customerId != customerId).Sum(c => c.actualCollateralCoverage);
-            custFacilitiesAmount += actualCollateralCoverageSum;
+            //custFacilitiesAmount += actualCollateralCoverageSum;
             decimal totalCollateralValue = 0;
             var currencies = context.TBL_CURRENCY.ToList();
             var baseCurrency = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanApplication.COMPANYID).CURRENCYID;
