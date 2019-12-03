@@ -3493,16 +3493,38 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_TRA);
                 }
 
+                if (data.TBL_LOAN_APPLICATION_DETL_LOG.Any())
+                {
+                    context.TBL_LOAN_APPLICATION_DETL_LOG.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_LOG);
+                }
+
+                if (data.TBL_LOAN_APPLICATION_DETL_CON.Any())
+                {
+                    context.TBL_LOAN_APPLICATION_DETL_CON.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_CON);
+                }
+
+                if (context.TBL_LOAN_APPLICATION_DETL_SYN.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var syndications = context.TBL_LOAN_APPLICATION_DETL_SYN.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_APPLICATION_DETL_SYN.RemoveRange(syndications);
+                }
+
+                if (context.TBL_LOAN_APPLICATION_DETL_TRA.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var tradders = context.TBL_LOAN_APPLICATION_DETL_TRA.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(tradders);
+                }
+
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Remove(data);
-                loanApplicationId = data.LOANAPPLICATIONID;
+                //loanApplicationId = data.LOANAPPLICATIONID;
 
-                var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationDetailId).ToList();
-                if (loan.Count() == 1)
-                {
-                    var loanApp = context.TBL_LOAN_APPLICATION.Where(la => la.LOANAPPLICATIONID == loanApplicationId);
-                    context.TBL_LOAN_APPLICATION.Remove(loanApp.FirstOrDefault());
-                }
+                //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationDetailId).ToList();
+                //if (loan.Count() == 1)
+                //{
+                //    var loanApp = context.TBL_LOAN_APPLICATION.Where(la => la.LOANAPPLICATIONID == loanApplicationId);
+                //    context.TBL_LOAN_APPLICATION.Remove(loanApp.FirstOrDefault());
+                //}
 
             }
             return context.SaveChanges() > 0;
@@ -6256,7 +6278,7 @@ namespace FintrakBanking.Repositories.Credit
             var insiderExposure = insiderLimit.outstandingBalance + (double)applicationAmount;     
             if (insiderExposure >= (double)insiderLimit.maximumAllowedLimit)
             {
-                throw new SecureException("Insider Limit Exceeded");
+                //throw new SecureException("Insider Limit Exceeded");
             }
 
             if(limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))

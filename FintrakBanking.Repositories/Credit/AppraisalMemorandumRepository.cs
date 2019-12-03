@@ -497,6 +497,13 @@ namespace FintrakBanking.Repositories.Credit
 
                     }
 
+                    if(appl.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
+                    {
+                        appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                        appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+
+                    }
+
                     //Send Email to Customer
                     SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
                     SaveApprovedDocumentation(model.createdBy, 6, model.applicationId);
@@ -1734,7 +1741,8 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_STAFF.Select(s => new OperationStaffViewModel
             {
                 id = s.STAFFID,
-                name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME
+                name = s.FIRSTNAME + " " + s.LASTNAME
+                //name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME
             });
         }
 
@@ -2186,7 +2194,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var query = new List<LoanApplicationViewModel>();
             var loggedOnStaff = context.TBL_STAFF.Find(staffId);
-            var staffProfile = (from r in context.TBL_STAFF_ROLE join f in context.TBL_STAFF on r.STAFFROLEID equals f.STAFFROLEID where f.STAFFID == staffId select r).FirstOrDefault();
+            var staffProfile = (from r in context.TBL_STAFF_ROLE join f in context.TBL_STAFF on r.STAFFROLEID equals f.STAFFROLEID where (f.STAFFID == staffId  || staffs.Contains(f.STAFFID)) select r).FirstOrDefault();
 
             //var businessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(loggedOnStaff.BUSINESSUNITID);
             
@@ -2348,7 +2356,7 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelTypeId = x.b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
             approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
             toStaffId = x.b.TOSTAFFID,
-            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault(),//businessUnit.BUSINESSUNITNAME,
+            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),//businessUnit.BUSINESSUNITNAME,
             customerBusinessUnitId = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == x.a.CUSTOMERID).Select(c => c.BUSINESSUNTID).FirstOrDefault(),
             timeIn = x.b.SYSTEMARRIVALDATETIME,
             slaTime = x.b.SLADATETIME,
@@ -2400,10 +2408,11 @@ namespace FintrakBanking.Repositories.Credit
 
             // var test = applications.Count();
 
-            if(staffProfile.STAFFROLESHORTCODE == "ED")
-            {
-                return applications.Where(x=>x.divisionCode == loggedOnStaff.MISCODE);
-            }
+            //if(staffProfile.STAFFROLESHORTCODE == "ED")
+            //{
+            //    var applList = applications.ToList();
+            //    return applications.Where(x=>x.divisionCode == loggedOnStaff.MISCODE);
+            //}
 
             return applications; //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
