@@ -1727,7 +1727,8 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_STAFF.Select(s => new OperationStaffViewModel
             {
                 id = s.STAFFID,
-                name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME
+                name = s.FIRSTNAME + " " + s.LASTNAME
+                //name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME
             });
         }
 
