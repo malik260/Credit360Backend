@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,11 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         List<WorkflowTrackerViewModel> GetAllApprovalOperations();
         int GoForApproval(ApprovalLevelStaffViewModel model);
         IEnumerable<ApprovalLevelStaffViewModel> GetTempApprovalLevelStaff(int staffId);
+        List<WorkflowTrackerViewModel> GetApprovalMointoring(DateRange param);
+        List<WorkflowTrackerViewModel> GetBookingMointoring(DateRange param);
+        List<WorkflowTrackerViewModel> GetBookingApprovalTrailByTargetId(int targetId, int companyId);
+        List<WorkflowTrackerViewModel> GetApprovalTrailByTargetId(int targetId, int companyId);
+        WorkflowTrackerViewModel GenerateApprovalMonitoringReport(DateRange param);
 
     }
 }

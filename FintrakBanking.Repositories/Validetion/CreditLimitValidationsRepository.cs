@@ -582,6 +582,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return model;
         }
 
+        public bool ValidateIsInsiderCustomer(int customerId)
+        {
+            var isRelatedcustomer = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == customerId && c.ISREALATEDPARTY == true).Select(c => c.CUSTOMERCODE).FirstOrDefault();
+            if (isRelatedcustomer != null)
+                return true;
+            return false;
+        }
+
         public List<CurrentCustomerExposure> GetGlobalCustomerExposure(List<string> customerCodes)
         {
             IEnumerable<CurrentCustomerExposure> exposure = null;
