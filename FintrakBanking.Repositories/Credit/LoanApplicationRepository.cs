@@ -6232,11 +6232,14 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Company Limit Exceeded");
             }
 
-            var insiderLimit = limitValidation.ValidateNPLByInsiderCustomer();
-            var insiderExposure = insiderLimit.outstandingBalance + (double)applicationAmount;     
-            if (insiderExposure >= (double)insiderLimit.maximumAllowedLimit)
+            if (limitValidation.ValidateIsInsiderCustomer(customerId))
             {
-                throw new SecureException("Insider Limit Exceeded");
+                var insiderLimit = limitValidation.ValidateNPLByInsiderCustomer();
+                var insiderExposure = insiderLimit.outstandingBalance + (double)applicationAmount;
+                if (insiderExposure >= (double)insiderLimit.maximumAllowedLimit)
+                {
+                    throw new SecureException("Insider Limit Exceeded");
+                }
             }
 
             if(limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))
