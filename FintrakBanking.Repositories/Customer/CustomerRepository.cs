@@ -189,12 +189,16 @@ namespace FintrakBanking.Repositories.Customer
                 }
 
             }
-            catch (DbEntityValidationException ex)
+            catch(Exception ex)
             {
-                string errorMessages = string.Join("; ",
-                    ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                throw new DbEntityValidationException(errorMessages);
+                throw ex;
             }
+            //catch (DbEntityValidationException ex)
+            //{
+            //    string errorMessages = string.Join("; ",
+            //        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+            //    throw new DbEntityValidationException(errorMessages);
+            //}
         }
 
         public void UpdateCustomerCollateralId(string customerCode)

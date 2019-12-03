@@ -491,6 +491,13 @@ namespace FintrakBanking.Repositories.Credit
                     appl.APPROVEDDATE = applicationDate;
                     appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
 
+                    if(appl.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
+                    {
+                        appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                        appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+
+                    }
+
                     //Send Email to Customer
                     SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
                     SaveApprovedDocumentation(model.createdBy, 6, model.applicationId);
