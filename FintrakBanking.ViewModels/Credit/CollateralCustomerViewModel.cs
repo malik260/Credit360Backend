@@ -1089,6 +1089,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralTypeName { get; set; }
         public int collateralTypeId { get; set; }
         public decimal collateralValue { get; set; }
+        public decimal omv { get; set; }
+        public decimal fsv { get; set; }
         public int customerId { get; set; }
         public string customerName { get; set; }
         public string collateralOwnerName { get; set; }

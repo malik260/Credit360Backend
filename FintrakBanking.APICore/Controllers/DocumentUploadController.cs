@@ -193,7 +193,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-download-credit-bereau/{documentId}")]
+        public HttpResponseMessage GetDocumentCreditBereau(int documentId)
+        {
+            DocumentUploadViewModel data = repo.GetDocumentCreditBereau(documentId);
+            if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
 
 
 
