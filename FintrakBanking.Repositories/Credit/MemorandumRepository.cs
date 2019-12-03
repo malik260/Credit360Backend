@@ -960,8 +960,11 @@ namespace FintrakBanking.Repositories.Credit
         public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
         {
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
-            var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID).ToList();
-            int managementFeeId = chargeFeeIds[0], processingFeeId = chargeFeeIds[1], commitmentFeeId = chargeFeeIds[2];
+            //var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID)?.ToList();
+            var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).Select(O => O.CHARGEFEEID).ToList();
+            int managementFeeId = chargeFeeIds[0];
+            int processingFeeId = chargeFeeIds[1]; 
+            int commitmentFeeId = chargeFeeIds[2];
             managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == managementFeeId).FirstOrDefault().VALUE;
             processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == processingFeeId).FirstOrDefault().VALUE;
             commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == commitmentFeeId).FirstOrDefault().VALUE;
@@ -3270,12 +3273,12 @@ namespace FintrakBanking.Repositories.Credit
         private string GetCollateralCoverageMarkupLOS()
         {
             var custFacilitiesAmount = new decimal();
-            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId, false);
+            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId, true);
             var result = String.Empty;
             if (collaterals.Count() < 1) return result;
             decimal actualCollateralCoverageSum = 0;
             actualCollateralCoverageSum = collaterals.Where(c => c.customerId != customerId).Sum(c => c.actualCollateralCoverage);
-            custFacilitiesAmount += actualCollateralCoverageSum;
+            //custFacilitiesAmount += actualCollateralCoverageSum;
             decimal totalCollateralValue = 0;
             var currencies = context.TBL_CURRENCY.ToList();
             var baseCurrency = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanApplication.COMPANYID).CURRENCYID;

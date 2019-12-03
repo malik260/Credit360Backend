@@ -845,7 +845,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return;
             }
-            
+
             if (this.skipLimitsCheck == true || IsPresetFinalLevel()) { return; }
             //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
             if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision())

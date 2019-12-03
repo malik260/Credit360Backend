@@ -371,7 +371,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>With regards to our discussions on the above subject, Access Bank Plc is pleased to offer you a $</Value>
+                    <Value>With regards to our discussions on the above subject, Access Bank Plc is pleased to offer you a </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -427,7 +427,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>OFFER OF $</Value>
+                    <Value>OFFER OF </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>

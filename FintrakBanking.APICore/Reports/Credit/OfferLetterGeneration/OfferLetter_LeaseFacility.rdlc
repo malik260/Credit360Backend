@@ -403,7 +403,47 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>We refer to your application for a Vehicle Lease Facility under our Auto Online Scheme and are pleased to inform you of the decision of Access Bank Plc to offer you a Vehicle Lease Facility, subject to the following terms and conditions:</Value>
+                    <Value>We refer to your application for a </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!productName.Value, "OfferLetterLoanDetail")</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value> Facility under our Auto Online Scheme and are pleased to inform you of the decision of Access Bank Plc to offer you a </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!productName.Value, "OfferLetterLoanDetail")</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value> Facility, subject to the following terms and conditions:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontSize>12pt</FontSize>
@@ -440,7 +480,27 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>OFFER TERMS AND CONDITIONS OF VEHICLE LEASE FACILITY</Value>
+                    <Value>OFFER TERMS AND CONDITIONS OF </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!productName.Value, "OfferLetterLoanDetail").ToUpper()</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value> FACILITY</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontSize>12pt</FontSize>
@@ -457,7 +517,7 @@
             <Top>7.1476cm</Top>
             <Left>0.51717cm</Left>
             <Height>0.67056cm</Height>
-            <Width>13.42099cm</Width>
+            <Width>16.60284cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
