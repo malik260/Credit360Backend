@@ -77,6 +77,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isRenewal { get; set; }
         public short approvedProductId { get; set; }
         public short? productClassId { get; set; }
+        public short? productTypeId { get; set; }
         public DateTime newApplicationDate;
         public string approvedTenorString
         {

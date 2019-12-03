@@ -100,21 +100,36 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 
             foreach(var x in loanApplicationDetail)
             {
-                switch (x.productClassId)
+                if (x.productClassId == 41 && x.productTypeId != 102)
                 {
-                    case (int)ProductClassEnum.ImportFinanceFacilities:
-                        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_ImportFinance.rdlc");
-                        break;
-                    case (int)ProductClassEnum.EmergingBusiness:
-                        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
-                        break;
-                    case (int)ProductClassEnum.BondAndGuarantees:
-                        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_OtherGuarantee.rdlc");
-                        break;
-
-                    default: reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
-                        break;
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_ImportFinance.rdlc");
+                } else if (x.productClassId == 33 && x.productTypeId == 102)
+                {
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
+                }else if (x.productClassId == 33 && x.productTypeId != 102)
+                {
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
                 }
+                else
+                {
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
+                }
+               
+                //switch (x.productClassId)
+                //{
+                //    case (int)ProductClassEnum.ImportFinanceFacilities:
+                //        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_ImportFinance.rdlc");
+                //        break;
+                //    case (int)ProductClassEnum.EmergingBusiness:
+                //        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
+                //        break;
+                //    case (int)ProductClassEnum.BondAndGuarantees:
+                //        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_OtherGuarantee.rdlc");
+                //        break;
+
+                //    default: reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
+                //        break;
+                //}
             }
 
             this.offerLetterReport.LocalReport.ReportPath = reportLink;
