@@ -986,7 +986,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = apiUrl,
+                        APIURL = API_URL + apiUrl,
                         LOGTYPEID = 2,
                         REFERENCENUMBER = model.sourceReferenceNumber,
                         REQUESTDATETIME = requestDatetime,
