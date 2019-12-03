@@ -439,16 +439,17 @@ var qry = Foo.GroupJoin(
 
         public bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity) // dont call if not editable
         {
-            var section = context.TBL_DOC_TEMPLATE_DETAIL.Find(entity.sectionId);
-
-            if (section == null) return true;
+            var detail = context.TBL_DOC_TEMPLATE_DETAIL.Find(entity.sectionId);
+            var section = context.TBL_DOC_TEMPLATE_SECTION.Find(detail.TEMPLATESECTIONID);
+            if (detail == null) return true;
             if (section.CANEDIT == false) return true;
+            //if (section.CANEDIT == false) return true;
 
             if (entity.templateDocument != null)
             {
-                section.TEMPLATEDOCUMENT = entity.templateDocument;
-                section.LASTUPDATEDBY = entity.staffId;
-                section.DATETIMEUPDATED = DateTime.Now;
+                detail.TEMPLATEDOCUMENT = entity.templateDocument;
+                detail.LASTUPDATEDBY = entity.staffId;
+                detail.DATETIMEUPDATED = DateTime.Now;
                 return context.SaveChanges() > 0;
 
             }
