@@ -9,7 +9,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationViewModel : GeneralEntity
     {
-        public int? customerBusinessUnitId;
+        public int? customerBusinessUnitId { get; set; }
+        public string divisionShortCode { get; set; }
 
         public string divisionCode { get; set; }
 
