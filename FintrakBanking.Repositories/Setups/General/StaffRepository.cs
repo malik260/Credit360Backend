@@ -413,6 +413,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.WORKSTARTDURATION = staffModel.workStartDuration;
                 tempStaffToUpdate.WORKENDDURATION = staffModel.workEndDuration;
                 tempStaffToUpdate.BUSINESSUNITID = staffModel.businessUnitId;
+                tempStaffToUpdate.MISCODE = staffModel.misCode;
                 context.Entry(tempStaffToUpdate).State = EntityState.Modified;
             }
             else
@@ -458,6 +459,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         WORKSTARTDURATION = staffModel.workStartDuration,
                         WORKENDDURATION = staffModel.workEndDuration,
                         BUSINESSUNITID = staffModel.businessUnitId,
+                        MISCODE = staffModel.misCode,
                     };
                 }
                 catch (Exception ex)
@@ -1606,7 +1608,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 user = new TBL_TEMP_PROFILE_USER()
                 {
                     TEMPSTAFFID = staffModel.staffId,
-                    USERNAME = staffModel.user.username,
+                    USERNAME = staffModel.user.username.ToLower(),
                     PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
                     ISFIRSTLOGINATTEMPT = false,
                     ISACTIVE = false,
@@ -1634,7 +1636,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 MIDDLENAME = staffModel.MiddleName,
                 COMPANYID = staffModel.companyId,
                 LASTNAME = staffModel.LastName,
-                STAFFCODE = staffModel.StaffCode,
+                STAFFCODE = staffModel.StaffCode.ToLower(),
                 //JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
                 SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
@@ -2313,8 +2315,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             }
                             else
                             {
-                                rowSuccess = false;
-                                staffRowData.message = staffRowData.message + $"Supervisor Code @ cell '{cellColumn}' of row '{cellRow}' does not exist. ";
+                                //rowSuccess = false;
+                                //staffRowData.message = staffRowData.message + $"Supervisor Code @ cell '{cellColumn}' of row '{cellRow}' does not exist. ";
                             }
                             break;
                         case "J":
@@ -2403,7 +2405,8 @@ namespace FintrakBanking.Repositories.Setups.General
             var user = new TBL_TEMP_PROFILE_USER()
             {
                 TEMPSTAFFID = staffModel.staffId,
-                USERNAME = staffCode,
+                //USERNAME = staffCode,
+                USERNAME = staffModel.StaffCode.ToLower(),
                 PASSWORD = StaticHelpers.EncryptSha512("password", StaticHelpers.EncryptionKey),
                 ISFIRSTLOGINATTEMPT = false,
                 ISACTIVE = false,
@@ -2427,7 +2430,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 MIDDLENAME = staffModel.MiddleName,
                 COMPANYID = staffModel.companyId,
                 LASTNAME = staffModel.LastName,
-                STAFFCODE = staffCode,
+                //STAFFCODE = staffCode,
+                STAFFCODE = staffModel.StaffCode.ToLower(),
                 JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
                 SUPERVISOR_STAFFID = staffModel.supervisorStaffId,

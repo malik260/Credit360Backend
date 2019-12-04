@@ -81,6 +81,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
 
+        void LoadCustomerTurnover(int applicationId, int staffId);
+
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
 
         List<FacilityRatingViewModel> GetFacilityRating(int applicationDetailId);
