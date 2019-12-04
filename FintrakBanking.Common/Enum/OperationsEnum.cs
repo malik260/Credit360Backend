@@ -119,6 +119,7 @@
     FullAndFinalCompleteWriteOff = 115,
     LmsOperations = 116,
     EarnUnEarnedFee = 117,
+    CRMSApproval = 118,
 
     //
     AdhocApproval = 133,

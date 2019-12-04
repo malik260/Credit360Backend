@@ -28,6 +28,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string STAFFROLECODE { get; set; }
 
+        public string STAFFROLESHORTCODE { get; set; }
+
         [Required]
         [StringLength(50)]
         public string STAFFROLENAME { get; set; }

@@ -860,7 +860,8 @@ namespace FintrakBanking.Repositories.Credit
             var totalSummary = GetTotalFacilitiesNGNLOS();
             var totalSummary2 = GetTotalForeignFacilitiesLOS();
             totalSummary.AddRange(totalSummary2);
-            return totalSummary.Sum(f => f.totalLLLImpact);
+            var exposureLLL = (GetTotalGroupExposure().totalLLLImpact - GetTotalGroupExposure(true).totalLLLImpact);
+            return (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
         }
 
         private decimal getTotalLLLImpactFCY()
@@ -959,8 +960,11 @@ namespace FintrakBanking.Repositories.Credit
         public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
         {
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
-            var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID).ToList();
-            int managementFeeId = chargeFeeIds[0], processingFeeId = chargeFeeIds[1], commitmentFeeId = chargeFeeIds[2];
+            //var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID)?.ToList();
+            var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).Select(O => O.CHARGEFEEID).ToList();
+            int managementFeeId = chargeFeeIds[0];
+            int processingFeeId = chargeFeeIds[1]; 
+            int commitmentFeeId = chargeFeeIds[2];
             managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == managementFeeId).FirstOrDefault().VALUE;
             processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == processingFeeId).FirstOrDefault().VALUE;
             commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == commitmentFeeId).FirstOrDefault().VALUE;
@@ -1540,11 +1544,11 @@ namespace FintrakBanking.Repositories.Credit
                 result = result + $@"<tr><td>Direct Facilities (NGN):</td></tr>";
             }
             //var loanGroups = loans.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
-            var loanExposuresGroups = loanExposures.GroupBy(f => f.productName);
+            var loanExposuresGroups = loanExposures.GroupBy(f => f.productCode.Trim());
             foreach (var group in loanExposuresGroups)
             {
                 var currentAmount = loanExposures.Sum(p => p.outstandings);
-                var facility = group.Key;
+                var facility = group.FirstOrDefault().facilityType;
                 var currency = group.First().currency;
                 var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().productCode.Trim() ==
                                           f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
@@ -1596,11 +1600,11 @@ namespace FintrakBanking.Repositories.Credit
             //        ";
             //}
 
-            var overdraftExposuresGroups = overdraftExposures.GroupBy(f => f.productName);
+            var overdraftExposuresGroups = overdraftExposures.GroupBy(f => f.productCode.Trim());
             foreach (var group in overdraftExposuresGroups)
             {
                 var currentAmount = group.Sum(p => p.approvedAmount);
-                var facility = group.Key;
+                var facility = group.FirstOrDefault().facilityType;
                 var currency = group.First().currency;
                 var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().productCode.Trim() ==
                                           f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
@@ -1696,12 +1700,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"<tr><td>Contingent Facilities (NGN):</td></tr>";
             }
-            var contingentsGroup = contingentExposures.GroupBy(f => f.productName);
+            var contingentsGroup = contingentExposures.GroupBy(f => f.productCode.Trim());
             if (contingentsGroup.Count() > 0)
             {
                 foreach (var group in contingentsGroup)
                 {
-                    var facility = group.Key;
+                    var facility = group.FirstOrDefault().facilityType;
                     var currency = group.First().currency;
                     var currentAmount = group.Sum(p => p.approvedAmountLcy);
                     //var currentAmount = group.Sum(p => p.CONTINGENTAMOUNT);
@@ -1832,13 +1836,13 @@ namespace FintrakBanking.Repositories.Credit
                     result = result + $@"<tr><td>Import Finance Facilities (FCY):</td></tr>";
                 }
             }
-            var loanGroups = iFFExposures.GroupBy(f => f.productName);
+            var loanGroups = iFFExposures.GroupBy(f => f.productCode.Trim());
             foreach (var group in loanGroups)
             {
                 var currFacility = group.GroupBy(f => f.currency.Trim());
                 foreach (var curr in currFacility)
                 {
-                    var facility = group.Key;
+                    var facility = group.FirstOrDefault().facilityType;
                     var currency = curr.Key;
                     //var currentAmount = curr.Sum(p => p.OUTSTANDINGPRINCIPAL) + curr.Sum(p => p.OUTSTANDINGINTEREST);
                     //var currentAmountForLLLImpact = curr.Sum(p => p.OUTSTANDINGPRINCIPAL * (decimal)p.EXCHANGERATE) + curr.Sum(p => p.OUTSTANDINGINTEREST * (decimal)p.EXCHANGERATE);
@@ -1978,7 +1982,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"<tr><td>Direct Facilities (FCY):</td></tr>";
             }
-            var loanGroups = loanExposures.GroupBy(f => f.productName);
+            var loanGroups = loanExposures.GroupBy(f => f.productCode.Trim());
             if (loanGroups.Count() > 0)
             {
                 foreach (var group in loanGroups)
@@ -1986,7 +1990,7 @@ namespace FintrakBanking.Repositories.Credit
                     var currFacility = group.GroupBy(f => f.currencyCode);
                     foreach (var curr in currFacility)
                     {
-                        var facility = group.Key;
+                        var facility = group.FirstOrDefault().facilityType;
                         var currency = curr.Key;
                         var currentAmount = curr.Sum(p => p.outstandings);
                         //var currentAmount = curr.Sum(p => p.OUTSTANDINGPRINCIPAL) + curr.Sum(p => p.OUTSTANDINGINTEREST);
@@ -2020,13 +2024,13 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            var overdraftExposuresGroups = overdraftExposures.GroupBy(f => f.productName);
+            var overdraftExposuresGroups = overdraftExposures.GroupBy(f => f.productCode.Trim());
             foreach (var group in overdraftExposuresGroups)
             {
                 var currFacility = group.GroupBy(f => f.currencyCode);
                 foreach (var curr in currFacility)
                 {
-                    var facility = group.Key;
+                    var facility = group.FirstOrDefault().facilityType;
                     var currency = curr.Key;
                     var currentAmount = curr.Sum(p => p.approvedAmount);
                     //var currentAmount = curr.Sum(p => p.OUTSTANDINGPRINCIPAL) + curr.Sum(p => p.OUTSTANDINGINTEREST);
@@ -2170,12 +2174,12 @@ namespace FintrakBanking.Repositories.Credit
                 result = result + $@"<tr><td>Contingent Facilities (FCY):</td></tr>";
             }
 
-            var contingentsGroup = contingentExposures.GroupBy(f => f.productName);
+            var contingentsGroup = contingentExposures.GroupBy(f => f.productCode.Trim());
             if (contingentsGroup.Count() > 0)
             {
                 foreach (var group in contingentsGroup)
                 {
-                    var facility = group.Key;
+                    var facility = group.FirstOrDefault().facilityType;
                     var currency = group.First().currency;
                     var currentAmount = group.Sum(p => p.approvedAmountLcy);
                     var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTCODE.Trim() ==
@@ -2735,18 +2739,79 @@ namespace FintrakBanking.Repositories.Credit
                 foreach(var cust in customers)
                 {
                     var directsGroup = cust.GroupBy(f => f.productCode.Trim());
-                    //foreach (var product in directsGroup)
+
+                    foreach (var product in directsGroup)
+                    {
+                        var facility = product.FirstOrDefault().facilityType;
+                        var currency = "Naira";
+                        //var currency = product.currency;
+                        var currentAmount = product.Sum(p => p.outstandings);
+                        var approvedAmount = product.Sum(p => p.approvedAmount);
+                        var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                        var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                        //var amountForLLL = currentAmountForLLL;
+                        var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                        var LLLImpact = amountForLLL;
+
+                        result = result + $@"
+                     <tr>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p =>p.maturityDate)}</td>
+                    </tr>
+                    ";
+                    }
+                }
+            }
+
+            if (contingents.Count() > 0)
+            {
+                result = result + $@"<tr><td>Contingent Facilities:</td></tr>";
+                var customers = contingents.GroupBy(e => e.customerCode);
+                foreach (var cust in customers)
+                {
+                    var contingentsGroup = cust.GroupBy(f => f.productCode.Trim());
+                    foreach (var product in contingentsGroup)
+                    {
+                        var facility = product.FirstOrDefault().facilityType;
+                        var currency = "Naira";
+                        var currentAmount = product.Sum(p => p.outstandings);
+                        var approvedAmount = product.Sum(p => p.approvedAmount);
+                        var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                        var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                        var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                        var LLLImpact = (amountForLLL / 3);
+                        //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                        result = result + $@"
+                     <tr>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
+                    </tr>
+                    ";
+                    }
+
+                    //foreach (var product in cust)
                     //{
-                    //    var facility = product.productName;
-                    //    //var facility = product.FirstOrDefault().productName;
+                    //    var facility = product.facilityType;
                     //    var currency = product.currency;
                     //    var currentAmount = product.outstandings;
                     //    var approvedAmount = product.approvedAmount;
-                    //    //var currentAmount = product.Sum(p => p.outstandings);
-                    //    //var approvedAmount = product.Sum(p => p.approvedAmount);
-                    //    var amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
-                    //    var LLLImpact = amountForLLL;
-                    //    //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+                    //    var currentAmountForLLL = product.outstandingsLcy;
+                    //    var approvedAmountForLLL = product.approvedAmountLcy;
+                    //    var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                    //    var LLLImpact = (amountForLLL / 3);
 
                     //    result = result + $@"
                     // <tr>
@@ -2761,89 +2826,6 @@ namespace FintrakBanking.Repositories.Credit
                     //</tr>
                     //";
                     //}
-
-                    foreach (var product in cust)
-                    {
-                        var facility = product.facilityType;
-                        var currency = product.currency;
-                        var currentAmount = product.outstandings;
-                        var approvedAmount = product.approvedAmount;
-                        var currentAmountForLLL = product.outstandingsLcy;
-                        var approvedAmountForLLL = product.approvedAmountLcy;
-                        var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
-                        var LLLImpact = amountForLLL;
-
-                        result = result + $@"
-                     <tr>
-                        <td>{product.customerName}</td>
-                        <td>{facility}</td>
-                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
-                        <td>{currency}</td>
-                        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
-                        <td>{currency}</td>
-                        <td>{product.maturityDate}</td>
-                    </tr>
-                    ";
-                    }
-                }
-            }
-
-            if (contingents.Count() > 0)
-            {
-                result = result + $@"<tr><td>Contingent Facilities:</td></tr>";
-                var customers = contingents.GroupBy(e => e.customerCode);
-                foreach (var cust in customers)
-                {
-                    var contingentsGroup = cust.GroupBy(f => f.productCode.Trim());
-                    //foreach (var product in contingentsGroup)
-                    //{
-                    //    var facility = product.FirstOrDefault().productName;
-                    //    var currency = "Naira";
-                    //    var currentAmount = product.Sum(p => p.outstandings);
-                    //    var approvedAmount = product.Sum(p => p.approvedAmount);
-                    //    var amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
-                    //    var LLLImpact = (amountForLLL / 3);
-                    //    //var tenor = curr.Sum(p => p.APPROVEDTENOR);
-
-                    //    result = result + $@"
-                    // <tr>
-                    //    <td>{product.FirstOrDefault().customerName}</td>
-                    //    <td>{facility}</td>
-                    //    <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
-                    //    <td>{currency}</td>
-                    //    <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
-                    //    <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
-                    //    <td>{currency}</td>
-                    //    <td>{product.Max(p => p.maturityDate)}</td>
-                    //</tr>
-                    //";
-                    //}
-
-                    foreach (var product in cust)
-                    {
-                        var facility = product.facilityType;
-                        var currency = product.currency;
-                        var currentAmount = product.outstandings;
-                        var approvedAmount = product.approvedAmount;
-                        var currentAmountForLLL = product.outstandingsLcy;
-                        var approvedAmountForLLL = product.approvedAmountLcy;
-                        var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
-                        var LLLImpact = (amountForLLL / 3);
-
-                        result = result + $@"
-                     <tr>
-                        <td>{product.customerName}</td>
-                        <td>{facility}</td>
-                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
-                        <td>{currency}</td>
-                        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
-                        <td>{currency}</td>
-                        <td>{product.maturityDate}</td>
-                    </tr>
-                    ";
-                    }
                 }
             }
 
@@ -2857,56 +2839,58 @@ namespace FintrakBanking.Repositories.Credit
                     foreach (var cust in customers)
                     {
                         var contingentsGroup = cust.GroupBy(f => f.productCode.Trim());
-                        //foreach (var product in contingentsGroup)
+                        foreach (var product in contingentsGroup)
+                        {
+                            var facility = product.FirstOrDefault().facilityType;
+                            var currency = "Naira";
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                            var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                            var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                            var LLLImpact = amountForLLL;
+                            //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                            result = result + $@"
+                             <tr>
+                                <td>{product.FirstOrDefault().customerName}</td>
+                                <td>{facility}</td>
+                                <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                                <td>{currency}</td>
+                                <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                                <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
+                                <td>{currency}</td>
+                                <td>{product.Max(p => p.maturityDate)}</td>
+                            </tr>
+                            ";
+                        }
+
+                        //foreach (var product in cust)
                         //{
-                        //    var facility = product.FirstOrDefault().productName;
-                        //    var currency = "Naira";
-                        //    var currentAmount = product.Sum(p => p.outstandings);
-                        //    var approvedAmount = product.Sum(p => p.approvedAmount);
-                        //    var amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                        //    var facility = product.facilityType;
+                        //    var currency = product.currency;
+                        //    var currentAmount = product.outstandings;
+                        //    var approvedAmount = product.approvedAmount;
+                        //    var currentAmountForLLL = product.outstandingsLcy;
+                        //    var approvedAmountForLLL = product.approvedAmountLcy;
+                        //    var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
                         //    var LLLImpact = amountForLLL;
+                        //    //var LLLImpact = (amountForLLL / 3);
                         //    //var tenor = curr.Sum(p => p.APPROVEDTENOR);
 
                         //    result = result + $@"
                         //     <tr>
-                        //        <td>{product.FirstOrDefault().customerName}</td>
+                        //        <td>{product.customerName}</td>
                         //        <td>{facility}</td>
                         //        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
                         //        <td>{currency}</td>
                         //        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
                         //        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                         //        <td>{currency}</td>
-                        //        <td>{product.Max(p => p.maturityDate)}</td>
+                        //        <td>{product.maturityDate}</td>
                         //    </tr>
                         //    ";
                         //}
-
-                        foreach (var product in cust)
-                        {
-                            var facility = product.facilityType;
-                            var currency = product.currency;
-                            var currentAmount = product.outstandings;
-                            var approvedAmount = product.approvedAmount;
-                            var currentAmountForLLL = product.outstandingsLcy;
-                            var approvedAmountForLLL = product.approvedAmountLcy;
-                            var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
-                            var LLLImpact = amountForLLL;
-                            //var LLLImpact = (amountForLLL / 3);
-                            //var tenor = curr.Sum(p => p.APPROVEDTENOR);
-
-                            result = result + $@"
-                             <tr>
-                                <td>{product.customerName}</td>
-                                <td>{facility}</td>
-                                <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
-                                <td>{currency}</td>
-                                <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
-                                <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
-                                <td>{currency}</td>
-                                <td>{product.maturityDate}</td>
-                            </tr>
-                            ";
-                        }
                     }
                 }
 
@@ -2917,55 +2901,57 @@ namespace FintrakBanking.Repositories.Credit
                     foreach (var cust in customers)
                     {
                         var directsGroup = cust.GroupBy(f => f.productCode.Trim());
-                        //foreach (var product in directsGroup)
-                        //{
-                        //    var facility = product.FirstOrDefault().productName;
-                        //    var currency = "Naira";
-                        //    var currentAmount = product.Sum(p => p.outstandings);
-                        //    var approvedAmount = product.Sum(p => p.approvedAmount);
-                        //    var amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
-                        //    var LLLImpact = amountForLLL;
-                        //    //var tenor = curr.Sum(p => p.APPROVEDTENOR);
-
-                        //    result = result + $@"
-                        //     <tr>
-                        //        <td>{product.FirstOrDefault().customerName}</td>
-                        //        <td>{facility}</td>
-                        //        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
-                        //        <td>{currency}</td>
-                        //        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
-                        //        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
-                        //        <td>{currency}</td>
-                        //        <td>{product.Max(p => p.maturityDate)}</td>
-                        //    </tr>
-                        //    ";
-                        //}
-
-                        foreach (var product in cust)
+                        foreach (var product in directsGroup)
                         {
-                            var facility = product.facilityType;
-                            var currency = product.currency;
-                            var currentAmount = product.outstandings;
-                            var approvedAmount = product.approvedAmount;
-                            var currentAmountForLLL = product.outstandingsLcy;
-                            var approvedAmountForLLL = product.approvedAmountLcy;
+                            var facility = product.FirstOrDefault().facilityType;
+                            var currency = "Naira";
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                            var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
                             var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
                             var LLLImpact = amountForLLL;
                             //var tenor = curr.Sum(p => p.APPROVEDTENOR);
 
                             result = result + $@"
                              <tr>
-                                <td>{product.customerName}</td>
+                                <td>{product.FirstOrDefault().customerName}</td>
                                 <td>{facility}</td>
                                 <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
                                 <td>{currency}</td>
-                                <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
-                                <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                                <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                                <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
                                 <td>{currency}</td>
-                                <td>{product.maturityDate}</td>
+                                <td>{product.Max(p => p.maturityDate)}</td>
                             </tr>
                             ";
                         }
+
+                        //foreach (var product in cust)
+                        //{
+                        //    var facility = product.facilityType;
+                        //    var currency = product.currency;
+                        //    var currentAmount = product.outstandings;
+                        //    var approvedAmount = product.approvedAmount;
+                        //    var currentAmountForLLL = product.outstandingsLcy;
+                        //    var approvedAmountForLLL = product.approvedAmountLcy;
+                        //    var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                        //    var LLLImpact = amountForLLL;
+                        //    //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                        //    result = result + $@"
+                        //     <tr>
+                        //        <td>{product.customerName}</td>
+                        //        <td>{facility}</td>
+                        //        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        //        <td>{currency}</td>
+                        //        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
+                        //        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        //        <td>{currency}</td>
+                        //        <td>{product.maturityDate}</td>
+                        //    </tr>
+                        //    ";
+                        //}
                     }
                 }
             }
@@ -3044,25 +3030,12 @@ namespace FintrakBanking.Repositories.Credit
             return exposures;
         }
 
-        private string GetTotalGroupExposureMarkup()
+        private TotalFacilitiesSummaryViewModel GetTotalGroupExposure(bool isForGFS = false)
         {
-            var result = String.Empty;
             var exposures = new List<CurrentCustomerExposure>();
-            var customerIds = new List<CustomerExposure>();
-            exposures = GetExposures();
-            //if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
-            //{
-            //    customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERID });
-            //    exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
-            //    //exposures = GetCurrentSingleCustomerExposures();
-            //}
-            //else
-            //{
-            //    customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERGROUPID });
-            //    exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
-            //    exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
-            //}
-
+            var exposure = new TotalFacilitiesSummaryViewModel();
+            //var customerIds = new List<CustomerExposure>();
+            exposures = GetExposures(isForGFS);
             var currentAmount = new decimal();
             var approvedAmount = new decimal();
             var amountForLLL = new decimal();
@@ -3071,10 +3044,11 @@ namespace FintrakBanking.Repositories.Credit
             var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
             var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
             var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
-            foreach(var product in directs)
+            foreach (var product in directs)
             {
                 currentAmount = product.outstandingsLcy;
                 approvedAmount = product.approvedAmountLcy;
+                //amountForLLL = currentAmount;
                 amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
                 LLLImpact += amountForLLL;
             }
@@ -3104,6 +3078,30 @@ namespace FintrakBanking.Repositories.Credit
                 LLLImpact += amountForLLL;
             }
 
+            exposure.totalLLLImpact = LLLImpact;
+            return exposure;
+
+        }
+        private string GetTotalGroupExposureMarkup()
+        {
+            var result = String.Empty;
+            var exposures = new List<CurrentCustomerExposure>();
+            var exposure = GetTotalGroupExposure();
+            //var customerIds = new List<CustomerExposure>();
+            exposures = GetExposures();
+            //if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+            //{
+            //    customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERID });
+            //    exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
+            //    //exposures = GetCurrentSingleCustomerExposures();
+            //}
+            //else
+            //{
+            //    customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERGROUPID });
+            //    exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
+            //    exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
+            //}
+
             CurrentCustomerExposure totalExposure;
             
             totalExposure = new CurrentCustomerExposure()
@@ -3118,7 +3116,7 @@ namespace FintrakBanking.Repositories.Credit
                      <tr>
                         <td><b>{totalExposure.facilityType}</b></td>
                         <td>&nbsp;</td>
-                        <td><b>{String.Format("{0:0,0.00}", LLLImpact)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", exposure.totalLLLImpact)}</b></td>
                         <td><b>Naira</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalExposure.approvedAmount)}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalExposure.outstandings)}</b></td>
@@ -3275,12 +3273,12 @@ namespace FintrakBanking.Repositories.Credit
         private string GetCollateralCoverageMarkupLOS()
         {
             var custFacilitiesAmount = new decimal();
-            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId, false);
+            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId, true);
             var result = String.Empty;
             if (collaterals.Count() < 1) return result;
             decimal actualCollateralCoverageSum = 0;
             actualCollateralCoverageSum = collaterals.Where(c => c.customerId != customerId).Sum(c => c.actualCollateralCoverage);
-            custFacilitiesAmount += actualCollateralCoverageSum;
+            //custFacilitiesAmount += actualCollateralCoverageSum;
             decimal totalCollateralValue = 0;
             var currencies = context.TBL_CURRENCY.ToList();
             var baseCurrency = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanApplication.COMPANYID).CURRENCYID;
@@ -3298,8 +3296,8 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>DESCRIPTION/SUMMARY</b></th>
-                        <th><b>COLLATERAL VALUE</b></th>
-                        <th><b>COLLATERAL VALUE(LCY)</b></th>
+                        <th><b>COLLATERAL VALUE(OMV)</b></th>
+                        <th><b>COLLATERAL VALUE(FSV)</b></th>
                     </tr>
                     ";
 
@@ -3314,8 +3312,8 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>{n}</td>
                         <td>{c.collateralSummary}</td>
-                        <td>{currCode + " " + String.Format("{0:0,0.00}", c.collateralValueFcy)}</td>
-                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", c.collateralValue)}</td>
+                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", c.omv)}</td>
+                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", c.fsv)}</td>
                     </tr>
                 ";
             }

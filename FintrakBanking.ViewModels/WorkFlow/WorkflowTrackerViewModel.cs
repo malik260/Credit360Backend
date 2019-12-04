@@ -31,5 +31,18 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public DateTime? systemResponseDate { get; set; }
         public DateTime? systemArrivalDate { get; set; }
         public int operationId { get; set; }
+        public string currentLevel { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string approvalState { get; set; }
+        public string customerName { get; set; }
+        public DateTime applicationDate { get; set; }
+        public string branchName { get; set; }
+        public int loanApplicationId { get; set; }
+        public string productNames { get; set; }
+        public decimal amount { get; set; }
+        public int serial { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public byte[] reportData { get; set; }
+        public string templateTypeName { get; set; }
     }
 }

@@ -802,7 +802,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
                     {
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                        var staffCode = context.TBL_STAFF.Find(model.createdBy).STAFFCODE;
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
                     }
 
                     context.SaveChanges();
@@ -1040,7 +1041,8 @@ namespace FintrakBanking.Repositories.Credit
                         PostBandGFacilityFees(entity);
                     }
 
-                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                    var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
+                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                     context.SaveChanges();
 
@@ -1415,7 +1417,8 @@ namespace FintrakBanking.Repositories.Credit
 
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
 
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility);
+                        var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility, staffCode, staffCode);
 
                         //if (!entity.feeOverride) PostLoanFees(entity);
                         context.SaveChanges();
@@ -1690,7 +1693,8 @@ namespace FintrakBanking.Repositories.Credit
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                         if (!entity.feeOverride) PostLoanFees(entity);
 
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                        var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                         context.SaveChanges();
 
@@ -2004,7 +2008,8 @@ namespace FintrakBanking.Repositories.Credit
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                         if (!entity.feeOverride) PostLoanFees(entity);
 
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID);
+                        var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == entity.createdBy).FirstOrDefault().STAFFCODE;
+                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                         context.SaveChanges();
 
@@ -2079,7 +2084,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        private void CreateFacilityOnThirdParty(int productID, int loanApplicationDetailId, int casaAccountId, DateTime effectiveDate, DateTime expiryDate, short loanSystemTypeId)
+        private void CreateFacilityOnThirdParty(int productID, int loanApplicationDetailId, int casaAccountId, DateTime effectiveDate, DateTime expiryDate, short loanSystemTypeId, string makerStaffCode, string checkerStaffCode)
         {
             if (USE_THIRD_PARTY_INTEGRATION)
             {
@@ -2095,10 +2100,12 @@ namespace FintrakBanking.Repositories.Credit
 
                 faciltyCreationModel.account_no = casa.PRODUCTACCOUNTNUMBER;
                 faciltyCreationModel.limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
+                faciltyCreationModel.checker_id = checkerStaffCode;
+                faciltyCreationModel.maker_id = makerStaffCode;
                 //faciltyCreationModel.= facilityDetail.APPROVEDINTERESTRATE.ToString();
                 //faciltyCreationModel.p_facility_description = product.PRODUCTCODE;
-                faciltyCreationModel.expiry_date = expiryDate.ToString();
-                faciltyCreationModel.start_date = effectiveDate.ToString();
+                faciltyCreationModel.expiry_date = expiryDate.ToString("dd-MM-yyyy");
+                faciltyCreationModel.start_date = effectiveDate.ToString("dd-MM-yyyy");
                 //faciltyCreationModel.p_line_serial = facilityDetail.LOANAPPLICATIONDETAILID.ToString();
                 //faciltyCreationModel.p_liab_no = customer.LIABILITYLIMITNUMBER;
                 faciltyCreationModel.line_code = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
@@ -2145,6 +2152,8 @@ namespace FintrakBanking.Repositories.Credit
                       where l.LOANREFERENCENUMBER == loanReffernceNumber
                       select new { feeShortName = f.SHORTNAME, feeRate = f.RATE };
 
+            var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == model.createdBy).FirstOrDefault().STAFFCODE;
+
             loanCreationModel.account_no = casa?.PRODUCTACCOUNTNUMBER;
             loanCreationModel.amount_financed = model.principalAmount.ToString();
             loanCreationModel.interest_rate = model.interestRate.ToString();
@@ -2183,6 +2192,8 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.freq_unit = "M";
             loanCreationModel.disbursement_type = "BOOKING";
             loanCreationModel.loanApplicationId = facility.LOANAPPLICATIONDETAILID;
+            loanCreationModel.maker_id = staffCode;
+            loanCreationModel.checker_id = staffCode;
 
             var apiResult = new PostingResult();
 
@@ -2516,7 +2527,7 @@ namespace FintrakBanking.Repositories.Credit
                             username = "model.username",//for test, real value to be passed!!!
                             passcode = "model.passCode"
                         };
-                        PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails);
+                        PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails, entity.createdBy);
                     }
 
                     //PlaceLien(request.LOANAPPLICATIONDETAILID, new TwoFactorAutheticationViewModel() { username = "model.username", passcode = "model.passCode" });
@@ -3952,7 +3963,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (user.operationId == (int)OperationsEnum.RevolvingLoanBooking)
                 {
-                    ProcessRevolvingLoanFacilityApproval(loanId, twoFactorAuthDetails, revolvingLoanRecord, user);
+                    ProcessRevolvingLoanFacilityApproval(loanId, twoFactorAuthDetails, revolvingLoanRecord, user, user.createdBy);
                 }
 
                 if (user.operationId == (int)OperationsEnum.ContigentLoanBooking)
@@ -4149,7 +4160,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private void ProcessRevolvingLoanFacilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_REVOLVING revolvingLoanRecord, ApprovalViewModel user)
+        private void ProcessRevolvingLoanFacilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_REVOLVING revolvingLoanRecord, ApprovalViewModel user, int createdBy)
         {
             decimal totalBookedAmount = 0;
             var loanReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER;
@@ -4192,6 +4203,8 @@ namespace FintrakBanking.Repositories.Credit
                     var product = context.TBL_PRODUCT.Find(revolvingLoanRecord.PRODUCTID);
                     if(product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
                     {
+                        var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == createdBy).FirstOrDefault().STAFFCODE;
+
                         var model = new FlexcubeCreateOverdraftViewModel
                         {
                             account_no = casa.PRODUCTACCOUNTNUMBER,
@@ -4200,6 +4213,8 @@ namespace FintrakBanking.Repositories.Credit
                             start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                             end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                             channel_code = "FINTRAK",
+                            maker_id = staffCode,
+                            checker_id = staffCode,
                             loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
                         };
@@ -7251,7 +7266,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private void PlaceLien(int loanApplicationDetailId, TwoFactorAutheticationViewModel twoFactorAuthDetails)
+        private void PlaceLien(int loanApplicationDetailId, TwoFactorAutheticationViewModel twoFactorAuthDetails, int createdBy)
         {
             //TODO fetch the AccountBalance for account from the API
             
@@ -7280,6 +7295,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var casaBalance = integration.GetCustomerAccountBalance(casa.PRODUCTACCOUNTNUMBER);
 
+                var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == createdBy).FirstOrDefault().STAFFCODE;
+
                 var lienModel = new FlexcubeLienViewModel
                 {
                     account_no = casa.PRODUCTACCOUNTNUMBER,
@@ -7292,6 +7309,8 @@ namespace FintrakBanking.Repositories.Credit
                     collateral_contribution = casaBalance.availableBalance.ToString(),
                     branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
                     channel_code = "FINTRAK",
+                    maker_id = staffCode,
+                    checker_id = staffCode,
                     loanApplicationId = app.LOANAPPLICATIONID
                 };
 
@@ -8278,6 +8297,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
+                            crmsCode = s.CRMSCODE,
                         }).ToList();
 
 
@@ -8986,6 +9006,8 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         e.tenor = int.Parse(e.tenorString);
+                        e.bookingDate = e.bookingDate.Date;
+                        e.maturityDate = e.maturityDate.Date;
                         //e.productId = int.Parse(e.productIdString);
                         e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
                         e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
@@ -13690,7 +13712,7 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            string WorkflowStageName = "";
+            /*string WorkflowStageName = "";
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
             if(WorkflowStage == "RM")
             {
@@ -13721,7 +13743,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
                 }
-            }
+            }*/
             
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT

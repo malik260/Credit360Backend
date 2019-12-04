@@ -1664,7 +1664,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 ISCURRENT = true,
                 WORKSTARTDURATION = staffModel.workStartDuration,
                 WORKENDDURATION = staffModel.workEndDuration,
-                BUSINESSUNITID = staffModel.businessUnitId
+                BUSINESSUNITID = staffModel.businessUnitId,
+                MISCODE = staffModel.misCode
             };
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT

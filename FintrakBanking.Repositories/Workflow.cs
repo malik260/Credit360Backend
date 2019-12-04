@@ -159,6 +159,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                             ).ToList();
 
+            //if(this.referredLog.FirstOrDefault()?.BASEOPERATIONID != null) { this.operationId = this.referredLog.FirstOrDefault().BASEOPERATIONID ?? this.operationId; }
+
+
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
 
             if (request == null)
@@ -831,7 +834,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             ReportingLine super = line.FirstOrDefault(x => x.levelRoleId == next.DefaultRoleId && x.levelIds.Contains(next.ApprovalLevelId));
             if (super == null)
             {
-                throw new ConditionNotMetException("No Staff Was Setup as Your Supervisor!");
+                throw new SecureException("No Staff Was Setup as Your Supervisor!");
                 //return null;
             }
 

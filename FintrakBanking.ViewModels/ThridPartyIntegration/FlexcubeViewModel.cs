@@ -131,6 +131,8 @@ namespace FintrakBanking.ViewModels.Flexcube
         public string freq_unit { get; set; }
 
         public string disbursement_type { get; set; }
+        public string checker_id { get; set; }
+        public string maker_id { get; set; }
 
         public string sourceReferenceNumber { get; set; }//
         public int loanApplicationId { get; set; }
