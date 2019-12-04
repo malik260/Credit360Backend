@@ -110,5 +110,40 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
+
+        [Route("Add-exposure")]
+        [HttpPost]
+        [ClaimsAuthorization]
+        public HttpResponseMessage AddExposure(Exposure expo)
+        {
+            try
+            {  
+                var data = repo.AddExposure(expo);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        [Route("Exposure-update/{exposureId}")]
+        [HttpPut]
+        [ClaimsAuthorization]
+        public HttpResponseMessage UpdateExposure(int exposureId, Exposure expo)
+        {
+            try
+            {
+               // loanMarket.companyId = token.GetCompanyId;
+
+                string response = repo.updateExposure(exposureId, expo);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+        
     }
 }

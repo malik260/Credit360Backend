@@ -14,9 +14,9 @@ namespace FintrakBanking.Interfaces.Credit
         LoanMarketViewModel GetLoanMarket(int markeetId, int companyId);
 
         string AddLoanMarket(LoanMarketViewModel loanMarket);
-
+        string AddExposure(Exposure expo);
         string UpdateLoanMarket(int markeetId, LoanMarketViewModel loanMarket);
-
+        string updateExposure(int exposureId, Exposure expo);
         string DeleteLoanMarket(int markeetId, LoanMarketViewModel loanMarket);
     }
 }

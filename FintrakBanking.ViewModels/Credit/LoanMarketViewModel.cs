@@ -18,4 +18,16 @@ namespace FintrakBanking.ViewModels.Credit
         public int stateId { get; set; }
         public string cityName { get; set; }
     }
+
+
+
+    public class Exposure 
+    {
+        public string facilityName { get; set; }
+        public decimal currency { get; set; }
+        public decimal outstandingExpo { get; set; }
+        public int currencyCode { get; set; }
+        public decimal impact { get; set; }
+        public int approvedAmount { get; set; }
+    }
 }
