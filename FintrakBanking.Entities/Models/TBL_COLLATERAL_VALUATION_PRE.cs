@@ -15,8 +15,8 @@ namespace FintrakBanking.Entities.Models
 
         public int VALUATIONREQUESTTYPEID { get; set; }
 
-        [Required]
-        [StringLength(500)]
+        //[Required]
+        //[StringLength(500)]
         public string VALUATIONCOMMENT { get; set; }
 
         public int? COMPANYID { get; set; }
