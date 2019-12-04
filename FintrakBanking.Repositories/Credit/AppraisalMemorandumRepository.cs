@@ -2193,8 +2193,11 @@ namespace FintrakBanking.Repositories.Credit
             IQueryable<LoanApplicationViewModel> applications = null;
 
             var query = new List<LoanApplicationViewModel>();
-            var loggedOnStaff = context.TBL_STAFF.Find(staffId);
-            var staffProfile = (from r in context.TBL_STAFF_ROLE join f in context.TBL_STAFF on r.STAFFROLEID equals f.STAFFROLEID where (f.STAFFID == staffId  || staffs.Contains(f.STAFFID)) select r).FirstOrDefault();
+            var loggedOnStaff = context.TBL_STAFF.Find(staffId );
+            var loggedOnStaffForReleive = context.TBL_STAFF.Where(x => staffs.Contains(x.STAFFID)).ToList();
+
+
+            var staffProfile = (from r in context.TBL_STAFF_ROLE join f in context.TBL_STAFF on r.STAFFROLEID equals f.STAFFROLEID where (f.STAFFID == staffId  || staffs.Contains(f.STAFFID)) select r);
 
             //var businessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(loggedOnStaff.BUSINESSUNITID);
             
@@ -2356,7 +2359,8 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelTypeId = x.b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
             approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
             toStaffId = x.b.TOSTAFFID,
-            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),//businessUnit.BUSINESSUNITNAME,
+            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
             customerBusinessUnitId = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == x.a.CUSTOMERID).Select(c => c.BUSINESSUNTID).FirstOrDefault(),
             timeIn = x.b.SYSTEMARRIVALDATETIME,
             slaTime = x.b.SLADATETIME,
@@ -2408,11 +2412,11 @@ namespace FintrakBanking.Repositories.Credit
 
             // var test = applications.Count();
 
-            //if(staffProfile.STAFFROLESHORTCODE == "ED")
-            //{
-            //    var applList = applications.ToList();
-            //    return applications.Where(x=>x.divisionCode == loggedOnStaff.MISCODE);
-            //}
+            if (staffProfile.Select(d=>d.STAFFROLESHORTCODE).Contains( "ED" ))
+            {
+                var applList = applications.ToList();
+                return applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d=>d.MISCODE).Contains(x.divisionCode));
+            }
 
             return applications; //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
