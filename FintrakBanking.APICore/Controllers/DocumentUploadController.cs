@@ -45,6 +45,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("document-deleted/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetDocumentDeleted(int operationId, int targetId)
+        {
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentDeleted(token.GetStaffId, operationId, targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("document-upload/{id}")]
         public HttpResponseMessage GetDocumentUpload(int id)
         {
@@ -52,6 +61,8 @@ namespace FintrakBanking.APICore.Controllers
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
+
+
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -182,7 +193,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-download-credit-bereau/{documentId}")]
+        public HttpResponseMessage GetDocumentCreditBereau(int documentId)
+        {
+            DocumentUploadViewModel data = repo.GetDocumentCreditBereau(documentId);
+            if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
 
 
 

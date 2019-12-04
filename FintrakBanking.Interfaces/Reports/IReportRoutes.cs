@@ -12,6 +12,9 @@ namespace FintrakBanking.Interfaces.Reports
 {
     public interface IReportRoutes
     {
+        string GetProductSpecificTemplateCFL(short? productClassProcessId, short? productClassId, string applicationRefNumber,
+                       string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName);
+        string DeferralWaiverReport(int staffId, int operationId, int targetId, int loanApplicationDetailId);
         string GetWorkflowSLA(int loanApplicationId, int companyId, int staffId);
         string GetLoanScheduleReport(int tearmLoanId, int companyId, int staffId);
         string GetSectorLimitMonitoringReport(int companyId, int staffId);
@@ -125,17 +128,26 @@ namespace FintrakBanking.Interfaces.Reports
         string IfrsClassificationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetByIFRSClassificationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetByVarianceReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string RiskAssetCombinedReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetDistributionBySectorReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetMainReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetTeamReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string UnpaidObligationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string RiskAssetContigentReportMain(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetMain1Report(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string DrawdownReport(string referenceNumber);
         string RiskAssetByCbnNplClassification(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string ContigentLiabilityReportMain(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string ContigentLiabilityReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string ContigentLiabilityReportMain1(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string CopyOfRiskAssetMain(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string RiskAssetCalcCombinedReportTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string RiskAssetCalcCombinedReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string RiskAssetsContigentReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string CopyOfRiskAssetByIfrsClassification(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
 
-
+        
     }
+
+   
 }

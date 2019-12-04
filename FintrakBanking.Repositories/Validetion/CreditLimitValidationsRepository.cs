@@ -16,6 +16,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 //using System.Math;
 
 namespace FintrakBanking.Repositories.CreditLimitValidations
@@ -561,17 +562,19 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         {
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
 
+            var customerCodes = context.TBL_CUSTOMER.Where(c => c.ISREALATEDPARTY && c.DELETED == false).Select(c => c.CUSTOMERCODE).ToList();
             var limitAmount = 0;
-            var principalAmountLoan = context.TBL_LOAN.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
-            var sumPrincipalAmountLoan = principalAmountLoan.Sum(x => x.OUTSTANDINGPRINCIPAL * (decimal)x.EXCHANGERATE);
-            var principalAmountRevolving = context.TBL_LOAN_REVOLVING.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
-            var sumPrincipalAmountRevolving = principalAmountRevolving.Sum(x => x.OVERDRAFTLIMIT * (decimal)x.EXCHANGERATE);
-            var principalAmountContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
-            var sumPrincipalAmountContingent = principalAmountContingent.Sum(x => x.CONTINGENTAMOUNT * (decimal)x.EXCHANGERATE);
-            var data = sumPrincipalAmountLoan + sumPrincipalAmountRevolving + sumPrincipalAmountContingent;
-
+            //var principalAmountLoan = context.TBL_LOAN.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            //var sumPrincipalAmountLoan = principalAmountLoan.Sum(x => x.OUTSTANDINGPRINCIPAL * (decimal)x.EXCHANGERATE);
+            //var principalAmountRevolving = context.TBL_LOAN_REVOLVING.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            //var sumPrincipalAmountRevolving = principalAmountRevolving.Sum(x => x.OVERDRAFTLIMIT * (decimal)x.EXCHANGERATE);
+            //var principalAmountContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            //var sumPrincipalAmountContingent = principalAmountContingent.Sum(x => x.CONTINGENTAMOUNT * (decimal)x.EXCHANGERATE);
+            //var data = sumPrincipalAmountLoan + sumPrincipalAmountRevolving + sumPrincipalAmountContingent;
+            var exposures = GetGlobalCustomerExposure(customerCodes);
+            var data = exposures.Sum(e => e.outstandings);
             var companyCapital = context.TBL_COMPANY.FirstOrDefault().SHAREHOLDERSFUND;
-            double maxLimit = (float)companyCapital * 0.1;
+            double maxLimit = (float)companyCapital * 0.01;
             model.outstandingBalance = (double)data;
             model.limit = (double)limitAmount;
             model.difference = (double)data - (double)limitAmount;
@@ -579,13 +582,112 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return model;
         }
 
-        public CreditLimitValidationsModel ValidateNPLByDirectors()
+        public bool ValidateIsInsiderCustomer(int customerId)
         {
-                CreditLimitValidationsModel models = new CreditLimitValidationsModel();
-                var companyCapital = context.TBL_COMPANY.FirstOrDefault().SHAREHOLDERSFUND;
-                double maxLimit = (float)companyCapital * 0.01;
-                models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
-                return models;
+            var isRelatedcustomer = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == customerId && c.ISREALATEDPARTY == true).Select(c => c.CUSTOMERCODE).FirstOrDefault();
+            if (isRelatedcustomer != null)
+                return true;
+            return false;
+        }
+
+        public List<CurrentCustomerExposure> GetGlobalCustomerExposure(List<string> customerCodes)
+        {
+            IEnumerable<CurrentCustomerExposure> exposure = null;
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+
+            foreach(var customerCode in customerCodes)
+            {
+                customerCode.Trim();
+
+                exposure = from a in context.TBL_GLOBAL_EXPOSURE
+                           where a.CUSTOMERID.Contains(customerCode)
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.ADJFACILITYTYPE,
+                               existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                               proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                               outstandings = a.TOTALEXPOSURE ?? 0,
+                               recommendedLimit = 0,
+                               //PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                               reviewDate = DateTime.Now,
+                               loanStatus = a.CBNCLASSIFICATION,
+                               referenceNumber = a.REFERENCENUMBER,
+                           };
+
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
+            }
+            
+            return exposures;
+        }
+
+        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposure(int customerGroupId)
+        {
+            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                        where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
+                                        select new CustomerGroupMappingViewModel
+                                        {
+                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                            customerGroupId = a.CUSTOMERGROUPID,
+                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                            relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                            customerId = a.CUSTOMERID,
+                                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                            customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                            customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                        }).ToList();
+            var customerCodes = customerGroupMapping.Select(m => m.customerCode).ToList();
+            var exposures = GetGlobalCustomerExposure(customerCodes);
+            return exposures;
+        }
+
+        public CreditLimitValidationsModel ValidateSingleObligorLimit(LoanApplicationViewModel application)
+        {
+            List<CurrentCustomerExposure> exposures;
+            CreditLimitValidationsModel models = new CreditLimitValidationsModel();
+            var company = context.TBL_COMPANY.FirstOrDefault(c => c.COMPANYID == application.companyId);
+            var globalLimit = company.SINGLEOBLIGORLIMIT;
+            if (!(globalLimit > 0) || globalLimit == null)
+            {
+                throw new SecureException("Single Obligor Limit has not been setup for" + company.NAME + " !");
+            }
+            if (application.loanTypeId == (int)LoanTypeEnum.Single)
+            {
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == application.customerId).CUSTOMERCODE;
+                var customerCodes = new List<string>();
+                customerCodes.Add(customerCode);
+                exposures = GetGlobalCustomerExposure(customerCodes);
+            }
+            else
+            {
+                exposures = GetGroupCustomerGlobalExposure((int)application.customerGroupId);
+            }
+
+            models.maximumAllowedLimit = (decimal?)globalLimit ?? 0;
+            models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
+            return models;
+        }
+
+        public CreditLimitValidationsModel ValidateNPLByDirectors(LoanApplicationViewModel application)
+        {
+            List<CurrentCustomerExposure> exposures;
+            if (application.loanTypeId == (int)LoanTypeEnum.Single)
+            {
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == application.customerId).CUSTOMERCODE;
+                var customerCodes = new List<string>();
+                customerCodes.Add(customerCode);
+                exposures = GetGlobalCustomerExposure(customerCodes);
+            }
+            else
+            {
+                exposures = GetGroupCustomerGlobalExposure((int)application.customerGroupId);
+            }
+            CreditLimitValidationsModel models = new CreditLimitValidationsModel();
+            var companyCapital = context.TBL_COMPANY.FirstOrDefault().SHAREHOLDERSFUND;
+            double maxLimit = (float)companyCapital * 0.01;
+            models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
+            models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
+            return models;
         }
 
         public bool IsDirectorRelatedGroup(int? customerGroupId)

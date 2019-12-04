@@ -62,6 +62,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public decimal? loanLimit { get; set; }
         public string StaffFullName { get { return this.FirstName + " " + this.MiddleName + " " + this.LastName; } }
 
+        //public string staffFullName { get; set; }
         public string JobTitleName { get; set; }
         public string documentTitle { get; set; }
         public byte[] fileData { get; set; }
@@ -72,6 +73,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public decimal? workEndDuration { get; set; }
         public AppUserViewModel user { get; set; }
         public string businessUnitName { get; set; }
+        public string misCode { get; set; }
     }
 
     public class staffBulkFeedbackViewModel
@@ -213,4 +215,5 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int supervisorStaffId { get; set; }
         public string staffCode { get; set; }
     }
+
 }

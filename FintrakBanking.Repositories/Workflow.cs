@@ -118,7 +118,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         public LevelBusinessRule LevelBusinessRule { set { levelBusinessRule = value; } }
         public AlertPlaceholders Placeholders { set { placeholders = value; } }
         public WorkflowResponse Response { get { return response; } set { response = value; } }
-
         public bool isCrossOperationProcess { get; private set; }
         
         
@@ -160,6 +159,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                             ).ToList();
 
+            //if(this.referredLog.FirstOrDefault()?.BASEOPERATIONID != null) { this.operationId = this.referredLog.FirstOrDefault().BASEOPERATIONID ?? this.operationId; }
+
+
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
 
             if (request == null)
@@ -196,6 +198,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             ValidateDestinationConfiguration();
 
             CheckApprovalLimits();
+
+            LastApproverCheck();
 
             SetState();
 
@@ -519,9 +523,15 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
+        //private void ResolveFlowChangeInitiatorLevel()
+        //{
+        //    if(this.ExclusiveFlowChangeId > 0 and this.ExclusiveFlowChangeId == (oper))
+        //}
+
         private bool ResolveLevelConfigurations() // REFACTOR!!!
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
+            
             approvalGrid = approvalLevels;
             next = approvalLevels.FirstOrDefault();
 
@@ -809,14 +819,25 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private int? GetReportingLineStaffId() // if workflow is forced to use organogram
         {
+            var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
             if (next == null) { return null; }
-            if (this.toStaffId != null) { return null; }
+            if (this.toStaffId != null) { return toStaffId; }
+            //if (this.toStaffId != null) { return null; }
             if (this.externalInitialization == true) { return null; }
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
+            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || this.fromLevelId == null)
+            {
+                return null;
+            }
             ReportingLine super = line.FirstOrDefault(x => x.levelRoleId == next.DefaultRoleId && x.levelIds.Contains(next.ApprovalLevelId));
-            if (super == null) return null;
+            if (super == null)
+            {
+                throw new SecureException("No Staff Was Setup as Your Supervisor!");
+                //return null;
+            }
+
             return super.staffId;
         }
 
@@ -829,14 +850,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             if (this.skipLimitsCheck == true || IsPresetFinalLevel()) { return; }
-
-            if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision())
+            //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
+            if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision())
             {
                 if (WithinAllLimits() == true)
                 {
                     this.EndProcess(this.statusId);
                 }
-                else
+                else if (ActionIsApprovalDecision())
                 {
                     if(this.statusId != (short)ApprovalStatusEnum.Disapproved)
                     {
@@ -902,16 +923,43 @@ namespace FintrakBanking.Repositories.WorkFlow
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
             if (level == null) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
             if (this.disputed == true && level.CANRESOLVEDISPUTE != true) { return false; }
-
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true
                 && WithinInvestmentGradeLimit(level) == true
                 && WithinPoliticallyExposedLimit(level) == true;
         }
 
+        private void LastApproverCheck()
+        {
+            var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+            if (IsLastApprover(level) && (this.statusId == (int)ApprovalStatusEnum.Processing || this.statusId == (int)ApprovalStatusEnum.Authorised))
+            {
+                this.statusId = (int)ApprovalStatusEnum.Approved;
+            }
+        }
+
+        private bool IsLastApprover(TBL_APPROVAL_LEVEL level)
+        {
+            var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId).ToList();
+            if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE)
+            //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
+                {
+                return true;
+            }
+                return false;
+        }
+
+        private bool IsLastLevel(List<WorkflowSetup> levels, TBL_APPROVAL_LEVEL level)
+        {
+            if (levels.Count() < 1 || level == null) return false;
+            var isLastLevel = (levels.FindLastIndex(l => l.Level.APPROVALLEVELID == level.APPROVALLEVELID)) == (levels.Count() - 1);
+            return isLastLevel;
+        }
+
         private int SetState()
         {
-            if (this.nextLevelId == null)
+            var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);//for test!!
+            if (this.nextLevelId == null && IsLastApprover(level))//for test!!
             {
                 if (ActionIsApprovalDecision() || this.amount == 0)
                 {
@@ -985,6 +1033,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool ActionIsApprovalDecision()
         {
+            //return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved || this.statusId == (int)ApprovalStatusEnum.Authorised);
             return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved);
         }
 
@@ -1086,13 +1135,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition)
                            .ToList();
+            
 
             List<WorkflowSetup> grid = new List<WorkflowSetup>();
-
+            //bool canSkipRule = levelBusinessRule.InsiderRelated == true;
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) continue;
+                //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
                 grid.Add(new WorkflowSetup
                 {
@@ -1405,6 +1456,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int NumberOfApprovals { get; set; }
         public bool CanRouteBack { get; set; }
         public bool IsPoliticallyExposed { get; set; }
+        //public bool IsInsiderRelated { get; set; }
         public bool IsActive { get; set; }
         public bool CanEdit { get; set; }
         public bool CanRecieveEmail { get; set; }

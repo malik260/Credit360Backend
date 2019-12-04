@@ -11,7 +11,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int originalDocumentReleaseId { get; set; }
         public int originalDocumentApprovalId { get; set; }
         public int documentUploadId { get; set; }
-        public int approvalStatusId { get; set; }
+        public short approvalStatusId { get; set; }
         public string approvalStatus { get; set; }
         public string customerName { get; set; }
         public string applicationReferenceNumber { get; set; }
@@ -36,5 +36,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalTrailId { get; set; }
         public string currentApprovalLevel { get; set; }
         public int collateralId { get; set; }
+        public int? loopedStaffId { get; set; }
     }
 }

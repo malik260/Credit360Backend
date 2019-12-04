@@ -48,13 +48,13 @@ namespace FintrakBanking.ReportObjects.Credit
                                           customerAddress = e.ADDRESS ?? " ",
                                           customerEmailAddress = b.EMAILADDRESS,
                                           customerPhoneNumber = g.PHONENUMBER,
-                                          isFinal = h.ISFINAL,
+                                          isFinal = (h.ISFINAL == null) ? false : h.ISFINAL,
                                           producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                           loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                           offerLetterTitle = b.OFFERLETTERTITLE,
                                           offerLetterSalutation = b.OFFERLETTERSALUTATION,
-                                              offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
-                                              offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
+                                          offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
+                                          offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
 
                                       }).ToList();
 
@@ -117,14 +117,13 @@ namespace FintrakBanking.ReportObjects.Credit
             FinTrakBankingContext context = new FinTrakBankingContext();
             try
             {
-                var collateral  = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
-                       join b in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                       where b.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                       select new LoanApplicationCollateralViewModel
+                var loanAppId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(c => c.LOANAPPLICATIONID).FirstOrDefault();
+                var collateral  = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                       join b in context.TBL_COLLATERAL_CUSTOMER  on x.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                       where b.LOANAPPLICATIONID == loanAppId
+                                   select new LoanApplicationCollateralViewModel
                        {
-                           collateralDetail = x.COLLATERALDETAIL,
-                           collateralValue = x.COLLATERALVALUE,
-                           stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT
+                           collateralDetail = b.COLLATERALSUMMARY,
                        }).ToList();
 
                 if (collateral != null)
@@ -223,8 +222,10 @@ namespace FintrakBanking.ReportObjects.Credit
                                        //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        approvedProductId = b.APPROVEDPRODUCTID,
                                        productClassId = a.PRODUCTCLASSID,
+                                       productTypeId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTTYPEID,
                                        currencyName = h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
                                        tenor = b.APPROVEDTENOR,
+                                       //approvedTenorString = b.APPROVEDTENOR,
                                        interestRate = b.APPROVEDINTERESTRATE,
                                        loanAmount = b.APPROVEDAMOUNT,
                                        exchangeRate = b.EXCHANGERATE,

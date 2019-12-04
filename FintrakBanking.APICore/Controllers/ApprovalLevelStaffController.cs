@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -274,5 +275,124 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion Workflow Tracker
+
+        #region Approval Monitoring 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("work-flow-tracker/approval-monitoring")]
+        public HttpResponseMessage GetApprovalMointoring(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+
+            try
+            {
+                var data = repo.GetApprovalMointoring(dateRange);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("work-flow-tracker/approval-booking-monitoring")]
+        public HttpResponseMessage GetBookingMointoring(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+
+            try
+            {
+                var data = repo.GetBookingMointoring(dateRange);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("work-flow-tracker/target/{targetId}")]
+        public HttpResponseMessage GetApprovalTrailByTargetId(int targetId)
+        {
+            try
+            {
+                var data = repo.GetApprovalTrailByTargetId(targetId, token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, count = data.Count() });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("work-flow-tracker/booking/target/{targetId}")]
+        public HttpResponseMessage GetBookingApprovalTrailByTargetId(int targetId)
+        {
+            try
+            {
+                var data = repo.GetBookingApprovalTrailByTargetId(targetId, token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, count = data.Count() });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("approval-monitoring/export")]
+        public HttpResponseMessage ExportScheduleToExcel([FromBody] DateRange model)
+        {
+            try
+            {
+                model.companyId = token.GetCompanyId;
+                var fileBytes = repo.GenerateApprovalMonitoringReport(model);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data = "no-record", success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
+            }
+
+        }
+        #endregion Approval Monitoring
     }
 }

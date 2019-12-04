@@ -17,12 +17,12 @@ namespace FintrakBanking.APICore
 
         public ClaimsAuthorization()
         {
-         //   if (publicClientId == null) throw new ArgumentNullException("publicClientId");
-            this._bankingContext = new FinTrakBankingContext();
+            //   if (publicClientId == null) throw new ArgumentNullException("publicClientId");
+            //this._bankingContext = new FinTrakBankingContext();
         }
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public FinTrakBankingContext _bankingContext { get; private set; }
+        //public FinTrakBankingContext _bankingContext { get; private set; }
         public object publicClientId { get; private set; }
 
         //public string ClaimType { get; set; }

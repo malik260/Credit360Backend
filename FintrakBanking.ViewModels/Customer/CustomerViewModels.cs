@@ -6,6 +6,8 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerViewModels : GeneralEntity
     {
+        public string customerRating { get; set; }
+
         public string branchCode { get; set; }
         public string rcNumber { get; set; }
         public string customerAccountNo { get; set; }
@@ -78,7 +80,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string firstChildName { get; set; }
         public DateTime childDateOfBirth { get; set; }
         public string occupation { get; set; }
-        public short customerTypeId { get; set; }
+        public short? customerTypeId { get; set; }
         public int? relationshipOfficerId { get; set; }
         public string relationshipOfficerCode { get; set; }
         public string relationshipOfficerName { get; set; }
@@ -107,6 +109,45 @@ namespace FintrakBanking.ViewModels.Customer
         public string riskRatingName { get; set; }
         public string prospectCustomerCode { get; set; }
         public bool isProspect { get; set; }
+
+
+        public string telephone { get; set; }
+        public string accountNumber { get; set; }
+        public string contactAddress { get; set; }
+        public string lastContactAddress { get; set; }
+        public string staffCode { get; set; }
+        public string customerSensitivityLevel { get; set; }
+        public string fsCaptionGroupCode { get; set; }
+        public string electricMeterNumber { get; set; }
+        public string officeAddress { get; set; }
+        public string nearestLandmark { get; set; }
+        public string dateofIncorporation { get; set; }
+        public string paidUpCapital { get; set; }
+        public string authorizedCapital { get; set; }
+        public string employerDetails { get; set; }
+        public string directorName { get; set; }
+        //public string companyName { get; set; }
+        public string directorAddress { get; set; }
+        public string directorEmail { get; set; }
+        public string directorBvn { get; set; }
+        public string directorShareholderPercentage { get; set; }
+        public string nameofSignatories { get; set; }
+        public string addressofSignatories { get; set; }
+        public string phoneNumberofSignatories { get; set; }
+        public string emailofSignatories { get; set; }
+        public string bvnNumberofSignatories { get; set; }
+        public string shareholderName { get; set; }
+        public string shareholderBvn { get; set; }
+        public string top10SuppliersName { get; set; }
+        public string top10SuppliersAddress { get; set; }
+        public string top10SuppliersPhoneNumber { get; set; }
+        public string top10SuppliersEmailAddress { get; set; }
+        public string top10CustomerName { get; set; }
+        public string top10CustomerAddress { get; set; }
+        public string top10CustomerPhoneNumber { get; set; }
+        public string top10CustomerEmailAddress { get; set; }
+
+
         public List<CustomerAddressViewModels> CustomerAddresses { get; set; }
         //public List<CustomerBvnViewModels> CustomerBvn { get; set; }
         public List<CustomerCompanyInfomationViewModels> CustomerCompanyInfomation { get; set; }
@@ -123,6 +164,7 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerChildrenViewModel> CustomerChildren { get; set; }
         public int? businessUnitId { get; set; }
         public decimal? pastDueObligations { get; set; }
+        public string ownership { get; set; }
     }
 
     public class CustomerViewModels2 : GeneralEntity
@@ -602,7 +644,10 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class CflLoanApplication : GeneralEntity
     {
-        public string requestId { get; set; }
+        public string customerCode { get; set; }
+
+        public string requestId { get; set; } 
+        public string callStatusCode { get; set; }
         public string applicationDate { get; set; }
 
         public string accountOfficerStaffCode { get; set; }
@@ -631,7 +676,7 @@ namespace FintrakBanking.ViewModels.Customer
 
         public string sectorCode { get; set; }
 
-        public string subSector { get; set; }
+        public string subSectorCode { get; set; }
 
         public string exchangeRate { get; set; }
 
@@ -653,7 +698,24 @@ namespace FintrakBanking.ViewModels.Customer
     {
         public string StatusCode { get; set; }   
         public string Message { get; set; }
-
+        public string requestId { get; set; }
+    	public string applicationReferenceNumber { get; set; }
     }
 
+    public class Attachment
+    {
+        public string FileLink { get; set; }
+        public string FileType { get; set; }
+    }
+
+    public class OfferLetterResponse 
+    {
+        public string StatusCode { get; set; }
+        public string RequestId { get; set; }
+        public string WorkflowStage { get; set; }
+        public string ReasonForRejection { get; set; }
+        public string ActionByName { get; set; }
+        public string Comment { get; set; }
+        public Attachment Attachment { get; set; }
+    }
 }

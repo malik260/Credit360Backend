@@ -571,6 +571,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 var productData = (from data in context.TBL_PRODUCT
                                    join g in context.TBL_PRODUCT_TYPE on data.PRODUCTTYPEID equals g.PRODUCTTYPEID
+                                   //where data.PRODUCTCODE !="EBFC"
                                    select new ProductViewModel()
                                    {
                                        productId = data.PRODUCTID,
@@ -595,7 +596,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
 
                                        productCode = data.PRODUCTCODE,
-                                       productName = data.PRODUCTNAME,
+                                       productName = data.PRODUCTNAME + " " + data.PRODUCTCODE,
                                        productDescription = data.PRODUCTDESCRIPTION,
 
                                        productGroupId = g.PRODUCTGROUPID,
@@ -1043,7 +1044,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                                       //join r in context.TBL_TEMP_PRODUCT_CURRENCY on c.PRODUCTID equals r.PRODUCTID
                                                   join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
                                                   join atrail in context.TBL_APPROVAL_TRAIL on c.TEMP_PRODUCTID equals atrail.TARGETID
-                                                  where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
+                                                  where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                                                        || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing) 
+                                                        && c.ISCURRENT == true
                                                         && atrail.RESPONSESTAFFID == null
                                                         && atrail.OPERATIONID == (int)OperationsEnum.ProductCreation
                                                                                       //&& atrail.TOAPPROVALLEVELID == staffApprovalLevelId
@@ -1460,6 +1463,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         }
                         else
                         {
+                            context.SaveChanges();
                             trans.Commit();
                         }
 

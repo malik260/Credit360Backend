@@ -781,7 +781,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     }
 
-                    financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee);
+                    financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee,  loanSystemTypeId);
 
                 }
 
@@ -5631,7 +5631,8 @@ namespace FintrakBanking.Repositories.Credit
 
 
                         pastDue.LOANID = item.loanId;
-                        pastDue.PARENT_PASTDUECODE = PastDueCode;
+                        //pastDue.PARENT_PASTDUECODE = PastDueCode;
+                        pastDue.PASTDUECODE = PastDueCode;
                         pastDue.CREDITAMOUNT = 0;
                         pastDue.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
                         pastDue.DEBITAMOUNT = Math.Abs(principalAmountNotCollected);
@@ -18114,8 +18115,20 @@ namespace FintrakBanking.Repositories.Credit
                             //{
                             //    item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                             //}
-                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                            output = context.SaveChanges() > 0;
+
+                            try
+                            {
+                                reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                output = context.SaveChanges() > 0;
+                            }
+                            catch (Exception ex)
+                            {
+
+                                var me = ex;
+                            }
+
+
+
                         }
                         if (output == true && result == true)
                         {
@@ -20466,7 +20479,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         result = OverdraftTopUp(twoFactorAuth, loanId, (decimal)model.newAmount);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20482,7 +20495,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = OverdraftRenewal(twoFactorAuth, loanReviewOperationsId, loanId, (decimal)model.newAmount);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20498,7 +20511,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = OverdraftExtension(twoFactorAuth, loanId, (decimal)model.newAmount);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20514,7 +20527,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = SubAllocation(twoFactorAuth, loanId, (decimal)model.newAmount, applicationDate, staffId);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20530,7 +20543,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = OverdraftInterestRate(twoFactorAuth, loanId);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -21427,7 +21440,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         result = ProcessContingentLiabilityTermination(twoFactorAuth, model, approvalComment);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -21917,6 +21930,40 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanApplDetailsArchive.DELETED = detailRow.DELETED;
                 addLoanApplDetailsArchive.DELETEDBY = detailRow.DELETEDBY;
                 addLoanApplDetailsArchive.DATETIMEDELETED = detailRow.DATETIMEDELETED;
+                addLoanApplDetailsArchive.EQUITYAMOUNT = detailRow.EQUITYAMOUNT;
+                addLoanApplDetailsArchive.HASDONECHECKLIST = detailRow.HASDONECHECKLIST;
+                addLoanApplDetailsArchive.EQUITYCASAACCOUNTID = detailRow.EQUITYCASAACCOUNTID;
+                addLoanApplDetailsArchive.CONSESSIONAPPROVALSTATUSID = detailRow.CONSESSIONAPPROVALSTATUSID;
+                addLoanApplDetailsArchive.CONSESSIONREASON = detailRow.CONSESSIONREASON;
+                addLoanApplDetailsArchive.ISPOLITICALLYEXPOSED = detailRow.ISPOLITICALLYEXPOSED;
+                addLoanApplDetailsArchive.REPAYMENTTERMS = detailRow.REPAYMENTTERMS;
+                addLoanApplDetailsArchive.REPAYMENTSCHEDULEID = detailRow.REPAYMENTSCHEDULEID;
+                addLoanApplDetailsArchive.EFFECTIVEDATE = detailRow.EFFECTIVEDATE;
+                addLoanApplDetailsArchive.ISTAKEOVERAPPLICATION = detailRow.ISTAKEOVERAPPLICATION;
+                addLoanApplDetailsArchive.EXPIRYDATE = detailRow.EXPIRYDATE;
+                addLoanApplDetailsArchive.CASAACCOUNTID = detailRow.CASAACCOUNTID;
+                addLoanApplDetailsArchive.OPERATINGCASAACCOUNTID = detailRow.OPERATINGCASAACCOUNTID;
+                addLoanApplDetailsArchive.SECUREDBYCOLLATERAL = detailRow.SECUREDBYCOLLATERAL;
+                addLoanApplDetailsArchive.CRMSCOLLATERALTYPEID = detailRow.CRMSCOLLATERALTYPEID;
+                addLoanApplDetailsArchive.MORATORIUMDURATION = detailRow.MORATORIUMDURATION;
+                addLoanApplDetailsArchive.CRMSFUNDINGSOURCEID = detailRow.CRMSFUNDINGSOURCEID;
+                addLoanApplDetailsArchive.CRMSREPAYMENTSOURCEID = detailRow.CRMSREPAYMENTSOURCEID;
+                addLoanApplDetailsArchive.CRMSFUNDINGSOURCECATEGORY = detailRow.CRMSFUNDINGSOURCECATEGORY;
+                addLoanApplDetailsArchive.CRMS_ECCI_NUMBER = detailRow.CRMS_ECCI_NUMBER;
+                addLoanApplDetailsArchive.CRMSCODE = detailRow.CRMSCODE;
+                addLoanApplDetailsArchive.CRMSREPAYMENTAGREEMENTID = detailRow.CRMSREPAYMENTAGREEMENTID;
+                addLoanApplDetailsArchive.CRMSVALIDATED = detailRow.CRMSVALIDATED;
+                addLoanApplDetailsArchive.CRMSDATE = detailRow.CRMSDATE;
+                addLoanApplDetailsArchive.TRANSACTIONDYNAMICS = detailRow.TRANSACTIONDYNAMICS;
+                addLoanApplDetailsArchive.CONDITIONPRECIDENT = detailRow.CONDITIONPRECIDENT;
+                addLoanApplDetailsArchive.CONDITIONSUBSEQUENT = detailRow.CONDITIONSUBSEQUENT;
+                addLoanApplDetailsArchive.FIELD1 = detailRow.FIELD1;
+                addLoanApplDetailsArchive.PRODUCTPRICEINDEXRATE = detailRow.PRODUCTPRICEINDEXRATE;
+                addLoanApplDetailsArchive.PRODUCTPRICEINDEXID = detailRow.PRODUCTPRICEINDEXID;
+                addLoanApplDetailsArchive.FIELD2 = detailRow.FIELD2;
+                addLoanApplDetailsArchive.FIELD3 = detailRow.FIELD3;
+                addLoanApplDetailsArchive.ISSPECIALISED = detailRow.ISSPECIALISED;
+                addLoanApplDetailsArchive.TENORFREQUENCYTYPEID = detailRow.TENORFREQUENCYTYPEID;
 
                 this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
 

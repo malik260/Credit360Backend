@@ -175,6 +175,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("refresh-customer-account/{customerId}")]
+        public HttpResponseMessage RefreshCustomerAccount(int customerId)
+        {
+            try
+            {
+                var result = repo.refreshCustomerAccount(customerId);
+                if(result)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Customer Account Refreshed Successfully" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error occurred, Please Contact the System Administrator" });
+                }
+            }
+            catch(SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+           
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -276,7 +300,9 @@ namespace FintrakBanking.APICore.Controllers
         [Route("customer-staging/")]
         public HttpResponseMessage GetStagedCustomer(string searchTerm)
         {
-
+            //var data2 = new CustomerViewModels();
+            //return Request.CreateResponse(HttpStatusCode.OK,
+            //      new { success = true, result = data2 });
             try
             {
                 var data = stagingRepo.GetIntegratedCustomerInformation(searchTerm);

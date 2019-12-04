@@ -75,6 +75,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("reinitiate-rejected-release/{id}")]
+        public HttpResponseMessage reinitiateSecurityRelease(int id)
+        {
+            try
+            {
+                var response = _repo.reinitiateSecurityRelease(id, token.GetStaffId, token.GetCompanyId);
+                if(response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error Occurred, Please Contact the System Administrator" });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("security-release")]
@@ -97,7 +120,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
                     else
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "ERROR! One or More Document has already been sent for Approval" });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An Error Occurred, Kindly Contact the System Administrator" });
                     }
                 }
 
@@ -153,6 +176,49 @@ namespace FintrakBanking.APICore.Controllers
 
                 WorkflowResponse response = _repo.SubmitApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("security-release/{operationId}/document-released/{targetId}")]
+        public HttpResponseMessage getReleasedDocUploadIds(int operationId, int targetId)
+        {
+            try
+            {
+                var response = _repo.GetReleasedDocUploadIds(operationId, targetId, token.GetStaffId);
+                if (response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error Occurred, Please Contact the System Administrator" });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("security-release/{operationId}/available-documents/{targetId}")]
+        public HttpResponseMessage GetAvailableDocumentsForReleease(int operationId, int targetId)
+        {
+            try
+            {
+                var response = _repo.GetAvailableDocumentsForReleease(operationId, targetId, token.GetStaffId);
+                if (response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error Occurred, Please Contact the System Administrator" });
             }
             catch (SecureException ex)
             {

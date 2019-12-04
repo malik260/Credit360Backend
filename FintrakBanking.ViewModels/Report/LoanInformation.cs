@@ -385,6 +385,22 @@ namespace FintrakBanking.ViewModels.Reports
 
     }
 
+    public class DeferralWaiverViewModel
+    {
+        public string customerName { get; set; }
+        public string facilityType { get; set; }
+        public decimal approvedAmount { get; set; }
+        public string preparedBy { get; set; }
+        public string condition { get; set; }
+        public double loanInformation { get; set; }
+        public decimal reason { get; set; }
+        public double cummulativeDays { get; set; }
+        public int deferralDuration { get; set; }
+        public double fromApprovalLevelName { get; set; }
+        public int? fromStaffName { get; set; }
+        public string branchName { get; set; }
+        public DateTime currentDate { get; set; }
 
+    }
 
 }

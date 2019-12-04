@@ -18,7 +18,14 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string businessOwner { get; set; }
         public string senderName { get; set; }
         public string senderEmail { get; set; }
-        public int templateType { get; set; }
+        public string templateType { get; set; }
+        public string defaultEmail { get; set; }
+        public string bindingMethod { get; set; }
+        public DateTime? lastSentDate { get; set; }
+        public int? actionStatus { get; set; }
+
+        //public DateTime lastSentDate { get; set; }
+        //public int source { get; set; }
     }
     public class AlertSetupViewModel : GeneralEntity
     {
@@ -53,22 +60,29 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class AlertLevelViewModel : GeneralEntity
     {
-        public string levelGroupName;
-
-        public int alertLevelId { get; set; }
-        public string emailList { get; set; }
-        public string levelCode { get; set; }
-        public short levelGroupId { get; set; }
+        public string levelGroupName { get; set; }
+        public int alertStaffRoleId { get; set; }
+        public int alertTitleId { get; set; }
+        public int staffRoleId { get; set; }
+        public string title { get; set; }
+        public string staffRoleCode { get; set; }
+        public string staffRoleName { get; set; }
     }
 
     public class AlertsViewModel : GeneralEntity
     {
+        public AlertsViewModel()
+        {
+            receiverEmailList = new List<string>();
+        }
+
         public string alertTitle { get; set; }
         public string frequencyMode { get; set; }
         public List<string> receiverEmailList { get; set; }
         public string template { get; set; }
         public bool canFire { get; set; }
         public int alertTitleId { get; set; }
+        public string accountOfficerEmail { get; set; }
     }
 
     public class AlertMisViewModel : GeneralEntity
@@ -109,6 +123,12 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
         public int operationId { get; set; }
         public string operationName { get; set; }
+    }
+
+    public class GeneralTempateViewModel
+    {
+        public int templateId { get; set; }
+        public string templateBody { get; set; }
     }
 
 }

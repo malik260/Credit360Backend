@@ -150,8 +150,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggers(int loanId, int loanSystemTypeId);
         bool VerifyLegalContingentCode(string legalContingentCode, int loanApplicationDetailId);
 
-        List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
-        List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId);
+        List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int loanTypeId, int companyId);
+        List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int loanTypeId, int companyId);
 
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> GetLoanScheduleByLoanId(int loanId);
         IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, string param);
@@ -199,8 +199,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId, bool isInitiation);
 
-        //int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
-        WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        //WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
         IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview(int staffId, int companyId);
         IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReviewAwaitingApproval(int staffId, int companyId);
@@ -241,6 +241,9 @@ namespace FintrakBanking.Interfaces.Credit
         AccountBalanceViewModel GetLoanBalances(int loanId, int companyId);
 
         Tuple<List<multipleDisbursementOutputViewModel>, bool> preBulkLoanDisbursement(byte[] file, UserInfo user, bool isFinal);
+
+        IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId);
+       // IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId);
 
         List<multipleDisbursementOutputViewModel> startBulkLoanDisbursement(List<multipleDisbursementOutputViewModel> models, UserInfo user);
         bool saveBulkLoanDisbursementEntries(List<multipleDisbursementOutputViewModel> models, UserInfo user);

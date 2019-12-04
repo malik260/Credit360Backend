@@ -174,6 +174,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public byte[] COMPANYLOGO { get; set; }
+        public decimal? COMPANYLIMIT { get; set; }
 
         public virtual TBL_ACCOUNTING_STANDARD TBL_ACCOUNTING_STANDARD { get; set; }
 
@@ -366,5 +367,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
+        public decimal? SINGLEOBLIGORLIMIT { get; set; }
     }
 }

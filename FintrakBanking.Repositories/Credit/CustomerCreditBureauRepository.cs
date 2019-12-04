@@ -686,14 +686,14 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
+            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa?.PRODUCTACCOUNTNUMBER;
             chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
-            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
+            if (casa != null) referenceNumber = casa?.PRODUCTACCOUNTNUMBER;
 
-            chargeModel.feeAmount = chargeAmount;
-            chargeModel.referenceNumber = referenceNumber;
-            chargeModel.casaAccountId = casa.CASAACCOUNTID;
-            chargeModel.debitBusiness = searchInfo.debitBusiness;
+            //chargeModel.feeAmount = chargeAmount;
+            //chargeModel.referenceNumber = referenceNumber;
+            //chargeModel.casaAccountId = casa?.CASAACCOUNTID;
+            //chargeModel.debitBusiness = searchInfo.debitBusiness;
 
             if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeBank || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && searchInfo.debitBusiness))
             {
@@ -768,7 +768,10 @@ namespace FintrakBanking.Repositories.Credit
                 else
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException("Search Response -  error occured during search");
+                    var errorCode = searchResponse.SearchResult.Split(new string[] { "<ERROR-CODE>" }, StringSplitOptions.None)[1].Split('<')[0];
+                    var errorDescription = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(O => O.ERRORCODE == errorCode).FirstOrDefault().DESCRIPTION;
+
+                    throw new ConditionNotMetException($"Search Response - ERRORCODE: {errorCode} ERRORMESSAGE: {errorDescription}");
                 }
                 //}
                 //else
@@ -882,7 +885,7 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.userBranchId = request.userBranchId;
             chargeModel.companyId = request.companyId;
             chargeModel.referenceNumber = referenceNumber;
-            chargeModel.casaAccountId = casa.CASAACCOUNTID;
+            chargeModel.casaAccountId = casa?.CASAACCOUNTID;
             chargeModel.debitBusiness = request.debitBusiness;
 
             if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeBank || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && request.debitBusiness))
@@ -1096,9 +1099,9 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.passCode = searchInput.passCode;
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.feeAmount = chargeAmount;
-            chargeModel.casaAccountId = casa.CASAACCOUNTID;
+            chargeModel.casaAccountId = casa?.CASAACCOUNTID;
 
-            searchInput.customerCreditBureauUploadDetails.accountNumber = casa != null ? casa.PRODUCTACCOUNTNUMBER : null;
+            searchInput.customerCreditBureauUploadDetails.accountNumber = casa != null ? casa?.PRODUCTACCOUNTNUMBER : null;
             searchInput.customerCreditBureauUploadDetails.userBranchId = searchInput.userBranchId;
             searchInput.userName = creditBureau.USERNAME;
             searchInput.password = creditBureau.PASSWORD;
@@ -1263,7 +1266,6 @@ namespace FintrakBanking.Repositories.Credit
         //private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
         //{
         //    var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
-
         //    FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
         //    debit.operationId = (int)OperationsEnum.CreditBureauSearch;
         //    debit.description = creditBureau.CREDITBUREAUNAME + " search charge";
@@ -1366,7 +1368,6 @@ namespace FintrakBanking.Repositories.Credit
         //    credit.creditAmount = chargeAmount;
         //    credit.sourceBranchId = creditBureauInputs.userBranchId;
         //    credit.destinationBranchId = creditBureauInputs.userBranchId;
-
 
         //    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
         //    inputTransactions.Add(debit);
@@ -1494,7 +1495,6 @@ namespace FintrakBanking.Repositories.Credit
                             debit.approvedDateTime = DateTime.Now;
                             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             debit.companyId = model.companyId;
-
 
                             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = model.referenceNumber;

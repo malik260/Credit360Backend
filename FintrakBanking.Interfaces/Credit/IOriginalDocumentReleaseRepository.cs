@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateOriginalDocumentRelease(OriginalDocumentReleaseViewModel mod);
 
         IEnumerable<OriginalDocumentReleaseViewModel> GetRejectedAndReferredSecurityRelease(int staffId);
+        bool reinitiateSecurityRelease(int id, int staffId, int companyId);
+        IEnumerable<DocumentUploadViewModel> GetReleasedDocUploadIds(int operationId, int targetId, int staffId);
+        IEnumerable<DocumentUploadViewModel> GetAvailableDocumentsForReleease(int operationId, int targetId, int staffId);
     }
 }

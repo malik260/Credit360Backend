@@ -1932,6 +1932,7 @@ namespace FintrakBanking.Repositories.Credit
                             deferralDuration = 1,
                             cummulativeDays = 1,
                             condition = b.CONDITION,
+                            loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             conditionId = b.LOANCONDITIONID,
                             loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -1974,6 +1975,7 @@ namespace FintrakBanking.Repositories.Credit
                             deferralDuration = 1,
                             cummulativeDays = 1,
                             condition = b.CONDITION,
+                            loanApplicationDetailId = a.LOANREVIEWAPPLICATIONID,
                             conditionId = b.LOANCONDITIONID,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -2283,7 +2285,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool ValidateChecklist(int applicationId)
         {
             var app = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == applicationId && d.DELETED == false && app.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased).ToList();
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == applicationId && d.DELETED == false && d.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased).ToList();
             foreach (var id in details)
             {
                 var checklists = context.TBL_ESG_CHECKLIST_DETAIL.Where(c => c.DELETED != true && c.LOANAPPLICATIONDETAILID == id.LOANAPPLICATIONDETAILID).ToList();

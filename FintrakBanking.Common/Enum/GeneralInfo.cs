@@ -440,8 +440,15 @@ namespace FintrakBanking.Common.Enum
         AlertConditionAdded = 541,
         AlertConditionUpdated = 542,
         AlertConditionDeleted = 543,
-        //LienProposed = 544,
-        //LienUnproposed = 545
+        CashbackSectionAdded = 544,
+        CashbackSectionUpdated = 545,
+        LcUsanceAdded = 546,
+        LcUsanceDeleted = 547,
+        LcUsanceUpdated = 548,
+        LienProposed = 549,
+        LienUnproposed = 550,
+        DocumentTemplatePrinted = 551,
+        CrmsRecordAdded = 552
     };
     public enum RegulatoryTypeEnum
     {

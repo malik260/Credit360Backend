@@ -203,6 +203,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return (from data in context.TBL_OPERATIONS_TYPE
                     orderby data.OPERATIONTYPENAME ascending
+                    where data.INUSE == true
                     select new LookupViewModel()
                     {
                         lookupId = data.OPERATIONTYPEID,
@@ -221,22 +222,35 @@ namespace FintrakBanking.Repositories.Setups.General
                             lookupName = a.OPERATIONNAME,
                             lookupTypeId = a.OPERATIONTYPEID,
                             lookupTypeName = a.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
-                        }).ToList();
+                        }).OrderBy(l => l.lookupName).ToList();
 
             return data;
         }
       
         public IEnumerable<LookupViewModel> GetOperations(short operationTypeId)
         {
-            return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == operationTypeId
+            var operations = (from data in context.TBL_OPERATIONS
+                    where data.OPERATIONTYPEID == operationTypeId && data.ISDISABLED == false
                     select new LookupViewModel()
                     {
                         lookupId = (short)data.OPERATIONID,
                         lookupName = data.OPERATIONNAME,
                         lookupTypeId = data.OPERATIONTYPEID,
                         lookupTypeName = data.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
-                    });
+                    }).ToList();
+
+            var operations2 = (from data in context.TBL_OPERATIONS
+                              join op in context.TBL_OPERATIONS_TYPE on data.OPERATIONTYPEID equals op.BINDINGTYPEID
+                              where data.OPERATIONTYPEID == op.BINDINGTYPEID && op.OPERATIONTYPEID == operationTypeId && data.ISDISABLED == false
+
+                               select new LookupViewModel()
+                              {
+                                  lookupId = (short)data.OPERATIONID,
+                                  lookupName = data.OPERATIONNAME,
+                                  lookupTypeId = data.OPERATIONTYPEID,
+                                  lookupTypeName = data.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
+                              }).ToList();
+            return operations.Union(operations2).OrderBy(l => l.lookupName).ToList();
         }
 
         /// <summary>
@@ -457,7 +471,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var roleLevelIds = context.TBL_APPROVAL_LEVEL
                 .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
                 .Select(x => x.APPROVALLEVELID)
-                .Distinct();
+                .Distinct().ToList();
 
             int scope = (int)ProcessViewScopeEnum.Level; // default 1
 
@@ -576,6 +590,29 @@ namespace FintrakBanking.Repositories.Setups.General
                    businessUnitName = x.BUSINESSUNITNAME,
                })
                .ToList();
+        }
+
+        public List<int> GetStaffRlieved(int staffId)
+        {
+            List<int> staffs = new List<int>();
+            var now = DateTime.Now;
+            staffs.Add(staffId);
+            var staffIds = context.TBL_STAFF_RELIEF
+                .Where(x => x.DELETED == false
+                    && x.RELIEFSTAFFID == staffId
+                    && x.STARTDATE <= now
+                    && x.ENDDATE >= now
+                    && x.ISACTIVE == true
+                ).Select(x => x.STAFFID).Distinct();
+            if (staffIds.Any())
+            {
+                foreach (var rec in staffIds)
+                {
+                    staffs.Add(rec);
+                }
+            }
+
+            return staffs;
         }
     }
 

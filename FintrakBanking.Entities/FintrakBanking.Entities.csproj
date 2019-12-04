@@ -76,6 +76,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\SqlDatabaseConfiguration.cs" />
+    <Compile Include="Models\TBL_ALERT_DAILYREPORT.cs" />
+    <Compile Include="Models\TBL_ALERT_GENERAL_TEMPLATE.cs" />
+    <Compile Include="Models\TBL_ALERT_USER_SECURITY.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_RATIO_CATEGORY.cs" />
+    <Compile Include="Models\TBL_DOC_TEMPLATE_SAVED.cs" />
+    <Compile Include="Models\TBL_GLOBAL_EXPOSURE.cs" />
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOCUMENT_UPLOAD.cs" />
@@ -85,10 +92,11 @@
     <Compile Include="DocumentModels\TBL_JOB_REQUEST_MSG_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
     <Compile Include="Models\TBL_ALERT_CONDITION.cs" />
+    <Compile Include="Models\TBL_ALERT_DATA_BINDINGTYPE.cs" />
     <Compile Include="Models\TBL_ALERT_FREQUENCY.cs" />
-    <Compile Include="Models\TBL_ALERT_LEVEL.cs" />
-    <Compile Include="Models\TBL_ALERT_LEVEL_GROUP.cs" />
-    <Compile Include="Models\TBL_ALERT_LEVEL_GRP_MAPPING.cs" />
+    <Compile Include="Models\TBL_ALERT_STAFF_ROLE.cs" />
+    <Compile Include="Models\TBL_ALERT_ROLE_GROUP.cs" />
+    <Compile Include="Models\TBL_ALERT_ROLE_GRP_MAPPING.cs" />
     <Compile Include="Models\TBL_ALERT_SETUP.cs" />
     <Compile Include="Models\TBL_ALERT_TEMPLATE_TYPE.cs" />
     <Compile Include="Models\TBL_ALERT_TITLE.cs" />
@@ -100,10 +108,16 @@
     <Compile Include="Models\TBL_ATC_RELEASE.cs" />
     <Compile Include="Models\TBL_ATC_RELEASE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_ATC_TYPE.cs" />
+    <Compile Include="Models\TBL_CASHBACK.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_DEPOSIT_ARCHV.cs" />
     <Compile Include="Models\TBL_COLLATERAL_SWAP_REQUEST.cs" />
+    <Compile Include="Models\TBL_COLLATERL_CUSTOMER_ARCHV.cs" />
+    <Compile Include="Models\TBL_CREDIT_OFFICER_STAFFROLE.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL_TEMP.cs" />
     <Compile Include="Models\TBL_EOD_OPERATION_LOG_DETAIL.cs" />
+    <Compile Include="Models\TBL_FACILITY_RATING.cs" />
+    <Compile Include="Models\TBL_INTERNAL_EXPOSURE.cs" />
     <Compile Include="Models\TBL_LOAN_CAMSOL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_MAPPING_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_FULLANDFINAL_STATUS.cs" />
@@ -161,6 +175,7 @@
     <Compile Include="Models\TBL_PROFILE_BUSINESS_UNIT.cs" />
     <Compile Include="Models\TBL_PSR_ANALYSIS.cs" />
     <Compile Include="Models\TBL_PSR_COMMENT.cs" />
+    <Compile Include="Models\TBL_PSR_IMAGES.cs" />
     <Compile Include="Models\TBL_PSR_NEXT_INSPECTION_TASK.cs" />
     <Compile Include="Models\TBL_PSR_OBSERVATION.cs" />
     <Compile Include="Models\TBL_PSR_PERFORMANCE_EVALUATION.cs" />
@@ -624,6 +639,7 @@
     <Compile Include="Models\TBL_TEMP_STAFF_RELIEF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TERM_SHEET.cs" />
+    <Compile Include="Models\TBL_THIRDPARTY_LOAN_MAPPING.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="Models\TBL_VALUATION_REPORT.cs" />
     <Compile Include="Models\TBL_VALUATION_REQUEST_TYPE.cs" />

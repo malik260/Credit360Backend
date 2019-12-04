@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.CASA;
+using System.Globalization;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -73,43 +74,45 @@ namespace FintrakBanking.Repositories.Credit
                     //Task.Run(async () => apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration)).GetAwaiter().GetResult();
                     apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode(customer.CUSTOMERCODE);
                     //apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("0689601167");
-                    foreach (var account in apiCustomerAccounts) 
+                    apiTransactions = integration.GetCustomerAccountTurnover(customer.CUSTOMERCODE, turnoverDuration);
+
+                    foreach (var transaction in apiTransactions)
                     {
-                        apiTransactions = integration.GetCustomerAccountTurnover(account.productAccountNumber, turnoverDuration);
-
-                        foreach (var transaction in apiTransactions)
+                        context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
                         {
+                            LOANAPPLICATIONID = applicationId,
+                            CUSTOMERID = customer.CUSTOMERID,
+                            CUSTOMERCODE = customer.CUSTOMERCODE,
+                            ACCOUNTNUMBER = transaction.accountNumber,
+                            //PERIOD = transaction.period,
+                            PERIOD = transaction.month == null ? "" : new DateTime(2019, (int)transaction.month, 1).ToString("MMM", CultureInfo.InvariantCulture).ToUpper(),
+                            PRODUCTNAME = transaction.productName,
+                            MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
+                            MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
+                            MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
+                            MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
+                            DEBITTURNOVER = transaction.debit_Turnover,
+                            CREDITTURNOVER = transaction.credit_Turnover,
+                            SMSALERT = transaction.sms_Alert,
+                            AMC = transaction.amc,
+                            VAT = transaction.vat,
+                            MANAGEMENTFEE = transaction.management_Fee,
+                            COMMITMENTFEE = transaction.commitment_Fees,
+                            CONTINGENTLIABILITYCOMM = transaction.com_Contigent_Liab,
+                            LC_COMMISSION = transaction.lc_Commission,
+                            CREATEDBY = staffId,
+                            DATETIMECREATED = DateTime.Now,
+                            MONTH = transaction.month,
+                            YEAR = transaction.year,
+                            ISLMS = isLms
 
-                            context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
-                            {
-                                LOANAPPLICATIONID = applicationId,
-                                CUSTOMERID = customer.CUSTOMERID,
-                                CUSTOMERCODE = customer.CUSTOMERCODE,
-                                ACCOUNTNUMBER = transaction.accountNumber,
-                                PERIOD = transaction.period,
-                                PRODUCTNAME = transaction.productName,
-                                MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
-                                MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
-                                MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
-                                MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
-                                DEBITTURNOVER = transaction.debit_Turnover,
-                                CREDITTURNOVER = transaction.credit_Turnover,
-                                SMSALERT = transaction.sms_Alert,
-                                AMC = transaction.amc,
-                                VAT = transaction.vat,
-                                MANAGEMENTFEE = transaction.management_Fee,
-                                COMMITMENTFEE = transaction.commitment_Fees,
-                                CONTINGENTLIABILITYCOMM = transaction.com_Contigent_Liab,
-                                LC_COMMISSION = transaction.lc_Commission,
-                                CREATEDBY = staffId,
-                                DATETIMECREATED = DateTime.Now,
-                                MONTH = transaction.month,
-                                YEAR = transaction.year,
-                                ISLMS = isLms
-                            });
-                        }
+                        });
                     }
-                    
+                    //foreach (var account in apiCustomerAccounts) 
+                    //{
+
+                    //}
+
 
                 }
             }
@@ -155,9 +158,8 @@ namespace FintrakBanking.Repositories.Credit
         public void LoadCustomerRatios(int applicationId, List<int> customerIds, int staffId) 
         {
             bool isGroup = false;
-            var apiTransactions = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
             var apiCustomerRatio = new List<RatingAndRatioViewModel>();
-            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+            var apiTransactionsOthers = new List<RatingAndRatioViewModel>();
             var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             if(application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
             var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
@@ -192,34 +194,161 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
-        public void GetCorporateCustomerRating(List<int> customerIds, int staffId)
+        public void LoadCustomerGroupRatios(int applicationId, List<int> customerIds, int staffId)
         {
-            var apiTransactions = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
-            var apiCustomerRatio = new List<RatingAndRatioViewModel>();
-            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+            bool isGroup = false;
+            var apiCustomerRatio = new List<GroupRatingAndRatioViewModel>();
+            var apiTransactionsOthers = new List<GroupRatingAndRatioViewModel>();
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
 
+            if (isGroup)
+            {
+                var ids = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == application.CUSTOMERGROUPID && x.DELETED == false).Select(x => x.CUSTOMERID).ToList();
+                customers = context.TBL_CUSTOMER.Where(x => ids.Contains(x.CUSTOMERID));
+            }
+
+            foreach (var customer in customers)
+            {
+                if (customer.ISPROSPECT == false)
+                {
+                    apiCustomerRatio = integration.GetCustomerGroupRatioByCustomerCode(customer.CUSTOMERCODE);
+
+                    foreach (var item in apiCustomerRatio)
+                    {
+                        for (int i = 0; i < item.ratio.Count - 1; i++) {
+                            context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
+                            {
+                                DESCRIPTION = item.ratio[i].indicatorname,
+                                VALUE = item.ratio[i].indicatorvalue,
+                                CUSTOMERID = customer.CUSTOMERID,
+                                LOANAPPLICATIONID = application.LOANAPPLICATIONID,
+                                CUSTOMERGROUPID = application.CUSTOMERGROUPID,
+                                DATETIMECREATED = DateTime.Now,
+                                CREATEDBY = staffId,
+                                DELETED = false,
+                                CATEGORYID = context.TBL_CUSTOMER_RATIO_CATEGORY.Where(O => item.ratioHeader.Contains(O.CATEGORYNAME)).FirstOrDefault()?.CATEGORYID,
+                            });
+                        }
+                    }
+
+                }
+            }
+
+            context.SaveChanges();
+        }
+
+        public void GetCorporateCustomerRating(int applicationId, List<int> customerIds, int staffId)
+        {
+            var apiCustomerRating = new CutomerRatingViewModel();
             var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
 
             foreach (var customer in customers)
             {
                 if (customer.ISPROSPECT == false)
                 {
-                    apiCustomerRatio = integration.GetCustomerRatioByCustomerCode(customer.CUSTOMERCODE);
-                    foreach (var item in apiCustomerRatio)
-                    {
-                        context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
-                        {
-                            DESCRIPTION = item.indicatorname,
-                            VALUE = item.indicatorvalue,
-                            CUSTOMERID = item.customerId,
-                            DATETIMECREATED = DateTime.Now,
-                            CREATEDBY = staffId,
-                            DELETED = false,
-                        });
-                    }
+                    apiCustomerRating = integration.GetCorporateCustomerRatingByCustomerCode(customer.CUSTOMERCODE);
+                    //apiCustomerRating = integration.GetCorporateCustomerRatingByCustomerCode("000107220");
+                    //customer.CUSTOMERRATING = apiCustomerRating.companYRating;
+                    customer.CUSTOMERRATING = apiCustomerRating.companY_RATING;
                 }
             }
 
+            context.SaveChanges();
+        }
+
+        public void GetAutoLoansRetail(int loanApplicationDetailId, int customerId, int staffId)
+        {
+            //bool isGroup = false;
+            var autoLoan = new FacilityRatingViewModel();
+            //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
+
+            if (customer.ISPROSPECT == false)
+            {
+                autoLoan = integration.GetAutoLoanRetailByCustomerCode(customer.CUSTOMERCODE);
+                //autoLoans = integration.GetAutoLoanRetailByCustomerCode("007484680");
+
+                if (autoLoan.probability_of_Default != null)
+                {
+                    context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
+                    {
+                        LOANAPPLICATIONDETAILID = loanApplicationDetailId,
+                        PROBABILITYOFDEFAULT = autoLoan.probability_of_Default,
+                        REMARK = autoLoan.remark,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = staffId,
+                        DELETED = false,
+                    });
+                }
+
+            }
+
+            context.SaveChanges();
+        }
+
+        public void GetPersonalLoansRetail(int loanApplicationDetailId, int customerId, int staffId)
+        {
+            //bool isGroup = false;
+            var personalLoan = new FacilityRatingViewModel();
+            //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
+
+            if (customer.ISPROSPECT == false)
+            {
+                //personalLoan = integration.GetPersonalLoanRetailByCustomerCode("000428107");
+                personalLoan = integration.GetPersonalLoanRetailByCustomerCode(customer.CUSTOMERCODE);
+
+                if (personalLoan.probability_of_Default != null)
+                {
+                    context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
+                    {
+                        LOANAPPLICATIONDETAILID = loanApplicationDetailId,
+                        PROBABILITYOFDEFAULT = personalLoan.probability_of_Default,
+                        REMARK = personalLoan.remark,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = staffId,
+                        DELETED = false,
+                    });
+                }
+            }
+
+            context.SaveChanges();
+        }
+
+        public void GetCreditCardsRetail(int loanApplicationDetailId, int customerId, int staffId)
+        {
+            //bool isGroup = false;
+            var creditCard = new FacilityRatingViewModel();
+            //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
+
+            if (customer.ISPROSPECT == false)
+            {
+                //creditCard = integration.GetCreditCardRetailByCustomerCode("006179612");
+                creditCard = integration.GetCreditCardRetailByCustomerCode(customer.CUSTOMERCODE);
+
+                if (creditCard.probability_of_Default != null)
+                {
+                    context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
+                    {
+                        LOANAPPLICATIONDETAILID = loanApplicationDetailId,
+                        PROBABILITYOFDEFAULT = creditCard.probability_of_Default,
+                        REMARK = creditCard.remark,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = staffId,
+                        DELETED = false,
+                    });
+                }
+            }
+          
             context.SaveChanges();
         }
 

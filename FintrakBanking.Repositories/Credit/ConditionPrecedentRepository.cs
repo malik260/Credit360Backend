@@ -39,8 +39,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByProductId(int? productId)
         {
-            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => x.PRODUCTID == productId || x.PRODUCTID == null)
-            .Select(c => new ConditionPrecedentViewModel
+            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => x.PRODUCTID == productId || x.PRODUCTID == null).ToList();
+            var test = conditions.Select(c => new ConditionPrecedentViewModel
             {
                 conditionId = c.CONDITIONID,
                 condition = c.CONDITION,
@@ -54,11 +54,12 @@ namespace FintrakBanking.Repositories.Credit
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
                 operationId = c.OPERATIONID,
-                isCheckListSpecific = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==c.OPERATIONID).Select(o=>o.ISCHECKLISTSPECIFIC).FirstOrDefault().Value
+                isCheckListSpecific = context.TBL_OPERATIONS.FirstOrDefault(o=>o.OPERATIONID==c.OPERATIONID)?.ISCHECKLISTSPECIFIC.Value
             })
             .OrderBy(x => x.isSubsequent).ThenByDescending(x => x.isExternal);
 
-            return conditions.ToList();
+            return test.ToList();
+            //return conditions.ToList();
         }
 
         public bool AddConditionPrecedent(ConditionPrecedentViewModel model)

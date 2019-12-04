@@ -35,6 +35,7 @@ namespace FintrakBanking.Repositories.Customer
         private IWorkflow workflow;
         private IApprovalLevelStaffRepository level;
         private IIntegrationWithFinacle finacle;
+        private IIntegrationWithFinacle integration;
 
         private int customerId;
         int status = 0;
@@ -45,13 +46,14 @@ namespace FintrakBanking.Repositories.Customer
             IWorkflow _workFlow,
             IApprovalLevelStaffRepository _level,
             FinTrakBankingContext _context,
-            ICustomerCreditBureauRepository bureau, IIntegrationWithFinacle finacle)
+            ICustomerCreditBureauRepository bureau, IIntegrationWithFinacle finacle, IIntegrationWithFinacle _integration)
         {
             context = _context;
             workflow = _workFlow;
             auditTrail = _auditTrail;
             _genSetup = genSetup;
             level = _level;
+            this.integration = _integration;
             this.finacle = finacle;
             this.bureau = bureau;
             var global = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -151,7 +153,8 @@ namespace FintrakBanking.Repositories.Customer
                 TEAMNPL = entity.teamNPL,
                 CORR = entity.corr,
                 PASTDUEOBLIGATIONS = entity.pastDueObligations,
-                BUSINESSUNTID = entity.businessUnitId
+                BUSINESSUNTID = entity.businessUnitId,
+                OWNERSHIP = entity.ownership,
             };
             context.TBL_CUSTOMER.Add(customer);
 
@@ -177,6 +180,8 @@ namespace FintrakBanking.Repositories.Customer
                 var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
                 if (output == true)
                 {
+                    UpdateCustomerCollateralId(customer.CUSTOMERCODE);
+                    fetchCustomerAccountBalance(customer);
                     return result;
                 }
                 else
@@ -185,12 +190,61 @@ namespace FintrakBanking.Repositories.Customer
                 }
 
             }
-            catch (DbEntityValidationException ex)
+            catch(Exception ex)
             {
-                string errorMessages = string.Join("; ",
-                    ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                throw new DbEntityValidationException(errorMessages);
+                throw ex;
             }
+            //catch (DbEntityValidationException ex)
+            //{
+            //    string errorMessages = string.Join("; ",
+            //        ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+            //    throw new DbEntityValidationException(errorMessages);
+            //}
+        }
+
+        public void UpdateCustomerCollateralId(string customerCode)
+        {
+            customerCode = customerCode.Trim();
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
+            foreach(var c in collaterals)
+            {
+                c.CUSTOMERID = customer.CUSTOMERID;
+            }
+            var saved = context.SaveChanges() > 0;
+        }
+
+        //public void UpdateCustomerCollateralId(string customerCode)
+        //{
+        //    customerCode = customerCode.Trim();
+        //    var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE.Contains(customerCode) || customerCode.Contains(c.CUSTOMERCODE.Trim()) && c.DELETED == false);
+        //    var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
+        //    foreach(var c in collaterals)
+        //    {
+        //        c.CUSTOMERID = customer.CUSTOMERID;
+        //    }
+        //    var saved = context.SaveChanges() > 0;
+        //}
+
+        public bool refreshCustomerAccount(int customerId)
+        {
+            bool result = false;
+
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
+
+            if (customer != null)
+            {
+                result = fetchCustomerAccountBalance(customer);
+            }
+
+            return result;    
+        }
+        private bool fetchCustomerAccountBalance(TBL_CUSTOMER data)
+        {
+            bool result;
+            result = integration.AddCustomerAccounts(data.CUSTOMERCODE);
+
+            return result;
         }
 
         public bool GetPoliticallyExposedPerson(string customerCode)
@@ -885,6 +939,7 @@ namespace FintrakBanking.Repositories.Customer
                             temp.ACTIVE = entity.active;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.NEXTOFKINID = entity.nextOfKinId;
                             context.TBL_TEMP_CUSTOMER_NEXTOFKIN.Add(temp);
                             //  var res = context.SaveChanges() > 0;
 
@@ -1959,6 +2014,9 @@ namespace FintrakBanking.Repositories.Customer
                             existingTempAddress.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             existingTempAddress.ISCURRENT = true;
                             modifiedTargetId = temp.TEMPPLACEOFWORKID;
+
+                            auditDetail = "Added Customer Employment History for customer ID: + (" + entity.customerId + ") ";
+                            auditType = (short)AuditTypeEnum.CustomerDetailAdded;
                         }
                         else //if customer employment information has no existing record being modified and approved, insert new row
                         {
@@ -1989,6 +2047,7 @@ namespace FintrakBanking.Repositories.Customer
                             temp.ANNUALINCOME = entity.annualIncome;
                             temp.MONTHLYINCOME = entity.monthlyIncome;
                             temp.EXPENDITURE = entity.expenditure;
+                            temp.PLACEOFWORKID = entity.placeOfWorkId;
                             context.TBL_TEMP_CUSTOMEREMPLOYMENT.Add(temp);
 
                             auditDetail = "Added Customer Employment History for customer ID: + (" + entity.customerId + ") ";
@@ -2214,6 +2273,7 @@ namespace FintrakBanking.Repositories.Customer
                            subSectorName = a.TBL_SUB_SECTOR.NAME,
                            taxNumber = a.TAXNUMBER,
                            riskRatingId = a.RISKRATINGID,
+                           ownership =a.OWNERSHIP,
                            //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                            customerBVN = a.CUSTOMERBVN,
                            isProspect = a.ISPROSPECT
@@ -2296,6 +2356,7 @@ namespace FintrakBanking.Repositories.Customer
                            subSectorName = a.TBL_SUB_SECTOR.NAME,
                            taxNumber = a.TAXNUMBER,
                            riskRatingId = a.RISKRATINGID,
+                           ownership = a.OWNERSHIP,
                            //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                            customerBVN = a.CUSTOMERBVN,
                            //CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
@@ -2656,6 +2717,7 @@ namespace FintrakBanking.Repositories.Customer
                 teamNPL = a.TEAMNPL,
                 businessUnitId = a.BUSINESSUNTID,
                 corr = a.CORR,
+                ownership = a.OWNERSHIP,
 
             });
         }
@@ -2797,7 +2859,7 @@ namespace FintrakBanking.Repositories.Customer
             //get previous customer name
             var previousCustomerName = customerMain?.FIRSTNAME;
 
-            if (customerMain != null && customerMain.ACCOUNTCREATIONCOMPLETE == false && entity.canModified == true)
+            if (customerMain != null && customerMain.ACCOUNTCREATIONCOMPLETE == false)// && entity.canModified == true)
             {
                 customerMain.CRMSCOMPANYSIZEID = entity.crmsCompanySizeId;
                 customerMain.CRMSLEGALSTATUSID = entity.crmsLegalStatusId;
@@ -2830,11 +2892,15 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.TAXNUMBER = entity.taxNumber;
                 customerMain.RISKRATINGID = entity.riskRatingId;
                 customerMain.CUSTOMERBVN = entity.customerBVN;
+                customerMain.OWNERSHIP = entity.ownership;
                 customerMain.DATETIMEUPDATED = DateTime.Now;
                 customerMain.LASTUPDATEDBY = entity.deletedBy;
 
+                var saved = context.SaveChanges() != 0;
 
-                return context.SaveChanges() != 0;
+                UpdateCustomerCollateralId(customerMain.CUSTOMERCODE);
+
+                return saved;
             }
             else
             {
@@ -2897,6 +2963,7 @@ namespace FintrakBanking.Repositories.Customer
                     customer.CORR = entity.corr;
                     customer.BUSINESSUNTID = entity.businessUnitId;
                     customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
+                    customer.OWNERSHIP = entity.ownership;
 
 
                 }
@@ -2951,6 +3018,8 @@ namespace FintrakBanking.Repositories.Customer
                     customer.CORR = entity.corr;
                     customer.BUSINESSUNTID = entity.businessUnitId;
                     customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
+                    customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
+                    customer.OWNERSHIP = entity.ownership;
 
                     context.TBL_TEMP_CUSTOMER.Add(customer);
 
@@ -3332,7 +3401,7 @@ namespace FintrakBanking.Repositories.Customer
                             gender = a.GENDER,
                             lastName = a.LASTNAME,
                             maidenName = a.MAIDENNAME,
-                            //maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
+                            maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
                             customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
@@ -3349,6 +3418,10 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
+                            customerRating = a.CUSTOMERRATING,
+                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                            businessUnitId = a.BUSINESSUNTID,
+                            ownership = a.OWNERSHIP,
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
@@ -3402,7 +3475,8 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
-
+                            customerRating = a.CUSTOMERRATING,
+                            ownership = a.OWNERSHIP,
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
@@ -3438,8 +3512,7 @@ namespace FintrakBanking.Repositories.Customer
                             maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
-                            customerTypeName = context.TBL_CUSTOMER_TYPE
-                                .FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                            customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                             misCode = a.MISCODE,
                             misStaff = a.MISSTAFF,
                             nationalityId = a.NATIONALITYID,
@@ -3461,6 +3534,7 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = context.TBL_SUB_SECTOR.FirstOrDefault(r => r.SUBSECTORID == a.SUBSECTORID).NAME,
                             taxNumber = a.TAXNUMBER,
+                            ownership = a.OWNERSHIP,
                             relationshipOfficerName =
                                 context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
                                                                                                                       + context
@@ -4109,7 +4183,8 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<GroupCustomerMembersViewModel> GetCustomerAndType(int custormerId)
         {
             List<GroupCustomerMembersViewModel> lstCustomer = new List<GroupCustomerMembersViewModel>();
-            var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId && c.ACCOUNTCREATIONCOMPLETE == true)
+            var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId)
+            //var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId && c.ACCOUNTCREATIONCOMPLETE == true)
                 .Select(c => new GroupCustomerMembersViewModel()
                 {
                     customerId = c.CUSTOMERID,
@@ -4117,7 +4192,9 @@ namespace FintrakBanking.Repositories.Customer
                     lastName = c.LASTNAME,
                     customerTypeId = c.CUSTOMERTYPEID,
                     customerType = c.TBL_CUSTOMER_TYPE.NAME,
-                    isProspect = c.ISPROSPECT
+                    isProspect = c.ISPROSPECT,
+                    customerRating = c.CUSTOMERRATING,
+                    customerCode = c.CUSTOMERCODE
                 }).ToList();
 
             return data;
@@ -4570,6 +4647,7 @@ namespace FintrakBanking.Repositories.Customer
                 entity.RELATIONSHIPOFFICERID = temp.RELATIONSHIPOFFICERID;
             }
 
+            UpdateCustomerCollateralId(entity.CUSTOMERCODE);
             //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
             temp.ISCURRENT = false;
             temp.APPROVALSTATUSID = approvalStatusId;
@@ -4595,6 +4673,7 @@ namespace FintrakBanking.Repositories.Customer
 
         private bool ApproveCompanyInformation(int modifiedId, int targetId, short approvalStatusId, UserInfo user)
         {
+            var customer = context.TBL_CUSTOMER.Find(targetId);
             var detail = string.Empty;
             var staff = context.TBL_STAFF.Find(user.staffId);
             TBL_CUSTOMER_COMPANYINFOMATION entity = null;
@@ -4613,10 +4692,7 @@ namespace FintrakBanking.Repositories.Customer
 
             if (entity != null) //Update existing customer company information with temp record
             {
-
-
-                detail = $"Approved Company Information for customer with code: : {entity.TBL_CUSTOMER.CUSTOMERCODE} has been updated by {staff.FIRSTNAME} {staff.LASTNAME} ({staff.STAFFCODE})";
-
+                detail = $"Approved Company Information for customer with code: : {customer.CUSTOMERCODE} has been updated by {staff.FIRSTNAME} {staff.LASTNAME} ({staff.STAFFCODE})";
                 entity.ANNUALTURNOVER = temp.ANNUALTURNOVER;
                 entity.COMPANYEMAIL = temp.COMPANYEMAIL;
                 entity.COMPANYNAME = temp.COMPANYNAME;
@@ -4628,6 +4704,23 @@ namespace FintrakBanking.Repositories.Customer
                 entity.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
                 entity.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
                 entity.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+            }
+            else
+            {
+                detail = $"Approved Company Information for customer with code: : {customer.CUSTOMERCODE} has been updated by {staff.FIRSTNAME} {staff.LASTNAME} ({staff.STAFFCODE})";
+                var corporateInfo = new TBL_CUSTOMER_COMPANYINFOMATION();
+                corporateInfo.ANNUALTURNOVER = temp.ANNUALTURNOVER;
+                corporateInfo.COMPANYEMAIL = temp.COMPANYEMAIL;
+                corporateInfo.COMPANYNAME = temp.COMPANYNAME;
+                corporateInfo.COMPANYWEBSITE = temp.COMPANYWEBSITE;
+                corporateInfo.CORPORATEBUSINESSCATEGORY = temp.CORPORATEBUSINESSCATEGORY;
+                corporateInfo.CUSTOMERID = temp.CUSTOMERID;
+                corporateInfo.REGISTEREDOFFICE = temp.REGISTEREDOFFICE;
+                corporateInfo.REGISTRATIONNUMBER = temp.REGISTRATIONNUMBER;
+                corporateInfo.PAIDUPCAPITAL = temp.PAIDUPCAPITAL;
+                corporateInfo.AUTHORISEDCAPITAL = temp.AUTHORISEDCAPITAL;
+                corporateInfo.SHAREHOLDER_FUND = temp.SHAREHOLDER_FUND;
+                context.TBL_CUSTOMER_COMPANYINFOMATION.Add(corporateInfo);
             }
 
             //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
@@ -4941,15 +5034,18 @@ namespace FintrakBanking.Repositories.Customer
                     var saved = context.SaveChanges() > 0;
                 }
             }
-            else if (modified.MODIFICATIONTYPEID ==
-                     (int)CustomerInformationTrackerEnum.Employment_History_Modification)
-            {
-                temp = context.TBL_TEMP_CUSTOMEREMPLOYMENT.FirstOrDefault(x => x.TEMPPLACEOFWORKID == targetId);
-                if (temp != null) //If temp record is not null select the information from the main table
-                {
-                    entity = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.FirstOrDefault(x =>
-                        x.PLACEOFWORKID == temp.PLACEOFWORKID);
-                    entity.ACTIVE = temp.ACTIVE;
+            else if 
+                
+                
+                       (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Employment_History_Modification)
+
+                 {
+                               temp = context.TBL_TEMP_CUSTOMEREMPLOYMENT.FirstOrDefault(x => x.TEMPPLACEOFWORKID == targetId);
+                       if (temp != null) //If temp record is not null select the information from the main table
+                 {
+                              entity = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.FirstOrDefault(x =>
+                              x.PLACEOFWORKID == temp.PLACEOFWORKID);
+                              entity.ACTIVE = temp.ACTIVE;
                     entity.CUSTOMERID = temp.CUSTOMERID;
                     entity.EMPLOYDATE = temp.EMPLOYDATE;
                     entity.EMPLOYERADDRESS = temp.EMPLOYERADDRESS;

@@ -296,8 +296,9 @@
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="XLeratorDLL-financial">
-      <HintPath>..\..\..\Users\USER\Documents\C# Materials\XLeratorDLL-financial.dll</HintPath>
+    <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +335,7 @@
     <Compile Include="Controllers\AccreditedConsultantsController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AlertController.cs" />
+    <Compile Include="Controllers\AlertTestingController.cs" />
     <Compile Include="Controllers\APILogController.cs" />
     <Compile Include="Controllers\AppraisalMemorandumController.cs" />
     <Compile Include="Controllers\ApprovalGroupController.cs" />
@@ -344,6 +346,7 @@
     <Compile Include="Controllers\AuthorisedSignatoryController.cs" />
     <Compile Include="Controllers\BulkDisbursementPackageController.cs" />
     <Compile Include="Controllers\BusinessRuleController.cs" />
+    <Compile Include="Controllers\CashBackController.cs" />
     <Compile Include="Controllers\CashFlowLendingController.cs" />
     <Compile Include="Controllers\CollateralValuationController.cs" />
     <Compile Include="Controllers\DeferredFeeController.cs" />
@@ -441,10 +444,12 @@
     <Compile Include="Filters\SecureExceptionFilterAttribute.cs" />
     <Compile Include="Providers\ReportServerCredentials.cs" />
     <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
-    <Compile Include="Reports\Credit\Credit1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Credit.xsd</DependentUpon>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\CFLOfferLetter.aspx.cs">
+      <DependentUpon>CFLOfferLetter.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\CFLOfferLetter.aspx.designer.cs">
+      <DependentUpon>CFLOfferLetter.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx.cs">
       <DependentUpon>ClassifiedAssetManagement.aspx</DependentUpon>
@@ -452,6 +457,11 @@
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx.designer.cs">
       <DependentUpon>ClassifiedAssetManagement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\Credit.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Credit.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS.aspx.cs">
       <DependentUpon>FORM3800B_LMS.aspx</DependentUpon>
@@ -466,6 +476,11 @@
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.designer.cs">
       <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportDataset\DeferralWaiver.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DeferralWaiver.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\DRAWDOWN.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -483,11 +498,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\PSR.cs">
+    <Compile Include="Reports\ReportDataset\PSR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportDataset\PSR.designer.cs">
-      <DependentUpon>PSR.cs</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\ReportDataSet1.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -634,6 +648,20 @@
     <Compile Include="Reports\ReportViews\ContigentReport.aspx.designer.cs">
       <DependentUpon>ContigentReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CopyOfRiskAssetByIfrsClassification.aspx.cs">
+      <DependentUpon>CopyOfRiskAssetByIfrsClassification.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CopyOfRiskAssetByIfrsClassification.aspx.designer.cs">
+      <DependentUpon>CopyOfRiskAssetByIfrsClassification.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CopyOfRiskAssetMain.aspx.cs">
+      <DependentUpon>CopyOfRiskAssetMain.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CopyOfRiskAssetMain.aspx.designer.cs">
+      <DependentUpon>CopyOfRiskAssetMain.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx.cs">
       <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -661,6 +689,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\DailyAccrualReport.aspx.designer.cs">
       <DependentUpon>DailyAccrualReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DeferralWaiver.aspx.cs">
+      <DependentUpon>DeferralWaiver.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DeferralWaiver.aspx.designer.cs">
+      <DependentUpon>DeferralWaiver.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\DisbursalCreditTurnover.aspx.cs">
       <DependentUpon>DisbursalCreditTurnover.aspx</DependentUpon>
@@ -795,6 +830,13 @@
     <Compile Include="Reports\ReportViews\LoggingStatus.aspx.designer.cs">
       <DependentUpon>LoggingStatus.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\MaturityReport.aspx.cs">
+      <DependentUpon>MaturityReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\MaturityReport.aspx.designer.cs">
+      <DependentUpon>MaturityReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\MiddleOfficeReport.aspx.cs">
       <DependentUpon>MiddleOfficeReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -851,6 +893,27 @@
     <Compile Include="Reports\ReportViews\PSR.aspx.designer.cs">
       <DependentUpon>PSR.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\RACCR.aspx.cs">
+      <DependentUpon>RACCR.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RACCR.aspx.designer.cs">
+      <DependentUpon>RACCR.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RACCRT.aspx.cs">
+      <DependentUpon>RACCRT.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RACCRT.aspx.designer.cs">
+      <DependentUpon>RACCRT.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RACRM.aspx.cs">
+      <DependentUpon>RACRM.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RACRM.aspx.designer.cs">
+      <DependentUpon>RACRM.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ReceivableInterest.aspx.cs">
       <DependentUpon>ReceivableInterest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -885,6 +948,20 @@
     </Compile>
     <Compile Include="Reports\ReportViews\RiskAssetByVariance.aspx.designer.cs">
       <DependentUpon>RiskAssetByVariance.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetCombinedReport.aspx.cs">
+      <DependentUpon>RiskAssetCombinedReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetCombinedReport.aspx.designer.cs">
+      <DependentUpon>RiskAssetCombinedReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetContigentReportMain.aspx.cs">
+      <DependentUpon>RiskAssetContigentReportMain.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetContigentReportMain.aspx.designer.cs">
+      <DependentUpon>RiskAssetContigentReportMain.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\RiskAssetDistributionBySector.aspx.cs">
       <DependentUpon>RiskAssetDistributionBySector.aspx</DependentUpon>
@@ -1186,13 +1263,6 @@
     <Compile Include="Reports\ReportViews\SectorialLimitMonitoring.aspx.designer.cs">
       <DependentUpon>SectorialLimitMonitoring.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\Report\MaturityReport.aspx.cs">
-      <DependentUpon>MaturityReport.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\Report\MaturityReport.aspx.designer.cs">
-      <DependentUpon>MaturityReport.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -1222,6 +1292,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Reports\Collateral\ScheduledCollateralReport.aspx" />
+    <Content Include="Reports\Credit\OfferLetterGeneration\CFLOfferLetter.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
@@ -1249,10 +1320,13 @@
     <Content Include="Reports\ReportViews\ContigentLiabilityReportMain.aspx" />
     <Content Include="Reports\ReportViews\ContigentLiabilityReportMain1.aspx" />
     <Content Include="Reports\ReportViews\ContigentReport.aspx" />
+    <Content Include="Reports\ReportViews\CopyOfRiskAssetByIfrsClassification.aspx" />
+    <Content Include="Reports\ReportViews\CopyOfRiskAssetMain.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
+    <Content Include="Reports\ReportViews\DeferralWaiver.aspx" />
     <Content Include="Reports\ReportViews\DisbursalCreditTurnover.aspx" />
     <Content Include="Reports\ReportViews\DrawdownMemo.aspx" />
     <Content Include="Reports\ReportViews\ExcessReport.aspx" />
@@ -1273,6 +1347,7 @@
     <Content Include="Reports\ReportViews\LoanDocumentDeferred.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\LoggingStatus.aspx" />
+    <Content Include="Reports\ReportViews\MaturityReport.aspx" />
     <Content Include="Reports\ReportViews\MiddleOfficeReport.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OutPutTemplate.aspx" />
@@ -1281,11 +1356,16 @@
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\ProfileActivityReport.aspx" />
     <Content Include="Reports\ReportViews\PSR.aspx" />
+    <Content Include="Reports\ReportViews\RACCR.aspx" />
+    <Content Include="Reports\ReportViews\RACCRT.aspx" />
+    <Content Include="Reports\ReportViews\RACRM.aspx" />
     <Content Include="Reports\ReportViews\ReceivableInterest.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByCbnClassification.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByIFRSClassificationaspx.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByVariance.aspx" />
+    <Content Include="Reports\ReportViews\RiskAssetCombinedReport.aspx" />
+    <Content Include="Reports\ReportViews\RiskAssetContigentReportMain.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetDistributionBySector.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetMain.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetMain1.aspx" />
@@ -1330,12 +1410,6 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
-    <Content Include="Reports\Credit\Credit.xss">
-      <DependentUpon>Credit.xsd</DependentUpon>
-    </Content>
-    <Content Include="Reports\Credit\Credit.xsc">
-      <DependentUpon>Credit.xsd</DependentUpon>
-    </Content>
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Agribusiness Report - 2019-03-14.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Autos Report - 2019-04-02.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Banking &amp; Financial Services Report -2019-03-19.pdf" />
@@ -1352,12 +1426,6 @@
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Telecommunications Report - 2019-03-13.pdf" />
     <Content Include="libman.json" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Reports\Credit\Credit.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Reports\Report\MaturityReport.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -1380,6 +1448,28 @@
     </Content>
     <Content Include="Reports\ReportDataset\DRAWDOWN.xsc">
       <DependentUpon>DRAWDOWN.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\DeferralWaiver.xsc">
+      <DependentUpon>DeferralWaiver.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\Credit\OfferLetterGeneration\Credit.xsc">
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\Credit\OfferLetterGeneration\Credit.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Credit.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\Credit\OfferLetterGeneration\Credit.xss">
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\DeferralWaiver.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DeferralWaiver.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\DeferralWaiver.xss">
+      <DependentUpon>DeferralWaiver.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\DRAWDOWN.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1438,7 +1528,7 @@
     </Content>
     <None Include="Reports\ReportDataset\PSR.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>PSR1.Designer.cs</LastGenOutput>
+      <LastGenOutput>PSR.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\PSR.xss">
@@ -1568,6 +1658,8 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_ImportFinance.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_LeaseFacility.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_OtherGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_OverDraftFacility.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
@@ -1592,6 +1684,7 @@
     <EmbeddedResource Include="Reports\Report\CreditScheduleReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DeferralWaiver.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
     <EmbeddedResource Include="Reports\Report\DrawdownMemo.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />

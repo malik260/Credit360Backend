@@ -20,14 +20,14 @@ namespace FintrakBanking.Entities.Models
         [StringLength(1000)]
         public string DESCRIPTION { get; set; }
 
-        public int APPROVALSTATUSID { get; set; }
+        public short APPROVALSTATUSID { get; set; }
         public bool DELETED { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public int LASTUPDATEDBY { get; set; }
-        public DateTime DATETIMEUPDATED { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
         public int DELETEDBY { get; set; }
-        public DateTime DATETIMEDELETED { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
         public DateTime? APPROVALDATE { get; set; }
         public int COLLATERALCUSTOMERID { get; set; }
     }

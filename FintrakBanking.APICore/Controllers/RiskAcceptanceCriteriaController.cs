@@ -3,17 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.APICore.core;
-using FintrakBanking.Common.CustomException;
-using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Risk;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.ViewModels.Risk;
 
@@ -32,15 +28,6 @@ namespace FintrakBanking.APICore.Controllers
 
         #region risk-acceptance-criteria
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("risk-acceptance-criteria/product/{productId}/target/{targetId}")]
-        public HttpResponseMessage GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId)
-        {
-            RiskAcceptanceCriteriaViewModel response = repo.GetRiskAcceptanceCriteriaByProductAndTarget(productId, targetId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.categories.Count() });
-        }
-
         [HttpPost]
         [ClaimsAuthorization]
         [Route("risk-acceptance-criteria-input")]
@@ -50,6 +37,17 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response?.categories?.Count() });
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("risk-acceptance-criteria/product/{productId}/target/{targetId}")]
+        public HttpResponseMessage GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId)
+        {
+            RiskAcceptanceCriteriaViewModel response = repo.GetRiskAcceptanceCriteriaByProductAndTarget(productId, targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.categories.Count() });
+        }
+
+       
         
 
         #endregion

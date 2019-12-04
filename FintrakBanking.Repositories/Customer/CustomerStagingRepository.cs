@@ -16,12 +16,13 @@ namespace FintrakBanking.Repositories.Customer
         private FinTrakBankingStagingContext context;
         private FinTrakBankingContext mainContext;
         private CustomerDetails _customer;
-       public CustomerStagingRepository(FinTrakBankingStagingContext _context, FinTrakBankingContext _mainContext, CustomerDetails customer)
+
+        public CustomerStagingRepository(FinTrakBankingStagingContext _context, FinTrakBankingContext _mainContext, CustomerDetails customer  )
         {
             context = _context;
             mainContext = _mainContext;
             this._customer = customer;
-        }
+    }
 
         //CustomerInformationStagingViewModels
         public IQueryable<CustomerViewModels> GetIntegratedCustomerInformation()
@@ -94,7 +95,7 @@ namespace FintrakBanking.Repositories.Customer
                     
                 Task.Run(async () => { data = await _customer.GetCustomerByAccountsNumber(searchTerm); }).GetAwaiter().GetResult();
 
-                return data;
+                    return data;
                 }
                 //return customer.GetCustomerByAccountNumber(searchTerm).GetAwaiter().GetResult();
             }

@@ -39,8 +39,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class OfferLetterDetailViewModel : GeneralEntity
     {
-        public DateTime newApplicationDate;
-
+        
         public string loanApplicationId { get; set; }
         public string productName { get; set; }
         public string customerName { get; set; }
@@ -58,6 +57,7 @@ namespace FintrakBanking.ViewModels.Credit
             get { return this.loanAmount * (decimal)this.exchangeRate; }
         }
 
+        
         public int tenor { get; set; }
         public double interestRate { get; set; }
         public string customerGroupName { get; set; }
@@ -77,6 +77,19 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isRenewal { get; set; }
         public short approvedProductId { get; set; }
         public short? productClassId { get; set; }
+        public short? productTypeId { get; set; }
+        public DateTime newApplicationDate;
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = tenor == 1 ? " day" : " days";
+                if (tenor < 15) return tenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(tenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity

@@ -29,7 +29,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     if (extension != null)
                     {
                         System.Reflection.FieldInfo fieldInfo = extension.GetType().GetField("m_isVisible", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-                        fieldInfo.SetValue(extension, false);
+                        fieldInfo.SetValue(extension, true);
                     }
 
                     RSR psr = new RSR();
@@ -91,6 +91,11 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     dsNextInspection.Name = "nextInspection";
                     ReportViewer.LocalReport.DataSources.Add(dsNextInspection);
 
+                    var image = psr.GetPsrImages(projectSiteReportId);
+                    ReportDataSource dsImage = new ReportDataSource();
+                    dsImage.Value = image;
+                    dsImage.Name = "supportImages";
+                    ReportViewer.LocalReport.DataSources.Add(dsImage);
 
                     if (psrReportTypeId == 1)
                     {

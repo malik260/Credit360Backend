@@ -16,13 +16,13 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         int ValidateWatchList(int customerId);
         bool IsDirectorRelatedGroup(int? customerGroupId);
         bool CustomerIsDirector(int? customerId);
-        CreditLimitValidationsModel ValidateNPLByDirectors();
+        CreditLimitValidationsModel ValidateNPLByDirectors(LoanApplicationViewModel application);
         //int ValidateCamsol(int customerId);
 
         //IEnumerable<CustomerEligibilityViewModel> ValidateCamsol(string customerCode);
         CreditLimitValidationsModel ValidateNPLByInsiderCustomer();
         IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode);
-
+        bool ValidateIsInsiderCustomer(int customerId);
         CreditLimitValidationsModel ValidateAmountByBranch(short branchId);
         CreditLimitValidationsModel ValidateNPLByBranch(short branchId);
         CreditLimitValidationsModel ValidateAmountBySector(int customerId);
@@ -34,6 +34,7 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         CreditLimitValidationsModel ValidateCreditLimitNPLByRMBM(short relationshipofficerId);
         CreditLimitValidationsModel ValidateAmountBySegment(short segmentId);
         CreditLimitValidationsModel ValidateNPLBySegment(short segmentId);
+        CreditLimitValidationsModel ValidateSingleObligorLimit(LoanApplicationViewModel application);
 
         IEnumerable<ObligorLimitViewModel> GetAllObligorLimit();
         bool ValidateRiskRating(string riskRating);

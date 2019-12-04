@@ -678,6 +678,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public string crmsCode { get; set; }
+
+        public string productClassName { get;set;}
+
         public double approvedInterestRate { get; set; }
         public List<feeDetails> fees { get; set; }
 
@@ -1535,8 +1539,6 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RuniningLoanViewModel : ImpairedWatchListViewModel
     {
-
-
         public string rmName { get; set; }
         public DateTime endDate { get; set; }
         public string userClassification { get; set; }
@@ -1616,30 +1618,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string cap { get; set; }
     }
 
-    public class LoanCreationViewModel
-    {
-        public string source                {get; set;}
-        public string app_user_id           {get; set;}
-        public string app_branch_code       {get; set;}
-        public string product_code          {get; set;}
-        public string product_cat           {get; set;}
-        public string user_refno            {get; set;}
-        public string book_date             {get; set;}
-        public string value_date            {get; set;}
-        public string maturity_date         {get; set;}
-        public string amount_financed       {get; set;}
-        public string account_no            {get; set;}
-        public string product_desc          {get; set;}
-        public string effective_date        {get; set;}
-        public string creditlife_rate       {get; set;}
-        public string interest_rate         {get; set;}
-        public string mgt_rate              {get; set;}
-        public string tax_rate              {get; set;}
-        public string first_repayment_date { get; set; }
-        public string sourceReferenceNumber { get; set; }
-        public int operationId             { get; set; }
-
-    }
+  
     //public class bulkDisbursementInputViewModel
     //{
     //    public string applicationReferenceNumber { get; set; }

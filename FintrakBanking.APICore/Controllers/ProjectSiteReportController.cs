@@ -628,5 +628,64 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
+        #region
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-images/{id}")]
+        public HttpResponseMessage GetPsrImages(int id)
+        {
+            IEnumerable<PsrImagesViewModel> response = repo.GetPsrImages(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-image")]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddPsrImagec()
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+            try
+            {
+                var entity = new PsrImagesViewModel();
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.fileSizeUnit = provider.FormData["fileSizeUnit"];
+                entity.imageCaption = provider.FormData["imageCaption"];
+                entity.projectSiteReportId = Convert.ToInt32(provider.FormData["projectSiteReportId"]);
+                entity.overwrite = provider.FormData["overwrite"] == "true";
+                
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                int response = repo.AddPsrImage(entity, buffer);
+
+
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
+
+        }
+        
+        #endregion
+
     }
 }

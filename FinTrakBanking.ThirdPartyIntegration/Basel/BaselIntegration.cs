@@ -23,8 +23,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
         public BaselIntegration(FinTrakBankingContext context)
         {
             _context = context;
-            API_KEY = "WzKQBRQXboWsIVI";
-            API_URL = "http://10.1.9.197:94/api/Credit360API/";
+            //API_KEY = "WzKQBRQXboWsIVI";
+            API_KEY = "XtSREijsrZYkt9S";
+            API_URL = "http://10.1.12.186:94/api/Credit360API/";
+            //API_URL = "http://10.1.9.197:94/api/Credit360API/";
+
             //var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
             //if (configdata != null)
             //{
@@ -32,9 +35,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             //    API_URL = configdata.APIURL;
             //}
         }
-       // private static HttpClient _httpClientInstance;
+        // private static HttpClient _httpClientInstance;
 
-       // private ResponseMessageViewModel responseAPI;
+        // private ResponseMessageViewModel responseAPI;
 
         public async Task<List<RatingAndRatioViewModel>> GetCustomerRatio( string customerNumber)
         {
@@ -46,7 +49,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"GetCorporateRatioPDConsolidatedByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetCorporateRatioPDConsolidatedByCustomerID/{customerNumber}?key={API_KEY}";
             try
             { 
                 handler.UseDefaultCredentials = true;
@@ -122,7 +125,86 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<CutomerRatingViewModel>> GetCorporateCustomerRatingByCustomerCode(string customerNumber)
+        public async Task<List<GroupRatingAndRatioViewModel>> GetAllCustomerRatios(string customerNumber)
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
+            HttpClient client = new HttpClient(handler);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+            ResponseMessageViewModel res = null;
+            string responseMessage = "";
+            string endPointUrl = $"{API_URL}GetAllCorporateRatios/{customerNumber}?key={API_KEY}";
+            try
+            {
+                handler.UseDefaultCredentials = true;
+
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback +=
+                    (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
+
+                try
+                {
+                    response = await client.GetAsync(endPointUrl);
+                    responseDateTime = DateTime.Now;
+                }
+                catch (Exception e) { throw new ConditionNotMetException(e.Message); }
+
+                responseMessage = await response.Content.ReadAsStringAsync();
+                List<GroupRatingAndRatioViewModel> customerGroupRatios = new List<GroupRatingAndRatioViewModel>();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsAsync<List<GroupRatingAndRatioViewModel>>();
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    customerGroupRatios = result;
+
+                }
+
+                return customerGroupRatios;
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new APIErrorException($"Error" + ex.Message);
+            }
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = endPointUrl,
+                    LOGTYPEID = 3,
+                    REFERENCENUMBER = customerNumber.ToString(),
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = customerNumber,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                logContext.SaveChanges();
+            }
+        }
+
+
+        public async Task<CutomerRatingViewModel> GetCorporateCustomerRatingByCustomerCode(string customerNumber)
         {
             HttpClientHandler handler = new HttpClientHandler();
             HttpClient httpClientInstance;
@@ -132,7 +214,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"GetCorporatePDByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetCorporatePDByCustomerID/{customerNumber}?key={API_KEY}";
             try 
             {
                 handler.UseDefaultCredentials = true;
@@ -153,23 +235,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                     response = await client.GetAsync(endPointUrl);
                     responseDateTime = DateTime.Now;
                 
-
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<CutomerRatingViewModel> customerRatios = new List<CutomerRatingViewModel>();
+                CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
+                    var result = await response.Content.ReadAsAsync<CutomerRatingViewModel>();
                     var responseData = await response.Content.ReadAsStringAsync();
-                    JObject responseDataJsonString = JObject.Parse(responseData);
-
-                    var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<List<CutomerRatingViewModel>>(data);
+                    customerRating = result;
                 }
 
-
-                return customerRatios;
+                return customerRating;
             }
             catch (APIErrorException ex)
             {
@@ -203,7 +279,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<CutomerRatingViewModel>> GetPersonalLoansRetailByCustomerCode(string customerNumber)
+        public async Task<FacilityRatingViewModel> GetPersonalLoansRetailByCustomerCode(string customerNumber)
         {
 
             //THIS METHOD's VIEW MODEL, CLASSESES ARE  YET TO BE CREATED
@@ -215,7 +291,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"api/Credit360API/GetPersonalLoansRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetPersonalLoansRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
             try
             {
                 handler.UseDefaultCredentials = true;
@@ -239,20 +315,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<CutomerRatingViewModel> customerRatios = new List<CutomerRatingViewModel>();
+                FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
-                    var responseData = await response.Content.ReadAsStringAsync();
-                    JObject responseDataJsonString = JObject.Parse(responseData);
-
-                    var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<List<CutomerRatingViewModel>>(data);
+                    var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
+                    //var responseData = await response.Content.ReadAsStringAsync();
+                    if (result != null) personalLoan = result;
                 }
 
-
-                return customerRatios;
+                return personalLoan;
             }
             catch (APIErrorException ex)
             {
@@ -286,7 +357,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<CutomerRatingViewModel>> GetCreditCardRetailProbabilityOfDefaultByCustomerCode(string customerNumber)
+        public async Task<FacilityRatingViewModel> GetCreditCardRetailProbabilityOfDefaultByCustomerCode(string customerNumber)
         {
 
             //THIS METHOD's VIEW MODEL, CLASSESES ARE  YET TO BE CREATED
@@ -298,7 +369,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"api/Credit360API/GetcreditCardRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetcreditCardRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
             try
             {
                 handler.UseDefaultCredentials = true;
@@ -322,20 +393,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<CutomerRatingViewModel> customerRatios = new List<CutomerRatingViewModel>();
+                FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
-                    var responseData = await response.Content.ReadAsStringAsync();
-                    JObject responseDataJsonString = JObject.Parse(responseData);
-
-                    var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<List<CutomerRatingViewModel>>(data);
+                    var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
+                    //var responseData = await response.Content.ReadAsStringAsync();
+                    if (result != null) creditCard = result;
                 }
 
-
-                return customerRatios;
+                return creditCard;
             }
             catch (APIErrorException ex)
             {
@@ -369,7 +435,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<CutomerRatingViewModel>> GetAutoLoanProbabilityOfDefaultByCustomerCode(string customerNumber)
+        public async Task<FacilityRatingViewModel> GetAutoLoanProbabilityOfDefaultByCustomerCode(string customerNumber)
         {
 
             //THIS METHOD's VIEW MODEL, CLASSESES ARE  YET TO BE CREATED
@@ -381,7 +447,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"api/Credit360API/GetAutoLoanRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetAutoLoanRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
             try
             {
                 handler.UseDefaultCredentials = true;
@@ -405,20 +471,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<CutomerRatingViewModel> customerRatios = new List<CutomerRatingViewModel>();
+                FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
-                    var responseData = await response.Content.ReadAsStringAsync();
-                    JObject responseDataJsonString = JObject.Parse(responseData);
-
-                    var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<List<CutomerRatingViewModel>>(data);
+                    var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
+                    //var responseData = await response.Content.ReadAsStringAsync();
+                    if (result != null) autoLoan = result;
                 }
 
-
-                return customerRatios;
+                return autoLoan;
             }
             catch (APIErrorException ex)
             {
@@ -445,9 +506,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 };
 
                 FinTrakBankingContext logContext = new FinTrakBankingContext();
-
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
                 logContext.SaveChanges();
             }
         }

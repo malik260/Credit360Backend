@@ -262,6 +262,27 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
+        public string GetGeneratedCFLOfferLetter(string applicationRefNumber, string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName)
+        {
+            try
+            {
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+                    var productClassId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
+                    var productClassProcessId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x => x.PRODUCT_CLASS_PROCESSID).FirstOrDefault();
+                    return GetProductSpecificTemplateCFL(productClassProcessId, productClassId, applicationRefNumber,
+                       StatusCode, RequestId, WorkflowStage, ReasonForRejection, ActionByName);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public int GetLoanApplicationIdByReferenceNumber(string applicationRefNumber)
         {
             int loanAppId;
@@ -385,9 +406,52 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                
             }
 
-            //templateLink = links.General;
+            
+        }
 
-            //return templateLink;
+        public string GetProductSpecificTemplateCFL(short? productClassProcessId, short? productClassId, string applicationRefNumber,
+                       string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName)
+            {
+
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            var links = new
+            {
+                General = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage="+ WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                IDF = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                FirstEdu = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                FirstTrader = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                BondsAndGuarantees = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                ImportFinance = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                CashBackedOnly = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                InvoiceDiscountingFacility = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+            };
+
+            if (productClassProcessId == (short)ProductClassProcessEnum.CAMBased)
+            {
+                return links.General;
+            }
+            else
+            {
+                switch (productClassId)
+                {
+                    case (short)ProductClassEnum.BondAndGuarantees:
+                        return links.BondsAndGuarantees;
+
+                    case (short)ProductClassEnum.CashCollaterized:
+                        return links.CashBackedOnly;
+
+                    case (short)ProductClassEnum.InvoiceDiscountingFacility:
+                        return links.InvoiceDiscountingFacility;
+
+                    default:
+                        return links.General;
+                }
+
+
+            }
+
+
         }
 
         #endregion Offer Letter Generation
@@ -1036,7 +1100,41 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string CopyOfRiskAssetMain(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
 
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CopyOfRiskAssetMain.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string RiskAssetCalcCombinedReportTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetCalcCombinedReportTeam.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string RiskAssetsContigentReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetContigentReportMain.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string RiskAssetCalcCombinedReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetCalcCombinedReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
 
         public string ContigentReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
         {
@@ -1126,6 +1224,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string RiskAssetCombinedReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetCombinedReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
         public string RiskAssetDistributionBySectorReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
@@ -1143,6 +1250,17 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/RiskAssetMainReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
             return path;
         }
+
+        public string CopyOfRiskAssetByIfrsClassification(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CopyOfRiskAssetByIfrsClassification.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        
 
 
         public string RiskAssetMain1Report(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
@@ -1172,6 +1290,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string RiskAssetContigentReportMain(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetContigentReportMain.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
         public string DrawdownReport(string referenceNumber)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
@@ -1180,6 +1307,13 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string DeferralWaiverReport(int staffId, int operationId, int targetId, int loanApplicationDetailId)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+            string path = string.Empty;
+            path = reportPath + "ReportViews/DeferralWaiver.aspx?staffId=" + staffId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&operationId=" + operationId + "&targetId=" + targetId + "&loanApplicationDetailId=" + loanApplicationDetailId;
+            return path;
+        }
 
 
 

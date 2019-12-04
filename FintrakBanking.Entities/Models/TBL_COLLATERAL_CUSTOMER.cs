@@ -42,6 +42,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string COLLATERALCODE { get; set; }
+        public string CUSTOMERCODE { get; set; }
 
         public short CURRENCYID { get; set; }
 
@@ -92,7 +93,7 @@ namespace FintrakBanking.Entities.Models
 
         public string RELATEDCOLLATERALCODE { get; set; }
 
-        public DateTime VALIDTILL { get; set; }
+        public DateTime? VALIDTILL { get; set; }
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }

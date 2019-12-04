@@ -5,6 +5,8 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using FintrakBanking.Interfaces.CRMS;
+using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
@@ -26,12 +28,14 @@ namespace FintrakBanking.Repositories.Credit
 {
     public class OfferLetterAndAvailmentRepository : IOfferLetterAndAvailmentRepository
     {
-        private FinTrakBankingContext context;
+        private FinTrakBankingContext context; 
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
+        private IReportRoutes reportRoutes;
         private IWorkflow workflow;
         private ICreditLimitValidationsRepository limitValidation;
         private CreditCommonRepository creditCommon;
+        private ICRMSRegulatories crmsRegulatories;
 
         //private IApprovalLevelStaffRepository approvalLevel;
         //private ILoanRepository loans;
@@ -43,7 +47,8 @@ namespace FintrakBanking.Repositories.Credit
             //IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
             ICreditLimitValidationsRepository _limitValidation,
-            CreditCommonRepository _creditCommon
+            CreditCommonRepository _creditCommon, IReportRoutes _reportRoutes,
+            ICRMSRegulatories _crmsRegulatories
             //ILoanRepository _loans  
             )
         {
@@ -54,6 +59,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow = _workflow;
             limitValidation = _limitValidation;
             creditCommon = _creditCommon;
+            reportRoutes = _reportRoutes;
+            crmsRegulatories = _crmsRegulatories;
             //loans = _loans;
         }
 
@@ -61,17 +68,30 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCRMSCollateralType(int applicationId, ApprovedLoanDetailViewModel model)
         {
+            
             bool output = false;
-            var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
-            LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
-            LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
-            LoanDetails.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
-            LoanDetails.ISSPECIALISED = model.isSpecialised;
-            LoanDetails.MORATORIUMDURATION = model.moratoriumPeriod;
+            var bookingRequest = context.TBL_LOAN_BOOKING_REQUEST.FirstOrDefault(r => r.LOAN_BOOKING_REQUESTID == applicationId && r.DELETED == false);
+            var refNumber = bookingRequest.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+            var userModel = new UserViewModel()
+            {
+                companyId = bookingRequest.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.COMPANYID
+            };
+            bookingRequest.SECUREDBYCOLLATERAL = model.securedByCollateral;
+            bookingRequest.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            bookingRequest.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
+            bookingRequest.MORATORIUMDURATION = model.moratoriumPeriod;
+            bookingRequest.TBL_LOAN_APPLICATION_DETAIL.ISSPECIALISED = model.isSpecialised;
+            var crmsRecordGenerated = crmsRegulatories.GenerateCRMSCode(bookingRequest.LOAN_BOOKING_REQUESTID, userModel);
+            //var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
+            //LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
+            //LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            //LoanDetails.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
+            //LoanDetails.ISSPECIALISED = model.isSpecialised;
+            //LoanDetails.MORATORIUMDURATION = model.moratoriumPeriod;
 
             var auditRec = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.StaffReliefUpdated,
+                AUDITTYPEID = (short)AuditTypeEnum.CrmsRecordAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Record Added For CRMS Collateral On Loan Detail '{model.applicationId}'",
@@ -119,6 +139,7 @@ namespace FintrakBanking.Repositories.Credit
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
             IQueryable<CamProcessedLoanViewModel> data = null;
 
+            //data = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress)
             data = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
@@ -237,7 +258,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerGroupCode = x.c.a.TBL_CUSTOMER_GROUP.GROUPCODE,
                     relationshipOfficerId = x.c.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.c.a.RELATIONSHIPMANAGERID,
-
+                    apiRequestId = x.c.a.APIREQUESTID,
                     applicationDate = x.c.a.APPLICATIONDATE,
                     newApplicationDate = x.c.a.APPLICATIONDATE,
                     applicationAmount = x.c.a.APPLICATIONAMOUNT,
@@ -259,6 +280,7 @@ namespace FintrakBanking.Repositories.Credit
                     applicationStatusId = x.c.a.APPLICATIONSTATUSID,
                     subSectorId = x.c.b.TBL_SUB_SECTOR.SUBSECTORID,
                     //approvalLevelId = staffApprovalLevelId,
+                    
                     operationId = (int)OperationsEnum.LoanAvailment,
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
@@ -2384,8 +2406,23 @@ namespace FintrakBanking.Repositories.Credit
 
                 workflow.Response.nextLevelName = "Drawdown";
                 workflow.Response.nextOperationName = "Drawdown";
+
+                var staffName = context.TBL_STAFF.Where(s => s.STAFFID == model.staffId).FirstOrDefault();
+                var fullNames = staffName?.FIRSTNAME +" "+ staffName?.LASTNAME;
+                context.SaveChanges();
+                if (appl.PRODUCTID == 20)
+                {
+                   var sendOfferLetter = reportRoutes.GetProductSpecificTemplateCFL(null, appl.PRODUCTCLASSID, model.applicationReferenceNumber, "90", appl.APIREQUESTID, "14", model.comment, fullNames);
+                   if(sendOfferLetter != "")
+                    {
+                        var successCashFlow = context.SaveChanges() > 0;
+                        workflow.Response.success = successCashFlow;
+                        return workflow.Response;
+                    }
+                }
             }
 
+            
             var success = context.SaveChanges() > 0;
             workflow.Response.success = success;
             return workflow.Response;
@@ -3261,7 +3298,8 @@ namespace FintrakBanking.Repositories.Credit
                 else
                 {
                     TBL_LOAN_OFFER_LETTER offerLetterExists = new TBL_LOAN_OFFER_LETTER();
-                    offerLetterExists = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId && o.ISLMS == isLMS).FirstOrDefault();
+                    //offerLetterExists = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId && o.ISLMS == isLMS).FirstOrDefault();
+                    offerLetterExists = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).FirstOrDefault();
                     offerLetterExists.OFFERLETTERACCEPTANCE = detail.offerLetteracceptance;
                     offerLetterExists.OFFERLETTERCLAUSES = detail.offerLetterClauses;
                     offerLetterExists.LASTUPDATEDBY = staffId;

@@ -1,22 +1,14 @@
 ﻿using FintrakBanking.Common.Enum;
-using FintrakBanking.Common.Extensions;
-using FintrakBanking.Entities.Models;
 using FintrakBanking.ReportObjects.Credit;
-using FintrakBanking.Repositories.Setups.General;
-using FintrakBanking.Repositories.Setups.General;
 using Microsoft.Reporting.WebForms;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+
 
 namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 {
     public partial class OfferLetter : System.Web.UI.Page
     {
+       
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -24,9 +16,7 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
                 try
                 {
                     string applicationRefNumber = Request.QueryString["applicationRefNumber"];
-
                     GenerateOutPutDocument(applicationRefNumber);
-
 
                 }
                 catch(Exception ex)
@@ -41,7 +31,6 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 
         void GenerateOutPutDocument(string applicationRefNumber)
         {
-
             OfferLetterInfo offerLetter = new OfferLetterInfo();
 
             var offerLetterDetails = offerLetter.GenerateOfferLetter(applicationRefNumber);
@@ -111,24 +100,42 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 
             foreach(var x in loanApplicationDetail)
             {
-                switch (x.productClassId)
+                if (x.productClassId == 41 && x.productTypeId != 102)
                 {
-                    case (int)ProductClassEnum.ImportFinanceFacilities:
-                        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_ImportFinance.rdlc");
-                        break;
-                    case (int)ProductClassEnum.EmergingBusiness:
-                        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
-                        break;
-
-                    default: reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
-                        break;
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_ImportFinance.rdlc");
+                } else if (x.productClassId == 33 && x.productTypeId == 102)
+                {
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
+                }else if (x.productClassId == 33 && x.productTypeId != 102)
+                {
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
                 }
+                else
+                {
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
+                }
+               
+                //switch (x.productClassId)
+                //{
+                //    case (int)ProductClassEnum.ImportFinanceFacilities:
+                //        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_ImportFinance.rdlc");
+                //        break;
+                //    case (int)ProductClassEnum.EmergingBusiness:
+                //        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
+                //        break;
+                //    case (int)ProductClassEnum.BondAndGuarantees:
+                //        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_OtherGuarantee.rdlc");
+                //        break;
+
+                //    default: reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
+                //        break;
+                //}
             }
-            
+
             this.offerLetterReport.LocalReport.ReportPath = reportLink;
             this.offerLetterReport.LocalReport.Refresh();
-
         }
+
 
     }
 }

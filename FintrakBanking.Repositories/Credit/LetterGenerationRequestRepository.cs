@@ -396,6 +396,8 @@ namespace FintrakBanking.Repositories.Credit
                         SIGNATORYID = s.signatoryId,
                         OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                         POSITION = n,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                        CREATEDBY = model.createdBy,
                     });
                 }
                 context.TBL_OPERATION_SIGNATORY.AddRange(sig);
@@ -413,6 +415,8 @@ namespace FintrakBanking.Repositories.Credit
                         LOAN_CAMSOLID = c.camsolId,
                         OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                         POSITION = n,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                        CREATEDBY = model.createdBy,
                     });
                 }
                 context.TBL_OPERATION_CAMSOL_LIST.AddRange(cam);
@@ -478,6 +482,9 @@ namespace FintrakBanking.Repositories.Credit
                     SIGNATORYID = s.signatoryId,
                     OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                     POSITION = n,
+                    DELETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = general.GetApplicationDate()
                 });
                 //if (!signatories.Exists(sig => sig.SIGNATORYID == s.signatoryId))
                 //{
@@ -507,6 +514,9 @@ namespace FintrakBanking.Repositories.Credit
                     LOAN_CAMSOLID = s.camsolId,
                     OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                     POSITION = n,
+                    DELETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = general.GetApplicationDate()
                 });
             }
             if (cams.Count() > 0)
@@ -574,10 +584,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CamsolLoanDocumentViewModel> GetCamsolLoansByCustomerCode(string customerName, string customerCode)
         {
-            customerName = customerName.Trim().ToLower();
+            string[] str = {" "};
+            //string[] customerNames;
+            var customerNames = customerName.Trim().ToLower().Split(str, StringSplitOptions.RemoveEmptyEntries);
+            customerNames.ToList();
+            //var test = context.TBL_LOAN_CAMSOL.Where(c => customerNames.Any(n => c.CUSTOMERNAME.Trim().ToLower().Contains(n))).ToList();
+            //var test2 = context.TBL_LOAN_CAMSOL.Select(c => c.CUSTOMERNAME.Trim().ToLower()).ToList();
+            //var contains = test2.Exists(n => n.Contains(customerName));
             var data = from O in context.TBL_LOAN_CAMSOL
                        join C in context.TBL_LOAN_CAMSOL_TYPE on O.CAMSOLTYPEID equals C.CAMSOLTYPEID
-                       where O.CUSTOMERNAME.Trim().ToLower().Contains(customerName) || O.CUSTOMERCODE == customerCode || O.CUSTOMERNAME.Trim().ToLower() == customerName
+                       //let customerNames = customerName.Trim().ToLower().Split(str, StringSplitOptions.RemoveEmptyEntries)
+                       where customerNames.Any(n => O.CUSTOMERNAME.Trim().ToLower().Contains(n)) || O.CUSTOMERCODE == customerCode || O.CUSTOMERNAME.Trim().ToLower() == customerName
                        orderby O.LOAN_CAMSOLID descending
                        select new CamsolLoanDocumentViewModel
                        {

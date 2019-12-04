@@ -1,16 +1,25 @@
-﻿using FintrakBanking.Common.CustomException;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,98 +32,110 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
         private CustomerDetails customerRequest;
-
+        private ICreditLimitValidationsRepository limitValidation;
+        private ICasaRepository casa;
+        private IWorkflow workflow;
         public CashFlowLendingRepository(FinTrakBankingContext _context, 
                                         ICustomerRepository _customer, 
                                         IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail,
-                                         CustomerDetails _customerRequest)
+                                         CustomerDetails _customerRequest,
+                                         ICreditLimitValidationsRepository _limitValidation,
+                                         ICasaRepository _casa,
+                                         IWorkflow _workflow
+                                         )
         {
             this.context = _context;
             this.customer = _customer;
             this.genSetup = _genSetup;
             this.auditTrail = _auditTrail;
             this.customerRequest = _customerRequest;
+            limitValidation = _limitValidation;
+            casa = _casa;
+            workflow = _workflow;
+
+
         }
 
+        #region  CUSTOMER PROFILE METHODS
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
         {
-            APIResponse response = new APIResponse();
-           if (model.customerType == "I")
-            {
-                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99"); }
+           APIResponse response = new APIResponse();
+           if (model.customerType == "1")
+           {
+               if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
 
-                return AddIndividualCustomer(model);
-            }
-           else if (model.customerType == "C")
-            {
-                if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99"); }
+               return AddIndividualCustomer(model);
+           }
+           else if (model.customerType == "2")
+           {
+               if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",model.request_Id); }
 
-                return AddIndividualCustomer(model);
-            }
-           else { return fireResponse("Uknown Customer Type","99"); }
+               return AddCorporateCustomer(model);
+           }
+           else { return fireResponse("Uknown Customer Type","99",""); }
         }
 
         private APIResponse AddIndividualCustomer(IncomingCustomerViewModels model)
         {
             APIResponse response = new APIResponse();
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99"); }
+            //if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
-            List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
-            if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99"); }
+            //List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
+            //if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99",""); }
 
             DateTime dateTime12;
-            if (!DateTime.TryParse(model.individualCustomerInformation.dateOfBirth, out dateTime12)) { return fireResponse("Date of birth not in the right format", "99"); }
+            if (!DateTime.TryParse(model.individualCustomerInformation.dateOfBirth, out dateTime12)) { return fireResponse("Date of birth not in the right format", "99",""); }
 
             List<string> mStatus = new List<string> { "single", "married", "divorced", "widowed" };
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "single") { model.individualCustomerInformation.maritalStatus = "1"; }
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "married") { model.individualCustomerInformation.maritalStatus = "2"; }
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "divorced") { model.individualCustomerInformation.maritalStatus = "3"; }
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "widowed") { model.individualCustomerInformation.maritalStatus = "4"; }
-            if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.","99"); }
-            if (!mStatus.Contains(model.individualCustomerInformation.maritalStatus)) { fireResponse($"Value, '{model.individualCustomerInformation.maritalStatus}' is not a valid marital status.", "99"); }
+            if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.","99",""); }
+            if (!mStatus.Contains(model.individualCustomerInformation.maritalStatus)) { fireResponse($"Value, '{model.individualCustomerInformation.maritalStatus}' is not a valid marital status.", "99",""); }
 
             if (saveIndividualCustomerInformation(model))
             {
-                fireResponse("Success","00");
+                customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
+                return fireResponse("Success","00",model.request_Id);
             }
-            else { fireResponse("Unresolved error: could not save customer information","99"); }
+            else { return fireResponse("Unresolved error: could not save customer information","99",""); }
 
-            return response;
         }
 
         private APIResponse AddCorporateCustomer(IncomingCustomerViewModels model)
         {
             APIResponse response = new APIResponse();
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
-            if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99"); }
+           // List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
 
-            List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
-            if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau","99"); }
+            //List<int> crcCreditBureauType = new List<int> { 3 };
+            //if (creditBureautype.Contains(crcCreditBureauType) == false)
+            //{ return fireResponse("Missing CRC credit bureau", "99",""); }
 
-            if (saveIndividualCustomerInformation(model))
+            if (saveCorporateCustomerInformation(model))
             {
-                fireResponse("Success", "00");
+                customer.UpdateCustomerCollateralId(model.corporateCustomerInformation.customerCode);
+                return fireResponse("Success", "00",model.request_Id);
             }
-            else { fireResponse("Unresolved error: could not save customer information", "99"); }
+            else { return fireResponse("Unresolved error: could not save customer information", "99",""); }
 
-            return response;
         }
 
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
         {
             var model = entity.individualCustomerInformation;
             
-
             var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
@@ -163,164 +184,72 @@ namespace FintrakBanking.Repositories.Credit
                 TEAMNPL = model.teamNpl,
                 //CORR = model.corr,
                 PASTDUEOBLIGATIONS = Convert.ToDecimal(model.pastDueObligation),
+                APIREQUESTID = entity.request_Id,
                 //BUSINESSUNTID = model.businessUnitId
-      
+
             };
-            return false;
+
+            context.TBL_CUSTOMER.Add(customer);
+
+
+            return context.SaveChanges() > 0;
         }
 
-        private bool saveCorporateCustomerInformation(ApiCustomerBusinessDetailsViewModel model)
+        private bool saveCorporateCustomerInformation(IncomingCustomerViewModels model)
         {
-            return false;
+            ApiCustomerBusinessDetailsViewModel corporateDetails = model.corporateCustomerInformation;
+
+           var crmsType = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == corporateDetails.crmsCompanySize).FirstOrDefault();
+           var customer = new TBL_CUSTOMER
+            {
+                ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
+                BRANCHID = 1, //entity.userBranchId,
+                COMPANYID = 1, //entity.companyId,
+                CREATEDBY = 1, //(int)entity.createdBy,
+                CREATIONMAILSENT = true, //entity.creationMailSent,
+                CUSTOMERCODE = corporateDetails.customerCode,
+                CUSTOMERSENSITIVITYLEVELID = 1, //entity.customerSensitivityLevelId,
+                CUSTOMERTYPEID = (short)CustomerTypeEnum.Corporate,
+                //DATEOFBIRTH = Convert.ToDateTime(corporateDetails.dateOfIncorporation),
+                DATETIMECREATED = DateTime.Now,
+                EMAILADDRESS = corporateDetails.emailAddress,
+                FIRSTNAME = corporateDetails.corporateName,
+                //MISCODE = model.misCode,
+                //MISSTAFF = model.misStaff,
+                //NATIONALITYID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfOrigin).FirstOrDefault()?.COUNTRYID,
+
+                ISPOLITICALLYEXPOSED = corporateDetails.politicallyExposed == "1" ? true : false,
+                //ISINVESTMENTGRADE = model,
+
+                //SUBSECTORID = model.,
+                //RISKRATINGID = model.riskRatingId,
+                //CUSTOMERBVN = corporateDetails.customerBvn,
+                //PROSPECTCUSTOMERCODE = model.prospectCustomerCode,
+                ISPROSPECT = false,
+                CRMSCOMPANYSIZEID = crmsType?.CRMSREGULATORYID,
+                //CRMSLEGALSTATUSID = model.crmsLegalStatus,
+                CRMSRELATIONSHIPTYPEID = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == (corporateDetails.crmsRelationship))?.FirstOrDefault()?.CRMSREGULATORYID,
+               // COUNTRYOFRESIDENTID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfResidence).FirstOrDefault()?.COUNTRYID,
+
+                //NUMBEROFLOANSTAKEN = model.numberOfLoansTaken,
+                //MONTHLYLOANREPAYMENT = model.loanMonthlyRepaymentFromOtherBanks,
+                //DATEOFRELATIONSHIPWITHBANK = model.dateOfRelationshipWithBank,
+                //RELATIONSHIPTYPEID = model.relationshipTypeCode,
+                TEAMLDR = corporateDetails.teamLdr,
+                TEAMNPL = corporateDetails.teamNpl,
+                APIREQUESTID = model.request_Id,
+                //CORR = model.corr,
+                //PASTDUEOBLIGATIONS = Convert.ToDecimal(corporateDetails.pastDueObligation),
+                //BUSINESSUNTID = model.businessUnitId
+
+            };
+
+            context.TBL_CUSTOMER.Add(customer);
+
+
+            return context.SaveChanges() > 0;
         }
 
-        
-        //public string AddCustomer(IncomingCustomerViewModels model)
-        //{
-        //    validateCustomerDetails(model);
-        //    var entity = getCustomerViewModel(model);
-
-        //    int? maritalStatus = null;
-        //    if (entity.customerTypeId == (short)CustomerTypeEnum.Individual)
-        //    {
-        //        maritalStatus = Convert.ToInt32(entity.maritalStatus);
-        //    }
-        //    var customer = new TBL_CUSTOMER
-        //    {
-        //        ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
-        //        BRANCHID = 1, //entity.userBranchId,
-        //        COMPANYID = 1, //entity.companyId,
-        //        CREATEDBY = 1, //(int)entity.createdBy,
-        //        CREATIONMAILSENT = false, //entity.creationMailSent,
-        //        CUSTOMERCODE = model.customerNumber,
-        //        CUSTOMERSENSITIVITYLEVELID = 1, //entity.customerSensitivityLevelId,
-        //        CUSTOMERTYPEID = entity.customerTypeId,
-        //        DATEOFBIRTH = entity.dateOfBirth,
-        //        DATETIMECREATED = DateTime.Now,
-        //        EMAILADDRESS = entity.emailAddress,
-        //        FIRSTNAME = entity.firstName,
-        //        GENDER = entity.gender,
-        //        LASTNAME = entity.lastName,
-        //        MAIDENNAME = entity.maidenName,
-        //        MARITALSTATUS = maritalStatus,
-        //        TITLE = entity.title,
-        //        MIDDLENAME = entity.middleName,
-        //        MISCODE = entity.misCode,
-        //        MISSTAFF = entity.misStaff,
-        //        NATIONALITYID = entity.nationalityId,
-        //        OCCUPATION = entity.occupation,
-        //        PLACEOFBIRTH = entity.placeOfBirth,
-        //        ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed,
-        //        ISINVESTMENTGRADE = entity.isInvestmentGrade,
-        //        ISREALATEDPARTY = entity.isRealatedParty,
-        //        RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-        //        SPOUSE = entity.spouse,
-        //        SUBSECTORID = entity.subSectorId,
-        //        TAXNUMBER = entity.taxNumber,
-        //        RISKRATINGID = entity.riskRatingId,
-        //        CUSTOMERBVN = entity.customerBVN,
-        //        PROSPECTCUSTOMERCODE = entity.prospectCustomerCode,
-        //        ISPROSPECT = entity.isProspect,
-        //        CRMSCOMPANYSIZEID = entity.crmsCompanySizeId,
-        //        CRMSLEGALSTATUSID = entity.crmsLegalStatusId,
-        //        CRMSRELATIONSHIPTYPEID = entity.crmsRelationshipTypeId,
-        //        COUNTRYOFRESIDENTID = entity.countryOfResidentId,
-        //        NUMBEROFDEPENDENTS = entity.numberOfDependents,
-        //        NUMBEROFLOANSTAKEN = entity.numberOfLoansTaken,
-        //        MONTHLYLOANREPAYMENT = entity.loanMonthlyRepaymentFromOtherBanks,
-        //        DATEOFRELATIONSHIPWITHBANK = entity.dateOfRelationshipWithBank,
-        //        RELATIONSHIPTYPEID = entity.relationshipTypeId,
-        //        TEAMLDR = entity.teamLDP,
-        //        TEAMNPL = entity.teamNPL,
-        //        CORR = entity.corr,
-        //        PASTDUEOBLIGATIONS = entity.pastDueObligations,
-        //        BUSINESSUNTID = entity.businessUnitId
-        //    };
-        //    context.TBL_CUSTOMER.Add(customer);
-
-        //    //var audit = new TBL_AUDIT
-        //    //{
-        //    //    AUDITTYPEID = (short)AuditTypeEnum.CustomerAdded,
-        //    //    STAFFID = entity.createdBy,
-        //    //    BRANCHID = (short)entity.userBranchId,
-        //    //    DETAIL = $"Added Customer  '{entity.customerName}' with Code: {entity.customerCode}",
-        //    //    IPADDRESS = entity.userIPAddress,
-        //    //    URL = entity.applicationUrl,
-        //    //    APPLICATIONDATE = genSetup.GetApplicationDate(),
-        //    //    SYSTEMDATETIME = DateTime.Now
-        //    //};
-
-        //    //auditTrail.AddAuditTrail(audit);
-
-        //    try
-        //    {
-        //        var output = context.SaveChanges() > 0;
-        //        var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
-        //        if (output == true)
-        //        {
-        //            return result;
-        //        }
-        //        else
-        //        {
-        //            return null;
-        //        }
-
-        //    }
-        //    catch (DbEntityValidationException ex)
-        //    {
-        //        string errorMessages = string.Join("; ",
-        //            ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-        //        throw new DbEntityValidationException(errorMessages);
-        //    }
-        //}
-
-        public CustomerViewModels getCustomerViewModel(ApiIndividualClientViewModel entity)
-        {
-            CustomerViewModels model = new CustomerViewModels();
-           // model.accountCreationComplete = "";
-            //model.userBranchId = "";
-            //model.companyId = "";
-            //model.createdBy = "";
-            //model.creationMailSent = "";
-           // model.customerCode = entity.customerNumber;
-           // //model.customerSensitivityLevelId = "";
-           // model.dateOfBirth = Convert.ToDateTime(entity.dateOfBirth).Date;
-           // model.emailAddress = entity.emailAddress;
-           // model.firstName = entity.firstName;
-           // model.gender = entity.gender;
-           // model.lastName = entity.lastName;
-           // model.maidenName = entity.maidenName;
-           // model.maritalStatus = entity.maritalStatus;
-           // model.title = entity.title;
-           // model.middleName = entity.middleName;
-           // model.misCode = entity.misCode;
-           // model.misStaff = entity.misStaff;
-           //// model.nationalityId = entity.nationality;
-           // model.occupation = entity.occupation;
-           // model.placeOfBirth = entity.placeOfBirth;
-           // model.isPoliticallyExposed = Convert.ToBoolean(entity.isPoliticallyExposed);
-           // model.isInvestmentGrade = Convert.ToBoolean(entity.isInvestmentGrade);
-           // model.isRealatedParty = Convert.ToBoolean(entity.isRealatedParty); 
-           //// model.relationshipOfficerId = ;
-           // model.spouse = entity.spouse;
-           // model.subSectorId = Convert.ToInt16(entity.subSectorId);
-           // model.taxNumber = entity.taxNumber;
-           // model.riskRatingId = Convert.ToInt16(entity.riskRatingId);
-           // model.customerBVN = entity.customerBVN;
-           // model.relationshipTypeId = Convert.ToInt16(entity.relationshipTypeId);
-
-
-            return model;
-        }
-
-        private APIResponse fireResponse(string message, string statusCode)
-        {
-            APIResponse response = new APIResponse();
-            response.StatusCode = statusCode;
-            response.Message = message;
-
-            return response;
-        }
         public bool ValidateCustomerCode(string customerCode)
         {
             bool itemExist = false;
@@ -333,21 +262,942 @@ namespace FintrakBanking.Repositories.Credit
             return itemExist;
         }
 
+        #endregion END OF CUSTOMER PROFILE METHODS
+
+
+        #region  LOAN REQUEST METHODS
         public APIResponse submitRequest(CflLoanApplication model)
         {
             APIResponse response = new APIResponse();
             var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == model.productCode).FirstOrDefault();
 
-            if (product == null) { return fireResponse("Product Code does not exist", "99"); }
-            if (model.requestId == null) { return fireResponse("Missing application unique indentifier", "99"); }
+            if (product == null) { return fireResponse("Product Code does not exist", "99",""); }
+            if (model.requestId == null) { return fireResponse("Missing application unique indentifier", "99",""); }
 
+            var subSector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.subSectorCode).FirstOrDefault();
+            if (subSector == null) { return fireResponse("Missing sub sector code", "99",""); }
 
+            var sector = context.TBL_SECTOR.Where(x => x.CODE == subSector.CODE).FirstOrDefault();
+
+            var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == model.currencyCode || x.CURRENCYCODE =="NGN").FirstOrDefault();
+            if (currency == null) return fireResponse("Missing currency code", "99","");
+
+            if (model.accountOfficerStaffCode == string.Empty) return fireResponse("Missing account officer code", "99","");
+
+            var accountOfficerr = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == model.customerCode).FirstOrDefault();
+            if(customer == null) return fireResponse("This customer is not profiled on Fintrak Credit360 application", "99", "");
+
+         
+
+            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == model.settlementAccount).FirstOrDefault();
+
+            LoanApplicationViewModel loanApp = new LoanApplicationViewModel();
+            loanApp.customerId = customer.CUSTOMERID;
+            loanApp.proposedTenor = Convert.ToInt16(model.tenor);
+            loanApp.tenorModeId = (short)TenorModeEnum.Days;
+            loanApp.proposedAmount = Convert.ToDecimal(model.loanAmount);
+            loanApp.productId = product.PRODUCTID;
+            loanApp.productClassId = product.PRODUCTCLASSID;
+            loanApp.productClassProcessId = product.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID;
+            loanApp.loanPurpose = model.purpose;
+            loanApp.sectorId = (int)subSector?.SECTORID;
+            loanApp.subSectorId = (short)subSector?.SUBSECTORID;
+            loanApp.exchangeRate = model.exchangeRate != string.Empty ? Convert.ToDouble(model.exchangeRate ) : (double)0;
+            loanApp.currencyCode = currency.CURRENCYCODE;
+            loanApp.interestRate = Convert.ToDouble(model.interestRate);
+            loanApp.editMode = model.callStatusCode == "01" ?  true : false;
+            loanApp.relationshipOfficerId = accountOfficerr.STAFFID;
+            loanApp.companyId = model.companyId;
+            loanApp.loanInformation = "<p></p>";
+            loanApp.casaAccountId = casa?.CASAACCOUNTID;
+            loanApp.branchId = 94;
+
+            
+
+            if(context.TBL_LOAN_APPLICATION.Any(x=>x.APIREQUESTID == model.requestId && x.DELETED != true))
+            {
+                if(model.callStatusCode == "01")
+                {
+                    response.requestId = model.requestId;
+                    if (UpdateLoanApplicationDetail(loanApp))
+                    {
+                        response.StatusCode = "00";
+                        response.Message = "Success";
+                    }
+                    else
+                    {
+                        response.StatusCode = "99";
+                        response.Message = "Failed!";
+                    }
+                   
+                    return response;
+                }
+                else { return fireResponse("New application request Id already exist", "99", ""); }
+            }
+
+            var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == loanApp.proposedAmount
+                 && o.APPROVEDINTERESTRATE == loanApp.interestRate && o.APPROVEDTENOR == loanApp.proposedTenor && o.CURRENCYID == currency.CURRENCYID && o.CUSTOMERID == customer.CUSTOMERID
+                 && o.SUBSECTORID == loanApp.sectorId && o.CREATEDBY == 1 && o.DELETED != true);
+
+            if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");  
+
+            response.applicationReferenceNumber = AddLoanApplication(loanApp,model.requestId);
+            response.StatusCode = "00";
+            response.Message = "Success";
+            if (response.applicationReferenceNumber == null)
+            {
+                response.StatusCode = "99";
+                response.Message = "Failed!";
+            }
             return response;
+        }
+
+        public string AddLoanApplication(LoanApplicationViewModel loan, string apiRequestId)
+        {
+           // ValidateLoanApplicationLimits(loan);
+            var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
+            var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED == false).ToList();
+
+            decimal cumulativeSum = 0;
+            foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
+
+            if (loan.relationshipOfficerId != 0)
+            {
+                var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
+                if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) fireResponse($"RM Limit Exceeded. The limit of this RM is {validation.limit}","99","");
+            }
+
+            loan.applicationAmount = cumulativeSum + additionalAmount;
+
+            if (loan.editMode == true )
+            {
+                if (UpdateLoanApplicationDetail(loan)) return loan.applicationReferenceNumber;
+                else return null;
+            }
+
+            var loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber && l.DELETED == false);
+
+            if (savedDetails.Count() == 0 || loan.isNewApplication)
+            {
+                if (loanData != null)
+                {
+                    loanData.APPLICATIONAMOUNT = loan.applicationAmount;
+                    loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
+                    loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
+                    loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
+                }
+
+                if (loanData == null) 
+                {
+                    if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
+                    var app = AddloanApplicationSub(loan, apiRequestId);
+
+                    if (AddLoanApplicationDetail(loan, app))
+                    {
+                        SubmitLoanApplicationForCam(app.LOANAPPLICATIONID, 1, 0);
+                        context.SaveChanges();
+                        return app.APPLICATIONREFERENCENUMBER;
+                    }
+                }
+            }
+            else
+            {
+                var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
+                UpdateLoanApplication(loan);
+            }
+
+            return null;
+        }
+
+        private bool AddLoanApplicationDetail(LoanApplicationViewModel loan, TBL_LOAN_APPLICATION app)//List<LoanApplicationDetailViewModel> entity, int createdBy)
+        {
+            var createdBy = loan.createdBy;
+            //foreach (var a in entity)
+            //{
+            var a = loan.LoanApplicationDetail.FirstOrDefault();
+
+            //if (a.repaymentScheduleId <= 0)
+            //{
+            //    fireResponse("Please select a repayment pattern","99","");
+            //}
+
+            //if (a.proposedTenor == 0)
+            //{
+            //    fireResponse("Tenor can not be ZERO (0)","99","");
+            //}
+      
+
+            var data = new TBL_LOAN_APPLICATION_DETAIL
+            {
+                APPROVEDAMOUNT = loan.proposedAmount,
+                APPROVEDINTERESTRATE = (double)app.INTERESTRATE,
+                APPROVEDPRODUCTID = (short)app.PRODUCTID,
+                APPROVEDTENOR = loan.proposedTenor,
+                
+                EXCHANGERATE = loan.exchangeRate,
+                CURRENCYID = 1,
+                CUSTOMERID = (int)app.CUSTOMERID,
+                LOANAPPLICATIONID = app.LOANAPPLICATIONID,
+                STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
+                
+                //EQUITYCASAACCOUNTID = a?.equityCasaAccountId,
+                //EQUITYAMOUNT = a?.equityAmount ,
+                
+                PROPOSEDAMOUNT = app.APPROVEDAMOUNT,
+                PROPOSEDINTERESTRATE = (int)app.INTERESTRATE,
+                PROPOSEDPRODUCTID = (short)app.PRODUCTID,
+                PROPOSEDTENOR = loan.proposedTenor, //Convert.ToInt32(Math.Round(((decimal)(app.pr / 12) * (decimal)365))),
+                DELETED = false,
+                SUBSECTORID = loan.subSectorId,
+                CREATEDBY = 1,
+                DATETIMECREATED = DateTime.Now,
+                LOANPURPOSE = loan.loanPurpose,
+                CASAACCOUNTID = loan.casaAccountId,
+                OPERATINGCASAACCOUNTID = loan.casaAccountId,
+                REPAYMENTSCHEDULEID = (short)FrequencyTypeEnum.Monthly,
+                REPAYMENTTERMS = "Monthly",
+                //CRMSFUNDINGSOURCEID = loan.fundingSource,
+                //CRMSREPAYMENTSOURCEID = a?.crmsPaymentSourceId,
+                //CRMSFUNDINGSOURCECATEGORY = a?.crmsFundingSourceCategory,
+                //CRMS_ECCI_NUMBER = a?.crms_ECCI_Number,
+                //FIELD1 = a.fieldOne,
+                //FIELD2 = a.fieldTwo,
+                //FIELD3 = a.fieldThree,
+                //PRODUCTPRICEINDEXID = a?.productPriceIndexId,
+                //PRODUCTPRICEINDEXRATE = a?.productPriceIndexRate,
+               
+                TENORFREQUENCYTYPEID = (short) TenorModeEnum.Months,
+                CRMSVALIDATED = false,
+                ISTAKEOVERAPPLICATION = false,
+            };
+
+            //var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
+            //        && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
+            //        && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
+
+            //if (loanExist == true) throw new SecureException("This loan application has already been saved!");
+
+            var appl = context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
+
+            //if (a.productFees.Count > 0)
+            //{
+            //    ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
+            //}
+
+           return context.SaveChanges() > 0;
+
+        }
+
+        private TBL_LOAN_APPLICATION AddloanApplicationSub(LoanApplicationViewModel loan, string apiRequestId)
+        {
+            short productClassProcessId = 0;
+            short? productClassId = null;
+            var isGroupLoan = false;
+            var response = 0;
+            int loanId = 0;
+            //var proposedProductId = loan.LoanApplicationDetail.FirstOrDefault()?.proposedProductId ?? 0;
+
+            // ValidateLoanApplicationLimits(loan); // init only
+            var workflowProductId = GetWorkflowProductId(loan.productId);
+
+            if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            {
+                isGroupLoan = true;
+            }
+
+            int? casaAccountId = null;
+            string refNumber = GenerateLoanReference(loan.customerId.Value);
+            if (loan.customerAccount != "N/A")
+            {
+                casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
+            }
+
+            var dat = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == loan.productClassId).FirstOrDefault();
+            if (dat != null)
+            {
+                productClassId = loan.productClassId;
+                productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+
+            }
+            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
+            var loanStatusId = (short)LoanStatusEnum.Inactive;
+
+            if (loan.flowchangeId != null && loan.flowchangeId > 0)
+            {
+                var newWorkflowBaseRecord = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(loan.flowchangeId);
+                if (newWorkflowBaseRecord != null)
+                {
+                    loan.exclusiveOperationId = newWorkflowBaseRecord.OPERATIONID;
+                }
+            }
+
+            var loanData = new TBL_LOAN_APPLICATION
+            {
+                REQUIRECOLLATERAL = loan.requireCollateral,
+                TOTALEXPOSUREAMOUNT = totalAmount,
+                PRODUCTCLASSID = productClassId,
+                APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
+                PRODUCT_CLASS_PROCESSID = productClassProcessId,
+                COMPANYID = loan.companyId,
+                BRANCHID = loan.branchId ?? 0,
+                RELATIONSHIPOFFICERID = 1, 
+                RELATIONSHIPMANAGERID = 1, 
+                MISCODE = loan.misCode ?? "002",
+                TEAMMISCODE = loan.teamMisCode ?? "002",
+                INTERESTRATE = loan.interestRate,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                LOANINFORMATION = loan.loanInformation,
+                ISRELATEDPARTY = loan.isRelatedParty,
+                ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed,
+                CREATEDBY = (int)loan.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                CUSTOMERGROUPID = loan.customerGroupId,
+                CASAACCOUNTID = loan.casaAccountId,
+                APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                APPLICATIONAMOUNT = loan.proposedAmount,
+                APPLICATIONTENOR = loan.proposedTenor,
+                ISINVESTMENTGRADE = loan.isInvestmentGrade,
+                CAPREGIONID = loan.regionId,
+                REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId,
+                LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
+                LOANTERMSHEETID = loan.loanTermSheetId,
+                CUSTOMERID = loan.customerId,
+                SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
+                // FLOWCHANGEID = loan.flowchangeId,
+                OPERATIONID = (short)OperationsEnum.CreditAppraisal,
+                LOANAPPLICATIONTYPEID = (short)LoanTypeEnum.Single,
+                COLLATERALDETAIL = loan.collateralDetail,
+                ISADHOCAPPLICATION = false,
+                LOANSWITHOTHERS = loan.loansWithOthers,
+                OWNERSHIPSTRUCTURE = loan.ownershipStructure,
+                LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
+                PRODUCTID = workflowProductId,
+                APIREQUESTID = apiRequestId
+
+            };
+
+            if (isGroupLoan)
+            {
+                loanData.CUSTOMERGROUPID = loan.customerGroupId;
+                loanData.CUSTOMERID = null;
+                loanData.ISRELATEDPARTY = GetCustomerIsRelatedParty((int)loan.customerGroupId);
+                loanData.ISPOLITICALLYEXPOSED = GetCustomerIsPoliticallyExposed((int)loan.customerGroupId);
+            }
+            else
+            {
+                loanData.CUSTOMERID = loan.customerId;
+                loanData.CUSTOMERGROUPID = null;
+                loanData.ISRELATEDPARTY = GetCustomerIsRelatedParty((int)loan.customerId);
+                loanData.ISPOLITICALLYEXPOSED = GetCustomerIsPoliticallyExposed((int)loan.customerId);
+            }
+
+            if (loan.loanPreliminaryEvaluationId != null && loan.loanPreliminaryEvaluationId != 0)
+            {
+                var pen = context.TBL_LOAN_PRELIMINARY_EVALUATN.Find(loan.loanPreliminaryEvaluationId);
+                pen.SENTFORLOANAPPLICATION = true;
+            }
+
+
+            context.TBL_LOAN_APPLICATION.Add(loanData);
+
+            // Audit Section ---------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
+            //    STAFFID = loan.createdBy,
+            //    BRANCHID = (short)loan.userBranchId,
+            //    DETAIL = $"Applied for loan with reference number: {loan.applicationReferenceNumber}",
+            //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+            //    URL = loan.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = loan.loanApplicationId,
+            //    DEVICENAME = CommonHelpers.GetDeviceName(),
+            //    OSNAME = CommonHelpers.FriendlyName(),
+            //};
+
+            //this.auditTrail.AddAuditTrail(audit);
+
+            
+
+            return loanData;
+        }
+
+        private bool UpdateLoanApplicationDetail(LoanApplicationViewModel loan)
+        {
+            UpdateLoanApplication(loan); 
+
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+            var update = loan.LoanApplicationDetail.SingleOrDefault();
+            if (update == null) fireResponse("Sequence contain not single! " + loan.LoanApplicationDetail.Count(), "99","");
+
+            if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTCLASSID != (int)ProductClassEnum.BondAndGuarantees))
+            {
+                fireResponse("Please select a repayment pattern for the product " + update.productName, "99","");
+            }
+
+            // LEFT TO RIGHT MAPPING
+            detail.SUBSECTORID = update.subSectorId;
+            //detail.PROPOSEDAMOUNT = update.proposedAmount;
+            detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
+            detail.PROPOSEDPRODUCTID = update.proposedProductId;
+            detail.PROPOSEDTENOR = update.proposedTenor;
+            detail.REPAYMENTSCHEDULEID = update.repaymentScheduleId;
+            detail.REPAYMENTTERMS = update.repaymentTerm;
+            detail.LOANPURPOSE = update.loanPurpose;
+            detail.PRODUCTPRICEINDEXID = update.productPriceIndexId;
+            detail.PRODUCTPRICEINDEXRATE = update.productPriceIndexRate;
+            detail.CASAACCOUNTID = update.casaAccountId;
+            detail.OPERATINGCASAACCOUNTID = update.operatingCasaAccountId;
+            detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
+            detail.CURRENCYID = update.currencyId;
+            detail.TENORFREQUENCYTYPEID = update.tenorModeId;
+            detail.ISTAKEOVERAPPLICATION = update.isTakeOverApplication;
+
+            var productClassId = detail.TBL_PRODUCT1.PRODUCTCLASSID;
+
+            return context.SaveChanges() > 0;
+
+        }
+
+        private void UpdateLoanApplication(LoanApplicationViewModel loan)
+        {
+            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
+
+            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
+
+           // decimal totalApplicationAmount = 0; 
+            //foreach (var item in application)
+            //{
+            //    var exchangeValue = ((decimal)item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
+            //    totalApplicationAmount = totalApplicationAmount + exchangeValue;
+            //}
+
+            var loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+            loanData.REQUIRECOLLATERAL = loan.requireCollateral;
+            loanData.TOTALEXPOSUREAMOUNT = totalAmount;
+            loanData.INTERESTRATE = loan.interestRate;
+            loanData.APPLICATIONDATE = genSetup.GetApplicationDate();
+            loanData.LOANINFORMATION = loan.loanInformation;
+            loanData.ISRELATEDPARTY = loan.isRelatedParty;
+            loanData.ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed;
+            loanData.CREATEDBY = (int)loan.createdBy;
+            loanData.DATETIMECREATED = genSetup.GetApplicationDate();
+            loanData.SYSTEMDATETIME = DateTime.Now;
+            loanData.CASAACCOUNTID = loan.casaAccountId;
+           // loanData.APPLICATIONAMOUNT = totalApplicationAmount;
+            loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
+            loanData.COLLATERALDETAIL = loan.collateralDetail;
+            loanData.CAPREGIONID = loan.regionId;
+            loanData.REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId;
+            loanData.LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId;
+            loanData.LOANTERMSHEETID = loan.loanTermSheetId;
+            loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
+            loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
+            loanData.LOANSWITHOTHERS = loan.loansWithOthers;
+            loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
+        }
+
+        public decimal GetCustomerTotalOutstandingBalance(int customerId)
+        {
+            var loanData = context.TBL_LOAN.FirstOrDefault(x => x.CUSTOMERID == customerId);
+            var overdraftData = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.CUSTOMERID == customerId);
+            decimal loanBalance = 0;
+            decimal overdraftBalance = 0;
+
+            if (loanData != null)
+            {
+                var balance = (from a in context.TBL_LOAN
+                               where a.CUSTOMERID == customerId
+                               select a.OUTSTANDINGPRINCIPAL).Sum();
+                loanBalance = balance;
+            }
+            else
+            {
+                loanBalance = 0;
+            }
+
+            if (overdraftData != null)
+            {
+                var balance = (from a in context.TBL_LOAN_REVOLVING
+                               where a.CUSTOMERID == customerId
+                               select a.OVERDRAFTLIMIT).Sum();
+                overdraftBalance = balance;
+            }
+            else
+            {
+                overdraftBalance = 0;
+            }
+
+            decimal totalBalance = loanBalance + overdraftBalance;
+
+            return totalBalance;
+        }
+
+        private void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
+        {
+            var details = application.LoanApplicationDetail;
+            int branchId = application?.branchId ?? 0;
+            int customerId = application?.customerId ?? 0;
+            int productId = application?.productId ?? 0;
+            decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
+
+            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
+
+            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
+
+            // if productoverride is to be used
+            //var productOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+            //    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.productLimitOverride && x.ISUSED == false),
+            //        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+            //    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+            //    .FirstOrDefault();
+
+            if (branchOverrideRequest != null)
+            {
+                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                //request.ISUSED = true;
+            }
+            else
+            {
+                // branch limits
+                var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
+                decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
+                var branch = context.TBL_BRANCH.Find(branchId);
+                if (branch?.NPL_LIMIT > 0 && branch?.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+            }
+
+            if (sectorOverrideRequest != null)
+            {
+                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                //request.ISUSED = true;
+            }
+            else
+            {
+                foreach (var facility in details)
+                {
+                    // sector limits
+                    // sectorId here is actually the subsectorId
+                    //List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
+                    //foreach (var sectorId in sectorIds)
+                    //{
+                    var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
+                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                    //var sector = context.TBL_SECTOR.Find(sectorId);
+                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
+                    //}
+                }
+
+            }
+            try
+            {
+                if (limitValidation.ProductLimitExceeded(productId, application.proposedAmount))
+                {
+                    fireResponse("Product Limit exceeded!","99","");
+                }
+            }
+            catch (Exception ex) { throw ex; }
+
+            var exposure = GetCurrentCompanyExposure();
+            var proposedExposure = exposure.proposedLimit + applicationAmount;
+            var company = context.TBL_COMPANY.Find(application.companyId);
+            if (proposedExposure >= company.SHAREHOLDERSFUND)
+            {
+                fireResponse("Company Limit Exceeded","99","");
+            }
+
+            var insiderLimit = limitValidation.ValidateNPLByInsiderCustomer();
+            var insiderExposure = insiderLimit.outstandingBalance + (double)applicationAmount;
+            if (insiderExposure >= (double)insiderLimit.maximumAllowedLimit)
+            {
+                fireResponse("Insider Limit Exceeded", "99","");
+            }
+
+            if (limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))
+            {
+                var directorLimit = limitValidation.ValidateNPLByDirectors(application);
+                var directorExposure = (double)applicationAmount + directorLimit.outstandingBalance;
+                if (directorExposure >= (double)directorLimit.maximumAllowedLimit)
+                {
+                    fireResponse("Director Limit Exceeded","99","");
+                }
+
+            }
+
+            var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
+            var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
+            if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+            {
+                fireResponse("Single Obligor Limit Exceeded","99","");
+            }
+
+        }
+
+        public string GetRefrenceNumber()
+        {
+            var millisecond = DateTime.Now.Millisecond;
+            string refnumber = CommonHelpers.GetLoanReferanceNumber().ToString()
+                + "" + CommonHelpers.AppendZeroString(millisecond, 3);
+            return refnumber.ToString();
+        }
+
+        public CurrentCustomerExposure GetCurrentCompanyExposure()
+        {
+            IQueryable<CurrentCustomerExposure> exposure = null;
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+            CurrentCustomerExposure totalExposures = new CurrentCustomerExposure();
+
+            //if (operationId == (int)OperationsEnum.CreditAppraisal)
+            //    details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.APPROVEDPRODUCTID }).ToList();
+            //else
+            //    details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.PRODUCTID }).ToList();
+
+            //foreach (var detail in details)
+            //{
+            exposure = context.TBL_LOAN
+                    .Where(x => x.LOANSTATUSID == (int)LoanStatusEnum.Active)
+                    .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
+                    .Select(g => new CurrentCustomerExposure
+                    {
+                        facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
+                        existingLimit = g.Sum(x => x.PRINCIPALAMOUNT),
+                        proposedLimit = g.Sum(x => x.OUTSTANDINGPRINCIPAL),
+                        recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                        PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
+                        pastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+                        reviewDate = DateTime.Now,
+                        prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
+                        loanStatus = "Running"
+                    });
+
+            if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+            // Same for revolving and contegent facility ...
+
+            exposure = context.TBL_LOAN_REVOLVING
+                .Where(x => x.LOANSTATUSID == (int)LoanStatusEnum.Active)
+                .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
+                .Select(g => new CurrentCustomerExposure
+                {
+                    facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
+                    existingLimit = g.Sum(x => x.OVERDRAFTLIMIT),
+                    proposedLimit = g.Sum(x => x.OVERDRAFTLIMIT),
+                    recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                    PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
+                    pastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+                    reviewDate = DateTime.Now,
+                    prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
+                    loanStatus = "Running"
+                });
+
+            if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+
+            exposure = context.TBL_LOAN_CONTINGENT
+                .Where(x => x.LOANSTATUSID == (int)LoanStatusEnum.Active)
+                .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
+                .Select(g => new CurrentCustomerExposure
+                {
+                    facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
+                    existingLimit = g.Sum(x => x.CONTINGENTAMOUNT),
+                    proposedLimit = g.Sum(x => x.CONTINGENTAMOUNT),
+                    recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                    reviewDate = DateTime.Now,
+                    loanStatus = "Running"
+                });
+
+            if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+
+            totalExposures = new CurrentCustomerExposure()
+            {
+                facilityType = "TOTAL",
+                existingLimit = exposures.Sum(t => t.existingLimit),
+                proposedLimit = exposures.Sum(t => t.proposedLimit),
+                recommendedLimit = exposures.Sum(t => t.recommendedLimit),
+                PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
+                pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
+                reviewDate = DateTime.Now,
+                prudentialGuideline = String.Empty,
+                loanStatus = String.Empty,
+            };
+
+            return totalExposures;
+        }
+
+        private int? GetWorkflowProductId(short productId)
+        {
+            if (context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                && x.OPERATIONID == (int)OperationsEnum.CreditAppraisal //&& x.PRODUCTCLASSID == model.productClassId
+                && x.PRODUCTID == productId).Any()) return productId;
+            return null;
+        }
+
+        private bool GetCustomerIsRelatedParty(int customerId)
+        {
+            var customer = context.TBL_CUSTOMER.Find(customerId);
+            var customerGroup = new TBL_CUSTOMER_GROUP();
+            if (customer == null)
+            {
+                customerGroup = context.TBL_CUSTOMER_GROUP.Find(customerId);
+                if (customerGroup != null)
+                {
+                    var mappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(m => m.DELETED != true && m.CUSTOMERGROUPID == customerGroup.CUSTOMERGROUPID);
+                    var customers = new List<TBL_CUSTOMER>();
+                    foreach (var map in mappings)
+                    {
+                        customers.Add(map.TBL_CUSTOMER);
+                    }
+
+                    if (customers.Exists(c => c.ISREALATEDPARTY == true))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return customer.ISREALATEDPARTY;
+        }
+
+        private bool GetCustomerIsPoliticallyExposed(int customerId)
+        {
+            var customer = context.TBL_CUSTOMER.Find(customerId);
+            var customerGroup = new TBL_CUSTOMER_GROUP();
+            if (customer == null)
+            {
+                customerGroup = context.TBL_CUSTOMER_GROUP.Find(customerId);
+                if (customerGroup != null)
+                {
+                    var mappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(m => m.DELETED != true && m.CUSTOMERGROUPID == customerGroup.CUSTOMERGROUPID);
+                    var customers = new List<TBL_CUSTOMER>();
+                    foreach (var map in mappings)
+                    {
+                        customers.Add(map.TBL_CUSTOMER);
+                    }
+
+                    if (customers.Exists(c => c.ISPOLITICALLYEXPOSED == true))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return customer.ISPOLITICALLYEXPOSED;
+        }
+
+        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
+        {
+            var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
+            {
+                CHARGEFEEID = c.feeId,
+                RECOMMENDED_FEERATEVALUE = c.rate,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = createdBy,
+                HASCONSESSION = false,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
+                DEFAULT_FEERATEVALUE = c.rate
+            });
+
+            context.TBL_LOAN_APPLICATION_DETL_FEE.AddRange(data);
+
+        }
+
+        private string GenerateLoanReference(int customerId)
+        {
+            string code = "";
+            int data = 0;
+            if (customerId > 2)
+            {
+                var grp = this.context.TBL_CUSTOMER_GROUP.Where(x => x.CUSTOMERGROUPID == customerId);
+                if (grp.Any())
+                {
+                    code = grp.First().GROUPCODE;
+                }
+                data = ((this.context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
+            }
+            else
+            {
+                var cust = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId);
+                if (cust.Any())
+                {
+                    code = cust.First().CUSTOMERCODE;
+                }
+                data = ((context.TBL_LOAN_APPLICATION.Count(x => x.CUSTOMERID == customerId)) + 1);
+            }
+
+            return $"{code}{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
         }
 
         private void validateCustomerDetails(IncomingCustomerViewModels entity)
         {
             
         }
+
+        private short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
+        {
+
+            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId).FirstOrDefault();
+
+            if (appl.LOANAPPROVEDLIMITID > 0)
+            {
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
+                context.SaveChanges();
+                return 1;
+            }
+
+            if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
+            {
+                appl.PRODUCT_CLASS_PROCESSID = (int)ProductClassProcessEnum.CAMBased;
+            }
+
+            appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+
+            int? receiverLevelId = null;
+            int operationId;
+            //var product = context.TBL_PRODUCT.Find(detail.PROPOSEDPRODUCTID);
+            //var productBahaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == detail.PROPOSEDPRODUCTID).FirstOrDefault();
+
+
+            operationId = appl.OPERATIONID; 
+            workflow.OperationId = operationId;
+            appl.OPERATIONID = operationId;
+            receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
+            workflow.NextLevelId = receiverLevelId; 
+
+
+            workflow.StaffId = staffId;
+            workflow.TargetId = appl.LOANAPPLICATIONID;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.ProductId = appl.PRODUCTID;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.Comment = "New loan application";
+            workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
+
+            if (workflow.LogActivity()) return 1;
+            else return 0;
+        }
+
+        private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId).ToList();
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+
+            return nextLevelId;
+        }
+
+        public int AddLoanDocument(LoanDocumentViewModel model, byte[] file)
+        {
+            FinTrakBankingDocumentsContext docContext = new  FinTrakBankingDocumentsContext();
+
+            var existing = docContext.TBL_MEDIA_LOAN_DOCUMENTS
+                .Where(x => x.FILENAME == model.fileName
+                    && x.FILEEXTENSION == model.fileExtension
+                    && x.LOANREFERENCENUMBER == model.loanReferenceNumber
+                    );
+
+            if (existing.Count() > 0 && model.overwrite == false) return 3;
+
+            if (existing.Count() > 0 && model.overwrite == true)
+            {
+                docContext.TBL_MEDIA_LOAN_DOCUMENTS.RemoveRange(existing);
+            }
+
+            var data = new TBL_MEDIA_LOAN_DOCUMENTS
+            {
+                FILEDATA = file,
+                LOANAPPLICATIONNUMBER = model.loanApplicationNumber,
+                LOANREFERENCENUMBER = model.loanReferenceNumber,
+                DOCUMENTTITLE = model.documentTitle,
+                DOCUMENTTYPEID = model.documentTypeId,
+                LOAN_BOOKING_REQUESTID = model.SourceId,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                SYSTEMDATETIME = DateTime.Now,
+                PHYSICALFILENUMBER = model.physicalFileNumber,
+                PHYSICALLOCATION = model.physicalLocation,
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+                CREATEDBY = (int)model.createdBy,
+            };
+
+            docContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+
+            // Audit Section ---------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"Added Loan Document with title : '{ model.documentTitle }' ",
+            //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    DEVICENAME = CommonHelpers.GetDeviceName(),
+            //    OSNAME = CommonHelpers.FriendlyName()
+            //};
+            //this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return docContext.SaveChanges() == 0 ? 1 : 2;
+        }
+
+        private APIResponse fireResponse(string message, string statusCode, string requestId)
+        {
+            APIResponse response = new APIResponse();
+            response.StatusCode = statusCode;
+            response.Message = message;
+            response.requestId = requestId;
+
+            return response;
+        }
+
+        #endregion END OF LOAN REQUEST METHODS
+
     }
 }

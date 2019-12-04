@@ -23,16 +23,18 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/credit")]
     public class CustomerCreditBureauController : ApiControllerBase
     {
+        private IIntegrationWithFinacle flexcube;
         private ICustomerCreditBureauRepository repo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
         //private ICreditBureauProcess creditBureau;
         //private IErrorLogRepository errorLogger;
 
-        public CustomerCreditBureauController(ICustomerCreditBureauRepository _repo) // ICreditBureauProcess _creditBureau) //IErrorLogRepository _errorLogger
+        public CustomerCreditBureauController(ICustomerCreditBureauRepository _repo, IIntegrationWithFinacle _flexcube) // ICreditBureauProcess _creditBureau) //IErrorLogRepository _errorLogger
         {
             this.repo = _repo;
+            flexcube = _flexcube;
             //creditBureau = _creditBureau;
-           // errorLogger = _errorLogger;
+            // errorLogger = _errorLogger;
         }
 
         #region CREDIT BUREAU REPORT
@@ -176,8 +178,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("crms-credit-check")]
+        public HttpResponseMessage GetCreditCheck([FromBody] CreditCheckViewModel model)
+        {
+            try
+            {
+                var data = flexcube.GetCreditCheck(model);
 
-      [HttpGet] [ClaimsAuthorization]  
+                if (!data.posted)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, responseMessage = data.responseMessage });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.responseMessage, credits = data.responseObject.Credits.ToList(), summary = data.responseObject.Summary });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("credit-bureau-report-log/{customerId}/director/{companyDirectorId}")]
         public HttpResponseMessage GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
@@ -388,8 +413,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (!result.errorOccured)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, data = result, message = " download Completed" });
+                    return Request.CreateResponse(HttpStatusCode.OK,  new { success = true, data = result, message = " download Completed" });
                 }
                 else
                 {
@@ -420,7 +444,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: An unhandles error occured" });
+                    new { success = false, message = $"Error: An unhandles error occured"+ex.Message });
             }
         }
 
@@ -479,7 +503,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: An unhandles error occured" });
+                    new { success = false, message = $"Error: An unhandles error occured "+ex.Message });
             }
         }
 

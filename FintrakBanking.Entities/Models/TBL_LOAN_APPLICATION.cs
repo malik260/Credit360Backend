@@ -76,6 +76,8 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "money")]
         public decimal TOTALEXPOSUREAMOUNT { get; set; }
 
+        public string APIREQUESTID { get; set; }
+
         [Required]
         public string LOANINFORMATION { get; set; }
 
@@ -155,7 +157,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISCHECKLISTLOADED { get; set; }
 
-        public bool? ISADHOCAPPLICATION { get; set; }
+        public bool ISADHOCAPPLICATION { get; set; }
 
         public decimal? LOANSWITHOTHERS { get; set; }
 
