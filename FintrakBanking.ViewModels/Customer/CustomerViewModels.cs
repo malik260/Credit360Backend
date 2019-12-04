@@ -164,6 +164,7 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerChildrenViewModel> CustomerChildren { get; set; }
         public int? businessUnitId { get; set; }
         public decimal? pastDueObligations { get; set; }
+        public string ownership { get; set; }
     }
 
     public class CustomerViewModels2 : GeneralEntity
