@@ -78,6 +78,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class ApprovedLoanDetailViewModel : GeneralEntity
     {
         public int loanApplicationDetailId { get; set; }
+        public int bookingRequestId { get; set; }
         public int applicationId { get; set; }
         public string obligorName { get; set; }
         public int approvedTenor { get; set; }
@@ -99,6 +100,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int proposedTenor { get; set; }
         public double proposedRate { get; set; }
         public decimal proposedAmount { get; set; }
+        public decimal trancheAmount { get; set; }
         //public double proposedExchangeRate { get; set; }
         //public double approvedExchangeRate { get; set; }
         public short proposedProductId { get; set; }

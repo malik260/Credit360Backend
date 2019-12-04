@@ -41,10 +41,10 @@ namespace FintrakBanking.Repositories.Media
             return context.TBL_DOCUMENT_CATEGORY.Where(x => x.DELETED == false)
                 .Select(x => new DocumentCategoryViewModel
                 {
-                    documentCategoryId = x.DOCUMENTCATEGORYID,
+                    documentCategoryId = (int) x.DOCUMENTCATEGORYID,
                     documentCategoryName = x.DOCUMENTCATEGORYNAME,
-                }).OrderBy(l => l.documentCategoryName)
-                .ToList();
+                })?.OrderBy(l => l.documentCategoryName)
+                ?.ToList();
         }
 
         public DocumentCategoryViewModel GetDocumentCategory(int id)

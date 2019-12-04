@@ -2152,6 +2152,8 @@ namespace FintrakBanking.Repositories.Credit
                       where l.LOANREFERENCENUMBER == loanReffernceNumber
                       select new { feeShortName = f.SHORTNAME, feeRate = f.RATE };
 
+            var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == model.createdBy).FirstOrDefault().STAFFCODE;
+
             loanCreationModel.account_no = casa?.PRODUCTACCOUNTNUMBER;
             loanCreationModel.amount_financed = model.principalAmount.ToString();
             loanCreationModel.interest_rate = model.interestRate.ToString();
@@ -2190,6 +2192,8 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.freq_unit = "M";
             loanCreationModel.disbursement_type = "BOOKING";
             loanCreationModel.loanApplicationId = facility.LOANAPPLICATIONDETAILID;
+            loanCreationModel.maker_id = staffCode;
+            loanCreationModel.checker_id = staffCode;
 
             var apiResult = new PostingResult();
 
@@ -2523,7 +2527,7 @@ namespace FintrakBanking.Repositories.Credit
                             username = "model.username",//for test, real value to be passed!!!
                             passcode = "model.passCode"
                         };
-                        PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails);
+                        PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails, entity.createdBy);
                     }
 
                     //PlaceLien(request.LOANAPPLICATIONDETAILID, new TwoFactorAutheticationViewModel() { username = "model.username", passcode = "model.passCode" });
@@ -3959,7 +3963,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (user.operationId == (int)OperationsEnum.RevolvingLoanBooking)
                 {
-                    ProcessRevolvingLoanFacilityApproval(loanId, twoFactorAuthDetails, revolvingLoanRecord, user);
+                    ProcessRevolvingLoanFacilityApproval(loanId, twoFactorAuthDetails, revolvingLoanRecord, user, user.createdBy);
                 }
 
                 if (user.operationId == (int)OperationsEnum.ContigentLoanBooking)
@@ -4156,7 +4160,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private void ProcessRevolvingLoanFacilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_REVOLVING revolvingLoanRecord, ApprovalViewModel user)
+        private void ProcessRevolvingLoanFacilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_REVOLVING revolvingLoanRecord, ApprovalViewModel user, int createdBy)
         {
             decimal totalBookedAmount = 0;
             var loanReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER;
@@ -4199,6 +4203,8 @@ namespace FintrakBanking.Repositories.Credit
                     var product = context.TBL_PRODUCT.Find(revolvingLoanRecord.PRODUCTID);
                     if(product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
                     {
+                        var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == createdBy).FirstOrDefault().STAFFCODE;
+
                         var model = new FlexcubeCreateOverdraftViewModel
                         {
                             account_no = casa.PRODUCTACCOUNTNUMBER,
@@ -4207,6 +4213,8 @@ namespace FintrakBanking.Repositories.Credit
                             start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                             end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                             channel_code = "FINTRAK",
+                            maker_id = staffCode,
+                            checker_id = staffCode,
                             loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
                         };
@@ -7258,7 +7266,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private void PlaceLien(int loanApplicationDetailId, TwoFactorAutheticationViewModel twoFactorAuthDetails)
+        private void PlaceLien(int loanApplicationDetailId, TwoFactorAutheticationViewModel twoFactorAuthDetails, int createdBy)
         {
             //TODO fetch the AccountBalance for account from the API
             
@@ -7287,6 +7295,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var casaBalance = integration.GetCustomerAccountBalance(casa.PRODUCTACCOUNTNUMBER);
 
+                var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == createdBy).FirstOrDefault().STAFFCODE;
+
                 var lienModel = new FlexcubeLienViewModel
                 {
                     account_no = casa.PRODUCTACCOUNTNUMBER,
@@ -7299,6 +7309,8 @@ namespace FintrakBanking.Repositories.Credit
                     collateral_contribution = casaBalance.availableBalance.ToString(),
                     branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
                     channel_code = "FINTRAK",
+                    maker_id = staffCode,
+                    checker_id = staffCode,
                     loanApplicationId = app.LOANAPPLICATIONID
                 };
 
@@ -8285,6 +8297,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
+                            crmsCode = s.CRMSCODE,
                         }).ToList();
 
 

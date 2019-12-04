@@ -7,7 +7,9 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.WorkFlow;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -829,6 +831,509 @@ namespace FintrakBanking.Repositories.Setups.Approval
                          });
 
             return result.ToList();
+        }
+
+        public List<WorkflowTrackerViewModel> GetApprovalMointoring(DateRange param)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var disbursedLoans = (from a in context.TBL_LOAN
+                                      join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                      select b.LOANAPPLICATIONID).ToList();
+                int[] operations = new int[] { (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.LoanAvailment };
+                int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved, (int)ApprovalStatusEnum.Authorised };
+                List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
+
+                //var recordApproved = (from a in context.TBL_APPROVAL_TRAIL
+                //                  join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
+                //                  join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
+                //              join d in context.TBL_LOAN_APPLICATION on a.TARGETID equals d.LOANAPPLICATIONID
+                //              where (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                //                 && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)) &&
+                //                 a.OPERATIONID == (int)OperationsEnum.LoanAvailment && a.RESPONSESTAFFID == null && approvals.Contains(a.APPROVALSTATUSID)
+                //                 && !disbursedLoans.Contains(d.LOANAPPLICATIONID)
+                //              select (new WorkflowTrackerViewModel
+                //              { 
+                //                  approvalStatusId = a.APPROVALSTATUSID,
+                //                  operationName = a.TBL_OPERATIONS.OPERATIONNAME,
+                //                  currentLevel = context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault(),
+                //                  approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                //                  approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
+                //                  applicationReferenceNumber = d.APPLICATIONREFERENCENUMBER,
+                //                  requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
+                //                  responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                //                  comment = a.COMMENT.ToString(),
+                //                  systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                //                  systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                //                  requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                //                  responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                //                  customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
+                //                  //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : context.TBL_CUSTOMER.Where(q=>q.CUSTOMERID == d.CUSTOMERID).Select(cu=>cu.LASTNAME + " " + cu.MIDDLENAME + cu.LASTNAME).FirstOrDefault(),
+                //                  responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
+                //                  arrivalDate = a.ARRIVALDATE,
+                //                  applicationDate = d.SYSTEMDATETIME,
+                //                 // amount = d.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == d.LOANAPPLICATIONID).Select(x => x.APPROVEDAMOUNT).FirstOrDefault(),
+                //                //  amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == d.LOANAPPLICATIONID).Sum(x=>x.APPROVEDAMOUNT * Convert.ToDecimal( x.EXCHANGERATE)),
+                //                  TargetId = a.TARGETID,
+                //                  branchName = d.TBL_BRANCH.BRANCHNAME + " (" + d.TBL_BRANCH.BRANCHCODE + ") ",
+                //                  loanApplicationId = d.LOANAPPLICATIONID,
+                //                  approvalTrailId = a.APPROVALTRAILID,
+
+                //              })
+                // ).ToList().Select(x =>
+                // {
+                //     // x.amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONID == x.loanApplicationId).Sum(m => m.APPROVEDAMOUNT *(decimal) m.EXCHANGERATE);
+                //     x.amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONID == x.loanApplicationId).Sum(m => m.APPROVEDAMOUNT);
+
+                //     return x;
+
+                // }).OrderBy(o => o.approvalTrailId);
+
+
+                var record = (from a in context.TBL_APPROVAL_TRAIL
+                              join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
+                              join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
+                              join d in context.TBL_LOAN_APPLICATION on a.TARGETID equals d.LOANAPPLICATIONID
+                              where (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate))
+                                 && operations.Contains(a.OPERATIONID)
+                                 && a.RESPONSESTAFFID == null
+                                 && !approvals.Contains(a.APPROVALSTATUSID)
+                                 //&& !disbursedLoans.Contains(d.LOANAPPLICATIONID)
+                                 && a.APPROVALSTATEID != (int)ApprovalState.Ended
+                              // a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
+                              // && a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
+                              select (new WorkflowTrackerViewModel
+                              {
+                                  approvalStatusId = a.APPROVALSTATUSID,
+                                  operationName = a.TBL_OPERATIONS.OPERATIONNAME,
+                                  currentLevel = context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault(),
+                                  approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
+                                  applicationReferenceNumber = d.APPLICATIONREFERENCENUMBER,
+                                  requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
+                                  responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                  comment = a.COMMENT,
+                                  systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                                  systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                                  requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                  responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                  customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
+                                  //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : context.TBL_CUSTOMER.Where(q=>q.CUSTOMERID == d.CUSTOMERID).Select(cu=>cu.LASTNAME + " " + cu.MIDDLENAME + cu.LASTNAME).FirstOrDefault(),
+                                  responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
+                                  arrivalDate = a.ARRIVALDATE,
+                                  applicationDate = d.SYSTEMDATETIME,
+                                  //  amount = d.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == d.LOANAPPLICATIONID).Select(x=>x.APPROVEDAMOUNT).FirstOrDefault(),
+
+                                  //   amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == d.LOANAPPLICATIONID).ToList().Sum(x => x.APPROVEDAMOUNT),
+
+                                  TargetId = a.TARGETID,
+                                  branchName = d.TBL_BRANCH.BRANCHNAME + " (" + d.TBL_BRANCH.BRANCHCODE + ") ",
+                                  loanApplicationId = d.LOANAPPLICATIONID,
+                                  approvalTrailId = a.APPROVALTRAILID,
+
+                              })
+                              ).ToList()
+                              //.Select(x=>
+                              //{
+                              // // x.amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONID == x.loanApplicationId).Sum(m => m.APPROVEDAMOUNT * (decimal)m.EXCHANGERATE);
+                              //    x.amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONID == x.loanApplicationId).Sum(m => m.APPROVEDAMOUNT);
+
+                              //    return x;
+
+                              //})
+                              .OrderBy(o => o.approvalTrailId);
+                //  ).OrderBy(o=>o.approvalTrailId);
+
+                var records = record.OrderByDescending(o => o.approvalTrailId);
+
+                int serial = 1;
+                foreach (var item in records.ToList())
+                {
+                    var ProductName = "";
+                    int count = serial;
+                    var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == item.loanApplicationId).ToList();
+                    decimal amount = 0;
+                    foreach (var rec in loanDetails.ToList())
+                    {
+                        ProductName += rec.TBL_PRODUCT.PRODUCTNAME + ",";
+                        amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
+                        //item.productNames += rec.TBL_PRODUCT.PRODUCTNAME + ",";
+                    }
+                    serial += 1;
+                    item.productNames = ProductName;
+                    item.amount = amount;
+                    item.serial = count;
+                    approvalRecord.Add(item);
+                }
+                //var test = approvalRecord.ToList();
+
+                return approvalRecord.OrderBy(o => o.serial).ToList();
+            }
+        }
+
+        public List<WorkflowTrackerViewModel> GetBookingMointoring(DateRange param)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+
+                int[] operations = new int[] { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.IndividualDrawdownRequest, (int)OperationsEnum.CorporateDrawdownRequest, (int)OperationsEnum.CRMSApproval };
+                int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved, (int)ApprovalStatusEnum.Authorised };
+                List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
+
+
+
+                var preBookingrecord = (from a in context.TBL_APPROVAL_TRAIL
+                                        join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
+                                        join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
+                                        join e in context.TBL_LOAN_APPLICATION on a.TARGETID equals e.LOANAPPLICATIONID
+                                        join d in context.TBL_LOAN_APPLICATION_DETAIL on e.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                        where a.OPERATIONID == (int)OperationsEnum.LoanAvailment
+                                           && a.RESPONSESTAFFID == null
+                                           && a.APPROVALSTATEID == (int)ApprovalState.Ended
+                                           && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                           && ((e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted)
+                                || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestInitiated)
+                                || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestCompleted)
+                                || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingInProgress)
+                                || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingCompleted))
+                                && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
+                                && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
+
+                                        // a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
+                                        //&& a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
+                                        select (new WorkflowTrackerViewModel
+                                        {
+                                            approvalStatusId = a.APPROVALSTATUSID,
+                                            operationName = a.TBL_OPERATIONS.OPERATIONNAME,
+                                            currentLevel = "Booking Initiation",//context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault(),
+                                            approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                            approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
+                                            applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+                                            requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
+                                            responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                            comment = a.COMMENT,
+                                            systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                                            systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                                            requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                            responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                            customerName = d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
+                                            //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : context.TBL_CUSTOMER.Where(q=>q.CUSTOMERID == d.CUSTOMERID).Select(cu=>cu.LASTNAME + " " + cu.MIDDLENAME + cu.LASTNAME).FirstOrDefault(),
+                                            responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
+                                            arrivalDate = a.ARRIVALDATE,
+                                            applicationDate = e.SYSTEMDATETIME,
+                                            amount = d.APPROVEDAMOUNT,
+                                            TargetId = a.TARGETID,
+                                            branchName = e.TBL_BRANCH.BRANCHNAME + " (" + e.TBL_BRANCH.BRANCHCODE + ") ",
+                                            loanApplicationId = d.LOANAPPLICATIONID,
+                                            loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                            approvalTrailId = a.APPROVALTRAILID,
+                                            productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                        })
+                           ).OrderByDescending(o => o.approvalTrailId);
+
+
+
+
+
+
+
+
+
+                var record = (from a in context.TBL_APPROVAL_TRAIL
+                              join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
+                              join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
+                              join bo in context.TBL_LOAN_BOOKING_REQUEST on a.TARGETID equals bo.LOAN_BOOKING_REQUESTID
+                              join d in context.TBL_LOAN_APPLICATION_DETAIL on bo.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                              join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                              where (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
+                                 && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)) &&
+                                 operations.Contains(a.OPERATIONID) && a.RESPONSESTAFFID == null && !approvals.Contains(a.APPROVALSTATUSID)
+                                 && a.APPROVALSTATEID != (int)ApprovalState.Ended
+                              // a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
+                              //&& a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
+                              select (new WorkflowTrackerViewModel
+                              {
+                                  approvalStatusId = a.APPROVALSTATUSID,
+                                  operationName = a.TBL_OPERATIONS.OPERATIONNAME,
+                                  currentLevel = context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault(),
+                                  approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
+                                  applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+                                  requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
+                                  responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                  comment = a.COMMENT,
+                                  systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                                  systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                                  requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                  responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                  customerName = d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
+                                  //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : context.TBL_CUSTOMER.Where(q=>q.CUSTOMERID == d.CUSTOMERID).Select(cu=>cu.LASTNAME + " " + cu.MIDDLENAME + cu.LASTNAME).FirstOrDefault(),
+                                  responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
+                                  arrivalDate = a.ARRIVALDATE,
+                                  applicationDate = e.SYSTEMDATETIME,
+                                  amount = d.APPROVEDAMOUNT,
+                                  TargetId = a.TARGETID,
+                                  branchName = e.TBL_BRANCH.BRANCHNAME + " (" + e.TBL_BRANCH.BRANCHCODE + ") ",
+                                  loanApplicationId = d.LOANAPPLICATIONID,
+                                  loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                  approvalTrailId = a.APPROVALTRAILID,
+                                  productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                              })
+                           ).OrderByDescending(o => o.approvalTrailId);
+
+                var test = preBookingrecord.ToList();
+
+                var records = record.Union(preBookingrecord).OrderByDescending(a => a.approvalTrailId).ToList();
+
+                int serial = 1;
+                foreach (var item in records.ToList())
+                {
+                    int count = serial;
+
+                    serial += 1;
+                    item.serial = count;
+                    approvalRecord.Add(item);
+                }
+                //var test = approvalRecord.ToList();
+
+                return approvalRecord.OrderBy(o => o.serial).ToList();
+            }
+        }
+
+        public List<WorkflowTrackerViewModel> GetApprovalTrailByTargetId(int targetId, int companyId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                int[] operations = new int[] { 6, 37, 38 };
+
+                var result = (from a in context.TBL_APPROVAL_TRAIL
+                                  // join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                                  //  join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                                  // join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                                  // join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
+
+                                  // join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
+                                  //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
+                                  // from j in apprStaff.DefaultIfEmpty()
+                                  // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
+                              where a.COMPANYID == companyId
+                              where a.TARGETID == targetId && operations.Contains(a.OPERATIONID)
+                              select new WorkflowTrackerViewModel
+                              {
+                                  arrivalDate = a.ARRIVALDATE,
+                                  responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? a.TBL_APPROVAL_LEVEL1.LEVELNAME : "N/A",
+                                  responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
+                                  systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                                  systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                                  responseStaffName = !a.TOAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                  comment = a.COMMENT,
+                                  requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
+                                  requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                  TargetId = a.TARGETID,
+                                  // operationId = e.OPERATIONID,
+                                  // operationName = e.OPERATIONNAME,
+                                  //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
+                                  approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  approvalTrailId = a.APPROVALTRAILID,
+                              }).Distinct().OrderByDescending(i => i.approvalTrailId);
+
+
+                var response = result.ToList();
+
+
+                // var test = GetApprovalTrail(companyId).ToList();
+                // var result = GetApprovalTrail(companyId).Where(c => c.TargetId == targetId && operations.Contains(c.operationId)).OrderByDescending(c => c.systemArrivalDate).ToList();
+                return result.ToList();
+            }
+        }
+        public List<WorkflowTrackerViewModel> GetBookingApprovalTrailByTargetId(int targetId, int companyId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                int[] operations = new int[] { 1, 39 };
+
+                var result = (from a in context.TBL_APPROVAL_TRAIL
+                                  // join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                                  //  join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                                  // join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                                  // join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
+
+                                  // join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
+                                  //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
+                                  // from j in apprStaff.DefaultIfEmpty()
+                                  // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
+                              where a.COMPANYID == companyId
+                              where a.TARGETID == targetId && operations.Contains(a.OPERATIONID)
+                              select new WorkflowTrackerViewModel
+                              {
+                                  arrivalDate = a.ARRIVALDATE,
+                                  responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? a.TBL_APPROVAL_LEVEL1.LEVELNAME : "N/A",
+                                  responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
+                                  systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                                  systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                                  responseStaffName = !a.TOAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                  comment = a.COMMENT,
+                                  requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
+                                  requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                  TargetId = a.TARGETID,
+                                  // operationId = e.OPERATIONID,
+                                  // operationName = e.OPERATIONNAME,
+                                  //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
+                                  approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  approvalTrailId = a.APPROVALTRAILID,
+                              }).Distinct().OrderByDescending(i => i.approvalTrailId);
+
+
+                var response = result.ToList();
+
+
+                // var test = GetApprovalTrail(companyId).ToList();
+                // var result = GetApprovalTrail(companyId).Where(c => c.TargetId == targetId && operations.Contains(c.operationId)).OrderByDescending(c => c.systemArrivalDate).ToList();
+                return result.ToList();
+            }
+        }
+
+        public WorkflowTrackerViewModel GenerateApprovalMonitoringReport(DateRange param)
+        {
+
+            return GenerateWorkflowRecord(param);
+
+        }
+        private WorkflowTrackerViewModel GenerateWorkflowRecord(DateRange param)
+        {
+            var record = GetApprovalMointoring(param).ToList();
+            if (record == null)
+                throw new ConditionNotMetException("Record Not Found For Download");
+
+            return GenerateApprovalMonitoring(record.ToList(), param);
+        }
+        private WorkflowTrackerViewModel GenerateApprovalMonitoring(List<WorkflowTrackerViewModel> loanInput, DateRange param)
+        {
+
+            Byte[] fileBytes = null;
+            WorkflowTrackerViewModel data = new WorkflowTrackerViewModel();
+
+            if (loanInput != null)
+            {
+                using (ExcelPackage pck = new ExcelPackage())
+                {
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Pending Approvals");
+
+                    ws.Cells[1, 1].Value = "S/N";
+                    ws.Cells[1, 2].Value = "APPLICATION REFERENCE NUMBER";
+                    ws.Cells[1, 3].Value = "APPLICATION DATE";
+                    ws.Cells[1, 4].Value = "ARRIVAL DATE";
+                    ws.Cells[1, 5].Value = "CUSTOMER NAME";
+                    ws.Cells[1, 6].Value = "PRODUCT";
+                    //ws.Cells[1, 7].Value = "AMOUNT";
+                    ws.Cells[1, 7].Value = "BRANCH";
+                    ws.Cells[1, 8].Value = "CURRENT LEVEL";
+                    ws.Cells[1, 9].Value = "STATE";
+                    ws.Cells[1, 10].Value = "FROM STAFF";
+                    ws.Cells[1, 11].Value = "TO STAFF";
+                    ws.Cells[1, 12].Value = "COMMENT_";
+                    ws.Cells[1, 13].Value = "AMOUNT";
+
+
+                    for (int i = 2; i <= loanInput.Count + 1; i++)
+                    {
+                        var record = loanInput[i - 2];
+                        ws.Cells[i, 1].Value = record.serial;
+                        ws.Cells[i, 2].Value = record.applicationReferenceNumber;
+                        ws.Cells[i, 3].Value = record.applicationDate.ToString("dd/MM/yyyy");
+                        ws.Cells[i, 4].Value = record.systemArrivalDate.Value.ToString("dd/MM/yyyy");
+                        ws.Cells[i, 5].Value = record.customerName;
+                        ws.Cells[i, 6].Value = record.productNames;
+                        //ws.Cells[i, 7].Value = record.amount;
+                        ws.Cells[i, 7].Value = record.branchName;
+                        ws.Cells[i, 8].Value = record.currentLevel;
+                        ws.Cells[i, 9].Value = record.approvalState;
+                        ws.Cells[i, 10].Value = record.requestStaffName;
+                        ws.Cells[i, 11].Value = record.responseStaffName;
+                        ws.Cells[i, 12].Value = record.comment;
+                        ws.Cells[i, 13].Value = record.amount;
+
+
+                    }
+                    //if (forSingle == 1)
+                    //{
+                    //    fee = GetFee100(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId &&
+                    //a.CRMSLEGALSTATUSID == (int)CRMSRegulatory.Government).ToList();
+                    //}
+                    //else
+                    //{
+                    //    fee = GetFee100(param).Where(x => x.CRMSDATE >= param.startDate
+                    // && x.CRMSDATE <= param.endDate &&
+                    //x.CRMSLEGALSTATUSID == (int)CRMSRegulatory.Government).ToList();
+                    //}
+
+                    //ExcelWorksheet ws3 = pck.Workbook.Worksheets.Add("FEE");
+                    //ws3.Cells[1, 1].Value = "ACCOUNT";
+                    //ws3.Cells[1, 2].Value = "FEE_TYPE";
+                    //ws3.Cells[1, 3].Value = "FEE_AMOUNT";
+
+
+                    //for (int i = 2; i <= fee.Count + 1; i++)
+                    //{
+                    //    var feeRecord = fee[i - 2];
+
+                    //    ws3.Cells[i, 1].Value = feeRecord.ACCOUNT;
+                    //    ws3.Cells[i, 2].Value = feeRecord.FEE_TYPE_NAME;
+                    //    ws3.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
+
+                    //}
+
+                    var booking = GetBookingMointoring(param).ToList();
+
+                    ExcelWorksheet ws3 = pck.Workbook.Worksheets.Add("Booking Approvals");
+                    ws3.Cells[1, 1].Value = "S/N";
+                    ws3.Cells[1, 2].Value = "APPLICATION REFERENCE NUMBER";
+                    ws3.Cells[1, 3].Value = "APPLICATION DATE";
+                    ws3.Cells[1, 4].Value = "ARRIVAL DATE";
+                    ws3.Cells[1, 5].Value = "CUSTOMER NAME";
+                    ws3.Cells[1, 6].Value = "PRODUCT";
+                    //ws.Cells[1, 7].Value = "AMOUNT";
+                    ws3.Cells[1, 7].Value = "BRANCH";
+                    ws3.Cells[1, 8].Value = "CURRENT LEVEL";
+                    ws3.Cells[1, 9].Value = "STATE";
+                    ws3.Cells[1, 10].Value = "FROM STAFF";
+                    ws3.Cells[1, 11].Value = "TO STAFF";
+                    ws3.Cells[1, 12].Value = "COMMENT_";
+                    ws3.Cells[1, 13].Value = "AMOUNT";
+
+
+                    for (int i = 2; i <= booking.Count + 1; i++)
+                    {
+                        var bookingRecord = booking[i - 2];
+
+                        ws3.Cells[i, 1].Value = bookingRecord.serial;
+                        ws3.Cells[i, 2].Value = bookingRecord.applicationReferenceNumber;
+                        ws3.Cells[i, 3].Value = bookingRecord.applicationDate.ToString("dd/MM/yyyy");
+                        ws3.Cells[i, 4].Value = bookingRecord.systemArrivalDate.Value.ToString("dd/MM/yyyy");
+                        ws3.Cells[i, 5].Value = bookingRecord.customerName;
+                        ws3.Cells[i, 6].Value = bookingRecord.productNames;
+                        //3ws.Cells[i, 7].Value = record.amount;
+                        ws3.Cells[i, 7].Value = bookingRecord.branchName;
+                        ws3.Cells[i, 8].Value = bookingRecord.currentLevel;
+                        ws3.Cells[i, 9].Value = bookingRecord.approvalState;
+                        ws3.Cells[i, 10].Value = bookingRecord.requestStaffName;
+                        ws3.Cells[i, 11].Value = bookingRecord.responseStaffName;
+                        ws3.Cells[i, 12].Value = bookingRecord.comment;
+                        ws3.Cells[i, 13].Value = bookingRecord.amount;
+
+                    }
+
+
+                    fileBytes = pck.GetAsByteArray();
+                    data.reportData = fileBytes;
+                    data.templateTypeName = "Pending Approvals";
+                }
+
+
+            }
+
+            return data;
         }
 
         #endregion ALIEN CODE BLOCKS

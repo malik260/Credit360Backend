@@ -2749,8 +2749,8 @@ namespace FintrakBanking.Repositories.Credit
                         var approvedAmount = product.Sum(p => p.approvedAmount);
                         var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
                         var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
-                        var amountForLLL = currentAmountForLLL;
-                        //var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                        //var amountForLLL = currentAmountForLLL;
+                        var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
                         var LLLImpact = amountForLLL;
 
                         result = result + $@"
@@ -3048,8 +3048,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 currentAmount = product.outstandingsLcy;
                 approvedAmount = product.approvedAmountLcy;
-                amountForLLL = currentAmount;
-                //amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                //amountForLLL = currentAmount;
+                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
                 LLLImpact += amountForLLL;
             }
 
