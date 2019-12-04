@@ -2176,7 +2176,7 @@ namespace FintrakBanking.Repositories.Credit
             return documentation;
         }
 
-        #region CAM Pending Applications
+        #region FAM Pending Applications
 
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int operationId, int companyId, int branchId, int staffId, int? classId)
         {
