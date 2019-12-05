@@ -1381,11 +1381,11 @@ namespace FintrakBanking.Repositories.Credit
                              staffId
                         );
 
-                        //creditCommon.LoadCustomerGroupRatios(
-                        //     applicationId,
-                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                        //     staffId
-                        //);
+                        creditCommon.LoadCustomerGroupRatios(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                        );
 
                         creditCommon.GetCorporateCustomerRating(
                              applicationId,
@@ -1417,7 +1417,6 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-
                 throw new SecureException(ex.ToString());
             }
         
