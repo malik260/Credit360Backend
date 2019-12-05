@@ -3141,7 +3141,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
                 <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
