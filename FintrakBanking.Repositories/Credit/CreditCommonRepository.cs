@@ -217,20 +217,23 @@ namespace FintrakBanking.Repositories.Credit
 
                     foreach (var item in apiCustomerRatio)
                     {
-                        for (int i = 0; i < item.ratio.Count - 1; i++) {
-                            context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
-                            {
-                                DESCRIPTION = item.ratio[i].indicatorname,
-                                VALUE = item.ratio[i].indicatorvalue,
-                                CUSTOMERID = customer.CUSTOMERID,
-                                LOANAPPLICATIONID = application.LOANAPPLICATIONID,
-                                CUSTOMERGROUPID = application.CUSTOMERGROUPID,
-                                DATETIMECREATED = DateTime.Now,
-                                CREATEDBY = staffId,
-                                DELETED = false,
-                                CATEGORYID = context.TBL_CUSTOMER_RATIO_CATEGORY.Where(O => item.ratioHeader.Contains(O.CATEGORYNAME)).FirstOrDefault()?.CATEGORYID,
-                            });
+                        if (item.ratio != null) {
+                            for (int i = 0; i < item.ratio.Count - 1; i++) {
+                                context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
+                                {
+                                    DESCRIPTION = item.ratio[i].indicatorname,
+                                    VALUE = item.ratio[i].indicatorvalue,
+                                    CUSTOMERID = customer.CUSTOMERID,
+                                    LOANAPPLICATIONID = application.LOANAPPLICATIONID,
+                                    CUSTOMERGROUPID = application.CUSTOMERGROUPID,
+                                    DATETIMECREATED = DateTime.Now,
+                                    CREATEDBY = staffId,
+                                    DELETED = false,
+                                    CATEGORYID = context.TBL_CUSTOMER_RATIO_CATEGORY.Where(O => item.ratioHeader.Contains(O.CATEGORYNAME)).FirstOrDefault()?.CATEGORYID,
+                                });
+                            }
                         }
+                        
                     }
 
                 }
