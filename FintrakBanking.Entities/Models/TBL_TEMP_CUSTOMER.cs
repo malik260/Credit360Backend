@@ -142,6 +142,7 @@ namespace FintrakBanking.Entities.Models
         public string CORR { get; set; }
 
         public decimal? PASTDUEOBLIGATIONS { get; set; }
+        public string OWNERSHIP { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
