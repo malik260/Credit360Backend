@@ -23,11 +23,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class Exposure 
     {
-        public string facilityName { get; set; }
-        public decimal currency { get; set; }
+        public short facilityName { get; set; }
+        public short currency { get; set; }
         public decimal outstandingExpo { get; set; }
-        public int currencyCode { get; set; }
         public decimal impact { get; set; }
-        public int approvedAmount { get; set; }
+        public decimal approvedAmount { get; set; }
+        public string productName { get; set; }
+        public string currencyCode { get; set; }
+        public string currencyName { get; set; }
     }
 }

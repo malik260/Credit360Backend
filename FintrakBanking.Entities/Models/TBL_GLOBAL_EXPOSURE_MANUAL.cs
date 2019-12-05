@@ -14,15 +14,10 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int EXPOSUREMANUALID { get; set; }
-        public decimal CURRENCYID { get; set; }
+        public short CURRENCYID { get; set; }
         public decimal EXPOSURE { get; set; }
-        public decimal LEGALLENDINGLIMIT { get; set; }
         public decimal APPROVEDAMOUNT { get; set; }
-        public int PRODUCTID { get; set; }
-        public int CUSTOMERID { get; set; }
-        public int LOANAPPLICATIONID { get; set; }
-        public int EXPOSURECURRENCYID { get; set; }
-        public string FACILITYNAME { get; set; }
+        public short PRODUCTID { get; set; }
         public decimal IMPACT { get; set; }
 
 

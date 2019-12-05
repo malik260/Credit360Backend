@@ -49,7 +49,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [Route("market")]
+
+      [Route("market")]
       [HttpGet] [ClaimsAuthorization]  
         public HttpResponseMessage GetAllLoanMarket(int marketId)
         {
@@ -64,6 +65,8 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
+
         [Route("update-market/{marketId}")]
        [HttpPut] [ClaimsAuthorization]
         public HttpResponseMessage UpdateLoanMarket(int marketId,LoanMarketViewModel loanMarket)
@@ -111,7 +114,25 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [Route("Add-exposure")]
+
+        [Route("exposure-manual")]
+        [HttpGet]
+        [ClaimsAuthorization]
+        public HttpResponseMessage GetAllExposureManual()
+        {
+            try
+            {
+                var data = repo.GetExposureManual();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [Route("add-exposure")]
         [HttpPost]
         [ClaimsAuthorization]
         public HttpResponseMessage AddExposure(Exposure expo)

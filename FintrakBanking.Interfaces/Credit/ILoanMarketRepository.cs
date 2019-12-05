@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
 {
-  public interface ILoanMarketRepository 
+    public interface ILoanMarketRepository 
     {
         IEnumerable<LoanMarketViewModel> GetLoanMarket(int companyId);
 
@@ -18,5 +18,6 @@ namespace FintrakBanking.Interfaces.Credit
         string UpdateLoanMarket(int markeetId, LoanMarketViewModel loanMarket);
         string updateExposure(int exposureId, Exposure expo);
         string DeleteLoanMarket(int markeetId, LoanMarketViewModel loanMarket);
+        IEnumerable<Exposure> GetExposureManual();
     }
 }

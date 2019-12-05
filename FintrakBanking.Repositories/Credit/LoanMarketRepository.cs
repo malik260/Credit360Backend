@@ -76,8 +76,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     CURRENCYID = expo.currency,
                     EXPOSURE = expo.outstandingExpo,
-                    EXPOSURECURRENCYID = expo.currencyCode,
-                    FACILITYNAME = expo.facilityName,
+                    PRODUCTID = expo.facilityName,
                     APPROVEDAMOUNT = expo.approvedAmount,
                     IMPACT = expo.impact,           
                 };
@@ -163,6 +162,25 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IEnumerable<Exposure> GetExposureManual()
+        {
+                var data = (from o in _context.TBL_GLOBAL_EXPOSURE_MANUAL
+                            join c in _context.TBL_CURRENCY on o.CURRENCYID equals c.CURRENCYID
+                            join p in _context.TBL_PRODUCT on o.PRODUCTID equals p.PRODUCTID
+                            select new Exposure
+                            {
+                                currencyName = c.CURRENCYNAME,
+                                outstandingExpo = o.EXPOSURE,
+                                productName = p.PRODUCTNAME,
+                                approvedAmount = o.APPROVEDAMOUNT,
+                                impact = o.IMPACT,
+                                currencyCode = c.CURRENCYCODE,
+                            }).ToList();
+
+                return data;
+            
+        }
+
         public string UpdateLoanMarket(int marketId, LoanMarketViewModel loanMarket)
         {
 
@@ -216,8 +234,7 @@ namespace FintrakBanking.Repositories.Credit
                
                     val.CURRENCYID = expo.currency;
                     val.EXPOSURE = expo.outstandingExpo;
-                    val.EXPOSURECURRENCYID = expo.currencyCode;
-                    val.FACILITYNAME = expo.facilityName;
+                    val.PRODUCTID = expo.facilityName;
                     val.APPROVEDAMOUNT = expo.approvedAmount;
                     val.IMPACT = expo.impact;  
                 

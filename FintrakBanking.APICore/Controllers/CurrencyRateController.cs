@@ -38,6 +38,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+
+
+
       [HttpGet] [ClaimsAuthorization]  
         [Route("currency-ratecode")]
         public HttpResponseMessage GetCurrencyRaceCode()
