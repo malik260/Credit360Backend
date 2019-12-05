@@ -14,12 +14,12 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        //[Required]
+        //[StringLength(100)]
         public string PRECIOUSMETALNAME { get; set; }
 
-        [Required]
-        [StringLength(10)]
+        //[Required]
+        //[StringLength(10)]
         public string WEIGHTINGRAMMES { get; set; }
 
         //[Column(TypeName = "money")]
@@ -27,13 +27,13 @@ namespace FintrakBanking.Entities.Models
 
         public double? UNITRATE { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string PRECIOUSMETALFORM { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REMARK { get; set; }
 
-        [StringLength(150)]
+        //[StringLength(150)]
         public string METALTYPE { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }

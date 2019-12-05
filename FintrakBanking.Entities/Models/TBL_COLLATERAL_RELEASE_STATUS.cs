@@ -13,8 +13,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int COLLATERALRELEASESTATUSID { get; set; }
 
-        [Required]
-        [StringLength(150)]
+        //[Required]
+        //[StringLength(150)]
         public string COLLATERALRELEASESTATUSNAME { get; set; }
 
      
