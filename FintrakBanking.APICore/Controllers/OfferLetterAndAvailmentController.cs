@@ -5,6 +5,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Data.Entity;
 using System.Linq;
@@ -564,6 +565,27 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
+        } 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("offer-letter/refer-back")]
+        public HttpResponseMessage OfferLetterReferBack([FromBody] ApprovalViewModel entity)
+        {
+            entity.BranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            bool response = repo.OfferLetterReferBack(entity);
+
+            if (response == true)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
         [HttpGet]

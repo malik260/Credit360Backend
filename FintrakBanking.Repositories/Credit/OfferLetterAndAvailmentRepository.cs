@@ -185,7 +185,8 @@ namespace FintrakBanking.Repositories.Credit
                     applicationStatusId = x.c.a.APPLICATIONSTATUSID,
                     subSectorId = x.c.b.TBL_SUB_SECTOR.SUBSECTORID,
                     //approvalLevelId = staffApprovalLevelId,
-                    operationId = (int)OperationsEnum.LoanAvailment,
+                    operationId = x.d.OPERATIONID,// (int)OperationsEnum.LoanAvailment,
+                    appraiselOperationId = x.c.a.OPERATIONID,
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
@@ -2570,6 +2571,62 @@ namespace FintrakBanking.Repositories.Credit
             appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
 
             return context.SaveChanges() > 0;
+        }
+
+        public bool OfferLetterReferBack(ApprovalViewModel model)
+        {
+            int staffId = model.staffId;
+
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList();
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
+            int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+
+
+            if (nextLevelIndex > currentLevelIndex)
+                throw new ConditionNotMetException("The refered level is higher than the current level.");
+
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.DestinationOperationId = model.destinationOperationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = null;
+            workflow.ProductId = null;
+            workflow.ToStaffId = model.toStaffId;
+            workflow.NextLevelId = model.nextLevelId;
+
+            workflow.LoopedStaffId = model.loopedStaffId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+
+            workflow.LogActivity();
+
+
+
+            return context.SaveChanges() > 0;
+
         }
 
         public IEnumerable<CommentOnLoanAvailmentViewModel> GetCommentOnLoanAvailment(string applicationRefNumber)
