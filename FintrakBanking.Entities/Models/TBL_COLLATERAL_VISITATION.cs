@@ -18,8 +18,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime VISITATIONDATE { get; set; }
         public DateTime? NEXTVISITATIONDATE { get; set; }
 
-        [Required]
-        [StringLength(2000)]
+       // [Required]
+       // [StringLength(2000)]
         public string REMARK { get; set; }
 
         public int CREATEDBY { get; set; }

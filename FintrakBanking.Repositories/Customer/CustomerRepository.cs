@@ -153,7 +153,8 @@ namespace FintrakBanking.Repositories.Customer
                 TEAMNPL = entity.teamNPL,
                 CORR = entity.corr,
                 PASTDUEOBLIGATIONS = entity.pastDueObligations,
-                BUSINESSUNTID = entity.businessUnitId
+                BUSINESSUNTID = entity.businessUnitId,
+                OWNERSHIP = entity.ownership,
             };
             context.TBL_CUSTOMER.Add(customer);
 
@@ -2272,6 +2273,7 @@ namespace FintrakBanking.Repositories.Customer
                            subSectorName = a.TBL_SUB_SECTOR.NAME,
                            taxNumber = a.TAXNUMBER,
                            riskRatingId = a.RISKRATINGID,
+                           ownership =a.OWNERSHIP,
                            //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                            customerBVN = a.CUSTOMERBVN,
                            isProspect = a.ISPROSPECT
@@ -2354,6 +2356,7 @@ namespace FintrakBanking.Repositories.Customer
                            subSectorName = a.TBL_SUB_SECTOR.NAME,
                            taxNumber = a.TAXNUMBER,
                            riskRatingId = a.RISKRATINGID,
+                           ownership = a.OWNERSHIP,
                            //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                            customerBVN = a.CUSTOMERBVN,
                            //CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
@@ -2714,6 +2717,7 @@ namespace FintrakBanking.Repositories.Customer
                 teamNPL = a.TEAMNPL,
                 businessUnitId = a.BUSINESSUNTID,
                 corr = a.CORR,
+                ownership = a.OWNERSHIP,
 
             });
         }
@@ -2888,6 +2892,7 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.TAXNUMBER = entity.taxNumber;
                 customerMain.RISKRATINGID = entity.riskRatingId;
                 customerMain.CUSTOMERBVN = entity.customerBVN;
+                customerMain.OWNERSHIP = entity.ownership;
                 customerMain.DATETIMEUPDATED = DateTime.Now;
                 customerMain.LASTUPDATEDBY = entity.deletedBy;
 
@@ -2958,6 +2963,7 @@ namespace FintrakBanking.Repositories.Customer
                     customer.CORR = entity.corr;
                     customer.BUSINESSUNTID = entity.businessUnitId;
                     customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
+                    customer.OWNERSHIP = entity.ownership;
 
 
                 }
@@ -3013,6 +3019,7 @@ namespace FintrakBanking.Repositories.Customer
                     customer.BUSINESSUNTID = entity.businessUnitId;
                     customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
                     customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
+                    customer.OWNERSHIP = entity.ownership;
 
                     context.TBL_TEMP_CUSTOMER.Add(customer);
 
@@ -3414,6 +3421,7 @@ namespace FintrakBanking.Repositories.Customer
                             customerRating = a.CUSTOMERRATING,
                             relationshipTypeId = a.RELATIONSHIPTYPEID,
                             businessUnitId = a.BUSINESSUNTID,
+                            ownership = a.OWNERSHIP,
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
@@ -3468,6 +3476,7 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
                             customerRating = a.CUSTOMERRATING,
+                            ownership = a.OWNERSHIP,
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
@@ -3525,6 +3534,7 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = context.TBL_SUB_SECTOR.FirstOrDefault(r => r.SUBSECTORID == a.SUBSECTORID).NAME,
                             taxNumber = a.TAXNUMBER,
+                            ownership = a.OWNERSHIP,
                             relationshipOfficerName =
                                 context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
                                                                                                                       + context

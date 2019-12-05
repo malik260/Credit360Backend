@@ -56,7 +56,11 @@ namespace FintrakBanking.Entities.Models
         public int? LOOPEDROLEID { get; set; }
 
         public short? REFEREBACKSTATEID { get; set; }
+<<<<<<< HEAD
        // public int? BASEOPERATIONID { get; set; }
+=======
+        //public int? BASEOPERATIONID { get; set; }
+>>>>>>> 466c0a869bceaeef9697a32aeb8c55edad1489c2
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

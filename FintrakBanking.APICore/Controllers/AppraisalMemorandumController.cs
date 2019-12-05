@@ -236,6 +236,14 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("appraisal-memorandum/tranche-detail/{bookingRequestId}")]
+        public HttpResponseMessage GetApprovedTrancheDetail(int bookingRequestId)
+        {
+            LoanApplicationDetailsViewModel data = repo.GetApprovedTrancheDetail(bookingRequestId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
         [Route("appraisal-memorandum/loan-detail-refnumber/{applicationReferenceNumber}")]
         public HttpResponseMessage GetApprovedLoanDetailByReferenceNumber(string applicationReferenceNumber)
         {
