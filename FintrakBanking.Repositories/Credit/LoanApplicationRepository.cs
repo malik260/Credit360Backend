@@ -5487,7 +5487,7 @@ namespace FintrakBanking.Repositories.Credit
             return result.Distinct();
         }
 
-        public bool SaveCancelledApplcation(LoanApplicationViewModel data)
+        public int SaveCancelledApplcation(LoanApplicationViewModel data)
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(data.loanApplicationId);
             var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId(appl.OPERATIONID, data.loanApplicationId, data.companyId, data.createdBy);
@@ -5499,9 +5499,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (context.SaveChanges() > 0)
                 {
-                    return true;
+                    return 1;
                 }
-                return false;
+                return 0;
             }
             var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
             if (isCancellatuionInProgress == true)
@@ -5572,9 +5572,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (context.SaveChanges() > 0)
             {
-                return true;
+                return 2;
             }
-            return false;
+            return 0;
         }
         public List<LoanApplicationViewModel> GetAllRequestsForLoanCancellation(int staffId)
         {

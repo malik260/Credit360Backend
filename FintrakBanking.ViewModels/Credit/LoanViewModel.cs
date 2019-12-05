@@ -776,6 +776,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short requestOperationId { get; set; }
         public decimal amountDisbursed { get; set; }
         public int loanBookingRequestId { get; set; }
+        //public int operationId { get; set; }
         public bool isInEditMode { get; set; } 
         public string purpose { get; set; }
         //......Loan Relational Table View Mapping Models..............//

@@ -962,14 +962,16 @@ namespace FintrakBanking.Repositories.Credit
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
             //var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID)?.ToList();
             var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).Select(O => O.CHARGEFEEID).ToList();
-            int managementFeeId = chargeFeeIds[0];
-            int processingFeeId = chargeFeeIds[1]; 
-            int commitmentFeeId = chargeFeeIds[2];
-            managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == managementFeeId).FirstOrDefault().VALUE;
-            processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == processingFeeId).FirstOrDefault().VALUE;
-            commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == commitmentFeeId).FirstOrDefault().VALUE;
-
-
+            if (chargeFeeIds.Count > 0)
+            {
+                int managementFeeId = chargeFeeIds[0];
+                int processingFeeId = chargeFeeIds[1];
+                int commitmentFeeId = chargeFeeIds[2];
+                managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == managementFeeId).FirstOrDefault().VALUE;
+                processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == processingFeeId).FirstOrDefault().VALUE;
+                commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == commitmentFeeId).FirstOrDefault().VALUE;
+            }
+            
             var result = String.Empty;
             result = result + $@"
                 <table border=1 width=900 cellpadding=15 cellspacing=0>

@@ -207,14 +207,15 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             this.applicationDate = GetApplicationDate();
 
+
             if (request != null)
             {
                 request.RESPONSEDATE = this.applicationDate;
                 request.SYSTEMRESPONSEDATETIME = this.systemDate;
                 request.RESPONSESTAFFID = this.staffId;
 
-                if(request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                { request.RESPONSESTAFFID = this.loopedStaffId; }
+                if (request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                { request.RESPONSESTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId; }
             }
 
             MakerCheckerControl();
@@ -247,7 +248,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 LOOPEDROLEID = this.loopedRoleId,
                 LOOPEDSTAFFID = this.loopedStaffId,
                 REFEREBACKSTATEID = this.referBackStateId,
-
             });
 
             if (this.deferredExecution) { return true; }
