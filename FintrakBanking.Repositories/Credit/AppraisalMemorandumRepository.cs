@@ -373,6 +373,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
             workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
+            
             //if (appl.PRODUCTID == 2)
             //{
             //    workflow.ProductId = null;
@@ -2380,7 +2381,7 @@ namespace FintrakBanking.Repositories.Credit
             )
         .OrderByDescending(x => x.LOANAPPLICATIONID)
         .Join(
-            context.TBL_APPROVAL_TRAIL.Where(x => (ExclusiveOperations.Contains(x.OPERATIONID))
+            context.TBL_APPROVAL_TRAIL.Where(x => (ExclusiveOperations.Contains(x.OPERATIONID) || ExclusiveOperations.Contains(x.DESTINATIONOPERATIONID ?? 0))
                 && x.APPROVALSTATEID != (int)ApprovalState.Ended
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.RESPONSESTAFFID == null

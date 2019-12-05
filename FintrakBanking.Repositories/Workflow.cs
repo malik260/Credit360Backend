@@ -28,6 +28,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int targetId;
         private int companyId;
         private int operationId;
+        private int? destinationOperationId;
+
         private int? exclusiveFlowChangeId = null;
 
         private int? productClassId = null;
@@ -68,7 +70,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? loopedRoleId = null;
         private int? loopedStaffId = null;
         private short? referBackStateId = null;
-        private bool initiatorOrLooped = false;
         public int actualRequestStaffId = 0;
         public bool isLoopResponse = false;
         private bool endProcess = false;
@@ -84,6 +85,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int TargetId { set { targetId = value; } }
         public int CompanyId { set { companyId = value; } }
         public int OperationId { set { operationId = value; } }
+
         public decimal Amount { set { amount = value; } }
         public string Comment { set { comment = value; } }
         public int Tenor { set { tenor = value; } }
@@ -103,8 +105,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
         public int? ExclusiveFlowChangeId { get { return exclusiveFlowChangeId; } set { exclusiveFlowChangeId = value; } }
+        public int? DestinationOperationId { get { return destinationOperationId; } set { destinationOperationId = value; } }
         public int? LoopedRoleId { get { return loopedRoleId; } set { loopedRoleId = value; } }
         public int? LoopedStaffId { get { return loopedStaffId; } set { loopedStaffId = value; } }
+
         public int? ProductClassId { set { productClassId = value; } }
         public bool EmailNotification { set { emailNotification = value; } }
         public bool SmsNotification { set { smsNotification = value; } }
@@ -159,18 +163,25 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                             ).ToList();
 
-            if(this.referredLog.FirstOrDefault()?.BASEOPERATIONID != null) { this.operationId = this.referredLog.FirstOrDefault().BASEOPERATIONID ?? this.operationId; }
-
-
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
+
+
+            //if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+            //    { this.destinationOperationId = this.request.DESTINATIONOPERATIONID ?? this.operationId; }
+
+            //if (this.request?.DESTINATIONOPERATIONID != null && request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+            //    { this.operationId = this.request.DESTINATIONOPERATIONID ?? this.operationId; }
 
             if (request == null)
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
+
+               // if(this.statusId != (int)ApprovalStatusEnum.Referred) { this.destinationOperationId = this.operationId;  }
             }
             else
             {
+                //this.destinationOperationId = request.DESTINATIONOPERATIONID;
                 this.currentStateId = request.APPROVALSTATEID;
                 this.requestStaffId = request.REQUESTSTAFFID;
                 this.fromLevelId = request.TOAPPROVALLEVELID;
@@ -247,6 +258,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 LOOPEDROLEID = this.loopedRoleId,
                 LOOPEDSTAFFID = this.loopedStaffId,
                 REFEREBACKSTATEID = this.referBackStateId,
+                DESTINATIONOPERATIONID = this.destinationOperationId
 
             });
 
@@ -288,7 +300,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.nextLevelId = request.TOAPPROVALLEVELID; 
                     this.loopedStaffId = (this.loopedStaffId != null && this.loopedStaffId > 0) ? this.loopedStaffId : initiatorRequest.REQUESTSTAFFID;
                     this.toStaffId = staffId;
-                    this.initiatorOrLooped = true;
+                    //this.initiatorOrLooped = true;
                 }
             }
 
@@ -440,6 +452,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             int companyId,
             int staffId,
             int operationId,
+           // int destinationOperationId,
             int? exclusiveFlowChangeId,
             int targetId,
             int? productClassId,
@@ -453,6 +466,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.staffId = staffId;
             this.companyId = companyId;
             this.operationId = operationId;
+            //this.destinationOperationId = destinationOperationId;
             this.exclusiveFlowChangeId = exclusiveFlowChangeId;
             this.targetId = targetId;
            
