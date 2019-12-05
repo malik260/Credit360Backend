@@ -69,6 +69,25 @@ namespace FintrakBanking.Repositories.Credit
             return "The record has not been added";
         }
 
+
+        public string AddExposure(Exposure expo)
+        {
+                var value = new TBL_GLOBAL_EXPOSURE_MANUAL
+                {
+                    CURRENCYID = expo.currency,
+                    EXPOSURE = expo.outstandingExpo,
+                    PRODUCTID = expo.facilityName,
+                    APPROVEDAMOUNT = expo.approvedAmount,
+                    IMPACT = expo.impact,           
+                };
+
+                _context.TBL_GLOBAL_EXPOSURE_MANUAL.Add(value);
+                _context.SaveChanges();
+                return "The record has been added successful";   
+        }
+
+      
+
         public string DeleteLoanMarket(int marketId, LoanMarketViewModel loanMarket)
         {
             TBL_LOAN_MARKET data = _context.TBL_LOAN_MARKET.Find(marketId);
@@ -143,6 +162,25 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IEnumerable<Exposure> GetExposureManual()
+        {
+                var data = (from o in _context.TBL_GLOBAL_EXPOSURE_MANUAL
+                            join c in _context.TBL_CURRENCY on o.CURRENCYID equals c.CURRENCYID
+                            join p in _context.TBL_PRODUCT on o.PRODUCTID equals p.PRODUCTID
+                            select new Exposure
+                            {
+                                currencyName = c.CURRENCYNAME,
+                                outstandingExpo = o.EXPOSURE,
+                                productName = p.PRODUCTNAME,
+                                approvedAmount = o.APPROVEDAMOUNT,
+                                impact = o.IMPACT,
+                                currencyCode = c.CURRENCYCODE,
+                            }).ToList();
+
+                return data;
+            
+        }
+
         public string UpdateLoanMarket(int marketId, LoanMarketViewModel loanMarket)
         {
 
@@ -181,6 +219,28 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
                 this._auditTrail.AddAuditTrail(audit);
+
+                return "The record has been updated successful";
+            }
+            return "The record has not been updated";
+        }
+
+        public string updateExposure(int exposureId, Exposure expo)
+        {
+
+            TBL_GLOBAL_EXPOSURE_MANUAL val = _context.TBL_GLOBAL_EXPOSURE_MANUAL.Find(exposureId);
+            if (val != null)
+            {
+               
+                    val.CURRENCYID = expo.currency;
+                    val.EXPOSURE = expo.outstandingExpo;
+                    val.PRODUCTID = expo.facilityName;
+                    val.APPROVEDAMOUNT = expo.approvedAmount;
+                    val.IMPACT = expo.impact;  
+                
+                _context.SaveChanges();
+
+               
 
                 return "The record has been updated successful";
             }
