@@ -1375,12 +1375,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
-                        creditCommon.LoadCustomerTurnover(
-                                applicationId,
-                                loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                                staffId
-                        );
-
                         creditCommon.LoadCustomerRatios(
                              applicationId,
                              loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
@@ -1435,6 +1429,15 @@ namespace FintrakBanking.Repositories.Credit
                 jumpToDrawdown = jumpToDrawdown
             };
 
+        }
+
+        public void LoadCustomerTurnover(int applicationId, int staffId)
+        {
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+
+            if (loanApplicationDetails != null) {
+                creditCommon.LoadCustomerTurnover(applicationId, loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(), staffId);
+            }
         }
 
         private void AddFacilityRating(List<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails, int staffId)
