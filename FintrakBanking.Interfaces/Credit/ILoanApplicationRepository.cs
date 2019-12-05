@@ -119,7 +119,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanApplicationViewModel> GetAllRequestsForLoanCancellation(int staffId);
 
-        bool SaveCancelledApplcation(LoanApplicationViewModel data);
+        int SaveCancelledApplcation(LoanApplicationViewModel data);
 
         LoanApplicationViewModel ViewLaonApplicationCancellationDetails(LoanApplicationViewModel data);
 

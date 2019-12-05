@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -47,6 +48,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateFinalOfferLetter(int loanApplicationId, OfferLetterTemplateViewModel model);
 
         bool OfferLetterRejection(ForwardViewModel entity);
+
+        bool OfferLetterReferBack(ApprovalViewModel model);
 
         IEnumerable<CommentOnLoanAvailmentViewModel> GetCommentOnLoanAvailment(string applicationRefNumber);
 
