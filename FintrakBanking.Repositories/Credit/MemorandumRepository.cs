@@ -67,6 +67,7 @@ namespace FintrakBanking.Repositories.Credit
         TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
         TBL_LMSR_APPLICATION lmsrApplication = null;
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
+        List<CurrentCustomerExposure> globalExposure = new List<CurrentCustomerExposure>();
         int customerId;
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
         private long legalLendingLimit;
@@ -392,6 +393,15 @@ namespace FintrakBanking.Repositories.Credit
                 this.obligorRiskRating = GetCustomerRiskRating();
                 this.obligorClassification = GetObligorClassification();
                 this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
+
+                if (this.loanApplication.TBL_CUSTOMER?.CUSTOMERTYPEID == (int)CustomerTypeEnum.Individual)
+                {
+                    //continue
+                }
+                else
+                {
+                    this.globalExposure = GetGloabalExposures();
+                }
                 //this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();
                 //this.contingentFacilities = GetContingentFacilitiesMarkupLOS();
                 //this.totalContingentFacilities = GetTotalContingentFacilitiesMarkupLOS();
@@ -2987,6 +2997,19 @@ namespace FintrakBanking.Repositories.Credit
         public List<CurrentCustomerExposure> GetExposures(bool isForGFS = false)
         {
             var exposures = new List<CurrentCustomerExposure>();
+            exposures = this.globalExposure;
+            if (isForGFS)
+            {
+                var custCode = context.TBL_CUSTOMER.Find(customerId).CUSTOMERCODE;
+                var exposure = exposures.Where(e => e.customerCode == custCode).ToList();
+                return exposure;
+            }
+            return exposures;
+        }
+
+        private List<CurrentCustomerExposure> GetGloabalExposures()
+        {
+            var exposures = new List<CurrentCustomerExposure>();
             var customerIds = new List<CustomerExposure>();
             int customerId;
             if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
@@ -3004,12 +3027,12 @@ namespace FintrakBanking.Repositories.Credit
                 customerId = (int)loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
                 //exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
             }
-            if (isForGFS)
-            {
-                var custCode = context.TBL_CUSTOMER.Find(customerId).CUSTOMERCODE;
-                var exposure = exposures.Where(e => e.customerCode == custCode).ToList();
-                return exposure;
-            }
+            //if (isForGFS)
+            //{
+            //    var custCode = context.TBL_CUSTOMER.Find(customerId).CUSTOMERCODE;
+            //    var exposure = exposures.Where(e => e.customerCode == custCode).ToList();
+            //    return exposure;
+            //}
             return exposures;
         }
 
