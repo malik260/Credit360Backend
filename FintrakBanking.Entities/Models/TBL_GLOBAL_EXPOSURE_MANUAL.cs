@@ -18,7 +18,19 @@ namespace FintrakBanking.Entities.Models
         public decimal EXPOSURE { get; set; }
         public decimal APPROVEDAMOUNT { get; set; }
         public short PRODUCTID { get; set; }
-        public decimal IMPACT { get; set; }
+        public decimal IMPACT { get; set; }      
+        public int CREATEDBY { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
+        public bool DELETED { get; set; }
+        public int? DELETEDBY { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
+        public int? LOANAPPLICATIONID { get; set; }
+        public int? CUSTOMERID { get; set; }
+       
+
+
 
 
     }
