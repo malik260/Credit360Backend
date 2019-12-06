@@ -803,7 +803,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
                     {
                         var staffCode = context.TBL_STAFF.Find(model.createdBy).STAFFCODE;
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
+                       // CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
                     }
 
                     context.SaveChanges();
@@ -1042,7 +1042,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                     var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
-                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
+                    //CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                     context.SaveChanges();
 
@@ -1418,7 +1418,7 @@ namespace FintrakBanking.Repositories.Credit
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
 
                         var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility, staffCode, staffCode);
+                       // CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility, staffCode, staffCode);
 
                         //if (!entity.feeOverride) PostLoanFees(entity);
                         context.SaveChanges();
@@ -1694,7 +1694,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (!entity.feeOverride) PostLoanFees(entity);
 
                         var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
+                        //CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                         context.SaveChanges();
 
