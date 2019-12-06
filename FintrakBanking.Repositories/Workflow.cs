@@ -259,7 +259,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 LOOPEDROLEID = this.loopedRoleId,
                 LOOPEDSTAFFID = this.loopedStaffId,
                 REFEREBACKSTATEID = this.referBackStateId,
-                DESTINATIONOPERATIONID = this.destinationOperationId
+               // DESTINATIONOPERATIONID = this.destinationOperationId
 
             });
 

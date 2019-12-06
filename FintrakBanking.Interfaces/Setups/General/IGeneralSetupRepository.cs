@@ -53,8 +53,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateSector(SectorViewModel model, short id);
         bool DeleteSector(int Id, UserInfo user);
         bool AddSector(SectorViewModel model);
-
+        
         IEnumerable<int> GetStaffApprovalLevelIds(int staffId, int operationId);
+        IEnumerable<int> GetStaffApprovalLevelIdsWithoutRelief(int staffId, int operationId);
         List<int> GetRouteLevels(int operationId, int depth);
 
         IEnumerable<LookupViewModel> GetRegionByType(int regionTypeId);
