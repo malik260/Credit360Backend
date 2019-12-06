@@ -386,11 +386,13 @@ var qry = Foo.GroupJoin(
                 printedDoc = raw.title;
             }
 
+            var staff = context.TBL_STAFF.Find(staffId);
+
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplatePrinted,
                 STAFFID = staffId,
-                BRANCHID = 1, //(short)model.userBranchId,
+                BRANCHID = staff.BRANCHID.Value, //(short)model.userBranchId,
                 DETAIL = $"Printed Document Template '{ printedDoc }' ",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = "localhost",//model.applicationUrl,

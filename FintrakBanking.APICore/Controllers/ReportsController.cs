@@ -276,6 +276,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (data.Count == 0)
                 {
                     data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
+                    if (data.Count > 0)
+                    {
+                        creditTemplateRepo.SaveApprovedDocumentation(token.GetStaffId, 6, loanAppId);
+                    }
                 }
                // var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
                 if (data == null)
