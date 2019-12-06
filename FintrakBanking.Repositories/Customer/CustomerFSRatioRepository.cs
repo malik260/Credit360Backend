@@ -357,12 +357,32 @@ namespace FintrakBanking.Repositories.Customer
 
             double demoninator = 0;
             if (demoninatorInfo.Count() > 0)
-                demoninator = (from a in demoninatorInfo select a.MULTIPLIER * (double)a.AMOUNT).Sum();
+                demoninator = (from a in demoninatorInfo select a.MULTIPLIER * (double) a.AMOUNT).Sum();
+
+            // extending the financial 
+            var additionInfo = from a in ratios
+                                join b in customerFS on a.FSCAPTIONID equals b.FSCAPTIONID
+                                where a.DIVISORTYPEID == 3
+                                select new { a.MULTIPLIER, b.AMOUNT };
+
+            double addition = 0;
+            if (additionInfo.Count() > 0)
+                addition = (from a in additionInfo select a.MULTIPLIER * (double) a.AMOUNT).Sum();
+
+            var subtractionInfo = from a in ratios
+                                  join b in customerFS on a.FSCAPTIONID equals b.FSCAPTIONID
+                                  where a.DIVISORTYPEID == 4
+                                  select new { a.MULTIPLIER, b.AMOUNT };
+
+            double subtraction = 0;
+            if (subtractionInfo.Count() > 0)
+                subtraction = (from a in subtractionInfo select a.MULTIPLIER * (double) a.AMOUNT).Sum();
+
 
             if (demoninator == 0)
-                return string.Format("{0:n}", numerator);
+                return string.Format("{0:n}", numerator + addition - subtraction);
             else
-                return string.Format("{0:0.00}", (decimal)numerator / (decimal)demoninator);
+                return string.Format("{0:0.00}", ((decimal) numerator / (decimal) demoninator) + (decimal) addition - (decimal) subtraction);
         }
 
 
