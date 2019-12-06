@@ -2630,11 +2630,10 @@ namespace FintrakBanking.Repositories.Credit
                                   && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                                  && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                                            || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
+                                  && (((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                                            || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)) && (levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) && (atrail.LOOPEDSTAFFID == null))
 
-                                  && ((levelIds.Contains((int)atrail.TOAPPROVALLEVELID))
-                                            || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
+                                  //&& ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
 
                                   && atrail.RESPONSESTAFFID == null
                               )
@@ -6800,9 +6799,10 @@ namespace FintrakBanking.Repositories.Credit
              
             //IEnumerable<CamProcessedLoanViewModel> data2;
 
-            var data2 = from d in context.TBL_LOAN_APPLICATION_DETAIL
+            var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                         where a.COMPANYID == companyId && d.DELETED == false
+                        && a.CREATEDBY == staffId
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -6813,6 +6813,10 @@ namespace FintrakBanking.Repositories.Credit
                         select new CamProcessedLoanViewModel
                         {
                             //approvalStatusId = (short)atrail.APPROVALSTATUSID,
+                            loanBookingRequestId = 0,
+                            approvalTrailId = 0,
+                            //bookingAmountRequested = r.AMOUNT_REQUESTED,
+                            requestedAmount = 0,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
@@ -6880,7 +6884,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
 
                             //availableAmount = 
-                        };
+                        }).ToList();
 
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
@@ -6896,9 +6900,20 @@ namespace FintrakBanking.Repositories.Credit
                         && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                         && m.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                         && m.BRANCHID == branchId
-                        orderby m.AVAILMENTDATE descending, m.DATETIMECREATED descending
+                        join r in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
+                        join atrail in context.TBL_APPROVAL_TRAIL on r.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                        where r.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
+                        && r.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved && atrail.RESPONSESTAFFID == null
+                        && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred) && (atrail.LOOPEDSTAFFID == staffId))
+                        //&& ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
+                        orderby atrail.SYSTEMARRIVALDATETIME descending, m.DATETIMECREATED descending
+                        //orderby m.AVAILMENTDATE descending, m.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel
                         {
+                            loanBookingRequestId = r.LOAN_BOOKING_REQUESTID,
+                            approvalTrailId = atrail.APPROVALTRAILID,
+                            //bookingAmountRequested = r.AMOUNT_REQUESTED,
+                            requestedAmount = r.AMOUNT_REQUESTED,
                             //approvalStatusId = (short) m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
@@ -6914,7 +6929,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerSensitivityLevelId = d.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
                             customerOccupation = d.TBL_CUSTOMER.OCCUPATION,
                             customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                            operationId = m.OPERATIONID,
+                            operationId = atrail.OPERATIONID,
                             isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                             isInvestmentGrade = m.ISINVESTMENTGRADE,
                             productClassName = d.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
@@ -6948,7 +6963,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = m.PRODUCTCLASSID,
                             misCode = m.MISCODE,
                             teamMisCode = m.TEAMMISCODE,
-                            casaAccountId = d.CASAACCOUNTID,
+                            casaAccountId = r.CASAACCOUNTID,
 
                             interestRate = d.APPROVEDINTERESTRATE,
                             submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
@@ -6964,12 +6979,13 @@ namespace FintrakBanking.Repositories.Credit
                             isTemporaryOverdraft = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == d.PROPOSEDPRODUCTID && x.ISTEMPORARYOVERDRAFT == true).Any(),
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
 
-                            approvalStatusId = (short)m.APPROVALSTATUSID,
-                            approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == m.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
+                            //approvalStatusId = (short)m.APPROVALSTATUSID,
+                            approvalStatusId = (short)atrail.APPROVALSTATUSID,
+                            approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
 
-                        });
+                        }).ToList();
 
-            data = data.Union(data2);
+            data = data.Union(data2).ToList();
 
             foreach (var item in data)
             {
@@ -7384,7 +7400,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = ((int)model.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)model.approvalStatusId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                //workflow.StatusId = ((int)model.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)model.approvalStatusId;
                 workflow.TargetId = request.LOAN_BOOKING_REQUESTID;
                 workflow.Comment = model.comment != null ? model.comment : "Kindly proceeed. Update has been applied";
                 workflow.OperationId = model.operationId ?? 0;
@@ -7393,7 +7410,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 workflow.LogActivity();
 
-
+                //return false;
                 return context.SaveChanges() > 0;
             }
             return false;
