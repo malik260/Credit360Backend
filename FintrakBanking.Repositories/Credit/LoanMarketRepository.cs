@@ -70,15 +70,20 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public string AddExposure(Exposure expo)
+        public string AddExposure(ExposureViewModel expo, int staffId)
         {
                 var value = new TBL_GLOBAL_EXPOSURE_MANUAL
                 {
+                    CREATEDBY = staffId,
                     CURRENCYID = expo.currency,
                     EXPOSURE = expo.outstandingExpo,
                     PRODUCTID = expo.facilityName,
                     APPROVEDAMOUNT = expo.approvedAmount,
-                    IMPACT = expo.impact,           
+                    IMPACT = expo.impact, 
+                    LOANAPPLICATIONID = expo.loanApplicationId,
+                    CUSTOMERID = expo.customerId,
+                    LEGALLENDINGUNIT = expo.legalLendingUnit
+                    
                 };
 
                 _context.TBL_GLOBAL_EXPOSURE_MANUAL.Add(value);
@@ -156,26 +161,34 @@ namespace FintrakBanking.Repositories.Credit
                             stateId = c.TBL_LOCALGOVERNMENT.STATEID,
                             cityName=c.CITYNAME,
                             
+                            
+                            
                         }).ToList();
 
             return data;
 
         }
 
-        public IEnumerable<Exposure> GetExposureManual()
+        public IEnumerable<ExposureViewModel> GetExposureManual()
         {
-                var data = (from o in _context.TBL_GLOBAL_EXPOSURE_MANUAL
-                            join c in _context.TBL_CURRENCY on o.CURRENCYID equals c.CURRENCYID
-                            join p in _context.TBL_PRODUCT on o.PRODUCTID equals p.PRODUCTID
-                            select new Exposure
-                            {
-                                currencyName = c.CURRENCYNAME,
-                                outstandingExpo = o.EXPOSURE,
-                                productName = p.PRODUCTNAME,
-                                approvedAmount = o.APPROVEDAMOUNT,
-                                impact = o.IMPACT,
-                                currencyCode = c.CURRENCYCODE,
-                            }).ToList();
+            var data = (from o in _context.TBL_GLOBAL_EXPOSURE_MANUAL
+                        join c in _context.TBL_CURRENCY on o.CURRENCYID equals c.CURRENCYID
+                        join p in _context.TBL_PRODUCT on o.PRODUCTID equals p.PRODUCTID
+                        where o.DELETED == false
+                        select new ExposureViewModel
+                        {
+                            exposureId = o.EXPOSUREMANUALID,
+                            currencyName = c.CURRENCYNAME,
+                            outstandingExpo = o.EXPOSURE,
+                            productName = p.PRODUCTNAME,
+                            approvedAmount = o.APPROVEDAMOUNT,
+                            impact = o.IMPACT,
+                            currencyCode = c.CURRENCYCODE,
+                            loanReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPLICATIONID == o.LOANAPPLICATIONID).Select(l => l.APPLICATIONREFERENCENUMBER).FirstOrDefault()?? "N/A",
+                            customerName  = _context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == o.CUSTOMERID).Select(x => x.FIRSTNAME +" "+x.LASTNAME).FirstOrDefault() ?? "N/A",
+                            legalLendingUnit = o.LEGALLENDINGUNIT,
+
+                        }).ToList();
 
                 return data;
             
@@ -225,7 +238,7 @@ namespace FintrakBanking.Repositories.Credit
             return "The record has not been updated";
         }
 
-        public string updateExposure(int exposureId, Exposure expo)
+        public string updateExposure(int exposureId, ExposureViewModel expo)
         {
 
             TBL_GLOBAL_EXPOSURE_MANUAL val = _context.TBL_GLOBAL_EXPOSURE_MANUAL.Find(exposureId);
@@ -246,5 +259,25 @@ namespace FintrakBanking.Repositories.Credit
             }
             return "The record has not been updated";
         }
+
+
+       
+
+
+        public bool DeleteExposure(int exposureId, int staffId)
+        {
+            TBL_GLOBAL_EXPOSURE_MANUAL data = _context.TBL_GLOBAL_EXPOSURE_MANUAL.Find(exposureId);
+            if (data != null)
+            {
+                data.DATETIMEDELETED = _genSetup.GetApplicationDate();
+                data.DELETED = true;
+                data.DELETEDBY = staffId;
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+            // Audit Section ---------------------------
+        }
+
     }
 }

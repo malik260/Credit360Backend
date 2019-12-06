@@ -135,11 +135,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("add-exposure")]
         [HttpPost]
         [ClaimsAuthorization]
-        public HttpResponseMessage AddExposure(Exposure expo)
+        public HttpResponseMessage AddExposure(ExposureViewModel expo)
         {
             try
             {  
-                var data = repo.AddExposure(expo);
+                var data = repo.AddExposure(expo,token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
             }
             catch (SecureException ex)
@@ -151,7 +151,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("Exposure-update/{exposureId}")]
         [HttpPut]
         [ClaimsAuthorization]
-        public HttpResponseMessage UpdateExposure(int exposureId, Exposure expo)
+        public HttpResponseMessage UpdateExposure(int exposureId, ExposureViewModel expo)
         {
             try
             {
@@ -165,6 +165,23 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        
+
+
+        [Route("delete-exposure/{exposureId}")]
+        [HttpDelete]
+        [ClaimsAuthorization]
+        public HttpResponseMessage deleteExposure(int exposureId)
+        {
+            try
+            {
+                bool response = repo.DeleteExposure(exposureId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }
