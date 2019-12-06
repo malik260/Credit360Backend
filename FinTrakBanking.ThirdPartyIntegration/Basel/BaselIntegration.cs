@@ -69,8 +69,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 try
                 {
-                    response = await client.GetAsync(endPointUrl
-                    );
+                    response = await client.GetAsync(endPointUrl);
                     responseDateTime = DateTime.Now;
                 }
                 catch (Exception e) { throw new ConditionNotMetException(e.Message); }
@@ -135,6 +134,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             ResponseMessageViewModel res = null;
             string responseMessage = "";
             string endPointUrl = $"{API_URL}GetAllCorporateRatios/{customerNumber}?key={API_KEY}";
+            //string endPointUrl = $"{API_URL}GetAllCorporateRatios/{"000107220"}?key={API_KEY}";
+
             try
             {
                 handler.UseDefaultCredentials = true;
@@ -152,12 +153,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                     (sender, cert, chain, sslPolicyErrors) => true;
                 requestDatetime = DateTime.Now;
 
-                try
-                {
+                //try
+                //{
                     response = await client.GetAsync(endPointUrl);
                     responseDateTime = DateTime.Now;
-                }
-                catch (Exception e) { throw new ConditionNotMetException(e.Message); }
+                //}
+                //catch (Exception e) { throw new ConditionNotMetException(e.Message); }
 
                 responseMessage = await response.Content.ReadAsStringAsync();
                 List<GroupRatingAndRatioViewModel> customerGroupRatios = new List<GroupRatingAndRatioViewModel>();

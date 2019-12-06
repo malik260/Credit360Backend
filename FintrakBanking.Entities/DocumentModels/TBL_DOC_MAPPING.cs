@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.DocumentModels
         public int? LASTUPDATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime DATETIMEUPDATED { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
         [ForeignKey("TBL_DOCUMENT_TYPE")]
         public int DOCUMENTTYPEID { get; set; }
         public int? SECTORID { get; set; }
