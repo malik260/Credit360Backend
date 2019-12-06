@@ -81,8 +81,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = expo.approvedAmount,
                     IMPACT = expo.impact, 
                     LOANAPPLICATIONID = expo.loanApplicationId,
-                    CUSTOMERID = expo.customerId,
-                    LEGALLENDINGUNIT = expo.legalLendingUnit
+                    CUSTOMERID = expo.customerId
+                   
                     
                 };
 
@@ -185,8 +185,8 @@ namespace FintrakBanking.Repositories.Credit
                             impact = o.IMPACT,
                             currencyCode = c.CURRENCYCODE,
                             loanReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPLICATIONID == o.LOANAPPLICATIONID).Select(l => l.APPLICATIONREFERENCENUMBER).FirstOrDefault()?? "N/A",
-                            customerName  = _context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == o.CUSTOMERID).Select(x => x.FIRSTNAME +" "+x.LASTNAME).FirstOrDefault() ?? "N/A",
-                            legalLendingUnit = o.LEGALLENDINGUNIT,
+                            customerName  = _context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == o.CUSTOMERID).Select(x => x.FIRSTNAME +" "+x.LASTNAME).FirstOrDefault() ?? "N/A"
+                         ,
 
                         }).ToList();
 
