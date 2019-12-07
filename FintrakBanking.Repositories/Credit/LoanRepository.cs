@@ -9028,7 +9028,7 @@ namespace FintrakBanking.Repositories.Credit
                         e.maturityDate = e.maturityDate.Date;
                         //e.productId = int.Parse(e.productIdString);
                         e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
-                        e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
+                        e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
                     }
                     exposures.AddRange(exposure);
                 }
