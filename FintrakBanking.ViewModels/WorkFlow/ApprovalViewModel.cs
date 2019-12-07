@@ -10,9 +10,12 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int? destinationOperationId { get; set; }
         private bool _keepPending = true;
         public int? toStaffId;
+        public object[] applicationId;
 
         public int? approvalLevelId { get; set; }
         public int operationId { get; set; }
+        public int? productId { get; set; }
+        public int? productClassId { get; set; }
         public int? exclusiveFlowChangeId { get; set; }
         public int? loopedStaffId { get; set; }
         public int? loopedRoleId { get; set; }

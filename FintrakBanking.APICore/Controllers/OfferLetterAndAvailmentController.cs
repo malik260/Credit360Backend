@@ -569,7 +569,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("offer-letter/refer-back")]
+        [Route("offer-letter/refer-back/{applicationId}")]
         public HttpResponseMessage OfferLetterReferBack([FromBody] ApprovalViewModel entity)
         {
             entity.BranchId = (short)token.GetBranchId;

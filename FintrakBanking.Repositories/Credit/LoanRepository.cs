@@ -13701,8 +13701,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = model.operationId;
             workflow.TargetId = model.targetId;
             workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = null;
-            workflow.ProductId = null;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
             workflow.NextLevelId = model.approvalLevelId;
             //workflow.ToStaffId = staffId;
             //workflow.ToStaffId = model.loopedStaffId;

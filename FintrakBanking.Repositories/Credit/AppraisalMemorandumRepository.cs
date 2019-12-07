@@ -2434,6 +2434,7 @@ namespace FintrakBanking.Repositories.Credit
             customerBusinessUnitId = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == x.a.CUSTOMERID).Select(c => c.BUSINESSUNTID).FirstOrDefault(),
             timeIn = x.b.SYSTEMARRIVALDATETIME,
             slaTime = x.b.SLADATETIME,
+            
             loanInformation = x.a.LOANINFORMATION,
             submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
@@ -2484,8 +2485,13 @@ namespace FintrakBanking.Repositories.Credit
 
             if (staffProfile.Select(d=>d.STAFFROLESHORTCODE).Contains( "ED" ))
             {
-                var applList = applications.ToList();
-                return applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d=>d.MISCODE).Contains(x.divisionCode));
+                List<LoanApplicationViewModel> apps = new List<LoanApplicationViewModel>();
+                if (staffProfile.Where(d => d.STAFFROLESHORTCODE != "ED").Any())
+                {
+                      apps =  applications.Where(x => x.toStaffId == staffId && levelIds.Contains(x.currentApprovalLevelId ?? 0  )).ToList();
+                }
+
+                return applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d=>d.MISCODE).Contains(x.divisionCode)).Union(apps);
             }
 
             return applications; //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));

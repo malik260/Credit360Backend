@@ -2603,18 +2603,18 @@ namespace FintrakBanking.Repositories.Credit
 
 
             if (nextLevelIndex > currentLevelIndex)
-                throw new ConditionNotMetException("The refered level is higher than the current level.");
-
+                throw new ConditionNotMetException("The referred level is higher than the current level.");
 
             workflow.StaffId = model.createdBy;
             workflow.OperationId = model.operationId;
             workflow.DestinationOperationId = model.destinationOperationId;
             workflow.TargetId = model.targetId;
             workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = null;
-            workflow.ProductId = null;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
             workflow.ToStaffId = model.toStaffId;
             workflow.NextLevelId = model.nextLevelId;
+            
 
             workflow.LoopedStaffId = model.loopedStaffId;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
@@ -2624,9 +2624,100 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
 
 
-
             return context.SaveChanges() > 0;
 
+        }
+
+        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, int? exclusiveFlowChangeId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var mappingsOnProducts = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == operationId
+                               && (x.PRODUCTCLASSID == productClassId && x.PRODUCTCLASSID != null)
+                               && (x.PRODUCTID == productId && x.PRODUCTID != null)
+                           )
+                           .ToList();
+
+            var mappingsOnProductClass = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == operationId
+                               && (x.PRODUCTCLASSID == productClassId && x.PRODUCTCLASSID != null)
+                               && x.PRODUCTID == null
+                           )
+                           .ToList();
+
+            var mappingsOnOperations = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == operationId
+                               && x.PRODUCTCLASSID == null
+                               && x.PRODUCTID == null
+                           )
+                           .ToList();
+
+            List<TBL_APPROVAL_GROUP_MAPPING> mappingsOnExclusiveOperations = new List<TBL_APPROVAL_GROUP_MAPPING>();
+
+            if (exclusiveFlowChangeId > 0)
+            {
+                var flowChangePartern = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(exclusiveFlowChangeId);
+
+                if (flowChangePartern != null)
+                {
+                    mappingsOnExclusiveOperations = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == flowChangePartern.OPERATIONID
+                               && x.PRODUCTCLASSID == null
+                               && x.PRODUCTID == null
+                           )
+                           .ToList();
+                }
+            }
+
+            List<TBL_APPROVAL_GROUP_MAPPING> mappings = new List<TBL_APPROVAL_GROUP_MAPPING>();
+
+            if (mappingsOnOperations.Any()) mappings = mappingsOnOperations;
+
+            if (mappingsOnProductClass.Any()) mappings = mappingsOnProductClass;
+
+            if (mappingsOnProducts.Any()) mappings = mappingsOnProducts;
+
+            if (mappingsOnExclusiveOperations.Any()) mappings = mappingsOnExclusiveOperations;
+
+            if (mappingsOnProducts.Any() == false && mappingsOnProductClass.Any() == false && mappingsOnOperations.Any() == false && mappingsOnExclusiveOperations.Any() == false)
+            {
+                var operation = context.TBL_OPERATIONS.Find(operationId);
+                if (operation == null) throw new SecureException("Operation ID didn't match");
+                if (productClassId != null)
+                {
+                    var productClass = context.TBL_PRODUCT_CLASS.Find(productClassId);
+                    throw new SecureException("There is no approval workflow setup for the OPERATION: " + operation.OPERATIONNAME + ", PRODUCT CLASS: " + productClass.PRODUCTCLASSNAME);
+                }
+                throw new SecureException("There is no approval workflow setup for the OPERATION: " + operation.OPERATIONNAME);
+            }
+
+            //var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
+            var levels = mappings.Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId).ToList();
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+
+            return nextLevelId;
         }
 
         public IEnumerable<CommentOnLoanAvailmentViewModel> GetCommentOnLoanAvailment(string applicationRefNumber)
