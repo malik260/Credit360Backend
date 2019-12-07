@@ -658,6 +658,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan/validate-application")]
+        public HttpResponseMessage ValidateDuplicateLoanApplication([FromBody] LoanApplicationViewModel entity)
+        {
+            var isDuplicate = repo.ValidateDuplicateLoanApplication(entity);
+            if (isDuplicate)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = isDuplicate, result = isDuplicate});
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = isDuplicate});
+        }
+
         [HttpPost]
         //[ClaimsAuthorization]
         [Route("loan/application")]
