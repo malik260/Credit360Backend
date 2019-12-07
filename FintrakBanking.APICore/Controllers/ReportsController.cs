@@ -18,6 +18,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ReportObjects;
 using System.Diagnostics;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -271,11 +272,15 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
                 var loanAppId = repo.GetLoanApplicationIdByReferenceNumber(applicationRefNumber);
                 var data = creditTemplateRepo.GetSavedDocumentation(6, loanAppId);
                 if (data.Count == 0)
                 {
-                    data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
+                    data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId, user);
                 }
                // var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
                 if (data == null)

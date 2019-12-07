@@ -21,8 +21,11 @@ namespace FintrakBanking.ViewModels.Credit
 
 
 
-    public class Exposure 
+    public class ExposureViewModel :GeneralEntity
     {
+        public string loanReferenceNumber;
+
+        public int exposureId { get; set; }
         public short facilityName { get; set; }
         public short currency { get; set; }
         public decimal outstandingExpo { get; set; }
@@ -31,5 +34,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string productName { get; set; }
         public string currencyCode { get; set; }
         public string currencyName { get; set; }
+        public int? loanApplicationId { get; set; }
+        public decimal? legalLendingUnit { get; set; }
+        public int? customerId { get; set; }
+        public string customerName { get; set; }
     }
 }
