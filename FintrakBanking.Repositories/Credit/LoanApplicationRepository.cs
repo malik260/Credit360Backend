@@ -2700,6 +2700,14 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Please select a repayment pattern for the product "+update.productName);
             }
 
+            if (update.productFees != null)
+            {
+                if (update.productFees.Count > 0)
+                {
+                    UpdateLoanDetailFees(update.productFees, loan.loanApplicationDetailId, detail.CREATEDBY);
+                }
+            }
+
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
@@ -2753,6 +2761,12 @@ namespace FintrakBanking.Repositories.Credit
                 bond.CASAACCOUNTID = bondUpdate.casaAccountId;
                 bond.REFERENCENO = bondUpdate.referenceNo;
             }
+
+           
+            //else
+            //{
+            //    throw new SecureException("No fee is defined for this product(s)");
+            //}
 
             //if (productClassId == (int)ProductClassEnum.FirstEdu)
             //{
@@ -3202,7 +3216,7 @@ namespace FintrakBanking.Repositories.Credit
             return fields;
         }
 
-        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
+        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationDetailId, int createdBy)
         {
             var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
             {
@@ -3220,13 +3234,18 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public bool UpdateLoanDetailFees(ProductFeesViewModel fees, int loanApplicationId, int createdBy)
+        public bool UpdateLoanDetailFees(List<ProductFeesViewModel> fees, int loanApplicationDetailId, int createdBy)
         {
-            var data = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(c => c.LOANCHARGEFEEID == fees.loanChargeFeeId).FirstOrDefault();
 
-            data.RECOMMENDED_FEERATEVALUE = fees.rate;
-            data.HASCONSESSION = fees.hasConsession;
-            data.CONSESSIONREASON = fees.consessionReason;
+            foreach (var fee in fees)
+            {
+                var savedFee = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(c => c.LOANAPPLICATIONDETAILID == loanApplicationDetailId && c.CHARGEFEEID == fee.feeId);
+                if (savedFee != null)
+                {
+                    savedFee.RECOMMENDED_FEERATEVALUE = fee.rate;
+                }
+            }
+           
             return context.SaveChanges() > 0;
         }
 
