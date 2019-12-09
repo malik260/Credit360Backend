@@ -2503,6 +2503,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductClassId = model.productClassId;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId;
+            workflow.DestinationOperationId = model.destinationOperationId;
             workflow.ToStaffId = model.receiverStaffId;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
@@ -2518,7 +2519,7 @@ namespace FintrakBanking.Repositories.Credit
                 int nextOperationId = (int)OperationsEnum.LoanAvailment;
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
                 workflow.NextLevelId = GetFirstReceiverLevel(model.createdBy, nextOperationId, null, true);
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, nextOperationId,appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, nextOperationId, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New application", true, true, false, model.isFlowTest); // model.operationId must be used here!
                 // PassApplicationToOperation(model.companyId, model.createdBy, (int)OperationsEnum.LoanAvailment, model.applicationId, "B&G application for availment...");
             }
 
@@ -2527,9 +2528,10 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion Bonds and Guarantees
 
-        public bool OfferLetterRejection(ForwardViewModel model)
+
+        public bool OfferLetterRejectionOld(ForwardViewModel model)
         {
-            var operationId = (int)OperationsEnum.CreditAppraisal;
+            var operationId = model.operationId;
             var o = context.TBL_APPROVAL_TRAIL.Find(model.trailId); // here we try to get the staffid on the trail row
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
 
@@ -2573,60 +2575,110 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool OfferLetterReferBack(ApprovalViewModel model)
+        public bool OfferLetterRejection(ForwardViewModel model)
         {
-            int staffId = model.staffId;
+            var operationId = model.operationId;
+            var o = context.TBL_APPROVAL_TRAIL.Find(model.trailId); // here we try to get the staffid on the trail row
+            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
 
-            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
-
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
-                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
-                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
-                     {
-                         groupPosition = mg.m.POSITION,
-                         levelPosition = l.POSITION,
-                         levelId = l.APPROVALLEVELID,
-                         levelName = l.LEVELNAME,
-                         staffRoleId = l.STAFFROLEID,
-                     })
-                     .OrderBy(x => x.groupPosition)
-                     .ThenBy(x => x.levelPosition)
-                     .ToList();
-
-            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
-            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
-            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
-
-            int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
-            int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
-
-
-            if (nextLevelIndex > currentLevelIndex)
-                throw new ConditionNotMetException("The referred level is higher than the current level.");
+            var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                x.OPERATIONID == operationId
+                && x.TARGETID == appl.LOANAPPLICATIONID
+                && x.REQUESTSTAFFID == o.REQUESTSTAFFID
+            );
 
             workflow.StaffId = model.createdBy;
-            workflow.OperationId = model.operationId;
-            workflow.DestinationOperationId = model.destinationOperationId;
-            workflow.TargetId = model.targetId;
-            workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = model.productClassId;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = model.productId;
-            workflow.ToStaffId = model.toStaffId;
-            workflow.NextLevelId = model.nextLevelId;
-            
-
-            workflow.LoopedStaffId = model.loopedStaffId;
+            workflow.NextLevelId = trail.FROMAPPROVALLEVELID;//
+            workflow.ToStaffId = o.REQUESTSTAFFID;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+            workflow.DestinationOperationId = (int)OperationsEnum.OfferLetterApproval;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;
-
+            workflow.ExternalInitialization = true;
             workflow.LogActivity();
 
+            // Take out of offer letter screen
+            var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
+                && x.RESPONSESTAFFID == null
+                && x.TARGETID == appl.LOANAPPLICATIONID
+            );
+            if (currentTrail != null)
+            {
+                currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                currentTrail.COMMENT = model.comment;
+                currentTrail.RESPONSESTAFFID = model.createdBy;
+                currentTrail.RESPONSEDATE = DateTime.Now;
+                //currentTrail.TOAPPROVALLEVELID = null;
+                //currentTrail.TOSTAFFID = null;
+            }
+            appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
 
             return context.SaveChanges() > 0;
-
         }
+
+
+        //public bool OfferLetterReferBack(ApprovalViewModel model)
+        //{
+        //    int staffId = model.staffId;
+
+        //    var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+        //    var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
+        //         .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+        //         .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+        //             mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+        //             {
+        //                 groupPosition = mg.m.POSITION,
+        //                 levelPosition = l.POSITION,
+        //                 levelId = l.APPROVALLEVELID,
+        //                 levelName = l.LEVELNAME,
+        //                 staffRoleId = l.STAFFROLEID,
+        //             })
+        //             .OrderBy(x => x.groupPosition)
+        //             .ThenBy(x => x.levelPosition)
+        //             .ToList();
+
+        //    var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+        //    var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+        //    var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+        //    int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
+        //    int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+
+
+        //    if (nextLevelIndex > currentLevelIndex)
+        //        throw new ConditionNotMetException("The referred level is higher than the current level.");
+
+        //    workflow.StaffId = model.createdBy;
+        //    workflow.OperationId = model.operationId;
+        //    workflow.DestinationOperationId = model.destinationOperationId;
+        //    workflow.TargetId = model.targetId;
+        //    workflow.CompanyId = model.companyId;
+        //    workflow.ProductClassId = model.productClassId;
+        //    workflow.ProductId = model.productId;
+        //    workflow.ToStaffId = model.toStaffId;
+        //    workflow.NextLevelId = model.nextLevelId;
+
+
+        //    workflow.LoopedStaffId = model.loopedStaffId;
+        //    workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+        //    workflow.Comment = model.comment;
+        //    workflow.DeferredExecution = true;
+
+        //    workflow.LogActivity();
+
+
+        //    return context.SaveChanges() > 0;
+
+        //}
 
         public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, int? exclusiveFlowChangeId, bool next = false)
         {

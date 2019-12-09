@@ -424,6 +424,36 @@ namespace FintrakBanking.Repositories.Credit
             //    workflow.ProductId = null;
             //}
             workflow.DeferredExecution = true;
+
+            if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred )
+            {
+                var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                    x.OPERATIONID == (int)appl.OPERATIONID
+                    && x.RESPONSESTAFFID == null
+                    && x.DESTINATIONOPERATIONID > 0
+                    && x.TARGETID == appl.LOANAPPLICATIONID
+                );
+                if (currentTrail != null)
+                {
+
+                    currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                    currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    currentTrail.COMMENT = model.comment;
+                    currentTrail.RESPONSESTAFFID = model.createdBy;
+                    currentTrail.RESPONSEDATE = DateTime.Now;
+
+                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+                    workflow.SetResponse = false;
+                    workflow.ExternalInitialization = true;
+                    
+                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
+                    context.SaveChanges();
+                    return workflow.Response;
+                }
+
+               
+            }
+           
             workflow.LogActivity();
 
             WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
@@ -527,7 +557,7 @@ namespace FintrakBanking.Repositories.Credit
                 // MEMORANDUM update
                 var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
                 if (memo != null) { memo.ISCOMPLETED = true; }
-                if (contextControl != null) contextControl.SaveChanges();
+                if (contextControl != null && model.isFlowTest == false) contextControl.SaveChanges();
             }
 
             // UPDATE APPROVED AMOUNT
@@ -564,17 +594,17 @@ namespace FintrakBanking.Repositories.Credit
             if (model.comment == "debug_test") throw new SecureException("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
             LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate,model.vote , (short)model.forwardAction); // LOG CHANGES
-            context.SaveChanges();
+            if (model.isFlowTest == false) { context.SaveChanges(); }
 
-            var lastStatus = workflow.StatusId; // prevents the nex
+            var lastStatus = workflow.StatusId; // prevents the next
 
-            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved && appl.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
                 workflow.SetResponse = false;
                 //workflow.ProductClassId = null;
                 //workflow.ProductId = null;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null,model.applicationId, null, "New approved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null,model.applicationId, null, "New approved application", true, false, false,model.isFlowTest);
             }
 
             //workflow.Response.success = true;
@@ -928,7 +958,7 @@ namespace FintrakBanking.Repositories.Credit
                     appl.AVAILMENTDATE = DateTime.Now;
                     appl.APPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;
-                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest,null, model.applicationId, null, "New approved application", true, false);
+                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest,null, model.applicationId, null, "New approved application", true, false, false,model.isFlowTest);
                 }
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
@@ -2688,7 +2718,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID, model.applicationId, null, "New pproved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID, model.applicationId, null, "New pproved application", true, false, false, model.isFlowTest);
             }
 
             return response;

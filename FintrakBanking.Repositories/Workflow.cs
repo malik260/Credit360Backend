@@ -29,7 +29,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int companyId;
         private int operationId;
         private int? destinationOperationId;
-
+        private bool isFlowTest;
         private int? exclusiveFlowChangeId = null;
 
         private int? productClassId = null;
@@ -106,6 +106,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int? ProductId { set { productId = value; } }
         public int? ExclusiveFlowChangeId { get { return exclusiveFlowChangeId; } set { exclusiveFlowChangeId = value; } }
         public int? DestinationOperationId { get { return destinationOperationId; } set { destinationOperationId = value; } }
+        public bool IsFlowTest { get { return isFlowTest; } set { isFlowTest = value; } }
         public int? LoopedRoleId { get { return loopedRoleId; } set { loopedRoleId = value; } }
         public int? LoopedStaffId { get { return loopedStaffId; } set { loopedStaffId = value; } }
 
@@ -239,6 +240,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
+            if (this.isFlowTest) return true;
 
             context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -259,7 +261,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 LOOPEDROLEID = this.loopedRoleId,
                 LOOPEDSTAFFID = this.loopedStaffId,
                 REFEREBACKSTATEID = this.referBackStateId,
-               // DESTINATIONOPERATIONID = this.destinationOperationId
+                DESTINATIONOPERATIONID = this.destinationOperationId
 
             });
 
@@ -460,13 +462,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             string comment,
             bool external,
             bool deferred,
-            bool sameDesk
-
+            bool sameDesk,
+            bool isFlowTest
             )
         {
             InitializeOperation();
-            this.staffId = staffId;
             this.companyId = companyId;
+            this.staffId = staffId;
             this.operationId = operationId;
             //this.destinationOperationId = destinationOperationId;
             this.exclusiveFlowChangeId = exclusiveFlowChangeId;
@@ -474,10 +476,12 @@ namespace FintrakBanking.Repositories.WorkFlow
            
             this.productClassId = productClassId;
             this.comment = comment;
-            this.statusId = (int)ApprovalStatusEnum.Pending;
             this.externalInitialization = external;
             this.deferredExecution = deferred;
             this.sameDesk = sameDesk;
+            this.isFlowTest = isFlowTest;
+            this.statusId = (int)ApprovalStatusEnum.Pending;
+           
             LogActivity();
         }
 
@@ -1403,7 +1407,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             LoopedRoleId = model.loopedRoleId;
             keepPending = model.keepPending;
             deferredExecution = model.deferredExecution;
-
+            IsFlowTest = model.isFlowTest;
+            destinationOperationId = model.destinationOperationId;
             var response = LogActivity();
 
             return response;

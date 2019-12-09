@@ -49,7 +49,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool OfferLetterRejection(ForwardViewModel entity);
 
-        bool OfferLetterReferBack(ApprovalViewModel model);
+       // bool OfferLetterReferBack(ApprovalViewModel model);
 
         IEnumerable<CommentOnLoanAvailmentViewModel> GetCommentOnLoanAvailment(string applicationRefNumber);
 

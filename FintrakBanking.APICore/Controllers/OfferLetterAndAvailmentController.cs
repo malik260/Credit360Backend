@@ -567,26 +567,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         } 
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("offer-letter/refer-back/{applicationId}")]
-        public HttpResponseMessage OfferLetterReferBack([FromBody] ApprovalViewModel entity)
-        {
-            entity.BranchId = (short)token.GetBranchId;
-            entity.companyId = token.GetCompanyId;
-            entity.createdBy = token.GetStaffId;
-            entity.staffId = token.GetStaffId;
-            entity.applicationUrl = HttpContext.Current.Request.Path;
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("offer-letter/refer-back/{applicationId}")]
+        //public HttpResponseMessage OfferLetterReferBack([FromBody] ApprovalViewModel entity)
+        //{
+        //    entity.BranchId = (short)token.GetBranchId;
+        //    entity.companyId = token.GetCompanyId;
+        //    entity.createdBy = token.GetStaffId;
+        //    entity.staffId = token.GetStaffId;
+        //    entity.applicationUrl = HttpContext.Current.Request.Path;
 
-            bool response = repo.OfferLetterReferBack(entity);
+        //    bool response = repo.OfferLetterReferBack(entity);
 
-            if (response == true)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            }
+        //    if (response == true)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+        //    }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-        }
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        //}
 
         [HttpGet]
         [ClaimsAuthorization]
