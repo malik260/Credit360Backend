@@ -481,6 +481,18 @@ namespace FintrakBanking.Repositories.Setups.General
                     feeTypeId= c.feeTypeId
                 });
         }
+        
+        public IEnumerable<dynamic> GetSavedFee(int loanApplicationDetailId)
+        {
+            var savedFees = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == loanApplicationDetailId && f.DELETED == false).ToList();
+            return savedFees.Select(c => new
+            {
+                feeId = c.CHARGEFEEID,
+                feeName = c.TBL_CHARGE_FEE.CHARGEFEENAME,
+                rate = c.RECOMMENDED_FEERATEVALUE,
+                feeTypeId = c.TBL_CHARGE_FEE.FEETYPEID
+            });
+        }
 
     }
 }

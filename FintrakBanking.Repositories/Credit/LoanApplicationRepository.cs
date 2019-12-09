@@ -1859,7 +1859,7 @@ namespace FintrakBanking.Repositories.Credit
                         e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         e.tenor = int.Parse(e.tenorString);
                         e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
-                        e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
+                        e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
                         //e.bookingDate = e.bookingDateString;
                         //e.maturityDate = DateTime.Parse(e.maturityDateString);
                         //e.productId = int.Parse(e.productIdString);
@@ -2700,6 +2700,14 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Please select a repayment pattern for the product "+update.productName);
             }
 
+            if (update.productFees != null)
+            {
+                if (update.productFees.Count > 0)
+                {
+                    UpdateLoanDetailFees(update.productFees, loan.loanApplicationDetailId, detail.CREATEDBY);
+                }
+            }
+
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
@@ -2753,6 +2761,12 @@ namespace FintrakBanking.Repositories.Credit
                 bond.CASAACCOUNTID = bondUpdate.casaAccountId;
                 bond.REFERENCENO = bondUpdate.referenceNo;
             }
+
+           
+            //else
+            //{
+            //    throw new SecureException("No fee is defined for this product(s)");
+            //}
 
             //if (productClassId == (int)ProductClassEnum.FirstEdu)
             //{
@@ -2894,6 +2908,81 @@ namespace FintrakBanking.Repositories.Credit
             //}
 
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
+        }
+
+        public bool ValidateDuplicateLoanApplication(LoanApplicationViewModel loan)
+        {
+            var createdBy = loan.createdBy;
+            var a = loan.LoanApplicationDetail.FirstOrDefault();
+
+            if (a.repaymentScheduleId <= 0)
+            {
+                throw new SecureException("Please select a repayment pattern");
+            }
+
+            if (a.proposedTenor == 0)
+            {
+                throw new SecureException("Tenor can not be ZERO (0)");
+            }
+            int applicationId = this.loanData == null ? 0 : this.loanData.LOANAPPLICATIONID; // ?
+            int tenor = ConvertTenorToDays(a.proposedTenor, a.tenorModeId);
+
+            var data = new TBL_LOAN_APPLICATION_DETAIL
+            {
+                APPROVEDAMOUNT = a.proposedAmount,
+                APPROVEDINTERESTRATE = (double)a.proposedInterestRate,
+                APPROVEDPRODUCTID = a.proposedProductId,
+                APPROVEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+
+                EXCHANGERATE = a.exchangeRate,
+                CURRENCYID = a.currencyId,
+                CUSTOMERID = a.customerId,
+                LOANAPPLICATIONID = applicationId,
+                STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
+
+                EQUITYCASAACCOUNTID = a.equityCasaAccountId,
+                EQUITYAMOUNT = a.equityAmount,
+
+                PROPOSEDAMOUNT = a.proposedAmount,
+                PROPOSEDINTERESTRATE = (int)a.proposedInterestRate,
+                PROPOSEDPRODUCTID = a.proposedProductId,
+                PROPOSEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                DELETED = false,
+                SUBSECTORID = a.subSectorId,
+                CREATEDBY = createdBy,
+                DATETIMECREATED = DateTime.Now,
+                LOANPURPOSE = a.loanPurpose,
+                CASAACCOUNTID = a.casaAccountId,
+                OPERATINGCASAACCOUNTID = a.operatingCasaAccountId,
+                REPAYMENTSCHEDULEID = a.repaymentScheduleId,
+                REPAYMENTTERMS = a.repaymentTerm,
+                CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
+                CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
+                CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
+                CRMS_ECCI_NUMBER = a.crms_ECCI_Number,
+                FIELD1 = a.fieldOne,
+                FIELD2 = a.fieldTwo,
+                FIELD3 = a.fieldThree,
+                PRODUCTPRICEINDEXID = a.productPriceIndexId,
+                PRODUCTPRICEINDEXRATE = a.productPriceIndexRate,
+                TENORFREQUENCYTYPEID = a.tenorModeId,
+                CRMSVALIDATED = false,
+                ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
+                //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
+            };
+
+            
+            var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
+                    && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
+                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
+
+            return loanExist;
+            //if (loanExist == true)
+            //{
+            //    return true;
+            //}
+
+            //return false;
         }
 
         private RacReturnInfoViewModel AddLoanApplicationDetail(LoanApplicationViewModel loan)//List<LoanApplicationDetailViewModel> entity, int createdBy)
@@ -3127,7 +3216,7 @@ namespace FintrakBanking.Repositories.Credit
             return fields;
         }
 
-        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
+        private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationDetailId, int createdBy)
         {
             var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
             {
@@ -3145,13 +3234,18 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public bool UpdateLoanDetailFees(ProductFeesViewModel fees, int loanApplicationId, int createdBy)
+        public bool UpdateLoanDetailFees(List<ProductFeesViewModel> fees, int loanApplicationDetailId, int createdBy)
         {
-            var data = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(c => c.LOANCHARGEFEEID == fees.loanChargeFeeId).FirstOrDefault();
 
-            data.RECOMMENDED_FEERATEVALUE = fees.rate;
-            data.HASCONSESSION = fees.hasConsession;
-            data.CONSESSIONREASON = fees.consessionReason;
+            foreach (var fee in fees)
+            {
+                var savedFee = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(c => c.LOANAPPLICATIONDETAILID == loanApplicationDetailId && c.CHARGEFEEID == fee.feeId);
+                if (savedFee != null)
+                {
+                    savedFee.RECOMMENDED_FEERATEVALUE = fee.rate;
+                }
+            }
+           
             return context.SaveChanges() > 0;
         }
 
@@ -5487,94 +5581,99 @@ namespace FintrakBanking.Repositories.Credit
             return result.Distinct();
         }
 
-        public bool SaveCancelledApplcation(LoanApplicationViewModel data)
+        public int SaveCancelledApplcation(LoanApplicationViewModel data)
         {
-            var appl = context.TBL_LOAN_APPLICATION.Find(data.loanApplicationId);
-            var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId(appl.OPERATIONID, data.loanApplicationId, data.companyId, data.createdBy);
-            //var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
-            var ApprovalStaffCount = ApprovalTrail.Where(a => a.requestStaffId != data.createdBy).Count();
-            if (ApprovalStaffCount == 0)
-            {
-                LaonApplcationCancelllationCompelted(data);
 
-                if (context.SaveChanges() > 0)
+            //try
+            //{
+                var appl = context.TBL_LOAN_APPLICATION.Find(data.loanApplicationId);
+                var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId(appl.OPERATIONID, data.loanApplicationId, data.companyId, data.createdBy);
+                //var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
+                var ApprovalStaffCount = ApprovalTrail.Where(a => a.requestStaffId != data.createdBy).Count();
+                if (ApprovalStaffCount == 0)
                 {
-                    return true;
+                    LaonApplcationCancelllationCompelted(data);
+
+                    if (context.SaveChanges() > 0)
+                    {
+                        return 1;
+                    }
+                    return 0;
                 }
-                return false;
-            }
-            var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
-            if (isCancellatuionInProgress == true)
-                throw new ConditionNotMetException(" This Loan is currently under going cancellation process");
+                var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
+                if (isCancellatuionInProgress == true)
+                    throw new ConditionNotMetException(" This Loan is currently under going cancellation process");
 
-            var isCancellatuionCompleted = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted).Any();
-            if (isCancellatuionCompleted == true)
-                throw new ConditionNotMetException(" This Loan has already been cancelled");
+                var isCancellatuionCompleted = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted).Any();
+                if (isCancellatuionCompleted == true)
+                    throw new ConditionNotMetException(" This Loan has already been cancelled");
 
-            var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
-            if (application != null)
-            {
-                var cancelledApplication = new TBL_TEMP_LOAN_APPLTN_CANCELTN
+                var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
+                if (application != null)
                 {
-                    LOANAPPLICATIONID = data.loanApplicationId,
-                    CANCELLATIONREASON = data.cancellationReason,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                    CREATEDBY = data.createdBy,
-                    DATETIMECREATED = genSetup.GetApplicationDate(),
-                    ISCURRENT = true,
-                    APPLICATIONSTATUSID = data.applicationStatusId
-                };
+                    var cancelledApplication = new TBL_TEMP_LOAN_APPLTN_CANCELTN
+                    {
+                        LOANAPPLICATIONID = data.loanApplicationId,
+                        CANCELLATIONREASON = data.cancellationReason,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                        CREATEDBY = data.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        ISCURRENT = true,
+                        APPLICATIONSTATUSID = data.applicationStatusId,
+                        LASTUPDATEDBY = data.createdBy,
+                        DATETIMEUPDATED = genSetup.GetApplicationDate()
+                    };
 
-                context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Add(cancelledApplication);
+                    context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Add(cancelledApplication);
 
-                if (context.SaveChanges() > 0)
-                {
-                    data.tempApplicationCancellationId = cancelledApplication.TEMPAPPLICATIONCANCELLATIONID;
+                    if (context.SaveChanges() > 0)
+                    {
+                        data.tempApplicationCancellationId = cancelledApplication.TEMPAPPLICATIONCANCELLATIONID;
+                    }
+
+                    LaonApplcationCancelllationInPregress(data);
+
+                    //EMAIL TO NOTIFY STACK HOLDERS ON PENDING CANCELLATION
+                    var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                    string messageBoby = $"Dear Team, <br /><br />This is to bring your attention a request for loan application cancellation has been initiated by {staffName} on {data.applicationReferenceNumber} application refernence number. The Loan application is currently under going approval. <br /><br />";
+                    string alertSubject = $"Loan Application Cancellation Approval Notification";
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetLoanApplicationEmailRecipients(data.loanApplicationId));
+
+                    workflow.StaffId = data.createdBy;
+                    workflow.CompanyId = data.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = data.tempApplicationCancellationId;
+                    workflow.Comment = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason}  ";
+                    workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+
+                    //var audit = new TBL_AUDIT
+                    //{
+                    //    AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationCancellation,
+                    //    STAFFID = data.createdBy,
+                    //    BRANCHID = (short)data.userBranchId,
+                    //    DETAIL = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason} ",
+                    //    IPADDRESS = data.userIPAddress,
+                    //    URL = data.applicationUrl,
+                    //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    //    SYSTEMDATETIME = DateTime.Now,
+                    //    TARGETID = application.LOANAPPLICATIONID,
+                    //};
+
+
+                    //this.auditTrail.AddAuditTrail(audit);
                 }
-
-                LaonApplcationCancelllationInPregress(data);
-
-                //EMAIL TO NOTIFY STACK HOLDERS ON PENDING CANCELLATION
-                var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
-                string messageBoby = $"Dear Team, <br /><br />This is to bring your attention a request for loan application cancellation has been initiated by {staffName} on {data.applicationReferenceNumber} application refernence number. The Loan application is currently under going approval. <br /><br />";
-                string alertSubject = $"Loan Application Cancellation Approval Notification";
-                LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetLoanApplicationEmailRecipients(data.loanApplicationId));
-
-                workflow.StaffId = data.createdBy;
-                workflow.CompanyId = data.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = data.tempApplicationCancellationId;
-                workflow.Comment = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason}  ";
-                workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;
-                workflow.DeferredExecution = true;
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
-
-                //var audit = new TBL_AUDIT
-                //{
-                //    AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationCancellation,
-                //    STAFFID = data.createdBy,
-                //    BRANCHID = (short)data.userBranchId,
-                //    DETAIL = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason} ",
-                //    IPADDRESS = data.userIPAddress,
-                //    URL = data.applicationUrl,
-                //    APPLICATIONDATE = genSetup.GetApplicationDate(),
-                //    SYSTEMDATETIME = DateTime.Now,
-                //    TARGETID = application.LOANAPPLICATIONID,
-                //};
-
-
-                //this.auditTrail.AddAuditTrail(audit);
-            }
 
 
 
 
             if (context.SaveChanges() > 0)
             {
-                return true;
+                return 2;
             }
-            return false;
+            return 0;
         }
         public List<LoanApplicationViewModel> GetAllRequestsForLoanCancellation(int staffId)
         {

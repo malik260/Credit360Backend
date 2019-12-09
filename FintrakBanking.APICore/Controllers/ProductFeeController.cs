@@ -48,7 +48,30 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("fee/saved-Facility/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetSavedFee(int loanApplicationDetailId)
+        {
+            try
+            {
+                var data = repo.GetSavedFee(loanApplicationDetailId);
+                if (data.Count() == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product-fee/all/{productId}")]
         public HttpResponseMessage GetFeeByProduct(int productId)
         {
