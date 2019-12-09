@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "money")]
         public decimal AMOUNT { get; set; }
 
-        public string VALUE { get; set; }
+        public string TEXTVALUE { get; set; }
 
         public int CREATEDBY { get; set; }
 

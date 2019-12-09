@@ -2165,7 +2165,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.tax_rate = "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
-            loanCreationModel.app_user_id = "FINTRAKUSR"; //staff.STAFFCODE;
+            loanCreationModel.app_user_id = "FINTRAKUSER"; //"FINTRAKUSR";
             loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
             loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");

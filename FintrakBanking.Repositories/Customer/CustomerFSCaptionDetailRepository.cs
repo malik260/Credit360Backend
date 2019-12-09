@@ -72,10 +72,10 @@ namespace FintrakBanking.Repositories.Customer
                     DELETED = false,
                     CREATEDBY = entity.createdBy,
                     DATETIMECREATED = _genSetup.GetApplicationDate(),
-                    VALUE = entity.value
+                    TEXTVALUE = entity.textValue
                 };
 
-                if (entity.value != null) {
+                if (entity.textValue != "") {
                     data.AMOUNT = 0;
                 }
 
