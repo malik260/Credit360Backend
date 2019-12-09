@@ -1910,7 +1910,8 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var proposedAmountForLLL = d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE;
+                    var LLLImpact = (100 / 100) * proposedAmountForLLL;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
 
@@ -2747,12 +2748,12 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b><h2>End Date</h2></b></th>
                     </tr>
                 ";
-            if (directExposures.Count > 0 || overdraftExposures.Count > 0)
+            if (loanExposures.Count > 0 || overdraftExposures.Count > 0)
             {
                 result = result + $@"<tr><td>Direct Facilities:</td></tr>";
-                if (directExposures.Count > 0)
+                if (loanExposures.Count > 0)
                 {
-                    var customers = directExposures.GroupBy(e => e.customerCode);
+                    var customers = loanExposures.GroupBy(e => e.customerCode);
                     foreach (var cust in customers)
                     {
                         var directsGroup = cust.GroupBy(f => f.productCode.Trim());
