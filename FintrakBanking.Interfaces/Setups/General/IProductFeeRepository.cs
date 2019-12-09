@@ -34,5 +34,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool DoesProductFeeExist(int productFeeId);
 
         IEnumerable<dynamic> GetFeesByProductId(int productId);
+        IEnumerable<dynamic> GetSavedFee(int loanApplicationDetailId);
     }
 }
