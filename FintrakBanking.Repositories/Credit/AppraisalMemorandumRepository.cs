@@ -2301,7 +2301,6 @@ namespace FintrakBanking.Repositories.Credit
             var loggedOnStaff = context.TBL_STAFF.Find(staffId );
             var loggedOnStaffForReleive = context.TBL_STAFF.Where(x => staffs.Contains(x.STAFFID)).ToList();
 
-
             var staffProfile = (from r in context.TBL_STAFF_ROLE join f in context.TBL_STAFF on r.STAFFROLEID equals f.STAFFROLEID where (staffs.Contains(f.STAFFID)) select r);
 
             query = context.TBL_LOAN_APPLICATION.Where(x =>

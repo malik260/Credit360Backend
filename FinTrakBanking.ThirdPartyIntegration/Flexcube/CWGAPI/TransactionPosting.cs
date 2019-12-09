@@ -913,7 +913,7 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
 
-                    //model.account_no = "0768140952";
+                    //model.account_no = "0001713178";
                     //model.amount_financed = "1000";
                     response = client.PostAsync(apiUrl, new StringContent(
                                                     new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
@@ -925,12 +925,21 @@
 
                     if (response.IsSuccessStatusCode)
                     {
-                        responseApi = await response.Content.ReadAsAsync<ResponseMessageLoanCreationViewModel>();
+                        //responseApi = await response.Content.ReadAsAsync<ResponseMessageLoanCreationViewModel>();
+
+                        string responseData = await response.Content.ReadAsStringAsync();
+                        var responseDataArray = responseData.Split(new[] { "</NS1:CREATEACCOUNT_FSFS_REQ>" }, StringSplitOptions.None);
+
+                        if (responseDataArray.Count() > 1) {
+                            responseData = responseDataArray[1];
+                        }
+
+                        responseApi = JsonConvert.DeserializeObject<ResponseMessageLoanCreationViewModel>(responseData);
 
                         var res = new ResponseMessageViewModel
                         {
                             //message = responseApi.response_desc,
-                            message = responseApi.bo_message,
+                            message = responseApi.bo_message != null ? responseApi.bo_message : responseApi.response_message,
                             responseCode = responseApi.response_code,
                             responseStatus = responseApi.response_code == "00" ? true : false,
                             APIMessage = response,

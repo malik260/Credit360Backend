@@ -803,7 +803,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (product.TBL_PRODUCT_CLASS.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
                     {
                         var staffCode = context.TBL_STAFF.Find(model.createdBy).STAFFCODE;
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
+                       // CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
                     }
 
                     context.SaveChanges();
@@ -1042,7 +1042,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                     var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
-                    CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
+                    //CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                     context.SaveChanges();
 
@@ -1418,7 +1418,7 @@ namespace FintrakBanking.Repositories.Credit
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
 
                         var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility, staffCode, staffCode);
+                       // CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility, staffCode, staffCode);
 
                         //if (!entity.feeOverride) PostLoanFees(entity);
                         context.SaveChanges();
@@ -1694,7 +1694,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (!entity.feeOverride) PostLoanFees(entity);
 
                         var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
-                        CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
+                        //CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, loan.LOANSYSTEMTYPEID, staffCode, staffCode);
 
                         context.SaveChanges();
 
@@ -2146,11 +2146,21 @@ namespace FintrakBanking.Repositories.Credit
                                   where b.LOANREFERENCENUMBER == loanReffernceNumber
                                   select r).FirstOrDefault();
 
+            /// To be made more dynamic 
             var fee = from lf in context.TBL_LOAN_FEE
                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
-                      join l in context.TBL_LOAN on lf.LOANID equals l.TERMLOANID
-                      where l.LOANREFERENCENUMBER == loanReffernceNumber
-                      select new { feeShortName = f.SHORTNAME, feeRate = f.RATE };
+                      join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
+                      where l.LOANREFERENCENUMBER == loanReffernceNumber 
+                      && ( lf.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility)
+                      select new {chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = f.RATE };
+
+            var test = fee.ToList();
+            var chargefeeIds = fee.Select(x => x.chargeFeeId).ToList();
+
+            var feeVat = (from d in context.TBL_CHARGE_FEE_DETAIL
+                         where chargefeeIds.Contains(d.CHARGEFEEID)
+                         && d.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax
+                         select d).FirstOrDefault();
 
             var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == model.createdBy).FirstOrDefault().STAFFCODE;
 
@@ -2162,10 +2172,10 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.product_desc = product.PRODUCTNAME;
             loanCreationModel.source = "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
-            loanCreationModel.tax_rate = "0";
+            loanCreationModel.tax_rate = feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
-            loanCreationModel.app_user_id = "FINTRAKUSR"; //staff.STAFFCODE;
+            loanCreationModel.app_user_id = "FINTRAKUSER"; //"FINTRAKUSR";
             loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
             loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");
@@ -2174,18 +2184,18 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.no_of_financials = "11";
             loanCreationModel.due_dateson = "4";
             loanCreationModel.inst_date = model.bookingDate.AddMonths(1).ToString("yyyy-MM-dd");
-            loanCreationModel.advisory_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault()?.feeRate) ?? "0";  //"0";
-            loanCreationModel.anniversary_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault()?.feeRate) ?? "0";  //"0";
-            loanCreationModel.appraisal_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault()?.feeRate) ?? "0";  //"0";
-            loanCreationModel.committment_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault()?.feeRate) ?? "0"; //"0";
-            loanCreationModel.creditlife_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault()?.feeRate) ?? "0";  //"0";
-            loanCreationModel.in_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault()?.feeRate) ?? "0";  //"0";
-            loanCreationModel.mgt_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault()?.feeRate) ?? "0";  //"0";
-            loanCreationModel.penal_charge = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault()?.feeRate) ?? "1";  //"1";
-            loanCreationModel.prn_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault()?.feeRate) ?? "0";  //"0";
-            loanCreationModel.processing_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault()?.feeRate) ?? "0";  //"0";
-            loanCreationModel.renann_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault()?.feeRate) ?? "0";  //"0";
-            loanCreationModel.vehicle_ins = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault()?.feeRate) ?? "0";  //"0";
+            loanCreationModel.advisory_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.anniversary_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.appraisal_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.committment_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault().feeRate.ToString() : "0"); //"0";
+            loanCreationModel.creditlife_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.in_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.mgt_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.penal_charge = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault().feeRate.ToString() : "1");  //"1";
+            loanCreationModel.prn_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.processing_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.renann_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.vehicle_ins = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault().feeRate.ToString() : "0");  //"0";
             loanCreationModel.vehicle_value = "0";
             loanCreationModel.crms_ref_number = loanLoanRequest.CRMSCODE; // "00044/20150613/356687"; //loanLoanRequest
             loanCreationModel.comp_mis8 = "596912";
@@ -2615,8 +2625,8 @@ namespace FintrakBanking.Repositories.Credit
 
             List<CamProcessedLoanViewModel> data = new List<CamProcessedLoanViewModel>();
 
-            try
-            {
+            //try
+            //{
                 data = (from req in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on req.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
@@ -2750,12 +2760,12 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                 }
-            }
-            catch (Exception ex)
-            {
+            //}
+            //catch (Exception ex)
+            //{
 
-                throw;
-            }
+            //    throw;
+            //}
 
 
             return data.ToList();
@@ -9028,7 +9038,7 @@ namespace FintrakBanking.Repositories.Credit
                         e.maturityDate = e.maturityDate.Date;
                         //e.productId = int.Parse(e.productIdString);
                         e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
-                        e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
+                        e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
                     }
                     exposures.AddRange(exposure);
                 }
