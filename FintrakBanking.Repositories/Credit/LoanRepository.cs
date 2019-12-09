@@ -2146,11 +2146,21 @@ namespace FintrakBanking.Repositories.Credit
                                   where b.LOANREFERENCENUMBER == loanReffernceNumber
                                   select r).FirstOrDefault();
 
+            /// To be made more dynamic 
             var fee = from lf in context.TBL_LOAN_FEE
                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
-                      join l in context.TBL_LOAN on lf.LOANID equals l.TERMLOANID
-                      where l.LOANREFERENCENUMBER == loanReffernceNumber
-                      select new { feeShortName = f.SHORTNAME, feeRate = f.RATE };
+                      join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
+                      where l.LOANREFERENCENUMBER == loanReffernceNumber 
+                      && ( lf.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility)
+                      select new {chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = f.RATE };
+
+            var test = fee.ToList();
+            var chargefeeIds = fee.Select(x => x.chargeFeeId).ToList();
+
+            var feeVat = (from d in context.TBL_CHARGE_FEE_DETAIL
+                         where chargefeeIds.Contains(d.CHARGEFEEID)
+                         && d.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax
+                         select d).FirstOrDefault();
 
             var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == model.createdBy).FirstOrDefault().STAFFCODE;
 
@@ -2162,7 +2172,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.product_desc = product.PRODUCTNAME;
             loanCreationModel.source = "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
-            loanCreationModel.tax_rate = "0";
+            loanCreationModel.tax_rate = feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "5";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
             loanCreationModel.app_user_id = "FINTRAKUSR"; //staff.STAFFCODE;
