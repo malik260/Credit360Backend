@@ -64,15 +64,20 @@ namespace FintrakBanking.Repositories.Customer
             else
             {
                 var data = new TBL_CUSTOMER_FS_CAPTION_DETAIL
-            {
-                CUSTOMERID = entity.customerId,
-                FSCAPTIONID = entity.fsCaptionId,
-                FSDATE = entity.fsDate,
-                AMOUNT = entity.amount,
-                DELETED = false,
-                CREATEDBY = entity.createdBy,
-                DATETIMECREATED = _genSetup.GetApplicationDate()
-            };
+                {
+                    CUSTOMERID = entity.customerId,
+                    FSCAPTIONID = entity.fsCaptionId,
+                    FSDATE = entity.fsDate,
+                    AMOUNT = entity.amount,
+                    DELETED = false,
+                    CREATEDBY = entity.createdBy,
+                    DATETIMECREATED = _genSetup.GetApplicationDate(),
+                    VALUE = entity.value
+                };
+
+                if (entity.value != null) {
+                    data.AMOUNT = 0;
+                }
 
             context.TBL_CUSTOMER_FS_CAPTION_DETAIL.Add(data);
 
