@@ -138,6 +138,7 @@ namespace FintrakBanking.Repositories.Credit
             public IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId)
         {
             var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();
+            var staffs = _general.GetStaffRlieved(staffId);
 
             var record = from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
                          join oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL on dr.ORIGINALDOCUMENTAPPROVALID equals oda.ORIGINALDOCUMENTAPPROVALID
@@ -148,6 +149,7 @@ namespace FintrakBanking.Repositories.Credit
                          where dr.DELETED == false && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                          && atrail.RESPONSESTAFFID == null
                          && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
+                         && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                          && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
                          select new OriginalDocumentReleaseViewModel
                          {

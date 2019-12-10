@@ -42,6 +42,8 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentApprovals(int staffId)
         {
+            var staffs = general.GetStaffRlieved(staffId);
+
             var data = new List<OriginalDocumentApprovalViewModel>();
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OriginalDocumentApproval).ToList();
 
@@ -54,6 +56,7 @@ namespace FintrakBanking.Repositories.Media
                     where x.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                      && atrail.RESPONSESTAFFID == null
                       && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
+                      && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                      && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
 
                     select new OriginalDocumentApprovalViewModel

@@ -25,6 +25,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ForwardViewModel : GeneralEntity
     {
+        public int? destinationOperationId { get; set; }
+
+        public bool isFlowTest { get; set; }
         public int forwardAction { get; set; } // statusId
         public int applicationId { get; set; } // targetId
         public int appraisalMemorandumId { get; set; }
@@ -236,6 +239,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int tenor { get; set; }
         public bool investmentGrade { get; set; }
         public bool politicallyExposed { get; set; }
+        public bool isFlowTest { get; set; }
         public List<CurrentCommitteeViewModel> votes { get; set; }
     }
 
