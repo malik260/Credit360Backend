@@ -3046,7 +3046,8 @@ namespace FintrakBanking.Repositories.Credit
             exposures = this.globalExposure;
             if (isForGFS)
             {
-                var custCode = context.TBL_CUSTOMER.Find(customerId).CUSTOMERCODE;
+                //var custCode = context.TBL_CUSTOMER.Find(customerId).CUSTOMERCODE;
+                var custCode = context.TBL_CUSTOMER.Find(loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID).CUSTOMERCODE;
                 var exposure = exposures.Where(e => e.customerCode == custCode).ToList();
                 return exposure;
             }
