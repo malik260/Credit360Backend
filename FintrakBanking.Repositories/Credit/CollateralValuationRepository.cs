@@ -493,6 +493,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<ValuationPrerequisiteViewModel> GetCollateralValuationRequestWaitingForApproval(int staffId)
         {
             var ids = _general.GetStaffApprovalLevelIds(staffId, (int) OperationsEnum.CollateralValuationRequest).ToList();
+            var staffs = _general.GetStaffRlieved(staffId);
             //_context.Configuration.ProxyCreationEnabled = false;
 
             var res = (from valPre in _context.TBL_COLLATERAL_VALUATION_PRE
@@ -504,6 +505,7 @@ namespace FintrakBanking.Repositories.Credit
                        where atrail.RESPONSESTAFFID == null
                         && atrail.LOOPEDSTAFFID == null
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                        && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                         && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest
                        orderby valPre.VALUATIONPREREQUISITEID descending
                        select new ValuationPrerequisiteViewModel
