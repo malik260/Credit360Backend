@@ -167,22 +167,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
 
 
-            //if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
-            //    { this.destinationOperationId = this.request.DESTINATIONOPERATIONID ?? this.operationId; }
-
-            //if (this.request?.DESTINATIONOPERATIONID != null && request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
-            //    { this.operationId = this.request.DESTINATIONOPERATIONID ?? this.operationId; }
-
             if (request == null)
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
 
-               // if(this.statusId != (int)ApprovalStatusEnum.Referred) { this.destinationOperationId = this.operationId;  }
             }
             else
             {
-                //this.destinationOperationId = request.DESTINATIONOPERATIONID;
                 this.currentStateId = request.APPROVALSTATEID;
                 this.requestStaffId = request.REQUESTSTAFFID;
                 this.fromLevelId = request.TOAPPROVALLEVELID;
@@ -941,7 +933,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool WithinAllLimits()
         {
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
-            if (level == null) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
+            if (level == null ) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
             if (this.disputed == true && level.CANRESOLVEDISPUTE != true) { return false; }
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true

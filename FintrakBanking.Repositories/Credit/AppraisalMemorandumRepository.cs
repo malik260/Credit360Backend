@@ -350,6 +350,48 @@ namespace FintrakBanking.Repositories.Credit
                 ValidateCustomerExposure(1, appl.LOANAPPLICATIONID, totalApprovedAmount, appl.CUSTOMERID, appl.CUSTOMERGROUPID);
             }
 
+
+            if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+            {
+                var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                    x.OPERATIONID == (int)appl.OPERATIONID
+                    && x.RESPONSESTAFFID == null
+                    && x.DESTINATIONOPERATIONID > 0
+                    && x.TARGETID == appl.LOANAPPLICATIONID
+                );
+                if (currentTrail != null)
+                {
+
+                    currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                    currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    currentTrail.COMMENT = model.comment;
+                    currentTrail.RESPONSESTAFFID = model.createdBy;
+                    currentTrail.RESPONSEDATE = DateTime.Now;
+
+                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+                    //workflow.SetResponse = false;
+                    //workflow.ExternalInitialization = true;
+                    //workflow.StaffId = model.staffId;
+                   
+                    //workflow.NextLevelId = currentTrail.FROMAPPROVALLEVELID;
+
+                    workflow.StaffId = model.staffId;
+                    workflow.OperationId = (short)currentTrail.DESTINATIONOPERATIONID;
+                    workflow.TargetId = model.applicationId;
+                    workflow.CompanyId = model.companyId;
+                    workflow.Comment = model.comment;
+                    workflow.ExternalInitialization = true;
+                    workflow.ToStaffId = currentTrail.REQUESTSTAFFID;
+                    workflow.StatusId = (short)ApprovalStatusEnum.Pending;
+                    workflow.Amount = model.amount;
+                    workflow.LogActivity();
+                    //workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
+                    context.SaveChanges();
+                    return workflow.Response;
+                }
+
+
+            }
             // WORKFLOW
             //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
             workflow.OperationId = appl.OPERATIONID;
@@ -425,34 +467,7 @@ namespace FintrakBanking.Repositories.Credit
             //}
             workflow.DeferredExecution = true;
 
-            if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred )
-            {
-                var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                    x.OPERATIONID == (int)appl.OPERATIONID
-                    && x.RESPONSESTAFFID == null
-                    && x.DESTINATIONOPERATIONID > 0
-                    && x.TARGETID == appl.LOANAPPLICATIONID
-                );
-                if (currentTrail != null)
-                {
-
-                    currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
-                    currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                    currentTrail.COMMENT = model.comment;
-                    currentTrail.RESPONSESTAFFID = model.createdBy;
-                    currentTrail.RESPONSEDATE = DateTime.Now;
-
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                    workflow.SetResponse = false;
-                    workflow.ExternalInitialization = true;
-                    
-                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
-                    context.SaveChanges();
-                    return workflow.Response;
-                }
-
-               
-            }
+           
            
             workflow.LogActivity();
 
