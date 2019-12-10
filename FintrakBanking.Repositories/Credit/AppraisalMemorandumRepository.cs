@@ -386,7 +386,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.Amount = model.amount;
                     workflow.LogActivity();
                     //workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
-                    context.SaveChanges();
+                    if(model.isFlowTest == false)context.SaveChanges();
                     return workflow.Response;
                 }
 
