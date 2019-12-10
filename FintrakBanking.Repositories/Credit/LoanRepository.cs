@@ -2175,7 +2175,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.tax_rate = feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
-            loanCreationModel.app_user_id = "FINTRAKUSR"; //staff.STAFFCODE;
+            loanCreationModel.app_user_id = "FINTRAKUSER"; //"FINTRAKUSR";
             loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
             loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");
@@ -13728,9 +13728,10 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = model.operationId;
             workflow.TargetId = model.targetId;
             workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = null;
-            workflow.ProductId = null;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
             workflow.NextLevelId = model.approvalLevelId;
+            
             //workflow.ToStaffId = staffId;
             //workflow.ToStaffId = model.loopedStaffId;
             workflow.LoopedStaffId = model.loopedStaffId;
