@@ -116,7 +116,7 @@ namespace FintrakBanking.Repositories.Media
             })
             .OrderBy(x => x.dateTimeCreated)
             .ThenBy(x => x.documentCategoryId)
-            .ThenBy(x => x.documentTypeId)
+            .ThenBy(x => x.documentTypeId)?
             .ToList();
 
             var customerCreditBureau = (from ccb in context.TBL_CUSTOMER_CREDIT_BUREAU
@@ -129,14 +129,10 @@ namespace FintrakBanking.Repositories.Media
                            where app.LOANAPPLICATIONID == targetId
                            select x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault();
           
-            var secondQuery = (//from c in context.TBL_CUSTOMER
-                               //join d in context.TBL_CUSTOMER_CREDIT_BUREAU on c.CUSTOMERID equals d.CUSTOMERID
-                               from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
+            var secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
                                where customerCreditBureau.Contains(d.CUSTOMERCREDITBUREAUID)  
                                select new DocumentUploadViewModel
                                {
-                                   // documentId = c.DOCUMENTID,
-                                   // customerCreditBureauId = d.CUSTOMERCREDITBUREAUID,
                                    documentUploadId = d.DOCUMENTID,
                                    documentTypeName = "CREDIT BUREAU",
                                    documentCategoryName = "CREDIT BUREAU",
@@ -147,7 +143,7 @@ namespace FintrakBanking.Repositories.Media
                                    fileExtension = d.FILEEXTENSION,
                                    fileData = d.FILEDATA,
                                    //fileSize = d.fileSize,
-                               }).ToList();
+                               })?.ToList();
 
             var output = firstQuery.Union(secondQuery);
 
