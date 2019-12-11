@@ -678,6 +678,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public int appraisalOperationId;
+
         public int appraiselOperationId { get; set; }
 
         public string crmsCode { get; set; }
@@ -838,7 +840,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? capRegionId { get; set; }
-
 
         //......End f Loan Relational Table View Mapping Models......//
     }
