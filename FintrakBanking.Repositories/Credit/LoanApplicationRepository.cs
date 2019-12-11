@@ -6067,6 +6067,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = (short?)b.TBL_PRODUCT.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             customerTypeId = b.TBL_CUSTOMER.CUSTOMERTYPEID,
+                            loanDetailReviewTypeId = b.LOANDETAILREVIEWTYPEID,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
                             customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
@@ -6961,5 +6962,16 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
+        public IEnumerable<LoanDetailReviewTypeViewModel> GetAllLoanDetailReviewTypes()
+        {
+            var reviewTypes = (from x in context.TBL_LOAN_DETAIL_REVIEW_TYPE
+                                select new LoanDetailReviewTypeViewModel
+                                {
+                                    loanDetailReviewTypeId = x.LOANDETAILREVIEWTYPEID,
+                                    loanDetailReviewTypeName = x.LOANDETAILREVIEWTYPENAME,
+                                }).ToList();
+
+            return reviewTypes;
+        }
     }
 }

@@ -120,6 +120,8 @@ namespace FintrakBanking.Entities.SQLServerModel
         public DateTime? DATETIMEDELETED { get; set; }
 
         public short? RISKRATINGID { get; set; }
+        [ForeignKey("TBL_LOAN_DETAIL_REVIEW_TYPE")]
+        public int LOANDETAILREVIEWTYPEID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

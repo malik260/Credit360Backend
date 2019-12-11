@@ -2044,5 +2044,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "Lien has been unproposed successfully" });
         }
         #endregion LIEN
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-review-type")]
+        public HttpResponseMessage GetAllLoanDetailReviewTypes()
+        {
+            IEnumerable<LoanDetailReviewTypeViewModel> response = repo.GetAllLoanDetailReviewTypes();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
     }
 }
