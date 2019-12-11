@@ -8894,8 +8894,9 @@ namespace FintrakBanking.Repositories.Credit
             List<LoanCAMSOLViewModel> camsol = new List<LoanCAMSOLViewModel>();
             if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
             {
+                var customerGroupId = customer.FirstOrDefault().customerId;
                 var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
-                                           where a.CUSTOMERGROUPID == customer.FirstOrDefault().customerId && a.DELETED == false
+                                           where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
                                            select new CustomerGroupMappingViewModel
                                            {
                                                customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
@@ -13728,9 +13729,10 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = model.operationId;
             workflow.TargetId = model.targetId;
             workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = null;
-            workflow.ProductId = null;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
             workflow.NextLevelId = model.approvalLevelId;
+            
             //workflow.ToStaffId = staffId;
             //workflow.ToStaffId = model.loopedStaffId;
             workflow.LoopedStaffId = model.loopedStaffId;
