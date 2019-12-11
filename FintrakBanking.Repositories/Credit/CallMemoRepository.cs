@@ -561,6 +561,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CallMemoViewModel> GetCallMemoWaitingForApproval(int staffId)
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int) OperationsEnum.CallMemo).ToList();
+            var staffs = _genSetup.GetStaffRlieved(staffId);
 
             var data = (from a in _context.TBL_CALL_MEMO
                         //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -568,7 +569,8 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in _context.TBL_APPROVAL_TRAIL on a.CALLMEMOID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing 
                         && atrail.RESPONSESTAFFID == null
-                        && ids.Contains((int) atrail.TOAPPROVALLEVELID) 
+                        && ids.Contains((int) atrail.TOAPPROVALLEVELID)
+                        && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                         && atrail.OPERATIONID == (int) OperationsEnum.CallMemo
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel

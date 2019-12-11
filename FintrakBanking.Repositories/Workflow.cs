@@ -855,6 +855,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void CheckApprovalLimits()
         {
+            if (this.statusId == (short)ApprovalStatusEnum.Referred) { return; }
             // allow business to drop process unconditionally 
             if (this.statusId == (int)ApprovalStatusEnum.Disapproved && GroupRole() == (int)ApprovalGroupEnum.Business) // for optimization the more expensive conditions are placed last. GroupRole() may not be called
             {
@@ -865,6 +866,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
             if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision())
             {
+                
                 if (WithinAllLimits() == true)
                 {
                     this.EndProcess(this.statusId);
