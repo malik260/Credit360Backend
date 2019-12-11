@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.LoanRepaymen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.MonitoringMessageLogger", "FintrakBanking.MonitoringMessageLogger\FintrakBanking.MonitoringMessageLogger.csproj", "{CEF982E6-22ED-4DEF-840F-358D3D177E8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.APIMobile", "FintrakBanking.APIMobile\FintrakBanking.APIMobile.csproj", "{8F511C42-C728-4803-A407-586050B43828}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -245,6 +247,18 @@ Global
 		{CEF982E6-22ED-4DEF-840F-358D3D177E8F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEF982E6-22ED-4DEF-840F-358D3D177E8F}.Release|x86.ActiveCfg = Release|Any CPU
 		{CEF982E6-22ED-4DEF-840F-358D3D177E8F}.Release|x86.Build.0 = Release|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.Debug|x86.Build.0 = Debug|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.DebugLocal|x86.ActiveCfg = Debug|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.DebugLocal|x86.Build.0 = Debug|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.Release|x86.ActiveCfg = Release|Any CPU
+		{8F511C42-C728-4803-A407-586050B43828}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -265,6 +279,7 @@ Global
 		{974DA792-AAE4-4415-BA86-A4C22F0680EF} = {B93C09B6-CCD8-4C8D-8FF5-7B1A6CEB4694}
 		{BFAEEB68-C7AC-4B1D-A5B4-119516641323} = {B93C09B6-CCD8-4C8D-8FF5-7B1A6CEB4694}
 		{CEF982E6-22ED-4DEF-840F-358D3D177E8F} = {B93C09B6-CCD8-4C8D-8FF5-7B1A6CEB4694}
+		{8F511C42-C728-4803-A407-586050B43828} = {FFFC697E-F2BE-4D13-BA78-96985F3549EB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0FBE970E-7E0B-4494-8ECA-E322C2AD8272}
