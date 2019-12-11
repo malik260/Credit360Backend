@@ -67,6 +67,7 @@ namespace FintrakBanking.Repositories.Credit
         TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
         TBL_LMSR_APPLICATION lmsrApplication = null;
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
+        List<CurrentCustomerExposure> globalExposure = new List<CurrentCustomerExposure>();
         int customerId;
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
         private long legalLendingLimit;
@@ -392,6 +393,15 @@ namespace FintrakBanking.Repositories.Credit
                 this.obligorRiskRating = GetCustomerRiskRating();
                 this.obligorClassification = GetObligorClassification();
                 this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
+
+                if (this.loanApplication.TBL_CUSTOMER?.CUSTOMERTYPEID == (int)CustomerTypeEnum.Individual)
+                {
+                    //continue
+                }
+                else
+                {
+                    this.globalExposure = GetGloabalExposures();
+                }
                 //this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();
                 //this.contingentFacilities = GetContingentFacilitiesMarkupLOS();
                 //this.totalContingentFacilities = GetTotalContingentFacilitiesMarkupLOS();
@@ -860,7 +870,7 @@ namespace FintrakBanking.Repositories.Credit
             var totalSummary = GetTotalFacilitiesNGNLOS();
             var totalSummary2 = GetTotalForeignFacilitiesLOS();
             totalSummary.AddRange(totalSummary2);
-            var exposureLLL = (GetTotalGroupExposure().totalLLLImpact - GetTotalGroupExposure(true).totalLLLImpact);
+            var exposureLLL = (GetTotalGroupLendingLimit().totalLLLImpact - GetTotalGroupLendingLimit(true).totalLLLImpact);
             return (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
         }
 
@@ -881,13 +891,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId)
         {
-               //int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
-               //        (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-               //    (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanTrancheBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
-               //        (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
-               //    ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
-
-               var allstaff = this.GetAllStaffNames();
+            var allstaff = this.GetAllStaffNames();
 
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId && x.OPERATIONID == operationId);
 
@@ -922,6 +926,46 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
+
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailDrawdown(int applicationId, int operationId)
+        {
+            var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList();
+            var allstaff = this.GetAllStaffNames();
+
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x=>x.OPERATIONID == operationId && x.FROMAPPROVALLEVELID !=null && bookingIds.Contains(x.TARGETID)).ToList();
+
+            //if (getAll)
+            //{
+            //    trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId);
+            //}
+
+            var data = trail.Select(x => new ApprovalTrailViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                comment = x.COMMENT,
+                vote = x.VOTE,
+                targetId = x.TARGETID,
+                arrivalDate = x.ARRIVALDATE,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
+                approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+            }).ToList();
+
+            return data;
+        }
+
 
         public bool IsLLLViolated()
         {
@@ -960,16 +1004,7 @@ namespace FintrakBanking.Repositories.Credit
         public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
         {
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
-            //var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).OrderBy(O => O.CHARGEFEEID).Select(O => O.CHARGEFEEID)?.ToList();
-            var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).Select(O => O.CHARGEFEEID).ToList();
-            int managementFeeId = chargeFeeIds[0];
-            int processingFeeId = chargeFeeIds[1]; 
-            int commitmentFeeId = chargeFeeIds[2];
-            managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == managementFeeId).FirstOrDefault().VALUE;
-            processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == processingFeeId).FirstOrDefault().VALUE;
-            commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == commitmentFeeId).FirstOrDefault().VALUE;
-
-
+                        
             var result = String.Empty;
             result = result + $@"
                 <table border=1 width=900 cellpadding=15 cellspacing=0>
@@ -995,20 +1030,20 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>DRAWDOWN AMOUNT:</td>
                         <td>{drawdownAmount}</td>
-                        <td>PROCESSING FEE:</td>
-                        <td>{processingFee}</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>TENOR:</td>
                         <td>{approvedTenorString}</td>
-                        <td>MGT FEE:</td>
-                        <td>{managementFee}</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>MORATORIUM:</td>
                         <td>{moratorium}</td>
-                        <td>COMMITMENT FEE:</td>
-                        <td>{commitmentFee}</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>PRINCIPAL REPAYMENT:</td>
@@ -1024,7 +1059,37 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetDrawdownApprovalsMarkupLOS() + GetOtherConditionsHtml();
+            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetDrawdownApprovalsMarkupLOS2(targetId,operationId) + GetOtherConditionsHtml();
+            return result;
+        }
+
+        public string GetFees(int targetId)
+        {
+
+            var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).ToList();
+            var result = String.Empty;
+            int n = 0;
+            result = result + $@"
+                <br />
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                   ";
+            if (chargeFeeIds.Count > 0)
+            {
+                foreach (var e in chargeFeeIds)
+                {
+                    n++;
+                    var name = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().DESCRIPTION;
+                    var value = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().VALUE;
+                    result = result + $@"
+                    < tr>
+                        <td>{n}</td>
+                        <td>{name.ToUpper()}:</td>
+                        <td>{value}</td>
+                    </tr>
+                ";
+                }
+            }
+            result = result + $"</table> <br />";
             return result;
         }
 
@@ -1191,48 +1256,6 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{othersInPlace1}</td>
                         <td>{othersPerfected1}</td>
                         <td>{othersDeferred1}</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td></td>
-                        <td>{othersInPlace2}</td>
-                        <td>{othersPerfected2}</td>
-                        <td>{othersDeferred2}</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td></td>
-                        <td>{othersInPlace3}</td>
-                        <td>{othersPerfected3}</td>
-                        <td>{othersDeferred3}</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td></td>
-                        <td>{othersInPlace4}</td>
-                        <td>{othersPerfected4}</td>
-                        <td>{othersDeferred4}</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td></td>
-                        <td>{othersInPlace5}</td>
-                        <td>{othersPerfected5}</td>
-                        <td>{othersDeferred5}</td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td></td>
-                        <td>{othersInPlace6}</td>
-                        <td>{othersPerfected6}</td>
-                        <td>{othersDeferred6}</td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td></td>
-                        <td>{othersInPlace7}</td>
-                        <td>{othersPerfected7}</td>
-                        <td>{othersDeferred7}</td>
                     </tr>
                  ";
             result = result + $"</table>";
@@ -1532,8 +1555,8 @@ namespace FintrakBanking.Repositories.Credit
             //                                                    && l.EXPOSURETYPECODE.Contains(ExposureTypeEnum.Direct.ToString()) && !l.ADJFACILITYTYPE.Contains("LC") && !l.ADJFACILITYTYPE.Contains("TRADELOAN")).ToList();
 
             directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
-            loanExposures = directExposures.Where(e => e.adjFacilityType != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
-            overdraftExposures = directExposures.Where(e => e.adjFacilityType == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
             
             var details = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && 
                                                                                  d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
@@ -1887,7 +1910,8 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var proposedAmountForLLL = d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE;
+                    var LLLImpact = (100 / 100) * proposedAmountForLLL;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
 
@@ -1972,8 +1996,8 @@ namespace FintrakBanking.Repositories.Credit
             var overdraftExposures = new List<CurrentCustomerExposure>();
             exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("fcy")).ToList();
             directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
-            loanExposures = directExposures.Where(e => e.adjFacilityType != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
-            overdraftExposures = directExposures.Where(e => e.adjFacilityType == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
             var appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN &&
                                                                                  d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
                                                                                  d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
@@ -2334,8 +2358,8 @@ namespace FintrakBanking.Repositories.Credit
                 //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
                 exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("lcy")).ToList();
                 directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
-                loanExposures = directExposures.Where(e => e.adjFacilityType != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
-                overdraftExposures = directExposures.Where(e => e.adjFacilityType == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+                loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+                overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
                 //loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
                 //                                && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
                 //overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
@@ -2351,8 +2375,8 @@ namespace FintrakBanking.Repositories.Credit
                 //                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
                 //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
                 directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
-                loanExposures = directExposures.Where(e => e.adjFacilityType != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
-                overdraftExposures = directExposures.Where(e => e.adjFacilityType == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+                loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+                overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
                 //loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN && l.ISDISBURSED == true
                 //                                && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
                 //overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
@@ -2703,17 +2727,9 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var exposures = new List<CurrentCustomerExposure>();
             exposures = GetExposures();
-            //if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
-            //{
-            //    exposures = GetCurrentSingleCustomerExposures();
-            //}
-            //else
-            //{
-            //    exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
-            //}
-            //if (exposures.Count() <= 0) return null;
-
-            var directs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            var overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
             var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
             var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
             var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
@@ -2732,28 +2748,29 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b><h2>End Date</h2></b></th>
                     </tr>
                 ";
-            if (directs.Count() > 0)
+            if (loanExposures.Count > 0 || overdraftExposures.Count > 0)
             {
                 result = result + $@"<tr><td>Direct Facilities:</td></tr>";
-                var customers = directs.GroupBy(e => e.customerCode);
-                foreach(var cust in customers)
+                if (loanExposures.Count > 0)
                 {
-                    var directsGroup = cust.GroupBy(f => f.productCode.Trim());
-
-                    foreach (var product in directsGroup)
+                    var customers = loanExposures.GroupBy(e => e.customerCode);
+                    foreach (var cust in customers)
                     {
-                        var facility = product.FirstOrDefault().facilityType;
-                        var currency = "Naira";
-                        //var currency = product.currency;
-                        var currentAmount = product.Sum(p => p.outstandings);
-                        var approvedAmount = product.Sum(p => p.approvedAmount);
-                        var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
-                        var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
-                        //var amountForLLL = currentAmountForLLL;
-                        var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
-                        var LLLImpact = amountForLLL;
+                        var directsGroup = cust.GroupBy(f => f.productCode.Trim());
 
-                        result = result + $@"
+                        foreach (var product in directsGroup)
+                        {
+                            var facility = product.FirstOrDefault().facilityType;
+                            var currency = "Naira";
+                            //var currency = product.currency;
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                            var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                            var amountForLLL = currentAmountForLLL;
+                            var LLLImpact = amountForLLL;
+
+                            result = result + $@"
                      <tr>
                         <td>{product.FirstOrDefault().customerName}</td>
                         <td>{facility}</td>
@@ -2762,11 +2779,47 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
                         <td>{currency}</td>
-                        <td>{product.Max(p =>p.maturityDate)}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
                     </tr>
                     ";
+                        }
                     }
                 }
+
+                if (overdraftExposures.Count > 0)
+                {
+                    var customers = overdraftExposures.GroupBy(e => e.customerCode);
+                    foreach (var cust in customers)
+                    {
+                        var overdraftsGroup = cust.GroupBy(f => f.productCode.Trim());
+
+                        foreach (var product in overdraftsGroup)
+                        {
+                            var facility = product.FirstOrDefault().facilityType;
+                            var currency = "Naira";
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                            var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                            var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                            var LLLImpact = amountForLLL;
+
+                            result = result + $@"
+                     <tr>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
+                    </tr>
+                    ";
+                        }
+                    }
+                }
+
             }
 
             if (contingents.Count() > 0)
@@ -2985,6 +3038,20 @@ namespace FintrakBanking.Repositories.Credit
         public List<CurrentCustomerExposure> GetExposures(bool isForGFS = false)
         {
             var exposures = new List<CurrentCustomerExposure>();
+            exposures = this.globalExposure;
+            if (isForGFS)
+            {
+                //var custCode = context.TBL_CUSTOMER.Find(customerId).CUSTOMERCODE;
+                var custCode = context.TBL_CUSTOMER.Find(loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID).CUSTOMERCODE;
+                var exposure = exposures.Where(e => e.customerCode == custCode).ToList();
+                return exposure;
+            }
+            return exposures;
+        }
+
+        private List<CurrentCustomerExposure> GetGloabalExposures()
+        {
+            var exposures = new List<CurrentCustomerExposure>();
             var customerIds = new List<CustomerExposure>();
             int customerId;
             if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
@@ -2992,7 +3059,6 @@ namespace FintrakBanking.Repositories.Credit
                 customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERID });
                 exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
                 customerId = (int)loanApplication.CUSTOMERID;
-                //exposures = GetCurrentSingleCustomerExposures();
             }
             else
             {
@@ -3001,12 +3067,6 @@ namespace FintrakBanking.Repositories.Credit
                 exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
                 customerId = (int)loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
                 //exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
-            }
-            if (isForGFS)
-            {
-                var custCode = context.TBL_CUSTOMER.Find(customerId).CUSTOMERCODE;
-                var exposure = exposures.Where(e => e.customerCode == custCode).ToList();
-                return exposure;
             }
             return exposures;
         }
@@ -3030,7 +3090,7 @@ namespace FintrakBanking.Repositories.Credit
             return exposures;
         }
 
-        private TotalFacilitiesSummaryViewModel GetTotalGroupExposure(bool isForGFS = false)
+        private TotalFacilitiesSummaryViewModel GetTotalGroupLendingLimit(bool isForGFS = false)
         {
             var exposures = new List<CurrentCustomerExposure>();
             var exposure = new TotalFacilitiesSummaryViewModel();
@@ -3040,15 +3100,23 @@ namespace FintrakBanking.Repositories.Credit
             var approvedAmount = new decimal();
             var amountForLLL = new decimal();
             var LLLImpact = new decimal();
-            var directs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            var overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
             var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
             var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
             var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
-            foreach (var product in directs)
+            foreach (var product in loanExposures)
+            {
+                currentAmount = product.outstandingsLcy;
+                amountForLLL = currentAmount;
+                LLLImpact += amountForLLL;
+            }
+
+            foreach (var product in overdraftExposures)
             {
                 currentAmount = product.outstandingsLcy;
                 approvedAmount = product.approvedAmountLcy;
-                //amountForLLL = currentAmount;
                 amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
                 LLLImpact += amountForLLL;
             }
@@ -3086,22 +3154,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var exposures = new List<CurrentCustomerExposure>();
-            var exposure = GetTotalGroupExposure();
+            var exposure = GetTotalGroupLendingLimit();
             //var customerIds = new List<CustomerExposure>();
             exposures = GetExposures();
-            //if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
-            //{
-            //    customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERID });
-            //    exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
-            //    //exposures = GetCurrentSingleCustomerExposures();
-            //}
-            //else
-            //{
-            //    customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERGROUPID });
-            //    exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
-            //    exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
-            //}
-
             CurrentCustomerExposure totalExposure;
             
             totalExposure = new CurrentCustomerExposure()
@@ -3203,6 +3258,41 @@ namespace FintrakBanking.Repositories.Credit
             return result;
 
         }
+
+
+        private string GetDrawdownApprovalsMarkupLOS2(int targetId, int operationId)
+        {
+            var appraisals = GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <th><b>APPROVALS:</b></th>
+                        <th><b></b></th>
+                    </tr>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Comment</b></th>
+                       
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{trail.comment}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table><br/>";
+            return result;
+
+        }
+
 
         private string GetDecision(short? vote)
         {
@@ -3910,7 +4000,7 @@ namespace FintrakBanking.Repositories.Credit
                     e.tenor = int.Parse(e.tenorString);
                     //e.productId = int.Parse(e.productIdString);
                     e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
-                    e.adjFacilityType = int.Parse(e.adjFacilityTypeCode);
+                    e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
                 }
                 exposures.AddRange(exposure);
             }

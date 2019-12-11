@@ -28,6 +28,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int targetId;
         private int companyId;
         private int operationId;
+        private int? destinationOperationId;
+        private bool isFlowTest;
         private int? exclusiveFlowChangeId = null;
 
         private int? productClassId = null;
@@ -68,7 +70,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? loopedRoleId = null;
         private int? loopedStaffId = null;
         private short? referBackStateId = null;
-        private bool initiatorOrLooped = false;
         public int actualRequestStaffId = 0;
         public bool isLoopResponse = false;
         private bool endProcess = false;
@@ -84,6 +85,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int TargetId { set { targetId = value; } }
         public int CompanyId { set { companyId = value; } }
         public int OperationId { set { operationId = value; } }
+
         public decimal Amount { set { amount = value; } }
         public string Comment { set { comment = value; } }
         public int Tenor { set { tenor = value; } }
@@ -103,8 +105,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
         public int? ExclusiveFlowChangeId { get { return exclusiveFlowChangeId; } set { exclusiveFlowChangeId = value; } }
+        public int? DestinationOperationId { get { return destinationOperationId; } set { destinationOperationId = value; } }
+        public bool IsFlowTest { get { return isFlowTest; } set { isFlowTest = value; } }
         public int? LoopedRoleId { get { return loopedRoleId; } set { loopedRoleId = value; } }
         public int? LoopedStaffId { get { return loopedStaffId; } set { loopedStaffId = value; } }
+
         public int? ProductClassId { set { productClassId = value; } }
         public bool EmailNotification { set { emailNotification = value; } }
         public bool SmsNotification { set { smsNotification = value; } }
@@ -159,15 +164,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                             ).ToList();
 
-            //if(this.referredLog.FirstOrDefault()?.BASEOPERATIONID != null) { this.operationId = this.referredLog.FirstOrDefault().BASEOPERATIONID ?? this.operationId; }
-
-
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
+
 
             if (request == null)
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
+
             }
             else
             {
@@ -207,14 +211,15 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             this.applicationDate = GetApplicationDate();
 
+
             if (request != null)
             {
                 request.RESPONSEDATE = this.applicationDate;
                 request.SYSTEMRESPONSEDATETIME = this.systemDate;
                 request.RESPONSESTAFFID = this.staffId;
 
-                if(request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                { request.RESPONSESTAFFID = this.loopedStaffId; }
+                if (request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                { request.RESPONSESTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId; }
             }
 
             MakerCheckerControl();
@@ -227,6 +232,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
+            if (this.isFlowTest) return true;
 
             context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -247,6 +253,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 LOOPEDROLEID = this.loopedRoleId,
                 LOOPEDSTAFFID = this.loopedStaffId,
                 REFEREBACKSTATEID = this.referBackStateId,
+                DESTINATIONOPERATIONID = this.destinationOperationId
 
             });
 
@@ -288,7 +295,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.nextLevelId = request.TOAPPROVALLEVELID; 
                     this.loopedStaffId = (this.loopedStaffId != null && this.loopedStaffId > 0) ? this.loopedStaffId : initiatorRequest.REQUESTSTAFFID;
                     this.toStaffId = staffId;
-                    this.initiatorOrLooped = true;
+                    //this.initiatorOrLooped = true;
                 }
             }
 
@@ -440,28 +447,33 @@ namespace FintrakBanking.Repositories.WorkFlow
             int companyId,
             int staffId,
             int operationId,
+           // int destinationOperationId,
             int? exclusiveFlowChangeId,
             int targetId,
             int? productClassId,
             string comment,
             bool external,
             bool deferred,
-            bool sameDesk
+            bool sameDesk,
+            bool isFlowTest
             )
         {
             InitializeOperation();
-            this.staffId = staffId;
             this.companyId = companyId;
+            this.staffId = staffId;
             this.operationId = operationId;
+            //this.destinationOperationId = destinationOperationId;
             this.exclusiveFlowChangeId = exclusiveFlowChangeId;
             this.targetId = targetId;
            
             this.productClassId = productClassId;
             this.comment = comment;
-            this.statusId = (int)ApprovalStatusEnum.Pending;
             this.externalInitialization = external;
             this.deferredExecution = deferred;
             this.sameDesk = sameDesk;
+            this.isFlowTest = isFlowTest;
+            this.statusId = (int)ApprovalStatusEnum.Pending;
+           
             LogActivity();
         }
 
@@ -843,6 +855,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void CheckApprovalLimits()
         {
+            if (this.statusId == (short)ApprovalStatusEnum.Referred) { return; }
             // allow business to drop process unconditionally 
             if (this.statusId == (int)ApprovalStatusEnum.Disapproved && GroupRole() == (int)ApprovalGroupEnum.Business) // for optimization the more expensive conditions are placed last. GroupRole() may not be called
             {
@@ -853,6 +866,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
             if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision())
             {
+                
                 if (WithinAllLimits() == true)
                 {
                     this.EndProcess(this.statusId);
@@ -921,7 +935,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool WithinAllLimits()
         {
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
-            if (level == null) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
+            if (level == null ) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
             if (this.disputed == true && level.CANRESOLVEDISPUTE != true) { return false; }
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true
@@ -1387,7 +1401,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             LoopedRoleId = model.loopedRoleId;
             keepPending = model.keepPending;
             deferredExecution = model.deferredExecution;
-
+            IsFlowTest = model.isFlowTest;
+            destinationOperationId = model.destinationOperationId;
             var response = LogActivity();
 
             return response;

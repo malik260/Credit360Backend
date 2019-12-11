@@ -1196,6 +1196,7 @@ namespace FintrakBanking.Repositories.Credit
                 equipCollateral.EQUIPMENTSIZE = model.equipmentSize;
                 equipCollateral.INTENDEDUSE = model.intendedUse;
                 equipCollateral.REMARK = model.remark;
+                equipCollateral.COLLATERALCUSTOMERID = model.collateralId;
                 context.TBL_COLLATERAL_PLANT_AND_EQUIP.Add(equipCollateral);
                 return;
             }
@@ -3104,7 +3105,8 @@ namespace FintrakBanking.Repositories.Credit
                     MARKETPRICE = entity.marketPrice,
                     AMOUNT = entity.amount,
                     SHARESSECURITYVALUE = entity.sharesSecurityValue,
-                    SHAREVALUEAMOUNTTOUSE = entity.shareValueAmountToUse
+                    SHAREVALUEAMOUNTTOUSE = entity.shareValueAmountToUse,
+                    COLLATERALCUSTOMERID = entity.collateralId
                 };
                 context.TBL_COLLATERAL_STOCK.Add(collateral);
                 // var saved = context.SaveChanges() > 0;
@@ -3558,7 +3560,8 @@ namespace FintrakBanking.Repositories.Credit
                     PROMISSORYNOTEID = entity.promissoryNoteRefferenceNumber,
                     //PROMISSORYVALUE = entity.promissoryValue,
                     EFFECTIVEDATE = entity.promissoryEffectiveDate,
-                    MATURITYDATE = entity.promissoryMaturityDate
+                    MATURITYDATE = entity.promissoryMaturityDate,
+                    COLLATERALCUSTOMERID = entity.collateralId
                 };
                 context.TBL_COLLATERAL_PROMISSORY.Add(collateral);
                 //var saved = context.SaveChanges() > 0;
@@ -3713,7 +3716,8 @@ namespace FintrakBanking.Repositories.Credit
                     VALUATIONDATE = entity.valuationDate,
                     LASTVALUATIONAMOUNT = entity.lastValuationAmount,
                     INVOICEVALUE = entity.invoiceValue,
-                    REMARK = entity.remark
+                    REMARK = entity.remark,
+                    COLLATERALCUSTOMERID = entity.collateralId
                 };
                 context.TBL_COLLATERAL_VEHICLE.Add(collateral);
                 //var saved = context.SaveChanges() > 0;
@@ -3754,7 +3758,8 @@ namespace FintrakBanking.Repositories.Credit
                     REGULARPAYMENTAMOUNT = (decimal)entity.regularPaymentAmount,
                     PAYER = entity.payer,
                     REMARK = entity.remark,
-                    DESCRIPTION = entity.description
+                    DESCRIPTION = entity.description,
+                    COLLATERALCUSTOMERID = entity.collateralId
                 };
                 context.TBL_COLLATERAL_ISPO.Add(collateral);
                 // var saved = context.SaveChanges() > 0;
@@ -3834,7 +3839,8 @@ namespace FintrakBanking.Repositories.Credit
                     ACCOUNTNUMBER = entity.accountNumber,
                     ANNUALSALARY = entity.annualSalary,
                     SECURITYVALUE = entity.securityValue,
-                    REMARK = entity.remark
+                    REMARK = entity.remark,
+                    COLLATERALCUSTOMERID = entity.collateralId,
                 };
                 context.TBL_COLLATERAL_DOMICILIATION.Add(collateral);
                 //var saved = context.SaveChanges() > 0;
@@ -3876,7 +3882,8 @@ namespace FintrakBanking.Repositories.Credit
                     RELATIONSHIP = entity.relationship,
                     TAXNUMBER = entity.taxNumber,
                     REMARK = entity.remark,
-                    DESCRIPTION = entity.description
+                    DESCRIPTION = entity.description,
+                    COLLATERALCUSTOMERID = entity.collateralId
                 };
                 context.TBL_COLLATERAL_INDEMNITY.Add(collateral);
                 //var saved = context.SaveChanges() > 0;
@@ -4123,7 +4130,8 @@ namespace FintrakBanking.Repositories.Credit
                     UNITRATE = entity.metalUnitRate,
                     PRECIOUSMETALFORM = entity.preciousMetalFrm,
                     METALTYPE = entity.metalType,
-                    REMARK = entity.remark
+                    REMARK = entity.remark,
+                    COLLATERALCUSTOMERID = entity.collateralId
                 };
                 context.TBL_COLLATERAL_PRECIOUSMETAL.Add(collateral);
                 //var saved = context.SaveChanges() > 0;
@@ -4180,7 +4188,7 @@ namespace FintrakBanking.Repositories.Credit
                     LIENAMOUNT = entity.lienAmount,
                     SECURITYVALUE = (decimal)entity.securityValue,
                     REMARK = entity.remark,
-                    ACCOUNTNAME = entity.accountName
+                    ACCOUNTNAME = entity.accountName,
                 };
                 context.TBL_COLLATERAL_CASA.Add(collateral);
                 var saved = context.SaveChanges() != 0;
@@ -4480,8 +4488,9 @@ namespace FintrakBanking.Repositories.Credit
                     PHONENUMBER2 = entity.phoneNumber2,
                     EMAILADDRESS = entity.emailAddress,
                     RELATIONSHIP = entity.relationship,
-                    RELATIONSHIPDURATION = entity.relationshipDuration
-                };
+                    RELATIONSHIPDURATION = entity.relationshipDuration,
+                    COLLATERALCUSTOMERID = entity.collateralId
+            };
                 context.TBL_COLLATERAL_GAURANTEE.Add(collateral);
                 //var saved = context.SaveChanges() > 0;
                 return;
@@ -4592,6 +4601,7 @@ namespace FintrakBanking.Repositories.Credit
                 imCollateral.LOCALGOVERNMENTID = entity.localGovernmentId;
                 imCollateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
                 imCollateral.ESTIMATEDVALUE = entity.estimatedValue;
+                imCollateral.COLLATERALCUSTOMERID = entity.collateralId;
                 context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(imCollateral);
                 if (context.SaveChanges() != 0)
                 { 
@@ -4854,8 +4864,9 @@ namespace FintrakBanking.Repositories.Credit
                     INTERESTPAYMENTFREQUENCY = entity.interestPaymentFrequency,
                     REMARK = entity.remark,
                     FUNDNAME = entity.fundName,
-                    BANKPURCHASEDFROM = entity.bank
-                };
+                    BANKPURCHASEDFROM = entity.bank,
+                    COLLATERALCUSTOMERID = entity.collateralId
+            };
                 context.TBL_COLLATERAL_MKT_SECURITY.Add(collateral);
                 //var saved = context.SaveChanges() > 0;
                 return;
@@ -5039,8 +5050,9 @@ namespace FintrakBanking.Repositories.Credit
                     POLICYRENEWALDATE = entity.policyRenewalDate,
                     REMARK = entity.remark,
                     INSURANCETYPEID = entity.insuranceTypeId,
-                    //INSURANCETYPE = entity.insuranceType
-                };
+                    COLLATERALCUSTOMERID = entity.collateralId,
+                //INSURANCETYPE = entity.insuranceType
+            };
                 context.TBL_COLLATERAL_POLICY.Add(collateral);
                 //var saved = context.SaveChanges() > 0;
                 return;

@@ -6,6 +6,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
     public interface IWorkflow
     {
         int OperationId { set; }
+        int? DestinationOperationId { get; set; }
+        bool IsFlowTest { get; set; }
         int? ExclusiveFlowChangeId { get; set; }
         int? LoopedStaffId { get; set; }
         int? LoopedRoleId { get; set; }
@@ -44,18 +46,19 @@ namespace FintrakBanking.Interfaces.WorkFlow
         LevelBusinessRule LevelBusinessRule { set; }
         bool LogActivity();
         void NextProcess(
-                int companyId, 
-                int staffId, 
-                int operationId, 
+                int companyId,
+                int staffId,
+                int operationId,
                 int? exclusiveFlowChangeId,
-                int targetId, 
-                int? productClassId, 
-                string comment, 
+                int targetId,
+                int? productClassId,
+                string comment,
                 bool external,
                 bool deferred,
-                bool sameDesk = false
+                bool sameDesk = false,
+                bool isFlowTest = false
             );
-
+   
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
         void ResolveMultipleProductPath(int operationId, List<short> productIds);
     }

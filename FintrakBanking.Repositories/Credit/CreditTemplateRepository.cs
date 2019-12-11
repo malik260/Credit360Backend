@@ -357,7 +357,7 @@ var qry = Foo.GroupJoin(
             //return replacedSections;
         }
 
-        public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId)
+        public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user)
         {
             // int staffId, is REDUNDANT!
             var printedDoc = "";
@@ -386,11 +386,13 @@ var qry = Foo.GroupJoin(
                 printedDoc = raw.title;
             }
 
+            var staff = context.TBL_STAFF.Find(staffId);
+
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplatePrinted,
                 STAFFID = staffId,
-                BRANCHID = 1, //(short)model.userBranchId,
+                BRANCHID = (short)user.BranchId,
                 DETAIL = $"Printed Document Template '{ printedDoc }' ",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = "localhost",//model.applicationUrl,

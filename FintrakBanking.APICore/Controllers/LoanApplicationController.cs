@@ -658,6 +658,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan/validate-application")]
+        public HttpResponseMessage ValidateDuplicateLoanApplication([FromBody] LoanApplicationViewModel entity)
+        {
+            var isDuplicate = repo.ValidateDuplicateLoanApplication(entity);
+            if (isDuplicate)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = isDuplicate, result = isDuplicate});
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = isDuplicate});
+        }
+
         [HttpPost]
         //[ClaimsAuthorization]
         [Route("loan/application")]
@@ -1371,13 +1385,17 @@ namespace FintrakBanking.APICore.Controllers
             data.createdBy = token.GetStaffId;
             data.companyId = token.GetCompanyId;
             var response = repo.SaveCancelledApplcation(data);
-            if (response)
+            if (response == 1)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been Cancelled Successfully" });
+            }
+            else if (response == 2)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been Cancelled Successfully" });
             }
             else
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, result = response });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, result = response, message = "An error Occured while cancelling this loan Application" });
             }
             
             //if()

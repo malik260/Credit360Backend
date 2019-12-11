@@ -117,6 +117,7 @@ namespace FintrakBanking.Repositories.credit
         public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForApproval(int staffId)
         {
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.AtcLodgementApproval).ToList();
+            var staffs = general.GetStaffRlieved(staffId);
 
             return (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
@@ -125,6 +126,7 @@ namespace FintrakBanking.Repositories.credit
                      || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && atrail.RESPONSESTAFFID == null
                      && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
+                     && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval
                     select new AtcLodgmentViewModel
                     {
@@ -188,6 +190,7 @@ namespace FintrakBanking.Repositories.credit
         public IEnumerable<AtcLodgmentViewModel> GetAtcReleaseForApproval(int staffId)
         {
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.AtcReleaseApproval).ToList();
+            var staffs = general.GetStaffRlieved(staffId);
 
             return (from atrail in context.TBL_APPROVAL_TRAIL
                     join r in context.TBL_ATC_RELEASE on atrail.TARGETID equals r.ATCLODGMENTID
@@ -198,6 +201,7 @@ namespace FintrakBanking.Repositories.credit
                      && r.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
                      && ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null
+                     && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                     select new AtcLodgmentViewModel
                     {

@@ -16277,13 +16277,21 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanOperationTypeViewModel> GetOperationType()
         {
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplicationApproval
                     && data.ISDISABLED == false
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME,
                     });
+            //return (from data in context.TBL_OPERATIONS
+            //        where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+            //        && data.ISDISABLED == false
+            //        select new LoanOperationTypeViewModel()
+            //        {
+            //            operationTypeId = data.OPERATIONID,
+            //            operationTypeName = data.OPERATIONNAME,
+            //        }); 
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD()
@@ -16307,6 +16315,73 @@ namespace FintrakBanking.Repositories.Credit
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME
                     });
+        }
+
+        public IEnumerable<LoanOperationTypeViewModel> GetReviewApprovalOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)
+        {
+            var loanOperations = (from data in context.TBL_OPERATIONS
+                                  where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplicationApproval
+                                  select new LoanOperationTypeViewModel()
+                                  {
+                                      operationTypeId = data.OPERATIONID,
+                                      operationTypeName = data.OPERATIONNAME
+                                  });
+
+            List<OperationsEnum> operationList = new List<OperationsEnum>();
+
+            if (productTypeId == LoanProductTypeEnum.TermLoan || productTypeId == LoanProductTypeEnum.SelfLiquidating)
+            {
+                if ((scheduleTypeId == LoanScheduleTypeEnum.Annuity) || (scheduleTypeId == LoanScheduleTypeEnum.ConstantPrincipalAndInterest))
+                {
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+                else if (scheduleTypeId == LoanScheduleTypeEnum.IrregularSchedule)
+                {
+                    operationList.Add(OperationsEnum.InterestandPrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.PrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.InterestFrequencyChange);
+                    operationList.Add(OperationsEnum.InterestSuspension);
+                    operationList.Add(OperationsEnum.TenorChange);
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+                else if (scheduleTypeId == LoanScheduleTypeEnum.BulletPayment)
+                {
+                    operationList.Add(OperationsEnum.InterestSuspension);
+                    operationList.Add(OperationsEnum.InterestandPrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.PrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.InterestFrequencyChange);
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+                else if (scheduleTypeId == LoanScheduleTypeEnum.BallonPayment)
+                {
+                    operationList.Add(OperationsEnum.InterestandPrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.PrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+            }
+            else if (productTypeId == LoanProductTypeEnum.RevolvingLoan)
+            {
+                operationList.Add(OperationsEnum.TenorChange);
+                operationList.Add(OperationsEnum.OverdraftTopup);
+                operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                operationList.Add(OperationsEnum.TerminateAndRebook);
+
+                loanOperations = loanOperations.Where(x => operationList.Contains((OperationsEnum)x.operationTypeId));
+            }
+            else if (productTypeId == LoanProductTypeEnum.ContingentLiability)
+            {
+
+            }
+
+            return loanOperations;
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)

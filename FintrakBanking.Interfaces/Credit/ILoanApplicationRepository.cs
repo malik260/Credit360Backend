@@ -57,8 +57,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanApplicationViewModel> Search(string searchString, int staffId = 0);
 
-
+        
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
+        bool ValidateDuplicateLoanApplication( LoanApplicationViewModel loan);
         string GetRefrenceNumber();
 
         bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity);
@@ -119,7 +120,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanApplicationViewModel> GetAllRequestsForLoanCancellation(int staffId);
 
-        bool SaveCancelledApplcation(LoanApplicationViewModel data);
+        int SaveCancelledApplcation(LoanApplicationViewModel data);
 
         LoanApplicationViewModel ViewLaonApplicationCancellationDetails(LoanApplicationViewModel data);
 
