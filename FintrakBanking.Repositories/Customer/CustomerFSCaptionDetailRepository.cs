@@ -175,8 +175,31 @@ namespace FintrakBanking.Repositories.Customer
                         join b in context.TBL_CUSTOMER_FS_CAPTION on a.FSCAPTIONID equals b.FSCAPTIONID
                         join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where a.CUSTOMERID == customerId && b.FSCAPTIONGROUPID == fsCaptionGroupId
-                        && b.ISRATIO == false && a.FSDATE == fsDate
-                        && a.DELETED == false
+                        && a.FSDATE == fsDate && a.DELETED == false //&& b.ISRATIO == false 
+                        orderby a.FSDATE, b.POSITION, b.FSCAPTIONGROUPID
+                        select new CustomerFSCaptionDetailViewModel
+                        {
+                            customerId = a.CUSTOMERID,
+                            customerCode = c.CUSTOMERCODE,
+                            fsdetailId = a.FSDETAILID,
+                            fsCaptionId = a.FSCAPTIONID,
+                            fsCaptionName = b.FSCAPTIONNAME,
+                            fsDate = a.FSDATE,
+                            amount = a.AMOUNT,
+                            fsCaptionPosition = b.POSITION,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<CustomerFSCaptionDetailViewModel> GetAllMappedCustomerFsCaptionDetail(int customerId, DateTime fsDate)
+        {
+            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
+                        join b in context.TBL_CUSTOMER_FS_CAPTION on a.FSCAPTIONID equals b.FSCAPTIONID
+                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                        where a.CUSTOMERID == customerId //&& b.FSCAPTIONGROUPID == fsCaptionGroupId
+                        && a.FSDATE == fsDate && a.DELETED == false //&& b.ISRATIO == false 
                         orderby a.FSDATE, b.POSITION, b.FSCAPTIONGROUPID
                         select new CustomerFSCaptionDetailViewModel
                         {
