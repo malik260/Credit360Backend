@@ -572,8 +572,7 @@
                     //responseAPI.webRequestDate = responseModel.webRequestDate;
                     //responseAPI.webRequestStatus = responseModel.webRequestStatus;
                     //responseAPI.referenceNumber = responseModel.referenceNumber;
-
-                    //responseMessage = await response.Content.ReadAsStringAsync();
+                                        //responseMessage = await response.Content.ReadAsStringAsync();
 
                     //handler.Dispose();
                     //client.Dispose();

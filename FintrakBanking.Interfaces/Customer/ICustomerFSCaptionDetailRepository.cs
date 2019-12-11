@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Customer
         #region Customer FS Detail
 
         IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptionDetail(int customerId, short fsCaptionGroupId, DateTime fsDate);
+        IEnumerable<CustomerFSCaptionDetailViewModel> GetAllMappedCustomerFsCaptionDetail(int customerId, DateTime fsDate);
         IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptions(int customerId);
         CustomerFSCaptionDetailViewModel GetCustomerFSCaptionDetailById(int fsdetailId);
 
