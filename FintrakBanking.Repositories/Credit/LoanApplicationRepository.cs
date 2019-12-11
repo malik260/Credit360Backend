@@ -6066,6 +6066,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
                             productClassId = (short?)b.TBL_PRODUCT.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            customerTypeId = b.TBL_CUSTOMER.CUSTOMERTYPEID,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
                             customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
