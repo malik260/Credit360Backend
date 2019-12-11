@@ -338,6 +338,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isTakeOverApplication { get; set; }
 
         public string customerType { get; set; }
+        public short? customerTypeId { get; set; }
         public string customerAccountNumber { get; set; }
 
         public bool requireCollateral { get; set; }
