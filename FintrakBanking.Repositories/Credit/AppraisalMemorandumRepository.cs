@@ -451,7 +451,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (appl.CUSTOMERGROUPID == null)
                 {
                     var c = appl.TBL_CUSTOMER;
-                    placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
+                    placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c?.MIDDLENAME + " " + c.LASTNAME;
                 }
                 else
                 {
