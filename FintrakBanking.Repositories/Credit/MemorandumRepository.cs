@@ -355,7 +355,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
                     {
                         this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-                        this.customerId = (int)loanApplication.CUSTOMERGROUPID;
+                        this.customerId = (int)loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
                     }
                     if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
                     {
@@ -3325,7 +3325,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var remark = string.Empty;
-            var customerCollaterals = collateralRepo.GetCustomerCollateral(this.customerId, this.loanApplication.LOANAPPLICATIONID, this.loanApplication.COMPANYID);
+            var customerCollaterals = collateralRepo.GetCustomerCollateral(this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID, this.loanApplication.LOANAPPLICATIONID, this.loanApplication.COMPANYID);
             
                     result += $@"
                         <ul>
@@ -3363,11 +3363,11 @@ namespace FintrakBanking.Repositories.Credit
         private string GetCollateralCoverageMarkupLOS()
         {
             var custFacilitiesAmount = new decimal();
-            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId, true);
+            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(this.customerId, true);
             var result = String.Empty;
             if (collaterals.Count() < 1) return result;
-            decimal actualCollateralCoverageSum = 0;
-            actualCollateralCoverageSum = collaterals.Where(c => c.customerId != customerId).Sum(c => c.actualCollateralCoverage);
+            //decimal actualCollateralCoverageSum = 0;
+            //actualCollateralCoverageSum = collaterals.Where(c => c.customerId != this.customerId).Sum(c => c.actualCollateralCoverage);
             //custFacilitiesAmount += actualCollateralCoverageSum;
             decimal totalCollateralValue = 0;
             var currencies = context.TBL_CURRENCY.ToList();
@@ -3442,7 +3442,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                var rating = context.TBL_CUSTOMER_GROUP.FirstOrDefault(c => c.CUSTOMERGROUPID == customerId).RISKRATINGID;
+                var rating = context.TBL_CUSTOMER_GROUP.FirstOrDefault(c => c.CUSTOMERGROUPID == loanApplication.CUSTOMERGROUPID).RISKRATINGID;
                 result += rating;
             }
             
