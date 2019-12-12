@@ -343,288 +343,303 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
             decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
-
-            //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
-            if (appl.RISKRATINGID != null && model.isBusiness == false)
+            using (var trans = context.Database.BeginTransaction())
             {
-                ValidateCustomerExposure(1, appl.LOANAPPLICATIONID, totalApprovedAmount, appl.CUSTOMERID, appl.CUSTOMERGROUPID);
-            }
-
-
-            if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-            {
-                var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                    x.OPERATIONID == (int)appl.OPERATIONID
-                    && x.RESPONSESTAFFID == null
-                    && x.DESTINATIONOPERATIONID > 0
-                    && x.TARGETID == appl.LOANAPPLICATIONID
-                );
-                if (currentTrail != null)
+                if (appl.RISKRATINGID != null && model.isBusiness == false)
                 {
-
-                    currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
-                    currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                    currentTrail.COMMENT = model.comment;
-                    currentTrail.RESPONSESTAFFID = model.createdBy;
-                    currentTrail.RESPONSEDATE = DateTime.Now;
-
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                    //workflow.SetResponse = false;
-                    //workflow.ExternalInitialization = true;
-                    //workflow.StaffId = model.staffId;
-                   
-                    //workflow.NextLevelId = currentTrail.FROMAPPROVALLEVELID;
-
-                    workflow.StaffId = model.staffId;
-                    workflow.OperationId = (short)currentTrail.DESTINATIONOPERATIONID;
-                    workflow.TargetId = model.applicationId;
-                    workflow.CompanyId = model.companyId;
-                    workflow.Comment = model.comment;
-                    workflow.ExternalInitialization = true;
-                    workflow.ToStaffId = currentTrail.REQUESTSTAFFID;
-                    workflow.StatusId = (short)ApprovalStatusEnum.Pending;
-                    workflow.Amount = model.amount;
-                    workflow.LogActivity();
-                    //workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
-                    if(model.isFlowTest == false)context.SaveChanges();
-                    return workflow.Response;
+                    ValidateCustomerExposure(1, appl.LOANAPPLICATIONID, totalApprovedAmount, appl.CUSTOMERID, appl.CUSTOMERGROUPID);
                 }
 
 
-            }
-            // WORKFLOW
-            //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
-            workflow.OperationId = appl.OPERATIONID;
-            workflow.ProductClassId = appl.PRODUCTCLASSID;
-            workflow.ProductId = appl.PRODUCTID;
-            workflow.StaffId = model.createdBy;
-            workflow.TargetId = model.applicationId;
-            workflow.CompanyId = model.companyId;
-            workflow.Vote = model.vote;
-            workflow.NextLevelId = model.receiverLevelId;
-            workflow.ToStaffId = model.receiverStaffId;
-            workflow.StatusId = model.forwardAction;
-            workflow.Comment = model.comment;
-            //workflow.Amount = totalApplicationAmount; 
-            workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
-            workflow.InvestmentGrade = model.investmentGrade;
-            //workflow.Tenor = model.applicationTenor;
-            workflow.PoliticallyExposed = model.politicallyExposed;
-            workflow.Untenored = model.untenored;
-            workflow.InterestRateConcession = model.interestRateConcession;
-            workflow.FeeRateConcession = model.feeRateConcession;
-            workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
-            workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
-            
-            //if (appl.PRODUCTID == 2)
-            //{
-            //    workflow.ProductId = null;
-            //}
-            // workflow.Disputed = appl.DISPUTED; // buggy
-
-            workflow.LevelBusinessRule = new LevelBusinessRule {
-                Amount = totalApplicationAmount, // appl.TOTALEXPOSUREAMOUNT,
-                PepAmount = totalApplicationAmount, // appl.TOTALEXPOSUREAMOUNT,
-                Pep = model.politicallyExposed,
-                InsiderRelated = appl.ISRELATEDPARTY,
-                ProjectRelated = appl.ISPROJECTRELATED,
-                OnLending = appl.ISONLENDING,
-                InterventionFunds = appl.ISINTERVENTIONFUNDS,
-                OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
-                DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
-            }; 
-
-            if (model.forwardAction == 8 || model.forwardAction == 9)
-            {
-                //workflow.StatusId = (int)ApprovalStatusEnum.Referred;
-                var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction,operationId);
-                workflow.NextLevelId = dictionary["levelId"];
-                //workflow.ToStaffId = dictionary["staffId"];
-                //if (model.forwardAction == 8) workflow.ToStaffId = null;
-            }
-
-            string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
-
-            var placeholders = new AlertPlaceholders();
-            if (appl.CUSTOMERGROUPID == null)
-            {
-                var c = appl.TBL_CUSTOMER;
-                placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
-            } else
-            {
-                placeholders.customerName = "<br />CUSTOMER NAME: " + appl.TBL_CUSTOMER_GROUP.GROUPNAME;
-            }
-            placeholders.referenceNumber = "<br />APPLICATION REFERENCENUMBER: " + appl.APPLICATIONREFERENCENUMBER;
-            placeholders.facilityType = "<br />FACILITY INFORMATION: " + facilityInformationMarkup;
-            placeholders.operationName = "<br />OPERATION NAME: Loan Origination";
-            placeholders.branchName = "<br />BRANCH NAME: " + appl.TBL_BRANCH.BRANCHNAME;
-            workflow.Placeholders = placeholders;
-
-            //if (appl.PRODUCTID == 2)
-            //{
-            //    //workflow.ProductClassId = null;
-            //    workflow.ProductId = null;
-            //}
-            workflow.DeferredExecution = true;
-
-           
-           
-            workflow.LogActivity();
-
-            WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
-
-            // DETAIL CHANGES
-            if (model.recommendedChanges.Count() > 0) // only approving authority
-            {
-                updateApprovedAmount = true;
-                // items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
-                foreach (var changed in model.recommendedChanges)
+                if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                 {
-                    var detail = items.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == changed.detailId);
-                    if (detail != null)
+                    var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                        x.OPERATIONID == (int)appl.OPERATIONID
+                        && x.RESPONSESTAFFID == null
+                        && x.DESTINATIONOPERATIONID > 0
+                        && x.TARGETID == appl.LOANAPPLICATIONID
+                    );
+                    if (currentTrail != null)
                     {
-                        if (changed.amount == 0) throw new SecureException("ZERO! => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
-                        detail.APPROVEDPRODUCTID = (short)changed.productId;
-                        detail.APPROVEDAMOUNT = changed.amount;
-                        detail.APPROVEDINTERESTRATE = changed.interestRate;
-                        detail.APPROVEDTENOR = changed.tenor;
-                        detail.STATUSID = (short)changed.statusId;
-                        detail.EXCHANGERATE = changed.exchangeRate;
-                        detail.LASTUPDATEDBY = model.createdBy;
-                        detail.DATETIMEUPDATED = DateTime.Now;
+                        currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                        currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                        currentTrail.COMMENT = model.comment;
+                        currentTrail.RESPONSESTAFFID = model.createdBy;
+                        currentTrail.RESPONSEDATE = DateTime.Now;
 
-                        if (model.isBusiness) // DELETE OR UPDATE PROPOSED
+                        appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+                        //workflow.SetResponse = false;
+                        //workflow.ExternalInitialization = true;
+                        //workflow.StaffId = model.staffId;
+
+                        //workflow.NextLevelId = currentTrail.FROMAPPROVALLEVELID;
+
+                        workflow.StaffId = model.staffId;
+                        workflow.OperationId = (short)currentTrail.DESTINATIONOPERATIONID;
+                        workflow.TargetId = model.applicationId;
+                        workflow.CompanyId = model.companyId;
+                        workflow.Comment = model.comment;
+                        workflow.ExternalInitialization = true;
+                        workflow.ToStaffId = currentTrail.REQUESTSTAFFID;
+                        workflow.StatusId = (short)ApprovalStatusEnum.Pending;
+                        workflow.Amount = model.amount;
+                        workflow.LogActivity();
+                        //workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
+                        context.SaveChanges();
+                        if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
+                        return workflow.Response;
+                    }
+
+
+                }
+                // WORKFLOW
+                //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
+                workflow.OperationId = appl.OPERATIONID;
+                workflow.ProductClassId = appl.PRODUCTCLASSID;
+                workflow.ProductId = appl.PRODUCTID;
+                workflow.StaffId = model.createdBy;
+                workflow.TargetId = model.applicationId;
+                workflow.CompanyId = model.companyId;
+                workflow.Vote = model.vote;
+                workflow.NextLevelId = model.receiverLevelId;
+                workflow.ToStaffId = model.receiverStaffId;
+                workflow.StatusId = model.forwardAction;
+                workflow.Comment = model.comment;
+                //workflow.Amount = totalApplicationAmount; 
+                workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
+                workflow.InvestmentGrade = model.investmentGrade;
+                //workflow.Tenor = model.applicationTenor;
+                workflow.PoliticallyExposed = model.politicallyExposed;
+                workflow.Untenored = model.untenored;
+                workflow.InterestRateConcession = model.interestRateConcession;
+                workflow.FeeRateConcession = model.feeRateConcession;
+                workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+                workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
+
+                //if (appl.PRODUCTID == 2)
+                //{
+                //    workflow.ProductId = null;
+                //}
+                // workflow.Disputed = appl.DISPUTED; // buggy
+
+                workflow.LevelBusinessRule = new LevelBusinessRule
+                {
+                    Amount = totalApplicationAmount, // appl.TOTALEXPOSUREAMOUNT,
+                    PepAmount = totalApplicationAmount, // appl.TOTALEXPOSUREAMOUNT,
+                    Pep = model.politicallyExposed,
+                    InsiderRelated = appl.ISRELATEDPARTY,
+                    ProjectRelated = appl.ISPROJECTRELATED,
+                    OnLending = appl.ISONLENDING,
+                    InterventionFunds = appl.ISINTERVENTIONFUNDS,
+                    OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
+                    DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
+                };
+
+                if (model.forwardAction == 8 || model.forwardAction == 9)
+                {
+                    //workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                    var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction, operationId);
+                    workflow.NextLevelId = dictionary["levelId"];
+                    //workflow.ToStaffId = dictionary["staffId"];
+                    //if (model.forwardAction == 8) workflow.ToStaffId = null;
+                }
+
+                string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
+
+                var placeholders = new AlertPlaceholders();
+                if (appl.CUSTOMERGROUPID == null)
+                {
+                    var c = appl.TBL_CUSTOMER;
+                    placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c?.MIDDLENAME + " " + c.LASTNAME;
+                }
+                else
+                {
+                    placeholders.customerName = "<br />CUSTOMER NAME: " + appl.TBL_CUSTOMER_GROUP.GROUPNAME;
+                }
+                placeholders.referenceNumber = "<br />APPLICATION REFERENCENUMBER: " + appl.APPLICATIONREFERENCENUMBER;
+                placeholders.facilityType = "<br />FACILITY INFORMATION: " + facilityInformationMarkup;
+                placeholders.operationName = "<br />OPERATION NAME: Loan Origination";
+                placeholders.branchName = "<br />BRANCH NAME: " + appl.TBL_BRANCH.BRANCHNAME;
+                workflow.Placeholders = placeholders;
+
+                //if (appl.PRODUCTID == 2)
+                //{
+                //    //workflow.ProductClassId = null;
+                //    workflow.ProductId = null;
+                //}
+                workflow.DeferredExecution = true;
+
+
+
+                workflow.LogActivity();
+
+                WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
+
+                // DETAIL CHANGES
+                if (model.recommendedChanges.Count() > 0) // only approving authority
+                {
+                    updateApprovedAmount = true;
+                    // items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
+                    foreach (var changed in model.recommendedChanges)
+                    {
+                        var detail = items.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == changed.detailId);
+                        if (detail != null)
                         {
-                            if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; } else
+                            if (changed.amount == 0) throw new SecureException("ZERO! => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
+
+                            detail.APPROVEDPRODUCTID = (short)changed.productId;
+                            detail.APPROVEDAMOUNT = changed.amount;
+                            detail.APPROVEDINTERESTRATE = changed.interestRate;
+                            detail.APPROVEDTENOR = changed.tenor;
+                            detail.STATUSID = (short)changed.statusId;
+                            detail.EXCHANGERATE = changed.exchangeRate;
+                            detail.LASTUPDATEDBY = model.createdBy;
+                            detail.DATETIMEUPDATED = DateTime.Now;
+
+                            if (model.isBusiness) // DELETE OR UPDATE PROPOSED
                             {
-                                detail.PROPOSEDPRODUCTID = (short)changed.productId;
-                                detail.PROPOSEDAMOUNT = changed.amount;
-                                detail.PROPOSEDINTERESTRATE = changed.interestRate;
-                                detail.PROPOSEDTENOR = changed.tenor;
+                                if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
+                                else
+                                {
+                                    detail.PROPOSEDPRODUCTID = (short)changed.productId;
+                                    detail.PROPOSEDAMOUNT = changed.amount;
+                                    detail.PROPOSEDINTERESTRATE = changed.interestRate;
+                                    detail.PROPOSEDTENOR = changed.tenor;
+                                }
                             }
+
+                            /*context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
+                            {
+                                LOANAPPLICATIONDETAILID = changed.detailId,
+                                APPROVEDPRODUCTID = (short)changed.productId,
+                                APPROVEDTENOR = changed.tenor,
+                                APPROVEDINTERESTRATE = changed.interestRate,
+                                APPROVEDAMOUNT = changed.amount,
+                                EXCHANGERATE = changed.exchangeRate,
+                                STATUSID = (short)changed.statusId,
+                                CREATEDBY = model.createdBy,
+                                DATETIMECREATED = applicationDate,
+                                SYSTEMDATETIME = DateTime.Now,
+                            });*/
+                        }
+                    }
+                }
+
+                // UPDATE APPLICATION
+                appl.APPROVALSTATUSID = (short)workflow.StatusId;
+                if (model.vote == 1) { appl.DISPUTED = true; }
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
+                if (appl.SUBMITTEDFORAPPRAISAL == false) { appl.SUBMITTEDFORAPPRAISAL = true; } // for product programs
+                if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
+
+                if (workflow.NewState == (int)ApprovalState.Ended) // cam status
+                {
+                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    {
+                        appl.APPROVEDDATE = applicationDate;
+                        appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
+                        if (appl.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
+                        {
+                            appl.APPROVALSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+
                         }
 
-                        /*context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG // LOG CHANGES
+                        if (appl.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
                         {
-                            LOANAPPLICATIONDETAILID = changed.detailId,
-                            APPROVEDPRODUCTID = (short)changed.productId,
-                            APPROVEDTENOR = changed.tenor,
-                            APPROVEDINTERESTRATE = changed.interestRate,
-                            APPROVEDAMOUNT = changed.amount,
-                            EXCHANGERATE = changed.exchangeRate,
-                            STATUSID = (short)changed.statusId,
-                            CREATEDBY = model.createdBy,
-                            DATETIMECREATED = applicationDate,
-                            SYSTEMDATETIME = DateTime.Now,
-                        });*/
+                            appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+
+                        }
+
+                        //Send Email to Customer
+                        SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
+                        SaveApprovedDocumentation(model.createdBy, 6, model.applicationId);
+                        //generate offer letter doc
+                        //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
+
+                        generateOutPutDocument = true;
                     }
-                }
-            }
-
-            // UPDATE APPLICATION
-            appl.APPROVALSTATUSID = (short) workflow.StatusId;
-            if (model.vote == 1) { appl.DISPUTED = true; }
-            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
-            if (appl.SUBMITTEDFORAPPRAISAL == false) { appl.SUBMITTEDFORAPPRAISAL = true; } // for product programs
-            if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
-
-            if (workflow.NewState == (int)ApprovalState.Ended) // cam status
-            {
-                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
-                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
-                {
-                    appl.APPROVEDDATE = applicationDate;
-                    appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
-                    if(appl.PRODUCTCLASSID == (short) ProductClassEnum.Creditcards)
+                    else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                     {
-                        appl.APPROVALSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-                        appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                        SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
+                        loanApp.ArchiveLoanApplication(model.applicationId, operationId);
 
                     }
 
-                    if(appl.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
+                    //applid, 
+
+                    if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+                    if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
+                                                                                                                                                                        // MEMORANDUM update
+                    var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
+                    if (memo != null) { memo.ISCOMPLETED = true; }
+                    if (contextControl != null)
                     {
-                        appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-                        appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                        contextControl.SaveChanges();
 
+                        if(model.isFlowTest == false) { trans.Commit(); }
+                        else { trans.Rollback(); }
                     }
-
-                    //Send Email to Customer
-                    SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
-                    SaveApprovedDocumentation(model.createdBy, 6, model.applicationId);
-                    //generate offer letter doc
-                    //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
-
-                    generateOutPutDocument = true;
                 }
-                else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+
+                // UPDATE APPROVED AMOUNT
+                if (updateApprovedAmount == true && items != null) appl.APPROVEDAMOUNT = totalApprovedAmount;
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
                 {
-                    SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
-                    loanApp.ArchiveLoanApplication(model.applicationId, operationId);
+                    AUDITTYPEID = (short)AuditTypeEnum.ForwardAppraisalMemorandum,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Loan Application Reference Number: '{ appl.APPLICATIONREFERENCENUMBER }', " +
+                                $"StaffId: '{ model.createdBy }', " +
+                                $"TargetId: '{ model.applicationId }', " +
+                                $"Vote: '{ model.vote }', " +
+                                $"NextLevelId: '{ model.receiverLevelId }', " +
+                                $"ToStaffId: '{ model.receiverStaffId }', " +
+                                $"StatusId: '{ model.forwardAction }', " +
+                                $"Comment: '{ model.comment }', " +
+                                $"LINE CHANGES:" +
+                                $"'{ LineItemChanges(model.recommendedChanges) }'",
 
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(), //model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = applicationDate,
+                    SYSTEMDATETIME = DateTime.Now,
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    DEVICENAME = CommonHelpers.GetDeviceName()
+
+                };
+                this.audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                if (model.comment == "debug_test") throw new SecureException("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
+
+                LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate, model.vote, (short)model.forwardAction); // LOG CHANGES
+                context.SaveChanges();
+                if (model.isFlowTest == false) { trans.Commit(); }
+                else { trans.Rollback(); }
+
+                var lastStatus = workflow.StatusId; // prevents the next
+
+                if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved && appl.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
+                {
+                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+                    workflow.SetResponse = false;
+                    //workflow.ProductClassId = null;
+                    //workflow.ProductId = null;
+                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
                 }
 
-                //applid, 
-
-                if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
-                if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
-                // MEMORANDUM update
-                var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
-                if (memo != null) { memo.ISCOMPLETED = true; }
-                if (contextControl != null && model.isFlowTest == false) contextControl.SaveChanges();
+                //workflow.Response.success = true;
+                workflow.Response.isFinal = generateOutPutDocument;
+                return workflow.Response;
             }
-
-            // UPDATE APPROVED AMOUNT
-            if (updateApprovedAmount == true && items != null) appl.APPROVEDAMOUNT = totalApprovedAmount;
-
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.ForwardAppraisalMemorandum,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Loan Application Reference Number: '{ appl.APPLICATIONREFERENCENUMBER }', " +
-                            $"StaffId: '{ model.createdBy }', " +
-                            $"TargetId: '{ model.applicationId }', " +
-                            $"Vote: '{ model.vote }', " +
-                            $"NextLevelId: '{ model.receiverLevelId }', " +
-                            $"ToStaffId: '{ model.receiverStaffId }', " +
-                            $"StatusId: '{ model.forwardAction }', " +
-                            $"Comment: '{ model.comment }', " +
-                            $"LINE CHANGES:" +
-                            $"'{ LineItemChanges(model.recommendedChanges) }'",
-
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(), //model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now,
-                OSNAME = CommonHelpers.FriendlyName(),
-                DEVICENAME = CommonHelpers.GetDeviceName()
-
-            };
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-
-            if (model.comment == "debug_test") throw new SecureException("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
-
-            LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate,model.vote , (short)model.forwardAction); // LOG CHANGES
-            if (model.isFlowTest == false) { context.SaveChanges(); }
-
-            var lastStatus = workflow.StatusId; // prevents the next
-
-            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved && appl.PRODUCTCLASSID != (short)ProductClassEnum.Creditcards)
-            {
-                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                workflow.SetResponse = false;
-                //workflow.ProductClassId = null;
-                //workflow.ProductId = null;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null,model.applicationId, null, "New approved application", true, false, false,model.isFlowTest);
-            }
-
-            //workflow.Response.success = true;
-            workflow.Response.isFinal = generateOutPutDocument;
-            return workflow.Response;
+                //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
+            
         }
 
         public bool SaveApprovedDocumentation(int staffId, int operationId, int targetId)

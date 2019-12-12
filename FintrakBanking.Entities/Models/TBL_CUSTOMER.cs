@@ -208,6 +208,13 @@ namespace FintrakBanking.Entities.Models
         public string CUSTOMERRATING { get; set; }
         public string LIABILITYLIMITNUMBER { get; set; }
         public string OWNERSHIP { get; set; }
+
+        public string NAMEOFSIGNATORY { get; set; }
+        public string ADDRESSOFSIGNATORY { get; set; }
+        public string PHONENUMBEROFSIGNATORY { get; set; }
+        public string EMAILOFSIGNATORY { get; set; }
+        public string BVNNUMBEROFSIGNATORY { get; set; }
+
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -1080,12 +1080,12 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     n++;
                     var name = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().DESCRIPTION;
-                    var value = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().VALUE;
+                    //var value = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().VALUE;
                     result = result + $@"
                     < tr>
                         <td>{n}</td>
                         <td>{name.ToUpper()}:</td>
-                        <td>{value}</td>
+                        <td>{e.DEFAULT_FEERATEVALUE}</td>
                     </tr>
                 ";
                 }

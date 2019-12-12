@@ -155,6 +155,11 @@ namespace FintrakBanking.Repositories.Customer
                 PASTDUEOBLIGATIONS = entity.pastDueObligations,
                 BUSINESSUNTID = entity.businessUnitId,
                 OWNERSHIP = entity.ownership,
+                NAMEOFSIGNATORY = entity.nameofSignatories,
+                ADDRESSOFSIGNATORY = entity.addressofSignatories,
+                PHONENUMBEROFSIGNATORY = entity.phoneNumberofSignatories,
+                EMAILOFSIGNATORY = entity.emailofSignatories,
+
             };
             context.TBL_CUSTOMER.Add(customer);
 
@@ -3426,6 +3431,11 @@ namespace FintrakBanking.Repositories.Customer
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
+                            nameofSignatories = a.NAMEOFSIGNATORY,
+                            addressofSignatories = a.ADDRESSOFSIGNATORY,
+                            phoneNumberofSignatories = a.PHONENUMBEROFSIGNATORY,
+                            emailofSignatories = a.EMAILOFSIGNATORY,
+                            bvnNumberofSignatories = a.BVNNUMBEROFSIGNATORY,
                         }).FirstOrDefault();
             if (USE_THIRD_PARTY_INTEGRATION)
                 data.isPoliticallyExposed = finacle.GetExposePersonStatus(data.customerCode);
@@ -3481,6 +3491,11 @@ namespace FintrakBanking.Repositories.Customer
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
+                            nameofSignatories = a.NAMEOFSIGNATORY,
+                            addressofSignatories = a.ADDRESSOFSIGNATORY,
+                            phoneNumberofSignatories = a.PHONENUMBEROFSIGNATORY,
+                            emailofSignatories = a.EMAILOFSIGNATORY,
+                            bvnNumberofSignatories = a.BVNNUMBEROFSIGNATORY,
                         }).FirstOrDefault();
             if (USE_THIRD_PARTY_INTEGRATION)
                 data.isPoliticallyExposed = finacle.GetExposePersonStatus(data.customerCode);
