@@ -1466,7 +1466,7 @@
                 <TextRuns>
                   <TextRun>
                     <Label>Offer Letter Salutation</Label>
-                    <Value>=StrConv(First(Fields!offerLetterSalutation.Value, "OfferLetterDetails"), vbProperCase)</Value>
+                    <Value>=First(Fields!offerLetterSalutation.Value, "OfferLetterDetails")</Value>
                     <MarkupType>HTML</MarkupType>
                     <Style>
                       <FontSize>11pt</FontSize>
