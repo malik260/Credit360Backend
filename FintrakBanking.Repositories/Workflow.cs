@@ -1285,7 +1285,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                         var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
                             .Select(x => x.TBL_STAFF.EMAIL)
                             .Distinct();
-                        emails = actorIds.Union(levelStaffEmails).ToList();
+
+                        var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.STAFFROLEID).Select(x => x.EMAIL);
+                        emails = actorIds.Union(levelStaffEmails).Union(nextLevelStaffEmails).ToList();
                     }
                 }
 
