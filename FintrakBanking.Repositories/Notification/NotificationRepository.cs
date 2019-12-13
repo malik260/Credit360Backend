@@ -30,30 +30,32 @@ namespace FintrakBanking.Repositories.Notification
         public IEnumerable<NotificationViewModel> GetWorkflowNotifications(int staffId, int companyId)
         {
             List<NotificationViewModel> logs = new List<NotificationViewModel>();
-            var staffRole = context.TBL_STAFF.Where(a => a.STAFFID == staffId).Select(w => w.STAFFROLEID).FirstOrDefault();
-
-            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId || c.staffRoleId == staffRole).ToList();
-
+            var staff = context.TBL_STAFF.Where(a => a.STAFFID == staffId).FirstOrDefault();
+            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId || c.staffRoleId == staff.STAFFROLEID).ToList();
             var staffApprovalLevels = approvalLevel.Select(x => x.approvalLevelId).Distinct();
 
             var result = (from a in context.TBL_APPROVAL_TRAIL
                           join b in context.TBL_OPERATIONS on a.OPERATIONID equals b.OPERATIONID
                           //join c in context.TBL_APPROVAL_LEVEL_STAFF  on a.TOAPPROVALLEVELID equals c.APPROVALLEVELID
-                          where 
-                          staffApprovalLevels.ToList().Contains((int)a.TOAPPROVALLEVELID)
+                          where staffApprovalLevels.ToList().Contains((int)a.TOAPPROVALLEVELID)
                           && a.APPROVALSTATEID != (int)ApprovalState.Ended
+                          && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                           //( a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
                           //a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ) 
                           && a.RESPONSESTAFFID == null
+                          && a.TOSTAFFID == staff.STAFFID
                           //&& c.STAFFID == staffId
+                          && a.COMPANYID == companyId
                           group b by new { b.OPERATIONID, b.OPERATIONNAME, b.OPERATIONURL } into p
                           select new
                           {
-                                operationId = p.FirstOrDefault().OPERATIONID,
-                                count = p.ToList().Count(),
+                            operationId = p.FirstOrDefault().OPERATIONID,
+                            count = p.ToList().Count(),
                           }
                        ).ToList();
+
             var operations = (from a in context.TBL_OPERATIONS select a).ToList();
+
             if (result != null)
             {
 
@@ -64,7 +66,6 @@ namespace FintrakBanking.Repositories.Notification
                         {
                             messageCount = t.count,
                             //message = "You have Pending " + filteredOp.OPERATIONNAME + " request(s) awaiting your action",
-
                             message = "You have " + t.count.ToString() + " " + filteredOp.OPERATIONNAME + " request awaiting your action",
                             operationURL = filteredOp.OPERATIONURL
                         };
@@ -83,8 +84,6 @@ namespace FintrakBanking.Repositories.Notification
             //if (approvalLevel.Any())
             //{
             //     var operations = (from a in context.TBL_OPERATIONS select a).ToList();
-
-
 
             //    foreach (var level in approvalLevel)
             //    {
