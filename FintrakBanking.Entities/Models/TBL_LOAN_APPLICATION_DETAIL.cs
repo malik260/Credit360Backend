@@ -158,6 +158,7 @@ namespace FintrakBanking.Entities.Models
         public int LOANDETAILREVIEWTYPEID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
+        public virtual TBL_LOAN_DETAIL_REVIEW_TYPE TBL_LOAN_DETAIL_REVIEW_TYPE { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
 

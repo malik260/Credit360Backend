@@ -2725,6 +2725,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.CURRENCYID = update.currencyId;
             detail.TENORFREQUENCYTYPEID = update.tenorModeId;
             detail.ISTAKEOVERAPPLICATION = update.isTakeOverApplication;
+            detail.LOANDETAILREVIEWTYPEID = update.loanDetailReviewTypeId;
             detail.DATETIMEUPDATED = DateTime.Now;
             detail.LASTUPDATEDBY = loan.createdBy;
 
@@ -3048,6 +3049,7 @@ namespace FintrakBanking.Repositories.Credit
                 TENORFREQUENCYTYPEID = a.tenorModeId,
                 CRMSVALIDATED = false,
                 ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
+                LOANDETAILREVIEWTYPEID = a.loanDetailReviewTypeId
                 //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
             };
 

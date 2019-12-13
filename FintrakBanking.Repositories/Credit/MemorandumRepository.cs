@@ -1462,7 +1462,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b><h2>Tenor (Months)</h2></b></th>
                     </tr>
                         {GetDirectFacilitiesMarkupLOS((int)CurrencyEnum.NGN)}
-                        {GetDirectFacilitiesMarkupLOS((int)CurrencyEnum.NGN)}
+                        {GetDirectFacilitiesMarkupLOS((int)CurrencyEnum.USD)}
                         {GetTotalDirectFacilitiesMarkupLOS()}
                         {GetContingentFacilitiesMarkupLOS((int)CurrencyEnum.NGN)}
                         {GetContingentFacilitiesMarkupLOS((int)CurrencyEnum.USD)}
