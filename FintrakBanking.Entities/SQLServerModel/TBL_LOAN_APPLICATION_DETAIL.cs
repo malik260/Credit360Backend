@@ -120,6 +120,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public DateTime? DATETIMEDELETED { get; set; }
 
         public short? RISKRATINGID { get; set; }
+        
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

@@ -2725,6 +2725,9 @@ namespace FintrakBanking.Repositories.Credit
             detail.CURRENCYID = update.currencyId;
             detail.TENORFREQUENCYTYPEID = update.tenorModeId;
             detail.ISTAKEOVERAPPLICATION = update.isTakeOverApplication;
+            detail.LOANDETAILREVIEWTYPEID = update.loanDetailReviewTypeId;
+            detail.DATETIMEUPDATED = DateTime.Now;
+            detail.LASTUPDATEDBY = loan.createdBy;
 
             var productClassId = detail.TBL_PRODUCT1.PRODUCTCLASSID;
 
@@ -2824,8 +2827,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.LOANINFORMATION = loan.loanInformation;
             this.loanData.ISRELATEDPARTY = loan.isRelatedParty;
             this.loanData.ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed;
-            this.loanData.CREATEDBY = (int)loan.createdBy;
-            this.loanData.DATETIMECREATED = genSetup.GetApplicationDate();
+            this.loanData.LASTUPDATEDBY = (int)loan.createdBy;
+            //this.loanData.DATETIMECREATED = genSetup.GetApplicationDate();
             this.loanData.SYSTEMDATETIME = DateTime.Now;
             this.loanData.CASAACCOUNTID = loan.casaAccountId;
             this.loanData.APPLICATIONAMOUNT = totalApplicationAmount;
@@ -3046,6 +3049,7 @@ namespace FintrakBanking.Repositories.Credit
                 TENORFREQUENCYTYPEID = a.tenorModeId,
                 CRMSVALIDATED = false,
                 ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
+                LOANDETAILREVIEWTYPEID = a.loanDetailReviewTypeId
                 //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
             };
 
@@ -3142,6 +3146,7 @@ namespace FintrakBanking.Repositories.Credit
                 productPriceIndexId = d.PRODUCTPRICEINDEXID,
                 productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
                 operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
+                loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
                 tenorModeId = d.TENORFREQUENCYTYPEID,
             };
 
@@ -6068,6 +6073,7 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = (short?)b.TBL_PRODUCT.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             customerTypeId = b.TBL_CUSTOMER.CUSTOMERTYPEID,
+                            loanDetailReviewTypeId = b.LOANDETAILREVIEWTYPEID,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
                             customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
@@ -6962,5 +6968,16 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
+        public IEnumerable<LoanDetailReviewTypeViewModel> GetAllLoanDetailReviewTypes()
+        {
+            var reviewTypes = (from x in context.TBL_LOAN_DETAIL_REVIEW_TYPE
+                                select new LoanDetailReviewTypeViewModel
+                                {
+                                    loanDetailReviewTypeId = x.LOANDETAILREVIEWTYPEID,
+                                    loanDetailReviewTypeName = x.LOANDETAILREVIEWTYPENAME,
+                                }).ToList();
+
+            return reviewTypes;
+        }
     }
 }
