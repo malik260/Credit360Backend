@@ -5019,21 +5019,22 @@ namespace FintrakBanking.Repositories.Credit
 
         public string ReviewRequest(ForwardViewModel model)
         {
-            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+            //var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+            var appl = context.TBL_LOAN_APPLICATION.Where(a => a.LOANAPPLICATIONID == model.applicationId && a.APPLICATIONSTATUSID ==model.applicationStatusId).Select(a=>a).FirstOrDefault();
 
-            if (context.TBL_LOAN_APPLICATION.Where(x => x.RELATEDREFERENCENUMBER == appl.APPLICATIONREFERENCENUMBER).Any())
+            if (context.TBL_LOAN_APPLICATION.Where(x => x.RELATEDREFERENCENUMBER == appl.APPLICATIONREFERENCENUMBER && x.APPLICATIONSTATUSID != model.applicationStatusId).Any())
             {
                 return "This application is already re-initiated!";
             }
 
-            var referenceNumber = GenerateLoanReferenceNumber();
+            //var referenceNumber = GenerateLoanReferenceNumber();
             var applicationDate = genSetup.GetApplicationDate();
             bool wasApproved = appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved ? true : false;
 
             var request = context.TBL_LOAN_APPLICATION.Add(new TBL_LOAN_APPLICATION
             {
                 PRODUCTCLASSID = appl.PRODUCTCLASSID,
-                APPLICATIONREFERENCENUMBER = referenceNumber,
+                APPLICATIONREFERENCENUMBER = appl.APPLICATIONREFERENCENUMBER,
                 RELATEDREFERENCENUMBER = appl.APPLICATIONREFERENCENUMBER,
                 COMPANYID = appl.COMPANYID,
                 BRANCHID = appl.BRANCHID,
@@ -5164,7 +5165,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         LOANAPPLICATIONID = request.LOANAPPLICATIONID,
                         COMPANYID = cam.COMPANYID,
-                        CAMREF = referenceNumber,
+                        CAMREF = appl.APPLICATIONREFERENCENUMBER,
                         ISCOMPLETED = false,
                         RISKRATED = cam.RISKRATED,
                         CREATEDBY = model.createdBy,
@@ -5208,7 +5209,7 @@ namespace FintrakBanking.Repositories.Credit
                     AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Re-applied for loan with reference number: { referenceNumber }",
+                    DETAIL = $"Re-applied for loan with reference number: { appl.APPLICATIONREFERENCENUMBER }",
                     IPADDRESS =CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
@@ -5220,7 +5221,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.auditTrail.AddAuditTrail(audit);
                 // End of Audit section ---------------------
 
-                return context.SaveChanges() > 0 ? "New Loan Application Reference Number " + referenceNumber : string.Empty;
+                return context.SaveChanges() > 0 ? "New Loan Application Reference Number " + appl.APPLICATIONREFERENCENUMBER : string.Empty;
             }
 
             context.TBL_LOAN_APPLICATION_DETAIL.RemoveRange(details);

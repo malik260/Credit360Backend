@@ -55,6 +55,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int targetId { get; set; }
         public int nextOperationId { get; set; }
         public int nextApprovalLevelId { get; set; }
+        public short applicationStatusId { get; set; }
+        
 
     }
 
