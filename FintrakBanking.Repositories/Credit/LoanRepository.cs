@@ -2151,7 +2151,7 @@ namespace FintrakBanking.Repositories.Credit
                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
                       join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
                       where l.LOANREFERENCENUMBER == loanReffernceNumber 
-                      && ( lf.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility)
+                      && ( lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
                       select new {chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = f.RATE };
 
             var test = fee.ToList();
@@ -2168,7 +2168,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.amount_financed = model.principalAmount.ToString();
             loanCreationModel.interest_rate = model.interestRate.ToString();
             loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME.ToUpper();
-            loanCreationModel.product_code = product.PRODUCTCODE; //"AFLF"; //
+            loanCreationModel.product_code = product.PRODUCTCODE; 
             loanCreationModel.product_desc = product.PRODUCTNAME;
             loanCreationModel.source = "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
@@ -2179,23 +2179,23 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
             loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");
-            loanCreationModel.maturity_date = model.maturityDate.AddYears(1).ToString("yyyy-MM-dd"); //.ToString("yyyy-MM-dd");
+            loanCreationModel.maturity_date = model.maturityDate.ToString("yyyy-MM-dd"); //.ToString("yyyy-MM-dd");
 
             loanCreationModel.no_of_financials = "11";
             loanCreationModel.due_dateson = "4";
-            loanCreationModel.inst_date = model.bookingDate.AddMonths(1).ToString("yyyy-MM-dd");
-            loanCreationModel.advisory_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
-            loanCreationModel.anniversary_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
-            loanCreationModel.appraisal_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
-            loanCreationModel.committment_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault().feeRate.ToString() : "0"); //"0";
-            loanCreationModel.creditlife_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
-            loanCreationModel.in_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
-            loanCreationModel.mgt_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
-            loanCreationModel.penal_charge = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault().feeRate.ToString() : "1");  //"1";
-            loanCreationModel.prn_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
-            loanCreationModel.processing_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
-            loanCreationModel.renann_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault().feeRate.ToString() : "0");  //"0";
-            loanCreationModel.vehicle_ins = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault().feeRate.ToString() : "0");  //"0";
+            loanCreationModel.inst_date = generalSetup.GetApplicationDate().ToString("yyyy-MM-dd");
+            loanCreationModel.advisory_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.anniversary_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.appraisal_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.committment_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault()?.feeRate.ToString() : "0"); //"0";
+            loanCreationModel.creditlife_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.in_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.mgt_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.penal_charge = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault()?.feeRate.ToString() : "1");  //"1";
+            loanCreationModel.prn_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.processing_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.renann_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.vehicle_ins = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.vehicle_value = "0";
             loanCreationModel.crms_ref_number = loanLoanRequest.CRMSCODE; // "00044/20150613/356687"; //loanLoanRequest
             loanCreationModel.comp_mis8 = "596912";
