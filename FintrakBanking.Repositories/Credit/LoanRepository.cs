@@ -2173,7 +2173,16 @@ namespace FintrakBanking.Repositories.Credit
                        select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = f.RATE }).ToList();
             }
             /// To be made more dynamic 
+<<<<<<< HEAD
 
+=======
+            var fee = (from lf in context.TBL_LOAN_FEE
+                      join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                      join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
+                      where l.LOANREFERENCENUMBER == loanReffernceNumber 
+                      && ( lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
+                      select new {chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = f.RATE }).ToList();
+>>>>>>> 6a8272e381a37fa80cc4aaf2b412700f45dbdf9b
 
             var test = fee.ToList();
             var chargefeeIds = fee.Select(x => x.chargeFeeId).ToList();
