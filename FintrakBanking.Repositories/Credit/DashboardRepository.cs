@@ -179,7 +179,7 @@ namespace FintrakBanking.Repositories.Credit
                         && a.APPROVALSTATUSID != (int) ApprovalStatusEnum.Approved
                         && l.COMPANYID == companyId
                         && x.DATETIMECREATED >= startDate && x.DATETIMECREATED <= endDate
-                        && a.TOSTAFFID == staff.STAFFID
+                        && (a.TOSTAFFID == staff.STAFFID || a.TOSTAFFID == null)
                         && a.RESPONSESTAFFID == null
                         //&& levelIds.Contains((int) a.TOAPPROVALLEVELID)
                         && staffApprovalLevels.ToList().Contains((int)a.TOAPPROVALLEVELID)

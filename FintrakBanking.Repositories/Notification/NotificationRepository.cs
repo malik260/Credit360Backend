@@ -43,7 +43,7 @@ namespace FintrakBanking.Repositories.Notification
                           //( a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
                           //a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ) 
                           && a.RESPONSESTAFFID == null
-                          && a.TOSTAFFID == staff.STAFFID
+                          && (a.TOSTAFFID == staff.STAFFID || a.TOSTAFFID == null)
                           //&& c.STAFFID == staffId
                           && a.COMPANYID == companyId
                           group b by new { b.OPERATIONID, b.OPERATIONNAME, b.OPERATIONURL } into p
