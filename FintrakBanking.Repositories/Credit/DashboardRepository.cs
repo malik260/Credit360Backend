@@ -153,9 +153,9 @@ namespace FintrakBanking.Repositories.Credit
         public List<DashboardViewModel> LoanOnThePipeline(DateTime startDate, DateTime endDate, int companyId, int staffId)
         {
             var staff = context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o).FirstOrDefault();
-            List<int> levelIds = new List<int>();
+            List<int> levelIds = new List<int>(); //List<int> levelIds2 = new List<int>();
             levelIds.AddRange(general.GetStaffApprovalLevelIds(staffId, (int) OperationsEnum.CreditAppraisal).ToList());
-
+            //levelIds2.AddRange(general.GetStaffApprovalLevelIdsWithoutRelief(staffId, (int) OperationsEnum.CreditAppraisal).ToList());
 
             int[] applicationStatus =  { (int)LoanApplicationStatusEnum.CancellationInProgress,
                 (int)LoanApplicationStatusEnum.CancellationInProgress,
@@ -177,6 +177,7 @@ namespace FintrakBanking.Repositories.Credit
                                 && a.RESPONSESTAFFID == null
                                 && levelIds.Contains((int) a.TOAPPROVALLEVELID)
                         select new { x, l })?.ToList();
+
 
             if (staff?.TBL_STAFF_ROLE.STAFFROLECODE == "RM")
             {
