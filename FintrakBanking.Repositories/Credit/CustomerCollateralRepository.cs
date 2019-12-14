@@ -10356,9 +10356,12 @@ namespace FintrakBanking.Repositories.Credit
 
             //if (proposedCollateral == true) throw new Exception("This Collateral has already been proposed for this facility");
 
-            var facilityValue = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).Select(o => o).FirstOrDefault();
+            var facility = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).Select(o => o).FirstOrDefault();
 
-            var facilityCurrencyId = facilityValue.CURRENCYID;
+            var obligorId = facility.CUSTOMERID;
+
+
+            var facilityCurrencyId = facility.CURRENCYID;
 
             var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == model.collateralId).Select(o => o).FirstOrDefault();
 
@@ -10381,7 +10384,7 @@ namespace FintrakBanking.Repositories.Credit
                     BALANCEAVAILABLE = model.availableCollateralValue - model.actualCollateralCoverage,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
-                    CUSTOMERID = model.customerId,
+                    CUSTOMERID = obligorId,
                     DELETED = false,
                     SYSTEMDATETIME = DateTime.Now,
 
@@ -10440,7 +10443,7 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = model.createdBy,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = genSetup.GetApplicationDate(),
-                        CUSTOMERID = model.customerId,
+                        CUSTOMERID = obligorId,
                         DELETED = false,
 
                     };
@@ -10455,8 +10458,6 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         throw;
                     }
-
-
 
                 }
                 else

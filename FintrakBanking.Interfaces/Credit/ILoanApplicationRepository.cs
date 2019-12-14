@@ -196,6 +196,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteLoanApplicationDetailLien(int id, UserInfo user);
         RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId);
         CurrentCustomerExposure GetTotalBankExposure();
+        IEnumerable<LoanDetailReviewTypeViewModel> GetAllLoanDetailReviewTypes();
         //IEnumerable<LoanApplicationLienViewModel> GetRacDetails();
     }
 }

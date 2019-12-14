@@ -212,7 +212,7 @@ namespace FintrakBanking.MessagingAlertSender
                                
                                 mail.IsBodyHtml = true;
                                 mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
-                                mail.Body = newMail.MESSAGEBODY;
+                                mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
                                 mailId = newMail.MESSAGEID;
 
                             if (newMail.ATTACHMENTTYPEID != null)
