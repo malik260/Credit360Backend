@@ -23,6 +23,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int psrReportTypeId { get; set; }
         public string facility { get; set; }
 
+        public bool? isFacilityCreated { get; set; }
+
         public LoanApplicationViewModel()
         {
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();

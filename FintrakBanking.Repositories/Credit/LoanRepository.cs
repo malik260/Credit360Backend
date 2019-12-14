@@ -2148,13 +2148,12 @@ namespace FintrakBanking.Repositories.Credit
 
             /// To be made more dynamic 
             var fee = (from lf in context.TBL_LOAN_FEE
-                      join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
-                      join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
-                      where l.LOANREFERENCENUMBER == loanReffernceNumber 
-                      && ( lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
-                      select new {chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = f.RATE }).ToList();
+                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                       join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber //&& (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
+                       select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = f.RATE }).ToList();
 
-            var test = fee.ToList();
+            //var test = fee.ToList();
             var chargefeeIds = fee.Select(x => x.chargeFeeId).ToList();
 
             var feeVat = (from d in context.TBL_CHARGE_FEE_DETAIL
