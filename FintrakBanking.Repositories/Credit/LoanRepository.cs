@@ -2149,31 +2149,10 @@ namespace FintrakBanking.Repositories.Credit
             var fee = (from lf in context.TBL_LOAN_FEE
                        join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
                        join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
-                       where l.LOANREFERENCENUMBER == loanReffernceNumber
-                       && ( lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
-                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = f.RATE }).ToList();
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber //&& (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
+                       select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = f.RATE }).ToList();
 
-            if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
-            {
-                 fee = (from lf in context.TBL_LOAN_FEE
-                           join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
-                           join l in context.TBL_LOAN_REVOLVING on lf.LOANID equals l.LOANAPPLICATIONDETAILID
-                           where l.LOANREFERENCENUMBER == loanReffernceNumber
-                           && ( lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
-                           select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = f.RATE }).ToList();
-            }
-
-            if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
-            {
-                fee = (from lf in context.TBL_LOAN_FEE
-                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
-                       join l in context.TBL_LOAN_CONTINGENT on lf.LOANID equals l.LOANAPPLICATIONDETAILID
-                       where l.LOANREFERENCENUMBER == loanReffernceNumber
-                       && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
-                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = f.RATE }).ToList();
-            }
-            /// To be made more dynamic 
-            var test = fee.ToList();
+            //var test = fee.ToList();
             var chargefeeIds = fee.Select(x => x.chargeFeeId).ToList();
 
             var feeVat = (from d in context.TBL_CHARGE_FEE_DETAIL
