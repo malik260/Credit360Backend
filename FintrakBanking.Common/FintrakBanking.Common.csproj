@@ -107,6 +107,7 @@
     <Compile Include="Enum\EodOperationEnum.cs" />
     <Compile Include="Enum\EodOperationStatusEnum.cs" />
     <Compile Include="Enum\FlowChangeEnum.cs" />
+    <Compile Include="Enum\LoanDetailReviewTypeEnum.cs" />
     <Compile Include="Enum\OtherOperationEnum.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
     <Compile Include="Enum\AccreditedConsultantTypeEnum.cs" />

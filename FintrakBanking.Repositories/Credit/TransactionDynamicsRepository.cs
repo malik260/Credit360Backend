@@ -337,7 +337,7 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId != null)
             {
                 var operation = context.TBL_OPERATIONS.Find(operationId);
-                if (operation.ISCHECKLISTSPECIFIC.Value)
+                if (operation.ISCHECKLISTSPECIFIC != null && operation.ISCHECKLISTSPECIFIC.Value)
                 {
                     var output = GetTransactionDynamicsDefaultByDetailIdLms(applicationDetail.LOANREVIEWAPPLICATIONID);
                     return output.Where(x => x.operationId == operationId).ToList();
