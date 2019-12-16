@@ -68,8 +68,8 @@ namespace FintrakBanking.Entities.Models
 
         public short STATUSID { get; set; }
 
-        [Required]
-        [StringLength(500)]
+        //[Required]
+        ///[StringLength(500)]
         public string LOANPURPOSE { get; set; }
 
         //[Column(TypeName = "money")]
@@ -79,14 +79,14 @@ namespace FintrakBanking.Entities.Models
 
         public short CONSESSIONAPPROVALSTATUSID { get; set; }
 
-        [StringLength(3000)]
+        //[StringLength(3000)]
         public string CONSESSIONREASON { get; set; }
 
         public bool HASDONECHECKLIST { get; set; }
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string REPAYMENTTERMS { get; set; }
 
         public int? REPAYMENTSCHEDULEID { get; set; }
@@ -126,9 +126,9 @@ namespace FintrakBanking.Entities.Models
         public int? CRMSREPAYMENTSOURCEID { get; set; }
         [StringLength(50)]
         public string CRMSFUNDINGSOURCECATEGORY { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMS_ECCI_NUMBER { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSCODE { get; set; }
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
         public bool? CRMSVALIDATED { get; set; }
