@@ -30,7 +30,8 @@
         public bool DELETED { get; set; }
 
         [StringLength(2000)]
-        public string REVIEWDETAILS { get; set; }
+        public string REVIEWDETAILS { get; set; } 
+        public short REVIEWSTAGEID { get; set; }
 
         [StringLength(2000)]
         public string REPAYMENTTERMS { get; set; }
