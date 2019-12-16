@@ -141,6 +141,8 @@ namespace FintrakBanking.Interfaces.Customer
         #endregion
 
         IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId);
+        bool DeleteRelatedParty(int relatedPartyId, UserInfo user);
+        bool Deleteaddress(int addressId, UserInfo user);
         bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity);
         bool UpdatePropectToCustomer(int customerId, CustomerViewModels entity);
         IEnumerable<CustomerRelatedDirectorViewModel> DirectorRelatedCustomer(string bvn);

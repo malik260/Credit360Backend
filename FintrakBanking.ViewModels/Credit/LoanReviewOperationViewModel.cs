@@ -370,6 +370,8 @@ public int? newInterestFrequencyTypeId { get; set; }
 
     public class applicationDetails
     {
+        public short reviewStageId;
+
         public int operationTypeId { get; set; } // remove after refactor
         public string reviewDetails { get; set; }
         //public string operationType { get; set; } // not relevant
@@ -506,7 +508,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string title { get; set; }
         public int typeId { get; set; }
         public int currencyId { get; set; }
-
+        public int? productTypeId { get; set; }
     }
 
     public class MaturityIntructionViewModel : GeneralEntity
