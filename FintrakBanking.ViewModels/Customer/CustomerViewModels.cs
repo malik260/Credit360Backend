@@ -78,7 +78,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string maidenName { get; set; }
         public string spouse { get; set; }
         public string firstChildName { get; set; }
-        public DateTime childDateOfBirth { get; set; }
+        public DateTime? childDateOfBirth { get; set; }
         public string occupation { get; set; }
         public short? customerTypeId { get; set; }
         public int? relationshipOfficerId { get; set; }
@@ -90,7 +90,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string misCode { get; set; }
         public string misStaff { get; set; }
         public int approvalStatus { get; set; }
-        public DateTime dateActedOn { get; set; }
+        public DateTime? dateActedOn { get; set; }
+        public DateTime? dateValidated { get; set; }
         public string actedOnBy { get; set; }
         public bool accountCreationComplete { get; set; }
         public bool creationMailSent { get; set; }
