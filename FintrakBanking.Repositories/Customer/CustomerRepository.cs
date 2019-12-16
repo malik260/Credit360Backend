@@ -2168,7 +2168,8 @@ namespace FintrakBanking.Repositories.Customer
             return false;
         }
 
-       
+        
+
 
         public async Task<bool> DeleteCustomer(int customerId, UserInfo user)
         {
@@ -5586,7 +5587,7 @@ namespace FintrakBanking.Repositories.Customer
         }
 
         #region Customer Related Party
-        public IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId)
+        public IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId) 
         {
             var related = (from a in context.TBL_CUSTOMER_RELATED_PARTY
                            join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -5603,6 +5604,71 @@ namespace FintrakBanking.Repositories.Customer
                            }).ToList();
             return related;
         }
+
+
+        public bool DeleteRelatedParty(int relatedPartyId, UserInfo user)
+        {
+            var child = context.TBL_CUSTOMER_RELATED_PARTY.Find(relatedPartyId);
+
+            if (child != null)
+            {
+                context.TBL_CUSTOMER_RELATED_PARTY.Remove(child);
+
+                // Audit Section ---------------------------
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerRelatedPartyDeleted,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = "Deleted Customer Related Party with Related Party ID: " + child.RELATEDPARTYID,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                auditTrail.AddAuditTrail(audit);
+                return context.SaveChanges() > 0;
+            }
+
+            return false;
+        }
+
+
+        public bool Deleteaddress(int addressId, UserInfo user)
+        {
+            var child = context.TBL_CUSTOMER_ADDRESS.Find(addressId);
+
+            if (child != null)
+            {
+                context.TBL_CUSTOMER_ADDRESS.Remove(child);
+
+                // Audit Section ---------------------------
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerRelatedPartyDeleted,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = "Deleted Customer Related Party with Related Party ID: ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                auditTrail.AddAuditTrail(audit);
+                return context.SaveChanges() > 0;
+            }
+
+            return false;
+        }
+
 
         public bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity)
         {
