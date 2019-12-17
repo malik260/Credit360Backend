@@ -579,8 +579,9 @@ namespace FintrakBanking.Repositories.Credit
                 OWNERSHIPSTRUCTURE = loan.ownershipStructure,
                 LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
                 PRODUCTID = workflowProductId,
-                APIREQUESTID = apiRequestId
-
+                APIREQUESTID = apiRequestId,
+                
+         
             };
 
             if (isGroupLoan)

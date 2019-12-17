@@ -800,8 +800,6 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-
-
                 int lastStatusId = workflow.StatusId;
                 if (workflow.NewState == (int)ApprovalState.Ended)
                 {
