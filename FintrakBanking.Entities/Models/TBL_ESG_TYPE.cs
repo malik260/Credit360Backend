@@ -12,7 +12,7 @@
         [Key]
         public short ESGTYPEID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string ESGTYPENAME { get; set; }
   
     }

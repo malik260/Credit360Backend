@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public short DIVISORTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DIVISORTYPENAME { get; set; }
 
         public int? CREATEDBY { get; set; }

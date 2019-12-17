@@ -314,6 +314,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.casaAccountId = casa?.CASAACCOUNTID;
             loanApp.branchId = 94;
 
+
             
 
             if(context.TBL_LOAN_APPLICATION.Any(x=>x.APIREQUESTID == model.requestId && x.DELETED != true))
@@ -459,6 +460,7 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATINGCASAACCOUNTID = loan.casaAccountId,
                 REPAYMENTSCHEDULEID = (short)FrequencyTypeEnum.Monthly,
                 REPAYMENTTERMS = "Monthly",
+                LOANDETAILREVIEWTYPEID = (short)LoanDetailReviewTypeEnum.Initial,
                 //CRMSFUNDINGSOURCEID = loan.fundingSource,
                 //CRMSREPAYMENTSOURCEID = a?.crmsPaymentSourceId,
                 //CRMSFUNDINGSOURCECATEGORY = a?.crmsFundingSourceCategory,

@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int CONDITIONALOPERATORID { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string OPERATORNAME { get; set; }
         
 

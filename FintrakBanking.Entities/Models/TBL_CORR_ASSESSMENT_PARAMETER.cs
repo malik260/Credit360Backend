@@ -16,10 +16,10 @@
 
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string PARAMETERNAME { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string DESCRIPTION { get; set; }
 
         public int PERCENTAGEWEIGHT { get; set; }

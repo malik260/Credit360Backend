@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
 
         public double MULTIPLIER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DESCRIPTION { get; set; }
 
         public short VALUETYPEID { get; set; }

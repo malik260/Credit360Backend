@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short FSTYPEID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string FSTYPENAME { get; set; }
     }
 }

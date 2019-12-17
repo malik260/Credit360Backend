@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
         public string APPLICATIONREFERNECENUMBER { get; set; }
         public string REFERENCENUMBER { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string DESCRIPTION { get; set; }
 
         public short APPROVALSTATUSID { get; set; }

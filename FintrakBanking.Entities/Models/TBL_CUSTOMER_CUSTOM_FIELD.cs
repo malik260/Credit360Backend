@@ -17,15 +17,15 @@ namespace FintrakBanking.Entities.Models
         public int DISPLAYORDER { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LABEL { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string VALUE { get; set; }
 
         public bool? SHOWBYDEFAULT { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string CREATEDBY { get; set; }
 
         public DateTime? DATETIMECREATED { get; set; }

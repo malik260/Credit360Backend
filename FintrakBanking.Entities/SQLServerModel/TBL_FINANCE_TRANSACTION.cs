@@ -13,10 +13,10 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int TRANSACTIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BATCHCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REVERSAL_BATCHCODE { get; set; }
 
         public int GLACCOUNTID { get; set; }
@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int OPERATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SOURCEREFERENCENUMBER { get; set; }
 
         public int? CASAACCOUNTID { get; set; }
@@ -36,7 +36,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public decimal CREDITAMOUNT { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         [Column(TypeName = "date")]
@@ -70,7 +70,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public short SOURCEAPPLICATIONID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BATCHCODE2 { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }

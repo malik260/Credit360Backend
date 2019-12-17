@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short FEETARGETID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FEETARGETNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

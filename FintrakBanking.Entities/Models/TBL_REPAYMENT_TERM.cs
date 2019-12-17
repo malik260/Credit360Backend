@@ -13,7 +13,7 @@
         public int REPAYMENTSCHEDULEID { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string REPAYMENTTERMDETAIL { get; set; }
 
         public bool DELETED { get; set; }

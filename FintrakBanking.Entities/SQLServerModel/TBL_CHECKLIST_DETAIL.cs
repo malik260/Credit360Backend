@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int CHECKLISTDEFINITIONID { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REMARK { get; set; }
 
         public int CHECKEDBY { get; set; }

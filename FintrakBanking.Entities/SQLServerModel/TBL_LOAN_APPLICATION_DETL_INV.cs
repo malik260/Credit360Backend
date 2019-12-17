@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int PRINCIPALID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string INVOICENO { get; set; }
 
         [Column(TypeName = "date")]
@@ -29,10 +29,10 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short INVOICE_CURRENCYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CONTRACTNO { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CERTIFICATENO { get; set; }
 
         [Column(TypeName = "date")]
@@ -41,12 +41,12 @@ namespace FintrakBanking.Entities.SQLServerModel
         [Column(TypeName = "date")]
         public DateTime CONTRACT_ENDDATE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PURCHASEORDERNUMBER { get; set; }
 
         public short? APPROVALSTATUSID { get; set; }
 
-        [StringLength(800)]
+        //[StringLength(800)]
         public string APPROVAL_COMMENT { get; set; }
 
         public int? APPROVEDBY { get; set; }

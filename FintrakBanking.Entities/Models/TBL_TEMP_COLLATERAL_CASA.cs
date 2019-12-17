@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
         public string ACCOUNTNAME { get; set; }
@@ -34,7 +34,7 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REMARK { get; set; }
     }
 }

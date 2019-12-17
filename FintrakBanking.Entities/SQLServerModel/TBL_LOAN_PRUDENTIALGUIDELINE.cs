@@ -37,7 +37,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         [Key]
         public int PRUDENTIALGUIDELINESTATUSID { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string STATUSNAME { get; set; }
 
         public short PRUDENTIALGUIDELINETYPEID { get; set; }
@@ -50,7 +50,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int? EXTERNALMAXIMUM { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string NARRATION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

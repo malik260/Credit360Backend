@@ -20,11 +20,11 @@ namespace FintrakBanking.Entities.Models
         public short LANGUAGEID { get; set; }
 
         [Required]
-        [StringLength(30)]
+        //[StringLength(30)]
         public string LANGUAGECODE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LANGUAGENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

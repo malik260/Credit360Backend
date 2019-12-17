@@ -10,11 +10,11 @@
     public partial class STG_GL_SUBHEAD_TBL
     {
         [Key]
-        [StringLength(6)]
+        //[StringLength(6)]
         public string GL_SUB_HEAD_CODE { get; set; }
-        [StringLength(3)]
+        //[StringLength(3)]
         public string CRNCY_CODE { get; set; }
-        [StringLength(6)]
+        //[StringLength(6)]
         public string SCHM_CODE { get; set; }
     }
 }

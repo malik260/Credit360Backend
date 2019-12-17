@@ -18,11 +18,11 @@ namespace FintrakBanking.Entities.Models
         public int RACITEMID { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string CRITERIA { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         public int CREATEDBY { get; set; }

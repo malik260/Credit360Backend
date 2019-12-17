@@ -24,11 +24,11 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short CRMSTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CODE { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string DESCRIPTION { get; set; }
 
         public int CREATEDBY { get; set; }

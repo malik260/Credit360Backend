@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int LOANPRELIMINARYEVALUATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRELIMINARYEVALUATIONCODE { get; set; }
 
         public int COMPANYID { get; set; }
@@ -36,30 +36,30 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int RELATIONSHIPMANAGERID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string PROJECTDESCRIPTION { get; set; }
 
         [Required]
-        [StringLength(300)]
+        //[StringLength(300)]
         public string CLIENTDESCRIPTION { get; set; }
 
-        [StringLength(300)]
+        //[StringLength(300)]
         public string OWNERSHIPSTRUCTURE { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string PROJECTFINANCINGPLAN { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string EXISTINGEXPOSURE { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string BANKROLE { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string COLLATERALARRANGEMENT { get; set; }
 
         public string RELATEDCOMPANIES { get; set; }
@@ -68,7 +68,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public string PROPOSEDTERMSANDCONDITIONS { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string IMPLEMENTATIONARRANGEMENTS { get; set; }
 
         [Required]
@@ -81,25 +81,25 @@ namespace FintrakBanking.Entities.SQLServerModel
         public string RISKSANDCONCERNS { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string PRUDENT_EXPOSUR_LIMIT_IMPLCATN { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string ENVIRONMENTALIMPACT { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string PORTFOLIOSTRATEGICALIGNMENT { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string COMMERCIALVIABILITYASSESSMENT { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TAXIDENTIFICATIONNUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REGISTRATIONNUMBER { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
