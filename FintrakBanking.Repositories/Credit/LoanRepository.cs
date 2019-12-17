@@ -2141,16 +2141,23 @@ namespace FintrakBanking.Repositories.Credit
             var casa = context.TBL_CASA.Find(model.casaAccountId);
             var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.loanApplicationDetailId);
             var app = facility.TBL_LOAN_APPLICATION;
+
             var loanLoanRequest = (from b in context.TBL_LOAN
                                   join r in context.TBL_LOAN_BOOKING_REQUEST on b.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
                                   where b.LOANREFERENCENUMBER == loanReffernceNumber
-                                  select r).FirstOrDefault();
+                                  select b).FirstOrDefault();
 
             var fee = (from lf in context.TBL_LOAN_FEE
                        join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
                        join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
                        where l.LOANREFERENCENUMBER == loanReffernceNumber //&& (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
                        select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+
+            var scheduleCount = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanLoanRequest.TERMLOANID).Count();
+            if(loanLoanRequest.SCHEDULEDAYCOUNTCONVENTIONID == (short)LoanScheduleTypeEnum.IrregularSchedule)
+            {
+                scheduleCount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanLoanRequest.TERMLOANID).Count();
+            }
 
             //var test = fee.ToList();
             var chargefeeIds = fee.Select(x => x.chargeFeeId).ToList();
@@ -2161,6 +2168,9 @@ namespace FintrakBanking.Repositories.Credit
                          select d).FirstOrDefault();
 
             var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == model.createdBy).FirstOrDefault().STAFFCODE;
+
+            var valueDate = model.effectiveDate;
+            
 
             loanCreationModel.account_no = casa?.PRODUCTACCOUNTNUMBER;
             loanCreationModel.amount_financed = model.principalAmount.ToString();
@@ -2173,15 +2183,15 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.tax_rate = feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
-            loanCreationModel.app_user_id = "FINTRAKUSER"; //"FINTRAKUSR";
+            loanCreationModel.app_user_id = "FINTRAKUSER";  //"FINTRAKUSR";//;
             loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
-            loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");
+            loanCreationModel.value_date = valueDate.ToString("yyyy-MM-dd");
             loanCreationModel.maturity_date = model.maturityDate.ToString("yyyy-MM-dd"); //.ToString("yyyy-MM-dd");
 
-            loanCreationModel.no_of_financials = "11";
-            loanCreationModel.due_dateson = "4";
-            loanCreationModel.inst_date = generalSetup.GetApplicationDate().ToString("yyyy-MM-dd");
+            loanCreationModel.no_of_financials = scheduleCount.ToString(); //"11";
+            loanCreationModel.due_dateson = loanLoanRequest.FIRSTPRINCIPALPAYMENTDATE.Value.Day.ToString(); //"4";
+            loanCreationModel.inst_date = loanLoanRequest.FIRSTPRINCIPALPAYMENTDATE.Value.ToString("yyyy-MM-dd");
             loanCreationModel.advisory_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.anniversary_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.appraisal_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
@@ -2195,7 +2205,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.renann_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.vehicle_ins = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.vehicle_value = "0";
-            loanCreationModel.crms_ref_number = loanLoanRequest.CRMSCODE; // "00044/20150613/356687"; //loanLoanRequest
+            loanCreationModel.crms_ref_number = (from b in context.TBL_LOAN join r in context.TBL_LOAN_BOOKING_REQUEST on b.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID where b.LOANREFERENCENUMBER == loanReffernceNumber select r).FirstOrDefault()?.CRMSCODE; //loanLoanRequest.CRMSCODE; // "00044/20150613/356687"; //loanLoanRequest
             loanCreationModel.comp_mis8 = "596912";
             loanCreationModel.freq_unit = "M";
             loanCreationModel.disbursement_type = "BOOKING";
