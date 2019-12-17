@@ -388,7 +388,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.ADDRESS = staffModel.Address;
                 tempStaffToUpdate.ADDRESSOFNOK = staffModel.AddressOfNok;
                 tempStaffToUpdate.BRANCHID = staffModel.BranchId;
-                tempStaffToUpdate.COMMENT = staffModel.Comment;
+                tempStaffToUpdate.COMMENT_ = staffModel.Comment;
                 tempStaffToUpdate.CREATEDBY = staffModel.createdBy;
                 tempStaffToUpdate.CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId;
                 tempStaffToUpdate.DATEOFBIRTH = staffModel.DateOfBirth;
@@ -434,7 +434,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ADDRESS = staffModel.Address,
                         ADDRESSOFNOK = staffModel.AddressOfNok,
                         BRANCHID = staffModel.BranchId,
-                        COMMENT = staffModel.Comment,
+                        COMMENT_ = staffModel.Comment,
                         CREATEDBY = staffModel.createdBy,
                         CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
                         DATEOFBIRTH = staffModel.DateOfBirth,
@@ -565,7 +565,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 newTempStaff.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
                 newTempStaff.BRANCHID = targetStaff.BRANCHID;
                 newTempStaff.CITYID = targetStaff.CITYID;
-                newTempStaff.COMMENT = targetStaff.COMMENT_;
+                newTempStaff.COMMENT_ = targetStaff.COMMENT_;
                 newTempStaff.COMPANYID = targetStaff.COMPANYID;
                 newTempStaff.CREATEDBY = targetStaff.CREATEDBY;
                 newTempStaff.STAFFCODE = targetStaff.STAFFCODE;
@@ -741,7 +741,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              companyId = coy.COMPANYID,
                              AddressOfNok = c.ADDRESSOFNOK,
                              BranchId = br.BRANCHID,
-                             Comment = c.COMMENT,
+                             Comment = c.COMMENT_,
                              customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                              DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                              DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
@@ -1112,7 +1112,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 targetStaff.ADDRESS = tempStaff.ADDRESS;
                 targetStaff.ADDRESSOFNOK = tempStaff.ADDRESSOFNOK;
                 targetStaff.BRANCHID = tempStaff.BRANCHID;
-                targetStaff.COMMENT_ = tempStaff.COMMENT;
+                targetStaff.COMMENT_ = tempStaff.COMMENT_;
                 targetStaff.CREATEDBY = tempStaff.CREATEDBY;
                 if (tempStaff.CUSTOMERSENSITIVITYLEVELID >= 1) targetStaff.CUSTOMERSENSITIVITYLEVELID = tempStaff.CUSTOMERSENSITIVITYLEVELID;
                 targetStaff.DATEOFBIRTH = tempStaff.DATEOFBIRTH;
@@ -1153,7 +1153,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     ADDRESS = tempStaff.ADDRESS,
                     ADDRESSOFNOK = tempStaff.ADDRESSOFNOK,
                     BRANCHID = tempStaff.BRANCHID,
-                    COMMENT_ = tempStaff.COMMENT,
+                    COMMENT_ = tempStaff.COMMENT_,
                     CREATEDBY = tempStaff.CREATEDBY,
                     DATEOFBIRTH = tempStaff.DATEOFBIRTH,
                     DATETIMECREATED = DateTime.Now,
@@ -1434,7 +1434,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     entity.ADDRESS = temp.ADDRESS;
                     entity.ADDRESSOFNOK = temp.ADDRESSOFNOK;
                     entity.BRANCHID = temp.BRANCHID;
-                    entity.COMMENT_ = temp.COMMENT;
+                    entity.COMMENT_ = temp.COMMENT_;
                     entity.CREATEDBY = temp.CREATEDBY;
                     if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                     entity.DATEOFBIRTH = temp.DATEOFBIRTH;
@@ -1475,7 +1475,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ADDRESS = temp.ADDRESS,
                         ADDRESSOFNOK = temp.ADDRESSOFNOK,
                         BRANCHID = temp.BRANCHID,
-                        COMMENT_ = temp.COMMENT,
+                        COMMENT_ = temp.COMMENT_,
                         CREATEDBY = temp.CREATEDBY,
                         DATEOFBIRTH = temp.DATEOFBIRTH,
                         DATETIMECREATED = DateTime.Now,
@@ -1643,7 +1643,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 ADDRESS = staffModel.Address,
                 ADDRESSOFNOK = staffModel.AddressOfNok,
                 BRANCHID = staffModel.BranchId,
-                COMMENT = staffModel.Comment,
+                COMMENT_ = staffModel.Comment,
                 CREATEDBY = staffModel.createdBy,
                 CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
                 DATEOFBIRTH = staffModel.DateOfBirth,
@@ -1783,7 +1783,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              companyId = coy.COMPANYID,
                              AddressOfNok = c.ADDRESSOFNOK,
                              BranchId = br.BRANCHID,
-                             Comment = c.COMMENT,
+                             Comment = c.COMMENT_,
                              customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                              DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                              DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
@@ -1839,7 +1839,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         AddressOfNok = c.ADDRESSOFNOK,
                         BranchId = br.BRANCHID,
                         BranchName = br.BRANCHNAME,
-                        Comment = c.COMMENT,
+                        Comment = c.COMMENT_,
                         customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                         DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                         DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
@@ -2438,7 +2438,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 ADDRESS = staffModel.Address,
                 ADDRESSOFNOK = staffModel.AddressOfNok,
                 BRANCHID = staffModel.BranchId,
-                COMMENT = staffModel.Comment,
+                COMMENT_ = staffModel.Comment,
                 CREATEDBY = staffModel.createdBy,
                 CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
                 DATEOFBIRTH = staffModel.DateOfBirth,
@@ -2661,7 +2661,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 ADDRESS = staff.ADDRESS,
                 ADDRESSOFNOK = staff.ADDRESSOFNOK,
                 BRANCHID = staff.BRANCHID,
-                COMMENT = comment,
+                COMMENT_ = comment,
                 CREATEDBY = model.createdBy,
                 CUSTOMERSENSITIVITYLEVELID = staff.CUSTOMERSENSITIVITYLEVELID,
                 DATEOFBIRTH = staff.DATEOFBIRTH,
