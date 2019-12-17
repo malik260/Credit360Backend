@@ -19,11 +19,11 @@ namespace FintrakBanking.Entities.DocumentModels
         public int? APPROVALSTATUSID { get; set; }
 
         [Required]
-        [StringLength(400)]
+        //////[StringLength(400)]
         public string FILENAME { get; set; }
 
         [Required]
-        [StringLength(10)]
+        ////[StringLength(10)]
         public string FILEEXTENSION { get; set; }
 
         [Required]

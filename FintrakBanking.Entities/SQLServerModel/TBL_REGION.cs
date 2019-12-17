@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COUNTRYID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string REGIONNAME { get; set; }
 
         public virtual TBL_COUNTRY TBL_COUNTRY { get; set; }

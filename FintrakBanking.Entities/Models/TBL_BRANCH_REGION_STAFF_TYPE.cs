@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int REGIONSTAFFTYPEID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string REGIONSTAFFTYPENAME { get; set; }
      
     }

@@ -15,10 +15,10 @@ namespace FintrakBanking.Entities.Models
         [Required]
         public int APPROVALLEVELID { get; set; }
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string SETTINGCODE { get; set; }
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string SETTINGDESCRIPTION { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         [Column(TypeName = "date")]
         public DateTime CHANGEEFFECTIVEDATE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ARCHIVEBATCHCODE { get; set; }
 
         public bool ISAPPLIED { get; set; }
@@ -23,7 +23,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int OPERATIONID { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string CHANGEREASON { get; set; }
 
         public double PRODUCTPRICEINDEXRATE { get; set; }
@@ -53,7 +53,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public double EXCHANGERATE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LOANREFERENCENUMBER { get; set; }
 
         public short SUBSECTORID { get; set; }
@@ -70,10 +70,10 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int RELATIONSHIPMANAGERID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MISCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TEAMMISCODE { get; set; }
 
         public double INTERESTRATE { get; set; }
@@ -101,7 +101,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int? APPROVEDBY { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string APPROVERCOMMENT { get; set; }
 
         public DateTime? DATEAPPROVED { get; set; }
@@ -118,7 +118,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int? DISBURSEDBY { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DISBURSERCOMMENT { get; set; }
 
         [Column(TypeName = "date")]

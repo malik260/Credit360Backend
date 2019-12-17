@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANCHARGEFEEID { get; set; }
 
-        [StringLength(3000)]
+        //[StringLength(3000)]
         public string CONSESSIONREASON { get; set; }
 
         public double CONCESSION { get; set; }

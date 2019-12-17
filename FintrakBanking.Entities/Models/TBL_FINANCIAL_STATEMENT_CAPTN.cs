@@ -20,20 +20,20 @@ namespace FintrakBanking.Entities.Models
         public short FSCAPTIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FSCAPTIONCODE { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FSCAPTION { get; set; }
 
         public int POSITION { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REFNOTE { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string FINTYPE { get; set; }
 
         public short? ACCOUNTCATEGORYID { get; set; }
@@ -42,7 +42,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISTOTALLINE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CAPTIONCOLOR { get; set; }
 
         public double? MULTIPLIER { get; set; }

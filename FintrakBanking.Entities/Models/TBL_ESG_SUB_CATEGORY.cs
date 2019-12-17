@@ -15,7 +15,7 @@
 
         public short ESGCATEGORYID { get; set; }
 
-        [StringLength(700)]
+        //[StringLength(700)]
         public string ESGSUBCATEGORYNAME { get; set; }
 
     }

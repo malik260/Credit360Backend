@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         public short APPLICATIONSTATUSID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string APPLICATIONSTATUSNAME { get; set; }
 
         public int POSITION { get; set; }

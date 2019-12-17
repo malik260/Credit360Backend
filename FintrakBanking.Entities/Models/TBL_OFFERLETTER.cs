@@ -14,12 +14,12 @@ namespace FintrakBanking.Entities.Models
 
         public string LOANAPPLICATIONDOCUMENT { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string APPLICATIONREFERENCENUMBER { get; set; }
 
         public short? PRODUCTID { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string COMMENTS { get; set; }
 
         public bool? ISACCEPTED { get; set; }

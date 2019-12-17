@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public int RISKASSESSMENTTITLEID { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string RISKTITLE { get; set; }
 
         public int? PRODUCTID { get; set; }

@@ -12,7 +12,7 @@
         [Key]
         public short ESGCLASSID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string ESGCLASSNAME { get; set; }
     }
 }

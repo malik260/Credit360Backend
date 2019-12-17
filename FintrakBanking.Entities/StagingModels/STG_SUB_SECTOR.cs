@@ -10,13 +10,13 @@
     public partial class STG_SUB_SECTOR
     {
         [Key]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string SUB_SECTOR { get; set; }
-        [StringLength(255)]
+        //[StringLength(255)]
         public string REF_DESC { get; set; }
-        [StringLength(2)]
+        //[StringLength(2)]
         public string DEL_FLG { get; set; }
-        [StringLength(2)]
+        //[StringLength(2)]
         public string BANK_ID { get; set; }
     }
 }

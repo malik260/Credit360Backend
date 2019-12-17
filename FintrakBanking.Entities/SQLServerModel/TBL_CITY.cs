@@ -27,7 +27,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int CITYID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string CITYNAME { get; set; }
 
         public int LOCALGOVERNMENTID { get; set; }
@@ -36,10 +36,10 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public bool ALLOWEDFORCOLLATERAL { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CITYCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSCODE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

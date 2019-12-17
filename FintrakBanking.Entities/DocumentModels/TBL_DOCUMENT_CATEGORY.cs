@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.DocumentModels
         public int DOCUMENTCATEGORYID { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //////[StringLength(250)]
         public string DOCUMENTCATEGORYNAME { get; set; }
 
         public bool DELETED { get; set; }

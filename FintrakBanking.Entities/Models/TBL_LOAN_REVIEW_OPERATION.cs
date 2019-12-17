@@ -82,7 +82,7 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
 
-        [StringLength(20)]
+        //[StringLength(20)]
         public string LEGALCONTINGENTCODE { get; set; }
 
         public bool ISMARKETINDUCED { get; set; }

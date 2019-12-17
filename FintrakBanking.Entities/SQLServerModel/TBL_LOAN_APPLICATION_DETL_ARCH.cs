@@ -48,7 +48,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short STATUSID { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string LOANPURPOSE { get; set; }
 
         public bool HASDONECHECKLIST { get; set; }

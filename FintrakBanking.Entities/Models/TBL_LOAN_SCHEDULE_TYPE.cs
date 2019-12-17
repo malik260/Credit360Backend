@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         public short SCHEDULETYPEID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string SCHEDULETYPENAME { get; set; }
 
         public short SCHEDULECATEGORYID { get; set; }

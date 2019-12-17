@@ -7373,7 +7373,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_STAFF>()
-                .Property(e => e.COMMENT)
+                .Property(e => e.COMMENT_)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_STAFF>()

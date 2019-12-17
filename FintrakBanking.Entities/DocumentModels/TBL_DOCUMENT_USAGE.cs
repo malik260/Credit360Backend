@@ -16,19 +16,19 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public int TARGETID { get; set; }
 
-        [StringLength(20)]
+        ////[StringLength(20)]
         public string TARGETCODE { get; set; }
 
-        [StringLength(20)]
+        ////[StringLength(20)]
         public string TARGETREFERENCENUMBER { get; set; }
 
-        [StringLength(20)]
+        ////[StringLength(20)]
         public string DOCUMENTCODE { get; set; }
 
-        [StringLength(250)]
+        ////[StringLength(250)]
         public string DOCUMENTTITLE { get; set; }
 
-        [StringLength(20)]
+        ////[StringLength(20)]
         public string CUSTOMERCODE { get; set; }
 
         public int OPERATIONID { get; set; }

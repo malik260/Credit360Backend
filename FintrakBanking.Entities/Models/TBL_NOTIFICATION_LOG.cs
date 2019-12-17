@@ -15,11 +15,11 @@ namespace FintrakBanking.Entities.Models
         public int STAFFID { get; set; }
 
         //[Required]
-        //[StringLength(1000)]
+        ////[StringLength(1000)]
         public string MESSAGE { get; set; }
 
         //[Required]
-        //[StringLength(50)]
+        ////[StringLength(50)]
         public string ACTIONURL { get; set; }
 
         public bool ISACTIVE { get; set; }

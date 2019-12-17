@@ -14,13 +14,13 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANID { get; set; }
 
-        [StringLength(20)]
+        //[StringLength(20)]
         public string COMMENTTYPE { get; set; }
 
-        [StringLength(250), Column(name: "COMMENT_")]
+        //[StringLength(250), Column(name: "COMMENT_")]
         public string COMMENT { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string CREATEDBY { get; set; }
 
         public DateTime? DATETIMECREATED { get; set; }

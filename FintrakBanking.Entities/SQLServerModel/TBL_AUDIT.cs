@@ -22,15 +22,15 @@ namespace FintrakBanking.Entities.SQLServerModel
         public DateTime APPLICATIONDATE { get; set; }
 
         [Required]
-        [StringLength(4000)]
+        //[StringLength(4000)]
         public string DETAIL { get; set; }
 
         public short BRANCHID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string IPADDRESS { get; set; }
 
-        [StringLength(300)]
+        //[StringLength(300)]
         public string URL { get; set; }
 
         public int TARGETID { get; set; }

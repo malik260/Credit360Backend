@@ -14,20 +14,20 @@ namespace FintrakBanking.Entities.Models
         public int INSURANCECOMPANYID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string COMPANYNAME { get; set; }
 
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ADDRESS { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string CONTACTEMAIL { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string PHONENUMBER { get; set; }
 
         public int COMPANYID { get; set; }

@@ -15,10 +15,10 @@ namespace FintrakBanking.Entities.Models
         public int? MISCELLANEOUSID { get; set; }
 
         //[Required]
-        //[StringLength(50)]
+        ////[StringLength(50)]
         public string COLUMNNAME { get; set; }
 
-        //[StringLength(250)]
+        ////[StringLength(250)]
         public string COLUMNVALUE { get; set; }
 
         public int CREATEDBY { get; set; }

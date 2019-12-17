@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CUSTOMERCODE { get; set; }
 
         public int? LOANID { get; set; }
@@ -31,7 +31,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short? LOANSYSTEMTYPEID { get; set; }
 
         [Required]
-        [StringLength(300)]
+        //[StringLength(300)]
         public string CUSTOMERNAME { get; set; }
 
         [Column(TypeName = "money")]
@@ -42,13 +42,13 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public short CAMSOLTYPEID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
-        [StringLength(300)]
+        //[StringLength(300)]
         public string ACCOUNTNAME { get; set; }
 
-        [StringLength(300)]
+        //[StringLength(300)]
         public string REMARK { get; set; }
 
         public bool CANTAKELOAN { get; set; }

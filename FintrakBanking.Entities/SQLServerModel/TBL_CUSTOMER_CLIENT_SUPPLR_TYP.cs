@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short CLIENT_SUPPLIERTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CLIENT_SUPPLIERTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

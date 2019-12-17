@@ -17,11 +17,11 @@ namespace FintrakBanking.Entities.Models
         public short COLLATERALSUBTYPEID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string SECURITYTYPE { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string DEALREFERENCENUMBER { get; set; }
 
         public DateTime EFFECTIVEDATE { get; set; }
@@ -38,11 +38,11 @@ namespace FintrakBanking.Entities.Models
         public decimal LIENUSABLEAMOUNT { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string ISSUERNAME { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ISSUERREFERENCENUMBER { get; set; }
 
         //[Column(TypeName = "money")]
@@ -56,13 +56,13 @@ namespace FintrakBanking.Entities.Models
 
         public short? INTERESTPAYMENTFREQUENCY { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REMARK { get; set; }
 
-        [StringLength(150)]
+        //[StringLength(150)]
         public string FUNDNAME { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string BANKPURCHASEDFROM { get; set; }
 
         public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }

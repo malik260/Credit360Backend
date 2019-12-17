@@ -13,10 +13,10 @@ namespace FintrakBanking.Entities.Models
         public int DEFINEDFUNCTIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FUNCTIONNAME { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string DESCRIPTION { get; set; }
 
         public bool ISSYSTEMDEFINED { get; set; }

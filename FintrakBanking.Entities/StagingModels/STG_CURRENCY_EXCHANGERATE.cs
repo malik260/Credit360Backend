@@ -12,11 +12,11 @@ namespace FintrakBanking.Entities.StagingModels
         public short CURRENCYRATEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CURRENCYCODE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string RATECODE { get; set; }
 
         [Column(TypeName = "date")]
@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.StagingModels
         public double EXCHANGERATE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BASECURRENCY { get; set; }
     }
 }

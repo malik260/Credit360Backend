@@ -962,7 +962,7 @@ namespace FintrakBanking.Repositories.Credit
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            }).ToList();
+            })?.ToList();
 
             return data;
         }
@@ -9603,7 +9603,7 @@ namespace FintrakBanking.Repositories.Credit
                 <p><b>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</b></p>
                 <p><b>{flowChange?.PLACEHOLDER.ToUpper()} MEMO</b></p>
             ";
-            result = result + GetCashBackApprovalsMarkupLOS();
+            result = result + GetCashBackApprovalsMarkup(targetId, operationId);
             return result;
         }
 
@@ -9611,6 +9611,39 @@ namespace FintrakBanking.Repositories.Credit
         private string GetCashBackApprovalsMarkupLOS()
         {
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <th><b>APPROVAL NAME</b></th>
+                        <th><b>DESIGNATION</b></th>
+                        <th><b>COMMENT</b></th>
+                        <th><b>ROUTING STATUS</b></th>
+                        <th><b>DATE APPROVED</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.comment}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
+
+        private string GetCashBackApprovalsMarkup(int targetId, int operationId)
+        {
+            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
                 <table border=1 width=900 cellpadding=10 cellspacing=0>

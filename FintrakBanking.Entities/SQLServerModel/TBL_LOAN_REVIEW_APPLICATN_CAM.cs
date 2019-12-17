@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CAMREF { get; set; }
 
         public bool ISCOMPLETED { get; set; }

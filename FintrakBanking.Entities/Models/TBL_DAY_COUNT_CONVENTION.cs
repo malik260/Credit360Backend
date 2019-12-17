@@ -27,7 +27,7 @@ namespace FintrakBanking.Entities.Models
         public short DAYCOUNTCONVENTIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DAYCOUNTCONVENTIONNAME { get; set; }
 
         public int DAYSINAYEAR { get; set; }

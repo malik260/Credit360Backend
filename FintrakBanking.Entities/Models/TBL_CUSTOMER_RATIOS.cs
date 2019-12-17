@@ -15,7 +15,7 @@
         public int CUSTOMERRATIOID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DESCRIPTION { get; set; }
 
         public string VALUE { get; set; }

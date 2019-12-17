@@ -31,13 +31,13 @@ namespace FintrakBanking.Entities.Models
         public short SUBSECTORID { get; set; }
         public short STATUSID { get; set; }
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string LOANPURPOSE { get; set; }
         public decimal? EQUITYAMOUNT { get; set; }
         public bool HASDONECHECKLIST { get; set; }
         public int? EQUITYCASAACCOUNTID { get; set; }
         public short CONSESSIONAPPROVALSTATUSID { get; set; }
-        [StringLength(3000)]
+        //[StringLength(3000)]
         public string CONSESSIONREASON { get; set; }
         public bool ISPOLITICALLYEXPOSED { get; set; }
         public string REPAYMENTTERMS { get; set; }
@@ -61,11 +61,11 @@ namespace FintrakBanking.Entities.Models
         public int? MORATORIUMDURATION { get; set; }
         public int? CRMSFUNDINGSOURCEID { get; set; }
         public int? CRMSREPAYMENTSOURCEID { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSFUNDINGSOURCECATEGORY { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMS_ECCI_NUMBER { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSCODE { get; set; }
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
         public bool? CRMSVALIDATED { get; set; }
@@ -73,11 +73,11 @@ namespace FintrakBanking.Entities.Models
         public string TRANSACTIONDYNAMICS { get; set; }
         public string CONDITIONPRECIDENT { get; set; }
         public string CONDITIONSUBSEQUENT { get; set; }
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string FIELD1 { get; set; }
         public double? PRODUCTPRICEINDEXRATE { get; set; }
         public short? PRODUCTPRICEINDEXID { get; set; }
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string FIELD2 { get; set; }
         public decimal? FIELD3 { get; set; }
         public bool ISSPECIALISED { get; set; }

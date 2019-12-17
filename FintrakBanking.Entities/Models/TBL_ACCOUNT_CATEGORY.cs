@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         public short ACCOUNTCATEGORYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        ////[StringLength(50)]
         public string ACCOUNTCATEGORYNAME { get; set; }
 
 

@@ -74,7 +74,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short STATUSID { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string LOANPURPOSE { get; set; }
 
         [Column(TypeName = "money")]
@@ -84,17 +84,17 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public short CONSESSIONAPPROVALSTATUSID { get; set; }
 
-        [StringLength(3000)]
+        //[StringLength(3000)]
         public string CONSESSIONREASON { get; set; }
 
         public bool HASDONECHECKLIST { get; set; }
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string REPAYMENTTERMS { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string REPAYMENTSCHEDULEID { get; set; }
 
         [Column(TypeName = "date")]

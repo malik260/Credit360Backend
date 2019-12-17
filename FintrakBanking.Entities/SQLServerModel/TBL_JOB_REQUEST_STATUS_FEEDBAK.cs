@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short JOB_STATUS_FEEDBACKID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string JOB_STATUS_FEEDBACK_NAME { get; set; }
 
         public short REQUESTSTATUSID { get; set; }

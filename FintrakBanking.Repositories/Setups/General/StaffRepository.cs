@@ -125,7 +125,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              companyId = coy.COMPANYID,
                              AddressOfNok = c.ADDRESSOFNOK,
                              BranchId = br.BRANCHID,
-                             Comment = c.COMMENT,
+                             Comment = c.COMMENT_,
                              //createdBy = c.CreatedBy.Value,
                              customerSensitivityLevelId = c.TBL_CUSTOMER_SENSITIVITY_LEVEL.CUSTOMERSENSITIVITYLEVELID,
                              DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              Address = c.ADDRESS,
                              AddressOfNok = c.ADDRESSOFNOK,
                              BranchId = c.BRANCHID,
-                             Comment = c.COMMENT,
+                             Comment = c.COMMENT_,
                              createdBy = c.CREATEDBY.Value,
                              customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                              DateOfBirth = c.DATEOFBIRTH,
@@ -565,7 +565,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 newTempStaff.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
                 newTempStaff.BRANCHID = targetStaff.BRANCHID;
                 newTempStaff.CITYID = targetStaff.CITYID;
-                newTempStaff.COMMENT = targetStaff.COMMENT;
+                newTempStaff.COMMENT = targetStaff.COMMENT_;
                 newTempStaff.COMPANYID = targetStaff.COMPANYID;
                 newTempStaff.CREATEDBY = targetStaff.CREATEDBY;
                 newTempStaff.STAFFCODE = targetStaff.STAFFCODE;
@@ -1112,7 +1112,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 targetStaff.ADDRESS = tempStaff.ADDRESS;
                 targetStaff.ADDRESSOFNOK = tempStaff.ADDRESSOFNOK;
                 targetStaff.BRANCHID = tempStaff.BRANCHID;
-                targetStaff.COMMENT = tempStaff.COMMENT;
+                targetStaff.COMMENT_ = tempStaff.COMMENT;
                 targetStaff.CREATEDBY = tempStaff.CREATEDBY;
                 if (tempStaff.CUSTOMERSENSITIVITYLEVELID >= 1) targetStaff.CUSTOMERSENSITIVITYLEVELID = tempStaff.CUSTOMERSENSITIVITYLEVELID;
                 targetStaff.DATEOFBIRTH = tempStaff.DATEOFBIRTH;
@@ -1153,7 +1153,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     ADDRESS = tempStaff.ADDRESS,
                     ADDRESSOFNOK = tempStaff.ADDRESSOFNOK,
                     BRANCHID = tempStaff.BRANCHID,
-                    COMMENT = tempStaff.COMMENT,
+                    COMMENT_ = tempStaff.COMMENT,
                     CREATEDBY = tempStaff.CREATEDBY,
                     DATEOFBIRTH = tempStaff.DATEOFBIRTH,
                     DATETIMECREATED = DateTime.Now,
@@ -1434,7 +1434,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     entity.ADDRESS = temp.ADDRESS;
                     entity.ADDRESSOFNOK = temp.ADDRESSOFNOK;
                     entity.BRANCHID = temp.BRANCHID;
-                    entity.COMMENT = temp.COMMENT;
+                    entity.COMMENT_ = temp.COMMENT;
                     entity.CREATEDBY = temp.CREATEDBY;
                     if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                     entity.DATEOFBIRTH = temp.DATEOFBIRTH;
@@ -1475,7 +1475,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ADDRESS = temp.ADDRESS,
                         ADDRESSOFNOK = temp.ADDRESSOFNOK,
                         BRANCHID = temp.BRANCHID,
-                        COMMENT = temp.COMMENT,
+                        COMMENT_ = temp.COMMENT,
                         CREATEDBY = temp.CREATEDBY,
                         DATEOFBIRTH = temp.DATEOFBIRTH,
                         DATETIMECREATED = DateTime.Now,
@@ -1899,7 +1899,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             AddressOfNok = c.ADDRESSOFNOK,
                             BranchId = br.BRANCHID,
                             BranchName = br.BRANCHNAME,
-                            Comment = c.COMMENT,
+                            Comment = c.COMMENT_,
                             customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
                             DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                             DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
