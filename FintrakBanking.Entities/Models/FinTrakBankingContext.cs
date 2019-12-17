@@ -1057,7 +1057,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_BRANCH>()
-                .Property(e => e.COMMENT)
+                .Property(e => e.COMMENT_)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_BRANCH>()
@@ -5191,7 +5191,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_COMMENT>()
-                .Property(e => e.COMMENT)
+                .Property(e => e.COMMENT_)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_COMMENT>()
@@ -8920,7 +8920,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_TEMP_STAFF>()
-                .Property(e => e.COMMENT)
+                .Property(e => e.COMMENT_)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_TEMP_STAFF>()

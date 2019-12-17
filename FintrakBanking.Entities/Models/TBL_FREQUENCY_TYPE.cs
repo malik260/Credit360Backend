@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
         public short FREQUENCYTYPEID { get; set; }
 
         [Required]
-        //[StringLength(20), Column(name: "MODE_")]
+        [Column(name: "MODE_")]
         public string MODE { get; set; }
 
         public double VALUE { get; set; }

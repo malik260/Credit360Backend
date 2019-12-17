@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
         public string COMMENTTYPE { get; set; }
 
         //[StringLength(250), Column(name: "COMMENT_")]
-        public string COMMENT { get; set; }
+        public string COMMENT_ { get; set; }
 
         //[StringLength(100)]
         public string CREATEDBY { get; set; }
