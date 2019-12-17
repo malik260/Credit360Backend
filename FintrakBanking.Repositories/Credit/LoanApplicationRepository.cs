@@ -692,7 +692,7 @@ namespace FintrakBanking.Repositories.Credit
                 trail.RESPONSEDATE = DateTime.Now;
                 trail.RESPONSESTAFFID = accountOfficerId;
             }
-
+            ArchiveLoanApplication(loanApplicationId, (int)OperationsEnum.LoanApplication);
             loan.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress;
             loan.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
             return context.SaveChanges() > 0;
@@ -3138,7 +3138,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanPurpose = d.LOANPURPOSE,
                 casaAccountId = d.CASAACCOUNTID,
                 repaymentTerm = d.REPAYMENTTERMS,
-                repaymentScheduleId = (int)d.REPAYMENTSCHEDULEID,
+                repaymentScheduleId = d.REPAYMENTSCHEDULEID,
                 isTakeOverApplication = d.ISTAKEOVERAPPLICATION,
                 crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
                 crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
