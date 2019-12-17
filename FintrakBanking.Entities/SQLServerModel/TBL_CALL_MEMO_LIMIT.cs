@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public short FREQUENCYID { get; set; }
 
-        public int CALLLIMITTYPEID { get; set; }
+       // public int CALLLIMITTYPEID { get; set; }
 
         public int COMPANYID { get; set; }
 

@@ -27,7 +27,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CallMemoViewModel : GeneralEntity
     {
         public int CallMemoId { get; set; }
-
+        public int? approvalLevelId { get; set; }
         public int LoanApplicationId { get; set; }
 
         public string LoanReferenceNo { get; set; }
@@ -36,9 +36,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string CustomerName { get; set; }
 
-        public short CallMemoTypeId { get; set; }
+        //public short CallMemoTypeId { get; set; }
 
-        public string CallMemoType { get; set; }
+        //public string CallMemoType { get; set; }
 
         public DateTime MemoDate { get; set; }
 
@@ -48,11 +48,13 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string Discusion { get; set; }
 
-        public string Summary { get; set; }
-
         public string Action { get; set; }
 
-        public string Recommendation { get; set; }
+        public string participants { get; set; }
+        public string location { get; set; }
+        public string background { get; set; }
+        public string recentUpdate { get; set; }
+
         public int OperationId { get; set; }
         public int ApprovalStatusId { get; set; }
         public string ApprovalStatus { get; set; }

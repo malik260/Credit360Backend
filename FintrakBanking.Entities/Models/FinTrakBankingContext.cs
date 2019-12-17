@@ -1184,15 +1184,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_CALL_MEMO>()
-                .Property(e => e.SUMMARY)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<TBL_CALL_MEMO>()
                 .Property(e => e.ACTION)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<TBL_CALL_MEMO>()
-                .Property(e => e.RECOMMENDATION)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_CALL_MEMO_LIMIT>()
@@ -1206,11 +1198,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CALL_MEMO_TYPE>()
                 .Property(e => e.NAME)
                 .IsUnicode(false);
-
-            modelBuilder.Entity<TBL_CALL_MEMO_TYPE>()
-                .HasMany(e => e.TBL_CALL_MEMO)
-                .WithRequired(e => e.TBL_CALL_MEMO_TYPE)
-                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CASA>()
                 .Property(e => e.PRODUCTACCOUNTNUMBER)

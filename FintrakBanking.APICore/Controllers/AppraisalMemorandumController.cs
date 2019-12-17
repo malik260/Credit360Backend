@@ -213,6 +213,20 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
 
+
+
+        [HttpGet]
+        [Route("appraisal-memorandum/trail/{operationId}")]
+        public HttpResponseMessage GetAppraisalMemorandumTrailCallMemo(int operationId)
+        {
+            var data = repo.GetAppraisalMemorandumTrailCallMemo(operationId);
+            if (data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
+        }
+
         [HttpPost]
         [Route("appraisal-memorandum/privilege")]
         public HttpResponseMessage GetUserPrivilege([FromBody] AuthoritySignatureViewModel entity)
