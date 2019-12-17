@@ -17,7 +17,7 @@
         public int ACCREDITEDCONSULTANTID { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string DESCRIPTION { get; set; }
 
         public int CREATEDBY { get; set; }

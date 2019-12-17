@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public short EMPLOYER_TYPEID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string EMPLOYER_TYPE_NAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

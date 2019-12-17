@@ -64,7 +64,7 @@ namespace FintrakBanking.Entities.Models
         public int STAFFID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFCODE { get; set; }
 
         public int COMPANYID { get; set; }
@@ -72,56 +72,56 @@ namespace FintrakBanking.Entities.Models
         public int? SUPERVISOR_STAFFID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FIRSTNAME { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LASTNAME { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MIDDLENAME { get; set; }
 
         public int? JOBTITLEID { get; set; }
 
         public int STAFFROLEID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string PHONE { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string EMAIL { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string ADDRESS { get; set; }
 
         //[Column(TypeName = "date")]
         public DateTime? DATEOFBIRTH { get; set; }
 
-        [StringLength(1)]
+        //[StringLength(1)]
         public string GENDER { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string NAMEOFNOK { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string PHONEOFNOK { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string EMAILOFNOK { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string ADDRESSOFNOK { get; set; }
 
         public int? BUSINESSUNITID { get; set; }
 
-        [StringLength(1)]
+        //[StringLength(1)]
         public string GENDEROFNOK { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string NOKRELATIONSHIP { get; set; }
 
-        [StringLength(100), Column(name: "COMMENT_")]
+        //[StringLength(100), Column(name: "COMMENT_")]
         public string COMMENT { get; set; }
 
         public short? BRANCHID { get; set; }

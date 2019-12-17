@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int EMPLOYERID { get; set; }
 
         [Required]
-        [StringLength(300)]
+        //[StringLength(300)]
         public string EMPLOYER_NAME { get; set; }
 
         public short EMPLOYER_SUB_TYPEID { get; set; }
@@ -27,15 +27,15 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string ADDRESS { get; set; }
 
         public int CITYID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PHONENUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string EMAILADDRESS { get; set; }
 
         public int CREATEDBY { get; set; }

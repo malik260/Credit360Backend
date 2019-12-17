@@ -15,34 +15,34 @@ namespace FintrakBanking.Entities.Models
         public int SID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BATCHID { get; set; }
       
         public int BATCHREFID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DEBITACCOUNT { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CREDITACCOUNT { get; set; }
 
         public int OPERATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SOURCEREFERENCENUMBER { get; set; }
 
         //[Column(TypeName = "money")]
         public decimal AMOUNT { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TRANSACTIONTYPE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FLOWTYPE { get; set; }
         
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         //[Column(TypeName = "date")]
@@ -57,10 +57,10 @@ namespace FintrakBanking.Entities.Models
 
         public int DESTINATIONBRANCHID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CURRENCYCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CURRENCYRATECODE { get; set; }
 
         public double CURRENCYRATE { get; set; }
@@ -71,13 +71,13 @@ namespace FintrakBanking.Entities.Models
 
         public string POSTEDBY { get; set; }
 
-        [StringLength(1)]
+        //[StringLength(1)]
         public string FORCEDEBITACCOUNT  { get; set; }
 
         //[Column(TypeName = "date")]
         public int VALUEDATENUMBER { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string BANKID { get; set; }
 
         public decimal AMOUNTCOLLECTED { get; set; }

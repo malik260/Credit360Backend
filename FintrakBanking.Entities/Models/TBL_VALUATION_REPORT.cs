@@ -19,17 +19,17 @@ namespace FintrakBanking.Entities.Models
         public int VALUERID { get; set; }
 
         //[Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string VALUERCOMMENT { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string ACCOUNTNUMBER { get; set; }
 
         public decimal? VALUATIONFEE { get; set; }
 
         [Required]
-        //[StringLength(20)]
+        ////[StringLength(20)]
         public decimal WHT { get; set; }
         public decimal? WHTAMOUNT { get; set; }
 

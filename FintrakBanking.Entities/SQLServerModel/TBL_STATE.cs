@@ -23,13 +23,13 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COUNTRYID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string STATENAME { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string STATECODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSCODE { get; set; }
 
         public int? REGIONID { get; set; }

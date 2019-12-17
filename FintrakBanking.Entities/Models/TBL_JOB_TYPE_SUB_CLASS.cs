@@ -19,7 +19,7 @@
         public int JOB_SUB_TYPE_CLASSID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string JOB_SUB_TYPE_CLASS_NAME { get; set; }
 
         [Required]

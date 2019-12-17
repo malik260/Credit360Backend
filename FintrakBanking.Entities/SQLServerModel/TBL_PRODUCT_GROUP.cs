@@ -19,11 +19,11 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short PRODUCTGROUPID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTGROUPCODE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTGROUPNAME { get; set; }
 
         public int CREATEDBY { get; set; }

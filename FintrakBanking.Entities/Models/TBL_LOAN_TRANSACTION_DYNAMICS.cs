@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int? DYNAMICSID { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string DYNAMICS { get; set; }
 
         public int LOANAPPLICATIONDETAILID { get; set; }

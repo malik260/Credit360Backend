@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int LOANAPPLICATIONDETAILID { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string COMMENT { get; set; }
 
         public short RATINGID { get; set; }

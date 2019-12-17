@@ -10,13 +10,13 @@
     public partial class STG_NAT_OF_ADV
     {
         [Key]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string NATURE_OF_ADVANCE { get; set; }
-        [StringLength(255)]
+        //[StringLength(255)]
         public string REF_DESC { get; set; }
-        [StringLength(2)]
+        //[StringLength(2)]
         public string DEL_FLG { get; set; }
-        [StringLength(2)]
+        //[StringLength(2)]
         public string BANK_ID { get; set; }
     }
 }

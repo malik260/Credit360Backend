@@ -23,7 +23,7 @@ namespace FintrakBanking.Entities.Models
         public int DISPLAYORDER { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string ITEM { get; set; }
 
         public bool ISMANDATORY { get; set; }

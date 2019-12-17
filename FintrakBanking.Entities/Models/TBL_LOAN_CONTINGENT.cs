@@ -42,10 +42,10 @@ namespace FintrakBanking.Entities.Models
         public double EXCHANGERATE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LOANREFERENCENUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string RELATED_LOAN_REFERENCE_NUMBER { get; set; }
 
         public short SUBSECTORID { get; set; }
@@ -54,10 +54,10 @@ namespace FintrakBanking.Entities.Models
 
         public int RELATIONSHIPMANAGERID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MISCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TEAMMISCODE { get; set; }
 
         //[Column(TypeName = "date")]
@@ -76,7 +76,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? APPROVEDBY { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string APPROVERCOMMENT { get; set; }
 
         public DateTime? DATEAPPROVED { get; set; }
@@ -85,10 +85,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISDISBURSED { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DISBURSEDBY { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DISBURSERCOMMENT { get; set; }
 
         //[Column(TypeName = "date")]
@@ -105,41 +105,41 @@ namespace FintrakBanking.Entities.Models
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD1 { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD2 { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD3 { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD4 { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD5 { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD6 { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD7 { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD8 { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD9 { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FIELD10 { get; set; }
 
         //public string CRMSCODE { get; set; }
         //public short? CRMSREPAYMENTAGREEMENTID { get; set; }
 
         //public DateTime? CRMSDATE { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LEGALCONTINGENTCODE { get; set; }
 
         public int? LOAN_BOOKING_REQUESTID { get; set; }

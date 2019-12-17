@@ -20,10 +20,10 @@ namespace FintrakBanking.Entities.Models
         public short SECTORID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string NAME { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string CODE { get; set; }
 
         //[Column(TypeName = "money")]

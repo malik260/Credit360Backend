@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public byte PERFECTIONSTATUSID { get; set; }
 
         //[Required]
-        //[StringLength(50)]
+        ////[StringLength(50)]
         public string PERFECTIONSTATUSNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

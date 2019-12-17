@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int PSRREPORTTYPEID { get; set; }
 
         [Required]
-        [StringLength(2)]
+        //[StringLength(2)]
         public string REPORTTYPENAME { get; set; }
 
         public int CREATEDBY { get; set; }

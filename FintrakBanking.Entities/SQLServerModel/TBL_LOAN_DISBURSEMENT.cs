@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public decimal AMOUNTDISBURSED { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string NARRATION { get; set; }
 
         public int CREATEDBY { get; set; }

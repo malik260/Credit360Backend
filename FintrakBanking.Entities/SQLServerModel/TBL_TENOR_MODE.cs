@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short TENORMODEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TENORMODENAME { get; set; }
     }
 }

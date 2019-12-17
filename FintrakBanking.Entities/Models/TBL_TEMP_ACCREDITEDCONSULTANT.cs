@@ -19,13 +19,13 @@ namespace FintrakBanking.Entities.Models
 
         public int ACCREDITEDCONSULTANTID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REGISTRATIONNUMBER { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string NAME { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string FIRMNAME { get; set; }
 
         public int? ACCREDITEDCONSULTANTTYPEID { get; set; }
@@ -34,24 +34,24 @@ namespace FintrakBanking.Entities.Models
 
         public short? CITYID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SOLICITORBVN { get; set; }
 
         public short? COUNTRYID { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string EMAILADDRESS { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string PHONENUMBER { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string ADDRESS { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string CORECOMPETENCE { get; set; }
 
         public int CREATEDBY { get; set; }

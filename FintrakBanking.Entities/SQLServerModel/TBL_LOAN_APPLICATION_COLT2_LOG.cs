@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int? LOANAPPLICATIONDETAILID { get; set; }
 
         [Required]
-        [StringLength(4000)]
+        //[StringLength(4000)]
         public string COLLATERALDETAIL { get; set; }
 
         [Column(TypeName = "money")]

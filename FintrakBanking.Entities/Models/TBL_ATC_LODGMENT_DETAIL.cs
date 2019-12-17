@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int ATCLODGMENTDETAILID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string DETAIL { get; set; }
 
         public decimal VALUE { get; set; }

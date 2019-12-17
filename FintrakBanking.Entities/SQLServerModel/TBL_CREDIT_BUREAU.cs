@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short CREDITBUREAUID { get; set; }
 
         [Required]
-        [StringLength(300)]
+        //[StringLength(300)]
         public string CREDITBUREAUNAME { get; set; }
 
         [Column(TypeName = "money")]
@@ -37,13 +37,13 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public bool USEINTEGRATION { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string USERNAME { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PASSWORD { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string TOKEN { get; set; }
 
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }

@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int RACCATEGORYID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string CATEGORYNAME { get; set; }
 
         public int CREATEDBY { get; set; }

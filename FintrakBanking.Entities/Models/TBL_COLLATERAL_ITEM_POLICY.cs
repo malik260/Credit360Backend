@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int COLLATERALCUSTOMERID { get; set; }
 
         //[Required]
-        //[StringLength(50)]
+        ////[StringLength(50)]
         public string POLICYREFERENCENUMBER { get; set; }
 
         //[Required]

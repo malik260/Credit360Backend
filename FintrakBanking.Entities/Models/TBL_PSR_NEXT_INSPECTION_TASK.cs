@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int PSRNEXTINSPECTIONTASKID { get; set; }
 
         [Required]
-        //[StringLength(1000)]
+        ////[StringLength(1000)]
         public string COMMENTS { get; set; }
 
         public bool ISDONE { get; set; }

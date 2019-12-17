@@ -57,14 +57,14 @@ namespace FintrakBanking.Entities.Models
         public short PRODUCTCLASSID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTCODE { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string PRODUCTNAME { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string PRODUCTDESCRIPTION { get; set; }
 
         public int? PRINCIPALBALANCEGL { get; set; }
