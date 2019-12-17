@@ -274,7 +274,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     branchCode = branch.BRANCHCODE,
                     addressLine1 = branch.ADDRESSLINE1,
                     addressLine2 = branch.ADDRESSLINE2,
-                    comment = branch.COMMENT,
+                    comment = branch.COMMENT_,
                 };
             }
 
@@ -298,7 +298,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                branchCode = x.BRANCHCODE,
                                addressLine1 = x.ADDRESSLINE1,
                                addressLine2 = x.ADDRESSLINE2,
-                               comment = x.COMMENT,
+                               comment = x.COMMENT_,
                                branchLimit = x.NPL_LIMIT,
                                deleted = x.DELETED,
                                regionId = x.REGIONID,
@@ -345,7 +345,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 branchCode = x.BRANCHCODE,
                 addressLine1 = x.ADDRESSLINE1,
                 addressLine2 = x.ADDRESSLINE2,
-                comment = x.COMMENT,
+                comment = x.COMMENT_,
                 branchLimit = x.NPL_LIMIT,
                 dateTimeUpdated = x.DATETIMEUPDATED,
                 deleted = x.DELETED,
@@ -370,7 +370,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     BRANCHCODE = model.branchCode,
                     ADDRESSLINE1 = model.addressLine1,
                     ADDRESSLINE2 = model.addressLine2,
-                    COMMENT = model.comment,
+                    COMMENT_ = model.comment,
                     CREATEDBY = model.createdBy,
                     DELETED = model.deleted,
                 };
@@ -417,7 +417,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 branch.BRANCHCODE = model.branchCode;
                 branch.ADDRESSLINE1 = model.addressLine1;
                 branch.ADDRESSLINE2 = model.addressLine2;
-                branch.COMMENT = model.comment;
+                branch.COMMENT_ = model.comment;
                 branch.NPL_LIMIT = model.branchLimit;
                 branch.LASTUPDATEDBY = model.lastUpdatedBy;
                 branch.DATETIMEUPDATED = DateTime.Now;
