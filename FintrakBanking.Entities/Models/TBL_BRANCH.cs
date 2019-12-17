@@ -57,7 +57,7 @@ namespace FintrakBanking.Entities.Models
         public string ADDRESSLINE2 { get; set; }
 
         //[StringLength(2000), Column(name: "COMMENT_")]
-        public string COMMENT { get; set; }
+        public string COMMENT_ { get; set; }
 
         public int? STATEID { get; set; }
 
