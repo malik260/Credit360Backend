@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public int OPERATIONID { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string CHANGEREASON { get; set; }
 
         public int LOANID { get; set; }

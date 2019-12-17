@@ -41,23 +41,23 @@ namespace FintrakBanking.Entities.Models
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string BRANCHNAME { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BRANCHCODE { get; set; }
 
         public int REGIONID { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string ADDRESSLINE1 { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string ADDRESSLINE2 { get; set; }
 
-        [StringLength(2000), Column(name: "COMMENT_")]
-        public string COMMENT { get; set; }
+        //[StringLength(2000), Column(name: "COMMENT_")]
+        public string COMMENT_ { get; set; }
 
         public int? STATEID { get; set; }
 

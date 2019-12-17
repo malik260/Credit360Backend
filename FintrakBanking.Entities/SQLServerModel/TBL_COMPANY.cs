@@ -82,16 +82,16 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string NAME { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string ADDRESS { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string TELEPHONE { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string EMAIL { get; set; }
 
         [Column(TypeName = "money")]
@@ -111,22 +111,22 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public short? NATUREOFBUSINESSID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string NAMEOFSCHEME { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FUNCTIONSREGISTERED { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? AUTHORISEDSHARECAPITAL { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string NAMEOFREGISTRAR { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string NAMEOFTRUSTEES { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FORMERMANAGERSTRUSTEES { get; set; }
 
         [Column(TypeName = "date")]
@@ -139,22 +139,22 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int? INITIALSUBSCRIPTION { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string REGISTEREDBY { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string TRUSTEESADDRESS { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string INVESTMENTOBJECTIVE { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string WEBSITE { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string EBUSINESSCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string EOYPROFITANDLOSSGL { get; set; }
 
         public short? COMPANYCLASSID { get; set; }
@@ -167,7 +167,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int? PARENTID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string LOGOPATH { get; set; }
 
         public int? CREATEDBY { get; set; }

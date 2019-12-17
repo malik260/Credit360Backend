@@ -19,15 +19,15 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int LOCALGOVERNMENTID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string NAME { get; set; }
 
         public int STATEID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LGACODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSCODE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

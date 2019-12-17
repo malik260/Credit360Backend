@@ -12,13 +12,13 @@ namespace FintrakBanking.Entities.StagingModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal ID { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string ACCOUNTNUMBER { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string CUSTOMERCODE { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string ACCOUNTNAME { get; set; }
 
         public decimal? ACCOUNTBALANCE { get; set; }

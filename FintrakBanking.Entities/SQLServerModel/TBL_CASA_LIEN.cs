@@ -13,15 +13,15 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int LIENID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SOURCEREFERENCENUMBER { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTACCOUNTNUMBER { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LIENREFERENCENUMBER { get; set; }
 
         public int COMPANYID { get; set; }
@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public decimal LIENAMOUNT { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         public short LIENTYPEID { get; set; }

@@ -17,7 +17,7 @@
         public int OPERATIONID { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string COMMENTS { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

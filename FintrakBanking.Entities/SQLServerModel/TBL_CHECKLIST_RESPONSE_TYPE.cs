@@ -23,7 +23,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short RESPONSE_TYPEID { get; set; }
 
         [Required]
-        [StringLength(160)]
+        //[StringLength(160)]
         public string RESPONSE_TYPE_NAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

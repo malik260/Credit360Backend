@@ -20,12 +20,12 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short COLLATERALVALUEBASETYPEID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string VALUEBASETYPENAME { get; set; }
 
         public int COLLATERALTYPEID { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REMARK { get; set; }
 
         public int CREATEDBY { get; set; }

@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int GROUPID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string GROUPNAME { get; set; }
 
         public int COMPANYID { get; set; }

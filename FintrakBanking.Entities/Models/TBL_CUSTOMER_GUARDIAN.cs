@@ -12,13 +12,13 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int GUARDIANID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string GUARDIANNAME { get; set; }
 
-        [StringLength(20)]
+        //[StringLength(20)]
         public string GUARDIANPHONE { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string GUARDIANADDRESS { get; set; }
 
         public int CUSTOMERID { get; set; }

@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
         public short FLOWCHANGEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PLACEHOLDER { get; set; }
 
         public short? PRODUCTCLASSID { get; set; }
@@ -33,10 +33,10 @@ namespace FintrakBanking.Entities.Models
         public  int OPERATIONID { get; set; }
         //public int INTERESTPAYMENT { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESTINATIONURL { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LABEL { get; set; }
 
         public bool DELETED { get; set; }

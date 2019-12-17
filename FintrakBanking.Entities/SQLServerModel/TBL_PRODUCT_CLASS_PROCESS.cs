@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short PRODUCT_CLASS_PROCESSID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string PRODUCT_CLASS_PROCESS_NAME { get; set; }
 
         public bool USE_AMOUNT_LIMIT { get; set; }

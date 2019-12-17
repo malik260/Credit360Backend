@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short PRUDENTIALGUIDELINETYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRUDENTIALGUIDELINETYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

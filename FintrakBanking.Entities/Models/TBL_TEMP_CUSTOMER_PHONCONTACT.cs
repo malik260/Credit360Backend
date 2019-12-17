@@ -14,10 +14,10 @@ namespace FintrakBanking.Entities.Models
 
         public int PHONECONTACTID { get; set; }
 
-        [StringLength(20)]
+        //[StringLength(20)]
         public string PHONE { get; set; }
 
-        [StringLength(12)]
+        //[StringLength(12)]
         public string PHONENUMBER { get; set; }
 
         public int CUSTOMERID { get; set; }

@@ -32,10 +32,10 @@ namespace FintrakBanking.Entities.SQLServerModel
         public string SUMMARY { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string ACTION { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string RECOMMENDATION { get; set; }
 
         public int CREATEDBY { get; set; }

@@ -12,19 +12,19 @@ namespace FintrakBanking.Entities.StagingModels
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public decimal ID { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string PRODUCTCODE { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string CASAACCOUNT { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string CUSTOMERCODE { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string BRANCHCODE { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string LOANREFERENCENUMBER { get; set; }
 
         public int? TENOR { get; set; }
@@ -53,10 +53,10 @@ namespace FintrakBanking.Entities.StagingModels
 
         public decimal? OUTSTANDINGPRINCIPAL { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string CLASSIFICATION { get; set; }
 
-        [StringLength(255)]
+        //[StringLength(255)]
         public string SUBCLASSIFICATION { get; set; }
     }
 }

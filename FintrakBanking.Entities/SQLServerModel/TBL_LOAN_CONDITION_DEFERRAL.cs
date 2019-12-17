@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short APPROVALSTATUSID { get; set; }
 
         [Required]
-        [StringLength(700)]
+        //[StringLength(700)]
         public string DEFERRALREASON { get; set; }
 
         public int CREATEDBY { get; set; }

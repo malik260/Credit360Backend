@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int TEMPCHARGEFEEID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string CHARGEFEENAME { get; set; }
 
         public short FEEINTERVALID { get; set; }

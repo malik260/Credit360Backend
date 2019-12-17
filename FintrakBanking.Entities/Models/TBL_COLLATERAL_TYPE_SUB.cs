@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public short COLLATERALSUBTYPEID { get; set; }
 
         //[Required]
-        //[StringLength(50)]
+        ////[StringLength(50)]
         public string COLLATERALSUBTYPENAME { get; set; }
 
         public int COLLATERALTYPEID { get; set; }

@@ -10,11 +10,11 @@
     public partial class STG_SCHEMECODE_TBL
     {
         [Key]
-        [StringLength(5)]
+        //[StringLength(5)]
         public string SCHEME_CODE { get; set; }
-        [StringLength(100)]
+        //[StringLength(100)]
         public string SCHEME_DESCRIPTION { get; set; }
-        [StringLength(3)]
+        //[StringLength(3)]
         public string SCHEME_TYPE { get; set; }
     }
 }

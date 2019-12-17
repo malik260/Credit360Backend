@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
         public int RACOPTIONID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string LABEL { get; set; }
 
         public int KEY { get; set; }

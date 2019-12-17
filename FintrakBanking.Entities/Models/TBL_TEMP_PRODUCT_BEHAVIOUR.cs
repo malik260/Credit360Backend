@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
         public short? TEMP_PRODUCTID { get; set; }
        // public int PRODUCTID { get; set; }
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTCODE { get; set; }
 
         public double? COLLATERAL_LCY_LIMIT { get; set; }

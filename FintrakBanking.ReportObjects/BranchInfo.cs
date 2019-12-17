@@ -32,7 +32,7 @@ namespace FintrakBanking.ReportObjects
                 branchCode = x.BRANCHCODE,
                 addressLine1 = x.ADDRESSLINE1,
                 addressLine2 = x.ADDRESSLINE2,
-                comment = x.COMMENT,
+                comment = x.COMMENT_,
                 deleted = x.DELETED,
             }).ToList();
 
@@ -57,7 +57,7 @@ namespace FintrakBanking.ReportObjects
                     branchCode = branch.BRANCHCODE,
                     addressLine1 = branch.ADDRESSLINE1,
                     addressLine2 = branch.ADDRESSLINE2,
-                    comment = branch.COMMENT,
+                    comment = branch.COMMENT_,
                 };
             }
 

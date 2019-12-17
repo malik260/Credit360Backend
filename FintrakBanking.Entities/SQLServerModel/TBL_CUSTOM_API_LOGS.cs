@@ -13,13 +13,13 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int APILOGID { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string APIURL { get; set; }
 
         public short LOGTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REFERENCENUMBER { get; set; }
 
         [Required]

@@ -19,11 +19,11 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int? EMPLOYERID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string EMPLOYERNAME { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string EMPLOYERADDRESS { get; set; }
 
         public int EMPLOYERSTATEID { get; set; }
@@ -31,13 +31,13 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int EMPLOYERCOUNTRYID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string OFFICEPHONE { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime EMPLOYDATE { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string PREVIOUSEMPLOYER { get; set; }
 
         public bool ACTIVE { get; set; }

@@ -26,7 +26,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int ACTIVITYPARENTID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string ACTIVITYNAME { get; set; }
 
         public virtual TBL_PROFILE_ACTIVITY_PARENT TBL_PROFILE_ACTIVITY_PARENT { get; set; }

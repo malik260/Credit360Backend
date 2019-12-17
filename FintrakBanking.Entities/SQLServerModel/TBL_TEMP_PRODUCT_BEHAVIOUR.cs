@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int TEMPPRODUCT_BEHAVIOURID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTCODE { get; set; }
 
         public double? COLLATERAL_LCY_LIMIT { get; set; }

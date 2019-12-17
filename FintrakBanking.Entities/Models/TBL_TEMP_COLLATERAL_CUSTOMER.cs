@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         public short COLLATERALSUBTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string COLLATERALCODE { get; set; }
 
         public short CURRENCYID { get; set; }
@@ -49,7 +49,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CUSTOMERGROUPID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CAMREFNUMBER { get; set; }
 
         public int CREATEDBY { get; set; }

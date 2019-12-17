@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
         public short DOCUMENTTYPEID { get; set; }
 
         //[Required]
-        //[StringLength(250)]
+        ////[StringLength(250)]
         public string DOCUMENTTYPENAME { get; set; }
 
         public int COLLATERALTYPEID { get; set; }

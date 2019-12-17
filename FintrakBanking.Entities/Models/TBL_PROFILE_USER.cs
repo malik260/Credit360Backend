@@ -23,11 +23,11 @@ namespace FintrakBanking.Entities.Models
         public int STAFFID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string USERNAME { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string PASSWORD
         { get;
             set; }
@@ -38,10 +38,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? FAILEDLOGONATTEMPT { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string SECURITYQUESTION { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string SECURITYANSWER { get; set; }
 
         public DateTime? NEXTPASSWORDCHANGEDATE { get; set; }
@@ -54,7 +54,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? LASTLOCKOUTDATE { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string LOGINCODE { get; set; }
 
         public int? CREATEDBY { get; set; }

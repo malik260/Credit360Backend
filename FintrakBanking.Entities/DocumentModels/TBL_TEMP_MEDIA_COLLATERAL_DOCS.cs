@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.DocumentModels
         public int DOCUMENTID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string DOCUMENTCODE { get; set; }
 
       //  public string COLLATERALCODE { get; set; }
@@ -24,11 +24,11 @@ namespace FintrakBanking.Entities.DocumentModels
         public bool ISPRIMARYDOCUMENT { get; set; }
 
         [Required]
-        [StringLength(400)]
+        //[StringLength(400)]
         public string FILENAME { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string FILEEXTENSION { get; set; }
 
         [Required]

@@ -26,7 +26,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public bool ISCOMPULSORY { get; set; }
 
-        [StringLength(800)]
+        //[StringLength(800)]
         public string ITEMDESCRIPTION { get; set; }
 
         public int COMPANYID { get; set; }

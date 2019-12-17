@@ -13,11 +13,11 @@ namespace FintrakBanking.Entities.Models
         public short COLLATERALVALUERID { get; set; }
 
         //[Required]
-        //[StringLength(50)]
+        ////[StringLength(50)]
         public string VALUERLICENCENUMBER { get; set; }
 
         //[Required]
-        //[StringLength(100)]
+        ////[StringLength(100)]
         public string NAME { get; set; }
 
         public short? VALUERTYPEID { get; set; }
@@ -28,13 +28,13 @@ namespace FintrakBanking.Entities.Models
 
         public short? COUNTRYID { get; set; }
 
-        //[StringLength(50)]
+        ////[StringLength(50)]
         public string EMAILADDRESS { get; set; }
 
-        ///[StringLength(50)]
+        /////[StringLength(50)]
         public string PHONENUMBER { get; set; }
 
-        //[StringLength(500)]
+        ////[StringLength(500)]
         public string ADDRESS { get; set; }
 
         public int CREATEDBY { get; set; }

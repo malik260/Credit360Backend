@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int? COLLATERALCUSTOMERID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CAMREFERENCENUMBER { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }

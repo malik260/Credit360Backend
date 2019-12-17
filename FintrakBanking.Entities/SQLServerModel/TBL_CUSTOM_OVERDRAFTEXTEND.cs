@@ -12,19 +12,19 @@ namespace FintrakBanking.Entities.SQLServerModel
         [Key]
         public int OVERDRAFTEXTENDID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SANCTIONREFERENCENUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SANCTIONLIMIT { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string EXPIRYDATE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string APIURL { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

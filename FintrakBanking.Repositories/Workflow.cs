@@ -285,6 +285,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void ResolveExternalFlowLoop(TBL_APPROVAL_TRAIL request, TBL_APPROVAL_TRAIL initiatorRequest)
         {
+            if(this.StatusId != (int)ApprovalStatusEnum.Referred && this.request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.referredLog.Count <= 0){ return; }
+
             if (this.StatusId == (int)ApprovalStatusEnum.Referred )
             {
                 this.referBackStateId = (short)ApprovalState.Initiation;
@@ -329,7 +331,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var referrer = initialReferrer == null ? this.referredLog.FirstOrDefault() : initialReferrer;
 
                 this.nextLevelId = referrer.FROMAPPROVALLEVELID;
-                //this.toStaffId = referrer.REQUESTSTAFFID;
+                this.toStaffId = referrer.REQUESTSTAFFID;
                 referrer.REFEREBACKSTATEID = (short)ApprovalState.Ended;
             }
         }

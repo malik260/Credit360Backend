@@ -2146,12 +2146,11 @@ namespace FintrakBanking.Repositories.Credit
                                   where b.LOANREFERENCENUMBER == loanReffernceNumber
                                   select r).FirstOrDefault();
 
-            /// To be made more dynamic 
             var fee = (from lf in context.TBL_LOAN_FEE
                        join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
                        join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
                        where l.LOANREFERENCENUMBER == loanReffernceNumber //&& (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
-                       select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = f.RATE }).ToList();
+                       select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
 
             //var test = fee.ToList();
             var chargefeeIds = fee.Select(x => x.chargeFeeId).ToList();
@@ -2174,7 +2173,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.tax_rate = feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
-            loanCreationModel.app_user_id = "FINTRAKUSER"; //"FINTRAKUSR";
+            loanCreationModel.app_user_id = "FINTRAKUSR";//"FINTRAKUSER"; //"";
             loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
             loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");

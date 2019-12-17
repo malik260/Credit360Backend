@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int RELIEFSTAFFID { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string RELIEFREASON { get; set; }
 
         [Column(TypeName = "date")]

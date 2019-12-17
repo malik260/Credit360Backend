@@ -13,18 +13,18 @@ namespace FintrakBanking.Entities.Models
         public int MESSAGEID { get; set; }
 
         //[Required]
-        //[StringLength(1000)]
+        ////[StringLength(1000)]
         public string FROMADDRESS { get; set; }
 
         //[Required]
-        //[StringLength(2000)]
+        ////[StringLength(2000)]
         public string TOADDRESS { get; set; }
 
         [Required]
         public string MESSAGEBODY { get; set; }
 
         //[Required]
-        //[StringLength(1000)]
+        ////[StringLength(1000)]
         public string MESSAGESUBJECT { get; set; }
 
         public short MESSAGESTATUSID { get; set; }
@@ -37,7 +37,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMESENT { get; set; }
 
-        //[StringLength(2000)]
+        ////[StringLength(2000)]
         public string GATEWAYRESPONSE { get; set; }
 
         public int? OPERATIONID { get; set; }

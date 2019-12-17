@@ -29,7 +29,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int APPROVALLEVELID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string LEVELNAME { get; set; }
 
         public int GROUPID { get; set; }

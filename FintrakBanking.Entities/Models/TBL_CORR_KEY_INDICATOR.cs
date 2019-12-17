@@ -18,10 +18,10 @@
         public int KEYINDICATORID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string INDICATORNAME { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string DESCRIPTION { get; set; }
 
         public int PERCENTAGEWEIGHT { get; set; }

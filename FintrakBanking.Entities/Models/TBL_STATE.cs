@@ -23,10 +23,10 @@ namespace FintrakBanking.Entities.Models
         public int COUNTRYID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string STATENAME { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string STATECODE { get; set; }
 
         public int? REGIONID { get; set; }
