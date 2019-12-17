@@ -122,7 +122,7 @@ namespace FintrakBanking.Entities.Models
         public string NOKRELATIONSHIP { get; set; }
 
         //[StringLength(100), Column(name: "COMMENT_")]
-        public string COMMENT { get; set; }
+        public string COMMENT_ { get; set; }
 
         public short? BRANCHID { get; set; }
 
