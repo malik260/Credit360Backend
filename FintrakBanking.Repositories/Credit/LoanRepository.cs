@@ -13754,13 +13754,13 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            /*string WorkflowStageName = "";
+            string WorkflowStageName = "";
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
-            if(WorkflowStage == "RM")
+            if (WorkflowStage == "RM")
             {
                 WorkflowStageName = "11";
             }
-            if (WorkflowStage.Substring(0,2) == "CR")
+            if (WorkflowStage.Substring(0, 2) == "CR")
             {
                 WorkflowStageName = "12";
             }
@@ -13768,12 +13768,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 WorkflowStageName = "13";
             }
-            
+
             var appl = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).FirstOrDefault();
-            if(appl != null && appl.APIREQUESTID != null)
+            if (appl != null && appl.APIREQUESTID != null)
             {
                 var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
-                if(product.PRODUCTCODE == "CFL")
+                if (product.PRODUCTCODE == "CFL")
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
@@ -13785,8 +13785,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
                 }
-            }*/
-            
+            }
+
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT
             //{

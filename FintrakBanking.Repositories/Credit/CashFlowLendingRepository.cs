@@ -61,7 +61,8 @@ namespace FintrakBanking.Repositories.Credit
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
         {
            APIResponse response = new APIResponse();
-           if (model.customerType == "1")
+            return fireResponse("Missing Customer Number", "99", model.request_Id);
+            if (model.customerType == "1")
            {
                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
 
@@ -284,8 +285,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.accountOfficerStaffCode == string.Empty) return fireResponse("Missing account officer code", "99","");
 
-            var accountOfficerr = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
-            if (accountOfficerr == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
+            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+            if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
+
+            var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFCODE == model.relationshipManagerStaffCode).FirstOrDefault();
 
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == model.customerCode).FirstOrDefault();
             if(customer == null) return fireResponse("This customer is not profiled on Fintrak Credit360 application", "99", "");
@@ -307,7 +310,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.currencyCode = currency.CURRENCYCODE;
             loanApp.interestRate = Convert.ToDouble(model.interestRate);
             loanApp.editMode = model.callStatusCode == "01" ?  true : false;
-            loanApp.relationshipOfficerId = accountOfficerr.STAFFID;
+            loanApp.relationshipOfficerId = accountOfficer.STAFFID;
             loanApp.companyId = model.companyId;
             loanApp.loanInformation = "<p></p>";
             loanApp.casaAccountId = casa?.CASAACCOUNTID;
@@ -575,8 +578,9 @@ namespace FintrakBanking.Repositories.Credit
                 OWNERSHIPSTRUCTURE = loan.ownershipStructure,
                 LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
                 PRODUCTID = workflowProductId,
-                APIREQUESTID = apiRequestId
-
+                APIREQUESTID = apiRequestId,
+                
+         
             };
 
             if (isGroupLoan)
