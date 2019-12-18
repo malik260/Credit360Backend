@@ -3501,7 +3501,9 @@ namespace FintrakBanking.Repositories.Credit
             ResponseMessage responseMsg = null;
             string responseJson = "";
 
-            string apiUrl = "api/CallBack/ReferBack";
+            //string apiUrl = "api/CallBack/ReferBack";
+            string apiUrl = "api/CallBack/refer-back";
+
             try
             {
                 var token = new AuthenticationHeaderValue("Basic", API_KEY);
