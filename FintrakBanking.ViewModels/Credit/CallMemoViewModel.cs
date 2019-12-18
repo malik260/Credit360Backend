@@ -54,7 +54,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string location { get; set; }
         public string background { get; set; }
         public string recentUpdate { get; set; }
-
+        public string cc { get; set; }
         public int OperationId { get; set; }
         public int ApprovalStatusId { get; set; }
         public string ApprovalStatus { get; set; }
