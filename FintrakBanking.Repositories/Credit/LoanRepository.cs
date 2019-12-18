@@ -7445,6 +7445,11 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
             }
 
+            if (entity.tenor > loanApplicationDetails.APPROVEDTENOR)
+            {
+                throw new ConditionNotMetException("Requested Tenor cannot be greater than the approved tenor");
+            }
+
             var requestedFacility = context.TBL_PRODUCT.Find(entity.productId);
 
             var operationId = 0;
@@ -7487,6 +7492,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTID = entity.productId,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = entity.createdBy,
+                TENOR = entity.tenor,
 
             };
             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
