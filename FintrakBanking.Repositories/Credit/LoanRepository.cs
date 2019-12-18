@@ -13808,6 +13808,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public async Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber)
         {
+
             HttpClientHandler handler = new HttpClientHandler();
             HttpClient httpClientInstance;
 

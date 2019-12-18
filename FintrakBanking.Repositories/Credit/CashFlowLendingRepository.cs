@@ -61,17 +61,15 @@ namespace FintrakBanking.Repositories.Credit
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
         {
            APIResponse response = new APIResponse();
-            return fireResponse("Missing Customer Number", "99", model.request_Id);
-            if (model.customerType == "1")
+
+           if (model.customerType == "1")
            {
                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
-
                return AddIndividualCustomer(model);
            }
            else if (model.customerType == "2")
            {
                if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",model.request_Id); }
-
                return AddCorporateCustomer(model);
            }
            else { return fireResponse("Uknown Customer Type","99",""); }
@@ -276,9 +274,10 @@ namespace FintrakBanking.Repositories.Credit
             if (model.requestId == null) { return fireResponse("Missing application unique indentifier", "99",""); }
 
             var subSector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.subSectorCode).FirstOrDefault();
-            if (subSector == null) { return fireResponse("Missing sub sector code", "99",""); }
+            if (subSector == null) { return fireResponse("Sub Sector Code does not exist in Fintrak Credit360", "99",""); }
 
             var sector = context.TBL_SECTOR.Where(x => x.CODE == subSector.CODE).FirstOrDefault();
+            if (sector == null) { return fireResponse("Sector Code does not exist in Fintrak Credit360", "99", ""); }
 
             var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == model.currencyCode || x.CURRENCYCODE =="NGN").FirstOrDefault();
             if (currency == null) return fireResponse("Missing currency code", "99","");
