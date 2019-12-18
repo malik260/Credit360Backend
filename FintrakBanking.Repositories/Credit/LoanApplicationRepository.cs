@@ -6329,7 +6329,7 @@ namespace FintrakBanking.Repositories.Credit
             var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
             int customerId = (int)application.customerId;
-            int productId = application.productId;
+            int productId = details.SingleOrDefault().proposedProductId;
             decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
 
             var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
@@ -6387,14 +6387,10 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
             }
-            try
+            if (limitValidation.ProductLimitExceeded(productId, details.SingleOrDefault().proposedAmount))
             {
-                if (limitValidation.ProductLimitExceeded(productId, application.proposedAmount))
-                {
-                    throw new SecureException("Product Limit exceeded!");
-                }
+                throw new SecureException("Product Limit exceeded!");
             }
-            catch (Exception ex) { }
 
             var exposure = GetCurrentCompanyExposure();
             var proposedExposure = exposure.outstandings + applicationAmount;
