@@ -219,11 +219,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("appraisal-memorandum/trail/{operationId}")]
         public HttpResponseMessage GetAppraisalMemorandumTrailCallMemo(int operationId)
         {
-            var data = repo.GetAppraisalMemorandumTrailCallMemo(operationId);
-            if (data.Any())
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
+            //var data = repo.GetAppraisalMemorandumTrailCallMemo(operationId);
+            //if (data.Any())
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            //}
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
 

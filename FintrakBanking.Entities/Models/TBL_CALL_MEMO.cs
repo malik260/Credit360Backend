@@ -32,6 +32,7 @@ namespace FintrakBanking.Entities.Models
         public string LOCATION { get; set; }
         public string RECENTUPDATE { get; set; }
         public string BACKGROUND { get; set; }
+        public string CC { get; set; }
         public int? APPROVALLEVELID { get; set; }
         public int CREATEDBY { get; set; }
 

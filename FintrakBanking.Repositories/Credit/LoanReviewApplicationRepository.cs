@@ -56,7 +56,7 @@ namespace FintrakBanking.Repositories.Credit
             int branchId = user.BranchId;
             int companyId = user.companyId;
 
-            var approvalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplicationApproval )
+            var approvalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication)
                 .Select(x=>x.OPERATIONID).ToList();
 
             bool ignoreBranch = true; // rm = false, ho = true
@@ -270,11 +270,9 @@ namespace FintrakBanking.Repositories.Credit
                 productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
             });
 
-
-
-
             return output;
         }
+
         public SelectListViewModel GetAllLMSApprovalOperationList()
         {
             var list = new SelectListViewModel();
@@ -288,9 +286,9 @@ namespace FintrakBanking.Repositories.Credit
             list.productTypes = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
             list.operationTypes = context.TBL_OPERATIONS.Where(x =>
                // (
-                x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplicationApproval
+                x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
                 //|| x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
-               // || x.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial)
+                // || x.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial)
                 && x.ISDISABLED == false
             ).Select(x => new DropDownSelect { id = x.OPERATIONID, name = x.OPERATIONNAME, typeId = (int)x.OPERATIONTYPEID , productTypeId=x.PRODUCTTYPEID}).OrderBy(o => o.name).ToList();
             list.feeCharges = context.TBL_CHARGE_FEE.Select(x => new DropDownSelect { id = x.CHARGEFEEID, name = x.CHARGEFEENAME }).ToList();
@@ -800,8 +798,6 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-
-
                 int lastStatusId = workflow.StatusId;
                 if (workflow.NewState == (int)ApprovalState.Ended)
                 {
