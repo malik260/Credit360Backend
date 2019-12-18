@@ -17,17 +17,17 @@ namespace FintrakBanking.Entities.DocumentModels
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int MATURITYINSTRUCTIONID { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string DOCUMENT_TITLE { get; set; }
 
         [Key]
         [Column(Order = 2)]
-        [StringLength(400)]
+        //[StringLength(400)]
         public string FILENAME { get; set; }
 
         [Key]
         [Column(Order = 3)]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string FILEEXTENSION { get; set; }
 
         [Key]

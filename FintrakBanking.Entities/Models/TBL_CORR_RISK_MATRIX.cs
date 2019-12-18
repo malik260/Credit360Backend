@@ -12,14 +12,14 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int RISKMATRIXID { get; set; }
 
-        [StringLength(20)]
+        //[StringLength(20)]
         public string RATING { get; set; }
 
         public int GRADINGMINIMUM { get; set; }
 
         public int GRADINGMAXIMUM { get; set; }
 
-        [StringLength(20)]
+        //[StringLength(20)]
         public string DESCRIPTION { get; set; }
 
         public int RISKTYPEID { get; set; }

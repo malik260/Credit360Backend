@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public short JOB_SUB_TYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string JOB_SUB_TYPE_NAME { get; set; }
 
         public short JOBTYPEID { get; set; }

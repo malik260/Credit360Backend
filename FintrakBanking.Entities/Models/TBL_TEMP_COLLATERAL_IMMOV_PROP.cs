@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PROPERTYNAME { get; set; }
 
         public int CITYID { get; set; }
@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? CONSTRUCTIONDATE { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string PROPERTYADDRESS { get; set; }
 
         public DateTime DATEOFACQUISITION { get; set; }
@@ -37,7 +37,7 @@ namespace FintrakBanking.Entities.Models
 
         public short? VALUERID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string VALUERREFERENCENUMBER { get; set; }
 
         public short PROPERTYVALUEBASETYPEID { get; set; }
@@ -48,7 +48,7 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "money")]
         public decimal? FORCEDSALEVALUE { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string STAMPTOCOVER { get; set; }
 
         //[Column(TypeName = "money")]
@@ -62,13 +62,13 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "money")]
         public decimal? VALUATIONAMOUNT { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REMARK { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string NEARESTLANDMARK { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string NEARESTBUSSTOP { get; set; }
 
         public double? LONGITUDE { get; set; }
@@ -77,7 +77,7 @@ namespace FintrakBanking.Entities.Models
 
         public byte PERFECTIONSTATUSID { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string PERFECTIONSTATUSREASON { get; set; }
 
         public bool? ISOWNEROCCUPIED { get; set; }

@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int OVERRIDE_DETAILID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CUSTOMERCODE { get; set; }
 
         public short OVERRIDE_ITEMID { get; set; }
@@ -22,11 +22,11 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SOURCE_REFERENCE_NUMBER { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string REASON { get; set; }
 
         public int CREATEDBY { get; set; }

@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short CHECKLIST_TYPEID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string CHECKLIST_TYPE_NAME { get; set; }
 
         public bool ISPRODUCT_BASED { get; set; }

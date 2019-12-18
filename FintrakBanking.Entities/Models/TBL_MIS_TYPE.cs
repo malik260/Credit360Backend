@@ -19,10 +19,10 @@ namespace FintrakBanking.Entities.Models
         public short MISTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MISTYPE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CATEGORY { get; set; }
 
         public int? CREATEDBY { get; set; }

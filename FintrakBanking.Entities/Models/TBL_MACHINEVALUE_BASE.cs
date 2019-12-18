@@ -14,10 +14,10 @@ namespace FintrakBanking.Entities.Models
         public byte MACHINEVALUEBASEID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string MACHINEVALUEBASENAME { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REMARK { get; set; }
 
         public int CREATEDBY { get; set; }

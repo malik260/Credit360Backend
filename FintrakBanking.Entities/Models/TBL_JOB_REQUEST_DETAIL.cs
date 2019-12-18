@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? ACCREDITEDCONSULTANTID { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string DESCRIPTION { get; set; }
 
         public string DESCRIPTION2 { get; set; }
@@ -28,7 +28,7 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "money")]
         public decimal? AMOUNT { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
         public bool ACCREDITEDCONSULTANTPAID { get; set; }

@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public bool HASCONSESSION { get; set; }
 
-        [StringLength(3000)]
+        //[StringLength(3000)]
         public string CONSESSIONREASON { get; set; }
 
         public short APPROVALSTATUSID { get; set; }

@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short TARGETTYPEID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TARGETTYPENAME { get; set; }
 
         public int CREATEDBY { get; set; }

@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short CALLLIMITTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string NAME { get; set; }
 
        

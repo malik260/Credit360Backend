@@ -13,10 +13,10 @@ namespace FintrakBanking.Entities.StagingModels
         public int TRANSACTIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BATCHCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REVERSAL_BATCHCODE { get; set; }
 
         public int CREDITGLACCOUNT { get; set; }
@@ -26,13 +26,13 @@ namespace FintrakBanking.Entities.StagingModels
         public int OPERATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SOURCEREFERENCENUMBER { get; set; }
 
         public decimal AMOUNT { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         //[Column(TypeName = "date")]
@@ -67,7 +67,7 @@ namespace FintrakBanking.Entities.StagingModels
         public short SOURCEAPPLICATIONID { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string TRANSTYPE { get; set; }
     }
 }

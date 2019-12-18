@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CUSTOMERID { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string  RELATIONSHIPTYPE { get; set; }
 
         public int CREATEDBY { get; set; }

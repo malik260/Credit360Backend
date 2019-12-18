@@ -33,10 +33,10 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public short? APPROVALSTATUSID { get; set; }
 
-        [StringLength(800)]
+        //[StringLength(800)]
         public string APPROVAL_COMMENT { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REFERENCENO { get; set; }
 
         public int? CASAACCOUNTID { get; set; }

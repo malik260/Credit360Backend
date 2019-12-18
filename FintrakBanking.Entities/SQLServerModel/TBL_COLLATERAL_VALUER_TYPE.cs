@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         [Key]
         public short COLLATERALVALUERTYPEID { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string VALUERTYPENAME { get; set; }
 
         public int CREATEDBY { get; set; }

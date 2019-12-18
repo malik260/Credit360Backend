@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         public short JOBTYPEID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string JOBTYPENAME { get; set; }
 
         public bool INUSE { get; set; }

@@ -15,12 +15,12 @@ namespace FintrakBanking.Entities.StagingModels
 
         public double? BID_RATE { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string PRICEINDEX { get; set; }
 
         public double? OFFER_RATE { get; set; }
 
-        [StringLength(20)]
+        //[StringLength(20)]
         public string CURRENCY { get; set; }
     }
 }

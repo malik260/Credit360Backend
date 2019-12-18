@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         public int TARGETID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string ACTUALVALUE { get; set; }
 
         public int CHECKLISTSTATUS { get; set; }

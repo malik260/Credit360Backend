@@ -22,10 +22,10 @@ namespace FintrakBanking.Entities.Models
         public string ARCHIVEBATCHCODE { get; set; }
         
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REFERENCENUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BASEREFERENCENUMBER { get; set; }
 
         public short CATEGORYID { get; set; }

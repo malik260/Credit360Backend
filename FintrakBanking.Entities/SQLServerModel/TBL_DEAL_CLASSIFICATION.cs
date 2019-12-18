@@ -21,11 +21,11 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short DEALCLASSIFICATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CLASSIFICATION { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string CODE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

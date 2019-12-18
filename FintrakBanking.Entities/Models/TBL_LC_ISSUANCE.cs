@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
         public string LCREFERENCENUMBER { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string BENEFICIARYNAME { get; set; }
 
         public decimal TOTALAPPROVEDAMOUNT { get; set; }
@@ -34,11 +34,11 @@ namespace FintrakBanking.Entities.Models
         public bool? ISDRAFTREQUIRED { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BENEFICIARYADDRESS { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string BENEFICIARYEMAIL { get; set; }
 
         public int CUSTOMERID { get; set; }

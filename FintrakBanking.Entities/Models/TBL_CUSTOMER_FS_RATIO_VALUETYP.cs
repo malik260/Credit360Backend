@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short VALUETYPEID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string VALUETYPENAME { get; set; }
 
         public int? CREATEDBY { get; set; }

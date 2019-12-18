@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public short LOANDOCUMENTTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DOCUMENTTYPE { get; set; }
     }
 }

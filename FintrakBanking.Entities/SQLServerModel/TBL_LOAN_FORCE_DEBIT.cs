@@ -22,14 +22,14 @@ namespace FintrakBanking.Entities.SQLServerModel
         public byte TRANSACTIONTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FORCEDEBITCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PARENT_FORCEDEBITCODE { get; set; }
 
         [Required]
-        [StringLength(800)]
+        //[StringLength(800)]
         public string DESCRIPTION { get; set; }
 
         [Column(TypeName = "money")]

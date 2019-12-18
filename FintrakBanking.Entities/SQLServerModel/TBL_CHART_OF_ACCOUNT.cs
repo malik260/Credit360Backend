@@ -45,11 +45,11 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int ACCOUNTTYPEID { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string ACCOUNTCODE { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string ACCOUNTNAME { get; set; }
 
         public int COMPANYID { get; set; }
@@ -64,7 +64,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public bool BRANCHSPECIFIC { get; set; }
 
-        [StringLength(20)]
+        //[StringLength(20)]
         public string OLDACCOUNTID { get; set; }
 
         public short FSCAPTIONID { get; set; }

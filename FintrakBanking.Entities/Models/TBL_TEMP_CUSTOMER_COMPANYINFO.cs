@@ -14,25 +14,25 @@ namespace FintrakBanking.Entities.Models
 
         public int CUSTOMERID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REGISTRATIONNUMBER { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string COMPANYNAME { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string COMPANYWEBSITE { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string COMPANYEMAIL { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string REGISTEREDOFFICE { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string ANNUALTURNOVER { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string CORPORATEBUSINESSCATEGORY { get; set; }
 
         public decimal? PAIDUPCAPITAL { get; set; }

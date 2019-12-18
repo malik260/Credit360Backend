@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public int JOBTITLEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string JOBTITLENAME { get; set; }
 
         public int COMPANYID { get; set; }

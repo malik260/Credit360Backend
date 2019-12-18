@@ -20,7 +20,7 @@
         [Key]
         public int REPRICINGMODEID { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string REPRICINGMODENAME { get; set; }
     }
 }

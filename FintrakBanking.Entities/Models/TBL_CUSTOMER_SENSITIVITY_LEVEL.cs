@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string DESCRIPTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

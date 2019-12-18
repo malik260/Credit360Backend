@@ -28,7 +28,7 @@ namespace FintrakBanking.Entities.Models
 
         public short CHECKLIST_TYPEID { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string ITEMDESCRIPTION { get; set; }
 
         public bool ISREQUIRED { get; set; }

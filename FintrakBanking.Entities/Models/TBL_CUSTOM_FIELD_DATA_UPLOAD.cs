@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CUSTOMFIELDSDATAID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CONTENTTYPE { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

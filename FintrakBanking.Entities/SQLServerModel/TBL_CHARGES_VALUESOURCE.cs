@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int VALUESOURCEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string VALUESOURCENAME { get; set; }
 
         public bool ISFIXED { get; set; }

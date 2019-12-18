@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int CUSTOMERID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string ACCOUNTNUMBER { get; set; }
 
         public bool? PROVIDED { get; set; }
@@ -33,7 +33,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public bool? APPROVEDBY { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

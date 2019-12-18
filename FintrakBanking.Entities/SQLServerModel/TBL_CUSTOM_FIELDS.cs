@@ -23,15 +23,15 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int HOSTPAGEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LABELNAME { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string CONTROLKEY { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string CONTROLTYPE { get; set; }
 
         public bool REQUIRED { get; set; }

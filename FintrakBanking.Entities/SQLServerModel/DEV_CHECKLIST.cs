@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.SQLServerModel
     {
         public int ID { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string CHECKLIST { get; set; }
     }
 }

@@ -692,7 +692,7 @@ namespace FintrakBanking.Repositories.Credit
                 trail.RESPONSEDATE = DateTime.Now;
                 trail.RESPONSESTAFFID = accountOfficerId;
             }
-
+            ArchiveLoanApplication(loanApplicationId, (int)OperationsEnum.LoanApplication);
             loan.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress;
             loan.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
             return context.SaveChanges() > 0;
@@ -2695,7 +2695,7 @@ namespace FintrakBanking.Repositories.Credit
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
 
 
-            if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTCLASSID != (int)ProductClassEnum.BondAndGuarantees))
+            if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability))
             {
                 throw new SecureException("Please select a repayment pattern for the product "+update.productName);
             }
@@ -2802,6 +2802,18 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)TenorMode.Daily: tenor = proposedTenor; break;
                 case (int)TenorMode.Monthly: tenor = proposedTenor * 30; break;
                 case (int)TenorMode.Yearly: tenor = proposedTenor * 365; break;
+            }
+            return tenor;
+        }
+
+        private int ConvertTenorDaysToTenor(int proposedTenor, int? tenorModeId = 1)
+        {
+            int tenor = 0;
+            switch (tenorModeId) // UPDATED
+            {
+                case (int)TenorMode.Daily: tenor = proposedTenor; break;
+                case (int)TenorMode.Monthly: tenor = proposedTenor / 30; break;
+                case (int)TenorMode.Yearly: tenor = proposedTenor / 365; break;
             }
             return tenor;
         }
@@ -2995,7 +3007,9 @@ namespace FintrakBanking.Repositories.Credit
             //{
             var a = loan.LoanApplicationDetail.FirstOrDefault();
 
-            if (a.repaymentScheduleId <= 0)
+            var product = context.TBL_PRODUCT.Find(a.proposedProductId);
+
+            if (a.repaymentScheduleId <= 0 && (product.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability))
             {
                 throw new SecureException("Please select a repayment pattern");
             }
@@ -3138,7 +3152,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanPurpose = d.LOANPURPOSE,
                 casaAccountId = d.CASAACCOUNTID,
                 repaymentTerm = d.REPAYMENTTERMS,
-                repaymentScheduleId = (int)d.REPAYMENTSCHEDULEID,
+                repaymentScheduleId = d.REPAYMENTSCHEDULEID,
                 isTakeOverApplication = d.ISTAKEOVERAPPLICATION,
                 crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
                 crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
@@ -3149,6 +3163,9 @@ namespace FintrakBanking.Repositories.Credit
                 loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
                 tenorModeId = d.TENORFREQUENCYTYPEID,
             };
+
+            var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
+            fields.proposedTenor = proposedTenor;
 
             var invoiceDetails = (from a in context.TBL_LOAN_APPLICATION_DETL_INV
                                   where a.LOANAPPLICATIONDETAILID == detailId

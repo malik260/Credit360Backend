@@ -11,7 +11,7 @@
         public short CHARGETYPEID { get; set; }
 
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string CHARGETYPENAME { get; set; }
 
     }

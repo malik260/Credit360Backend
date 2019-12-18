@@ -46,7 +46,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short APPROVALSTATUSID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string APPROVALSTATUSNAME { get; set; }
 
         public bool FORDISPLAY { get; set; }

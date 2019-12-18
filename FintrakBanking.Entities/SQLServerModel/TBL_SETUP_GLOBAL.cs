@@ -13,18 +13,18 @@ namespace FintrakBanking.Entities.SQLServerModel
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short APPLICATIONSETUPID { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REPORTPATH { get; set; }
 
         public bool USE_ACTIVE_DIRECTORY { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string ACTIVE_DIRECTORY_DOMAIN_NAME { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACTIVE_DIRECTORY_USERNAME { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACTIVE_DIRECTORY_PASSWORD { get; set; }
 
         public bool REQUIRE_ADUSER { get; set; }

@@ -15,7 +15,7 @@
         public short JOBTYPEUNITID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string UNITNAME { get; set; }
 
         public short JOBTYPEID { get; set; }

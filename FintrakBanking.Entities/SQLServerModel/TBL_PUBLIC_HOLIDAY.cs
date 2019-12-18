@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public DateTime DATE { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         public bool ISACTIVE { get; set; }

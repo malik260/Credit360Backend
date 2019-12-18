@@ -12,11 +12,11 @@ namespace FintrakBanking.Entities.StagingModels
     public partial class STG_CURRENCY_TBL
     {
         [Key]
-        [StringLength(3)]
+        //[StringLength(3)]
         public string CURRENCY { get; set; }
-        [StringLength(20)]
+        //[StringLength(20)]
         public string CURRENCY_NAME { get; set; }
-        [StringLength(5)]
+        //[StringLength(5)]
         public string COUNTRY_CODE { get; set; }
         public int POINTS { get; set; }
         public string ENTITY_CRE_FLAG { get; set; }

@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public bool ISOWNEDBYCUSTOMER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string INSURANCEPOLICYNUMBER { get; set; }
 
         [Column(TypeName = "money")]
@@ -26,14 +26,14 @@ namespace FintrakBanking.Entities.SQLServerModel
         public decimal POLICYAMOUNT { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string INSURANCECOMPANYNAME { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string INSURANCETYPE { get; set; }
 
         [Required]
-        [StringLength(300)]
+        //[StringLength(300)]
         public string INSURERADDRESS { get; set; }
 
         public DateTime POLICYSTARTDATE { get; set; }
@@ -42,12 +42,12 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public short? RENEWALFREQUENCYTYPEID { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string INSURERDETAILS { get; set; }
 
         public DateTime POLICYRENEWALDATE { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REMARK { get; set; }
 
         public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }

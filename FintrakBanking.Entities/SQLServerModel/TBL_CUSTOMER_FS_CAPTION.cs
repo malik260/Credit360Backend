@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int FSCAPTIONID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string FSCAPTIONNAME { get; set; }
 
         public short FSCAPTIONGROUPID { get; set; }

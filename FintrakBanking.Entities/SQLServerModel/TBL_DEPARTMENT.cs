@@ -23,13 +23,13 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DEPARTMENTCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DEPARTMENTNAME { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string DESCRIPTION { get; set; }
 
         public int? CREATEDBY { get; set; }

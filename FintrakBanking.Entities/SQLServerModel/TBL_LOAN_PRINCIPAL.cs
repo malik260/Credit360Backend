@@ -20,25 +20,25 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int PRINCIPALID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRINCIPALSREGNUMBER { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string NAME { get; set; }
 
         public int COMPANYID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string EMAILADDRESS { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PHONENUMBER { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string ADDRESS { get; set; }
 
         public int CREATEDBY { get; set; }

@@ -20,15 +20,15 @@ namespace FintrakBanking.Entities.Models
         public int CUSTOMERID { get; set; }
 
         [Required]
-     //   [StringLength(20)]
+     //   //[StringLength(20)]
         public int ATCTYPEID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string DESCRIPTION { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string DEPOT { get; set; }
 
         public decimal UNITVALUE { get; set; }

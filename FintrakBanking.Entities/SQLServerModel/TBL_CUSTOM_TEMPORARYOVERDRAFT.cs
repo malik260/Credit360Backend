@@ -12,19 +12,19 @@ namespace FintrakBanking.Entities.SQLServerModel
         [Key]
         public int TEMPORARYOVERDRAFTID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TEMPORARYOVERDRAFTFLAG { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TEMPORARYOVERDRAFTAMOUNT { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TEMPORARYOVERDRAFTDATE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TEMPORARYOVERDRAFTNARATION { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string APIURL { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
