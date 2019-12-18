@@ -5733,6 +5733,37 @@ namespace FintrakBanking.Repositories.Customer
             return false;
         }
 
+        //public bool DeleteNextOfKin(int nextKinId, UserInfo user)
+        //{
+        //    var child = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Find(placeOfWorkId);
+
+        //    if (child != null)
+        //    {
+        //        context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Remove(child);
+
+        //        // Audit Section ---------------------------
+
+        //        var audit = new TBL_AUDIT
+        //        {
+        //            AUDITTYPEID = (short)AuditTypeEnum.CustomerEmploymentHistoryDeleted,
+        //            STAFFID = user.staffId,
+        //            BRANCHID = (short)user.BranchId,
+        //            DETAIL = "Deleted Customer Related Party with Related Party ID: ",
+        //            IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+        //            URL = user.applicationUrl,
+        //            APPLICATIONDATE = _genSetup.GetApplicationDate(),
+        //            SYSTEMDATETIME = DateTime.Now,
+        //            DEVICENAME = CommonHelpers.GetDeviceName(),
+        //            OSNAME = CommonHelpers.FriendlyName()
+        //        };
+
+        //        auditTrail.AddAuditTrail(audit);
+        //        return context.SaveChanges() > 0;
+        //    }
+
+        //    return false;
+        //}
+
 
 
         public bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity)
