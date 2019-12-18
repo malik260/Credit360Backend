@@ -276,7 +276,8 @@ namespace FintrakBanking.Repositories.Credit
             var subSector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.subSectorCode).FirstOrDefault();
             if (subSector == null) { return fireResponse("Sub Sector Code does not exist in Fintrak Credit360", "99",""); }
 
-            var sector = context.TBL_SECTOR.Where(x => x.CODE == subSector.CODE).FirstOrDefault();
+            //var sector = context.TBL_SECTOR.Where(x => x.CODE == subSector.CODE).FirstOrDefault();
+            var sector = context.TBL_SECTOR.Where(x => x.CODE == model.sectorCode).FirstOrDefault();
             if (sector == null) { return fireResponse("Sector Code does not exist in Fintrak Credit360", "99", ""); }
 
             var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == model.currencyCode || x.CURRENCYCODE =="NGN").FirstOrDefault();
