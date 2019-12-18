@@ -642,6 +642,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //if (update == null) fireResponse("Sequence contain not single! " + loan.LoanApplicationDetail.Count(), "99","");
             if (detail == null) fireResponse("Sequence contain not single! " + 0, "99", "");
+            var product = context.TBL_PRODUCT.Find(update.productId);
 
             //if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTCLASSID != (int)ProductClassEnum.BondAndGuarantees))
             //{
@@ -650,15 +651,15 @@ namespace FintrakBanking.Repositories.Credit
 
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
-            //detail.PROPOSEDAMOUNT = update.proposedAmount;
+            detail.PROPOSEDAMOUNT = update.proposedAmount;
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
             detail.PROPOSEDPRODUCTID = (short) update.proposedProductId;
             detail.PROPOSEDTENOR = update.proposedTenor;
             detail.REPAYMENTSCHEDULEID = update.repaymentScheduleId;
             detail.REPAYMENTTERMS = update.repaymentTerm;
             detail.LOANPURPOSE = update.loanPurpose;
-            //detail.PRODUCTPRICEINDEXID = update.productPriceIndexId;
-            //detail.PRODUCTPRICEINDEXRATE = update.productPriceIndexRate;
+            detail.PRODUCTPRICEINDEXID = product.PRODUCTPRICEINDEXID;
+            detail.PRODUCTPRICEINDEXRATE = product.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE;
             detail.CASAACCOUNTID = update.casaAccountId;
             //detail.OPERATINGCASAACCOUNTID = update.operatingCasaAccountId;
             //detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
