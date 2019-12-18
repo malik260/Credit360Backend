@@ -16277,7 +16277,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanOperationTypeViewModel> GetOperationType()
         {
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplicationApproval
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
                     && data.ISDISABLED == false
                     select new LoanOperationTypeViewModel()
                     {
@@ -16320,7 +16320,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanOperationTypeViewModel> GetReviewApprovalOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)
         {
             var loanOperations = (from data in context.TBL_OPERATIONS
-                                  where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplicationApproval
+                                  where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
                                   select new LoanOperationTypeViewModel()
                                   {
                                       operationTypeId = data.OPERATIONID,

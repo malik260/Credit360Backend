@@ -61,7 +61,8 @@ namespace FintrakBanking.Repositories.Credit
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
         {
            APIResponse response = new APIResponse();
-           if (model.customerType == "1")
+            return fireResponse("Missing Customer Number", "99", model.request_Id);
+            if (model.customerType == "1")
            {
                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
 
