@@ -2570,10 +2570,19 @@ namespace FintrakBanking.Repositories.Credit
                     .Where(x => x.currentApprovalLevelTypeId != 2)
                     .GroupBy(d => d.loanApplicationId)
                     .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+                    var app2ForFilter = applications2.ToList();
 
                     var relisfApplications = applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d => d.MISCODE).Contains(x.divisionCode));
-                    var test2 = relisfApplications.ToList();
-                    var final = relisfApplications.Union(applications2);
+                    var app1ForFilter = relisfApplications.ToList();
+                    foreach(var app in applications2)
+                    {
+                        if (app1ForFilter.Any(a => a.approvalTrailId == app.approvalTrailId))
+                        {
+                            app2ForFilter.Remove(app);
+                        }
+                    }
+                    var app2 = app2ForFilter.AsQueryable();
+                    var final = relisfApplications.Union(app2);
                     return final;
                 }
             }
