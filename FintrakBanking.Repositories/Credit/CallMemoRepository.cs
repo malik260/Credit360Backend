@@ -393,6 +393,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOCATION = model.location,
                 DISCUSION = model.Discusion,
                 CALLTIME = model.CallTime,
+                CC = model.cc,
                 NEXTCALLTIME = model.NextCallTime,
                 ACTION = model.Action,
                 RECENTUPDATE = model.recentUpdate,
@@ -478,6 +479,7 @@ namespace FintrakBanking.Repositories.Credit
             data.LOCATION = model.location;
             data.BACKGROUND = model.background;
             data.RECENTUPDATE = model.recentUpdate;
+            data.CC = model.cc;
             // Audit Section ---------------------------
 
             var audit = new TBL_AUDIT

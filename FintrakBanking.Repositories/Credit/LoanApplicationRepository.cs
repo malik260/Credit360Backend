@@ -5046,7 +5046,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             //var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
             var appl = context.TBL_LOAN_APPLICATION.Where(a => a.LOANAPPLICATIONID == model.applicationId && a.APPLICATIONSTATUSID ==model.applicationStatusId).Select(a=>a).FirstOrDefault();
-
             if (context.TBL_LOAN_APPLICATION.Where(x => x.RELATEDREFERENCENUMBER == appl.APPLICATIONREFERENCENUMBER && x.APPLICATIONSTATUSID != model.applicationStatusId).Any())
             {
                 return "This application is already re-initiated!";
