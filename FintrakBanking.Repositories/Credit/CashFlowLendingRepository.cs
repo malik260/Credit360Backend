@@ -284,12 +284,13 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.accountOfficerStaffCode == string.Empty) return fireResponse("Missing account officer code", "99","");
 
-            var accountOfficerr = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+            if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
+
+            var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFCODE == model.relationshipManagerStaffCode).FirstOrDefault();
 
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == model.customerCode).FirstOrDefault();
             if(customer == null) return fireResponse("This customer is not profiled on Fintrak Credit360 application", "99", "");
-
-         
 
             var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == model.settlementAccount).FirstOrDefault();
 
@@ -308,14 +309,11 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.currencyCode = currency.CURRENCYCODE;
             loanApp.interestRate = Convert.ToDouble(model.interestRate);
             loanApp.editMode = model.callStatusCode == "01" ?  true : false;
-            loanApp.relationshipOfficerId = accountOfficerr.STAFFID;
+            loanApp.relationshipOfficerId = accountOfficer.STAFFID;
             loanApp.companyId = model.companyId;
             loanApp.loanInformation = "<p></p>";
             loanApp.casaAccountId = casa?.CASAACCOUNTID;
-            loanApp.branchId = 94;
-
-
-            
+            loanApp.branchId = 94;            
 
             if(context.TBL_LOAN_APPLICATION.Any(x=>x.APIREQUESTID == model.requestId && x.DELETED != true))
             {

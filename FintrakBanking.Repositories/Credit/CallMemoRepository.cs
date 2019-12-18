@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (JobRole > 0)
                 {
-                    var memoLimit = (from b in _context.TBL_CALL_MEMO_LIMIT where b.JOBTITLEID == JobRole && b.CALLLIMITTYPEID == 1 select b).FirstOrDefault();
+                    var memoLimit = (from b in _context.TBL_CALL_MEMO_LIMIT where b.JOBTITLEID == JobRole select b).FirstOrDefault();
                     if (memoLimit != null)
                     {
                         allFilteredLoan = (from a in _context.TBL_CUSTOMER
@@ -96,7 +97,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in _context.TBL_CALL_MEMO_LIMIT
                         where a.DELETED == false && a.COMPANYID == companyId
-                        orderby a.CALLLIMITTYPEID
                         select new CallLimitViewModel
                         {
                             MaximumAmount = a.MAXIMUMAMOUNT,
@@ -107,8 +107,7 @@ namespace FintrakBanking.Repositories.Credit
                             FrequencyName = a.TBL_FREQUENCY_TYPE.MODE,
                             JobTitleId = a.JOBTITLEID,
                             JobTitleName = _context.TBL_STAFF_ROLE.FirstOrDefault(d => d.STAFFROLEID == a.JOBTITLEID).STAFFROLENAME,
-                            CallLimitTypeId = a.CALLLIMITTYPEID,
-                            CallLimitTypeName = _context.TBL_CALL_MEMO_TYPE.FirstOrDefault(i => i.CALLLIMITTYPEID == a.CALLLIMITTYPEID).NAME
+                           // CallLimitTypeName = _context.TBL_CALL_MEMO_TYPE.FirstOrDefault(i => i.CALLLIMITTYPEID == a.CALLLIMITTYPEID).NAME
                         }).ToList();
             return data;
         }
@@ -117,7 +116,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in _context.TBL_CALL_MEMO_LIMIT
                         where a.DELETED == false && a.CALLLIMITID == limitId
-                        orderby a.CALLLIMITTYPEID
+                        //orderby a.CALLLIMITTYPEID
                         select new CallLimitViewModel
                         {
                             MaximumAmount = a.MAXIMUMAMOUNT,
@@ -128,14 +127,14 @@ namespace FintrakBanking.Repositories.Credit
                             FrequencyName = a.TBL_FREQUENCY_TYPE.MODE,
                             JobTitleId = a.JOBTITLEID,
                             JobTitleName = _context.TBL_STAFF_JOBTITLE.FirstOrDefault(d => d.JOBTITLEID == a.JOBTITLEID).JOBTITLENAME,
-                            CallLimitTypeId = a.CALLLIMITTYPEID,
-                            CallLimitTypeName = _context.TBL_CALL_MEMO_TYPE.FirstOrDefault(i => i.CALLLIMITTYPEID == a.CALLLIMITTYPEID).NAME
+                           // CallLimitTypeId = a.CALLLIMITTYPEID,
+                           // CallLimitTypeName = _context.TBL_CALL_MEMO_TYPE.FirstOrDefault(i => i.CALLLIMITTYPEID == a.CALLLIMITTYPEID).NAME
                         }).ToList();
             return data;
         }
         public bool isLimitExist(CallLimitViewModel model)
         {
-            return _context.TBL_CALL_MEMO_LIMIT.Where(x => x.JOBTITLEID == model.JobTitleId && x.CALLLIMITTYPEID == model.CallLimitTypeId).Any();
+            return _context.TBL_CALL_MEMO_LIMIT.Where(x => x.JOBTITLEID == model.JobTitleId).Any();
         }
         public bool AddCallLimit(CallLimitViewModel model)
         {
@@ -145,7 +144,7 @@ namespace FintrakBanking.Repositories.Credit
                 MINIMUMAMOUNT = model.MinimumAmount,
                 FREQUENCYID = model.FrequencyId,
                 JOBTITLEID = model.JobTitleId,
-                CALLLIMITTYPEID = model.CallLimitTypeId,
+                //CALLLIMITTYPEID = model.CallLimitTypeId,
                 COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = _genSetup.GetApplicationDate()
@@ -182,7 +181,7 @@ namespace FintrakBanking.Repositories.Credit
 
             data.MAXIMUMAMOUNT = model.MaximumAmount;
             data.MINIMUMAMOUNT = model.MinimumAmount;
-            data.CALLLIMITTYPEID = model.CallLimitTypeId;
+            //data.CALLLIMITTYPEID = model.CallLimitTypeId;
             data.FREQUENCYID = model.FrequencyId;
             data.JOBTITLEID = model.JobTitleId;
             // Audit Section ---------------------------
@@ -243,7 +242,6 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CallMemoViewModel> GetCustomerCallMemo(int staffId, int customerId)
         {
             var data = (from a in _context.TBL_CALL_MEMO
-                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where a.STAFFID == staffId && a.CUSTOMERID == customerId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                         orderby a.CALLMEMOID
@@ -253,22 +251,37 @@ namespace FintrakBanking.Repositories.Credit
                             LoanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
-                            CallMemoTypeId = a.CALLLIMITTYPEID,
-                            CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
+                            participants = a.PARTICIPANTS,
+                            location = a.LOCATION,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
                             CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
                             Discusion = a.DISCUSION,
-                            Summary = a.SUMMARY,
+                            recentUpdate = a.RECENTUPDATE,
                             Action = a.ACTION,
-                            Recommendation = a.RECOMMENDATION,
+                            background = a.BACKGROUND,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
                             ApprovalStatus = _context.TBL_APPROVAL_STATUS.Where(O => O.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(O => O.APPROVALSTATUSNAME).FirstOrDefault(),
                             OperationId = (int) OperationsEnum.CallMemo
                         }).ToList();
+            return data;
+        }
+
+        public IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId)
+        {
+            var data = (from a in _context.TBL_APPROVAL_GROUP_MAPPING
+                        join b in _context.TBL_APPROVAL_GROUP on a.GROUPID equals b.GROUPID
+                        join c in _context.TBL_APPROVAL_LEVEL on b.GROUPID equals c.GROUPID
+                        where a.OPERATIONID == 150
+                        select new ApprovalTrailCallMemoViewModel
+                        {
+                            levelName = c.LEVELNAME,
+                            approvalLevelId = c.APPROVALLEVELID,
+                        })?.ToList();
+
             return data;
         }
 
@@ -285,17 +298,18 @@ namespace FintrakBanking.Repositories.Credit
                             LoanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
-                            CallMemoTypeId = a.CALLLIMITTYPEID,
-                            CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
+                            ApprovalStatusId = a.APPROVALSTATUSID,
+                            participants = a.PARTICIPANTS,
+                            location = a.LOCATION,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
                             CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
                             Discusion = a.DISCUSION,
-                            Summary = a.SUMMARY,
+                            recentUpdate = a.RECENTUPDATE,
                             Action = a.ACTION,
-                            Recommendation = a.RECOMMENDATION,
+                            background = a.BACKGROUND,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
                             //ApprovalStatus = ,
@@ -319,17 +333,16 @@ namespace FintrakBanking.Repositories.Credit
                             LoanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
-                            CallMemoTypeId = a.CALLLIMITTYPEID,
-                            CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
+                            participants = a.PARTICIPANTS,
+                            location = a.LOCATION,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
                             CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
                             Discusion = a.DISCUSION,
-                            Summary = a.SUMMARY,
                             Action = a.ACTION,
-                            Recommendation = a.RECOMMENDATION,
+                            recentUpdate = a.RECENTUPDATE,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
                             OperationId = (int)OperationsEnum.CallMemo
@@ -340,27 +353,25 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CallMemoViewModel> GetAllCallMemo(int staffId)
         {
             var data = (from a in _context.TBL_CALL_MEMO
-                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where a.STAFFID == staffId
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
                             CallMemoId = a.CALLMEMOID,
+                            ApprovalStatusId = a.APPROVALSTATUSID,
                             LoanApplicationId = a.LOANAPPLICATIONID,
-                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
-                            StaffId = a.STAFFID,
-                            CallMemoTypeId = a.CALLLIMITTYPEID,
-                            CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
+                            participants = a.PARTICIPANTS,
+                            location = a.LOCATION,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
                             CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
                             Discusion = a.DISCUSION,
-                            Summary = a.SUMMARY,
                             Action = a.ACTION,
-                            Recommendation = a.RECOMMENDATION,
+                            background = a.BACKGROUND,
+                            recentUpdate = a.RECENTUPDATE,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
                             OperationId = (int)OperationsEnum.CallMemo
@@ -377,14 +388,15 @@ namespace FintrakBanking.Repositories.Credit
                 MEMODATE = model.MemoDate,
                 NEXTCALLDATE = model.NextCallDate,
                 PURPOSE = model.Purpose,
-                CALLLIMITTYPEID = model.CallMemoTypeId,
+                PARTICIPANTS = model.participants,
+                BACKGROUND = model.background,
+                LOCATION = model.location,
                 DISCUSION = model.Discusion,
-                SUMMARY = "",
-                //SUMMARY = model.Summary,
                 CALLTIME = model.CallTime,
                 NEXTCALLTIME = model.NextCallTime,
                 ACTION = model.Action,
-                RECOMMENDATION = model.Recommendation,
+                RECENTUPDATE = model.recentUpdate,
+                APPROVALLEVELID = model.approvalLevelId,
                 CREATEDBY = model.createdBy,
                 CUSTOMERID = model.CustomerId.Value,
                 OPERATIONID = (int) OperationsEnum.CallMemo,
@@ -432,21 +444,20 @@ namespace FintrakBanking.Repositories.Credit
                             LoanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
-                            CallMemoTypeId = a.CALLLIMITTYPEID,
-                            CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
+                            participants = a.PARTICIPANTS,
+                            location = a.LOCATION,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
                             CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
                             Discusion = a.DISCUSION,
-                            Summary = a.SUMMARY,
                             Action = a.ACTION,
-                            Recommendation = a.RECOMMENDATION,
+                            background = a.BACKGROUND,
+                            recentUpdate = a.RECENTUPDATE,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
-                            ApprovalStatusId = a.APPROVALSTATUSID,
-                            OperationId = (int) OperationsEnum.CallMemo
+                            OperationId = (int)OperationsEnum.CallMemo
                         }).FirstOrDefault();
 
             return data;
@@ -456,16 +467,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = _context.TBL_CALL_MEMO.Find(limitId);
             if (data == null) return false;
-            data.CALLLIMITTYPEID = model.CallMemoTypeId;
+            data.PARTICIPANTS = model.participants;
             data.LOANAPPLICATIONID = model.LoanApplicationId;
-            data.STAFFID = model.StaffId;
+            data.STAFFID = model.createdBy;
             data.MEMODATE = model.MemoDate;
             data.NEXTCALLDATE = model.NextCallDate;
             data.PURPOSE = model.Purpose;
             data.DISCUSION = model.Discusion;
-            data.SUMMARY = model.Summary;
             data.ACTION = model.Action;
-            data.RECOMMENDATION = model.Recommendation;
+            data.LOCATION = model.location;
+            data.BACKGROUND = model.background;
+            data.RECENTUPDATE = model.recentUpdate;
             // Audit Section ---------------------------
 
             var audit = new TBL_AUDIT
@@ -473,7 +485,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.LimitUpdated,
                 STAFFID = model.createdBy,
                 BRANCHID = model.userBranchId,
-                DETAIL = $"Updated tbl_Call_Limit for data with Id : '{ data.CALLMEMOID }' ",
+                DETAIL = $"Updated tbl_Call_memo for data with Id : '{ data.CALLMEMOID }' ",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -579,17 +591,17 @@ namespace FintrakBanking.Repositories.Credit
                             LoanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
-                            CallMemoTypeId = a.CALLLIMITTYPEID,
-                            CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
+                            participants = a.PARTICIPANTS,
+                            location = a.LOCATION,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
                             CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
                             Discusion = a.DISCUSION,
-                            Summary = a.SUMMARY,
                             Action = a.ACTION,
-                            Recommendation = a.RECOMMENDATION,
+                            background = a.BACKGROUND,
+                            recentUpdate = a.RECENTUPDATE,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
                             OperationId = (int)OperationsEnum.CallMemo
