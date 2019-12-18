@@ -5733,6 +5733,36 @@ namespace FintrakBanking.Repositories.Customer
             return false;
         }
 
+        public bool DeleteNextOfKin(int nextOfKinId, UserInfo user)
+        {
+            var nextOfKin = context.TBL_CUSTOMER_NEXTOFKIN.Find(nextOfKinId);
+
+            if (nextOfKin != null)
+            {
+                context.TBL_CUSTOMER_NEXTOFKIN.Remove(nextOfKin);
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerDetailUpdated,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = "Deleted Customer Next of Kin with Next of Kin ID: ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                auditTrail.AddAuditTrail(audit);
+                return context.SaveChanges() > 0;
+            }
+
+            return false;
+        }
+
 
 
         public bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity)

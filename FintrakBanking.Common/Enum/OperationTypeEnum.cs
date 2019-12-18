@@ -17,6 +17,5 @@ namespace FintrakBanking.Common.Enum
         LoanReviewApplication = 7,
         LoanManagementOverdraft = 8, 
         Remedial = 9,
-        LoanReviewApplicationApproval = 11
     }
 }

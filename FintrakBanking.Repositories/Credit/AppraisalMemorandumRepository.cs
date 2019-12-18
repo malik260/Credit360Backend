@@ -24,6 +24,11 @@ using FintrakBanking.ViewModels.credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using System.Collections;
 using FintrakBanking.ViewModels.Flexcube;
+using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
+using System.Net;
+using System.Web.Script.Serialization;
+using System.Text;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -335,6 +340,7 @@ namespace FintrakBanking.Repositories.Credit
             List<TBL_LOAN_APPLICATION_DETAIL> items = null;
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
             // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
 
             // VALIDATION TODO if (model.recommendedChanges.Count() > 0)
             items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
@@ -532,6 +538,38 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
                 if (appl.SUBMITTEDFORAPPRAISAL == false) { appl.SUBMITTEDFORAPPRAISAL = true; } // for product programs
                 if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
+
+                if (appl != null && appl.APIREQUESTID != null)
+                {
+                    string WorkflowStageName = "";
+                    var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
+                    if (WorkflowStage == "RM")
+                    {
+                        WorkflowStageName = "11";
+                    }
+                    if (WorkflowStage.Substring(0, 2) == "CR")
+                    {
+                        WorkflowStageName = "12";
+                    }
+                    if (WorkflowStage == "GH")
+                    {
+                        WorkflowStageName = "13";
+                    }
+
+                    var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
+                    if (product.PRODUCTCODE == "CFL")
+                    {
+                        OfferLetterResponse offerLetters = new OfferLetterResponse();
+                        var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
+                        var staffFullName = staffDetail.FIRSTNAME + " " + staffDetail.LASTNAME;
+                        offerLetters.Comment = model.comment;
+                        offerLetters.RequestId = appl.APIREQUESTID;
+                        offerLetters.WorkflowStage = WorkflowStageName;
+                        offerLetters.ActionByName = staffFullName;
+
+                        ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
+                    }
+                }
 
                 if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                 {
@@ -1639,22 +1677,6 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-
-        public IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId)
-        {
-            var data = (from a in context.TBL_APPROVAL_GROUP_MAPPING
-                       join  b in context.TBL_APPROVAL_GROUP on a.GROUPID equals b.GROUPID
-                       join c in context.TBL_APPROVAL_LEVEL on b.GROUPID equals c.GROUPID
-                       where a.OPERATIONID == operationId
-                        select new ApprovalTrailCallMemoViewModel
-                       {
-                        levelName = c.LEVELNAME,
-                        approvalLevelId = c.APPROVALLEVELID,
-                        })?.ToList();
-
-            return data;
-        }
-
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);
@@ -2570,10 +2592,19 @@ namespace FintrakBanking.Repositories.Credit
                     .Where(x => x.currentApprovalLevelTypeId != 2)
                     .GroupBy(d => d.loanApplicationId)
                     .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+                    var app2ForFilter = applications2.ToList();
 
                     var relisfApplications = applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d => d.MISCODE).Contains(x.divisionCode));
-                    var test2 = relisfApplications.ToList();
-                    var final = relisfApplications.Union(applications2);
+                    var app1ForFilter = relisfApplications.ToList();
+                    foreach(var app in applications2)
+                    {
+                        if (app1ForFilter.Any(a => a.approvalTrailId == app.approvalTrailId))
+                        {
+                            app2ForFilter.Remove(app);
+                        }
+                    }
+                    var app2 = app2ForFilter.AsQueryable();
+                    var final = relisfApplications.Union(app2);
                     return final;
                 }
             }
@@ -3453,6 +3484,113 @@ namespace FintrakBanking.Repositories.Credit
 
             return workflow.Response;
         }
+
+        private async Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber)
+        {
+            string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
+            string API_URL = "http://10.1.7.116:8989/";
+
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
+
+            HttpClient client = new HttpClient(handler);
+            var inputJson = new JavaScriptSerializer().Serialize(model);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+            OfferLetterResponse responseApi = new OfferLetterResponse();
+            ResponseMessage responseMsg = null;
+            string responseJson = "";
+
+            string apiUrl = "api/CallBack/ReferBack";
+            try
+            {
+                var token = new AuthenticationHeaderValue("Basic", API_KEY);
+                handler.UseDefaultCredentials = true;
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.DefaultRequestHeaders.Authorization = token;
+
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
+
+                response = client.PostAsync(apiUrl, new StringContent(
+                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                responseDateTime = DateTime.Now;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseApi = await response.Content.ReadAsAsync<OfferLetterResponse>();
+                    var res = new OfferLetterResponse
+                    {
+                        StatusCode = responseApi.StatusCode,
+                        RequestId = responseApi.RequestId,
+                        WorkflowStage = responseApi.WorkflowStage,
+
+                    };
+                    responseMsg = new ResponseMessage
+                    {
+                        APIOffetResponse = res,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+                else
+                {
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = null,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+
+                responseJson = await response.Content.ReadAsStringAsync();
+                responseMsg.responseMessage = responseJson;
+                //handler.Dispose();
+                //client.Dispose();
+
+                return responseMsg;
+            }
+            catch (Exception ex)
+            {
+                var innerExceptionMessage = "";
+                if (ex.InnerException != null)
+                    innerExceptionMessage = ex.InnerException.Message;
+                //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
+                throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+            }
+
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = API_URL + apiUrl,
+                    LOGTYPEID = 14,
+                    REFERENCENUMBER = refNumber,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = inputJson,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseJson,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                logContext.SaveChanges();
+            }
+
+        }
+
+
     }
 
 

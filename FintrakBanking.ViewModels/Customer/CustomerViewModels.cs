@@ -325,7 +325,7 @@ namespace FintrakBanking.ViewModels.Customer
     //=================================================================================================================================================================
     public class IncomingCustomerViewModels
     {
-
+        
         public string customerType { get; set; }
         public string request_Id { get; set; }
         public ApiCustomerBusinessDetailsViewModel corporateCustomerInformation { get; set; }

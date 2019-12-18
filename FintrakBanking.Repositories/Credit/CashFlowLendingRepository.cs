@@ -61,16 +61,15 @@ namespace FintrakBanking.Repositories.Credit
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
         {
            APIResponse response = new APIResponse();
+
            if (model.customerType == "1")
            {
                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
-
                return AddIndividualCustomer(model);
            }
            else if (model.customerType == "2")
            {
                if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",model.request_Id); }
-
                return AddCorporateCustomer(model);
            }
            else { return fireResponse("Uknown Customer Type","99",""); }
@@ -275,21 +274,23 @@ namespace FintrakBanking.Repositories.Credit
             if (model.requestId == null) { return fireResponse("Missing application unique indentifier", "99",""); }
 
             var subSector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.subSectorCode).FirstOrDefault();
-            if (subSector == null) { return fireResponse("Missing sub sector code", "99",""); }
+            if (subSector == null) { return fireResponse("Sub Sector Code does not exist in Fintrak Credit360", "99",""); }
 
             var sector = context.TBL_SECTOR.Where(x => x.CODE == subSector.CODE).FirstOrDefault();
+            if (sector == null) { return fireResponse("Sector Code does not exist in Fintrak Credit360", "99", ""); }
 
             var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == model.currencyCode || x.CURRENCYCODE =="NGN").FirstOrDefault();
             if (currency == null) return fireResponse("Missing currency code", "99","");
 
             if (model.accountOfficerStaffCode == string.Empty) return fireResponse("Missing account officer code", "99","");
 
-            var accountOfficerr = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+            if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
+
+            var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFCODE == model.relationshipManagerStaffCode).FirstOrDefault();
 
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == model.customerCode).FirstOrDefault();
             if(customer == null) return fireResponse("This customer is not profiled on Fintrak Credit360 application", "99", "");
-
-         
 
             var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == model.settlementAccount).FirstOrDefault();
 
@@ -308,14 +309,11 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.currencyCode = currency.CURRENCYCODE;
             loanApp.interestRate = Convert.ToDouble(model.interestRate);
             loanApp.editMode = model.callStatusCode == "01" ?  true : false;
-            loanApp.relationshipOfficerId = accountOfficerr.STAFFID;
+            loanApp.relationshipOfficerId = accountOfficer.STAFFID;
             loanApp.companyId = model.companyId;
             loanApp.loanInformation = "<p></p>";
             loanApp.casaAccountId = casa?.CASAACCOUNTID;
-            loanApp.branchId = 94;
-
-
-            
+            loanApp.branchId = 94;            
 
             if(context.TBL_LOAN_APPLICATION.Any(x=>x.APIREQUESTID == model.requestId && x.DELETED != true))
             {
@@ -579,8 +577,9 @@ namespace FintrakBanking.Repositories.Credit
                 OWNERSHIPSTRUCTURE = loan.ownershipStructure,
                 LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
                 PRODUCTID = workflowProductId,
-                APIREQUESTID = apiRequestId
-
+                APIREQUESTID = apiRequestId,
+                
+         
             };
 
             if (isGroupLoan)
