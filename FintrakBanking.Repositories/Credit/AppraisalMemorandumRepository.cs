@@ -1639,6 +1639,22 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+
+        public IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId)
+        {
+            var data = (from a in context.TBL_APPROVAL_GROUP_MAPPING
+                       join  b in context.TBL_APPROVAL_GROUP on a.GROUPID equals b.GROUPID
+                       join c in context.TBL_APPROVAL_LEVEL on b.GROUPID equals c.GROUPID
+                       where a.OPERATIONID == operationId
+                        select new ApprovalTrailCallMemoViewModel
+                       {
+                        levelName = c.LEVELNAME,
+                        approvalLevelId = c.APPROVALLEVELID,
+                        })?.ToList();
+
+            return data;
+        }
+
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);
