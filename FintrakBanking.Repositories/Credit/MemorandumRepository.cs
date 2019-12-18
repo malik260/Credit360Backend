@@ -9603,45 +9603,12 @@ namespace FintrakBanking.Repositories.Credit
                 <p><b>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</b></p>
                 <p><b>{flowChange?.PLACEHOLDER.ToUpper()} MEMO</b></p>
             ";
-            result = result + GetCashBackApprovalsMarkup(targetId, operationId);
+            result = result + GetCashBackApprovalsMarkupLOS(targetId , operationId);
             return result;
         }
 
 
-        private string GetCashBackApprovalsMarkupLOS()
-        {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
-            var result = String.Empty;
-            result = result + $@"
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
-                    <tr>
-                        <th><b>APPROVAL NAME</b></th>
-                        <th><b>DESIGNATION</b></th>
-                        <th><b>COMMENT</b></th>
-                        <th><b>ROUTING STATUS</b></th>
-                        <th><b>DATE APPROVED</b></th>
-                    </tr>
-                    ";
-            foreach (var trail in appraisals)
-            {
-                result = result + $@"
-                    <tr>
-                        <td>{trail.fromStaffName}</td>
-                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
-                        <td>{trail.comment}</td>
-                        <td>{GetDecision(trail.vote)}</td>
-                        <td>{trail.systemArrivalDateTime}</td>
-                    </tr>
-                ";
-            }
-
-            result = result + $"</table>";
-            return result;
-
-        }
-
-
-        private string GetCashBackApprovalsMarkup(int targetId, int operationId)
+        private string GetCashBackApprovalsMarkupLOS(int targetId , int operationId)
         {
             var appraisals = GetAppraisalMemorandumTrail(targetId, operationId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
@@ -9669,6 +9636,60 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             result = result + $"</table>";
+            return result;
+
+        }
+
+        public string GetCallMemoMarkup(int id)
+        {
+            var data = context.TBL_CALL_MEMO.Find(id);
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == data.CREATEDBY).Select(s => s).FirstOrDefault();
+            var branch = context.TBL_BRANCH.Where(c => c.BRANCHID == staff.BRANCHID).Select(c => c.BRANCHNAME).FirstOrDefault();
+
+
+            var nextDateTime = data.NEXTCALLDATE;
+            var date = nextDateTime?.ToString("yyyy-MM-dd");
+            var nextCallTime = data.NEXTCALLTIME;
+            var time = nextCallTime.ToString("hh:mm:ss");
+
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                      <td><strong>Date</strong></td>
+                      <td>{data.DATECREATED}</td>  
+                    </tr>
+                    <tr>
+                      <td><strong>Participants at the meeting</strong></td>
+                      <td>{data.PARTICIPANTS}</td>  
+                    </tr>
+                    <tr>
+                      <td><strong>Location of the meeting</strong></td>
+                      <td>{data.LOCATION}</td>  
+                    </tr>
+                     <tr>
+                      <td><strong>Time</strong></td>
+                      <td>{data.CALLTIME}</td>  
+                    </tr>
+                    <br/>
+                    ";
+            result = result + $"</table>";
+            result = result + $"<br/>";
+            result = result + $"<p><strong>CUSTOMER BACKGROUND</strong><br/>{data.BACKGROUND}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>RECENT UPDATE</strong><br/>{data.RECENTUPDATE}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>PURPOSE</strong><br/>{data.PURPOSE}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>MEETING HIGHLIGHTS</strong><br/>{data.DISCUSION}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>ACTION PLAN</strong><br/>{data.ACTION}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>NEXT CALL DATE AND TIME</strong><br/>{date} {time}";
+            result = result + $"</p><br/>";
+            result = result + $"<strong>NAME OF INITIATOR: </strong>{staff.FIRSTNAME} {staff.MIDDLENAME} {staff.LASTNAME}";
+            result = result + $"<br/>";
+            result = result + $"<strong>BUSINESS UNIT: </strong>{branch}";
             return result;
 
         }

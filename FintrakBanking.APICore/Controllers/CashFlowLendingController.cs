@@ -80,11 +80,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = 1; // token.GetCompanyId;
                 //entity.createdBy = token.GetStaffId;
                 //entity.applicationUrl = HttpContext.Current.Request.Path;
-    
                 var data = repo.submitRequest(entity);
-
                 return Request.CreateResponse(HttpStatusCode.OK, data );
-                
             }
             catch (Exception ex)
             {
@@ -93,7 +90,6 @@ namespace FintrakBanking.APICore.Controllers
                 response.requestId = null;
                 response.StatusCode = "99";
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
-                
             }
            
         }
