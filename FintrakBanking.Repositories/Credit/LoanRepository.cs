@@ -2154,6 +2154,7 @@ namespace FintrakBanking.Repositories.Credit
                        select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
 
             var scheduleCount = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanLoanRequest.TERMLOANID).Count();
+
             if(loanLoanRequest.SCHEDULEDAYCOUNTCONVENTIONID == (short)LoanScheduleTypeEnum.IrregularSchedule)
             {
                 scheduleCount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanLoanRequest.TERMLOANID).Count();
