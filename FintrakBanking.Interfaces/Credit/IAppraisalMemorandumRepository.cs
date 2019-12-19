@@ -99,7 +99,5 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersByOperationId(int operationId, int applicationDetailId);
         LoanApplicationDetailsViewModel GetLoanApplicationDetailByRefNo(string applicationReferenceNumber);
-
-        //Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber);
     }
 }

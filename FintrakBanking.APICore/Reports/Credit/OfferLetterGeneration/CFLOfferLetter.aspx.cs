@@ -6,6 +6,7 @@ using FintrakBanking.ReportObjects.Credit;
 using FintrakBanking.Repositories.Setups.General;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
@@ -27,8 +28,15 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 {
     public partial class CFLOfferLetter : System.Web.UI.Page
     {
+        private TransactionPosting _transaction;
         private string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
         private string API_URL = "http://10.1.7.116:8989/";
+
+        public CFLOfferLetter(TransactionPosting transaction)
+        {
+            _transaction = transaction;
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -160,120 +168,11 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
                 offerLetters.Attachment.FileType = "pdf";
                 offerLetters.ReasonForRejection = ReasonForRejection;
                 offerLetters.ActionByName = ActionByName;
-                ApiOfferLetterPosting(offerLetters, applicationRefNumber);
+                _transaction.ApiOfferLetterPosting(offerLetters, applicationRefNumber);
             }
             this.offerLetterReport.LocalReport.Refresh();
         }
 
-        public async Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber)
-        {
-            HttpClientHandler handler = new HttpClientHandler();
-            HttpClient httpClientInstance;
-
-            HttpClient client = new HttpClient(handler);
-            var inputJson = new JavaScriptSerializer().Serialize(model);
-            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
-            HttpResponseMessage response = null;
-            OfferLetterResponse responseApi = new OfferLetterResponse();
-            ResponseMessage responseMsg = null;
-            string responseJson = "";
-
-            string apiUrl = "api/CallBack/notify-status-change";
-            try
-            {
-                var token = new AuthenticationHeaderValue("Basic", API_KEY);
-                handler.UseDefaultCredentials = true;
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(180);
-                client.DefaultRequestHeaders.Authorization = token;
-
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                requestDatetime = DateTime.Now;
-
-                response = client.PostAsync(apiUrl, new StringContent(
-                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-
-
-                responseDateTime = DateTime.Now;
-
-
-                if (response.IsSuccessStatusCode)
-                {
-
-                    responseApi = await response.Content.ReadAsAsync<OfferLetterResponse>();
-
-                    var res = new OfferLetterResponse
-                    {
-                        StatusCode = responseApi.StatusCode,
-                        RequestId = responseApi.RequestId,
-                        WorkflowStage = responseApi.WorkflowStage,
-
-                    };
-                    responseMsg = new ResponseMessage
-                    {
-                        APIOffetResponse = res,
-                        APIStatus = response.IsSuccessStatusCode,
-                        Message = response
-                    };
-                }
-                else
-                {
-                    responseMsg = new ResponseMessage
-                    {
-                        APIResponse = null,
-                        APIStatus = response.IsSuccessStatusCode,
-                        Message = response
-                    };
-                }
-
-                responseJson = await response.Content.ReadAsStringAsync();
-
-                responseMsg.responseMessage = responseJson;
-                //handler.Dispose();
-                //client.Dispose();
-
-                return responseMsg;
-            }
-            catch (Exception ex)
-            {
-                var innerExceptionMessage = "";
-                if (ex.InnerException != null)
-                    innerExceptionMessage = ex.InnerException.Message;
-                //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
-
-                throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
-            }
-
-            finally
-            {
-                handler.Dispose();
-                client.Dispose();
-
-                var logs = new TBL_CUSTOM_API_LOGS
-                {
-                    APIURL = apiUrl,
-                    LOGTYPEID = 14,
-                    REFERENCENUMBER = refNumber,
-                    REQUESTDATETIME = requestDatetime,
-                    REQUESTMESSAGE = inputJson,
-                    RESPONSEDATETIME = responseDateTime,
-                    RESPONSEMESSAGE = responseJson,
-                };
-
-                FinTrakBankingContext logContext = new FinTrakBankingContext();
-
-                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
-                logContext.SaveChanges();
-            }
-
-        }
 
 
     }

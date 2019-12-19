@@ -718,5 +718,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string ActionByName { get; set; }
         public string Comment { get; set; }
         public Attachment Attachment { get; set; }
+        public string Message { get; set; }
+
     }
 }
