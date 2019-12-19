@@ -599,6 +599,7 @@ namespace FintrakBanking.Repositories.Credit
                         };
                             _context.TBL_MESSAGE_LOG.Add(message);
                             _context.SaveChanges();
+
                         }
                     }
 
