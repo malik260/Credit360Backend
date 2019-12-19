@@ -715,7 +715,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // customization for CAM approvals
             bool operationIsCam = (currentOperationType == (int)OperationTypeEnum.LoanReviewApplication) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
-            if (apsOperationIds.Contains(operationId) || operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            if (camOperationIds.Contains(operationId) || operationIsCam)
             {
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 operationId = (int)appl.OPERATIONID;
@@ -723,7 +723,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-            if (camOperationIds.Contains(operationId) || operationIsCam)
+            if (apsOperationIds.Contains(operationId) || operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter)
             {
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 operationId = (int)appl.OPERATIONID;
@@ -809,6 +809,7 @@ namespace FintrakBanking.Repositories.Credit
                         
                         //workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
                         workflow.SetResponse = false;
+                        nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
                         workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, null, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                         //workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
 
