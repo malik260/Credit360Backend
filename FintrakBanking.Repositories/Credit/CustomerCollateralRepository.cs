@@ -2019,7 +2019,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = c.CURRENCYID,
                                    customerId = (int)x.CUSTOMERID,
                                    collateralOwnerId = (int)c.CUSTOMERID
-                               }).ToList();
+                               })?.ToList();
 
 
             if (collaterals == null) return new List<CollateralCoverageViewModel>();
