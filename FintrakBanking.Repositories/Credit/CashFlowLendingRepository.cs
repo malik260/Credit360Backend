@@ -658,8 +658,8 @@ namespace FintrakBanking.Repositories.Credit
             detail.REPAYMENTSCHEDULEID = update.repaymentScheduleId;
             detail.REPAYMENTTERMS = update.repaymentTerm;
             detail.LOANPURPOSE = update.loanPurpose;
-            detail.PRODUCTPRICEINDEXID = product.PRODUCTPRICEINDEXID;
-            detail.PRODUCTPRICEINDEXRATE = product.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE;
+            //detail.PRODUCTPRICEINDEXID = product.PRODUCTPRICEINDEXID;
+            //detail.PRODUCTPRICEINDEXRATE = product.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE;
             detail.CASAACCOUNTID = update.casaAccountId;
             //detail.OPERATINGCASAACCOUNTID = update.operatingCasaAccountId;
             //detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
