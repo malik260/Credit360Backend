@@ -1314,7 +1314,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             //var productLimit = productMaximumExposure - productExposure;
 
             //return productMaximumExposure > 0 && productLimit <= applicationAmount;
-
+            if (productId == 0)
+            {
+                return false;
+            }
             decimal productMaximumExposure = 0;
             var product = context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(a => a.PRODUCTID == productId);
             if (product != null) productMaximumExposure = (decimal?)product.PRODUCT_LIMIT ?? 0;
