@@ -8022,12 +8022,14 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         NotifyForCollateralValidity(mainCollateral, model.validTill);
                     }
+
                     mainCollateral.COLLATERALCODE = model.collateralCode;
-                    mainCollateral.COLLATERALTYPEID = model.collateralTypeId;
-                    mainCollateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
-                    mainCollateral.COLLATERALCODE = model.collateralCode;
+                    //mainCollateral.COLLATERALTYPEID = model.collateralTypeId;
+                    //mainCollateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
+                    //mainCollateral.COLLATERALCODE = model.collateralCode;
+
                     mainCollateral.COLLATERALVALUE = (decimal)model.collateralValue;
-                    mainCollateral.COMPANYID = model.companyId;
+                    //mainCollateral.COMPANYID = model.companyId;
                     mainCollateral.ALLOWSHARING = model.allowSharing;
                     mainCollateral.ISLOCATIONBASED = model.isLocationBased;
                     mainCollateral.VALUATIONCYCLE = model.valuationCycle;
@@ -8035,18 +8037,10 @@ namespace FintrakBanking.Repositories.Credit
                     mainCollateral.CURRENCYID = model.currencyId;
                     mainCollateral.VALIDTILL = model.validTill;
                     mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
-
-                    if (model.loanTypeId == 1)
-                        mainCollateral.CUSTOMERID = model.customerId;
-                    else if (model.loanTypeId == 2)
-                        mainCollateral.CUSTOMERGROUPID = model.customerGroupId;
-                    else
-                        mainCollateral.CUSTOMERID = model.customerId;
-
-                    mainCollateral.CUSTOMERID = model.customerId;
+                   
                     mainCollateral.CAMREFNUMBER = model.camRefNumber;
-                    mainCollateral.CREATEDBY = model.createdBy;
-                    mainCollateral.DATETIMECREATED = genSetup.GetApplicationDate();
+                    mainCollateral.LASTUPDATEDBY = model.createdBy;
+                    mainCollateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
                     mainCollateral.ACTEDONBY = model.createdBy;
                     mainCollateral.RELATEDCOLLATERALCODE = model.relatedCollateralCode;
                     mainCollateral.COLLATERALSUMMARY = model.collateralSummary;
@@ -8069,7 +8063,7 @@ namespace FintrakBanking.Repositories.Credit
                         HAIRCUT = model.haircut,
                         CURRENCYID = model.currencyId,
                         EXCHANGERATE = repo.GetExchangeRate(date, model.currencyId, model.companyId).sellingRate,
-                        //CUSTOMERID = model.customerId,
+                        CUSTOMERID = model.customerId,
                         CAMREFNUMBER = model.camRefNumber,
                         CREATEDBY = model.createdBy,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
@@ -8081,12 +8075,13 @@ namespace FintrakBanking.Repositories.Credit
                         VALIDTILL = model.validTill
                     });
 
-                    if (model.loanTypeId == 1)
-                        collateral.CUSTOMERID = model.customerId;
-                    else if (model.loanTypeId == 2)
-                        collateral.CUSTOMERGROUPID = model.customerGroupId;
-                    else
-                        collateral.CUSTOMERID = model.customerId;
+
+                    //if (model.loanTypeId == 1)
+                    //    collateral.CUSTOMERID = model.customerId;
+                    //else if (model.loanTypeId == 2)
+                    //    collateral.CUSTOMERGROUPID = model.customerGroupId;
+                    //else
+                    //    collateral.CUSTOMERID = model.customerId;                    
 
                     try
                     {
@@ -8098,7 +8093,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     catch (Exception ex)
                     {
-                        throw;
+                        throw ex;
                     }
 
                 }
@@ -8153,7 +8148,7 @@ namespace FintrakBanking.Repositories.Credit
                         return collateral.TEMPCOLLATERALCUSTOMERID;
                     }
                 }
-                catch (Exception ex) { }
+                catch (Exception ex) { throw ex; }
             }
 
 
