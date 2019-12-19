@@ -247,25 +247,26 @@ namespace FintrakBanking.Repositories.Credit
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
-                            CallMemoId = a.CALLMEMOID,
-                            LoanApplicationId = a.LOANAPPLICATIONID,
+                            callMemoId = a.CALLMEMOID,
+                            loanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
-                            StaffId = a.STAFFID,
+                            staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
-                            CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = c.CUSTOMERID,
-                            MemoDate = a.MEMODATE,
-                            NextCallDate = a.NEXTCALLDATE,
-                            Purpose = a.PURPOSE,
-                            Discusion = a.DISCUSION,
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                            customerId = c.CUSTOMERID,
+                            memoDate = a.MEMODATE,
+                            nextCallDate = a.NEXTCALLDATE,
+                            purpose = a.PURPOSE,
+                            discusion = a.DISCUSION,
+                            cc = a.CC,
                             recentUpdate = a.RECENTUPDATE,
-                            Action = a.ACTION,
+                            action = a.ACTION,
                             background = a.BACKGROUND,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
-                            ApprovalStatus = _context.TBL_APPROVAL_STATUS.Where(O => O.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(O => O.APPROVALSTATUSNAME).FirstOrDefault(),
-                            OperationId = (int) OperationsEnum.CallMemo
+                            approvalStatus = _context.TBL_APPROVAL_STATUS.Where(O => O.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(O => O.APPROVALSTATUSNAME).FirstOrDefault(),
+                            operationId = (int) OperationsEnum.CallMemo
                         }).ToList();
             return data;
         }
@@ -294,26 +295,26 @@ namespace FintrakBanking.Repositories.Credit
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
-                            CallMemoId = a.CALLMEMOID,
-                            LoanApplicationId = a.LOANAPPLICATIONID,
+                            callMemoId = a.CALLMEMOID,
+                            loanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
-                            StaffId = a.STAFFID,
-                            ApprovalStatusId = a.APPROVALSTATUSID,
+                            staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
-                            CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = c.CUSTOMERID,
-                            MemoDate = a.MEMODATE,
-                            NextCallDate = a.NEXTCALLDATE,
-                            Purpose = a.PURPOSE,
-                            Discusion = a.DISCUSION,
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                            customerId = c.CUSTOMERID,
+                            memoDate = a.MEMODATE,
+                            nextCallDate = a.NEXTCALLDATE,
+                            purpose = a.PURPOSE,
+                            discusion = a.DISCUSION,
+                            cc = a.CC,
                             recentUpdate = a.RECENTUPDATE,
-                            Action = a.ACTION,
+                            action = a.ACTION,
                             background = a.BACKGROUND,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
-                            //ApprovalStatus = ,
-                            OperationId = (int)OperationsEnum.CallMemo
+                            approvalStatus = _context.TBL_APPROVAL_STATUS.Where(O => O.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(O => O.APPROVALSTATUSNAME).FirstOrDefault(),
+                            operationId = (int)OperationsEnum.CallMemo
                         }).ToList();
             return data;
         }
@@ -323,82 +324,124 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in _context.TBL_CALL_MEMO
                             //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                        where (c.FIRSTNAME + " " + c.LASTNAME).ToLower().Contains(model.CustomerName.ToLower())
-                        && a.NEXTCALLDATE >= model.StartDate && a.NEXTCALLDATE <= model.EndDate
+                        where (c.FIRSTNAME + " " + c.LASTNAME).ToLower().Contains(model.customerName.ToLower())
+                        && a.NEXTCALLDATE >= model.startDate && a.NEXTCALLDATE <= model.endDate
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
-                            CallMemoId = a.CALLMEMOID,
-                            LoanApplicationId = a.LOANAPPLICATIONID,
+                            callMemoId = a.CALLMEMOID,
+                            loanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
-                            StaffId = a.STAFFID,
+                            staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
-                            CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = c.CUSTOMERID,
-                            MemoDate = a.MEMODATE,
-                            NextCallDate = a.NEXTCALLDATE,
-                            Purpose = a.PURPOSE,
-                            Discusion = a.DISCUSION,
-                            Action = a.ACTION,
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                            customerId = c.CUSTOMERID,
+                            memoDate = a.MEMODATE,
+                            nextCallDate = a.NEXTCALLDATE,
+                            purpose = a.PURPOSE,
+                            discusion = a.DISCUSION,
+                            cc = a.CC,
                             recentUpdate = a.RECENTUPDATE,
+                            action = a.ACTION,
+                            background = a.BACKGROUND,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
-                            OperationId = (int)OperationsEnum.CallMemo
+                            approvalStatus = _context.TBL_APPROVAL_STATUS.Where(O => O.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(O => O.APPROVALSTATUSNAME).FirstOrDefault(),
+                            operationId = (int)OperationsEnum.CallMemo
                         }).ToList();
             return data;
         }
 
         public IEnumerable<CallMemoViewModel> GetAllCallMemo(int staffId)
         {
-            var data = (from a in _context.TBL_CALL_MEMO
-                        join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                        where a.STAFFID == staffId
-                        orderby a.CALLMEMOID
-                        select new CallMemoViewModel
-                        {
-                            CallMemoId = a.CALLMEMOID,
-                            ApprovalStatusId = a.APPROVALSTATUSID,
-                            LoanApplicationId = a.LOANAPPLICATIONID,
-                            participants = a.PARTICIPANTS,
-                            location = a.LOCATION,
-                            CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = c.CUSTOMERID,
-                            MemoDate = a.MEMODATE,
-                            NextCallDate = a.NEXTCALLDATE,
-                            Purpose = a.PURPOSE,
-                            Discusion = a.DISCUSION,
-                            Action = a.ACTION,
-                            background = a.BACKGROUND,
-                            recentUpdate = a.RECENTUPDATE,
-                            createdBy = a.CREATEDBY,
-                            dateTimeCreated = a.DATECREATED,
-                            OperationId = (int)OperationsEnum.CallMemo
-                        }).ToList();
-            return data;
+           
+                var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.CallMemo).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+
+                var firstQuery = (from a in _context.TBL_CALL_MEMO
+                                  join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                  where a.STAFFID == staffId && (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                                  orderby a.CALLMEMOID
+                                  select new CallMemoViewModel
+                                  {
+                                      callMemoId = a.CALLMEMOID,
+                                      loanApplicationId = a.LOANAPPLICATIONID,
+                                      participants = a.PARTICIPANTS,
+                                      location = a.LOCATION,
+                                      approvalStatusId = a.APPROVALSTATUSID,
+                                      customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                      customerId = c.CUSTOMERID,
+                                      memoDate = a.MEMODATE,
+                                      nextCallDate = a.NEXTCALLDATE,
+                                      purpose = a.PURPOSE,
+                                      discusion = a.DISCUSION,
+                                      action = a.ACTION,
+                                      cc = a.CC,
+                                      background = a.BACKGROUND,
+                                      recentUpdate = a.RECENTUPDATE,
+                                      createdBy = a.CREATEDBY,
+                                      dateTimeCreated = a.DATECREATED,
+                                      approvalStatusName = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                                      operationId = (int)OperationsEnum.CallMemo
+                                  }).OrderByDescending(a => a.callMemoId).ToList();
+
+                var secondQuery = (from x in _context.TBL_CALL_MEMO
+                                   join trail in _context.TBL_APPROVAL_TRAIL on x.CALLMEMOID equals trail.TARGETID
+                                   join c in _context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                   where trail.OPERATIONID == (short)OperationsEnum.CallMemo
+                                        && trail.TARGETID == x.CALLMEMOID
+                                   orderby trail.APPROVALTRAILID descending
+                                   select new CallMemoViewModel
+                                   {
+                                       callMemoId = x.CALLMEMOID,
+                                       loanApplicationId = x.LOANAPPLICATIONID,
+                                       participants = x.PARTICIPANTS,
+                                       location = x.LOCATION,
+                                       customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                       customerId = c.CUSTOMERID,
+                                       memoDate = x.MEMODATE,
+                                       nextCallDate = x.NEXTCALLDATE,
+                                       purpose = x.PURPOSE,
+                                       discusion = x.DISCUSION,
+                                       action = x.ACTION,
+                                       cc = x.CC,
+                                       background = x.BACKGROUND,
+                                       recentUpdate = x.RECENTUPDATE,
+                                       createdBy = x.CREATEDBY,
+                                       dateTimeCreated = x.DATECREATED,
+                                       operationId = (int)OperationsEnum.CallMemo,
+                                       loopedStaffId = trail.LOOPEDSTAFFID,
+                                       approvalStatusId = trail.APPROVALSTATUSID,
+                                       approvalTrailId = trail.APPROVALTRAILID,
+                                       approvalStatusName = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                                   }).GroupBy(x => x.callMemoId).Select(x => x.OrderByDescending(p => p.approvalTrailId).FirstOrDefault()).Where((trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
+                                              && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)).ToList();
+                var data = firstQuery.Union(secondQuery).ToList();
+                return data;
         }
 
         public int AddCallMemo(CallMemoViewModel model)
         {
             var data = new TBL_CALL_MEMO
             {
-                LOANAPPLICATIONID = model.LoanApplicationId,
-                STAFFID = model.StaffId,
-                MEMODATE = model.MemoDate,
-                NEXTCALLDATE = model.NextCallDate,
-                PURPOSE = model.Purpose,
+                LOANAPPLICATIONID = model.loanApplicationId,
+                STAFFID = model.staffId,
+                MEMODATE = model.memoDate,
+                NEXTCALLDATE = model.nextCallDate,
+                PURPOSE = model.purpose,
                 PARTICIPANTS = model.participants,
                 BACKGROUND = model.background,
                 LOCATION = model.location,
-                DISCUSION = model.Discusion,
-                CALLTIME = model.CallTime,
-                NEXTCALLTIME = model.NextCallTime,
-                ACTION = model.Action,
+                DISCUSION = model.discusion,
+                CALLTIME = model.callTime,
+                CC = model.cc,
+                NEXTCALLTIME = model.nextCallTime,
+                ACTION = model.action,
                 RECENTUPDATE = model.recentUpdate,
                 APPROVALLEVELID = model.approvalLevelId,
                 CREATEDBY = model.createdBy,
-                CUSTOMERID = model.CustomerId.Value,
+                CUSTOMERID = model.customerId.Value,
                 OPERATIONID = (int) OperationsEnum.CallMemo,
                 APPROVALSTATUSID = (int) ApprovalStatusEnum.Pending,
                 DATECREATED = _genSetup.GetApplicationDate()
@@ -440,24 +483,25 @@ namespace FintrakBanking.Repositories.Credit
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
-                            CallMemoId = a.CALLMEMOID,
-                            LoanApplicationId = a.LOANAPPLICATIONID,
+                            callMemoId = a.CALLMEMOID,
+                            loanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
-                            StaffId = a.STAFFID,
+                            staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
-                            CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = c.CUSTOMERID,
-                            MemoDate = a.MEMODATE,
-                            NextCallDate = a.NEXTCALLDATE,
-                            Purpose = a.PURPOSE,
-                            Discusion = a.DISCUSION,
-                            Action = a.ACTION,
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                            customerId = c.CUSTOMERID,
+                            memoDate = a.MEMODATE,
+                            nextCallDate = a.NEXTCALLDATE,
+                            purpose = a.PURPOSE,
+                            discusion = a.DISCUSION,
+                            cc = a.CC,
+                            action = a.ACTION,
                             background = a.BACKGROUND,
                             recentUpdate = a.RECENTUPDATE,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
-                            OperationId = (int)OperationsEnum.CallMemo
+                            operationId = (int)OperationsEnum.CallMemo
                         }).FirstOrDefault();
 
             return data;
@@ -468,16 +512,17 @@ namespace FintrakBanking.Repositories.Credit
             var data = _context.TBL_CALL_MEMO.Find(limitId);
             if (data == null) return false;
             data.PARTICIPANTS = model.participants;
-            data.LOANAPPLICATIONID = model.LoanApplicationId;
+            data.LOANAPPLICATIONID = model.loanApplicationId;
             data.STAFFID = model.createdBy;
-            data.MEMODATE = model.MemoDate;
-            data.NEXTCALLDATE = model.NextCallDate;
-            data.PURPOSE = model.Purpose;
-            data.DISCUSION = model.Discusion;
-            data.ACTION = model.Action;
+            data.MEMODATE = model.memoDate;
+            data.NEXTCALLDATE = model.nextCallDate;
+            data.PURPOSE = model.purpose;
+            data.DISCUSION = model.discusion;
+            data.ACTION = model.action;
             data.LOCATION = model.location;
             data.BACKGROUND = model.background;
             data.RECENTUPDATE = model.recentUpdate;
+            data.CC = model.cc;
             // Audit Section ---------------------------
 
             var audit = new TBL_AUDIT
@@ -502,7 +547,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool GoForCallMemoApproval(CallMemoViewModel entity)
         {
-            var callMemos = _context.TBL_CALL_MEMO.Where(O => O.CALLMEMOID == entity.CallMemoId 
+            var callMemos = _context.TBL_CALL_MEMO.Where(O => O.CALLMEMOID == entity.callMemoId 
                                                          && O.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending).Select(O => O).ToList();
 
             try
@@ -517,7 +562,7 @@ namespace FintrakBanking.Repositories.Credit
                     _workflow.StaffId = entity.createdBy;
                     _workflow.CompanyId = entity.companyId;
                     _workflow.StatusId = (int) ApprovalStatusEnum.Processing;
-                    _workflow.TargetId = entity.CallMemoId;
+                    _workflow.TargetId = entity.callMemoId;
                     _workflow.Comment = "Request for call memo approval";
                     _workflow.OperationId = (int) OperationsEnum.CallMemo;
                     _workflow.DeferredExecution = true;
@@ -538,9 +583,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 _workflow.StaffId = model.createdBy;
                 _workflow.CompanyId = model.companyId;
-                _workflow.StatusId = model.ApprovalStatusId == 3 ? (int) ApprovalStatusEnum.Disapproved : (int) ApprovalStatusEnum.Processing;
-                _workflow.TargetId = model.CallMemoId;
-                _workflow.Comment = model.Comment;
+                _workflow.StatusId = model.approvalStatusId == 3 ? (int) ApprovalStatusEnum.Disapproved : (int) ApprovalStatusEnum.Processing;
+                _workflow.TargetId = model.callMemoId;
+                _workflow.Comment = model.comment;
                 _workflow.OperationId = (int) OperationsEnum.CallMemo;
                 _workflow.DeferredExecution = true;
                 _workflow.LogActivity();
@@ -549,7 +594,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (_workflow.NewState == (int) ApprovalState.Ended)
                     {
-                        var callMemos = _context.TBL_CALL_MEMO.Where(O => O.CALLMEMOID == model.CallMemoId 
+                        var callMemos = _context.TBL_CALL_MEMO.Where(O => O.CALLMEMOID == model.callMemoId 
                                                 && O.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing).Select(O => O).ToList();
 
                         foreach (var callMemo in callMemos)
@@ -587,24 +632,24 @@ namespace FintrakBanking.Repositories.Credit
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
-                            CallMemoId = a.CALLMEMOID,
-                            LoanApplicationId = a.LOANAPPLICATIONID,
+                            callMemoId = a.CALLMEMOID,
+                            loanApplicationId = a.LOANAPPLICATIONID,
                             //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
-                            StaffId = a.STAFFID,
+                            staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
-                            CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = c.CUSTOMERID,
-                            MemoDate = a.MEMODATE,
-                            NextCallDate = a.NEXTCALLDATE,
-                            Purpose = a.PURPOSE,
-                            Discusion = a.DISCUSION,
-                            Action = a.ACTION,
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                            customerId = c.CUSTOMERID,
+                            memoDate = a.MEMODATE,
+                            nextCallDate = a.NEXTCALLDATE,
+                            purpose = a.PURPOSE,
+                            discusion = a.DISCUSION,
+                            action = a.ACTION,
                             background = a.BACKGROUND,
                             recentUpdate = a.RECENTUPDATE,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
-                            OperationId = (int)OperationsEnum.CallMemo
+                            operationId = (int)OperationsEnum.CallMemo
                         }).ToList();
             return data;
         }

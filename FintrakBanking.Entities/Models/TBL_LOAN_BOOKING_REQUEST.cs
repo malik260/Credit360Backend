@@ -59,6 +59,7 @@ namespace FintrakBanking.Entities.Models
         public bool? CRMSVALIDATED { get; set; }
 
         public DateTime? CRMSDATE { get; set; }
+        public int? TENOR { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

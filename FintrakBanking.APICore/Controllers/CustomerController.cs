@@ -2481,6 +2481,37 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-nextOfKin-history/{nextOfKinId}")]
+        public HttpResponseMessage DeleteNextOfKin(int nextOfKinId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+
+                var data = repo.DeleteNextOfKin(nextOfKinId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Customer Next of Kin deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error deleting this Next of Kin" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("customer-related-party")]

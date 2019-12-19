@@ -61,17 +61,15 @@ namespace FintrakBanking.Repositories.Credit
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
         {
            APIResponse response = new APIResponse();
-            return fireResponse("Missing Customer Number", "99", model.request_Id);
-            if (model.customerType == "1")
+
+           if (model.customerType == "1")
            {
                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
-
                return AddIndividualCustomer(model);
            }
            else if (model.customerType == "2")
            {
                if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",model.request_Id); }
-
                return AddCorporateCustomer(model);
            }
            else { return fireResponse("Uknown Customer Type","99",""); }
@@ -276,9 +274,11 @@ namespace FintrakBanking.Repositories.Credit
             if (model.requestId == null) { return fireResponse("Missing application unique indentifier", "99",""); }
 
             var subSector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.subSectorCode).FirstOrDefault();
-            if (subSector == null) { return fireResponse("Missing sub sector code", "99",""); }
+            if (subSector == null) { return fireResponse("Sub Sector Code does not exist in Fintrak Credit360", "99",""); }
 
-            var sector = context.TBL_SECTOR.Where(x => x.CODE == subSector.CODE).FirstOrDefault();
+            //var sector = context.TBL_SECTOR.Where(x => x.CODE == subSector.CODE).FirstOrDefault();
+            var sector = context.TBL_SECTOR.Where(x => x.CODE == model.sectorCode).FirstOrDefault();
+            if (sector == null) { return fireResponse("Sector Code does not exist in Fintrak Credit360", "99", ""); }
 
             var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == model.currencyCode || x.CURRENCYCODE =="NGN").FirstOrDefault();
             if (currency == null) return fireResponse("Missing currency code", "99","");
@@ -314,12 +314,15 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.companyId = model.companyId;
             loanApp.loanInformation = "<p></p>";
             loanApp.casaAccountId = casa?.CASAACCOUNTID;
-            loanApp.branchId = 94;            
+            loanApp.branchId = 94;
 
             if(context.TBL_LOAN_APPLICATION.Any(x=>x.APIREQUESTID == model.requestId && x.DELETED != true))
             {
                 if(model.callStatusCode == "01")
                 {
+                    loanApp.loanApplicationId = context.TBL_LOAN_APPLICATION.Where(O => O.APIREQUESTID == model.requestId).FirstOrDefault().LOANAPPLICATIONID;
+                    loanApp.loanApplicationDetailId = context.TBL_LOAN_APPLICATION_DETAIL.Where(O => O.LOANAPPLICATIONID == loanApp.loanApplicationId).FirstOrDefault().LOANAPPLICATIONDETAILID;
+
                     response.requestId = model.requestId;
                     if (UpdateLoanApplicationDetail(loanApp))
                     {
@@ -630,36 +633,41 @@ namespace FintrakBanking.Repositories.Credit
             return loanData;
         }
 
-        private bool UpdateLoanApplicationDetail(LoanApplicationViewModel loan)
+        private bool UpdateLoanApplicationDetail(LoanApplicationViewModel update)
         {
-            UpdateLoanApplication(loan); 
+            UpdateLoanApplication(update); 
 
-            var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
-            var update = loan.LoanApplicationDetail.SingleOrDefault();
-            if (update == null) fireResponse("Sequence contain not single! " + loan.LoanApplicationDetail.Count(), "99","");
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == update.loanApplicationDetailId);
+            //var update = update.LoanApplicationDetail.SingleOrDefault();
 
-            if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTCLASSID != (int)ProductClassEnum.BondAndGuarantees))
-            {
-                fireResponse("Please select a repayment pattern for the product " + update.productName, "99","");
-            }
+            //if (update == null) fireResponse("Sequence contain not single! " + loan.LoanApplicationDetail.Count(), "99","");
+            if (detail == null) fireResponse("Sequence contain not single! " + 0, "99", "");
+            var product = context.TBL_PRODUCT.Find(update.productId);
+
+            //if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTCLASSID != (int)ProductClassEnum.BondAndGuarantees))
+            //{
+            //    fireResponse("Please select a repayment pattern for the product " + update.productName, "99","");
+            //}
 
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
-            //detail.PROPOSEDAMOUNT = update.proposedAmount;
+            detail.PROPOSEDAMOUNT = update.proposedAmount;
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
-            detail.PROPOSEDPRODUCTID = update.proposedProductId;
+            detail.PROPOSEDPRODUCTID = (short) update.proposedProductId;
             detail.PROPOSEDTENOR = update.proposedTenor;
             detail.REPAYMENTSCHEDULEID = update.repaymentScheduleId;
             detail.REPAYMENTTERMS = update.repaymentTerm;
             detail.LOANPURPOSE = update.loanPurpose;
-            detail.PRODUCTPRICEINDEXID = update.productPriceIndexId;
-            detail.PRODUCTPRICEINDEXRATE = update.productPriceIndexRate;
+            //detail.PRODUCTPRICEINDEXID = product.PRODUCTPRICEINDEXID;
+            //detail.PRODUCTPRICEINDEXRATE = product.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE;
             detail.CASAACCOUNTID = update.casaAccountId;
-            detail.OPERATINGCASAACCOUNTID = update.operatingCasaAccountId;
-            detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
+            //detail.OPERATINGCASAACCOUNTID = update.operatingCasaAccountId;
+            //detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
             detail.CURRENCYID = update.currencyId;
             detail.TENORFREQUENCYTYPEID = update.tenorModeId;
             detail.ISTAKEOVERAPPLICATION = update.isTakeOverApplication;
+            detail.PROPOSEDPRODUCTID = update.productId;
+            detail.CURRENCYID = context.TBL_CURRENCY.Where(O => O.CURRENCYCODE == update.currencyCode).FirstOrDefault().CURRENCYID;
 
             var productClassId = detail.TBL_PRODUCT1.PRODUCTCLASSID;
 
@@ -681,6 +689,7 @@ namespace FintrakBanking.Repositories.Credit
             //}
 
             var loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+
             loanData.REQUIRECOLLATERAL = loan.requireCollateral;
             loanData.TOTALEXPOSUREAMOUNT = totalAmount;
             loanData.INTERESTRATE = loan.interestRate;
