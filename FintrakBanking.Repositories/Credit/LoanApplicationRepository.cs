@@ -2062,7 +2062,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) {  return loan; }
 
-                loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber && l.DELETED == false);
+                loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER.Trim().ToLower() == loan.applicationReferenceNumber.Trim().ToLower() && l.DELETED == false);
 
                 if (loan.productClassId == (short)ProductClassEnum.Creditcards)
                 {
@@ -6328,7 +6328,7 @@ namespace FintrakBanking.Repositories.Credit
             var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
             int customerId = (int)application.customerId;
-            int productId = details.SingleOrDefault().proposedProductId;
+            int productId = details.SingleOrDefault()?.proposedProductId ?? 0;
             decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
 
             var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
@@ -6386,7 +6386,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
             }
-            if (limitValidation.ProductLimitExceeded(productId, details.SingleOrDefault().proposedAmount))
+            if (limitValidation.ProductLimitExceeded(productId, details.SingleOrDefault()?.proposedAmount ?? 0))
             {
                 throw new SecureException("Product Limit exceeded!");
             }

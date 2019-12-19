@@ -43,7 +43,7 @@ namespace FintrakBanking.Entities.Models
 
         public int OPERATIONID { get; set; }
 
-        public int APPROVALSTATUSID { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
         public DateTime CALLTIME { get; set; }
         public DateTime NEXTCALLTIME { get; set; }
