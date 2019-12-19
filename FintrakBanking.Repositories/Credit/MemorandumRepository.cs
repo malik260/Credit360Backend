@@ -962,7 +962,7 @@ namespace FintrakBanking.Repositories.Credit
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.ToList();
+            }).ToList();
 
             return data;
         }
@@ -1008,7 +1008,7 @@ namespace FintrakBanking.Repositories.Credit
                         
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>NAME OF CUSTOMER:</b></th>
                         <th><b>{customerName}</b></th>
@@ -1072,7 +1072,7 @@ namespace FintrakBanking.Repositories.Credit
             int n = 0;
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                    ";
             if (chargeFeeIds.Count > 0)
             {
@@ -1103,7 +1103,7 @@ namespace FintrakBanking.Repositories.Credit
              //       </ tr >
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <td><b>TRANCHE DISBURSEMENT:</b></td>
                         <td>APPROVED AMOUNT</td>
@@ -1132,7 +1132,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <td><b>REQUEST TYPE</b></td>
                         <td>{requestType}</td>
@@ -1154,7 +1154,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></h3>
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS</b></th>
@@ -1194,7 +1194,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
                         <th><b></b></th>
@@ -1236,7 +1236,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>OTHER CONDITIONS PRECEDENT TO DRAWDOWN AS APPROVED IN THE FAM</b></th>
@@ -1270,7 +1270,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table border=1 width=1000px cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px cellpadding=15 cellspacing=0>
                     < tr>
                         <th><b>S/N</b></th>
                         <th><b>Facility Type</b></th>
@@ -1314,7 +1314,7 @@ namespace FintrakBanking.Repositories.Credit
                 var c = g.FirstOrDefault();
                 result += c.title;
                 result = result + $@"
-                <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
@@ -1395,7 +1395,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 result = result + $@"
-                <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b><h2>S/N</h2></b></th>
                         <th><b><h2>TRANSACTIONS DYNAMICS</h2></b></th>
@@ -1451,7 +1451,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b><h2>Facility</h2></b></th>
                         <th><b><h2>LLL Impact(NGN)</h2></b></th>
@@ -1500,7 +1500,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Facility</b></th>
                         <th><b>LLL Impact(NGN)</b></th>
@@ -3452,7 +3452,7 @@ namespace FintrakBanking.Repositories.Credit
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerCode);
             var n = 0;
             result = result + $@"
-                <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b><h2>Related Obligors(domestic)</h2></b></th>
                         <th><b><h2>Facility Name</h2></b></th>
@@ -3915,7 +3915,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
@@ -3947,7 +3947,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
                         <th><b></b></th>
@@ -3981,7 +3981,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
                         <th><b></b></th>
@@ -4062,7 +4062,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result += $@"
-                <table border=1 width=600 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=600 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Security / Support</b></th>
@@ -4098,7 +4098,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             int n = 0;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>DESCRIPTION/SUMMARY</b></th>
@@ -4347,7 +4347,7 @@ namespace FintrakBanking.Repositories.Credit
             //var exposures = GetGroupExposurebyCustomerId((int)lmsrApplication.CUSTOMERID, this.lmsrApplication.COMPANYID);
             var n = 0;
             result = result + $@"
-                <table border=1>
+                <table style='font face: arial; size:12px' border=1>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>Customer Name</b></th>
@@ -4493,7 +4493,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table border=1>
+                <table style='font face: arial; size:12px' border=1>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>Facility Type</b></th>
@@ -4572,7 +4572,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var n = 0;
             result = result + $@"
-                <table border=1>
+                <table style='font face: arial; size:12px' border=1>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>Facility</b></th>
@@ -4617,7 +4617,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var n = 0;
             //result = result + $@"
-            //    <table border=1>
+            //    <table style='font face: arial; size:12px' border=1>
             //        <tr>
             //            <th><b>S/N</b></th>
             //            <th><b>Facility</b></th>
@@ -4949,7 +4949,7 @@ namespace FintrakBanking.Repositories.Credit
             //var turnover = GetCustomerTurnover();
             //var n = 0;
             //result = result + $@"
-            //    <table border=1>
+            //    <table style='font face: arial; size:12px' border=1>
             //        <tr>
             //            <th><b>S/N</b></th>
             //            <th><b>Account ID</b></th>
@@ -4990,7 +4990,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>MEMO</b></h3>
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <td><b>Date</b></td>
                         <td></td>
@@ -5044,7 +5044,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (FACILITY UPGRADE SUPPORT SCHEME)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -5084,7 +5084,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>School Fees Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <td>Total No of Pupils</td>
                         <td>----------------------</td>
@@ -5117,7 +5117,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -5151,7 +5151,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Account Activity with Current (Major) Banker per period of 6 months</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Period (e.g. Jan 08 to Mar 09)</b></th>
                         <th><b>Debits</b></th>
@@ -5225,7 +5225,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Cash flow Analysis/Projections</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td></td>
@@ -5461,7 +5461,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Summary Net Cash Flow </b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=700 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Year</b></th>
                         <th><b></b></th>
@@ -5506,14 +5506,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -5536,7 +5536,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <td><table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -5580,7 +5580,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CONCURRENCES:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -5631,7 +5631,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
@@ -5802,7 +5802,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CONCURRENCES:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -5848,7 +5848,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -5910,7 +5910,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -5944,7 +5944,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>6 Months Activity with Current (Major) Banker</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Month</b></th>
                         <th><b>Debits</b></th>
@@ -6018,14 +6018,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -6048,7 +6048,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <td><table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -6094,7 +6094,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CONCURRENCES:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -6145,7 +6145,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
@@ -6357,7 +6357,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='4'><strong>Documentation Checklist</strong></th>                     
                     </tr> 
@@ -6409,7 +6409,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Concurrences:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -6455,7 +6455,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (CASH COLLATERIZED)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -6494,7 +6494,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -6535,7 +6535,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>12 Months Activity with Current (Major) Banker</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Month</b></th>
                         <th><b>Debits</b></th>
@@ -6651,14 +6651,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -6681,7 +6681,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <td><table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -6723,7 +6723,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CONCURRENCES:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -6774,7 +6774,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
@@ -6835,7 +6835,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></th>                     
                     </tr> 
@@ -6881,7 +6881,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>APPROVALS:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -6925,7 +6925,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <h3><b>MEMO</b></h3>
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td colspan=2><strong>TEMPORARY OVERDRAFT (TOD)</strong></td>
                         <td></td>
@@ -6943,7 +6943,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                
-                <table border=0 width=900 cellpadding=10 cellspacing=0>        
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>        
                    <tr>
                         <td>Name of Customer:</td>
                         <td>XXXXXXXX</td>
@@ -6976,7 +6976,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td><strong>New Request:</strong></td>
@@ -7007,7 +7007,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>3 MONTHS ACTIVITY:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                    <tr>
                         <td>Month</td>
                         <td>Debits</td>
@@ -7035,7 +7035,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4>Collateral/Support/Justification:</h4>
                 <p><ul><li>List the supporting documents and their perfection status.</li></ul></p>
                 <br />
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='2'><strong>APPROVAL INFORMATION</strong></td>                     
@@ -7080,7 +7080,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                    <tr>
                         <td COLSPAN=2>ATTESTATION: I hereby undertake to sponsor the TOD based on my expert knowledge of the customer and his business, and state that I would be personally responsible in ensuring repayment in line with approved terms.</td>
                         
@@ -7103,7 +7103,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>Staff Car Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h3><b>Staff Information</b></h3>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
                         <td>------------------</td>
@@ -7199,7 +7199,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -7243,7 +7243,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -7288,7 +7288,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -7328,7 +7328,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Month</b></th>
                         <th><b>Debit</b></th>
@@ -7397,7 +7397,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -7427,14 +7427,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Car Loan</td>
@@ -7503,7 +7503,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Risk Acceptance Criteria (RAC) – Staff Car Loans</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Description</b></th>
                         <th><b>Required</b></th>
@@ -7588,7 +7588,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Approval Information:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -7638,7 +7638,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>Staff Mortgage Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h3><b>Staff Information</b></h3>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
                         <td>------------------</td>
@@ -7749,7 +7749,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -7793,7 +7793,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -7838,7 +7838,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -7878,7 +7878,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Month</b></th>
                         <th><b>Debit</b></th>
@@ -7947,7 +7947,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -7976,14 +7976,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Mortgage Loan</td>
@@ -8049,7 +8049,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Risk Acceptance Criteria – Staff Mortgage Loan</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Description</b></th>
                         <th><b>Required</b></th>
@@ -8139,7 +8139,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Approval Information:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -8198,7 +8198,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>Staff Personal Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h4><b>Staff Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
                         <td>-----------------------------</td>
@@ -8292,7 +8292,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -8336,7 +8336,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -8381,7 +8381,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -8421,7 +8421,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Month</b></th>
                         <th><b>Debit</b></th>
@@ -8490,7 +8490,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -8519,14 +8519,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Personal Loan</td>
@@ -8599,7 +8599,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Risk Acceptance Criteria – Staff Personal Loan</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Description</b></th>
                         <th><b>Required</b></th>
@@ -8703,7 +8703,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Approval Information:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -8744,7 +8744,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th></th>
@@ -8765,7 +8765,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>Staff Personal Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h4><b>Staff Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
                         <td>----------------------</td>
@@ -8860,7 +8860,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -8904,7 +8904,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -8949,7 +8949,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -8989,7 +8989,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Month</b></th>
                         <th><b>Debit</b></th>
@@ -9058,7 +9058,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -9087,14 +9087,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Personal Loan</td>
@@ -9160,7 +9160,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Risk Acceptance Criteria – Staff Personal Loan</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Description</b></th>
                         <th><b>Required</b></th>
@@ -9259,7 +9259,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Approval Information:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -9316,7 +9316,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>DOCUMENTATION DEFERRAL/WAIVER FORM</b></h3>
                 <br />
                
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td><strong>BORROWER:</strong></td> 
                         <td>{customerName}</td>
@@ -9348,7 +9348,7 @@ namespace FintrakBanking.Repositories.Credit
             var precedent = GetConditionPrecedentByApplicationDetailId(appId.LOANAPPLICATIONDETAILID);
             result = result + $@"
                 <br />              
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><em><strong>Documents/Conditions precedent to draw down as approved in the FAM</strong></em>:</td>
@@ -9556,11 +9556,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId)
         {
-            var createdStaff = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
-            var staff = context.TBL_STAFF.Where(s => s.STAFFID == createdStaff.CREATEDBY).Select(s=>s.BRANCHID).FirstOrDefault();
-            var branchName = context.TBL_BRANCH.Where(b=>b.BRANCHID == staff).Select(b=>b.BRANCHNAME).FirstOrDefault();
-            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
             
+            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+            //var isInitialize = InitializeCashBackMemoProperties(operationId, targetId);
             var flowChange = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.OPERATIONID == operationId).FirstOrDefault();
             var cashbackSection = context.TBL_CASHBACK.Where(x => x.LOANAPPLICATIONDETAILID == targetId).FirstOrDefault();
 
@@ -9569,7 +9567,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>MEMO</b></h3> <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td><b>Date:</b></td>
                         <td>{DateTime.Now}</td>
@@ -9584,7 +9582,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                         <td><b>Location:</b></td>
-                        <td>{branchName?.ToUpper()}</td>
+                        <td>{locationName?.ToUpper()}</td>
                     </tr>
                     <tr>
                         <td><b>Subject:</b></td>
@@ -9605,17 +9603,17 @@ namespace FintrakBanking.Repositories.Credit
                 <p><b>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</b></p>
                 <p><b>{flowChange?.PLACEHOLDER.ToUpper()} MEMO</b></p>
             ";
-            result = result + GetCashBackApprovalsMarkupLOS(targetId , operationId);
+            result = result + GetCashBackApprovalsMarkupLOS();
             return result;
         }
 
 
-        private string GetCashBackApprovalsMarkupLOS(int targetId , int operationId)
+        private string GetCashBackApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <th><b>APPROVAL NAME</b></th>
                         <th><b>DESIGNATION</b></th>
@@ -9641,6 +9639,8 @@ namespace FintrakBanking.Repositories.Credit
             return result;
 
         }
+
+
 
         public string GetCallMemoMarkup(int id)
         {
@@ -9695,7 +9695,6 @@ namespace FintrakBanking.Repositories.Credit
             return result;
 
         }
-
     }
 }
 
