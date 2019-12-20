@@ -549,7 +549,7 @@ namespace FintrakBanking.Repositories.Credit
                 ///////////////////// Call Refer Back API /////////////////////
                 if(workflow.StatusId == (short) ApprovalStatusEnum.Referred)
                 {
-                    ReferBackThroughAPI(appl, model, staff.STAFFROLEID);
+                    if (model.isFlowTest == false) ReferBackThroughAPI(appl, model, staff.STAFFROLEID);
                 }
                 ///////////////////// Call Refer Back API /////////////////////
 
@@ -557,9 +557,9 @@ namespace FintrakBanking.Repositories.Credit
                 ////////////////////// Call Status Change API /////////////////
                 if (workflow.StatusId == (short) ApprovalStatusEnum.Processing || workflow.StatusId == (short)ApprovalStatusEnum.Approved || workflow.StatusId == (short)ApprovalStatusEnum.Disapproved)
                 {
-                    var statusCode = "";
+                    var statusCode = ""; // Approved = "90", Rejected = "99"
                     statusCode = workflow.StatusId == (short)ApprovalStatusEnum.Disapproved ? "99" : "90";
-                    LoanStatusChangeThroughAPI(appl, model, staff, statusCode);
+                    if (model.isFlowTest == false) LoanStatusChangeThroughAPI(appl, model.comment, staff.STAFFID, statusCode);
                 }
                 ////////////////////// Call Status Change API /////////////////
 
@@ -675,12 +675,12 @@ namespace FintrakBanking.Repositories.Credit
             
         }
 
-        private void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, ForwardViewModel model, TBL_STAFF staff, string statusCode)
+        public void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode)
         {
             //string cflReport = builder.ToString();
             string WorkflowStageName = "";
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == staffId).FirstOrDefault();
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
-            //WorkflowStageName = WorkflowStage == "RM" ? "11" : WorkflowStage.Substring(0, 2) == "CR" ? "12" : WorkflowStage == "GH" ? "13" : "";
 
             if (WorkflowStage == "RM")
             {
@@ -695,12 +695,11 @@ namespace FintrakBanking.Repositories.Credit
                 WorkflowStageName = "13";
             }
 
-            var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
-            var staffFullName = staffDetail.FIRSTNAME + " " + staffDetail.LASTNAME;
+            var staffFullName = staff.FIRSTNAME + " " + staff.LASTNAME;
 
             OfferLetterResponse offerLetters = new OfferLetterResponse();
             offerLetters.StatusCode = statusCode;
-            offerLetters.Comment = model.comment;
+            offerLetters.Comment = comment;
             offerLetters.RequestId = loanApplication.APIREQUESTID;
             offerLetters.WorkflowStage = WorkflowStageName;
             //offerLetters.Attachment.FileLink = cflReport;

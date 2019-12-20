@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -99,5 +100,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersByOperationId(int operationId, int applicationDetailId);
         LoanApplicationDetailsViewModel GetLoanApplicationDetailByRefNo(string applicationReferenceNumber);
+
+        void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode);
+
     }
 }

@@ -262,16 +262,20 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        public string GetGeneratedCFLOfferLetter(string applicationRefNumber, string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName)
+        public string GetGeneratedCFLOfferLetter(string applicationRefNumber,  string ActionByName)
         {
             try
             {
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
-                    var productClassId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
+                    var statusCode = "90"; // Approved 
+                    var workflowStage = "14"; // Offer Letter
+                    var reasonForRejection = String.Empty;
+                    var loanApplication = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).FirstOrDefault();
+                    //var productClassId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
                     var productClassProcessId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x => x.PRODUCT_CLASS_PROCESSID).FirstOrDefault();
-                    return GetProductSpecificTemplateCFL(productClassProcessId, productClassId, applicationRefNumber,
-                       StatusCode, RequestId, WorkflowStage, ReasonForRejection, ActionByName);
+                    return GetProductSpecificTemplateCFL(productClassProcessId, loanApplication.PRODUCTCLASSID, applicationRefNumber,
+                       statusCode, loanApplication.APIREQUESTID, workflowStage, reasonForRejection, ActionByName);
                 }
 
 

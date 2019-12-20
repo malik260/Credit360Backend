@@ -3460,7 +3460,7 @@ namespace FintrakBanking.Repositories.Customer
                             createdBy = a.CREATEDBY,
                             creationMailSent = a.CREATIONMAILSENT,
                             customerCode = a.CUSTOMERCODE,
-                            customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                           // customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                             customerTypeId = (short)a.CUSTOMERTYPEID,
                             dateOfBirth = (DateTime)a.DATEOFBIRTH,
                             customerId = a.CUSTOMERID,
