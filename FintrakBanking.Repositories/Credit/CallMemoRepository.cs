@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,15 +23,18 @@ namespace FintrakBanking.Repositories.Credit
         private readonly FinTrakBankingContext _context;
         private readonly IGeneralSetupRepository _genSetup;
         private readonly IAuditTrailRepository _auditTrail;
+        private readonly IMemorandumRepository _memorandum;
+        private readonly string support = ConfigurationManager.AppSettings["SupportEmailAddr"];
         private readonly IWorkflow _workflow;
-
+       
         public CallMemoRepository(FinTrakBankingContext context, IGeneralSetupRepository genSetup,
-                                  IAuditTrailRepository auditTrail, IWorkflow workflow)
+                                  IAuditTrailRepository auditTrail, IWorkflow workflow, IMemorandumRepository memorandum)
         {
             _context = context;
             _genSetup = genSetup;
             _auditTrail = auditTrail;
             _workflow = workflow;
+            _memorandum = memorandum;
         }
         public IQueryable<CallMemoLoanSearchViewModel> SearchForCallMemoLoan(int staffId, string searchQuery)
         {
@@ -561,13 +565,44 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     _workflow.StaffId = entity.createdBy;
                     _workflow.CompanyId = entity.companyId;
-                    _workflow.StatusId = (int) ApprovalStatusEnum.Processing;
+                    _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                     _workflow.TargetId = entity.callMemoId;
                     _workflow.Comment = "Request for call memo approval";
-                    _workflow.OperationId = (int) OperationsEnum.CallMemo;
+                    _workflow.OperationId = (int)OperationsEnum.CallMemo;
                     _workflow.DeferredExecution = true;
                     _workflow.ExternalInitialization = true;
                     _workflow.LogActivity();
+
+                    var message = new TBL_MESSAGE_LOG();
+                    if (_workflow.NewState == (int)ApprovalState.Ended) 
+                    {
+                        if (_workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                        {
+                            var memo = _context.TBL_CALL_MEMO.Find(entity.callMemoId);
+                            var emailList = memo.CC;
+                            var subject = $"Call Memo Approved Notification";
+                            var messageBody = $"Dear All,<br/> Call Memo with purpose " + memo.PURPOSE + " has been approve.<br/> Kindly see details below.";
+                                messageBody = messageBody + " " + _memorandum.GetCallMemoMarkup(entity.callMemoId);
+
+                            message = new TBL_MESSAGE_LOG 
+                            {
+                                TOADDRESS = emailList,
+                                MESSAGESUBJECT = subject,
+                                MESSAGEBODY = messageBody,
+                                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                                MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                                FROMADDRESS = this.support,
+                                DATETIMERECEIVED = DateTime.Now,
+                                SENDONDATETIME = DateTime.Now,
+                                TARGETID = entity.callMemoId,
+                                OPERATIONID = (int)OperationsEnum.CallMemo,
+                        };
+                            _context.TBL_MESSAGE_LOG.Add(message);
+                            _context.SaveChanges();
+                        }
+                    }
+
+
                 }
             }
             catch (Exception ex) { }
