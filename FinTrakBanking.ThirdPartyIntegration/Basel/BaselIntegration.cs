@@ -39,7 +39,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
         // private ResponseMessageViewModel responseAPI;
 
-        public async Task<List<RatingAndRatioViewModel>> GetCustomerRatio( string customerNumber)
+        public async Task<List<SubGroupRatingAndRatioViewModel>> GetCustomerRatio( string customerNumber)
         {
             HttpClientHandler handler = new HttpClientHandler();
             HttpClient httpClientInstance;
@@ -75,20 +75,16 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 catch (Exception e) { throw new ConditionNotMetException(e.Message); }
 
                 responseMessage = await response.Content.ReadAsStringAsync();
+                List<SubGroupRatingAndRatioViewModel> customerRatios = new List<SubGroupRatingAndRatioViewModel>();
 
-                List<RatingAndRatioViewModel> customerRatios = new List<RatingAndRatioViewModel>();
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadAsAsync<List<RatingAndRatioViewModel>>();
-                    
+                    var result = await response.Content.ReadAsAsync<List<SubGroupRatingAndRatioViewModel>>();
                     var responseData = await response.Content.ReadAsStringAsync();
                     //JObject responseDataJsonString = JObject.Parse(responseData);
-
                     //var data = responseDataJsonString["data"].ToString();
                     customerRatios = result;// JsonConvert.DeserializeObject<List<RatingAndRatioViewModel>>(data);
-
                 }
-              
 
                 return customerRatios;
             }
@@ -117,14 +113,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 };
 
                 FinTrakBankingContext logContext = new FinTrakBankingContext();
-
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
                 logContext.SaveChanges();
             }
         }
 
-        public async Task<List<GroupRatingAndRatioViewModel>> GetAllCustomerRatios(string customerNumber)
+        public async Task<List<MainGroupRatingAndRatioViewModel>> GetAllCustomerRatios(string customerNumber)
         {
             HttpClientHandler handler = new HttpClientHandler();
             HttpClient httpClientInstance;
@@ -133,13 +127,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"{API_URL}GetAllCorporateRatios/{customerNumber}?key={API_KEY}";
-            //string endPointUrl = $"{API_URL}GetAllCorporateRatios/{"000107220"}?key={API_KEY}";
+            //string endPointUrl = $"{API_URL}GetAllCorporateRatios/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetAllCorporateRatios/{"000077293"}?key={API_KEY}";
 
             try
             {
                 handler.UseDefaultCredentials = true;
-
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -161,14 +154,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 //catch (Exception e) { throw new ConditionNotMetException(e.Message); }
 
                 responseMessage = await response.Content.ReadAsStringAsync();
-                List<GroupRatingAndRatioViewModel> customerGroupRatios = new List<GroupRatingAndRatioViewModel>();
+                List<MainGroupRatingAndRatioViewModel> customerGroupRatios = new List<MainGroupRatingAndRatioViewModel>();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadAsAsync<List<GroupRatingAndRatioViewModel>>();
+                    var result = await response.Content.ReadAsAsync<List<MainGroupRatingAndRatioViewModel>>();
                     var responseData = await response.Content.ReadAsStringAsync();
                     customerGroupRatios = result;
-
                 }
 
                 return customerGroupRatios;
