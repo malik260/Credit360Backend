@@ -6,12 +6,14 @@ using System.Linq;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Setups.Credit;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Interfaces.Credit
 {
     public interface IAppraisalMemorandumRepository
     {
-        IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId);
+        //IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId);
         AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId);
 
         IEnumerable<DocumentationViewModel> GetAllDocumentation(int applicationId);
@@ -97,5 +99,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersByOperationId(int operationId, int applicationDetailId);
         LoanApplicationDetailsViewModel GetLoanApplicationDetailByRefNo(string applicationReferenceNumber);
+
+        //Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber);
     }
 }
