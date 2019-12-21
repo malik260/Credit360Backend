@@ -42,6 +42,14 @@ namespace FintrakBanking.Common
             return String.Format("{0:dd-MMM-yyyy}", date);
         }
 
+        public static string EmailValidator
+        {
+            //return String.Format("{0:dd-MMM-yyyy}", date);
+            get {
+                return "^([0-9a-zA-Z]([-\\.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$";
+            }
+        }
+
         /// <summary>
         /// For parsing DateTime string from the format "yyyyMMdd"
         /// </summary>
