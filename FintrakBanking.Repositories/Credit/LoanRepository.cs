@@ -67,6 +67,8 @@ namespace FintrakBanking.Repositories.Credit
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
         private IApprovalLevelRepository approvalLevelStaff;
+        private IAppraisalMemorandumRepository appraisalMemoRepo;
+
 
         //private CreditCommonRepository creditCommon;
 
@@ -83,7 +85,7 @@ namespace FintrakBanking.Repositories.Credit
                                         //IOverRideRepository _overrider, IntegrationWithFlexcube _integration, ILoanApplicationRepository _loanRepo,
                                         IOverRideRepository _overrider, IntegrationWithFlexcube _integration,
             IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin,//, CreditCommonRepository creditCommon
-            IApprovalLevelRepository _approvalLevelStaff
+            IApprovalLevelRepository _approvalLevelStaff, IAppraisalMemorandumRepository _appraisalMemoRepo
 
             )
         {
@@ -107,6 +109,7 @@ namespace FintrakBanking.Repositories.Credit
             this.transRepo = _transRepo;
             this.admin = _admin;
             this.approvalLevelStaff = _approvalLevelStaff;
+            this.appraisalMemoRepo = _appraisalMemoRepo;
             //this.creditCommon = creditCommon;
 
 
@@ -4042,9 +4045,11 @@ namespace FintrakBanking.Repositories.Credit
                 loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
                 totalBookedAmount = (from a in context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.PRINCIPALAMOUNT);
+                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+
                 if (totalBookedAmount >= loanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
                 {
-                    var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+                    //var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 }
 
@@ -4175,6 +4180,12 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
                 CreateLoanOnThirdParty(loanApplication, loanReferenceNumber);
+
+                if(loanProductInfo.PRODUCTCODE == "CFL")
+                {
+                    var statusCode = "15"; // Disbursement
+                    appraisalMemoRepo.LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
+                }
 
             }
         }
