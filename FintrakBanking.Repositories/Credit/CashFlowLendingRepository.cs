@@ -346,7 +346,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");  
 
-            response.applicationReferenceNumber = AddLoanApplication(loanApp,model.requestId);
+            response.applicationReferenceNumber = AddLoanApplication(loanApp, model.requestId);
             response.StatusCode = "00";
             response.Message = "Success";
             if (response.applicationReferenceNumber == null)

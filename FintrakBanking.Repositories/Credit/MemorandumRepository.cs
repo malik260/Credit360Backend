@@ -1423,11 +1423,11 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
             {
-                result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR.TBL_SECTOR.NAME;
+                result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR?.TBL_SECTOR.NAME;
             }
             else
             {
-                result += this.loanApplication.TBL_CUSTOMER_GROUP.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault().TBL_CUSTOMER.TBL_SUB_SECTOR.TBL_SECTOR.NAME;
+                result += this.loanApplication.TBL_CUSTOMER_GROUP.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault().TBL_CUSTOMER.TBL_SUB_SECTOR?.TBL_SECTOR.NAME;
             }
             //foreach (var loanDetail in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL)
             //{
