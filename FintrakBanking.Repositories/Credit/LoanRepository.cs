@@ -41,6 +41,7 @@ using System.Net.Http.Headers;
 using System.Net;
 using System.Text;
 using FintrakBanking.ViewModels.Flexcube;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -67,7 +68,8 @@ namespace FintrakBanking.Repositories.Credit
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
         private IApprovalLevelRepository approvalLevelStaff;
-        private IAppraisalMemorandumRepository appraisalMemoRepo;
+        private TransactionPosting transaction;
+        //private IAppraisalMemorandumRepository appraisalMemoRepo;
 
 
         //private CreditCommonRepository creditCommon;
@@ -85,7 +87,8 @@ namespace FintrakBanking.Repositories.Credit
                                         //IOverRideRepository _overrider, IntegrationWithFlexcube _integration, ILoanApplicationRepository _loanRepo,
                                         IOverRideRepository _overrider, IntegrationWithFlexcube _integration,
             IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin,//, CreditCommonRepository creditCommon
-            IApprovalLevelRepository _approvalLevelStaff, IAppraisalMemorandumRepository _appraisalMemoRepo
+            IApprovalLevelRepository _approvalLevelStaff, TransactionPosting _transaction
+            //, IAppraisalMemorandumRepository _appraisalMemoRepo
 
             )
         {
@@ -109,7 +112,8 @@ namespace FintrakBanking.Repositories.Credit
             this.transRepo = _transRepo;
             this.admin = _admin;
             this.approvalLevelStaff = _approvalLevelStaff;
-            this.appraisalMemoRepo = _appraisalMemoRepo;
+            this.transaction = _transaction;
+            //this.appraisalMemoRepo = _appraisalMemoRepo;
             //this.creditCommon = creditCommon;
 
 
@@ -4185,10 +4189,44 @@ namespace FintrakBanking.Repositories.Credit
                 if(loanProductInfo.PRODUCTCODE == "CFL")
                 {
                     var statusCode = "15"; // Disbursement
-                    appraisalMemoRepo.LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
+                    LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
                 }
 
             }
+        }
+
+        private void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode)
+        {
+            //string cflReport = builder.ToString();
+            string WorkflowStageName = "";
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == staffId).FirstOrDefault();
+            var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
+
+            if (WorkflowStage == "RM")
+            {
+                WorkflowStageName = "11";
+            }
+            if (WorkflowStage.Substring(0, 2) == "CR")
+            {
+                WorkflowStageName = "12";
+            }
+            if (WorkflowStage == "GH")
+            {
+                WorkflowStageName = "13";
+            }
+
+            var staffFullName = staff.FIRSTNAME + " " + staff.LASTNAME;
+
+            OfferLetterResponse offerLetters = new OfferLetterResponse();
+            offerLetters.StatusCode = statusCode;
+            offerLetters.Comment = comment;
+            offerLetters.RequestId = loanApplication.APIREQUESTID;
+            offerLetters.WorkflowStage = WorkflowStageName;
+            //offerLetters.Attachment.FileLink = cflReport;
+            //offerLetters.Attachment.FileType = "pdf";
+            //offerLetters.ReasonForRejection = ReasonForRejection;
+            offerLetters.ActionByName = staffFullName;
+            transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
         }
 
         private void ProcessRevolvingLoanFacilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_REVOLVING revolvingLoanRecord, ApprovalViewModel user, int createdBy)
