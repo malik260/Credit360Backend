@@ -687,7 +687,7 @@ namespace FintrakBanking.Repositories.Credit
                 trail.APPROVALSTATEID = (int)ApprovalState.Ended;
                 trail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
                 trail.VOTE = (int)ApprovalStatusEnum.Referred;
-                trail.COMMENT = "Sent to Applications to edit Application with loan Referrence Id: " + loan.APPLICATIONREFERENCENUMBER;
+                trail.COMMENT += "Sent to Applications to edit Application with loan Referrence Id: " + loan.APPLICATIONREFERENCENUMBER;
                 trail.SYSTEMRESPONSEDATETIME = DateTime.Now;
                 trail.RESPONSEDATE = DateTime.Now;
                 trail.RESPONSESTAFFID = accountOfficerId;
