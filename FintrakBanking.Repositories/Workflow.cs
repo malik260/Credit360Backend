@@ -181,6 +181,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestLevelId = request.FROMAPPROVALLEVELID;
                 this.isCrossOperationProcess = request.OPERATIONID != this.operationId;
                 this.ResolveExternalFlowLoop(request, initiatingRequest);
+                //throw new SecureException(""); for test purposes pls!!!!
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(request.TOSTAFFID); }
                 if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(request.REQUESTSTAFFID, request.FROMAPPROVALLEVELID, request.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
@@ -1288,8 +1289,17 @@ namespace FintrakBanking.Repositories.WorkFlow
                             .Select(x => x.TBL_STAFF.EMAIL)
                             .Distinct();
 
-                        var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.STAFFROLEID).Select(x => x.EMAIL);
-                        emails = actorIds.Union(levelStaffEmails).Union(nextLevelStaffEmails).ToList();
+                        var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(r => r.STAFFROLEID).ToList();
+                        var nextLvlRoleIsABusinessRole = businessRoleIds.Contains(nextLevel.STAFFROLEID ?? 0);
+                        if (nextLvlRoleIsABusinessRole)
+                        {
+                            emails = actorIds.Union(levelStaffEmails).ToList();
+                        }
+                        else
+                        {
+                            var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.STAFFROLEID).Select(x => x.EMAIL);
+                            emails = actorIds.Union(levelStaffEmails).Union(nextLevelStaffEmails).ToList();
+                        }
                     }
                 }
 
