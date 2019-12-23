@@ -41,6 +41,7 @@ using System.Net.Http.Headers;
 using System.Net;
 using System.Text;
 using FintrakBanking.ViewModels.Flexcube;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -67,6 +68,9 @@ namespace FintrakBanking.Repositories.Credit
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
         private IApprovalLevelRepository approvalLevelStaff;
+        private TransactionPosting transaction;
+        //private IAppraisalMemorandumRepository appraisalMemoRepo;
+
 
         //private CreditCommonRepository creditCommon;
 
@@ -83,7 +87,8 @@ namespace FintrakBanking.Repositories.Credit
                                         //IOverRideRepository _overrider, IntegrationWithFlexcube _integration, ILoanApplicationRepository _loanRepo,
                                         IOverRideRepository _overrider, IntegrationWithFlexcube _integration,
             IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin,//, CreditCommonRepository creditCommon
-            IApprovalLevelRepository _approvalLevelStaff
+            IApprovalLevelRepository _approvalLevelStaff, TransactionPosting _transaction
+            //, IAppraisalMemorandumRepository _appraisalMemoRepo
 
             )
         {
@@ -107,6 +112,8 @@ namespace FintrakBanking.Repositories.Credit
             this.transRepo = _transRepo;
             this.admin = _admin;
             this.approvalLevelStaff = _approvalLevelStaff;
+            this.transaction = _transaction;
+            //this.appraisalMemoRepo = _appraisalMemoRepo;
             //this.creditCommon = creditCommon;
 
 
@@ -2673,7 +2680,6 @@ namespace FintrakBanking.Repositories.Credit
                             requestedAmount = req.AMOUNT_REQUESTED,
                             customerId = m.CUSTOMERID ?? 0,
                             customerCode = cust.CUSTOMERCODE,
-
                             customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                             customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
@@ -4042,9 +4048,11 @@ namespace FintrakBanking.Repositories.Credit
                 loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
                 totalBookedAmount = (from a in context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.PRINCIPALAMOUNT);
+                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+
                 if (totalBookedAmount >= loanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
                 {
-                    var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+                    //var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 }
 
@@ -4176,7 +4184,47 @@ namespace FintrakBanking.Repositories.Credit
 
                 CreateLoanOnThirdParty(loanApplication, loanReferenceNumber);
 
+                if(loanProductInfo.PRODUCTCODE == "CFL")
+                {
+                    var statusCode = "15"; // Disbursement
+                    LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
+                }
+
             }
+        }
+
+        private void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode)
+        {
+            //string cflReport = builder.ToString();
+            string WorkflowStageName = "";
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == staffId).FirstOrDefault();
+            var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
+
+            if (WorkflowStage == "RM")
+            {
+                WorkflowStageName = "11";
+            }
+            if (WorkflowStage.Substring(0, 2) == "CR")
+            {
+                WorkflowStageName = "12";
+            }
+            if (WorkflowStage == "GH")
+            {
+                WorkflowStageName = "13";
+            }
+
+            var staffFullName = staff.FIRSTNAME + " " + staff.LASTNAME;
+
+            OfferLetterResponse offerLetters = new OfferLetterResponse();
+            offerLetters.StatusCode = statusCode;
+            offerLetters.Comment = comment;
+            offerLetters.RequestId = loanApplication.APIREQUESTID;
+            offerLetters.WorkflowStage = WorkflowStageName;
+            //offerLetters.Attachment.FileLink = cflReport;
+            //offerLetters.Attachment.FileType = "pdf";
+            //offerLetters.ReasonForRejection = ReasonForRejection;
+            offerLetters.ActionByName = staffFullName;
+            transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
         }
 
         private void ProcessRevolvingLoanFacilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_REVOLVING revolvingLoanRecord, ApprovalViewModel user, int createdBy)
