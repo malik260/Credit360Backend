@@ -4013,7 +4013,7 @@ namespace FintrakBanking.Repositories.Credit
                 var currCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == c.currencyId).CURRENCYCODE;
                 //var rate = financeTransaction.GetExchangeRate(DateTime.Now, (short)c.currencyId, loanApplication.COMPANYID);
                 //var baseCollateralValue = c.collateralValue * (decimal)rate.sellingRate;
-                totalCollateralValue += c.collateralValue;
+                totalCollateralValue += c.fsv;
                 result = result + $@"
                     <tr>
                         <td>{n}</td>
