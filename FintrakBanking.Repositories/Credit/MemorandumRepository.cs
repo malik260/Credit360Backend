@@ -1008,7 +1008,7 @@ namespace FintrakBanking.Repositories.Credit
                         
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>NAME OF CUSTOMER:</b></th>
                         <th><b>{customerName}</b></th>
@@ -1072,7 +1072,7 @@ namespace FintrakBanking.Repositories.Credit
             int n = 0;
             result = result + $@"
                 <br />
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                    ";
             if (chargeFeeIds.Count > 0)
             {
@@ -1103,7 +1103,7 @@ namespace FintrakBanking.Repositories.Credit
              //       </ tr >
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <td><b>TRANCHE DISBURSEMENT:</b></td>
                         <td>APPROVED AMOUNT</td>
@@ -1132,7 +1132,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <td><b>REQUEST TYPE</b></td>
                         <td>{requestType}</td>
@@ -1154,7 +1154,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></h3>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS</b></th>
@@ -1194,7 +1194,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
                         <th><b></b></th>
@@ -1236,7 +1236,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             result = result + $@"
                 <br />
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>OTHER CONDITIONS PRECEDENT TO DRAWDOWN AS APPROVED IN THE FAM</b></th>
@@ -1270,7 +1270,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000px cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px cellpadding=0 cellspacing=0>
                     < tr>
                         <th><b>S/N</b></th>
                         <th><b>Facility Type</b></th>
@@ -1314,7 +1314,7 @@ namespace FintrakBanking.Repositories.Credit
                 var c = g.FirstOrDefault();
                 result += c.title;
                 result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
@@ -1395,10 +1395,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=0 cellspacing=0>
                     <tr>
-                        <th><b><h2>S/N</h2></b></th>
-                        <th><b><h2>TRANSACTIONS DYNAMICS</h2></b></th>
+                        <th><b>S/N</b></th>
+                        <th><b>TRANSACTIONS DYNAMICS</b></th>
                     </tr>
                  ";
                 var c = group.FirstOrDefault();
@@ -1451,15 +1451,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=0 cellspacing=0>
                     <tr>
-                        <th><b><h2>Facility</h2></b></th>
-                        <th><b><h2>LLL Impact(NGN)</h2></b></th>
-                        <th><b><h2>Currency</h2></b></th>
-                        <th><b><h2>Approved Amount</h2></b></th>
-                        <th><b><h2>Proposed Amount</h2></b></th>
-                        <th><b><h2>Change</h2></b></th>
-                        <th><b><h2>Tenor (Months)</h2></b></th>
+                        <th><b>Facility</b></th>
+                        <th><b>LLL Impact(NGN)</b></th>
+                        <th><b>Currency</b></th>
+                        <th><b>Approved Amount</b></th>
+                        <th><b>Proposed Amount</b></th>
+                        <th><b>Change</b></th>
+                        <th><b>Tenor (Months)</b></th>
                     </tr>
                         {GetDirectFacilitiesMarkupLOS((int)CurrencyEnum.NGN)}
                         {GetDirectFacilitiesMarkupLOS((int)CurrencyEnum.USD)}
@@ -1472,23 +1472,23 @@ namespace FintrakBanking.Repositories.Credit
                         {GetTotalIFFMarkupLOS()}
                         {GetTotalFacilitiesMarkupLOS()}
                     <tr>
-                        <td><b><h2>Legal Lending Limit:</h2></b></td>
+                        <td><b>Legal Lending Limit:</b></td>
                         <td>{String.Format("{0:0,0.00}", legalLendingLimit)}</td>
                     </tr>
                     <tr>
-                        <td><b><h2>LLL Impact of Proposed Facilities:</h2></b></td>
+                        <td><b>LLL Impact of Proposed Facilities:</b></td>
                         <td>{String.Format("{0:0,0.00}", getTotalLLLImpact())}</td>
                     </tr>
                     <tr>
-                        <td><b><h2>Any LLL violation? (Yes / No):</h2></b></td>
+                        <td><b>Any LLL violation? (Yes / No):</b></td>
                         <td>{(IsLLLViolated() ? "Yes" : "No")}</td>
                     </tr>
                     <tr>
-                        <td><b><h2>Director-related? (Yes / No):</h2></b></td>
+                        <td><b>Director-related? (Yes / No):</b></td>
                         <td>{getIsDirectorRelated()}</td>
                     </tr>
                     <tr>
-                        <td><b><h2>Environmental And Social Risk Summary:</h2></b></td>
+                        <td><b>Environmental And Social Risk Summary:</b></td>
                         <td>{GetEnvironmentalSocialRiskMarkup()}</td>
                     </tr>
                  ";
@@ -1500,7 +1500,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility</b></th>
                         <th><b>LLL Impact(NGN)</b></th>
@@ -3452,16 +3452,16 @@ namespace FintrakBanking.Repositories.Credit
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerCode);
             var n = 0;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=0 cellspacing=0>
                     <tr>
-                        <th><b><h2>Related Obligors(domestic)</h2></b></th>
-                        <th><b><h2>Facility Name</h2></b></th>
-                        <th><b><h2>LLL Impact (NGN)</h2></b></th>
-                        <th><b><h2>Currency</h2></b></th>
-                        <th><b><h2>Approved Amount</h2></b></th>
-                        <th><b><h2>Outstanding Exposure</h2></b></th>
-                        <th><b><h2>[O/S] Ccy</h2></b></th>
-                        <th><b><h2>End Date</h2></b></th>
+                        <th><b>Related Obligors(domestic)</b></th>
+                        <th><b>Facility Name</b></th>
+                        <th><b>LLL Impact (NGN)</b></th>
+                        <th><b>Currency</b></th>
+                        <th><b>Approved Amount</b></th>
+                        <th><b>Outstanding Exposure</b></th>
+                        <th><b>[O/S] Ccy</b></th>
+                        <th><b>End Date</b></th>
                     </tr>
                 ";
             if (loanExposures.Count > 0 || overdraftExposures.Count > 0)
@@ -3915,7 +3915,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
@@ -3947,7 +3947,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
                         <th><b></b></th>
@@ -3981,7 +3981,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
                         <th><b></b></th>
@@ -4062,7 +4062,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result += $@"
-                <table style='font face: arial; size:12px' border=1 width=600 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=600 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Security / Support</b></th>
@@ -4098,7 +4098,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             int n = 0;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>DESCRIPTION/SUMMARY</b></th>
@@ -4990,7 +4990,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>MEMO</b></h3>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <td><b>Date</b></td>
                         <td></td>
@@ -9599,7 +9599,7 @@ namespace FintrakBanking.Repositories.Credit
                     <p><b>REQUEST</b></p>
                     <p>{cashbackSection?.REQUEST}</p>
                     
-                <p align='center'><h2><b>APPROVAL LOG</b></h2></p>
+                <p align='center'><b>APPROVAL LOG</b></p>
                 <p><b>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</b></p>
                 <p><b>{flowChange?.PLACEHOLDER.ToUpper()} MEMO</b></p>
             ";
