@@ -1044,11 +1044,11 @@ namespace FintrakBanking.Repositories.Credit
         private void UpdateCollateralMainForm(CollateralViewModel model, int collateralId)
         {
             var collateral = context.TBL_COLLATERAL_CUSTOMER.Find(collateralId);
+            if (collateral == null) return;
             if (collateral.VALIDTILL != model.validTill)
             {
                 NotifyForCollateralValidity(collateral, model.validTill);
             }
-            if (collateral == null) return;
             collateral.COLLATERALTYPEID = model.collateralTypeId;
             collateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
             collateral.COLLATERALCODE = model.collateralCode.Trim();
@@ -8014,42 +8014,47 @@ namespace FintrakBanking.Repositories.Credit
             var xchRate = repo.GetExchangeRate(date, model.currencyId, model.companyId);
             if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
-                var mainCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == model.collateralCode).Select(x => x).FirstOrDefault();
+                var mainCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE.Trim() == model.collateralCode.Trim()).Select(x => x).FirstOrDefault();
 
                 if (mainCollateral != null)
                 {
-                    if (mainCollateral.VALIDTILL != model.validTill)
-                    {
-                        NotifyForCollateralValidity(mainCollateral, model.validTill);
-                    }
+                    throw new ConditionNotMetException("Collateral Code Already Exists, Kindly enter a unique code or leave the field blank for Auto-Generation");
+                    //if (mainCollateral.VALIDTILL != model.validTill)
+                    //{
+                    //    NotifyForCollateralValidity(mainCollateral, model.validTill);
+                    //}
 
-                    mainCollateral.COLLATERALCODE = model.collateralCode;
-                    //mainCollateral.COLLATERALTYPEID = model.collateralTypeId;
-                    //mainCollateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
                     //mainCollateral.COLLATERALCODE = model.collateralCode;
+                    ////mainCollateral.COLLATERALTYPEID = model.collateralTypeId;
+                    ////mainCollateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
+                    ////mainCollateral.COLLATERALCODE = model.collateralCode;
 
-                    mainCollateral.COLLATERALVALUE = (decimal)model.collateralValue;
-                    //mainCollateral.COMPANYID = model.companyId;
-                    mainCollateral.ALLOWSHARING = model.allowSharing;
-                    mainCollateral.ISLOCATIONBASED = model.isLocationBased;
-                    mainCollateral.VALUATIONCYCLE = model.valuationCycle;
-                    mainCollateral.HAIRCUT = model.haircut;
-                    mainCollateral.CURRENCYID = model.currencyId;
-                    mainCollateral.VALIDTILL = model.validTill;
-                    mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
+                    //mainCollateral.COLLATERALVALUE = (decimal)model.collateralValue;
+                    ////mainCollateral.COMPANYID = model.companyId;
+                    //mainCollateral.ALLOWSHARING = model.allowSharing;
+                    //mainCollateral.ISLOCATIONBASED = model.isLocationBased;
+                    //mainCollateral.VALUATIONCYCLE = model.valuationCycle;
+                    //mainCollateral.HAIRCUT = model.haircut;
+                    //mainCollateral.CURRENCYID = model.currencyId;
+                    //mainCollateral.VALIDTILL = model.validTill;
+                    //mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
                    
-                    mainCollateral.CAMREFNUMBER = model.camRefNumber;
-                    mainCollateral.LASTUPDATEDBY = model.createdBy;
-                    mainCollateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
-                    mainCollateral.ACTEDONBY = model.createdBy;
-                    mainCollateral.RELATEDCOLLATERALCODE = model.relatedCollateralCode;
-                    mainCollateral.COLLATERALSUMMARY = model.collateralSummary;
-                    context.SaveChanges();
-                    return mainCollateral.COLLATERALCUSTOMERID;
-
+                    //mainCollateral.CAMREFNUMBER = model.camRefNumber;
+                    //mainCollateral.LASTUPDATEDBY = model.createdBy;
+                    //mainCollateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
+                    //mainCollateral.ACTEDONBY = model.createdBy;
+                    //mainCollateral.RELATEDCOLLATERALCODE = model.relatedCollateralCode;
+                    //mainCollateral.COLLATERALSUMMARY = model.collateralSummary;
+                    //context.SaveChanges();
+                    //return mainCollateral.COLLATERALCUSTOMERID;
                 }
                 else
                 {
+                    if (String.IsNullOrWhiteSpace(model.collateralCode)  || String.IsNullOrEmpty(model.collateralCode))
+                    {
+                        var refNo = CommonHelpers.GenerateRandomDigitCode(7);
+                        model.collateralCode = refNo;
+                    }
                     var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
                     {
                         COLLATERALTYPEID = model.collateralTypeId,
@@ -8106,6 +8111,11 @@ namespace FintrakBanking.Repositories.Credit
                     throw new SecureException("The specified Collateral is edited and is going through approval!");
                 }
 
+                if (String.IsNullOrWhiteSpace(model.collateralCode) || String.IsNullOrEmpty(model.collateralCode))
+                {
+                    var refNo = CommonHelpers.GenerateRandomDigitCode(7);
+                    model.collateralCode = refNo;
+                }
                 var collateral = context.TBL_TEMP_COLLATERAL_CUSTOMER.Add(new TBL_TEMP_COLLATERAL_CUSTOMER
                 {
                     COLLATERALTYPEID = model.collateralTypeId,
@@ -8132,14 +8142,14 @@ namespace FintrakBanking.Repositories.Credit
                     VALIDTILL = model.validTill,
                 });
 
-                if (model.customerId > 0)
-                    //if (model.loanTypeId == 1)
-                    collateral.CUSTOMERID = model.customerId;
-                else if (model.customerGroupId > 0)
-                //else if (model.loanTypeId == 2)
-                        collateral.CUSTOMERGROUPID = model.customerGroupId;
-                else
-                    collateral.CUSTOMERID = model.customerId;
+                //if (model.customerId > 0)
+                //    //if (model.loanTypeId == 1)
+                //    collateral.CUSTOMERID = model.customerId;
+                //else if (model.customerGroupId > 0)
+                ////else if (model.loanTypeId == 2)
+                //        collateral.CUSTOMERGROUPID = model.customerGroupId;
+                //else
+                //    collateral.CUSTOMERID = model.customerId;
 
                 try
                 {
