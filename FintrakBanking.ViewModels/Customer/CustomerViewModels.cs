@@ -325,7 +325,13 @@ namespace FintrakBanking.ViewModels.Customer
     //=================================================================================================================================================================
     public class IncomingCustomerViewModels
     {
-        
+        public int? createdBy { get; set; }
+        public int? staffId { get; set; }
+        public int? companyId { get; set; }
+        public short? branchId { get; set; }
+
+        public string accountOfficerStaffCode { get; set; }
+
         public string customerType { get; set; }
         public string request_Id { get; set; }
         public ApiCustomerBusinessDetailsViewModel corporateCustomerInformation { get; set; }
@@ -645,6 +651,7 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class CflLoanApplication : GeneralEntity
     {
+        public string applicationReferenceNumber { get; set; }
         public string customerCode { get; set; }
 
         public string requestId { get; set; } 
