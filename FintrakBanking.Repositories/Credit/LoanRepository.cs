@@ -2677,11 +2677,9 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = m.APPLICATIONSTATUSID,
                             appraisalOperationId = m.OPERATIONID,
                             operationId = atrail.OPERATIONID, //(short)OperationsEnum.LoanTrancheBookingRequest,
-                            bookingOperationId = req.OPERATIONID,
                             requestedAmount = req.AMOUNT_REQUESTED,
                             customerId = m.CUSTOMERID ?? 0,
                             customerCode = cust.CUSTOMERCODE,
-
                             customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                             customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
