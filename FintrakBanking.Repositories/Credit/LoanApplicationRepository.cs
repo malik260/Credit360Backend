@@ -3431,6 +3431,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApplArchive.FLOWCHANGEID = app.FLOWCHANGEID;
             loanApplArchive.ISMULTIPLEPRODUCTDRAWDOWN = app.ISMULTIPLEPRODUCTDRAWDOWN;
             loanApplArchive.ARCHIVINGOPERATIONID = operationId;
+            context.TBL_LOAN_APPLICATION_ARCHIVE.Add(loanApplArchive);
             foreach(var f in details)
             {
                 ArchiveLoanApplicationDetails(f.LOANAPPLICATIONDETAILID);
@@ -3445,7 +3446,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Facility doesn't exist!");
             }
-            List<TBL_LOAN_APPLICATION_DETL_ARCH> LoanApplicationDetailsArchive = new List<TBL_LOAN_APPLICATION_DETL_ARCH>();
             TBL_LOAN_APPLICATION_DETL_ARCH addLoanApplDetailsArchive = new TBL_LOAN_APPLICATION_DETL_ARCH();
 
             addLoanApplDetailsArchive.ARCHIVEDATE = DateTime.Today;
