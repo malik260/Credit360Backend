@@ -711,6 +711,11 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class OfferLetterResponse 
     {
+        public OfferLetterResponse()
+        {
+            this.Attachment = new Attachment();
+        }
+
         public string StatusCode { get; set; }
         public string RequestId { get; set; }
         public string WorkflowStage { get; set; }
@@ -718,5 +723,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string ActionByName { get; set; }
         public string Comment { get; set; }
         public Attachment Attachment { get; set; }
+        public string Message { get; set; }
+
     }
 }

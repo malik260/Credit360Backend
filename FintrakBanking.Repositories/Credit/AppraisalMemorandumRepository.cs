@@ -29,6 +29,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System.Net;
 using System.Web.Script.Serialization;
 using System.Text;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -46,6 +47,8 @@ namespace FintrakBanking.Repositories.Credit
         private IOfferLetterAndAvailmentRepository offerLetter;
         private ILoanApplicationRepository loanApp;
         private IMemorandumRepository memo;
+        private TransactionPosting transaction;
+
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -56,7 +59,8 @@ namespace FintrakBanking.Repositories.Credit
             IEmailAlertLogger _emailLogger,
             IOfferLetterAndAvailmentRepository _offerLetter,
             ILoanApplicationRepository _loanApp,
-            IMemorandumRepository _memo
+            IMemorandumRepository _memo,
+            TransactionPosting _transaction
             )
         {
             this.context = context;
@@ -68,6 +72,7 @@ namespace FintrakBanking.Repositories.Credit
             this.offerLetter = _offerLetter;
             this.loanApp = _loanApp;
             this.memo = _memo;
+            this.transaction = _transaction;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -359,6 +364,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                 {
+                    model.isFlowTest = false;
+
                     var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                         x.OPERATIONID == (int)appl.OPERATIONID
                         && x.RESPONSESTAFFID == null
@@ -428,6 +435,8 @@ namespace FintrakBanking.Repositories.Credit
                 //    workflow.ProductId = null;
                 //}
                 // workflow.Disputed = appl.DISPUTED; // buggy
+
+
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
@@ -539,37 +548,25 @@ namespace FintrakBanking.Repositories.Credit
                 if (appl.SUBMITTEDFORAPPRAISAL == false) { appl.SUBMITTEDFORAPPRAISAL = true; } // for product programs
                 if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
 
-                if (appl != null && appl.APIREQUESTID != null)
+                ///////////////////// Call Refer Back API /////////////////////
+                if(workflow.StatusId == (short) ApprovalStatusEnum.Referred)
                 {
-                    string WorkflowStageName = "";
-                    var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
-                    if (WorkflowStage == "RM")
-                    {
-                        WorkflowStageName = "11";
-                    }
-                    if (WorkflowStage.Substring(0, 2) == "CR")
-                    {
-                        WorkflowStageName = "12";
-                    }
-                    if (WorkflowStage == "GH")
-                    {
-                        WorkflowStageName = "13";
-                    }
-
-                    var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
-                    if (product.PRODUCTCODE == "CFL")
-                    {
-                        OfferLetterResponse offerLetters = new OfferLetterResponse();
-                        var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
-                        var staffFullName = staffDetail.FIRSTNAME + " " + staffDetail.LASTNAME;
-                        offerLetters.Comment = model.comment;
-                        offerLetters.RequestId = appl.APIREQUESTID;
-                        offerLetters.WorkflowStage = WorkflowStageName;
-                        offerLetters.ActionByName = staffFullName;
-
-                        ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
-                    }
+                    if (model.isFlowTest == false) ReferBackThroughAPI(appl, model, staff.STAFFROLEID);
                 }
+                ///////////////////// Call Refer Back API /////////////////////
+
+
+                ////////////////////// Call Status Change API /////////////////
+                if (workflow.StatusId == (short) ApprovalStatusEnum.Processing || workflow.StatusId == (short)ApprovalStatusEnum.Approved || workflow.StatusId == (short)ApprovalStatusEnum.Disapproved)
+                {
+                    var statusCode = ""; // Approved = "90", Rejected = "99"
+                    statusCode = workflow.StatusId == (short)ApprovalStatusEnum.Disapproved ? "99" : "90";
+                    if (model.isFlowTest == false) LoanStatusChangeThroughAPI(appl, model.comment, staff.STAFFID, statusCode);
+                }
+                ////////////////////// Call Status Change API /////////////////
+
+
+
 
                 if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                 {
@@ -678,6 +675,76 @@ namespace FintrakBanking.Repositories.Credit
             }
                 //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
             
+        }
+
+        public void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode)
+        {
+            //string cflReport = builder.ToString();
+            string WorkflowStageName = "";
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == staffId).FirstOrDefault();
+            var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
+
+            if (WorkflowStage == "RM")
+            {
+                WorkflowStageName = "11";
+            }
+            if (WorkflowStage.Substring(0, 2) == "CR")
+            {
+                WorkflowStageName = "12";
+            }
+            if (WorkflowStage == "GH")
+            {
+                WorkflowStageName = "13";
+            }
+
+            var staffFullName = staff.FIRSTNAME + " " + staff.LASTNAME;
+
+            OfferLetterResponse offerLetters = new OfferLetterResponse();
+            offerLetters.StatusCode = statusCode;
+            offerLetters.Comment = comment;
+            offerLetters.RequestId = loanApplication.APIREQUESTID;
+            offerLetters.WorkflowStage = WorkflowStageName;
+            //offerLetters.Attachment.FileLink = cflReport;
+            //offerLetters.Attachment.FileType = "pdf";
+            //offerLetters.ReasonForRejection = ReasonForRejection;
+            offerLetters.ActionByName = staffFullName;
+            transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+        }
+
+        private void ReferBackThroughAPI(TBL_LOAN_APPLICATION loanApplication, ForwardViewModel model, int staffRoleId)
+        {
+            if (loanApplication != null && loanApplication.APIREQUESTID != null)
+            {
+                string WorkflowStageName = "";
+                var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staffRoleId).Select(s => s.STAFFROLECODE).FirstOrDefault();
+
+                if (WorkflowStage == "RM")
+                {
+                    WorkflowStageName = "11";
+                }
+                if (WorkflowStage.Substring(0, 2) == "CR")
+                {
+                    WorkflowStageName = "12";
+                }
+                if (WorkflowStage == "GH")
+                {
+                    WorkflowStageName = "13";
+                }
+
+                var product = context.TBL_PRODUCT.Find(loanApplication.PRODUCTID);
+                if (product.PRODUCTCODE == "CFL")
+                {
+                    OfferLetterResponse offerLetters = new OfferLetterResponse();
+                    var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
+                    var staffFullName = staffDetail.FIRSTNAME + " " + staffDetail.LASTNAME;
+                    offerLetters.Comment = model.comment;
+                    offerLetters.RequestId = loanApplication.APIREQUESTID;
+                    offerLetters.WorkflowStage = WorkflowStageName;
+                    offerLetters.ActionByName = staffFullName;
+
+                    transaction.ReferBackThroughAPI(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+                }
+            }
         }
 
         public bool SaveApprovedDocumentation(int staffId, int operationId, int targetId)
@@ -3485,112 +3552,6 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
-        private async Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber)
-        {
-            string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
-            string API_URL = "http://10.1.7.116:8989/";
-
-            HttpClientHandler handler = new HttpClientHandler();
-            HttpClient httpClientInstance;
-
-            HttpClient client = new HttpClient(handler);
-            var inputJson = new JavaScriptSerializer().Serialize(model);
-            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
-            HttpResponseMessage response = null;
-            OfferLetterResponse responseApi = new OfferLetterResponse();
-            ResponseMessage responseMsg = null;
-            string responseJson = "";
-
-            //string apiUrl = "api/CallBack/ReferBack";
-            string apiUrl = "api/CallBack/refer-back";
-
-            try
-            {
-                var token = new AuthenticationHeaderValue("Basic", API_KEY);
-                handler.UseDefaultCredentials = true;
-                httpClientInstance = new HttpClient();
-                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(180);
-                client.DefaultRequestHeaders.Authorization = token;
-
-                client.BaseAddress = new Uri(API_URL);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
-
-                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-                requestDatetime = DateTime.Now;
-
-                response = client.PostAsync(apiUrl, new StringContent(
-                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
-
-                responseDateTime = DateTime.Now;
-
-                if (response.IsSuccessStatusCode)
-                {
-                    responseApi = await response.Content.ReadAsAsync<OfferLetterResponse>();
-                    var res = new OfferLetterResponse
-                    {
-                        StatusCode = responseApi.StatusCode,
-                        RequestId = responseApi.RequestId,
-                        WorkflowStage = responseApi.WorkflowStage,
-
-                    };
-                    responseMsg = new ResponseMessage
-                    {
-                        APIOffetResponse = res,
-                        APIStatus = response.IsSuccessStatusCode,
-                        Message = response
-                    };
-                }
-                else
-                {
-                    responseMsg = new ResponseMessage
-                    {
-                        APIResponse = null,
-                        APIStatus = response.IsSuccessStatusCode,
-                        Message = response
-                    };
-                }
-
-                responseJson = await response.Content.ReadAsStringAsync();
-                responseMsg.responseMessage = responseJson;
-                //handler.Dispose();
-                //client.Dispose();
-
-                return responseMsg;
-            }
-            catch (Exception ex)
-            {
-                var innerExceptionMessage = "";
-                if (ex.InnerException != null)
-                    innerExceptionMessage = ex.InnerException.Message;
-                //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
-                throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
-            }
-
-            finally
-            {
-                handler.Dispose();
-                client.Dispose();
-
-                var logs = new TBL_CUSTOM_API_LOGS
-                {
-                    APIURL = API_URL + apiUrl,
-                    LOGTYPEID = 14,
-                    REFERENCENUMBER = refNumber,
-                    REQUESTDATETIME = requestDatetime,
-                    REQUESTMESSAGE = inputJson,
-                    RESPONSEDATETIME = responseDateTime,
-                    RESPONSEMESSAGE = responseJson,
-                };
-
-                FinTrakBankingContext logContext = new FinTrakBankingContext();
-                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-                logContext.SaveChanges();
-            }
-
-        }
 
 
     }
