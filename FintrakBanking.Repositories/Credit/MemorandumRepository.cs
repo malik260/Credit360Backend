@@ -9511,7 +9511,7 @@ namespace FintrakBanking.Repositories.Credit
                 <p><b>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</b></p>
                 <p><b>{flowChange?.PLACEHOLDER.ToUpper()} MEMO</b></p>
             ";
-            result = result + GetCashBackApprovalsMarkupLOS(targetId, operationId);
+            result = result + GetCashBackApprovalsMarkupLOS(this.loanApplication.LOANAPPLICATIONID, operationId);
             return result;
         }
 
