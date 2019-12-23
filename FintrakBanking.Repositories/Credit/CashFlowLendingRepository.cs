@@ -397,15 +397,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
 
-            foreach (var t in model.loanApplicationFiles)
+            foreach (var loanFile in model.loanApplicationFiles)
             {
                 var document = new TBL_DOCUMENT_UPLOAD()
                 {
                     DOCUMENTTYPEID = 236, //Offer Letter
-                    FILENAME = t.caption,
-                    FILEEXTENSION = t.fileExtension,
-                    FILESIZE = t.fileData.Length,
-                    FILEDATA = t.fileData.Base64ToByte(),
+                    FILENAME = loanFile.caption,
+                    FILEEXTENSION = loanFile.fileExtension,
+                    FILESIZE = loanFile.fileData.Length,
+                    FILEDATA = loanFile.fileData.Base64ToByte(),
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = DateTime.Now,
@@ -421,7 +421,7 @@ namespace FintrakBanking.Repositories.Credit
                     TARGETID = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID,
                     TARGETREFERENCENUMBER = model.applicationReferenceNumber,
                     CUSTOMERCODE = model.customerCode,
-                    OPERATIONID = 9,
+                    OPERATIONID = (int) OperationsEnum.LoanApplication,
                     ISPRIMARYDOCUMENT = false,
                     DELETED = false,
                     CREATEDBY = model.createdBy,
