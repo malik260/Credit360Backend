@@ -36,5 +36,8 @@
         public DateTime? DATETIMEDELETED { get; set; }
         public int? CATEGORYID { get; set; }
         public int? CATEGORYIDFI { get; set; }
+        public DateTime? COMPILATIONDATE { get; set; }
+        public string AUDITORNAME { get; set; }
+
     }
 }

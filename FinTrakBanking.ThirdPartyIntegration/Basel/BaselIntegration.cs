@@ -49,7 +49,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"{API_URL}GetCorporateRatioPDConsolidatedByCustomerID/{customerNumber}?key={API_KEY}";
+            //string endPointUrl = $"{API_URL}GetCorporateRatioPDConsolidatedByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetCorporateRatioPDConsolidatedByCustomerID/{"000077293"}?key={API_KEY}";
+
             try
             { 
                 handler.UseDefaultCredentials = true;
