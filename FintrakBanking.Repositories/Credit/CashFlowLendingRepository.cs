@@ -409,7 +409,7 @@ namespace FintrakBanking.Repositories.Credit
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = DateTime.Now,
-                    CREATEDBY = model.accountOfficerStaffCode //model.createdBy
+                    CREATEDBY = model.createdBy
                 };
 
                 docContext.TBL_DOCUMENT_UPLOAD.Add(document);
