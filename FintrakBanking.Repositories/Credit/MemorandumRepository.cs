@@ -9506,7 +9506,6 @@ namespace FintrakBanking.Repositories.Credit
                     <p>{cashbackSection?.ISSUES}</p>
                     <p><b>REQUEST</b></p>
                     <p>{cashbackSection?.REQUEST}</p>
-                    
                 <p align='center'><b>APPROVAL LOG</b></p>
                 <p><b>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</b></p>
                 <p><b>{flowChange?.PLACEHOLDER.ToUpper()} MEMO</b></p>
