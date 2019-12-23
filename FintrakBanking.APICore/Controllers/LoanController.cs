@@ -22,7 +22,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using System.Text;
 using FintrakBanking.ViewModels;
 
-namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
+namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/loan")]
     public class LoanController : ApiControllerBase
