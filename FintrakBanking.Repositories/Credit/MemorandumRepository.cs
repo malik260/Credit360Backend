@@ -9462,11 +9462,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId)
         {
-            var createdStaff = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
-            var staff = context.TBL_STAFF.Where(s => s.STAFFID == createdStaff.CREATEDBY).Select(s=>s.BRANCHID).FirstOrDefault();
-            var branchName = context.TBL_BRANCH.Where(b=>b.BRANCHID == staff).Select(b=>b.BRANCHNAME).FirstOrDefault();
-            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
-            
             var isInitialize = InitializeCashBackMemoProperties(operationId, targetId);
             var staffBranch = context.TBL_STAFF.Where(s => s.STAFFID == staffId).Select(s => s.BRANCHID).FirstOrDefault();
             var branchName = context.TBL_BRANCH.Where(b => b.BRANCHID == staffBranch).Select(b => b.BRANCHNAME).FirstOrDefault();
