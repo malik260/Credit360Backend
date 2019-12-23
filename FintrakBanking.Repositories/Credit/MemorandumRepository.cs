@@ -800,13 +800,12 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId)
         {
             var allstaff = this.GetAllStaffNames();
-            bool getAll = true;
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId && x.OPERATIONID == operationId).ToList();
 
-            if (getAll)
-            {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId).ToList();
-            }
+            //if (getAll)
+            //{
+            //    trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId).ToList();
+            //}
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
@@ -839,13 +838,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList();
             var allstaff = this.GetAllStaffNames();
-            bool getAll = true;
+           
             var trail = context.TBL_APPROVAL_TRAIL.Where(x=>x.OPERATIONID == operationId && x.FROMAPPROVALLEVELID !=null && bookingIds.Contains(x.TARGETID)).ToList();
 
-            if (getAll)
-            {
-               trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId).ToList();
-            }
+            //if (getAll)
+            //{
+            //   trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId).ToList();
+            //}
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
