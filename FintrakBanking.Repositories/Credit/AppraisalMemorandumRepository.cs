@@ -363,7 +363,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                 {
-                    model.isFlowTest = false;
+                    //model.isFlowTest = false;
 
                     var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                         x.OPERATIONID == (int)appl.OPERATIONID

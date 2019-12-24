@@ -526,7 +526,14 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
+<<<<<<< HEAD
             this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId)?.ToList());
+=======
+            if (this.customerIds.Count > 0)
+            {
+                this.accountNumbers = AccountNumbersMarkup(this.customerIds?.Select(x => x.customerId).ToList());
+            }
+>>>>>>> master
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
             this.conditionsPrecedenceList = GetConditionsMarkUp();
@@ -1214,7 +1221,7 @@ namespace FintrakBanking.Repositories.Credit
                 var c = g.FirstOrDefault();
                 result += c.title;
                 result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
@@ -1295,7 +1302,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
@@ -1351,7 +1358,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility</b></th>
                         <th><b>LLL Impact(NGN)</b></th>
@@ -3352,7 +3359,7 @@ namespace FintrakBanking.Repositories.Credit
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerCode);
             var n = 0;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 align=center cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Related Obligors(domestic)</b></th>
                         <th><b>Facility Name</b></th>
@@ -3815,7 +3822,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 align=center cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
@@ -4014,7 +4021,7 @@ namespace FintrakBanking.Repositories.Credit
                 var currCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == c.currencyId).CURRENCYCODE;
                 //var rate = financeTransaction.GetExchangeRate(DateTime.Now, (short)c.currencyId, loanApplication.COMPANYID);
                 //var baseCollateralValue = c.collateralValue * (decimal)rate.sellingRate;
-                totalCollateralValue += c.collateralValue;
+                totalCollateralValue += c.fsv;
                 result = result + $@"
                     <tr>
                         <td>{n}</td>

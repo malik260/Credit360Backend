@@ -28,7 +28,6 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 {
     public partial class CFLOfferLetter : System.Web.UI.Page
     {
-        private TransactionPosting _transaction;
         private string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
         private string API_URL = "http://10.1.7.116:8989/";
         

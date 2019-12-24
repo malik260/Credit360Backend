@@ -3446,7 +3446,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Facility doesn't exist!");
             }
-            List<TBL_LOAN_APPLICATION_DETL_ARCH> LoanApplicationDetailsArchive = new List<TBL_LOAN_APPLICATION_DETL_ARCH>();
             TBL_LOAN_APPLICATION_DETL_ARCH addLoanApplDetailsArchive = new TBL_LOAN_APPLICATION_DETL_ARCH();
 
             addLoanApplDetailsArchive.ARCHIVEDATE = DateTime.Today;

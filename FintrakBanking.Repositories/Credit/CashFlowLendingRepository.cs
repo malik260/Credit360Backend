@@ -62,6 +62,9 @@ namespace FintrakBanking.Repositories.Credit
         {
            APIResponse response = new APIResponse();
 
+            if (model.accountOfficerStaffCode == string.Empty || model.accountOfficerStaffCode == null) { return fireResponse("Missing Account Officer Code", "99",""); }
+            
+
            if (model.customerType == "1")
            {
                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
@@ -99,6 +102,13 @@ namespace FintrakBanking.Repositories.Credit
             if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.","99",""); }
             if (!mStatus.Contains(model.individualCustomerInformation.maritalStatus)) { fireResponse($"Value, '{model.individualCustomerInformation.maritalStatus}' is not a valid marital status.", "99",""); }
 
+            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+            if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
+            model.createdBy = accountOfficer.STAFFID;
+            model.staffId = accountOfficer.STAFFID;
+            model.companyId = accountOfficer.COMPANYID;
+            model.branchId = accountOfficer.BRANCHID;
+
             if (saveIndividualCustomerInformation(model))
             {
                 customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
@@ -116,7 +126,15 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
-           // List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
+            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+            if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
+            model.createdBy = accountOfficer.STAFFID;
+            model.staffId = accountOfficer.STAFFID;
+            model.companyId = accountOfficer.COMPANYID;
+            model.branchId = accountOfficer.BRANCHID;
+
+
+            // List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
 
             //List<int> crcCreditBureauType = new List<int> { 3 };
             //if (creditBureautype.Contains(crcCreditBureauType) == false)
@@ -134,13 +152,13 @@ namespace FintrakBanking.Repositories.Credit
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
         {
             var model = entity.individualCustomerInformation;
-            
+           
             var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
-                BRANCHID = 1, //entity.userBranchId,
-                COMPANYID = 1, //entity.companyId,
-                CREATEDBY = 1, //(int)entity.createdBy,
+                BRANCHID = (short) entity.branchId, //entity.userBranchId,
+                COMPANYID = (int) entity.companyId, //entity.companyId,
+                CREATEDBY = (int) entity.createdBy, //(int)entity.createdBy,
                 CREATIONMAILSENT = true, //entity.creationMailSent,
                 CUSTOMERCODE = model.customerCode,
                 CUSTOMERSENSITIVITYLEVELID = 1, //entity.customerSensitivityLevelId,
@@ -189,8 +207,6 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             context.TBL_CUSTOMER.Add(customer);
-
-
             return context.SaveChanges() > 0;
         }
 
@@ -202,9 +218,9 @@ namespace FintrakBanking.Repositories.Credit
            var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
-                BRANCHID = 1, //entity.userBranchId,
-                COMPANYID = 1, //entity.companyId,
-                CREATEDBY = 1, //(int)entity.createdBy,
+                BRANCHID = (short)model.branchId, //entity.userBranchId,
+                COMPANYID = (int)model.companyId, //entity.companyId,
+                CREATEDBY = (int)model.createdBy, //(int)entity.createdBy,
                 CREATIONMAILSENT = true, //entity.creationMailSent,
                 CUSTOMERCODE = corporateDetails.customerCode,
                 CUSTOMERSENSITIVITYLEVELID = 1, //entity.customerSensitivityLevelId,
@@ -268,6 +284,23 @@ namespace FintrakBanking.Repositories.Credit
         public APIResponse submitRequest(CflLoanApplication model)
         {
             APIResponse response = new APIResponse();
+
+            if(model.callStatusCode == "02")
+            {
+                if (model.accountOfficerStaffCode == string.Empty) return fireResponse("Missing account officer code", "99", "");
+
+                var accountOfficer1 = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
+                if (accountOfficer1 == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
+
+                var application = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
+                if (application == null) { return fireResponse("Application does not exist in Fintrak Credit360", "99", ""); }
+
+                model.createdBy = accountOfficer1.STAFFID;
+                model.customerCode = context.TBL_CUSTOMER.Find(application.CUSTOMERID)?.CUSTOMERCODE;
+                SaveLoanDocument(model);
+                return fireResponse("Offer Letter successfully saved", "00", application.APIREQUESTID);
+            }
+
             var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == model.productCode).FirstOrDefault();
 
             if (product == null) { return fireResponse("Product Code does not exist", "99",""); }
@@ -314,7 +347,8 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.companyId = model.companyId;
             loanApp.loanInformation = "<p></p>";
             loanApp.casaAccountId = casa?.CASAACCOUNTID;
-            loanApp.branchId = 94;
+            loanApp.branchId = accountOfficer.BRANCHID;
+            loanApp.createdBy = accountOfficer.STAFFID;
 
             if(context.TBL_LOAN_APPLICATION.Any(x=>x.APIREQUESTID == model.requestId && x.DELETED != true))
             {
@@ -347,6 +381,8 @@ namespace FintrakBanking.Repositories.Credit
             if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");  
 
             response.applicationReferenceNumber = AddLoanApplication(loanApp, model.requestId);
+            SaveLoanDocument(model);
+
             response.StatusCode = "00";
             response.Message = "Success";
             if (response.applicationReferenceNumber == null)
@@ -355,6 +391,45 @@ namespace FintrakBanking.Repositories.Credit
                 response.Message = "Failed!";
             }
             return response;
+        }
+
+        private void SaveLoanDocument(CflLoanApplication model)
+        {
+            FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
+
+            foreach (var loanFile in model.loanApplicationFiles)
+            {
+                var document = new TBL_DOCUMENT_UPLOAD()
+                {
+                    DOCUMENTTYPEID = 236, //Offer Letter
+                    FILENAME = loanFile.caption,
+                    FILEEXTENSION = loanFile.fileExtension,
+                    FILESIZE = loanFile.fileData.Length,
+                    FILEDATA = loanFile.fileData.Base64ToByte(),
+                    COMPANYID = model.companyId,
+                    DELETED = false,
+                    DATETIMECREATED = DateTime.Now,
+                    CREATEDBY = model.createdBy
+                };
+
+                docContext.TBL_DOCUMENT_UPLOAD.Add(document);
+                docContext.SaveChanges();
+
+                docContext.TBL_DOCUMENT_USAGE.Add(new TBL_DOCUMENT_USAGE()
+                {
+                    DOCUMENTUPLOADID = document.DOCUMENTUPLOADID,
+                    TARGETID = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID,
+                    TARGETREFERENCENUMBER = model.applicationReferenceNumber,
+                    CUSTOMERCODE = model.customerCode,
+                    OPERATIONID = (int) OperationsEnum.LoanApplication,
+                    ISPRIMARYDOCUMENT = false,
+                    DELETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = DateTime.Now
+                });
+            }
+
+            docContext.SaveChanges();
         }
 
         public string AddLoanApplication(LoanApplicationViewModel loan, string apiRequestId)
@@ -399,8 +474,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (AddLoanApplicationDetail(loan, app))
                     {
-                        SubmitLoanApplicationForCam(app.LOANAPPLICATIONID, 1, 0);
-                        context.SaveChanges();
+                        SubmitLoanApplicationForCam(app.LOANAPPLICATIONID, loan.createdBy, 0);
+                        context.SaveChanges();                       
                         return app.APPLICATIONREFERENCENUMBER;
                     }
                 }
@@ -455,7 +530,7 @@ namespace FintrakBanking.Repositories.Credit
                 PROPOSEDTENOR = loan.proposedTenor, //Convert.ToInt32(Math.Round(((decimal)(app.pr / 12) * (decimal)365))),
                 DELETED = false,
                 SUBSECTORID = loan.subSectorId,
-                CREATEDBY = 1,
+                CREATEDBY = loan.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 LOANPURPOSE = loan.loanPurpose,
                 CASAACCOUNTID = loan.casaAccountId,
@@ -547,8 +622,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
                 COMPANYID = loan.companyId,
                 BRANCHID = loan.branchId ?? 0,
-                RELATIONSHIPOFFICERID = 1, 
-                RELATIONSHIPMANAGERID = 1, 
+                RELATIONSHIPOFFICERID = loan.createdBy, 
+                RELATIONSHIPMANAGERID = loan.createdBy, 
                 MISCODE = loan.misCode ?? "002",
                 TEAMMISCODE = loan.teamMisCode ?? "002",
                 INTERESTRATE = loan.interestRate,
