@@ -526,7 +526,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
+            this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId)?.ToList());
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
             this.conditionsPrecedenceList = GetConditionsMarkUp();
@@ -822,7 +822,7 @@ namespace FintrakBanking.Repositories.Credit
                 fromApprovalLevelId = x.FROMAPPROVALLEVELID,
                 fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
-                toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                toApprovalLevelId = x.TOAPPROVALLEVELID ?? 0,
                 approvalStateId = x.APPROVALSTATEID,
                 approvalStatusId = x.APPROVALSTATUSID,
                 approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
@@ -855,14 +855,14 @@ namespace FintrakBanking.Repositories.Credit
                 fromApprovalLevelId = x.FROMAPPROVALLEVELID,
                 fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
-                toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                toApprovalLevelId = x.TOAPPROVALLEVELID ?? 0,
                 approvalStateId = x.APPROVALSTATEID,
                 approvalStatusId = x.APPROVALSTATUSID,
                 approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            }).ToList();
+            })?.ToList();
 
             return data;
         }
@@ -960,7 +960,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetApprovalsMarkupLOS()+ GetDrawdownApprovalsMarkupLOS2(targetId,operationId) + GetOtherConditionsHtml();
+            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetDrawdownApprovalsMarkupLOS2(targetId,operationId) + GetOtherConditionsHtml();
             return result;
         }
 
@@ -3878,6 +3878,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetDrawdownApprovalsMarkupLOS2(int targetId, int operationId)
         {
+
             var appraisals = GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
