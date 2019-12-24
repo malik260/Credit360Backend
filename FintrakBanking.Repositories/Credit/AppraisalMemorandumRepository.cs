@@ -349,7 +349,6 @@ namespace FintrakBanking.Repositories.Credit
 
             // VALIDATION TODO if (model.recommendedChanges.Count() > 0)
             items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
-
             var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
 
             decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
@@ -364,7 +363,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                 {
-                    model.isFlowTest = false;
+                    //model.isFlowTest = false;
 
                     var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                         x.OPERATIONID == (int)appl.OPERATIONID

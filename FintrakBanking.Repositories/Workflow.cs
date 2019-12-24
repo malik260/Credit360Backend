@@ -1287,7 +1287,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                         var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
                             .Select(x => x.TBL_STAFF.EMAIL)
-                            .Distinct();
+                            .Distinct().ToList();
 
                         var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(r => r.STAFFROLEID).ToList();
                         var nextLvlRoleIsABusinessRole = businessRoleIds.Contains(nextLevel.STAFFROLEID ?? 0);
@@ -1304,6 +1304,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
 
                 var time = String.Format("{0:F}", DateTime.Now);
+                //throw new Exception("");
 
                 if (placeholders == null) placeholders = new AlertPlaceholders();
 

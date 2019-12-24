@@ -526,7 +526,10 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
+            if (this.customerIds.Count > 0)
+            {
+                this.accountNumbers = AccountNumbersMarkup(this.customerIds?.Select(x => x.customerId).ToList());
+            }
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
             this.conditionsPrecedenceList = GetConditionsMarkUp();
@@ -539,21 +542,16 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        private bool InitializeDrawdownMemoProperties(int operationId, int targetId) // feeder
+        private bool InitializeDrawdownMemoProperties(int targetId, int operationId) // feeder
         {
             this.targetId = targetId;
             this.operationId = operationId;
 
-            //if (operationId == (int) OperationsEnum.CreditAppraisal) // LOS 
-            //{
                 if (loanApplicationDetail == null)
                 {
                     this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
                     this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
-                
-                    //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
-                    //this.customerExposure = CustomerExposureMarkup();
-            }
+                }
                 var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId)?.CHARGEFEEID;
             
                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
@@ -571,9 +569,6 @@ namespace FintrakBanking.Repositories.Credit
                 this.principalRepayment = "";
                 this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
                 this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-                //this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
-                //this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
-                //this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); 
                 this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
                 this.effectiveDate = loanApplication.APPROVEDDATE;
                 this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
@@ -584,64 +579,7 @@ namespace FintrakBanking.Repositories.Credit
                 //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
                 approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
-
                 newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
-
-                requestType = "";
-
-                inPlace1 = "";
-                perfected1 = "";
-                deferred1 = "";
-                inPlace2 = "";
-                perfected2 = "";
-                deferred2 = "";
-                inPlace3 = "";
-                perfected3 = "";
-                deferred3 = "";
-                inPlace4 = "";
-                perfected4 = "";
-                deferred4 = "";
-                inPlace5 = "";
-                perfected5 = "";
-                deferred5 = "";
-                inPlace6 = "";
-                perfected6 = "";
-                deferred6 = "";
-                inPlace7 = "";
-                perfected7 = "";
-                deferred7 = "";
-
-                relationshipOfficer = "";
-                relationshipManager = "";
-                riskManagement = "";
-                legal = "";
-                treasury = "";
-                coo = "";
-                crmInternational = "";
-
-                othersInPlace1 = "";
-                othersPerfected1 = "";
-                othersDeferred1 = "";
-                othersInPlace2 = "";
-                othersPerfected2 = "";
-                othersDeferred2 = "";
-                othersInPlace3 = "";
-                othersPerfected3 = "";
-                othersDeferred3 = "";
-                othersInPlace4 = "";
-                othersPerfected4 = "";
-                othersDeferred4 = "";
-                othersInPlace5 = "";
-                othersPerfected5 = "";
-                othersDeferred5 = "";
-                othersInPlace6 = "";
-                othersPerfected6 = "";
-                othersDeferred6 = "";
-                othersInPlace7 = "";
-                othersPerfected7 = "";
-                othersDeferred7 = "";
-
-            //}
 
             return true;
         }
@@ -654,59 +592,31 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loanApplicationDetail == null)
             {
-                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(targetId);
-                //this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
-                
-
-                //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
-                //this.customerExposure = CustomerExposureMarkup();
+                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
+                this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
             }
 
-            var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId).CHARGEFEEID;
+            //var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f=>f.LOANAPPLICATIONDETAILID == targetId).Select(f=>f.CHARGEFEEID).ToList();
 
-            //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
             string customerName = String.Empty;
             if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
             if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
 
             this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
             this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
-            //this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER)?.FirstOrDefault();
             this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID)?.Select(O => O.PRODUCTNAME)?.FirstOrDefault();
-            //this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
-            //this.tenor = loanApplicationDetail?.APPROVEDTENOR;
-            //this.moratorium = loanApplicationDetail.MORATORIUMDURATION;
             this.principalRepayment = "";
-            //this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
-            //this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-            // this.processingFee = ""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
-            this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
-            this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
-            this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
-            this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
+            //this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[0]).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
+            //this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[1]).Select(p => p.VALUE).FirstOrDefault();
+            //this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[2]).Select(p => p.VALUE).FirstOrDefault();
+            //this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[3]).Select(p => p.VALUE).FirstOrDefault(); ;
             this.effectiveDate = loanApplication.APPROVEDDATE;
-            //this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
-            //this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
             this.currentDate = DateTime.Now.ToShortDateString();
             this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
             this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
-            //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
             approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
             amountUtilised = "0.00";
-
-            //newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
-
-            requestType = "";
-
-            relationshipOfficer = "";
-            relationshipManager = "";
-            riskManagement = "";
-            legal = "";
-            treasury = "";
-            coo = "";
-            crmInternational = "";
-
-            return true;
+           return true;
         }
 
         public List<DropDownSelect> GetProposedConditions()
@@ -890,16 +800,15 @@ namespace FintrakBanking.Repositories.Credit
             });
         }
 
-        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId)
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool getAll)
         {
             var allstaff = this.GetAllStaffNames();
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId && x.OPERATIONID == operationId).ToList();
 
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId && x.OPERATIONID == operationId);
-
-            //if (getAll)
-            //{
-            //    trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId);
-            //}
+            if (getAll)
+            {
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId).ToList();
+            }
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
@@ -916,14 +825,14 @@ namespace FintrakBanking.Repositories.Credit
                 fromApprovalLevelId = x.FROMAPPROVALLEVELID,
                 fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
-                toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                toApprovalLevelId = x.TOAPPROVALLEVELID ?? 0,
                 approvalStateId = x.APPROVALSTATEID,
                 approvalStatusId = x.APPROVALSTATUSID,
                 approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            }).ToList();
+            })?.ToList();
 
             return data;
         }
@@ -932,13 +841,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList();
             var allstaff = this.GetAllStaffNames();
-
             var trail = context.TBL_APPROVAL_TRAIL.Where(x=>x.OPERATIONID == operationId && x.FROMAPPROVALLEVELID !=null && bookingIds.Contains(x.TARGETID)).ToList();
-
-            //if (getAll)
-            //{
-            //    trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId);
-            //}
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
@@ -955,7 +858,7 @@ namespace FintrakBanking.Repositories.Credit
                 fromApprovalLevelId = x.FROMAPPROVALLEVELID,
                 fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
-                toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                toApprovalLevelId = x.TOAPPROVALLEVELID ?? 0,
                 approvalStateId = x.APPROVALSTATEID,
                 approvalStatusId = x.APPROVALSTATUSID,
                 approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
@@ -1004,7 +907,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
         {
-            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+            var isInitialize = InitializeDrawdownMemoProperties(targetId, operationId);
                         
             var result = String.Empty;
             result = result + $@"
@@ -1060,7 +963,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetDrawdownApprovalsMarkupLOS2(targetId,operationId) + GetOtherConditionsHtml();
+            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetApprovalsMarkupLOS()+ GetDrawdownApprovalsMarkupLOS2(targetId,operationId) + GetOtherConditionsHtml();
             return result;
         }
 
@@ -1314,7 +1217,7 @@ namespace FintrakBanking.Repositories.Credit
                 var c = g.FirstOrDefault();
                 result += c.title;
                 result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
@@ -1395,7 +1298,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
@@ -1451,7 +1354,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=left width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility</b></th>
                         <th><b>LLL Impact(NGN)</b></th>
@@ -3452,7 +3355,7 @@ namespace FintrakBanking.Repositories.Credit
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerCode);
             var n = 0;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 align=center cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Related Obligors(domestic)</b></th>
                         <th><b>Facility Name</b></th>
@@ -3912,10 +3815,10 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId).ToList();
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 align=left cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000 align=center cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
@@ -3944,7 +3847,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetDrawdownApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrailDrawdown(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
@@ -4113,7 +4016,7 @@ namespace FintrakBanking.Repositories.Credit
                 var currCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == c.currencyId).CURRENCYCODE;
                 //var rate = financeTransaction.GetExchangeRate(DateTime.Now, (short)c.currencyId, loanApplication.COMPANYID);
                 //var baseCollateralValue = c.collateralValue * (decimal)rate.sellingRate;
-                totalCollateralValue += c.collateralValue;
+                totalCollateralValue += c.fsv;
                 result = result + $@"
                     <tr>
                         <td>{n}</td>
@@ -9557,8 +9460,9 @@ namespace FintrakBanking.Repositories.Credit
         public string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId)
         {
             
-            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
-            //var isInitialize = InitializeCashBackMemoProperties(operationId, targetId);
+            var isInitialize = InitializeCashBackMemoProperties(operationId, targetId);
+            var staffBranch = context.TBL_STAFF.Where(s => s.STAFFID == staffId).Select(s => s.BRANCHID).FirstOrDefault();
+            var branchName = context.TBL_BRANCH.Where(b => b.BRANCHID == staffBranch).Select(b => b.BRANCHNAME).FirstOrDefault();
             var flowChange = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.OPERATIONID == operationId).FirstOrDefault();
             var cashbackSection = context.TBL_CASHBACK.Where(x => x.LOANAPPLICATIONDETAILID == targetId).FirstOrDefault();
 
@@ -9582,7 +9486,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                         <td><b>Location:</b></td>
-                        <td>{locationName?.ToUpper()}</td>
+                        <td>{branchName?.ToUpper()}</td>
                     </tr>
                     <tr>
                         <td><b>Subject:</b></td>
@@ -9598,19 +9502,18 @@ namespace FintrakBanking.Repositories.Credit
                     <p>{cashbackSection?.ISSUES}</p>
                     <p><b>REQUEST</b></p>
                     <p>{cashbackSection?.REQUEST}</p>
-                    
                 <p align='center'><b>APPROVAL LOG</b></p>
                 <p><b>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</b></p>
                 <p><b>{flowChange?.PLACEHOLDER.ToUpper()} MEMO</b></p>
             ";
-            result = result + GetCashBackApprovalsMarkupLOS();
+            result = result + GetCashBackApprovalsMarkupLOS(this.loanApplication.LOANAPPLICATIONID, operationId);
             return result;
         }
 
 
-        private string GetCashBackApprovalsMarkupLOS()
+        private string GetCashBackApprovalsMarkupLOS(int targetId, int operationId)
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,true).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
