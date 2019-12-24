@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
+        IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user);
         List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId);
         List<LoanApplicationDetailViewModel> GetLmsLoanApplicationDetailsById(int loanApplicationId, int companyId);
 
