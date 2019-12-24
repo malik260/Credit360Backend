@@ -382,6 +382,9 @@ namespace FintrakBanking.Repositories.Credit
             if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");  
 
             response.applicationReferenceNumber = AddLoanApplication(loanApp, model.requestId);
+            model.createdBy = accountOfficer.STAFFID;
+            model.customerCode = customer.CUSTOMERCODE;
+            model.applicationReferenceNumber = response.applicationReferenceNumber;
             SaveLoanDocument(model);
 
             response.StatusCode = "00";
@@ -394,6 +397,7 @@ namespace FintrakBanking.Repositories.Credit
             return response;
         }
 
+        //private void SaveLoanDocument(CflLoanApplication model)
         private void SaveLoanDocument(CflLoanApplication model)
         {
             FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
