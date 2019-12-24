@@ -156,9 +156,7 @@
                     };
 
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
-
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
                     logContext.SaveChanges();
                 }
             }         
@@ -1344,9 +1342,7 @@
                     };
 
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
-
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
                     logContext.SaveChanges();
                 }
 

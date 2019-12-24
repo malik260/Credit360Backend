@@ -130,7 +130,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             ResponseMessageViewModel res = null;
             string responseMessage = "";
             //string endPointUrl = $"{API_URL}GetAllCorporateRatios/{customerNumber}?key={API_KEY}";
-            string endPointUrl = $"{API_URL}GetAllCorporateRatios/{"000077293"}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetAllCorporateRatios/{"107220"}?key={API_KEY}";
 
             try
             {
