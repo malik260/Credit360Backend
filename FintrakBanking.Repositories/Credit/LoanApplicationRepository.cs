@@ -5314,6 +5314,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.ProductId = null; // appl.PRODUCTID;
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
+                workflow.ToStaffId = model.createdBy;
                 workflow.Amount = appl.APPLICATIONAMOUNT;
                 workflow.InvestmentGrade = appl.ISINVESTMENTGRADE;
                 workflow.Tenor = appl.APPLICATIONTENOR;
