@@ -731,7 +731,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 var product = context.TBL_PRODUCT.Find(loanApplication.PRODUCTID);
-                if (product.PRODUCTCODE == "CFL")
+
+                if (product.PRODUCTCODE == "EBFC")
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
@@ -740,7 +741,6 @@ namespace FintrakBanking.Repositories.Credit
                     offerLetters.RequestId = loanApplication.APIREQUESTID;
                     offerLetters.WorkflowStage = WorkflowStageName;
                     offerLetters.ActionByName = staffFullName;
-
                     transaction.ReferBackThroughAPI(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
                 }
             }
