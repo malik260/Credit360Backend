@@ -23,9 +23,9 @@ namespace FintrakBanking.APICore.Controllers
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IAppraisalMemorandumRepository repo;
 
-        public AppraisalMemorandumController(IAppraisalMemorandumRepository repo)
+        public AppraisalMemorandumController(IAppraisalMemorandumRepository repo_)
         {
-            this.repo = repo;
+            this.repo = repo_;
         }
 
         [HttpGet]

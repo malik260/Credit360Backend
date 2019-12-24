@@ -49,8 +49,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddCustomerAccounts(int customerId, string customerCode);
         Users GetUserRoleFinacle(string staffCode);
 
-        List<RatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode);
-        List<GroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode);
+        List<SubGroupRatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode);
+        List<MainGroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode);
 
         CutomerRatingViewModel GetCorporateCustomerRatingByCustomerCode(string customerCode);
         FacilityRatingViewModel GetAutoLoanRetailByCustomerCode(string customerCode);
