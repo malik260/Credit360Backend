@@ -526,14 +526,11 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-<<<<<<< HEAD
-            this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId)?.ToList());
-=======
             if (this.customerIds.Count > 0)
             {
                 this.accountNumbers = AccountNumbersMarkup(this.customerIds?.Select(x => x.customerId).ToList());
             }
->>>>>>> master
+
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
             this.conditionsPrecedenceList = GetConditionsMarkUp();
