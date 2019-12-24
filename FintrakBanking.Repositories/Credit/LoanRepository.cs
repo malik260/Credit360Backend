@@ -4184,7 +4184,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 CreateLoanOnThirdParty(loanApplication, loanReferenceNumber);
 
-                if(loanProductInfo.PRODUCTCODE == "CFL")
+                if(loanProductInfo.PRODUCTCODE == "EBFC")
                 {
                     var statusCode = "15"; // Disbursement
                     LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
@@ -6883,6 +6883,7 @@ namespace FintrakBanking.Repositories.Credit
                             //approvalStatusId = (short)atrail.APPROVALSTATUSID,
                             loanBookingRequestId = 0,
                             approvalTrailId = 0,
+                            appraisalOperationId = a.OPERATIONID,
                             //bookingAmountRequested = r.AMOUNT_REQUESTED,
                             requestedAmount = 0,
                             loanApplicationId = a.LOANAPPLICATIONID,
@@ -6983,6 +6984,7 @@ namespace FintrakBanking.Repositories.Credit
                             //bookingAmountRequested = r.AMOUNT_REQUESTED,
                             requestedAmount = r.AMOUNT_REQUESTED,
                             //approvalStatusId = (short) m.APPROVALSTATUSID,
+                            appraisalOperationId = m.OPERATIONID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
@@ -13827,7 +13829,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl != null && appl.APIREQUESTID != null)
             {
                 var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
-                if (product.PRODUCTCODE == "CFL")
+                if (product.PRODUCTCODE == "EBFC")
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
@@ -13836,7 +13838,6 @@ namespace FintrakBanking.Repositories.Credit
                     offerLetters.RequestId = appl.APIREQUESTID;
                     offerLetters.WorkflowStage = WorkflowStageName;
                     offerLetters.ActionByName = staffFullName;
-
                     ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
                 }
             }

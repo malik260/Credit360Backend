@@ -112,6 +112,7 @@ namespace FintrakBanking.Repositories.Credit
             if (saveIndividualCustomerInformation(model))
             {
                 customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
+                //SaveLoanDocument();
                 return fireResponse("Success","00",model.request_Id);
             }
             else { return fireResponse("Unresolved error: could not save customer information","99",""); }

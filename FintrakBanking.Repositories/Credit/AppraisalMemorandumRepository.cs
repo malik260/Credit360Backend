@@ -349,7 +349,6 @@ namespace FintrakBanking.Repositories.Credit
 
             // VALIDATION TODO if (model.recommendedChanges.Count() > 0)
             items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
-
             var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
 
             decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
@@ -732,7 +731,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 var product = context.TBL_PRODUCT.Find(loanApplication.PRODUCTID);
-                if (product.PRODUCTCODE == "CFL")
+
+                if (product.PRODUCTCODE == "EBFC")
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
@@ -741,7 +741,6 @@ namespace FintrakBanking.Repositories.Credit
                     offerLetters.RequestId = loanApplication.APIREQUESTID;
                     offerLetters.WorkflowStage = WorkflowStageName;
                     offerLetters.ActionByName = staffFullName;
-
                     transaction.ReferBackThroughAPI(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
                 }
             }
