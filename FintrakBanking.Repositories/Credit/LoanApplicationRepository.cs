@@ -2711,10 +2711,13 @@ namespace FintrakBanking.Repositories.Credit
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
+            detail.APPROVEDAMOUNT = update.proposedAmount;
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
+            detail.APPROVEDINTERESTRATE = (double)update.proposedInterestRate;
             detail.PROPOSEDPRODUCTID = update.proposedProductId;
             detail.APPROVEDPRODUCTID = update.proposedProductId;
             detail.PROPOSEDTENOR = ConvertTenorToDays(update.proposedTenor, update.tenorModeId);
+            detail.APPROVEDTENOR = ConvertTenorToDays(update.proposedTenor, update.tenorModeId);
             detail.REPAYMENTSCHEDULEID = update.repaymentScheduleId;
             detail.REPAYMENTTERMS = update.repaymentTerm;
             detail.LOANPURPOSE = update.loanPurpose;
@@ -3633,6 +3636,12 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var tradders = context.TBL_LOAN_APPLICATION_DETL_TRA.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
                     context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(tradders);
+                }
+
+                if (context.TBL_LOAN_APPLICATION_DETL_ARCH.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var archs = context.TBL_LOAN_APPLICATION_DETL_ARCH.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_APPLICATION_DETL_ARCH.RemoveRange(archs);
                 }
 
 
