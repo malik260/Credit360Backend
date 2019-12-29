@@ -96,7 +96,7 @@ namespace FintrakBanking.ViewModels.Customer
         public bool accountCreationComplete { get; set; }
         public bool creationMailSent { get; set; }
         public short customerSensitivityLevelId { get; set; }
-        public short subSectorId { get; set; }
+        public short? subSectorId { get; set; }
         public string subSectorName { get; set; }
         public short sectorId { get; set; }
         public string sectorName { get; set; }
@@ -261,7 +261,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string branchName { get; set; }
         public int customerSectorId { get; set; }
         public string customerSectorName { get; set; }
-        public short subSectorId { get; set; }
+        public short? subSectorId { get; set; }
         public string subSectorName { get; set; }
     }
     public class CustomerChildrenViewModel : GeneralEntity
