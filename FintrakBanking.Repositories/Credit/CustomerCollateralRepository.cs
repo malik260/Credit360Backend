@@ -34,7 +34,6 @@ namespace FintrakBanking.Repositories.Credit
     public class CustomerCollateralRepository : ICustomerCollateralRepository
     {
         private FinTrakBankingContext context;
-        private FinTrakBankingContext delContext;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
         private IProductRepository product;
@@ -53,7 +52,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
-            FinTrakBankingContext _delContext,
             IGeneralSetupRepository _genSetup,
             IAuditTrailRepository _auditTrail, IProductRepository _product,
             IMediaRepository _media,
@@ -76,7 +74,6 @@ namespace FintrakBanking.Repositories.Credit
             this.collateralType = _collateralType;
             this.workflow = workflow;
             this.documentContext = _documentContext;
-            this.delContext = _delContext;
             this.repo = _repo;
             this.level = _level;
             this.lien = _lien;
@@ -1068,11 +1065,11 @@ namespace FintrakBanking.Repositories.Credit
 
         private void DeleteCollateral(int collateralId)
         {
-            var collateral = delContext.TBL_TEMP_COLLATERAL_CUSTOMER.Find(collateralId);
+            var collateral = context.TBL_TEMP_COLLATERAL_CUSTOMER.Find(collateralId);
             collateral.DELETED = true; // audit here
             if (collateral != null)
             {
-                delContext.SaveChanges();
+                context.SaveChanges();
             }
         }
 

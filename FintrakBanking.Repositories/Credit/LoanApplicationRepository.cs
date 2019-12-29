@@ -15,17 +15,13 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
 using System.Configuration;
 using System.Data.Entity;
-using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
-using System.Web.Configuration;
-using FintrakBanking.ViewModels.CASA;
 using GemBox.Spreadsheet;
 using System.IO;
 
@@ -45,8 +41,7 @@ namespace FintrakBanking.Repositories.Credit
         private IApprovalLevelStaffRepository approvalLevel;
         private CreditCommonRepository creditCommon;
         private int? workflowProductId = null;
-        private IAuditTrailRepository audit;
-        private IGeneralSetupRepository general;
+
 
         public int response { get; set; }
         public bool isGroupLoan { get; set; }
@@ -54,34 +49,31 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationRepository(
             IAuditTrailRepository _auditTrail,
-            ICasaRepository _casa,
             ICustomerCollateralRepository _collateral,
+            IFinanceTransactionRepository _fina,
+            ICasaRepository _casa,
             IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
             IIntegrationWithFinacle _integration,
-            IFinanceTransactionRepository fina,
-            ICreditLimitValidationsRepository limitValidation,
-            CreditCommonRepository creditCommon,
-            IAuditTrailRepository _audit,
-             IGeneralSetupRepository _general
+            ICreditLimitValidationsRepository _limitValidation,
+            CreditCommonRepository _creditCommon
+
             )
         {
-            this.collateral = _collateral;
-            this.fina = fina;
-            this.context = _context;
             auditTrail = _auditTrail;
-            this.genSetup = _genSetup;
-            this.casa = _casa;
             this.collateral = _collateral;
+            this.fina = _fina;
+            this.casa = _casa;
+            this.genSetup = _genSetup;
+            this.context = _context;
             approvalLevel = _approvallevel;
             workflow = _workflow;
             this.integration = _integration;
-            this.limitValidation = limitValidation;
-            this.creditCommon = creditCommon;
-            this.audit = _audit;
-            this.general = _general;
+            this.limitValidation = _limitValidation;
+            this.creditCommon = _creditCommon;
+
         }
 
         // public
@@ -3361,7 +3353,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var details = app.TBL_LOAN_APPLICATION_DETAIL.ToList();
             TBL_LOAN_APPLICATION_ARCHIVE loanApplArchive = new TBL_LOAN_APPLICATION_ARCHIVE();
-            loanApplArchive.ARCHIVEDATE = general.GetApplicationDate();
+            loanApplArchive.ARCHIVEDATE = genSetup.GetApplicationDate();
             loanApplArchive.LOANAPPLICATIONID = app.LOANAPPLICATIONID;
             loanApplArchive.APPLICATIONREFERENCENUMBER = app.APPLICATIONREFERENCENUMBER;
             loanApplArchive.LOANPRELIMINARYEVALUATIONID = app.LOANPRELIMINARYEVALUATIONID;
@@ -6720,7 +6712,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
+            this.auditTrail.AddAuditTrail(new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationFlowChangeAdded,
                 STAFFID = model.createdBy,
@@ -6752,7 +6744,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.PRODUCTTYPEID = model.productTypeId;
             var auditStaff = context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE).FirstOrDefault();
             // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
+            this.auditTrail.AddAuditTrail(new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationFlowChangeUpdated,
                 STAFFID = user.createdBy,
@@ -6777,11 +6769,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             var entity = this.context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(id);
             entity.DELETED = true;
-            entity.DATETIMEDELETED = general.GetApplicationDate();
+            entity.DATETIMEDELETED = genSetup.GetApplicationDate();
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
+            this.auditTrail.AddAuditTrail(new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationFlowChangeDeleted, //still missing its value
                 STAFFID = user.createdBy,
@@ -6897,14 +6889,14 @@ namespace FintrakBanking.Repositories.Credit
                     ISRELEASED = false,
                     COLLATERALCUSTOMERID = model.collateralId,
                     CREATEDBY = model.createdBy,
-                    DATETIMECREATED = general.GetApplicationDate()
+                    DATETIMECREATED = genSetup.GetApplicationDate()
                 };
 
                 var id = context.TBL_APPLICATIONDETAIL_LIEN.Add(entity);
 
                 var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
                 // Audit Section ---------------------------
-                this.audit.AddAuditTrail(new TBL_AUDIT
+                this.auditTrail.AddAuditTrail(new TBL_AUDIT
                 {
                     //AUDITTYPEID = (short)AuditTypeEnum.LienProposed,
                     AUDITTYPEID = (short)AuditTypeEnum.LienPlaced,
@@ -6913,7 +6905,7 @@ namespace FintrakBanking.Repositories.Credit
                     DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' created by {auditStaff}",
                     IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
-                    APPLICATIONDATE = general.GetApplicationDate(),
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
                     DEVICENAME = CommonHelpers.GetDeviceName(),
                     OSNAME = CommonHelpers.FriendlyName(),
@@ -6936,7 +6928,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
                 // Audit Section ---------------------------
-                this.audit.AddAuditTrail(new TBL_AUDIT
+                this.auditTrail.AddAuditTrail(new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ProjectSiteReportUpdated,// lien edited
                     STAFFID = user.createdBy,
@@ -6964,7 +6956,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
+            this.auditTrail.AddAuditTrail(new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LienReleased,
                 //AUDITTYPEID = (short)AuditTypeEnum.LienUnproposed,

@@ -67,7 +67,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
         private IApprovalLevelRepository approvalLevelStaff;
-        private IAppraisalMemorandumRepository appraisalMemoRepo;
+       // private IAppraisalMemorandumRepository appraisalMemoRepo;
 
 
         //private CreditCommonRepository creditCommon;
@@ -85,7 +85,7 @@ namespace FintrakBanking.Repositories.Credit
                                         //IOverRideRepository _overrider, IntegrationWithFlexcube _integration, ILoanApplicationRepository _loanRepo,
                                         IOverRideRepository _overrider, IntegrationWithFlexcube _integration,
             IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin,//, CreditCommonRepository creditCommon
-            IApprovalLevelRepository _approvalLevelStaff, IAppraisalMemorandumRepository _appraisalMemoRepo
+            IApprovalLevelRepository _approvalLevelStaff//IAppraisalMemorandumRepository _appraisalMemoRepo
 
             )
         {
@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.Credit
             this.transRepo = _transRepo;
             this.admin = _admin;
             this.approvalLevelStaff = _approvalLevelStaff;
-            this.appraisalMemoRepo = _appraisalMemoRepo;
+           // this.appraisalMemoRepo = _appraisalMemoRepo;
             //this.creditCommon = creditCommon;
 
 
@@ -4185,7 +4185,7 @@ namespace FintrakBanking.Repositories.Credit
                 if(loanProductInfo.PRODUCTCODE == "CFL")
                 {
                     var statusCode = "15"; // Disbursement
-                    appraisalMemoRepo.LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
+                    //appraisalMemoRepo.LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
                 }
 
             }

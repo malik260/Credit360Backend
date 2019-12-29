@@ -28,28 +28,28 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanApplicationController : ApiControllerBase
     {
         private ILoanApplicationRepository repo;
-        private ILoanRepository loanRepository;
-        private ICreditLimitValidationsRepository creditLimitValidationsRepository;
+        //private ILoanRepository loanRepository;
+        //private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
-        private IErrorLogRepository errorLogger;
-        private IRepaymentTermsRepository repaymentRepo;
+        //private IErrorLogRepository errorLogger;
+        //private IRepaymentTermsRepository repaymentRepo;
 
         public LoanApplicationController(
             ILoanApplicationRepository _repo,
-            ILoanRepository _loanRepository,
-            ICreditLimitValidationsRepository _creditLimitValidationsRepository,
-            ILoanPreliminaryEvaluationRepository _repoLoanPEN,
-            IErrorLogRepository _errorLogger,
-            IRepaymentTermsRepository _repaymentRepo
+           // ILoanRepository _loanRepository,
+           // ICreditLimitValidationsRepository _creditLimitValidationsRepository,
+            ILoanPreliminaryEvaluationRepository _repoLoanPEN
+            //IErrorLogRepository _errorLogger
+           // IRepaymentTermsRepository _repaymentRepo
             )
         {
             this.repo = _repo;
-            this.loanRepository = _loanRepository;
-            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
+          //  this.loanRepository = _loanRepository;
+           // this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
-            errorLogger = _errorLogger;
-            repaymentRepo = _repaymentRepo;
+            //errorLogger = _errorLogger;
+           // repaymentRepo = _repaymentRepo;
         }
 
         #region Loan Application

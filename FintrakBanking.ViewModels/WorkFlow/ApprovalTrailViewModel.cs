@@ -8,6 +8,10 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class ApprovalTrailViewModel : GeneralEntity
     {
+        public string commentStage { get; set; }
+
+        public int? applicationId { get; set; }
+
         public int approvalTrailId { get; set; }
         public int targetId { get; set; }
         public DateTime arrivalDate { get; set; }
