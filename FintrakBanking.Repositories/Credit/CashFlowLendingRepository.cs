@@ -401,20 +401,20 @@ namespace FintrakBanking.Repositories.Credit
         private void SaveLoanDocument(CflLoanApplication model)
         {
             FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
-
+            var staffId = context.TBL_STAFF.Where(s => s.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
             foreach (var loanFile in model.loanApplicationFiles)
             {
                 var document = new TBL_DOCUMENT_UPLOAD()
                 {
                     DOCUMENTTYPEID = 236, //Offer Letter
-                    FILENAME = loanFile.caption,
+                    FILENAME = loanFile.caption+"."+loanFile.fileExtension,
                     FILEEXTENSION = loanFile.fileExtension,
                     FILESIZE = loanFile.fileData.Length,
                     FILEDATA = loanFile.fileData.Base64ToByte(),
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = DateTime.Now,
-                    CREATEDBY = model.createdBy
+                    CREATEDBY = staffId.STAFFID,
                 };
 
                 docContext.TBL_DOCUMENT_UPLOAD.Add(document);
@@ -426,10 +426,10 @@ namespace FintrakBanking.Repositories.Credit
                     TARGETID = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID,
                     TARGETREFERENCENUMBER = model.applicationReferenceNumber,
                     CUSTOMERCODE = model.customerCode,
-                    OPERATIONID = (int) OperationsEnum.LoanApplication,
+                    OPERATIONID = (int) OperationsEnum.CreditAppraisal,
                     ISPRIMARYDOCUMENT = false,
                     DELETED = false,
-                    CREATEDBY = model.createdBy,
+                    CREATEDBY = staffId.STAFFID,
                     DATETIMECREATED = DateTime.Now
                 });
             }
