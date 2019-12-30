@@ -36,10 +36,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("document-upload/operation/{operationId}/target/{targetId}")]
-        public HttpResponseMessage GetDocumentUploads(int operationId, int targetId)
+        [Route("document-upload/operation/{operationId}/target/{targetId}/isOperationSpecific/{isOperationSpecific}")]
+        public HttpResponseMessage GetDocumentUploads(int operationId, int targetId, bool isOperationSpecific)
         {
-            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId);
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId,  isOperationSpecific);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 

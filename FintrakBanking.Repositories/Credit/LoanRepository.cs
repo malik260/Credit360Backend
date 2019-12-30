@@ -2154,11 +2154,37 @@ namespace FintrakBanking.Repositories.Credit
                                   where b.LOANREFERENCENUMBER == loanReffernceNumber
                                   select b).FirstOrDefault();
 
-            var fee = (from lf in context.TBL_LOAN_FEE
+            var fee2 = (from lf in context.TBL_LOAN_FEE
                        join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
-                       join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
-                       where l.LOANREFERENCENUMBER == loanReffernceNumber //&& (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
+                       join l in context.TBL_LOAN on lf.LOANID equals l.TERMLOANID
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
                        select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+
+            var lineFee = (from lf in context.TBL_LOAN_FEE
+                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                       join l in context.TBL_LOAN_APPLICATION_DETAIL on lf.LOANID equals l.LOANAPPLICATIONDETAILID
+                       where lf.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility && l.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId
+                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+
+            var prod = context.TBL_PRODUCT.Find(model.productId);
+            if(prod.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
+            {
+                fee2 = (from lf in context.TBL_LOAN_FEE
+                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                       join l in context.TBL_LOAN_REVOLVING on lf.LOANID equals l.REVOLVINGLOANID
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
+                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+            }
+            if (prod.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+            {
+                fee2 = (from lf in context.TBL_LOAN_FEE
+                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                       join l in context.TBL_LOAN_CONTINGENT on lf.LOANID equals l.CONTINGENTLOANID
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
+                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+            }
+
+           var fee = fee2.Union(lineFee.ToList());
 
             var scheduleCount = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanLoanRequest.TERMLOANID).Count();
 

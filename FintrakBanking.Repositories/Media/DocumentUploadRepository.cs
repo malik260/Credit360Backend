@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Media
         //        .ToList();
         //}
 
-        public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId, int operationId, int targetId)
+        public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId, int operationId, int targetId, bool isOperationSpecific=false)
         {
             var firstQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
@@ -145,7 +145,91 @@ namespace FintrakBanking.Repositories.Media
                                    //fileSize = d.fileSize,
                                })?.ToList();
 
-            var output = firstQuery.Union(secondQuery);
+            var output = firstQuery.Union(secondQuery).ToList();
+
+            if (!isOperationSpecific)
+            {
+                output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.OfferLetterApproval, targetId));
+                output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.LoanAvailment, targetId));
+                foreach (var t in firstQuery.ToList())
+                {
+                    var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+                    foreach (var f in facilities)
+                    {
+                        var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
+                        foreach (var r in request)
+                        {
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)r.OPERATIONID, targetId));
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.TermLoanBooking, targetId));
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.RevolvingLoanBooking, targetId));
+                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.ContigentLoanBooking, targetId));
+                            
+                        }
+                    }
+                };
+            }
+
+            return output;
+        }
+
+        private IEnumerable<DocumentUploadViewModel> GetDocumentUploadsByOperation(int staffId, int operationId, int targetId)
+        {
+            var firstQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
+                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
+               new {
+                   documentUploadId = up.DOCUMENTUPLOADID,
+                   fileName = up.FILENAME,
+                   fileExtension = up.FILEEXTENSION,
+                   fileSize = up.FILESIZE,
+                   fileSizeUnit = up.FILESIZEUNIT,
+                   fileData = up.FILEDATA,
+                   companyId = up.COMPANYID,
+                   issueDate = up.ISSUEDATE,
+                   expiryDate = up.EXPIRYDATE,
+                   physicalFilenumber = up.PHYSICALFILENUMBER,
+                   physicalLocation = up.PHYSICALLOCATION,
+                   documentTypeId = up.DOCUMENTTYPEID,
+                   documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                   documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                   documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                   owner = up.CREATEDBY == staffId,
+                   dateTimeCreated = us.DATETIMECREATED,
+                   dateTimeUpdated = us.DATETIMEUPDATED,
+                   createdBy = us.CREATEDBY.Value,
+               }
+            )
+            .AsEnumerable()
+            .Select(up => new DocumentUploadViewModel
+            {
+                documentUploadId = up.documentUploadId,
+                fileName = up.fileName,
+                fileExtension = up.fileExtension,
+                fileSize = up.fileSize,
+                fileSizeUnit = up.fileSizeUnit,
+                fileData = up.fileData,
+                companyId = up.companyId,
+                issueDate = up.issueDate,
+                expiryDate = up.expiryDate,
+                physicalFilenumber = up.physicalFilenumber,
+                physicalLocation = up.physicalLocation,
+                documentTypeId = up.documentTypeId,
+                documentTypeName = up.documentTypeName,
+                documentCategoryId = up.documentCategoryId,
+                documentCategoryName = up.documentCategoryName,
+                owner = up.owner,
+                dateTimeCreated = up.dateTimeCreated,
+                dateTimeUpdated = up.dateTimeUpdated,
+                createdBy = up.createdBy,
+                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
+
+            })
+            .OrderBy(x => x.dateTimeCreated)
+            .ThenBy(x => x.documentCategoryId)
+            .ThenBy(x => x.documentTypeId)?
+            .ToList();
+
+            var output = firstQuery; //.Union(secondQuery);
 
             return output;
         }
