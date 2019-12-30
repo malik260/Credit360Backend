@@ -2711,10 +2711,13 @@ namespace FintrakBanking.Repositories.Credit
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
+            detail.APPROVEDAMOUNT = update.proposedAmount;
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
+            detail.APPROVEDINTERESTRATE = (double)update.proposedInterestRate;
             detail.PROPOSEDPRODUCTID = update.proposedProductId;
             detail.APPROVEDPRODUCTID = update.proposedProductId;
             detail.PROPOSEDTENOR = ConvertTenorToDays(update.proposedTenor, update.tenorModeId);
+            detail.APPROVEDTENOR = ConvertTenorToDays(update.proposedTenor, update.tenorModeId);
             detail.REPAYMENTSCHEDULEID = update.repaymentScheduleId;
             detail.REPAYMENTTERMS = update.repaymentTerm;
             detail.LOANPURPOSE = update.loanPurpose;
@@ -3359,12 +3362,12 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Loan Application doesn't exist!");
             }
 
-            var appArch = context.TBL_LOAN_APPLICATION_ARCHIVE.FirstOrDefault(l => l.LOANAPPLICATIONID == loanAppliactionId);
-            if (appArch != null)
-            {
-                return true;
-                //throw new SecureException("Loan Application already exist!");
-            }
+            //var appArch = context.TBL_LOAN_APPLICATION_ARCHIVE.FirstOrDefault(l => l.LOANAPPLICATIONID == loanAppliactionId);
+            //if (appArch != null)
+            //{
+            //    return true;
+            //    //throw new SecureException("Loan Application already exist!");
+            //}
 
             var details = app.TBL_LOAN_APPLICATION_DETAIL.ToList();
             TBL_LOAN_APPLICATION_ARCHIVE loanApplArchive = new TBL_LOAN_APPLICATION_ARCHIVE();
@@ -3454,9 +3457,9 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Facility doesn't exist!");
             }
 
-            var detailRowArch = context.TBL_LOAN_APPLICATION_DETL_ARCH.Where(d=>d.LOANAPPLICATIONDETAILID == loanApplicationDetailId).FirstOrDefault();
-            if (detailRowArch == null)
-            {
+            //var detailRowArch = context.TBL_LOAN_APPLICATION_DETL_ARCH.Where(d=>d.LOANAPPLICATIONDETAILID == loanApplicationDetailId).FirstOrDefault();
+            //if (detailRowArch == null)
+            //{
                 TBL_LOAN_APPLICATION_DETL_ARCH addLoanApplDetailsArchive = new TBL_LOAN_APPLICATION_DETL_ARCH();
 
                 addLoanApplDetailsArchive.ARCHIVEDATE = DateTime.Today;
@@ -3519,7 +3522,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanApplDetailsArchive.TENORFREQUENCYTYPEID = detailRow.TENORFREQUENCYTYPEID;
 
                 this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
-            }
+            //}
             //return context.SaveChanges() != 0;
         }
 
@@ -3644,6 +3647,12 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var tradders = context.TBL_LOAN_APPLICATION_DETL_TRA.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
                     context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(tradders);
+                }
+
+                if (context.TBL_LOAN_APPLICATION_DETL_ARCH.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var archs = context.TBL_LOAN_APPLICATION_DETL_ARCH.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_APPLICATION_DETL_ARCH.RemoveRange(archs);
                 }
 
 
@@ -4319,7 +4328,8 @@ namespace FintrakBanking.Repositories.Credit
                                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                         applicationDate = x.APPLICATIONDATE,
-                                        applicationAmount = x.APPLICATIONAMOUNT,
+                                        applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT),
+                                        //applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = x.APPROVEDAMOUNT,
                                         interestRate = x.INTERESTRATE,
                                         applicationTenor = x.APPLICATIONTENOR,
@@ -4386,7 +4396,8 @@ namespace FintrakBanking.Repositories.Credit
                                              relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                              relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                              applicationDate = x.APPLICATIONDATE,
-                                             applicationAmount = x.APPLICATIONAMOUNT,
+                                             applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT),
+                                             //applicationAmount = x.APPLICATIONAMOUNT,
                                              approvedAmount = x.APPROVEDAMOUNT,
                                              interestRate = x.INTERESTRATE,
                                              applicationTenor = x.APPLICATIONTENOR,

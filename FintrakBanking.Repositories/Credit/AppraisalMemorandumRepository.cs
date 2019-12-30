@@ -731,7 +731,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 var product = context.TBL_PRODUCT.Find(loanApplication.PRODUCTID);
-                if (product.PRODUCTCODE == "CFL")
+
+                if (product.PRODUCTCODE == "EBFC")
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
@@ -740,7 +741,6 @@ namespace FintrakBanking.Repositories.Credit
                     offerLetters.RequestId = loanApplication.APIREQUESTID;
                     offerLetters.WorkflowStage = WorkflowStageName;
                     offerLetters.ActionByName = staffFullName;
-
                     transaction.ReferBackThroughAPI(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
                 }
             }
@@ -1718,27 +1718,72 @@ namespace FintrakBanking.Repositories.Credit
                     fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 })?.OrderByDescending(x => x.approvalTrailId).ToList();
           
-            //var data2 = data;
-          ///  var testData = data;
-          // IList selectedApprovalTrailIds = new List<int>();
-            //foreach (var t in data.ToList())
-            //{
-            //    if (data.FindAll(d => d?.fromApprovalLevelId == t?.fromApprovalLevelId).Count() > 1)
-            //    {
-            //        if(selectedApprovalTrailIds.IndexOf(t.fromApprovalLevelId) == -1)
-            //        {
-            //            if (t.fromApprovalLevelId != null)
-            //                selectedApprovalTrailIds.Add(t.fromApprovalLevelId);
-            //        }
-            //        else
-            //        {
-            //            var tr = data.FirstOrDefault(d => d.approvalTrailId == t.approvalTrailId);
-            //            data.Remove(tr);
-            //        }
-                    
-            //    }
-            //}
+           
+            data.OrderByDescending(d => d.approvalTrailId);
+            return data;
+        }
 
+        public IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool getAll = false)
+        {
+            var staffRoles = context.TBL_STAFF_ROLE.ToList();
+            var staffs = from s in context.TBL_STAFF select s;
+
+            var allstaff = this.GetAllStaffNames();
+
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            // List<TBL_APPROVAL_TRAIL> trail = new List<TBL_APPROVAL_TRAIL>();
+
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
+
+            if (getAll)
+            {
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.OPERATIONID && x.TARGETID == applicationId).ToList();
+            }
+
+            var data = trail.Select(x => new ApprovalTrailViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                comment = x.COMMENT,
+                targetId = x.TARGETID,
+                arrivalDate = x.ARRIVALDATE,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelId = x.TOAPPROVALLEVELID,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
+                approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+            })?.OrderBy(x => x.approvalTrailId).ToList();
+
+            if (data.Count > 0 && currentLevelId > 0)
+            {
+                var firstTrail = data.FirstOrDefault(t => t.toApprovalLevelId == currentLevelId);
+                data = data.Where(t => t.approvalTrailId <= firstTrail.approvalTrailId && t.fromApprovalLevelId > 0).ToList();
+            }
+
+
+            var data2 = data.ToList();
+            var testData = data.ToList();
+            //IList selectedApprovalTrailIds = new List<int>();
+            foreach (var t in testData)
+            {
+                var firstTrailForLevel = testData.OrderBy(x => x.approvalTrailId).FirstOrDefault(x => x.fromApprovalLevelId == t.fromApprovalLevelId);
+                var multipleTrails = testData.Where(d => d.fromApprovalLevelId == firstTrailForLevel.fromApprovalLevelId && d.approvalTrailId != firstTrailForLevel.approvalTrailId).ToList();
+                foreach(var tr in multipleTrails)
+                {
+                    data2.RemoveAll(d => d.approvalTrailId == tr.approvalTrailId);
+                }
+            }
+
+            data = data2;
             data.OrderByDescending(d => d.approvalTrailId);
             return data;
         }

@@ -112,6 +112,7 @@ namespace FintrakBanking.Repositories.Credit
             if (saveIndividualCustomerInformation(model))
             {
                 customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
+                //SaveLoanDocument();
                 return fireResponse("Success","00",model.request_Id);
             }
             else { return fireResponse("Unresolved error: could not save customer information","99",""); }
@@ -381,6 +382,8 @@ namespace FintrakBanking.Repositories.Credit
             if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");  
 
             response.applicationReferenceNumber = AddLoanApplication(loanApp, model.requestId);
+            model.createdBy = accountOfficer.STAFFID;
+            model.customerCode = customer.CUSTOMERCODE;
             model.applicationReferenceNumber = response.applicationReferenceNumber;
             SaveLoanDocument(model);
 
@@ -394,6 +397,7 @@ namespace FintrakBanking.Repositories.Credit
             return response;
         }
 
+        //private void SaveLoanDocument(CflLoanApplication model)
         private void SaveLoanDocument(CflLoanApplication model)
         {
             FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
