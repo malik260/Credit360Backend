@@ -96,7 +96,7 @@ namespace FintrakBanking.ViewModels.Customer
         public bool accountCreationComplete { get; set; }
         public bool creationMailSent { get; set; }
         public short customerSensitivityLevelId { get; set; }
-        public short subSectorId { get; set; }
+        public short? subSectorId { get; set; }
         public string subSectorName { get; set; }
         public short sectorId { get; set; }
         public string sectorName { get; set; }
@@ -261,7 +261,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string branchName { get; set; }
         public int customerSectorId { get; set; }
         public string customerSectorName { get; set; }
-        public short subSectorId { get; set; }
+        public short? subSectorId { get; set; }
         public string subSectorName { get; set; }
     }
     public class CustomerChildrenViewModel : GeneralEntity
@@ -325,7 +325,13 @@ namespace FintrakBanking.ViewModels.Customer
     //=================================================================================================================================================================
     public class IncomingCustomerViewModels
     {
-        
+        public int? createdBy { get; set; }
+        public int? staffId { get; set; }
+        public int? companyId { get; set; }
+        public short? branchId { get; set; }
+
+        public string accountOfficerStaffCode { get; set; }
+
         public string customerType { get; set; }
         public string request_Id { get; set; }
         public ApiCustomerBusinessDetailsViewModel corporateCustomerInformation { get; set; }
@@ -645,6 +651,7 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class CflLoanApplication : GeneralEntity
     {
+        public string applicationReferenceNumber { get; set; }
         public string customerCode { get; set; }
 
         public string requestId { get; set; } 

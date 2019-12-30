@@ -1001,9 +1001,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public List<RatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode)
+        public List<SubGroupRatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode)
         {
-            List<RatingAndRatioViewModel> customerRatio = new List<RatingAndRatioViewModel>();
+            List<SubGroupRatingAndRatioViewModel> customerRatio = new List<SubGroupRatingAndRatioViewModel>();
 
             try {
                 Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode)).GetAwaiter().GetResult();
@@ -1016,9 +1016,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         } // GetCorporateProbabilityDefaultByCustomerId
 
-        public List<GroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode)
+        public List<MainGroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode)
         {
-            List<GroupRatingAndRatioViewModel> customerGroupRatio = new List<GroupRatingAndRatioViewModel>();
+            List<MainGroupRatingAndRatioViewModel> customerGroupRatio = new List<MainGroupRatingAndRatioViewModel>();
             Task.Run(async () => customerGroupRatio = await basel.GetAllCustomerRatios(customerCode))
                 .GetAwaiter().GetResult();
             return customerGroupRatio;

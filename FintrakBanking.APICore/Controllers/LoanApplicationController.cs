@@ -1226,6 +1226,27 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet, Route("loan-application-and-offer/rejected/arch")]
+        public HttpResponseMessage GetRejectedLoanApplicationsArch()
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            IQueryable<LoanApplicationViewModel> items;
+
+            items = repo.GetRejectedLoanApplicationsArch(user);
+
+            var data = items.ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+
+        }
+
         //[HttpPut]
         //[Route("loan-application-for-cam")]
         //public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] dynamic model)

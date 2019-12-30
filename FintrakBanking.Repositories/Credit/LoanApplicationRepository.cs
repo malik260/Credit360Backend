@@ -679,7 +679,7 @@ namespace FintrakBanking.Repositories.Credit
                 trail.APPROVALSTATEID = (int)ApprovalState.Ended;
                 trail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
                 trail.VOTE = (int)ApprovalStatusEnum.Referred;
-                trail.COMMENT = "Sent to Applications to edit Application with loan Referrence Id: " + loan.APPLICATIONREFERENCENUMBER;
+                trail.COMMENT += "Sent to Applications to edit Application with loan Referrence Id: " + loan.APPLICATIONREFERENCENUMBER;
                 trail.SYSTEMRESPONSEDATETIME = DateTime.Now;
                 trail.RESPONSEDATE = DateTime.Now;
                 trail.RESPONSESTAFFID = accountOfficerId;
@@ -2703,10 +2703,13 @@ namespace FintrakBanking.Repositories.Credit
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
+            detail.APPROVEDAMOUNT = update.proposedAmount;
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
+            detail.APPROVEDINTERESTRATE = (double)update.proposedInterestRate;
             detail.PROPOSEDPRODUCTID = update.proposedProductId;
             detail.APPROVEDPRODUCTID = update.proposedProductId;
             detail.PROPOSEDTENOR = ConvertTenorToDays(update.proposedTenor, update.tenorModeId);
+            detail.APPROVEDTENOR = ConvertTenorToDays(update.proposedTenor, update.tenorModeId);
             detail.REPAYMENTSCHEDULEID = update.repaymentScheduleId;
             detail.REPAYMENTTERMS = update.repaymentTerm;
             detail.LOANPURPOSE = update.loanPurpose;
@@ -3351,6 +3354,13 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Loan Application doesn't exist!");
             }
 
+            //var appArch = context.TBL_LOAN_APPLICATION_ARCHIVE.FirstOrDefault(l => l.LOANAPPLICATIONID == loanAppliactionId);
+            //if (appArch != null)
+            //{
+            //    return true;
+            //    //throw new SecureException("Loan Application already exist!");
+            //}
+
             var details = app.TBL_LOAN_APPLICATION_DETAIL.ToList();
             TBL_LOAN_APPLICATION_ARCHIVE loanApplArchive = new TBL_LOAN_APPLICATION_ARCHIVE();
             loanApplArchive.ARCHIVEDATE = genSetup.GetApplicationDate();
@@ -3423,6 +3433,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApplArchive.FLOWCHANGEID = app.FLOWCHANGEID;
             loanApplArchive.ISMULTIPLEPRODUCTDRAWDOWN = app.ISMULTIPLEPRODUCTDRAWDOWN;
             loanApplArchive.ARCHIVINGOPERATIONID = operationId;
+            context.TBL_LOAN_APPLICATION_ARCHIVE.Add(loanApplArchive);
             foreach(var f in details)
             {
                 ArchiveLoanApplicationDetails(f.LOANAPPLICATIONDETAILID);
@@ -3437,70 +3448,73 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Facility doesn't exist!");
             }
-            List<TBL_LOAN_APPLICATION_DETL_ARCH> LoanApplicationDetailsArchive = new List<TBL_LOAN_APPLICATION_DETL_ARCH>();
-            TBL_LOAN_APPLICATION_DETL_ARCH addLoanApplDetailsArchive = new TBL_LOAN_APPLICATION_DETL_ARCH();
 
-            addLoanApplDetailsArchive.ARCHIVEDATE = DateTime.Today;
-            addLoanApplDetailsArchive.LOANAPPLICATIONDETAILID = detailRow.LOANAPPLICATIONDETAILID;
-            addLoanApplDetailsArchive.LOANAPPLICATIONID = detailRow.LOANAPPLICATIONID;
-            addLoanApplDetailsArchive.CUSTOMERID = detailRow.CUSTOMERID;
-            addLoanApplDetailsArchive.PROPOSEDPRODUCTID = detailRow.PROPOSEDPRODUCTID;
-            addLoanApplDetailsArchive.PROPOSEDTENOR = detailRow.PROPOSEDTENOR;
-            addLoanApplDetailsArchive.PROPOSEDINTERESTRATE = detailRow.PROPOSEDINTERESTRATE;
-            addLoanApplDetailsArchive.PROPOSEDAMOUNT = detailRow.PROPOSEDAMOUNT;
-            addLoanApplDetailsArchive.APPROVEDPRODUCTID = detailRow.APPROVEDPRODUCTID;
-            addLoanApplDetailsArchive.APPROVEDTENOR = detailRow.APPROVEDTENOR;
-            addLoanApplDetailsArchive.APPROVEDINTERESTRATE = detailRow.APPROVEDINTERESTRATE;
-            addLoanApplDetailsArchive.APPROVEDAMOUNT = detailRow.APPROVEDAMOUNT;
-            addLoanApplDetailsArchive.CURRENCYID = detailRow.CURRENCYID;
-            addLoanApplDetailsArchive.EXCHANGERATE = detailRow.EXCHANGERATE;
-            addLoanApplDetailsArchive.SUBSECTORID = detailRow.SUBSECTORID;
-            addLoanApplDetailsArchive.STATUSID = detailRow.STATUSID;
-            addLoanApplDetailsArchive.LOANPURPOSE = detailRow.LOANPURPOSE;
-            addLoanApplDetailsArchive.CREATEDBY = detailRow.CREATEDBY;
-            addLoanApplDetailsArchive.DATETIMECREATED = detailRow.DATETIMECREATED;
-            addLoanApplDetailsArchive.LASTUPDATEDBY = detailRow.LASTUPDATEDBY;
-            addLoanApplDetailsArchive.DATETIMEUPDATED = detailRow.DATETIMEUPDATED;
-            addLoanApplDetailsArchive.DELETED = detailRow.DELETED;
-            addLoanApplDetailsArchive.DELETEDBY = detailRow.DELETEDBY;
-            addLoanApplDetailsArchive.DATETIMEDELETED = detailRow.DATETIMEDELETED;
-            addLoanApplDetailsArchive.EQUITYAMOUNT = detailRow.EQUITYAMOUNT;
-            addLoanApplDetailsArchive.HASDONECHECKLIST = detailRow.HASDONECHECKLIST;
-            addLoanApplDetailsArchive.EQUITYCASAACCOUNTID = detailRow.EQUITYCASAACCOUNTID;
-            addLoanApplDetailsArchive.CONSESSIONAPPROVALSTATUSID = detailRow.CONSESSIONAPPROVALSTATUSID;
-            addLoanApplDetailsArchive.CONSESSIONREASON = detailRow.CONSESSIONREASON;
-            addLoanApplDetailsArchive.ISPOLITICALLYEXPOSED = detailRow.ISPOLITICALLYEXPOSED;
-            addLoanApplDetailsArchive.REPAYMENTTERMS = detailRow.REPAYMENTTERMS;
-            addLoanApplDetailsArchive.REPAYMENTSCHEDULEID = detailRow.REPAYMENTSCHEDULEID;
-            addLoanApplDetailsArchive.EFFECTIVEDATE = detailRow.EFFECTIVEDATE;
-            addLoanApplDetailsArchive.ISTAKEOVERAPPLICATION = detailRow.ISTAKEOVERAPPLICATION;
-            addLoanApplDetailsArchive.EXPIRYDATE = detailRow.EXPIRYDATE;
-            addLoanApplDetailsArchive.CASAACCOUNTID = detailRow.CASAACCOUNTID;
-            addLoanApplDetailsArchive.OPERATINGCASAACCOUNTID = detailRow.OPERATINGCASAACCOUNTID;
-            addLoanApplDetailsArchive.SECUREDBYCOLLATERAL = detailRow.SECUREDBYCOLLATERAL;
-            addLoanApplDetailsArchive.CRMSCOLLATERALTYPEID = detailRow.CRMSCOLLATERALTYPEID;
-            addLoanApplDetailsArchive.MORATORIUMDURATION = detailRow.MORATORIUMDURATION;
-            addLoanApplDetailsArchive.CRMSFUNDINGSOURCEID = detailRow.CRMSFUNDINGSOURCEID;
-            addLoanApplDetailsArchive.CRMSREPAYMENTSOURCEID = detailRow.CRMSREPAYMENTSOURCEID;
-            addLoanApplDetailsArchive.CRMSFUNDINGSOURCECATEGORY = detailRow.CRMSFUNDINGSOURCECATEGORY;
-            addLoanApplDetailsArchive.CRMS_ECCI_NUMBER = detailRow.CRMS_ECCI_NUMBER;
-            addLoanApplDetailsArchive.CRMSCODE = detailRow.CRMSCODE;
-            addLoanApplDetailsArchive.CRMSREPAYMENTAGREEMENTID = detailRow.CRMSREPAYMENTAGREEMENTID;
-            addLoanApplDetailsArchive.CRMSVALIDATED = detailRow.CRMSVALIDATED;
-            addLoanApplDetailsArchive.CRMSDATE = detailRow.CRMSDATE;
-            addLoanApplDetailsArchive.TRANSACTIONDYNAMICS = detailRow.TRANSACTIONDYNAMICS;
-            addLoanApplDetailsArchive.CONDITIONPRECIDENT = detailRow.CONDITIONPRECIDENT;
-            addLoanApplDetailsArchive.CONDITIONSUBSEQUENT = detailRow.CONDITIONSUBSEQUENT;
-            addLoanApplDetailsArchive.FIELD1 = detailRow.FIELD1;
-            addLoanApplDetailsArchive.PRODUCTPRICEINDEXRATE = detailRow.PRODUCTPRICEINDEXRATE;
-            addLoanApplDetailsArchive.PRODUCTPRICEINDEXID = detailRow.PRODUCTPRICEINDEXID;
-            addLoanApplDetailsArchive.FIELD2 = detailRow.FIELD2;
-            addLoanApplDetailsArchive.FIELD3 = detailRow.FIELD3;
-            addLoanApplDetailsArchive.ISSPECIALISED = detailRow.ISSPECIALISED;
-            addLoanApplDetailsArchive.TENORFREQUENCYTYPEID = detailRow.TENORFREQUENCYTYPEID;
+            //var detailRowArch = context.TBL_LOAN_APPLICATION_DETL_ARCH.Where(d=>d.LOANAPPLICATIONDETAILID == loanApplicationDetailId).FirstOrDefault();
+            //if (detailRowArch == null)
+            //{
+                TBL_LOAN_APPLICATION_DETL_ARCH addLoanApplDetailsArchive = new TBL_LOAN_APPLICATION_DETL_ARCH();
 
-            this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
+                addLoanApplDetailsArchive.ARCHIVEDATE = DateTime.Today;
+                addLoanApplDetailsArchive.LOANAPPLICATIONDETAILID = detailRow.LOANAPPLICATIONDETAILID;
+                addLoanApplDetailsArchive.LOANAPPLICATIONID = detailRow.LOANAPPLICATIONID;
+                addLoanApplDetailsArchive.CUSTOMERID = detailRow.CUSTOMERID;
+                addLoanApplDetailsArchive.PROPOSEDPRODUCTID = detailRow.PROPOSEDPRODUCTID;
+                addLoanApplDetailsArchive.PROPOSEDTENOR = detailRow.PROPOSEDTENOR;
+                addLoanApplDetailsArchive.PROPOSEDINTERESTRATE = detailRow.PROPOSEDINTERESTRATE;
+                addLoanApplDetailsArchive.PROPOSEDAMOUNT = detailRow.PROPOSEDAMOUNT;
+                addLoanApplDetailsArchive.APPROVEDPRODUCTID = detailRow.APPROVEDPRODUCTID;
+                addLoanApplDetailsArchive.APPROVEDTENOR = detailRow.APPROVEDTENOR;
+                addLoanApplDetailsArchive.APPROVEDINTERESTRATE = detailRow.APPROVEDINTERESTRATE;
+                addLoanApplDetailsArchive.APPROVEDAMOUNT = detailRow.APPROVEDAMOUNT;
+                addLoanApplDetailsArchive.CURRENCYID = detailRow.CURRENCYID;
+                addLoanApplDetailsArchive.EXCHANGERATE = detailRow.EXCHANGERATE;
+                addLoanApplDetailsArchive.SUBSECTORID = detailRow.SUBSECTORID;
+                addLoanApplDetailsArchive.STATUSID = detailRow.STATUSID;
+                addLoanApplDetailsArchive.LOANPURPOSE = detailRow.LOANPURPOSE;
+                addLoanApplDetailsArchive.CREATEDBY = detailRow.CREATEDBY;
+                addLoanApplDetailsArchive.DATETIMECREATED = detailRow.DATETIMECREATED;
+                addLoanApplDetailsArchive.LASTUPDATEDBY = detailRow.LASTUPDATEDBY;
+                addLoanApplDetailsArchive.DATETIMEUPDATED = detailRow.DATETIMEUPDATED;
+                addLoanApplDetailsArchive.DELETED = detailRow.DELETED;
+                addLoanApplDetailsArchive.DELETEDBY = detailRow.DELETEDBY;
+                addLoanApplDetailsArchive.DATETIMEDELETED = detailRow.DATETIMEDELETED;
+                addLoanApplDetailsArchive.EQUITYAMOUNT = detailRow.EQUITYAMOUNT;
+                addLoanApplDetailsArchive.HASDONECHECKLIST = detailRow.HASDONECHECKLIST;
+                addLoanApplDetailsArchive.EQUITYCASAACCOUNTID = detailRow.EQUITYCASAACCOUNTID;
+                addLoanApplDetailsArchive.CONSESSIONAPPROVALSTATUSID = detailRow.CONSESSIONAPPROVALSTATUSID;
+                addLoanApplDetailsArchive.CONSESSIONREASON = detailRow.CONSESSIONREASON;
+                addLoanApplDetailsArchive.ISPOLITICALLYEXPOSED = detailRow.ISPOLITICALLYEXPOSED;
+                addLoanApplDetailsArchive.REPAYMENTTERMS = detailRow.REPAYMENTTERMS;
+                addLoanApplDetailsArchive.REPAYMENTSCHEDULEID = detailRow.REPAYMENTSCHEDULEID;
+                addLoanApplDetailsArchive.EFFECTIVEDATE = detailRow.EFFECTIVEDATE;
+                addLoanApplDetailsArchive.ISTAKEOVERAPPLICATION = detailRow.ISTAKEOVERAPPLICATION;
+                addLoanApplDetailsArchive.EXPIRYDATE = detailRow.EXPIRYDATE;
+                addLoanApplDetailsArchive.CASAACCOUNTID = detailRow.CASAACCOUNTID;
+                addLoanApplDetailsArchive.OPERATINGCASAACCOUNTID = detailRow.OPERATINGCASAACCOUNTID;
+                addLoanApplDetailsArchive.SECUREDBYCOLLATERAL = detailRow.SECUREDBYCOLLATERAL;
+                addLoanApplDetailsArchive.CRMSCOLLATERALTYPEID = detailRow.CRMSCOLLATERALTYPEID;
+                addLoanApplDetailsArchive.MORATORIUMDURATION = detailRow.MORATORIUMDURATION;
+                addLoanApplDetailsArchive.CRMSFUNDINGSOURCEID = detailRow.CRMSFUNDINGSOURCEID;
+                addLoanApplDetailsArchive.CRMSREPAYMENTSOURCEID = detailRow.CRMSREPAYMENTSOURCEID;
+                addLoanApplDetailsArchive.CRMSFUNDINGSOURCECATEGORY = detailRow.CRMSFUNDINGSOURCECATEGORY;
+                addLoanApplDetailsArchive.CRMS_ECCI_NUMBER = detailRow.CRMS_ECCI_NUMBER;
+                addLoanApplDetailsArchive.CRMSCODE = detailRow.CRMSCODE;
+                addLoanApplDetailsArchive.CRMSREPAYMENTAGREEMENTID = detailRow.CRMSREPAYMENTAGREEMENTID;
+                addLoanApplDetailsArchive.CRMSVALIDATED = detailRow.CRMSVALIDATED;
+                addLoanApplDetailsArchive.CRMSDATE = detailRow.CRMSDATE;
+                addLoanApplDetailsArchive.TRANSACTIONDYNAMICS = detailRow.TRANSACTIONDYNAMICS;
+                addLoanApplDetailsArchive.CONDITIONPRECIDENT = detailRow.CONDITIONPRECIDENT;
+                addLoanApplDetailsArchive.CONDITIONSUBSEQUENT = detailRow.CONDITIONSUBSEQUENT;
+                addLoanApplDetailsArchive.FIELD1 = detailRow.FIELD1;
+                addLoanApplDetailsArchive.PRODUCTPRICEINDEXRATE = detailRow.PRODUCTPRICEINDEXRATE;
+                addLoanApplDetailsArchive.PRODUCTPRICEINDEXID = detailRow.PRODUCTPRICEINDEXID;
+                addLoanApplDetailsArchive.FIELD2 = detailRow.FIELD2;
+                addLoanApplDetailsArchive.FIELD3 = detailRow.FIELD3;
+                addLoanApplDetailsArchive.ISSPECIALISED = detailRow.ISSPECIALISED;
+                addLoanApplDetailsArchive.TENORFREQUENCYTYPEID = detailRow.TENORFREQUENCYTYPEID;
 
+                this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
+            //}
             //return context.SaveChanges() != 0;
         }
 
@@ -3625,6 +3639,12 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var tradders = context.TBL_LOAN_APPLICATION_DETL_TRA.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
                     context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(tradders);
+                }
+
+                if (context.TBL_LOAN_APPLICATION_DETL_ARCH.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var archs = context.TBL_LOAN_APPLICATION_DETL_ARCH.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_APPLICATION_DETL_ARCH.RemoveRange(archs);
                 }
 
 
@@ -4300,7 +4320,8 @@ namespace FintrakBanking.Repositories.Credit
                                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                         applicationDate = x.APPLICATIONDATE,
-                                        applicationAmount = x.APPLICATIONAMOUNT,
+                                        applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT),
+                                        //applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = x.APPROVEDAMOUNT,
                                         interestRate = x.INTERESTRATE,
                                         applicationTenor = x.APPLICATIONTENOR,
@@ -4367,7 +4388,8 @@ namespace FintrakBanking.Repositories.Credit
                                              relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                              relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                              applicationDate = x.APPLICATIONDATE,
-                                             applicationAmount = x.APPLICATIONAMOUNT,
+                                             applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT),
+                                             //applicationAmount = x.APPLICATIONAMOUNT,
                                              approvedAmount = x.APPROVEDAMOUNT,
                                              interestRate = x.INTERESTRATE,
                                              applicationTenor = x.APPLICATIONTENOR,
@@ -5035,57 +5057,151 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
         }
 
+        public IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user)
+        {
+            bool isHeadOffice = (user.BranchId == 1) ? true : false;
+
+            var applications = context.TBL_LOAN_APPLICATION_ARCHIVE
+                .Where(x => (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected
+                || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted)
+                )
+            .Select(x => new LoanApplicationViewModel
+            {
+                loanApplicationId = x.LOANAPPLICATIONID,
+                applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
+                customerId = x.CUSTOMERID,
+                branchId = x.BRANCHID,
+                branchName = x.TBL_BRANCH.BRANCHNAME,
+                productClassId = x.PRODUCTCLASSID,
+                productClassName = x.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                customerGroupId = x.CUSTOMERGROUPID,
+                loanTypeId = x.LOANAPPLICATIONTYPEID,
+                relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                applicationDateArch = x.APPLICATIONDATE,
+                applicationAmount = x.APPLICATIONAMOUNT,
+                approvedAmount = x.APPROVEDAMOUNT,
+                interestRate = x.INTERESTRATE,
+                applicationTenor = x.APPLICATIONTENOR,
+                loanInformation = x.LOANINFORMATION,
+                submittedForAppraisal = x.SUBMITTEDFORAPPRAISAL,
+                customerInfoValidated = x.CUSTOMERINFOVALIDATED,
+                isRelatedParty = x.ISRELATEDPARTY,
+                isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
+                approvalStatusId = (short)x.APPROVALSTATUSID,
+                applicationStatusId = x.APPLICATIONSTATUSID,
+                createdBy = x.CREATEDBY,
+                misCode = x.MISCODE,
+
+                applicationStatus = x.TBL_LOAN_APPLICATION_STATUS.APPLICATIONSTATUSNAME, // <----------------- new 
+                relationshipOfficerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
+                relationshipManagerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
+                customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                loanTypeName = x.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
+                loanTermSheetId = x.LOANTERMSHEETID,
+                customerName = x.CUSTOMERID.HasValue ? x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME : "N/A",
+
+                details = context.TBL_LOAN_APPLICATION_DETAIL.Where(o=>o.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => new ApprovedLoanDetailViewModel
+                {
+                    loanApplicationDetailId = o.LOANAPPLICATIONDETAILID,
+                    applicationId = o.LOANAPPLICATIONID,
+                    customerId = o.TBL_CUSTOMER.CUSTOMERID,
+                    obligorName = o.TBL_CUSTOMER.FIRSTNAME + " " + o.TBL_CUSTOMER.MIDDLENAME + " " + o.TBL_CUSTOMER.LASTNAME,
+                    currencyCode = o.TBL_CURRENCY.CURRENCYCODE,
+                    //proposedProductName = o.TBL_PRODUCT.PRODUCTNAME,
+                    proposedTenor = o.PROPOSEDTENOR,
+                    proposedRate = o.PROPOSEDINTERESTRATE,
+                    proposedAmount = o.PROPOSEDAMOUNT,
+                    proposedProductId = o.PROPOSEDPRODUCTID,
+                    approvedProductName = o.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
+                    approvedTenor = o.APPROVEDTENOR,
+                    approvedRate = o.APPROVEDINTERESTRATE,
+                    approvedAmount = o.APPROVEDAMOUNT,
+                    //convertedApprovedAmount = o.ApprovedAmount * Convert.ToDecimal(o.ExchangeRate),
+                    approvedProductId = o.APPROVEDPRODUCTID,
+
+                    statusId = o.STATUSID,
+                    exchangeRate = o.EXCHANGERATE,
+                })
+            })
+            .OrderByDescending(x => x.loanApplicationId)
+            //.ThenByDescending(x => x.loanApplicationId)
+            ;
+
+            //var test = applications.ToList();
+            return applications;
+        }
+
         public string ReviewRequest(ForwardViewModel model)
         {
-            //var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+            var applArchive = context.TBL_LOAN_APPLICATION_ARCHIVE.Where(ar=>ar.LOANAPPLICATIONID == model.applicationId).FirstOrDefault();
             var appl = context.TBL_LOAN_APPLICATION.Where(a => a.LOANAPPLICATIONID == model.applicationId && a.APPLICATIONSTATUSID ==model.applicationStatusId).Select(a=>a).FirstOrDefault();
             if (context.TBL_LOAN_APPLICATION.Where(x => x.RELATEDREFERENCENUMBER == appl.APPLICATIONREFERENCENUMBER && x.APPLICATIONSTATUSID != model.applicationStatusId).Any())
             {
                 return "This application is already re-initiated!";
             }
 
+            if ((context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPLICATIONSTATUSID != model.applicationStatusId).Any()) && applArchive == null)
+            {
+                ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID);
+            }
+
+            if ((context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPLICATIONSTATUSID == model.applicationStatusId).Any()) && applArchive == null)
+            {
+                ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID);
+            }
+
+
             //var referenceNumber = GenerateLoanReferenceNumber();
             var applicationDate = genSetup.GetApplicationDate();
-            bool wasApproved = appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved ? true : false;
+            var entity = context.TBL_LOAN_APPLICATION.Find(appl.LOANAPPLICATIONID);
+            entity.DATETIMECREATED = applicationDate;
+            entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            entity.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
+            entity.DELETED = false;
 
-            var request = context.TBL_LOAN_APPLICATION.Add(new TBL_LOAN_APPLICATION
-            {
-                PRODUCTCLASSID = appl.PRODUCTCLASSID,
-                APPLICATIONREFERENCENUMBER = appl.APPLICATIONREFERENCENUMBER,
-                RELATEDREFERENCENUMBER = appl.APPLICATIONREFERENCENUMBER,
-                COMPANYID = appl.COMPANYID,
-                BRANCHID = appl.BRANCHID,
-                RELATIONSHIPOFFICERID = appl.RELATIONSHIPOFFICERID,
-                RELATIONSHIPMANAGERID = appl.RELATIONSHIPMANAGERID,
-                MISCODE = appl.MISCODE,
-                TEAMMISCODE = appl.TEAMMISCODE,
-                INTERESTRATE = appl.INTERESTRATE,
-                APPLICATIONDATE = appl.APPLICATIONDATE,
-                LOANINFORMATION = appl.LOANINFORMATION,
-                ISRELATEDPARTY = appl.ISRELATEDPARTY,
-                ISPOLITICALLYEXPOSED = appl.ISPOLITICALLYEXPOSED,
-                CREATEDBY = model.createdBy,
-                DATETIMECREATED = applicationDate,
-                SYSTEMDATETIME = DateTime.Now,
-                CUSTOMERGROUPID = appl.CUSTOMERGROUPID,
-                CASAACCOUNTID = appl.CASAACCOUNTID,
-                APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
-                APPLICATIONAMOUNT = appl.APPLICATIONAMOUNT,
-                APPROVEDAMOUNT = appl.APPLICATIONAMOUNT,
-                TOTALEXPOSUREAMOUNT = appl.TOTALEXPOSUREAMOUNT,
-                APPLICATIONTENOR = appl.APPLICATIONTENOR,
-                ISINVESTMENTGRADE = appl.ISINVESTMENTGRADE,
-                LOANPRELIMINARYEVALUATIONID = appl.LOANPRELIMINARYEVALUATIONID,
-                LOANTERMSHEETID = appl.LOANTERMSHEETID,
-                CUSTOMERID = appl.CUSTOMERID,
-                SUBMITTEDFORAPPRAISAL = appl.SUBMITTEDFORAPPRAISAL,
-                OPERATIONID = appl.OPERATIONID,
-                LOANAPPLICATIONTYPEID = appl.LOANAPPLICATIONTYPEID,
-                PRODUCT_CLASS_PROCESSID = appl.PRODUCT_CLASS_PROCESSID,
-            });
+            //bool wasApproved = appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved ? true : false;
 
-            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+            /* var request = context.TBL_LOAN_APPLICATION.Add(new TBL_LOAN_APPLICATION
+             {
+                 PRODUCTCLASSID = appl.PRODUCTCLASSID,
+                 APPLICATIONREFERENCENUMBER = appl.APPLICATIONREFERENCENUMBER,
+                 RELATEDREFERENCENUMBER = appl.APPLICATIONREFERENCENUMBER,
+                 COMPANYID = appl.COMPANYID,
+                 BRANCHID = appl.BRANCHID,
+                 RELATIONSHIPOFFICERID = appl.RELATIONSHIPOFFICERID,
+                 RELATIONSHIPMANAGERID = appl.RELATIONSHIPMANAGERID,
+                 MISCODE = appl.MISCODE,
+                 TEAMMISCODE = appl.TEAMMISCODE,
+                 INTERESTRATE = appl.INTERESTRATE,
+                 APPLICATIONDATE = appl.APPLICATIONDATE,
+                 LOANINFORMATION = appl.LOANINFORMATION,
+                 ISRELATEDPARTY = appl.ISRELATEDPARTY,
+                 ISPOLITICALLYEXPOSED = appl.ISPOLITICALLYEXPOSED,
+                 CREATEDBY = model.createdBy,
+                 DATETIMECREATED = applicationDate,
+                 SYSTEMDATETIME = DateTime.Now,
+                 CUSTOMERGROUPID = appl.CUSTOMERGROUPID,
+                 CASAACCOUNTID = appl.CASAACCOUNTID,
+                 APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress,
+                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                 APPLICATIONAMOUNT = appl.APPLICATIONAMOUNT,
+                 APPROVEDAMOUNT = appl.APPLICATIONAMOUNT,
+                 TOTALEXPOSUREAMOUNT = appl.TOTALEXPOSUREAMOUNT,
+                 APPLICATIONTENOR = appl.APPLICATIONTENOR,
+                 ISINVESTMENTGRADE = appl.ISINVESTMENTGRADE,
+                 LOANPRELIMINARYEVALUATIONID = appl.LOANPRELIMINARYEVALUATIONID,
+                 LOANTERMSHEETID = appl.LOANTERMSHEETID,
+                 CUSTOMERID = appl.CUSTOMERID,
+                 SUBMITTEDFORAPPRAISAL = appl.SUBMITTEDFORAPPRAISAL,
+                 OPERATIONID = appl.OPERATIONID,
+                 LOANAPPLICATIONTYPEID = appl.LOANAPPLICATIONTYPEID,
+                 PRODUCT_CLASS_PROCESSID = appl.PRODUCT_CLASS_PROCESSID,
+             });*/
+
+            /*var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
             foreach (var x in details)
             {
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(new TBL_LOAN_APPLICATION_DETAIL // TODO update the list below!
@@ -5110,37 +5226,37 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = applicationDate,
                 });
-            }
+            }*/
 
             if (context.SaveChanges() > 0) // <------------------------- skip to test
             {
-                int i;
+                /*int i;
                 var rejectedDetails = context.TBL_LOAN_APPLICATION_DETAIL
                     .Where(x => x.LOANAPPLICATIONID == request.LOANAPPLICATIONID)
                     .Select(x => x.LOANAPPLICATIONDETAILID)
                     .ToArray();
 
-                i = 0; // collateral
-                var collats = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
-                foreach (var x in collats)
-                {
-                    context.TBL_LOAN_APPLICATION_COLLATERL.Add(new TBL_LOAN_APPLICATION_COLLATERL
+                    i = 0; // collateral
+                    var collats = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                    foreach (var x in collats)
                     {
-                        LOANAPPLICATIONID = request.LOANAPPLICATIONID,
-                        //LOANAPPLICATIONDETAILID = rejectedDetails[i], // ?
-                        COLLATERALCUSTOMERID = x.COLLATERALCUSTOMERID,
-                        LOANAPPCOLLATERALID = x.LOANAPPCOLLATERALID,
-                        CREATEDBY = model.createdBy,
-                        DATETIMECREATED = applicationDate,
-                        SYSTEMDATETIME = DateTime.Now,
-                    });
-                    i++;
-                }
+                        context.TBL_LOAN_APPLICATION_COLLATERL.Add(new TBL_LOAN_APPLICATION_COLLATERL
+                        {
+                            LOANAPPLICATIONID = request.LOANAPPLICATIONID,
+                            //LOANAPPLICATIONDETAILID = rejectedDetails[i], // ?
+                            COLLATERALCUSTOMERID = x.COLLATERALCUSTOMERID,
+                            LOANAPPCOLLATERALID = x.LOANAPPCOLLATERALID,
+                            CREATEDBY = model.createdBy,
+                            DATETIMECREATED = applicationDate,
+                            SYSTEMDATETIME = DateTime.Now,
+                        });
+                        i++;
+                    }*/
 
-                i = 0; // conditions
-                var conditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
-                foreach (var x in conditions)
-                {
+                   /* i = 0; // conditions
+                    var conditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                 foreach (var x in conditions)
+                 {
                     var condition = new TBL_LOAN_CONDITION_PRECEDENT
                     {
                         CONDITION = x.CONDITION,
@@ -5154,9 +5270,9 @@ namespace FintrakBanking.Repositories.Credit
                     };
 
                     context.TBL_LOAN_CONDITION_PRECEDENT.Add(condition);
-                }
+                 }*/
 
-                i = 0; // fees
+                /*i = 0; // fees
                 var fees = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
                 foreach (var x in fees)
                 {
@@ -5173,9 +5289,9 @@ namespace FintrakBanking.Repositories.Credit
                         DATETIMECREATED = applicationDate,
                         CREATEDBY = model.createdBy,
                     });
-                }
+                }*/
 
-                var cam = context.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                /*var cam = context.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
                 if (cam != null)
                 {
                     var newcam = context.TBL_CREDIT_APPRAISAL_MEMORANDM.Add(new TBL_CREDIT_APPRAISAL_MEMORANDM
@@ -5201,17 +5317,18 @@ namespace FintrakBanking.Repositories.Credit
                             DATETIMECREATED = applicationDate,
                         });
                     }
-                }
+                }*/
 
                 var operationId = (int)OperationsEnum.CreditAppraisal;
                 workflow.StaffId = model.createdBy;
                 workflow.OperationId = operationId;
-                workflow.TargetId = request.LOANAPPLICATIONID;
+                workflow.TargetId = appl.LOANAPPLICATIONID;
                 workflow.CompanyId = appl.COMPANYID;
                 workflow.ProductClassId = appl.PRODUCTCLASSID;
                 workflow.ProductId = null; // appl.PRODUCTID;
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
+                workflow.ToStaffId = model.createdBy;
                 workflow.Amount = appl.APPLICATIONAMOUNT;
                 workflow.InvestmentGrade = appl.ISINVESTMENTGRADE;
                 workflow.Tenor = appl.APPLICATIONTENOR;
@@ -5241,8 +5358,8 @@ namespace FintrakBanking.Repositories.Credit
                 return context.SaveChanges() > 0 ? "New Loan Application Reference Number " + appl.APPLICATIONREFERENCENUMBER : string.Empty;
             }
 
-            context.TBL_LOAN_APPLICATION_DETAIL.RemoveRange(details);
-            context.TBL_LOAN_APPLICATION.Remove(request);
+            //context.TBL_LOAN_APPLICATION_DETAIL.RemoveRange(details);
+            //context.TBL_LOAN_APPLICATION.Remove(request);
 
             context.SaveChanges();
 
