@@ -3365,7 +3365,8 @@ namespace FintrakBanking.Repositories.Credit
             var appArch = context.TBL_LOAN_APPLICATION_ARCHIVE.FirstOrDefault(l => l.LOANAPPLICATIONID == loanAppliactionId);
             if (appArch != null)
             {
-                throw new SecureException("Loan Application already exist!");
+                return true;
+                //throw new SecureException("Loan Application already exist!");
             }
 
             var details = app.TBL_LOAN_APPLICATION_DETAIL.ToList();
@@ -3457,74 +3458,71 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var detailRowArch = context.TBL_LOAN_APPLICATION_DETL_ARCH.Where(d=>d.LOANAPPLICATIONDETAILID == loanApplicationDetailId).FirstOrDefault();
-            if (detailRowArch != null)
+            if (detailRowArch == null)
             {
-                throw new SecureException("Facility already exist!");
+                TBL_LOAN_APPLICATION_DETL_ARCH addLoanApplDetailsArchive = new TBL_LOAN_APPLICATION_DETL_ARCH();
+
+                addLoanApplDetailsArchive.ARCHIVEDATE = DateTime.Today;
+                addLoanApplDetailsArchive.LOANAPPLICATIONDETAILID = detailRow.LOANAPPLICATIONDETAILID;
+                addLoanApplDetailsArchive.LOANAPPLICATIONID = detailRow.LOANAPPLICATIONID;
+                addLoanApplDetailsArchive.CUSTOMERID = detailRow.CUSTOMERID;
+                addLoanApplDetailsArchive.PROPOSEDPRODUCTID = detailRow.PROPOSEDPRODUCTID;
+                addLoanApplDetailsArchive.PROPOSEDTENOR = detailRow.PROPOSEDTENOR;
+                addLoanApplDetailsArchive.PROPOSEDINTERESTRATE = detailRow.PROPOSEDINTERESTRATE;
+                addLoanApplDetailsArchive.PROPOSEDAMOUNT = detailRow.PROPOSEDAMOUNT;
+                addLoanApplDetailsArchive.APPROVEDPRODUCTID = detailRow.APPROVEDPRODUCTID;
+                addLoanApplDetailsArchive.APPROVEDTENOR = detailRow.APPROVEDTENOR;
+                addLoanApplDetailsArchive.APPROVEDINTERESTRATE = detailRow.APPROVEDINTERESTRATE;
+                addLoanApplDetailsArchive.APPROVEDAMOUNT = detailRow.APPROVEDAMOUNT;
+                addLoanApplDetailsArchive.CURRENCYID = detailRow.CURRENCYID;
+                addLoanApplDetailsArchive.EXCHANGERATE = detailRow.EXCHANGERATE;
+                addLoanApplDetailsArchive.SUBSECTORID = detailRow.SUBSECTORID;
+                addLoanApplDetailsArchive.STATUSID = detailRow.STATUSID;
+                addLoanApplDetailsArchive.LOANPURPOSE = detailRow.LOANPURPOSE;
+                addLoanApplDetailsArchive.CREATEDBY = detailRow.CREATEDBY;
+                addLoanApplDetailsArchive.DATETIMECREATED = detailRow.DATETIMECREATED;
+                addLoanApplDetailsArchive.LASTUPDATEDBY = detailRow.LASTUPDATEDBY;
+                addLoanApplDetailsArchive.DATETIMEUPDATED = detailRow.DATETIMEUPDATED;
+                addLoanApplDetailsArchive.DELETED = detailRow.DELETED;
+                addLoanApplDetailsArchive.DELETEDBY = detailRow.DELETEDBY;
+                addLoanApplDetailsArchive.DATETIMEDELETED = detailRow.DATETIMEDELETED;
+                addLoanApplDetailsArchive.EQUITYAMOUNT = detailRow.EQUITYAMOUNT;
+                addLoanApplDetailsArchive.HASDONECHECKLIST = detailRow.HASDONECHECKLIST;
+                addLoanApplDetailsArchive.EQUITYCASAACCOUNTID = detailRow.EQUITYCASAACCOUNTID;
+                addLoanApplDetailsArchive.CONSESSIONAPPROVALSTATUSID = detailRow.CONSESSIONAPPROVALSTATUSID;
+                addLoanApplDetailsArchive.CONSESSIONREASON = detailRow.CONSESSIONREASON;
+                addLoanApplDetailsArchive.ISPOLITICALLYEXPOSED = detailRow.ISPOLITICALLYEXPOSED;
+                addLoanApplDetailsArchive.REPAYMENTTERMS = detailRow.REPAYMENTTERMS;
+                addLoanApplDetailsArchive.REPAYMENTSCHEDULEID = detailRow.REPAYMENTSCHEDULEID;
+                addLoanApplDetailsArchive.EFFECTIVEDATE = detailRow.EFFECTIVEDATE;
+                addLoanApplDetailsArchive.ISTAKEOVERAPPLICATION = detailRow.ISTAKEOVERAPPLICATION;
+                addLoanApplDetailsArchive.EXPIRYDATE = detailRow.EXPIRYDATE;
+                addLoanApplDetailsArchive.CASAACCOUNTID = detailRow.CASAACCOUNTID;
+                addLoanApplDetailsArchive.OPERATINGCASAACCOUNTID = detailRow.OPERATINGCASAACCOUNTID;
+                addLoanApplDetailsArchive.SECUREDBYCOLLATERAL = detailRow.SECUREDBYCOLLATERAL;
+                addLoanApplDetailsArchive.CRMSCOLLATERALTYPEID = detailRow.CRMSCOLLATERALTYPEID;
+                addLoanApplDetailsArchive.MORATORIUMDURATION = detailRow.MORATORIUMDURATION;
+                addLoanApplDetailsArchive.CRMSFUNDINGSOURCEID = detailRow.CRMSFUNDINGSOURCEID;
+                addLoanApplDetailsArchive.CRMSREPAYMENTSOURCEID = detailRow.CRMSREPAYMENTSOURCEID;
+                addLoanApplDetailsArchive.CRMSFUNDINGSOURCECATEGORY = detailRow.CRMSFUNDINGSOURCECATEGORY;
+                addLoanApplDetailsArchive.CRMS_ECCI_NUMBER = detailRow.CRMS_ECCI_NUMBER;
+                addLoanApplDetailsArchive.CRMSCODE = detailRow.CRMSCODE;
+                addLoanApplDetailsArchive.CRMSREPAYMENTAGREEMENTID = detailRow.CRMSREPAYMENTAGREEMENTID;
+                addLoanApplDetailsArchive.CRMSVALIDATED = detailRow.CRMSVALIDATED;
+                addLoanApplDetailsArchive.CRMSDATE = detailRow.CRMSDATE;
+                addLoanApplDetailsArchive.TRANSACTIONDYNAMICS = detailRow.TRANSACTIONDYNAMICS;
+                addLoanApplDetailsArchive.CONDITIONPRECIDENT = detailRow.CONDITIONPRECIDENT;
+                addLoanApplDetailsArchive.CONDITIONSUBSEQUENT = detailRow.CONDITIONSUBSEQUENT;
+                addLoanApplDetailsArchive.FIELD1 = detailRow.FIELD1;
+                addLoanApplDetailsArchive.PRODUCTPRICEINDEXRATE = detailRow.PRODUCTPRICEINDEXRATE;
+                addLoanApplDetailsArchive.PRODUCTPRICEINDEXID = detailRow.PRODUCTPRICEINDEXID;
+                addLoanApplDetailsArchive.FIELD2 = detailRow.FIELD2;
+                addLoanApplDetailsArchive.FIELD3 = detailRow.FIELD3;
+                addLoanApplDetailsArchive.ISSPECIALISED = detailRow.ISSPECIALISED;
+                addLoanApplDetailsArchive.TENORFREQUENCYTYPEID = detailRow.TENORFREQUENCYTYPEID;
+
+                this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
             }
-
-            TBL_LOAN_APPLICATION_DETL_ARCH addLoanApplDetailsArchive = new TBL_LOAN_APPLICATION_DETL_ARCH();
-
-            addLoanApplDetailsArchive.ARCHIVEDATE = DateTime.Today;
-            addLoanApplDetailsArchive.LOANAPPLICATIONDETAILID = detailRow.LOANAPPLICATIONDETAILID;
-            addLoanApplDetailsArchive.LOANAPPLICATIONID = detailRow.LOANAPPLICATIONID;
-            addLoanApplDetailsArchive.CUSTOMERID = detailRow.CUSTOMERID;
-            addLoanApplDetailsArchive.PROPOSEDPRODUCTID = detailRow.PROPOSEDPRODUCTID;
-            addLoanApplDetailsArchive.PROPOSEDTENOR = detailRow.PROPOSEDTENOR;
-            addLoanApplDetailsArchive.PROPOSEDINTERESTRATE = detailRow.PROPOSEDINTERESTRATE;
-            addLoanApplDetailsArchive.PROPOSEDAMOUNT = detailRow.PROPOSEDAMOUNT;
-            addLoanApplDetailsArchive.APPROVEDPRODUCTID = detailRow.APPROVEDPRODUCTID;
-            addLoanApplDetailsArchive.APPROVEDTENOR = detailRow.APPROVEDTENOR;
-            addLoanApplDetailsArchive.APPROVEDINTERESTRATE = detailRow.APPROVEDINTERESTRATE;
-            addLoanApplDetailsArchive.APPROVEDAMOUNT = detailRow.APPROVEDAMOUNT;
-            addLoanApplDetailsArchive.CURRENCYID = detailRow.CURRENCYID;
-            addLoanApplDetailsArchive.EXCHANGERATE = detailRow.EXCHANGERATE;
-            addLoanApplDetailsArchive.SUBSECTORID = detailRow.SUBSECTORID;
-            addLoanApplDetailsArchive.STATUSID = detailRow.STATUSID;
-            addLoanApplDetailsArchive.LOANPURPOSE = detailRow.LOANPURPOSE;
-            addLoanApplDetailsArchive.CREATEDBY = detailRow.CREATEDBY;
-            addLoanApplDetailsArchive.DATETIMECREATED = detailRow.DATETIMECREATED;
-            addLoanApplDetailsArchive.LASTUPDATEDBY = detailRow.LASTUPDATEDBY;
-            addLoanApplDetailsArchive.DATETIMEUPDATED = detailRow.DATETIMEUPDATED;
-            addLoanApplDetailsArchive.DELETED = detailRow.DELETED;
-            addLoanApplDetailsArchive.DELETEDBY = detailRow.DELETEDBY;
-            addLoanApplDetailsArchive.DATETIMEDELETED = detailRow.DATETIMEDELETED;
-            addLoanApplDetailsArchive.EQUITYAMOUNT = detailRow.EQUITYAMOUNT;
-            addLoanApplDetailsArchive.HASDONECHECKLIST = detailRow.HASDONECHECKLIST;
-            addLoanApplDetailsArchive.EQUITYCASAACCOUNTID = detailRow.EQUITYCASAACCOUNTID;
-            addLoanApplDetailsArchive.CONSESSIONAPPROVALSTATUSID = detailRow.CONSESSIONAPPROVALSTATUSID;
-            addLoanApplDetailsArchive.CONSESSIONREASON = detailRow.CONSESSIONREASON;
-            addLoanApplDetailsArchive.ISPOLITICALLYEXPOSED = detailRow.ISPOLITICALLYEXPOSED;
-            addLoanApplDetailsArchive.REPAYMENTTERMS = detailRow.REPAYMENTTERMS;
-            addLoanApplDetailsArchive.REPAYMENTSCHEDULEID = detailRow.REPAYMENTSCHEDULEID;
-            addLoanApplDetailsArchive.EFFECTIVEDATE = detailRow.EFFECTIVEDATE;
-            addLoanApplDetailsArchive.ISTAKEOVERAPPLICATION = detailRow.ISTAKEOVERAPPLICATION;
-            addLoanApplDetailsArchive.EXPIRYDATE = detailRow.EXPIRYDATE;
-            addLoanApplDetailsArchive.CASAACCOUNTID = detailRow.CASAACCOUNTID;
-            addLoanApplDetailsArchive.OPERATINGCASAACCOUNTID = detailRow.OPERATINGCASAACCOUNTID;
-            addLoanApplDetailsArchive.SECUREDBYCOLLATERAL = detailRow.SECUREDBYCOLLATERAL;
-            addLoanApplDetailsArchive.CRMSCOLLATERALTYPEID = detailRow.CRMSCOLLATERALTYPEID;
-            addLoanApplDetailsArchive.MORATORIUMDURATION = detailRow.MORATORIUMDURATION;
-            addLoanApplDetailsArchive.CRMSFUNDINGSOURCEID = detailRow.CRMSFUNDINGSOURCEID;
-            addLoanApplDetailsArchive.CRMSREPAYMENTSOURCEID = detailRow.CRMSREPAYMENTSOURCEID;
-            addLoanApplDetailsArchive.CRMSFUNDINGSOURCECATEGORY = detailRow.CRMSFUNDINGSOURCECATEGORY;
-            addLoanApplDetailsArchive.CRMS_ECCI_NUMBER = detailRow.CRMS_ECCI_NUMBER;
-            addLoanApplDetailsArchive.CRMSCODE = detailRow.CRMSCODE;
-            addLoanApplDetailsArchive.CRMSREPAYMENTAGREEMENTID = detailRow.CRMSREPAYMENTAGREEMENTID;
-            addLoanApplDetailsArchive.CRMSVALIDATED = detailRow.CRMSVALIDATED;
-            addLoanApplDetailsArchive.CRMSDATE = detailRow.CRMSDATE;
-            addLoanApplDetailsArchive.TRANSACTIONDYNAMICS = detailRow.TRANSACTIONDYNAMICS;
-            addLoanApplDetailsArchive.CONDITIONPRECIDENT = detailRow.CONDITIONPRECIDENT;
-            addLoanApplDetailsArchive.CONDITIONSUBSEQUENT = detailRow.CONDITIONSUBSEQUENT;
-            addLoanApplDetailsArchive.FIELD1 = detailRow.FIELD1;
-            addLoanApplDetailsArchive.PRODUCTPRICEINDEXRATE = detailRow.PRODUCTPRICEINDEXRATE;
-            addLoanApplDetailsArchive.PRODUCTPRICEINDEXID = detailRow.PRODUCTPRICEINDEXID;
-            addLoanApplDetailsArchive.FIELD2 = detailRow.FIELD2;
-            addLoanApplDetailsArchive.FIELD3 = detailRow.FIELD3;
-            addLoanApplDetailsArchive.ISSPECIALISED = detailRow.ISSPECIALISED;
-            addLoanApplDetailsArchive.TENORFREQUENCYTYPEID = detailRow.TENORFREQUENCYTYPEID;
-
-            this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
-
             //return context.SaveChanges() != 0;
         }
 
