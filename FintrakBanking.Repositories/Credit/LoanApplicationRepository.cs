@@ -684,7 +684,7 @@ namespace FintrakBanking.Repositories.Credit
                 trail.RESPONSEDATE = DateTime.Now;
                 trail.RESPONSESTAFFID = accountOfficerId;
             }
-            ArchiveLoanApplication(loanApplicationId, (int)OperationsEnum.LoanApplication);
+            ArchiveLoanApplication(loanApplicationId, (int)OperationsEnum.LoanApplication, 0);
             loan.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress;
             loan.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
             return context.SaveChanges() > 0;
@@ -3346,14 +3346,23 @@ namespace FintrakBanking.Repositories.Credit
         //    else return 0;
         //}
 
-        public bool ArchiveLoanApplication(int loanAppliactionId, int operationId)
+        public bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus)
         {
+            short applicationStatusId = 0; 
             var app = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.LOANAPPLICATIONID == loanAppliactionId);
             if (app == null)
             {
                 throw new SecureException("Loan Application doesn't exist!");
             }
 
+            if(applicationStatus == 0)
+            {
+                applicationStatusId = app.APPLICATIONSTATUSID;
+            }
+            else
+            {
+                applicationStatusId = applicationStatus;
+            }
             //var appArch = context.TBL_LOAN_APPLICATION_ARCHIVE.FirstOrDefault(l => l.LOANAPPLICATIONID == loanAppliactionId);
             //if (appArch != null)
             //{
@@ -3408,7 +3417,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApplArchive.DATETIMEDELETED = app.DATETIMEDELETED;
             loanApplArchive.SYSTEMDATETIME = app.SYSTEMDATETIME;
             loanApplArchive.APPROVALSTATUSID = app.APPROVALSTATUSID;
-            loanApplArchive.APPLICATIONSTATUSID = app.APPLICATIONSTATUSID;
+            loanApplArchive.APPLICATIONSTATUSID = applicationStatusId;
             loanApplArchive.FINALAPPROVAL_LEVELID = app.FINALAPPROVAL_LEVELID;
             loanApplArchive.TRANCHEAPPROVAL_LEVELID = app.TRANCHEAPPROVAL_LEVELID;
             loanApplArchive.NEXTAPPLICATIONSTATUSID = app.NEXTAPPLICATIONSTATUSID;
@@ -5145,12 +5154,12 @@ namespace FintrakBanking.Repositories.Credit
 
             if ((context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPLICATIONSTATUSID != model.applicationStatusId).Any()) && applArchive == null)
             {
-                ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID);
+                ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID,0);
             }
 
             if ((context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPLICATIONSTATUSID == model.applicationStatusId).Any()) && applArchive == null)
             {
-                ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID);
+                ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID,0);
             }
 
 
@@ -5946,7 +5955,7 @@ namespace FintrakBanking.Repositories.Credit
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
             val.LASTUPDATEDBY = data.createdBy;
             val.DATETIMEUPDATED = DateTime.Now;
-            ArchiveLoanApplication(data.loanApplicationId, (int)OperationsEnum.LoanApplicationCancellation);
+            ArchiveLoanApplication(data.loanApplicationId, (int)OperationsEnum.LoanApplicationCancellation, val.APPLICATIONSTATUSID);
 
             var audit = new TBL_AUDIT
             {
