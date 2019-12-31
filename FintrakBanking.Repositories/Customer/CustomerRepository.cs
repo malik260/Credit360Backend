@@ -5050,18 +5050,14 @@ namespace FintrakBanking.Repositories.Customer
                     var saved = context.SaveChanges() > 0;
                 }
             }
-            else if 
-                
-                
-                       (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Employment_History_Modification)
-
-                 {
-                               temp = context.TBL_TEMP_CUSTOMEREMPLOYMENT.FirstOrDefault(x => x.TEMPPLACEOFWORKID == targetId);
-                       if (temp != null) //If temp record is not null select the information from the main table
-                 {
-                              entity = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.FirstOrDefault(x =>
-                              x.PLACEOFWORKID == temp.PLACEOFWORKID);
-                              entity.ACTIVE = temp.ACTIVE;
+            else if (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Employment_History_Modification)
+            {
+                temp = context.TBL_TEMP_CUSTOMEREMPLOYMENT.FirstOrDefault(x => x.TEMPPLACEOFWORKID == targetId);
+                if (temp != null) //If temp record is not null select the information from the main table
+                {
+                    entity = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.FirstOrDefault(x =>
+                    x.PLACEOFWORKID == temp.PLACEOFWORKID);
+                    entity.ACTIVE = temp.ACTIVE;
                     entity.CUSTOMERID = temp.CUSTOMERID;
                     entity.EMPLOYDATE = temp.EMPLOYDATE;
                     entity.EMPLOYERADDRESS = temp.EMPLOYERADDRESS;
