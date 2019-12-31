@@ -599,7 +599,7 @@ namespace FintrakBanking.Repositories.Credit
                     else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                     {
                         SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
-                        loanApp.ArchiveLoanApplication(model.applicationId, operationId);
+                        loanApp.ArchiveLoanApplication(model.applicationId, operationId, (short)LoanApplicationStatusEnum.ApplicationRejected);
 
                     }
 
