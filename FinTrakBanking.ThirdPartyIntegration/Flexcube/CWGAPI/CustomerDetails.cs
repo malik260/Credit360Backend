@@ -108,7 +108,7 @@
                             if (customerModel.gender == "M") { customerModel.gender = "Male"; }
                             if (customerModel.gender == "F") { customerModel.gender = "Female"; }
 
-                            if (customerModel.customerTypeId == (short)CustomerTypeEnum.Corporate)
+                            if (customerModel.customerTypeId == (short)CustomerTypeEnum.Corporate || customerModel.customerType == "C")
                             {
                                 customerModel.firstName = customerModel.companyName == null ? customerModel.company_name : customerModel.companyName;
                                 customerModel.companyName = customerModel.company_name;
