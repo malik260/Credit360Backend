@@ -2167,6 +2167,7 @@ namespace FintrakBanking.Repositories.Credit
                        select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
 
             var prod = context.TBL_PRODUCT.Find(model.productId);
+
             if(prod.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
             {
                 fee2 = (from lf in context.TBL_LOAN_FEE
@@ -2217,7 +2218,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.tax_rate = feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
-            loanCreationModel.app_user_id = "FINTRAKUSER";  //"FINTRAKUSR";//;
+            loanCreationModel.app_user_id = "FINTRAKUSR";  //"FINTRAKUSER";//;
             loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
             loanCreationModel.value_date = valueDate.ToString("yyyy-MM-dd");
