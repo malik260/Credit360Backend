@@ -894,13 +894,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
                               join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
                               join d in context.TBL_LOAN_APPLICATION on a.TARGETID equals d.LOANAPPLICATIONID
+                              join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                               where (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
                                  && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate))
                                  && operations.Contains(a.OPERATIONID)
                                  && a.RESPONSESTAFFID == null
-                                 && !approvals.Contains(a.APPROVALSTATUSID)
+                                // && !approvals.Contains(a.APPROVALSTATUSID)
                                  //&& !disbursedLoans.Contains(d.LOANAPPLICATIONID)
-                                 && a.APPROVALSTATEID != (int)ApprovalState.Ended
+                                 //&& a.APPROVALSTATEID != (int)ApprovalState.Ended 
                               // a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
                               // && a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
                               select (new WorkflowTrackerViewModel
@@ -923,6 +924,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
                                   arrivalDate = a.ARRIVALDATE,
                                   applicationDate = d.SYSTEMDATETIME,
+                                  customerDivisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                   //  amount = d.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == d.LOANAPPLICATIONID).Select(x=>x.APPROVEDAMOUNT).FirstOrDefault(),
 
                                   //   amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == d.LOANAPPLICATIONID).ToList().Sum(x => x.APPROVEDAMOUNT),
@@ -977,7 +979,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
 
-                int[] operations = new int[] { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.IndividualDrawdownRequest, (int)OperationsEnum.CorporateDrawdownRequest, (int)OperationsEnum.CRMSApproval };
+                int[] operations = new int[] { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.IndividualDrawdownRequest, (int)OperationsEnum.CorporateDrawdownRequest, (int)OperationsEnum.CRMSApproval,
+                (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking};
                 int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved, (int)ApprovalStatusEnum.Authorised };
                 List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
 
@@ -988,6 +991,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                         join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
                                         join e in context.TBL_LOAN_APPLICATION on a.TARGETID equals e.LOANAPPLICATIONID
                                         join d in context.TBL_LOAN_APPLICATION_DETAIL on e.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                                         where a.OPERATIONID == (int)OperationsEnum.LoanAvailment
                                            && a.RESPONSESTAFFID == null
                                            && a.APPROVALSTATEID == (int)ApprovalState.Ended
@@ -1019,6 +1023,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
                                             customerName = d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
                                             //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : context.TBL_CUSTOMER.Where(q=>q.CUSTOMERID == d.CUSTOMERID).Select(cu=>cu.LASTNAME + " " + cu.MIDDLENAME + cu.LASTNAME).FirstOrDefault(),
+                                            customerDivisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                             responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
                                             arrivalDate = a.ARRIVALDATE,
                                             applicationDate = e.SYSTEMDATETIME,
@@ -1027,6 +1032,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             branchName = e.TBL_BRANCH.BRANCHNAME + " (" + e.TBL_BRANCH.BRANCHCODE + ") ",
                                             loanApplicationId = d.LOANAPPLICATIONID,
                                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+
                                             approvalTrailId = a.APPROVALTRAILID,
                                             productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                         })
@@ -1046,6 +1052,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               join bo in context.TBL_LOAN_BOOKING_REQUEST on a.TARGETID equals bo.LOAN_BOOKING_REQUESTID
                               join d in context.TBL_LOAN_APPLICATION_DETAIL on bo.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                               join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                              join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                               where (DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) >= DbFunctions.TruncateTime(param.startDate)
                                  && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)) &&
                                  operations.Contains(a.OPERATIONID) && a.RESPONSESTAFFID == null && !approvals.Contains(a.APPROVALSTATUSID)
@@ -1068,6 +1075,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
                                   responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
                                   customerName = d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
+                                  customerDivisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                   //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : context.TBL_CUSTOMER.Where(q=>q.CUSTOMERID == d.CUSTOMERID).Select(cu=>cu.LASTNAME + " " + cu.MIDDLENAME + cu.LASTNAME).FirstOrDefault(),
                                   responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
                                   arrivalDate = a.ARRIVALDATE,

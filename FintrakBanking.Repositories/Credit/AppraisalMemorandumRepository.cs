@@ -1706,7 +1706,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStatusId = x.APPROVALSTATUSID,
                     approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
                     approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                    applicationId = application?.LOANAPPLICATIONID,
+                    //applicationId = application.LOANAPPLICATIONID,
                     commentStage = "Credit Appaisal",
                     toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                     fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
@@ -1726,7 +1726,10 @@ namespace FintrakBanking.Repositories.Credit
                         var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
                         foreach (var r in request)
                         {
-                            data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, r.OPERATIONID ?? 0, "Drawdown"));
+                            if (r?.OPERATIONID != null)
+                            {
+                                data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, r.OPERATIONID ?? 0, "Drawdown"));
+                            }
                             data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, (short)OperationsEnum.TermLoanBooking, "Booking"));
                             data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, (short)OperationsEnum.RevolvingLoanBooking, "Booking"));
                             data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, (short)OperationsEnum.ContigentLoanBooking, "Booking"));
