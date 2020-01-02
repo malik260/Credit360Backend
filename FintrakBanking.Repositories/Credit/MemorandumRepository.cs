@@ -1592,7 +1592,7 @@ namespace FintrakBanking.Repositories.Credit
                     else
                     {
                         var currentAmount = curr.Sum(p => p.outstandings);
-                        var currentAmountForLLLImpact = curr.Sum(p => p.approvedAmountLcy);
+                        var currentAmountForLLLImpact = curr.Sum(p => p.outstandingsLcy);
                         var proposedAmountTestForLLLImpact = (initialLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
                         var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
                         var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
