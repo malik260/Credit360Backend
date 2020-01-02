@@ -898,9 +898,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                  && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate))
                                  && operations.Contains(a.OPERATIONID)
                                  && a.RESPONSESTAFFID == null
-                                 && !approvals.Contains(a.APPROVALSTATUSID)
+                                // && !approvals.Contains(a.APPROVALSTATUSID)
                                  //&& !disbursedLoans.Contains(d.LOANAPPLICATIONID)
-                                 && a.APPROVALSTATEID != (int)ApprovalState.Ended
+                                 //&& a.APPROVALSTATEID != (int)ApprovalState.Ended 
                               // a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
                               // && a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
                               select (new WorkflowTrackerViewModel
@@ -977,7 +977,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
 
-                int[] operations = new int[] { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.IndividualDrawdownRequest, (int)OperationsEnum.CorporateDrawdownRequest, (int)OperationsEnum.CRMSApproval };
+                int[] operations = new int[] { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.IndividualDrawdownRequest, (int)OperationsEnum.CorporateDrawdownRequest, (int)OperationsEnum.CRMSApproval,
+                (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking};
                 int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved, (int)ApprovalStatusEnum.Authorised };
                 List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
 
