@@ -159,7 +159,7 @@ namespace FintrakBanking.Repositories.Media
                         var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
                         foreach (var r in request)
                         {
-                            output.AddRange(GetDocumentUploadsByOperation(staffId, (short)r.OPERATIONID, targetId));
+                            if(r?.OPERATIONID != null)output.AddRange(GetDocumentUploadsByOperation(staffId, (short)r.OPERATIONID, targetId));
                             output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.TermLoanBooking, targetId));
                             output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.RevolvingLoanBooking, targetId));
                             output.AddRange(GetDocumentUploadsByOperation(staffId, (short)(short)OperationsEnum.ContigentLoanBooking, targetId));
