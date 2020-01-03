@@ -529,7 +529,8 @@ namespace FintrakBanking.Repositories.Credit
                 //EQUITYCASAACCOUNTID = a?.equityCasaAccountId,
                 //EQUITYAMOUNT = a?.equityAmount ,
                 
-                PROPOSEDAMOUNT = app.APPROVEDAMOUNT,
+                //PROPOSEDAMOUNT = app.APPROVEDAMOUNT,
+                PROPOSEDAMOUNT = app.APPLICATIONAMOUNT,
                 PROPOSEDINTERESTRATE = (int)app.INTERESTRATE,
                 PROPOSEDPRODUCTID = (short)app.PRODUCTID,
                 PROPOSEDTENOR = loan.proposedTenor, //Convert.ToInt32(Math.Round(((decimal)(app.pr / 12) * (decimal)365))),
