@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 //workflow.Amount = totalApplicationAmount; 
-                workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
+                workflow.Amount = appl.TOTALEXPOSUREAMOUNT = appl.TBL_LOAN_APPLICATION_DETAIL.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE) + (loanApp.GetExposures(appl).Sum(e => e.outstandingsLcy));
                 workflow.InvestmentGrade = model.investmentGrade;
                 //workflow.Tenor = model.applicationTenor;
                 workflow.PoliticallyExposed = model.politicallyExposed;
