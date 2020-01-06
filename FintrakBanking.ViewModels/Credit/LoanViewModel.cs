@@ -161,6 +161,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? approvedAmount { get; set; }
         public bool creditAppraisalCompleted { get; set; }
         public int? operationId { get; set; }
+        public int? appraisalOperationId { get; set; }
         public int? operationTypeId { get; set; }
         public string operationName { get; set; }
         public int? customerGroupId { get; set; }
