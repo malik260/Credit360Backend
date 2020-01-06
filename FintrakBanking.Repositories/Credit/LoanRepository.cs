@@ -8341,7 +8341,7 @@ namespace FintrakBanking.Repositories.Credit
                             bookingRequestStatusId = s.APPROVALSTATUSID,
                             requestDate = s.DATETIMECREATED,
                             requestedBy = "",
-
+                            appraisalOperationId = m.OPERATIONID,
                             requestedAmount = s.AMOUNT_REQUESTED,
                             requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
                             approvalStatusId = (short)m.APPROVALSTATUSID,
