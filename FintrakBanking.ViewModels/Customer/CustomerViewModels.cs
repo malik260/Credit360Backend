@@ -700,6 +700,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string fileExtension { get; set; }
         public string caption { get; set; }
         public string contentDescription { get; set; }
+        public string documentTypeId { get; set; }
     }
 
     public class APIResponse

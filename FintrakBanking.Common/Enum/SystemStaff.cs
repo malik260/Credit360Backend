@@ -9,9 +9,8 @@ namespace FintrakBanking.Common.Enum
         System  = 1,
         HQ = 1
 
-            //System = -1,
+
+            // System = -1,
        // HQ = 1
-
-
     }
 }
