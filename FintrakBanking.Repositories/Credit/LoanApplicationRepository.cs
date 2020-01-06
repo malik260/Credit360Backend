@@ -3537,35 +3537,36 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var data in datadetail)
                 {
+                    DeleteLoanApplicationDetail(data.LOANAPPLICATIONDETAILID);
                     //int loanApplicationId = 0;
-                    var fees = data.TBL_LOAN_APPLICATION_DETL_FEE;
-                    if (fees.Count > 0)
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_FEE.RemoveRange(fees);
-                    }
+                    //var fees = data.TBL_LOAN_APPLICATION_DETL_FEE;
+                    //if (fees.Count > 0)
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_FEE.RemoveRange(fees);
+                    //}
 
-                    if (data.TBL_LOAN_APPLICATION_DETL_EDU.Any())
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_EDU.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_EDU);
-                    }
+                    //if (data.TBL_LOAN_APPLICATION_DETL_EDU.Any())
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_EDU.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_EDU);
+                    //}
 
-                    if (data.TBL_LOAN_APPLICATION_DETL_BG.Any())
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_BG.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_BG);
-                    }
+                    //if (data.TBL_LOAN_APPLICATION_DETL_BG.Any())
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_BG.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_BG);
+                    //}
 
-                    if (data.TBL_LOAN_APPLICATION_DETL_INV.Any())
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_INV.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_INV);
-                    }
+                    //if (data.TBL_LOAN_APPLICATION_DETL_INV.Any())
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_INV.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_INV);
+                    //}
 
-                    if (data.TBL_LOAN_APPLICATION_DETL_TRA.Any())
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_TRA);
-                    }
+                    //if (data.TBL_LOAN_APPLICATION_DETL_TRA.Any())
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_TRA);
+                    //}
 
 
-                    context.TBL_LOAN_APPLICATION_DETAIL.Remove(data);
+                    //context.TBL_LOAN_APPLICATION_DETAIL.Remove(data);
                     // loanApplicationId = data.LOANAPPLICATIONID;
 
                     //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationId).ToList();
@@ -3648,6 +3649,24 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var tradders = context.TBL_LOAN_APPLICATION_DETL_TRA.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
                     context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(tradders);
+                }
+
+                if (context.TBL_LOAN_CONDITION_PRECEDENT.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var conds = context.TBL_LOAN_CONDITION_PRECEDENT.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_CONDITION_PRECEDENT.RemoveRange(conds);
+                }
+
+                if (context.TBL_LOAN_TRANSACTION_DYNAMICS.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var trans = context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_TRANSACTION_DYNAMICS.RemoveRange(trans);
+                }
+
+                if (context.TBL_LOAN_APPLICATION_COLLATERL.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var collaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_APPLICATION_COLLATERL.RemoveRange(collaterals);
                 }
 
                 if (context.TBL_LOAN_APPLICATION_DETL_ARCH.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
