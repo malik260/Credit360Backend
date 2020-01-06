@@ -445,7 +445,7 @@ namespace FintrakBanking.Repositories.Credit
                 RECENTUPDATE = model.recentUpdate,
                 APPROVALLEVELID = model.approvalLevelId,
                 CREATEDBY = model.createdBy,
-                CUSTOMERID = model.customerId.Value,
+                CUSTOMERID = model.customerId,
                 OPERATIONID = (int) OperationsEnum.CallMemo,
                 APPROVALSTATUSID = (int) ApprovalStatusEnum.Pending,
                 DATECREATED = _genSetup.GetApplicationDate()
@@ -599,6 +599,7 @@ namespace FintrakBanking.Repositories.Credit
                         };
                             _context.TBL_MESSAGE_LOG.Add(message);
                             _context.SaveChanges();
+
                         }
                     }
 

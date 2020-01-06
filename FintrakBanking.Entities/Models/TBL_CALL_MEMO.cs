@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CALLMEMOID { get; set; }
 
-        public int LOANAPPLICATIONID { get; set; }
+        public int? LOANAPPLICATIONID { get; set; }
 
         public int STAFFID { get; set; }
 
@@ -43,7 +43,7 @@ namespace FintrakBanking.Entities.Models
 
         public int OPERATIONID { get; set; }
 
-        public short APPROVALSTATUSID { get; set; }
+        public int APPROVALSTATUSID { get; set; }
 
         public DateTime CALLTIME { get; set; }
         public DateTime NEXTCALLTIME { get; set; }

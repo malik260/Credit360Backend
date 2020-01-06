@@ -739,7 +739,7 @@ namespace FintrakBanking.Repositories.Finance
         private CurrencyExchangeRateViewModel GetExchangeRateStaging(DateTime date, short currencyId, short baseCurrency, string rateCode)
         {
             var exchangeRateCode = context.TBL_CURRENCY_RATECODE.FirstOrDefault(r => r.RATECODE.Trim() == rateCode);
-            var systemDate = generalSetup.GetApplicationDate();
+            //var systemDate = generalSetup.GetApplicationDate();
             if (currencyId == baseCurrency)
             {
                 return new CurrencyExchangeRateViewModel { baseCurrencyId = baseCurrency, currencyId = currencyId, buyingRate = 1, sellingRate = 1, date = date, isBaseCurrency = true };
@@ -749,8 +749,8 @@ namespace FintrakBanking.Repositories.Finance
                 //DateTime systemDate = generalSetup.GetApplicationDate();
                 //DateTime date = generalSetup.GetApplicationDate().Date;
                 var rateInfo = (from x in this.context.TBL_CURRENCY_EXCHANGERATE
-                                where x.CURRENCYID == currencyId && x.DATE == systemDate && x.RATECODEID == exchangeRateCode.RATECODEID
-                                select x).FirstOrDefault();
+                                where x.CURRENCYID == currencyId && x.RATECODEID == exchangeRateCode.RATECODEID
+                                select x).OrderByDescending(x => x.CURRENCYRATEID).FirstOrDefault();
 
                 if (rateInfo == null)
                     throw new ConditionNotMetException($"Exchange rate for {generalSetup.GetApplicationDate()} is not defined. Define the exchange rate and try again");

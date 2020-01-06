@@ -36,10 +36,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("document-upload/operation/{operationId}/target/{targetId}")]
-        public HttpResponseMessage GetDocumentUploads(int operationId, int targetId)
+        [Route("document-upload/operation/{operationId}/target/{targetId}/isOperationSpecific/{isOperationSpecific}")]
+        public HttpResponseMessage GetDocumentUploads(int operationId, int targetId, bool isOperationSpecific)
         {
-            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId);
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId,  isOperationSpecific);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
@@ -92,7 +92,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
             }
-            try {
+            //try {
                 var entity = new DocumentUploadViewModel();
                 entity.fileName = provider.FormData["fileName"];
                 entity.fileExtension = provider.FormData["fileExtension"];
@@ -126,8 +126,8 @@ namespace FintrakBanking.APICore.Controllers
 
             if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
             if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
-            }
-            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+            //}
+            //catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
 
         }

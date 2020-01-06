@@ -158,7 +158,7 @@ namespace FintrakBanking.Repositories.Credit
         public void LoadCustomerRatios(int applicationId, List<int> customerIds, int staffId) 
         {
             bool isGroup = false;
-            var apiCustomerRatio = new List<RatingAndRatioViewModel>();
+            var apiCustomerRatio = new List<SubGroupRatingAndRatioViewModel>();
             var apiTransactionsOthers = new List<RatingAndRatioViewModel>();
             var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             if(application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
@@ -169,24 +169,42 @@ namespace FintrakBanking.Repositories.Credit
                 var ids = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == application.CUSTOMERGROUPID && x.DELETED == false).Select(x => x.CUSTOMERID).ToList();
                 customers = context.TBL_CUSTOMER.Where(x => ids.Contains(x.CUSTOMERID));
             }
+
             foreach (var customer in customers)
             {
                 if (customer.ISPROSPECT == false)
                 {
                     apiCustomerRatio = integration.GetCustomerRatioByCustomerCode(customer.CUSTOMERCODE);
+
                     foreach (var item in apiCustomerRatio)
                     {
-                        context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
+                        if (item.ratio_List != null)
                         {
-                            DESCRIPTION = item.indicatorname,
-                            VALUE = item.indicatorvalue,
-                            CUSTOMERID = customer.CUSTOMERID,
-                            LOANAPPLICATIONID = application.LOANAPPLICATIONID,
-                            CUSTOMERGROUPID = application.CUSTOMERGROUPID,
-                            DATETIMECREATED = DateTime.Now,
-                            CREATEDBY = staffId,
-                            DELETED = false,
-                        });
+                            for (int i = 0; i < item.ratio_List.Count; i++)
+                            {
+                                var lastTwo = item.ratio_List.Count - 2;
+
+                                if (i < lastTwo) {
+                                    context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
+                                    {
+                                        FINANCIALPERIOD = item.financial_Period,
+                                        DESCRIPTION = item.ratio_List[i].indicatorname,
+                                        VALUE = item.ratio_List[i].indicatorvalue,
+                                        CUSTOMERID = customer.CUSTOMERID,
+                                        LOANAPPLICATIONID = application.LOANAPPLICATIONID,
+                                        CUSTOMERGROUPID = application.CUSTOMERGROUPID,
+                                        DATETIMECREATED = DateTime.Now,
+                                        CREATEDBY = staffId,
+                                        DELETED = false,
+                                        COMPILATIONDATE = DateTime.Parse(item.ratio_List[lastTwo].indicatorvalue),
+                                        AUDITORNAME = item.ratio_List[lastTwo + 1].indicatorvalue
+                                    });
+                                }
+                                //else if (i == lastTwo) { }
+                                //else { }
+                            }
+                        }
+                        
                     }
                 }
             }
@@ -197,7 +215,7 @@ namespace FintrakBanking.Repositories.Credit
         public void LoadCustomerGroupRatios(int applicationId, List<int> customerIds, int staffId)
         {
             bool isGroup = false;
-            var apiCustomerRatio = new List<GroupRatingAndRatioViewModel>();
+            var apiCustomerRatio = new List<MainGroupRatingAndRatioViewModel>();
             var apiTransactionsOthers = new List<GroupRatingAndRatioViewModel>();
             var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
@@ -217,20 +235,34 @@ namespace FintrakBanking.Repositories.Credit
 
                     foreach (var item in apiCustomerRatio)
                     {
-                        if (item.ratio != null) {
-                            for (int i = 0; i < item.ratio.Count - 1; i++) {
-                                context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
-                                {
-                                    DESCRIPTION = item.ratio[i].indicatorname,
-                                    VALUE = item.ratio[i].indicatorvalue,
-                                    CUSTOMERID = customer.CUSTOMERID,
-                                    LOANAPPLICATIONID = application.LOANAPPLICATIONID,
-                                    CUSTOMERGROUPID = application.CUSTOMERGROUPID,
-                                    DATETIMECREATED = DateTime.Now,
-                                    CREATEDBY = staffId,
-                                    DELETED = false,
-                                    CATEGORYID = context.TBL_CUSTOMER_RATIO_CATEGORY.Where(O => item.ratioHeader.Contains(O.CATEGORYNAME)).FirstOrDefault()?.CATEGORYID,
-                                });
+                        if (item.ratio_List != null) {
+                            for (int i = 0; i < item.ratio_List.Count; i++) {
+                                for (int j = 0; j < item.ratio_List[i].ratio.Count; j++) {
+                                    var customerRatio = new TBL_CUSTOMER_RATIOS
+                                    {
+                                        FINANCIALPERIOD = item.financial_Period,
+                                        DESCRIPTION = item.ratio_List[i].ratio[j].indicatorname,
+                                        VALUE = item.ratio_List[i].ratio[j].indicatorvalue,
+                                        CUSTOMERID = customer.CUSTOMERID,
+                                        LOANAPPLICATIONID = application.LOANAPPLICATIONID,
+                                        CUSTOMERGROUPID = application.CUSTOMERGROUPID,
+                                        DATETIMECREATED = DateTime.Now,
+                                        CREATEDBY = staffId,
+                                        DELETED = false,
+                                        // CATEGORYID = context.TBL_CUSTOMER_RATIO_CATEGORY.Where(O => item.ratioHeader.Contains(O.CATEGORYNAME)).FirstOrDefault()?.CATEGORYID,
+                                    };
+
+                                    if (item.ratio_List.Count == 4) {
+                                        customerRatio.CATEGORYID = int.Parse(item.ratio_List[i].ratioHeaderId);
+                                        customerRatio.CATEGORYIDFI = null;
+                                    }
+                                    else {
+                                        customerRatio.CATEGORYID = null;
+                                        customerRatio.CATEGORYIDFI = int.Parse(item.ratio_List[i].ratioHeaderId);
+                                    }
+
+                                    context.TBL_CUSTOMER_RATIOS.Add(customerRatio);
+                                }
                             }
                         }
                         
