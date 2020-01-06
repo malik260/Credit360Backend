@@ -406,7 +406,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var document = new TBL_DOCUMENT_UPLOAD()
                 {
-                    DOCUMENTTYPEID = 236, //Offer Letter
+                    DOCUMENTTYPEID = Convert.ToInt32( loanFile.documentTypeId), // ?? 236, //Offer Letter
                     FILENAME = loanFile.caption+"."+loanFile.fileExtension,
                     FILEEXTENSION = loanFile.fileExtension,
                     FILESIZE = loanFile.fileData.Length,
