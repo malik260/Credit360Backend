@@ -1180,6 +1180,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             workflow.StaffId = staffId;
+            workflow.ToStaffId = staffId;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
