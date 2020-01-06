@@ -28,28 +28,28 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanApplicationController : ApiControllerBase
     {
         private ILoanApplicationRepository repo;
-        private ILoanRepository loanRepository;
-        private ICreditLimitValidationsRepository creditLimitValidationsRepository;
+        //private ILoanRepository loanRepository;
+        //private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
-        private IErrorLogRepository errorLogger;
-        private IRepaymentTermsRepository repaymentRepo;
+        //private IErrorLogRepository errorLogger;
+        //private IRepaymentTermsRepository repaymentRepo;
 
         public LoanApplicationController(
             ILoanApplicationRepository _repo,
-            ILoanRepository _loanRepository,
-            ICreditLimitValidationsRepository _creditLimitValidationsRepository,
-            ILoanPreliminaryEvaluationRepository _repoLoanPEN,
-            IErrorLogRepository _errorLogger,
-            IRepaymentTermsRepository _repaymentRepo
+           // ILoanRepository _loanRepository,
+           // ICreditLimitValidationsRepository _creditLimitValidationsRepository,
+            ILoanPreliminaryEvaluationRepository _repoLoanPEN
+            //IErrorLogRepository _errorLogger
+           // IRepaymentTermsRepository _repaymentRepo
             )
         {
             this.repo = _repo;
-            this.loanRepository = _loanRepository;
-            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
+          //  this.loanRepository = _loanRepository;
+           // this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
-            errorLogger = _errorLogger;
-            repaymentRepo = _repaymentRepo;
+            //errorLogger = _errorLogger;
+           // repaymentRepo = _repaymentRepo;
         }
 
         #region Loan Application
@@ -1219,6 +1219,27 @@ namespace FintrakBanking.APICore.Controllers
             IQueryable<LoanApplicationViewModel> items;
 
             items = repo.GetRejectedLoanApplications(user);
+
+            var data = items.ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+
+        }
+
+        [HttpGet, Route("loan-application-and-offer/rejected/arch")]
+        public HttpResponseMessage GetRejectedLoanApplicationsArch()
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            IQueryable<LoanApplicationViewModel> items;
+
+            items = repo.GetRejectedLoanApplicationsArch(user);
 
             var data = items.ToList();
 

@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
+        IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user);
         List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId);
         List<LoanApplicationDetailViewModel> GetLmsLoanApplicationDetailsById(int loanApplicationId, int companyId);
 
@@ -90,7 +91,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
         int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false);
-        bool ArchiveLoanApplication(int loanAppliactionId, int operationId);
+        bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus);
         void ArchiveLoanApplicationDetails(int loanApplicationDetailId);
         int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, int? exclusiveFlowChangeId, bool next = false);
         int? GetFirstLevelStaffId(int levelId, int userBranch);

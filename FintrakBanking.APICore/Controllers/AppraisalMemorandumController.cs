@@ -23,9 +23,9 @@ namespace FintrakBanking.APICore.Controllers
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IAppraisalMemorandumRepository repo;
 
-        public AppraisalMemorandumController(IAppraisalMemorandumRepository repo)
+        public AppraisalMemorandumController(IAppraisalMemorandumRepository repo_)
         {
-            this.repo = repo;
+            this.repo = repo_;
         }
 
         [HttpGet]
@@ -213,6 +213,17 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
 
+        [HttpGet]
+        [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/currentLevel/{currentLevelId}/all/{all}")]
+        public HttpResponseMessage GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all)
+        {
+            var data = repo.GetTrailForReferBack(applicationId, operationId, currentLevelId, all);
+            if (data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
+        }
 
 
         [HttpGet]

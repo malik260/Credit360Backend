@@ -27,13 +27,13 @@ namespace FintrakBanking.ViewModels.Credit
     public class CallMemoViewModel : GeneralEntity
     {
         public int? loopedStaffId;
-        public short approvalStatusId;
+        public int approvalStatusId;
         public int approvalTrailId;
         public string approvalStatusName;
 
         public int callMemoId { get; set; }
         public int? approvalLevelId { get; set; }
-        public int loanApplicationId { get; set; }
+        public int? loanApplicationId { get; set; }
 
         public string loanReferenceNo { get; set; }
 
@@ -63,7 +63,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
        
         public string approvalStatus { get; set; }
-        public int? customerId { get; set; }
+        public int customerId { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public string searchName { get; set; }

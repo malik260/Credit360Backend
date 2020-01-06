@@ -15,10 +15,10 @@
         public int CUSTOMERRATIOID { get; set; }
 
         [Required]
-        //[StringLength(50)]
+        //[StringLength(50)]financial_Period
         public string DESCRIPTION { get; set; }
-
         public string VALUE { get; set; }
+        public string FINANCIALPERIOD { get; set; }
 
         public int CUSTOMERID { get; set; }
         public int LOANAPPLICATIONID { get; set; }
@@ -35,6 +35,9 @@
 
         public DateTime? DATETIMEDELETED { get; set; }
         public int? CATEGORYID { get; set; }
+        public int? CATEGORYIDFI { get; set; }
+        public DateTime? COMPILATIONDATE { get; set; }
+        public string AUDITORNAME { get; set; }
 
     }
 }
