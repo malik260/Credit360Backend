@@ -2576,7 +2576,6 @@ namespace FintrakBanking.Repositories.Credit
                 //}
 
             }
-            decimal totalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount) + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
             //decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
             var loanStatusId = (short)LoanStatusEnum.Inactive;
 
@@ -2592,7 +2591,7 @@ namespace FintrakBanking.Repositories.Credit
             loanData = new TBL_LOAN_APPLICATION
             {
                 REQUIRECOLLATERAL = loan.requireCollateral,
-                TOTALEXPOSUREAMOUNT = totalAmount,
+                //TOTALEXPOSUREAMOUNT = totalAmount,
                 PRODUCTCLASSID = productClassId,
                 APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
@@ -2633,6 +2632,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
                 PRODUCTID = workflowProductId,
             };
+            loanData.TOTALEXPOSUREAMOUNT = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount) + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
 
             if (isGroupLoan)
             {
