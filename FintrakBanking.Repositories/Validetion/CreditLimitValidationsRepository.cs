@@ -697,8 +697,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             if (customerIds.Count() <= 0) return false;
             foreach (var id in customerIds)
             {
-                var bvn = context.TBL_CUSTOMER.Find(id).CUSTOMERBVN;
+                var bvn = context.TBL_CUSTOMER.Find(id) ?.CUSTOMERBVN;
+
                 var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
+
                 if (isDirector) return isDirector;
             }
             return false;
@@ -706,7 +708,8 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public bool CustomerIsDirector(int? customerId)
         {
-            var bvn = context.TBL_CUSTOMER.Find(customerId).CUSTOMERBVN;
+
+            var bvn = context.TBL_CUSTOMER.Find(customerId)?.CUSTOMERBVN;
             if (String.IsNullOrEmpty(bvn) || String.IsNullOrEmpty(bvn)) return false;
             var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
             if (isDirector) return isDirector;
