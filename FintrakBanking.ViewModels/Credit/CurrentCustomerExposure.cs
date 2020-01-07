@@ -5,7 +5,7 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CurrentCustomerExposure
     {
-        public DateTime bookingDate { get; set; }
+        public DateTime? bookingDate { get; set; }
         public DateTime bookingDateString { get; set; }
         public DateTime? maturityDateString { get; set; }
 
@@ -46,7 +46,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currency { get; set; }
         public string currencyType { get; set; }
         public string currencyCode { get; set; }
-        public DateTime maturityDate { get; set; }
+        public DateTime? maturityDate { get; set; }
         public int tenor { get; set; }
         public string tenorString { get; set; }
         public decimal? totalBankExposure { get; set; }
@@ -80,7 +80,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int id { get; set; }
         public string customerId { get; set; }
-        public DateTime date { get; set; }
+        public DateTime? date { get; set; }
         public string customerName { get; set; }
         public string groupObligorName { get; set; }
         public string referenceNumber { get; set; }
@@ -102,21 +102,21 @@ namespace FintrakBanking.ViewModels.Credit
         public string pwcClassification { get; set; }
         public string ifrsClassification { get; set; }
         public string tenor { get; set; }
-        public DateTime maturityDate { get; set; }
+        public DateTime? maturityDate { get; set; }
         public string location { get; set; }
-        public DateTime bookingDate { get; set; }
-        public DateTime valueDate { get; set; }
+        public DateTime? bookingDate { get; set; }
+        public DateTime? valueDate { get; set; }
         public string maturityBand { get; set; }
         public string customerType { get; set; }
         public string branchName { get; set; }           
         public string branchCode { get; set; }
         public string obligorRiskRating { get; set; }
-        public DateTime lastCrDate { get; set; }
+        public DateTime? lastCrDate { get; set; }
         public string productId { get; set; }
         public string exposureTypeCode { get; set; }
         public string exposureType { get; set; }
         public string teamCode { get; set; }
-        public string lastCreditAmount { get; set; }
+        public decimal? lastCreditAmount { get; set; }
         public decimal? principalOutStandingBaltcy { get; set; }
         public decimal? principalOutStandingBallcy { get; set; }
         public decimal? loanAmounyTcy { get; set; }

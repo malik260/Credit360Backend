@@ -9133,8 +9133,8 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         e.tenor = int.Parse(e.tenorString);
-                        e.bookingDate = e.bookingDate.Date;
-                        e.maturityDate = e.maturityDate.Date;
+                        e.bookingDate = e.bookingDate?.Date;
+                        e.maturityDate = e.maturityDate?.Date;
                         //e.productId = int.Parse(e.productIdString);
                         e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
                         e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);

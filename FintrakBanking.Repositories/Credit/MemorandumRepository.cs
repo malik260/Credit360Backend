@@ -4606,7 +4606,7 @@ namespace FintrakBanking.Repositories.Credit
                             outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                             pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
                             reviewDate = DateTime.Now,
-                            bookingDate = a.BOOKINGDATE,
+                            bookingDate = a.BOOKINGDATE ,
                             //maturityDateString = a.MATURITYDATE,
                             maturityDate = a.MATURITYDATE,
                             loanStatus = a.CBNCLASSIFICATION,
