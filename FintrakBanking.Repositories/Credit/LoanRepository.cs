@@ -2215,7 +2215,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.product_desc = product.PRODUCTNAME;
             loanCreationModel.source = "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
-            loanCreationModel.tax_rate = feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
+            loanCreationModel.tax_rate = "5"; // feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
             loanCreationModel.app_user_id = "FINTRAKUSER";  //"FINTRAKUSER";//;
