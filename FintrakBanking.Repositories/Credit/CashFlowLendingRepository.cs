@@ -82,9 +82,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             APIResponse response = new APIResponse();
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
+            //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
+            //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
             //if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
@@ -123,9 +123,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             APIResponse response = new APIResponse();
 
-            if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
+            //if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
+            //if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
             var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
             if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
@@ -296,6 +296,10 @@ namespace FintrakBanking.Repositories.Credit
                 var application = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
                 if (application == null) { return fireResponse("Application does not exist in Fintrak Credit360", "99", ""); }
 
+                if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99", ""); }
+
+                if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99", ""); }
+
                 model.createdBy = accountOfficer1.STAFFID;
                 model.customerCode = context.TBL_CUSTOMER.Find(application.CUSTOMERID)?.CUSTOMERCODE;
                 SaveLoanDocument(model);
@@ -379,7 +383,11 @@ namespace FintrakBanking.Repositories.Credit
                  && o.APPROVEDINTERESTRATE == loanApp.interestRate && o.APPROVEDTENOR == loanApp.proposedTenor && o.CURRENCYID == currency.CURRENCYID && o.CUSTOMERID == customer.CUSTOMERID
                  && o.SUBSECTORID == loanApp.sectorId && o.CREATEDBY == 1 && o.DELETED != true);
 
-            if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");  
+            if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");
+
+            if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99", ""); }
+
+            if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99", ""); }
 
             response.applicationReferenceNumber = AddLoanApplication(loanApp, model.requestId);
             model.createdBy = accountOfficer.STAFFID;
@@ -400,6 +408,7 @@ namespace FintrakBanking.Repositories.Credit
         //private void SaveLoanDocument(CflLoanApplication model)
         private void SaveLoanDocument(CflLoanApplication model)
         {
+            
             FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
             var staffId = context.TBL_STAFF.Where(s => s.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
             foreach (var loanFile in model.loanApplicationFiles)
@@ -427,6 +436,43 @@ namespace FintrakBanking.Repositories.Credit
                     TARGETREFERENCENUMBER = model.applicationReferenceNumber,
                     CUSTOMERCODE = model.customerCode,
                     OPERATIONID = (int) OperationsEnum.CreditAppraisal,
+                    ISPRIMARYDOCUMENT = false,
+                    DELETED = false,
+                    CREATEDBY = staffId.STAFFID,
+                    DATETIMECREATED = DateTime.Now
+                });
+            }
+
+            foreach (var loanFile in model.creditBureauReport)
+            {
+                var caption = string.Empty;
+                if (Convert.ToInt16(loanFile.reportStatus) == (short)CreditBureauEnum.CRCCreditBureau) caption = "CRCCreditBureau";
+                if (Convert.ToInt16(loanFile.reportStatus) == (short)CreditBureauEnum.XDSCreditBureau) caption = "FirstCentralCreditBureau";
+                if (Convert.ToInt16(loanFile.reportStatus) == (short)CreditBureauEnum.CRMS) caption = "CRMSCreditBureau";
+
+                var document = new TBL_DOCUMENT_UPLOAD()
+                {
+                    DOCUMENTTYPEID = Convert.ToInt32(loanFile.documentTypeId), 
+                    FILENAME = caption + "." + "pdf",
+                    FILEEXTENSION = "pdf",
+                    FILESIZE = loanFile.reportFileDateinPDF.Length,
+                    FILEDATA = loanFile.reportFileDateinPDF.Base64ToByte(),
+                    COMPANYID = model.companyId,
+                    DELETED = false,
+                    DATETIMECREATED = DateTime.Now,
+                    CREATEDBY = staffId.STAFFID,
+                };
+
+                docContext.TBL_DOCUMENT_UPLOAD.Add(document);
+                docContext.SaveChanges();
+
+                docContext.TBL_DOCUMENT_USAGE.Add(new TBL_DOCUMENT_USAGE()
+                {
+                    DOCUMENTUPLOADID = document.DOCUMENTUPLOADID,
+                    TARGETID = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID,
+                    TARGETREFERENCENUMBER = model.applicationReferenceNumber,
+                    CUSTOMERCODE = model.customerCode,
+                    OPERATIONID = (int)OperationsEnum.CreditAppraisal,
                     ISPRIMARYDOCUMENT = false,
                     DELETED = false,
                     CREATEDBY = staffId.STAFFID,

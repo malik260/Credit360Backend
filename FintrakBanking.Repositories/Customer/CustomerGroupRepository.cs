@@ -1503,7 +1503,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 bookingDate = a.BOOKINGDATE,
                                 tenorString = a.TENOR,
                                 //maturityDateString = a.MATURITYDATE,
-                                maturityDate = a.MATURITYDATE,
+                                maturityDate = Convert.ToDateTime(a.MATURITYDATE),
                                 loanStatus = a.CBNCLASSIFICATION,
                                 referenceNumber = a.REFERENCENUMBER,
                             }).ToList();
