@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
         public short FEETYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FEETYPENAME { get; set; }
 
         public bool BYAMOUNTREQUIRED { get; set; }

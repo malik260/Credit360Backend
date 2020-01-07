@@ -16,7 +16,7 @@
         public short JOBTYPEHUBID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string HUBNAME { get; set; }
 
         public short JOBTYPEID { get; set; }

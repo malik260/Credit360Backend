@@ -665,7 +665,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal approvedAmount { get; set; }
         public short productId { get; set; }
         public int? operationId { get; set; }
-
+        public int? tenor { get; set; }
         public bool isLienPlacementForLoan { get; set; }
 
 
@@ -678,6 +678,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public int appraisalOperationId { get; set; }
+
         public int appraiselOperationId { get; set; }
 
         public string crmsCode { get; set; }
@@ -838,7 +840,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? capRegionId { get; set; }
-
 
         //......End f Loan Relational Table View Mapping Models......//
     }

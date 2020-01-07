@@ -29,21 +29,21 @@ namespace FintrakBanking.Entities.Models
         public string PROJECTLOCATION { get; set; }
 
         [Required]
-        //[StringLength(2)]
+        ////[StringLength(2)]
         public string CLIENTNAME { get; set; }
 
         [Required]
-        //[StringLength(2)]
+        ////[StringLength(2)]
         public string CONTRACTORNAME { get; set; }
 
         [Required]
-        //[StringLength(2)]
+        ////[StringLength(2)]
         public string CONSULTANTNAME { get; set; }
 
         public decimal PROJECTAMOUNT { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string PROJECTDESCRIPTION { get; set; }
 
         public DateTime COMMENCEMENTDATE { get; set; }

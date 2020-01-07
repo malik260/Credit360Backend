@@ -13,26 +13,26 @@ namespace FintrakBanking.Entities.SQLServerModel
         public long ERRORLOGID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string USERNAME { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string ERRORTYPE { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string ERRORSOURCE { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string ERRORMESSAGE { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string APIENDPOINT { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string ERRORPATH { get; set; }
 
         public int? STATUSCODE { get; set; }

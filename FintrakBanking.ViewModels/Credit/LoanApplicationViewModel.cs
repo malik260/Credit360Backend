@@ -23,6 +23,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int psrReportTypeId { get; set; }
         public string facility { get; set; }
 
+        public bool? isFacilityCreated { get; set; }
+
         public LoanApplicationViewModel()
         {
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
@@ -60,6 +62,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
         public DateTime applicationDate { get; set; }
+        public DateTime? applicationDateArch { get; set; }
         public decimal applicationAmount { get; set; }
         public decimal approvedAmount { get; set; }
         public double applicationTenor { get; set; }
@@ -338,6 +341,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isTakeOverApplication { get; set; }
 
         public string customerType { get; set; }
+        public short? customerTypeId { get; set; }
+        public int loanDetailReviewTypeId { get; set; }
         public string customerAccountNumber { get; set; }
 
         public bool requireCollateral { get; set; }

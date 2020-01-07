@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.SQLServerModel
     public partial class SYSDIAGRAM
     {
         [Required]
-        [StringLength(128)]
+        //[StringLength(128)]
         public string NAME { get; set; }
 
         public int PRINCIPAL_ID { get; set; }

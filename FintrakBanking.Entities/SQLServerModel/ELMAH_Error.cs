@@ -12,27 +12,27 @@ namespace FintrakBanking.Entities.SQLServerModel
         public Guid ErrorId { get; set; }
 
         [Required]
-        [StringLength(60)]
+        //[StringLength(60)]
         public string Application { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string Host { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string Type { get; set; }
 
         [Required]
-        [StringLength(60)]
+        //[StringLength(60)]
         public string Source { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string Message { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string User { get; set; }
 
         public int StatusCode { get; set; }

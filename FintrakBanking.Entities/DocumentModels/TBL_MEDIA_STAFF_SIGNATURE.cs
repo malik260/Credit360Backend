@@ -12,17 +12,17 @@ namespace FintrakBanking.Entities.DocumentModels
         public int DOCUMENTID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFCODE { get; set; }
 
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(400)]
+        //[StringLength(400)]
         public string FILENAME { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string FILEEXTENSION { get; set; }
 
         [Required]

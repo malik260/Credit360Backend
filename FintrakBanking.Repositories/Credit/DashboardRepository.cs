@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
@@ -19,13 +20,16 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
+        private IApprovalLevelStaffRepository levelStaffRepo;
 
-        public DashboardRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
+        public DashboardRepository(FinTrakBankingContext context, IGeneralSetupRepository general, 
+                                    IAuditTrailRepository audit, IWorkflow workflow, IApprovalLevelStaffRepository _levelStaffRepo)
         {
             this.context = context;
             this.general = general;
             this.audit = audit;
             this.workflow = workflow;
+            this.levelStaffRepo = _levelStaffRepo;
         }
 
         public List<DashboardViewModel> LoanApplicationsBySector(DateTime startDate, DateTime endDate, int companyId, int staffId)
@@ -153,19 +157,32 @@ namespace FintrakBanking.Repositories.Credit
         public List<DashboardViewModel> LoanOnThePipeline(DateTime startDate, DateTime endDate, int companyId, int staffId)
         {
             var staff = context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o).FirstOrDefault();
+            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId || c.staffRoleId == staff.STAFFROLEID).ToList();
+            var staffApprovalLevels = approvalLevel.Select(x => x.approvalLevelId).Distinct();
 
-            int[] applicationStatus =  { (int)LoanApplicationStatusEnum.CancellationInProgress,
-                (int)LoanApplicationStatusEnum.CancellationInProgress,
-                (int)LoanApplicationStatusEnum.LoanBookingInProgress,
-                (int)LoanApplicationStatusEnum.LoanBookingCompleted };
+            //int[] applicationStatus =  { (int)LoanApplicationStatusEnum.CancellationInProgress,
+            //    (int)LoanApplicationStatusEnum.CancellationInProgress,
+            //    (int)LoanApplicationStatusEnum.LoanBookingInProgress,
+            //    (int)LoanApplicationStatusEnum.LoanBookingCompleted
+            //};
 
             var data = (from x in context.TBL_LOAN_APPLICATION_DETAIL
-                         join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
-                         where !applicationStatus.Contains(l.APPLICATIONSTATUSID)
-                                && x.STATUSID == (int)ApprovalStatusEnum.Approved
-                                && l.COMPANYID == companyId
-                                && x.DATETIMECREATED >= startDate && x.DATETIMECREATED <= endDate
-                         select new { x, l })?.ToList();
+                        join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                        join a in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals a.TARGETID
+                        where a.APPROVALSTATEID != (int)ApprovalState.Ended && l.DELETED == false 
+                        && l.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                        //&& !applicationStatus.Contains(l.APPLICATIONSTATUSID) //&& x.STATUSID == (int)ApprovalStatusEnum.Approved
+                        && l.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted 
+                        && l.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && a.APPROVALSTATUSID != (int) ApprovalStatusEnum.Approved
+                        && l.COMPANYID == companyId
+                        && x.DATETIMECREATED >= startDate && x.DATETIMECREATED <= endDate
+                        && (a.TOSTAFFID == staff.STAFFID || a.TOSTAFFID == null)
+                        && a.RESPONSESTAFFID == null
+                        //&& levelIds.Contains((int) a.TOAPPROVALLEVELID)
+                        && staffApprovalLevels.ToList().Contains((int)a.TOAPPROVALLEVELID)
+                        select new { x, l })?.ToList();
+
 
             if (staff?.TBL_STAFF_ROLE.STAFFROLECODE == "RM")
             {
@@ -178,13 +195,14 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             List<DashboardViewModel> result = new List<DashboardViewModel>();
+
             if (data != null && data.Count() > 0)
             {
                 result = (from rec in data
                           group rec by new { rec.l.COMPANYID } into gg
                           select new DashboardViewModel
                           {
-                              loanCount = gg?.Count() ?? 0,
+                              loanCount = gg?.Select(O => O.x.LOANAPPLICATIONID).Distinct().Count() ?? 0,
                               sumOfProposedAmount = gg?.Sum(g => (double)g.x.APPROVEDAMOUNT * g.x.EXCHANGERATE) ?? 0,
                           })?.ToList();
             }
@@ -306,13 +324,22 @@ namespace FintrakBanking.Repositories.Credit
         public List<DashboardViewModel> ApprovedLoan(DateTime startDate, DateTime endDate, int companyId, int staffId)
         {
             var staff = context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o).FirstOrDefault();
+            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId || c.staffRoleId == staff.STAFFROLEID).ToList();
+            var staffApprovalLevels = approvalLevel.Select(x => x.approvalLevelId).Distinct();
 
             var data = (from l in context.TBL_LOAN_APPLICATION_DETAIL
-                           join a in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                           where l.STATUSID == (int)ApprovalStatusEnum.Approved
-                                && a.COMPANYID == companyId
-                                && a.DATETIMECREATED >= startDate && a.DATETIMECREATED <= endDate
-                           select new { l, a })?.ToList();
+                        join a in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                        join t in context.TBL_APPROVAL_TRAIL on l.LOANAPPLICATIONID equals t.TARGETID
+                        where l.DELETED == false //a.APPROVALSTATEID != (int)ApprovalState.Ended &&
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                        && a.COMPANYID == companyId
+                        && l.DATETIMECREATED >= startDate && l.DATETIMECREATED <= endDate
+                        //&& a.TOSTAFFID == staff.STAFFID
+                        && t.RESPONSESTAFFID == staff.STAFFID
+                        //&& levelIds.Contains((int) t.TOAPPROVALLEVELID)
+                        && staffApprovalLevels.ToList().Contains((int) t.TOAPPROVALLEVELID)
+                        select new { l, a })?.ToList();
 
             if (staff?.TBL_STAFF_ROLE.STAFFROLECODE == "RM")
             {
@@ -331,7 +358,7 @@ namespace FintrakBanking.Repositories.Credit
                             group rec by new { rec.a.COMPANYID } into gg
                             select new DashboardViewModel
                             {
-                                loanCount = gg?.Count() ?? 0,
+                                loanCount = gg?.Select(O => O.l.LOANAPPLICATIONID).Distinct().Count() ?? 0,
                                 sumOfProposedAmount = gg?.Sum(x => (double)x.l.APPROVEDAMOUNT * x.l.EXCHANGERATE) ?? 0
                             })?.ToList();
             }

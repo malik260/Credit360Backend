@@ -36,9 +36,6 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var responseMessage = string.Empty;
 
-
-
-
                 List<OverrideDetailVeiwModel> model = entity.Select(c => new OverrideDetailVeiwModel
                 {
                     approvedStatusId = c.approvedStatusId,

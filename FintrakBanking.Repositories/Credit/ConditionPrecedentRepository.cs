@@ -39,7 +39,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByProductId(int? productId)
         {
-            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => x.PRODUCTID == productId || x.PRODUCTID == null).ToList();
+            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => x.PRODUCTID == productId).ToList();
             var test = conditions.Select(c => new ConditionPrecedentViewModel
             {
                 conditionId = c.CONDITIONID,
@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
-                product = c.TBL_PRODUCT.PRODUCTNAME,
+                product = context.TBL_PRODUCT.Where(p => p.PRODUCTID == productId).Select(p => p.PRODUCTNAME).FirstOrDefault() ?? "N/A" ,
                 timelineId = c.TIMELINEID,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,

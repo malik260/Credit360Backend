@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int LOANAPPLICATIONDETAILID { get; set; }
 
         public int? PRINCIPALID { get; set; }
-        [StringLength(500)]
+        //[StringLength(500)]
         public string PRINCIPALNAME { get; set; }
 
         //[Column(TypeName = "money")]
@@ -35,10 +35,10 @@ namespace FintrakBanking.Entities.Models
 
         public short? APPROVALSTATUSID { get; set; }
 
-        [StringLength(800)]
+        //[StringLength(800)]
         public string APPROVAL_COMMENT { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REFERENCENO { get; set; }
 
         public int? CASAACCOUNTID { get; set; }

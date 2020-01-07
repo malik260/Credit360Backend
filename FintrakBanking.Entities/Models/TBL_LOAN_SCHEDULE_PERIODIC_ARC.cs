@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime ARCHIVEDATE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ARCHIVEBATCHCODE { get; set; }
 
         public int LOANID { get; set; }

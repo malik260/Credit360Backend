@@ -28,7 +28,7 @@ namespace FintrakBanking.Entities.Models
         public int TARGETID { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string REASONFORCHANGE { get; set; }
 
         public short APPROVALSTATUSID { get; set; }

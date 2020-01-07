@@ -163,7 +163,7 @@ namespace FintrakBanking.Repositories.Credit
                 //.Select(x => new { x.currencyId, x.sellingRate}).Distinct().ToList();
 
 
-
+               
                 var scheduledLoan = (//from a in context.TBL_LOAN_SCHEDULE_DAILY
                                      from b in context.TBL_LOAN // on a.LOANID equals b.TERMLOANID
                                                                 //join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
@@ -16277,7 +16277,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanOperationTypeViewModel> GetOperationType()
         {
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplicationApproval
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
                     && data.ISDISABLED == false
                     select new LoanOperationTypeViewModel()
                     {
@@ -16320,7 +16320,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanOperationTypeViewModel> GetReviewApprovalOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)
         {
             var loanOperations = (from data in context.TBL_OPERATIONS
-                                  where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplicationApproval
+                                  where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
                                   select new LoanOperationTypeViewModel()
                                   {
                                       operationTypeId = data.OPERATIONID,

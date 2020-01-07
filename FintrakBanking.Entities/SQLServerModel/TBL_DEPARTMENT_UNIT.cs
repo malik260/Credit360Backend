@@ -21,12 +21,12 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short DEPARTMENTUNITID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string DEPARTMENTUNITNAME { get; set; }
 
         public short DEPARTMENTID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string EMAIL { get; set; }
 
         public bool? DELETED { get; set; }

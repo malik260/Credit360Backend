@@ -43,11 +43,11 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short CURRENCYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CURRENCYCODE { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string CURRENCYNAME { get; set; }
 
         public bool INUSE { get; set; }

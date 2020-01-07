@@ -28,28 +28,28 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanApplicationController : ApiControllerBase
     {
         private ILoanApplicationRepository repo;
-        private ILoanRepository loanRepository;
-        private ICreditLimitValidationsRepository creditLimitValidationsRepository;
+        //private ILoanRepository loanRepository;
+        //private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
-        private IErrorLogRepository errorLogger;
-        private IRepaymentTermsRepository repaymentRepo;
+        //private IErrorLogRepository errorLogger;
+        //private IRepaymentTermsRepository repaymentRepo;
 
         public LoanApplicationController(
             ILoanApplicationRepository _repo,
-            ILoanRepository _loanRepository,
-            ICreditLimitValidationsRepository _creditLimitValidationsRepository,
-            ILoanPreliminaryEvaluationRepository _repoLoanPEN,
-            IErrorLogRepository _errorLogger,
-            IRepaymentTermsRepository _repaymentRepo
+           // ILoanRepository _loanRepository,
+           // ICreditLimitValidationsRepository _creditLimitValidationsRepository,
+            ILoanPreliminaryEvaluationRepository _repoLoanPEN
+            //IErrorLogRepository _errorLogger
+           // IRepaymentTermsRepository _repaymentRepo
             )
         {
             this.repo = _repo;
-            this.loanRepository = _loanRepository;
-            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
+          //  this.loanRepository = _loanRepository;
+           // this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
-            errorLogger = _errorLogger;
-            repaymentRepo = _repaymentRepo;
+            //errorLogger = _errorLogger;
+           // repaymentRepo = _repaymentRepo;
         }
 
         #region Loan Application
@@ -1226,6 +1226,27 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet, Route("loan-application-and-offer/rejected/arch")]
+        public HttpResponseMessage GetRejectedLoanApplicationsArch()
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            IQueryable<LoanApplicationViewModel> items;
+
+            items = repo.GetRejectedLoanApplicationsArch(user);
+
+            var data = items.ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+
+        }
+
         //[HttpPut]
         //[Route("loan-application-for-cam")]
         //public HttpResponseMessage SubmitLoanApplicationForCam([FromBody] dynamic model)
@@ -2044,5 +2065,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "Lien has been unproposed successfully" });
         }
         #endregion LIEN
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-review-type")]
+        public HttpResponseMessage GetAllLoanDetailReviewTypes()
+        {
+            IEnumerable<LoanDetailReviewTypeViewModel> response = repo.GetAllLoanDetailReviewTypes();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
     }
 }

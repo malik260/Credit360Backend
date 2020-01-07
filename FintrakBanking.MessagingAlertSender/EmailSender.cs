@@ -12,6 +12,8 @@ using FintrakBanking.Common.CustomException;
 using System.IO;
 using FintrakBanking.Entities.DocumentModels;
 using Topshelf.Logging;
+using System.Text.RegularExpressions;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.MessagingAlertSender
 {
@@ -203,16 +205,24 @@ namespace FintrakBanking.MessagingAlertSender
 
                                 foreach (var emailAddy in Addy)
                                 {
+                                    string pattern = null;
+                                    pattern = CommonHelpers.EmailValidator;  
+
+                                    if (Regex.IsMatch(emailAddy, pattern) == false)
+                                    {
+                                        continue;
+                                    }
+
                                     if (emailAddy != null && emailAddy != string.Empty)
                                     {
                                         mail.To.Add(new MailAddress(emailAddy));
                                     }
                                 }
+                                
                             }
-                               
                                 mail.IsBodyHtml = true;
                                 mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
-                                mail.Body = newMail.MESSAGEBODY;
+                                mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
                                 mailId = newMail.MESSAGEID;
 
                             if (newMail.ATTACHMENTTYPEID != null)
@@ -339,6 +349,18 @@ namespace FintrakBanking.MessagingAlertSender
         }
 
 
+        public string RemoveSpecialCharacters(string str)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in str)
+            {
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.')
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
 
 
     }

@@ -527,7 +527,33 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("all-customer-fs-caption-detail/customer/")]
+        public HttpResponseMessage GetAllMappedCustomerFsCaptionDetail(int customerId, DateTime fsDate)
+        {
+            try
+            {
+                var data = _fsDetailRepo.GetAllMappedCustomerFsCaptionDetail(customerId, fsDate);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, result = data, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-caption-detail/customer/{customerId}")]
         public HttpResponseMessage GetMappedCustomerFsCaptions(int customerId)
         {

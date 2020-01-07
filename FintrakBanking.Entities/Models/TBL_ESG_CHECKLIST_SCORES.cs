@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? ESGCHECKLISTDEFINITIONID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string GRADE { get; set; }
 
         public int? SCORE { get; set; }

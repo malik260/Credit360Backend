@@ -26,43 +26,50 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class CallMemoViewModel : GeneralEntity
     {
-        public int CallMemoId { get; set; }
+        public int? loopedStaffId;
+        public int approvalStatusId;
+        public int approvalTrailId;
+        public string approvalStatusName;
 
-        public int LoanApplicationId { get; set; }
+        public int callMemoId { get; set; }
+        public int? approvalLevelId { get; set; }
+        public int? loanApplicationId { get; set; }
 
-        public string LoanReferenceNo { get; set; }
+        public string loanReferenceNo { get; set; }
 
-        public int StaffId { get; set; }
+        public int staffId { get; set; }
 
-        public string CustomerName { get; set; }
+        public string customerName { get; set; }
 
-        public short CallMemoTypeId { get; set; }
+        //public short CallMemoTypeId { get; set; }
 
-        public string CallMemoType { get; set; }
+        //public string CallMemoType { get; set; }
 
-        public DateTime MemoDate { get; set; }
+        public DateTime memoDate { get; set; }
 
-        public DateTime? NextCallDate { get; set; }
+        public DateTime? nextCallDate { get; set; }
 
-        public string Purpose { get; set; }
+        public string purpose { get; set; }
 
-        public string Discusion { get; set; }
+        public string discusion { get; set; }
 
-        public string Summary { get; set; }
+        public string action { get; set; }
 
-        public string Action { get; set; }
-
-        public string Recommendation { get; set; }
-        public int OperationId { get; set; }
-        public int ApprovalStatusId { get; set; }
-        public string ApprovalStatus { get; set; }
-        public int? CustomerId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public string SearchName { get; set; }
-        public DateTime CallTime { get; set; }
-        public DateTime NextCallTime { get; set; }
-        public string Comment { get; set; }
+        public string participants { get; set; }
+        public string location { get; set; }
+        public string background { get; set; }
+        public string recentUpdate { get; set; }
+        public string cc { get; set; }
+        public int operationId { get; set; }
+       
+        public string approvalStatus { get; set; }
+        public int customerId { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
+        public string searchName { get; set; }
+        public DateTime callTime { get; set; }
+        public DateTime nextCallTime { get; set; }
+        public string comment { get; set; }
     }
     public class CallLimitViewModel : GeneralEntity
     {

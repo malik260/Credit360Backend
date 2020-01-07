@@ -264,6 +264,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offer-letter-cfl")]
+        public HttpResponseMessage GetGeneratedCFLOfferLetter(string applicationRefNumber)
+        {
+            try
+            {
+
+                //var data = repo.GetGeneratedCFLOfferLetter(applicationRefNumber, StatusCode, RequestId, WorkflowStage, ReasonForRejection, ActionByName);
+                var data = repo.GetGeneratedCFLOfferLetter(applicationRefNumber, token.GetUsername);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int CUSTOMERID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CHILDNAME { get; set; }
 
         //[Column(TypeName = "date")]

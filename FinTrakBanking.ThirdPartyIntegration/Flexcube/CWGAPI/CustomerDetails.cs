@@ -39,12 +39,12 @@
             {
                 APIUrlConfig = context.TBL_API_URL.ToList();
                 var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
-                if (apiConfig != null)
+                if (apiConfig != null && !String.IsNullOrEmpty(apiConfig.URL))
                 {
                     API_URL = apiConfig.URL;
                     API_KEY = apiConfig.APIKEY;
                 }
-                if (apiConfig == null)
+                if (apiConfig == null || String.IsNullOrEmpty(apiConfig.URL))
                 {
                     apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
 
@@ -108,7 +108,7 @@
                             if (customerModel.gender == "M") { customerModel.gender = "Male"; }
                             if (customerModel.gender == "F") { customerModel.gender = "Female"; }
 
-                            if (customerModel.customerTypeId == (short)CustomerTypeEnum.Corporate)
+                            if (customerModel.customerTypeId == (short)CustomerTypeEnum.Corporate || customerModel.customerType == "C")
                             {
                                 customerModel.firstName = customerModel.companyName == null ? customerModel.company_name : customerModel.companyName;
                                 customerModel.companyName = customerModel.company_name;

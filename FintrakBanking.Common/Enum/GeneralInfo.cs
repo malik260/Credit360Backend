@@ -448,7 +448,13 @@ namespace FintrakBanking.Common.Enum
         LienProposed = 549,
         LienUnproposed = 550,
         DocumentTemplatePrinted = 551,
-        CrmsRecordAdded = 552
+        CrmsRecordAdded = 552,
+        CustomerRelatedPartyDeleted = 553,
+        CustomerPhoneContactDeleted = 554,
+        CustomerContactAddressDeleted = 555,
+        CustomerEmploymentHistoryDeleted = 556,
+
+
     };
     public enum RegulatoryTypeEnum
     {

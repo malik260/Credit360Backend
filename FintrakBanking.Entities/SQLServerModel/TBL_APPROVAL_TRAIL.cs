@@ -46,7 +46,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int OPERATIONID { get; set; }
 
-        [StringLength(700)]
+        //[StringLength(700)]
         public string COMMENT { get; set; }
 
         public short? VOTE { get; set; }

@@ -24,7 +24,7 @@
         public int CORRSCORE { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string CORRCOMMENT { get; set; }
 
         public int CREATEDBY { get; set; }

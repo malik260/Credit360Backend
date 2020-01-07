@@ -6,11 +6,15 @@ using System.Linq;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Setups.Credit;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.Interfaces.Credit
 {
     public interface IAppraisalMemorandumRepository
     {
+        //IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId);
         AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId);
 
         IEnumerable<DocumentationViewModel> GetAllDocumentation(int applicationId);
@@ -33,6 +37,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
         IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all);
+        IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all);
 
         // IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
         LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId);
@@ -96,5 +101,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersByOperationId(int operationId, int applicationDetailId);
         LoanApplicationDetailsViewModel GetLoanApplicationDetailByRefNo(string applicationReferenceNumber);
+
+        void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode);
+
     }
 }

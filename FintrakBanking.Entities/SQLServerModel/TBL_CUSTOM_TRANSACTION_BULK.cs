@@ -15,23 +15,23 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int SID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BATCHID { get; set; }
 
         public int BATCHREFID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DEBITACCOUNTID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CREDITACCOUNTID { get; set; }
 
         public int OPERATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SOURCEREFERENCENUMBER { get; set; }
 
         [Column(TypeName = "money")]
@@ -41,14 +41,14 @@ namespace FintrakBanking.Entities.SQLServerModel
         public decimal? AMOUNTCOLLECTED { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TRANSACTIONTYPE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FLOWTYPE { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         [Column(TypeName = "date")]
@@ -64,10 +64,10 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short DESTINATIONBRANCHID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CURRENCYCODE { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string CURRENCYRATECODE { get; set; }
 
         public double CURRENCYRATE { get; set; }
@@ -77,17 +77,17 @@ namespace FintrakBanking.Entities.SQLServerModel
         public bool ISPOSTED { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string POSTEDBY { get; set; }
 
         [Required]
-        [StringLength(1)]
+        //[StringLength(1)]
         public string FORCEDEBITACCOUNT { get; set; }
 
         public short VALUEDATENUMBER { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string BANKID { get; set; }
     }
 }

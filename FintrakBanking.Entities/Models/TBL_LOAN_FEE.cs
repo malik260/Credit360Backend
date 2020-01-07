@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CHARGEFEEID { get; set; }
 
-        [StringLength(3000)]
+        //[StringLength(3000)]
         public string DESCRIPTION { get; set; }
         public bool ISMANUAL { get; set; }
 

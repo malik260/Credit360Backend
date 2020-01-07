@@ -63,7 +63,7 @@ namespace FintrakBanking.MonitoringMessageLogger
                 {
                     //alert.validateAlertCheck();
                     // SEND EMAILS
-                    bool response = true; // emailSender.SendEmails();
+                    bool response = true; //emailSender.SendEmails();
                     if (response == true)
                     {
                         _log.Info("");

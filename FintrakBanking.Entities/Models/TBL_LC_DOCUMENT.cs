@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int LCISSUANCEID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string DOCUMENTTITLE { get; set; }
 
         public bool ISSENTTOISSUINGBANK { get; set; }

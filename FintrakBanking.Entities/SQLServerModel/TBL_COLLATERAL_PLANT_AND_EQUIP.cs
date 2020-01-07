@@ -15,47 +15,47 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COLLATERALCUSTOMERID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string MACHINENAME { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MACHINENUMBER { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MANUFACTURERNAME { get; set; }
 
         [Required]
-        [StringLength(5)]
+        //[StringLength(5)]
         public string YEAROFMANUFACTURE { get; set; }
 
         [Required]
-        [StringLength(5)]
+        //[StringLength(5)]
         public string YEAROFPURCHASE { get; set; }
 
         public short VALUEBASETYPEID { get; set; }
 
-        [StringLength(300)]
+        //[StringLength(300)]
         public string MACHINECONDITION { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string MACHINERYLOCATION { get; set; }
 
         [Column(TypeName = "money")]
         public decimal REPLACEMENTVALUE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string EQUIPMENTSIZE { get; set; }
 
-        [StringLength(150)]
+        //[StringLength(150)]
         public string INTENDEDUSE { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string REMARK { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }

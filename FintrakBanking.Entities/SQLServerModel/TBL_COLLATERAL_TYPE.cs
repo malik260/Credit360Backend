@@ -24,12 +24,12 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COLLATERALTYPEID { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string COLLATERALTYPENAME { get; set; }
 
         public int COMPANYID { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DETAILS { get; set; }
 
         public bool REQUIREINSURANCEPOLICY { get; set; }

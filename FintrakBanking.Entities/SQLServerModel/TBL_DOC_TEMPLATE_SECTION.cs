@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int TEMPLATEID { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string TITLE { get; set; }
 
         [Required]

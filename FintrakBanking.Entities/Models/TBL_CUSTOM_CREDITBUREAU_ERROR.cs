@@ -17,15 +17,15 @@ namespace FintrakBanking.Entities.Models
         public int CODEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BUREAUTYPE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ERRORCODE { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
     }

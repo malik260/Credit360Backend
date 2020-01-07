@@ -2334,7 +2334,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("customer-related-party")]
-        public HttpResponseMessage GetCustomerRelatedParty(int custormerId)
+        public HttpResponseMessage GetCustomerRelatedParty(int custormerId) 
         {
             try
             {
@@ -2348,6 +2348,167 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-related-party/{relatedPartyId}")]
+        public HttpResponseMessage DeleteRelatedParty(int relatedPartyId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
+
+                var data = repo.DeleteRelatedParty(relatedPartyId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Customer party Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error delete this party" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-address/{addressId}")]
+        public HttpResponseMessage DeleteAddress(int addressId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
+
+                var data = repo.Deleteaddress(addressId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Customer address Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error delete this address" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
+            }
+        }
+
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-contact/{phoneContactId}")]
+        public HttpResponseMessage DeleteContact(int phoneContactId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
+
+                var data = repo.Deletcontact(phoneContactId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Customer contact Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error delete this address" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
+            }
+        }
+
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-employment-history/{placeOfWorkId}")]
+        public HttpResponseMessage DeleteEmployment(int placeOfWorkId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
+
+                var data = repo.DeleteEmployment(placeOfWorkId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Customer contact Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error delete this address" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-nextOfKin-history/{nextOfKinId}")]
+        public HttpResponseMessage DeleteNextOfKin(int nextOfKinId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+
+                var data = repo.DeleteNextOfKin(nextOfKinId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Customer Next of Kin deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error deleting this Next of Kin" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
             }
         }
 
@@ -2473,6 +2634,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+     
     }
 }
 //Models

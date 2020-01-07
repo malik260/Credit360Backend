@@ -15,22 +15,22 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int CUSTOMERID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SURNAME { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FIRSTNAME { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MIDDLENAME { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BVN { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string GENDER { get; set; }
     }
 }

@@ -69,7 +69,7 @@ namespace FintrakBanking.Entities.Models
         public short STATUSID { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string LOANPURPOSE { get; set; }
 
         //[Column(TypeName = "money")]
@@ -79,14 +79,14 @@ namespace FintrakBanking.Entities.Models
 
         public short CONSESSIONAPPROVALSTATUSID { get; set; }
 
-        [StringLength(3000)]
+        //[StringLength(3000)]
         public string CONSESSIONREASON { get; set; }
 
         public bool HASDONECHECKLIST { get; set; }
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string REPAYMENTTERMS { get; set; }
 
         public int? REPAYMENTSCHEDULEID { get; set; }
@@ -124,11 +124,11 @@ namespace FintrakBanking.Entities.Models
         public int? CRMSFUNDINGSOURCEID { get; set; }
 
         public int? CRMSREPAYMENTSOURCEID { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSFUNDINGSOURCECATEGORY { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMS_ECCI_NUMBER { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSCODE { get; set; }
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
         public bool? CRMSVALIDATED { get; set; }
@@ -140,13 +140,13 @@ namespace FintrakBanking.Entities.Models
         public string CONDITIONPRECIDENT { get; set; }
 
         public string CONDITIONSUBSEQUENT { get; set; }
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string FIELD1 { get; set; }
 
         public double? PRODUCTPRICEINDEXRATE { get; set; }
 
         public short? PRODUCTPRICEINDEXID { get; set; }
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string FIELD2 { get; set; }
         public decimal? FIELD3 { get; set; }
         public bool ISSPECIALISED { get; set; }
@@ -154,9 +154,11 @@ namespace FintrakBanking.Entities.Models
         public int? TENORFREQUENCYTYPEID { get; set; }
         // public int? OPERATINGCASAACCOUNTID { get; set; }
         public bool? ISFACILITYCREATED { get; set; }
-
+        [ForeignKey("TBL_LOAN_DETAIL_REVIEW_TYPE")]
+        public int LOANDETAILREVIEWTYPEID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
+        public virtual TBL_LOAN_DETAIL_REVIEW_TYPE TBL_LOAN_DETAIL_REVIEW_TYPE { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
 

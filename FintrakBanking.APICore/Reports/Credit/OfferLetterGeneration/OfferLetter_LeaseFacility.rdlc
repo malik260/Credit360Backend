@@ -1331,7 +1331,7 @@
                 <TextRuns>
                   <TextRun>
                     <Label>Offer Letter Salutation</Label>
-                    <Value>=StrConv(First(Fields!offerLetterSalutation.Value, "OfferLetterDetails"), vbProperCase)</Value>
+                    <Value>=First(Fields!offerLetterSalutation.Value, "OfferLetterDetails")</Value>
                     <MarkupType>HTML</MarkupType>
                     <Style>
                       <FontSize>11pt</FontSize>
@@ -2712,7 +2712,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>10.94098in</Height>
+        <Height>27.79009cm</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2725,10 +2725,10 @@
           </BackgroundImage>
         </Style>
       </Body>
-      <Width>6.887in</Width>
+      <Width>17.49298cm</Width>
       <Page>
         <PageHeader>
-          <Height>1.14111in</Height>
+          <Height>2.89842cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <Style>
@@ -2738,7 +2738,7 @@
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>0.65066in</Height>
+          <Height>1.65268cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -2783,12 +2783,13 @@
             </Border>
           </Style>
         </PageFooter>
-        <PageHeight>10.7in</PageHeight>
-        <PageWidth>9in</PageWidth>
-        <LeftMargin>1in</LeftMargin>
-        <RightMargin>1in</RightMargin>
-        <TopMargin>1in</TopMargin>
-        <BottomMargin>1in</BottomMargin>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>1.3cm</LeftMargin>
+        <RightMargin>1.3cm</RightMargin>
+        <TopMargin>1.5cm</TopMargin>
+        <BottomMargin>1.5cm</BottomMargin>
+        <ColumnSpacing>1.27cm</ColumnSpacing>
         <Style />
       </Page>
     </ReportSection>
@@ -3255,6 +3256,6 @@ RRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAB
 ZsncJRpULHaUNwUaZFy1qRWXO+cj9EUdw4gdqTCp4c77T1T2gynLsnyNAVBdXe46GEANddXRAnx/nf0lLoEGhX20s+eDNi3QH2Uss+Atd7g9pL1fkCk/HOEEuLgu6ZpcxaFL2AJmeVytwqR6+g7zsYhgJ1usGm8a00KiAP0R7BHmHugWRrtraoQmbiLGLzzxa3Kt6RKmK2Ph/eZVjd/YZspeSza8ExmtHyMyUHWbqH6fYgPLJhKqL1hXIzRC2mxkcQYLA/yv7amaYo1aKquzIyp7cNGcPRQxX3PUxOagBydtxHbT42k+sgtLiheKwbsQCgaGHg1U3g5nhgKhnRdvWAK4Vae54HxNvAwvGDCUfSuUyextt9W6V9rrAUcmH/SynVgWsZoTazRnhCyDdEX2JeR67xZdmLSwFCQESkYmXRGY38gcDmgEyjAlxDhhE5QuhXfvE3RjBSfgZ3YZ4ldavkSYnFuauW6HfSot80uQ1oGGw8kP5peNJzvQ2bhRpwtC69rtTMbO2OpI9yZ8IKJzz3iGWXqnkKAv0lHz3s5Ow9F01izCWCiFTLDhWLpROjaA64KO18OPtrYphURlZ8dx03Iz6ano4VKoEgxXFSsfmZpszjcqiaYsyBJzlnPhnxG/H/aHyWAw9PkZyZ51Nun/G01WW08Mqwn6gt8Zr8ki6A/FLCEHoEcUc2MS6BLJU9AD/gJW+BE006z6uQAAAABJRU5ErkJggg==</ImageData>
     </EmbeddedImage>
   </EmbeddedImages>
-  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>3b115608-9b46-41ac-851f-86c7cdcdbe3c</rd:ReportID>
 </Report>

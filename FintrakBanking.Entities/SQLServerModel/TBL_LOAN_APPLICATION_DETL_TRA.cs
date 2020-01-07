@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         [Column(TypeName = "money")]
         public decimal AVERAGE_MONTHLY_TURNOVER { get; set; }
 
-        [StringLength(300)]
+        //[StringLength(300)]
         public string SOLDITEMS { get; set; }
 
         public int CREATEDBY { get; set; }

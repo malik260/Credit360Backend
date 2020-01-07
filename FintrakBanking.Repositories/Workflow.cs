@@ -181,6 +181,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestLevelId = request.FROMAPPROVALLEVELID;
                 this.isCrossOperationProcess = request.OPERATIONID != this.operationId;
                 this.ResolveExternalFlowLoop(request, initiatingRequest);
+                //throw new SecureException(""); for test purposes pls!!!!
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(request.TOSTAFFID); }
                 if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(request.REQUESTSTAFFID, request.FROMAPPROVALLEVELID, request.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
@@ -285,6 +286,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void ResolveExternalFlowLoop(TBL_APPROVAL_TRAIL request, TBL_APPROVAL_TRAIL initiatorRequest)
         {
+            if(this.StatusId != (int)ApprovalStatusEnum.Referred && this.request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.referredLog.Count <= 0){ return; }
+
             if (this.StatusId == (int)ApprovalStatusEnum.Referred )
             {
                 this.referBackStateId = (short)ApprovalState.Initiation;
@@ -329,7 +332,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var referrer = initialReferrer == null ? this.referredLog.FirstOrDefault() : initialReferrer;
 
                 this.nextLevelId = referrer.FROMAPPROVALLEVELID;
-                //this.toStaffId = referrer.REQUESTSTAFFID;
+                this.toStaffId = referrer.REQUESTSTAFFID;
                 referrer.REFEREBACKSTATEID = (short)ApprovalState.Ended;
             }
         }
@@ -1284,12 +1287,24 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                         var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
                             .Select(x => x.TBL_STAFF.EMAIL)
-                            .Distinct();
-                        emails = actorIds.Union(levelStaffEmails).ToList();
+                            .Distinct().ToList();
+
+                        var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(r => r.STAFFROLEID).ToList();
+                        var nextLvlRoleIsABusinessRole = businessRoleIds.Contains(nextLevel.STAFFROLEID ?? 0);
+                        if (nextLvlRoleIsABusinessRole)
+                        {
+                            emails = actorIds.Union(levelStaffEmails).ToList();
+                        }
+                        else
+                        {
+                            var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.STAFFROLEID).Select(x => x.EMAIL);
+                            emails = actorIds.Union(levelStaffEmails).Union(nextLevelStaffEmails).ToList();
+                        }
                     }
                 }
 
                 var time = String.Format("{0:F}", DateTime.Now);
+                //throw new Exception("");
 
                 if (placeholders == null) placeholders = new AlertPlaceholders();
 

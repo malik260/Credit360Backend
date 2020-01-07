@@ -12,32 +12,28 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CALLMEMOID { get; set; }
 
-        public int LOANAPPLICATIONID { get; set; }
+        public int? LOANAPPLICATIONID { get; set; }
 
         public int STAFFID { get; set; }
 
-        public short CALLLIMITTYPEID { get; set; }
-
-        //[Column(TypeName = "date")]
         public DateTime MEMODATE { get; set; }
 
-        //[Column(TypeName = "date")]
         public DateTime? NEXTCALLDATE { get; set; }
 
-        [Required]
+        //[Required]
         public string PURPOSE { get; set; }
 
         public string DISCUSION { get; set; }
 
-        public string SUMMARY { get; set; }
-
-        [Required]
-        [StringLength(500)]
         public string ACTION { get; set; }
 
-        [StringLength(500)]
-        public string RECOMMENDATION { get; set; }
-
+        //[StringLength(500)]
+        public string PARTICIPANTS { get; set; }
+        public string LOCATION { get; set; }
+        public string RECENTUPDATE { get; set; }
+        public string BACKGROUND { get; set; }
+        public string CC { get; set; }
+        public int? APPROVALLEVELID { get; set; }
         public int CREATEDBY { get; set; }
 
         //[Column(TypeName = "date")]
@@ -53,7 +49,5 @@ namespace FintrakBanking.Entities.Models
         public DateTime NEXTCALLTIME { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF { get; set; }
-
-        public virtual TBL_CALL_MEMO_TYPE TBL_CALL_MEMO_TYPE { get; set; }
     }
 }
