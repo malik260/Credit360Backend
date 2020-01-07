@@ -698,7 +698,9 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             foreach (var id in customerIds)
             {
                 var bvn = context.TBL_CUSTOMER.Find(id) ?.CUSTOMERBVN;
+
                 var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
+
                 if (isDirector) return isDirector;
             }
             return false;
