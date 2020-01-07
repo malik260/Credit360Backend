@@ -446,16 +446,20 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var loanFile in model.creditBureauReport)
             {
                 var caption = string.Empty;
-                if (Convert.ToInt16(loanFile.reportStatus) == (short)CreditBureauEnum.CRCCreditBureau) caption = "CRCCreditBureau";
-                if (Convert.ToInt16(loanFile.reportStatus) == (short)CreditBureauEnum.XDSCreditBureau) caption = "FirstCentralCreditBureau";
-                if (Convert.ToInt16(loanFile.reportStatus) == (short)CreditBureauEnum.CRMS) caption = "CRMSCreditBureau";
+                if (Convert.ToInt16(loanFile.creditBureauType) == (short)CreditBureauEnum.CRCCreditBureau) caption = "CRCCreditBureau";
+                if (Convert.ToInt16(loanFile.creditBureauType) == (short)CreditBureauEnum.XDSCreditBureau) caption = "FirstCentralCreditBureau";
+                if (Convert.ToInt16(loanFile.creditBureauType) == (short)CreditBureauEnum.CRMS) caption = "CRMSCreditBureau";
 
+                if (loanFile.reportFileDateinPDF == null || loanFile.reportFileDateinPDF == string.Empty) continue;
+
+                var b = loanFile.reportFileDateinPDF.Base64ToByte();
+                var a = (int)loanFile.reportFileDateinPDF.Length;
                 var document = new TBL_DOCUMENT_UPLOAD()
                 {
                     DOCUMENTTYPEID = Convert.ToInt32(loanFile.documentTypeId), 
                     FILENAME = caption + "." + "pdf",
                     FILEEXTENSION = "pdf",
-                    FILESIZE = loanFile.reportFileDateinPDF.Length,
+                    FILESIZE = (int)loanFile.reportFileDateinPDF.Length,
                     FILEDATA = loanFile.reportFileDateinPDF.Base64ToByte(),
                     COMPANYID = model.companyId,
                     DELETED = false,
@@ -466,6 +470,7 @@ namespace FintrakBanking.Repositories.Credit
                 docContext.TBL_DOCUMENT_UPLOAD.Add(document);
                 docContext.SaveChanges();
 
+                var p = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID;
                 docContext.TBL_DOCUMENT_USAGE.Add(new TBL_DOCUMENT_USAGE()
                 {
                     DOCUMENTUPLOADID = document.DOCUMENTUPLOADID,
@@ -479,7 +484,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now
                 });
             }
-
+            var n = docContext;
             docContext.SaveChanges();
         }
 
@@ -1221,9 +1226,9 @@ namespace FintrakBanking.Repositories.Credit
             operationId = appl.OPERATIONID; 
             workflow.OperationId = operationId;
             appl.OPERATIONID = operationId;
-            receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
-            workflow.NextLevelId = receiverLevelId; 
-
+            receiverLevelId = GetFirstReceiverLevel(staffId, (short)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID, appl.PRODUCTID);
+            workflow.NextLevelId = receiverLevelId;
+            workflow.ToStaffId = staffId;
 
             workflow.StaffId = staffId;
             workflow.TargetId = appl.LOANAPPLICATIONID;
