@@ -1197,20 +1197,22 @@ namespace FintrakBanking.Repositories.Credit
 
         private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
         {
-            var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
+            foreach (var fee in fees)
             {
-                CHARGEFEEID = c.feeId,
-                RECOMMENDED_FEERATEVALUE = c.rate,
-                DATETIMECREATED = DateTime.Now,
-                CREATEDBY = createdBy,
-                HASCONSESSION = false,
-                APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
-                LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
-                DEFAULT_FEERATEVALUE = c.rate
-            });
-
-            context.TBL_LOAN_APPLICATION_DETL_FEE.AddRange(data);
-
+                var feeRecord = new TBL_LOAN_APPLICATION_DETL_FEE()
+                {
+                    CHARGEFEEID = fee.feeId,
+                    RECOMMENDED_FEERATEVALUE = fee.rate,
+                    DATETIMECREATED = DateTime.Now,
+                    CREATEDBY = createdBy,
+                    HASCONSESSION = false,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                    LOANAPPLICATIONDETAILID = fee.loanApplicationDetailId,
+                    DEFAULT_FEERATEVALUE = fee.rate
+                };
+                context.TBL_LOAN_APPLICATION_DETL_FEE.Add(feeRecord);
+            }
+         
         }
 
         private string GenerateLoanReference(int customerId)
