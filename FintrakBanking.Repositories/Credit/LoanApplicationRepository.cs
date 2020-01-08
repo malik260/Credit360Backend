@@ -2685,20 +2685,13 @@ namespace FintrakBanking.Repositories.Credit
             var update = loan.LoanApplicationDetail.SingleOrDefault();
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
 
-
-            if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability))
-            {
-                throw new SecureException("Please select a repayment pattern for the product "+update.productName);
-            }
-
             if (update.productFees != null)
             {
                 if (update.productFees.Count > 0)
                 {
-                    UpdateLoanDetailFees(update.productFees, loan.loanApplicationDetailId, detail.CREATEDBY);
+                    UpdateLoanDetailFees(update.productFees, loan.loanApplicationDetailId, loan.createdBy);
                 }
             }
-
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
@@ -2724,7 +2717,15 @@ namespace FintrakBanking.Repositories.Credit
             detail.DATETIMEUPDATED = DateTime.Now;
             detail.LASTUPDATEDBY = loan.createdBy;
 
-            var productClassId = context.TBL_PRODUCT.Find(detail.APPROVEDPRODUCTID).PRODUCTCLASSID;
+            var currentProduct = context.TBL_PRODUCT.Find(detail.APPROVEDPRODUCTID);
+
+            var productClassId = currentProduct.PRODUCTCLASSID;
+
+            if (update.repaymentScheduleId <= 0 && (currentProduct.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability))
+            {
+                throw new SecureException("Please select a repayment pattern for the product " + update.productName);
+            }
+
 
             if (productClassId == (int)ProductClassEnum.InvoiceDiscountingFacility && update.invoiceDetails.Any())
             {
