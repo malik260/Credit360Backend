@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -235,6 +236,8 @@ namespace FintrakBanking.ViewModels.Credit
             if (factor <= 100) return "danger";
             return "danger";
         }
+
+  
     }
 
     public class LoanApplicationUpdateMessage

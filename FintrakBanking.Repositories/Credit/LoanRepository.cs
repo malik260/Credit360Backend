@@ -2199,7 +2199,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var feeVat = (from d in context.TBL_CHARGE_FEE_DETAIL
                          where chargefeeIds.Contains(d.CHARGEFEEID)
-                         && d.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax && d.VALUE > 0
+                         && d.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax  && d.VALUE > 0
                          select d).FirstOrDefault();
 
             var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == model.createdBy).FirstOrDefault().STAFFCODE;
@@ -2213,10 +2213,10 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.interest_rate = model.interestRate.ToString();
             loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME.ToUpper();
             loanCreationModel.product_code = product.PRODUCTCODE; 
-            loanCreationModel.product_desc = product.PRODUCTNAME;
+            loanCreationModel.product_desc = product.PRODUCTNAME; 
             loanCreationModel.source = apiSetup.SOURCE; // "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
-            loanCreationModel.tax_rate = "5"; // feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
+            loanCreationModel.tax_rate =  feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
             loanCreationModel.app_user_id = apiSetup.USERID; //"FINTRAKUSR";  //"FINTRAKUSER";//;
@@ -2234,7 +2234,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.committment_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault()?.feeRate.ToString() : "0"); //"0";
             loanCreationModel.creditlife_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.in_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
-            loanCreationModel.mgt_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.mgt_fee =  String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.penal_charge = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault()?.feeRate.ToString() : "1");  //"1";
             loanCreationModel.prn_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.processing_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";

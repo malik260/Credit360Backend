@@ -834,7 +834,7 @@ namespace FintrakBanking.Repositories.Setups.General
             GetLoanRepaymentReminder();
             GetImminentMaturitiesAlertEmail();*/
 
-            //GetImminentMaturities();
+            GetImminentMaturities();
             //GetCreditCardMaturingObligations();
             //GetExpiringFacilityReport();
             //GetUnAuthorizedOverdraftReport();
@@ -851,11 +851,11 @@ namespace FintrakBanking.Repositories.Setups.General
             //GetLoanRepaymentReminderAccountOfficer();
             //GetUnpaidObligationReminderAccountOfficer();
             //GetOverlineReminder();
-            GetMaturingObligationsReport();
+            //GetMaturingObligationsReport();
             //GetOverlineFacilityNotification();
             //GetImminentObligationMaturityFacilityNotification();
             //GetNplOnCreditPortfolio();
-            GetLoanExpirationReminderAccountOfficer();
+            //GetLoanExpirationReminderAccountOfficer();
 
         }
 
@@ -937,9 +937,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
 
-                        var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+                        //var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+                        var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
                         var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
-                        result = result + $@"
+                        //Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}
+                    result = result + $@"
                         <tr>
                             <td>{n}</td>
                             <td>{t.CUSTOMERNAME}</td>
@@ -954,7 +956,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                    var emailList2 = "benjamin.gbaaikye@fintraksoftware.com"; //emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                    var emailList2 = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
 
                     alert.receiverEmailList.Add(emailList2);
                     alert.template = alertTemplate;
@@ -1470,7 +1472,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     foreach (var t in loanInformation)
                     {
                         n++;
-                        var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
+                        
+                        var amount = Convert.ToDecimal(t.AMOUNTDUE).ToString();  //string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
                         result = result + $@"
                         <tr>
                             <td>{n}</td>
