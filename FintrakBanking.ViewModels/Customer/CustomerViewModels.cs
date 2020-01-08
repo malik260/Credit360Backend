@@ -696,6 +696,7 @@ namespace FintrakBanking.ViewModels.Customer
 
     }
 
+    
     public class applicationDocument
     {
         public string fileData { get; set; }
