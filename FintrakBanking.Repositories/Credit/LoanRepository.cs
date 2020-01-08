@@ -2199,13 +2199,14 @@ namespace FintrakBanking.Repositories.Credit
 
             var feeVat = (from d in context.TBL_CHARGE_FEE_DETAIL
                          where chargefeeIds.Contains(d.CHARGEFEEID)
-                         && d.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax
+                         && d.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax && d.VALUE > 0
                          select d).FirstOrDefault();
 
             var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == model.createdBy).FirstOrDefault().STAFFCODE;
 
             var valueDate = model.effectiveDate;
-            
+
+            var apiSetup = context.TBL_API_URL.Where(x => x.TYPENAME == "LOANCREATION").FirstOrDefault();
 
             loanCreationModel.account_no = casa?.PRODUCTACCOUNTNUMBER;
             loanCreationModel.amount_financed = model.principalAmount.ToString();
@@ -2213,12 +2214,12 @@ namespace FintrakBanking.Repositories.Credit
             loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME.ToUpper();
             loanCreationModel.product_code = product.PRODUCTCODE; 
             loanCreationModel.product_desc = product.PRODUCTNAME;
-            loanCreationModel.source = "FINTRAK";
+            loanCreationModel.source = apiSetup.SOURCE; // "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
             loanCreationModel.tax_rate = "5"; // feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
-            loanCreationModel.app_user_id = "FINTRAKUSER";  //"FINTRAKUSER";//;
+            loanCreationModel.app_user_id = apiSetup.USERID; //"FINTRAKUSR";  //"FINTRAKUSER";//;
             loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
             loanCreationModel.value_date = valueDate.ToString("yyyy-MM-dd");
