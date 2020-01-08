@@ -2724,7 +2724,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.DATETIMEUPDATED = DateTime.Now;
             detail.LASTUPDATEDBY = loan.createdBy;
 
-            var productClassId = detail.TBL_PRODUCT1.PRODUCTCLASSID;
+            var productClassId = context.TBL_PRODUCT.Find(detail.APPROVEDPRODUCTID).PRODUCTCLASSID;
 
             if (productClassId == (int)ProductClassEnum.InvoiceDiscountingFacility && update.invoiceDetails.Any())
             {
