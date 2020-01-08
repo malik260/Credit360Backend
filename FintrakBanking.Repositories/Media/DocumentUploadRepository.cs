@@ -150,6 +150,7 @@ namespace FintrakBanking.Repositories.Media
             if (!isOperationSpecific)
             {
                 output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.OfferLetterApproval, targetId));
+                output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.LoanReviewApprovalOfferLetter, targetId));
                 output.AddRange(GetDocumentUploadsByOperation(staffId, (short)OperationsEnum.LoanAvailment, targetId));
                 var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
                 foreach (var f in facilities)

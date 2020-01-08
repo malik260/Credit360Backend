@@ -306,8 +306,11 @@ namespace FintrakBanking.Repositories.Customer
                 value.ratioValue3 = count >= 2 ? GetCustomerFSRatio(item.ISRATIO, customerId, (short)item.FSCAPTIONID, lastFourDates[count - 2]) : "0.00";
                 value.ratioValue4 = count >= 1 ? GetCustomerFSRatio(item.ISRATIO, customerId, (short)item.FSCAPTIONID, lastFourDates[count - 1]) : "0.00";
 
-                if( Convert.ToDecimal(value.ratioValue1) > 0 || Convert.ToDecimal(value.ratioValue2) > 0 ||
-                    Convert.ToDecimal(value.ratioValue3) > 0 || Convert.ToDecimal(value.ratioValue4) > 0)
+                ////if (Convert.ToDecimal(value.ratioValue1) > 0 || Convert.ToDecimal(value.ratioValue2) > 0 ||
+                ////    Convert.ToDecimal(value.ratioValue3) > 0 || Convert.ToDecimal(value.ratioValue4) > 0)
+                ////{
+                if (!string.IsNullOrEmpty(value.ratioValue1) && (value.ratioValue1 != "0.00") || !string.IsNullOrEmpty(value.ratioValue2) && (value.ratioValue2 != "0.00") ||
+                    !string.IsNullOrEmpty(value.ratioValue3) && (value.ratioValue3 != "0.00") || !string.IsNullOrEmpty(value.ratioValue4) && (value.ratioValue4 != "0.00"))
                 {
                     output.Add(value);
                 }
@@ -326,11 +329,14 @@ namespace FintrakBanking.Repositories.Customer
                                 where a.CUSTOMERID == customerId && a.FSDATE == fsDate && a.FSCAPTIONID == fsCaptionId
                                 select a).FirstOrDefault();
 
-                if (fsAmount != null)
-
-                    return string.Format("{0:n}", fsAmount.AMOUNT);
-                else
-                    return "0.00";
+                if (fsAmount != null) {
+                    if (fsAmount.AMOUNT != 0)
+                        return string.Format("{0:n}", fsAmount.AMOUNT);
+                    else if (!string.IsNullOrEmpty(fsAmount.TEXTVALUE) && !string.IsNullOrWhiteSpace(fsAmount.TEXTVALUE))
+                        return fsAmount.TEXTVALUE;
+                }
+                //else
+                //    return "0.00";
             }
 
             var customerFS = from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
