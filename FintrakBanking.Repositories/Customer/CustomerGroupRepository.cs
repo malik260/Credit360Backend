@@ -1287,7 +1287,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
             var data = (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
                     join g in context.TBL_CUSTOMER_GROUP on c.CUSTOMERGROUPID equals g.CUSTOMERGROUPID
-                    join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
+                    join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID 
                     join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPMAPPINGID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending 
                     && c.ISCURRENT == true
