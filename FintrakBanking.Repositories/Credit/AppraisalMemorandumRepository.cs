@@ -351,8 +351,8 @@ namespace FintrakBanking.Repositories.Credit
             items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
             var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
 
-            decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
-            decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
+            decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
+            decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
             using (var trans = context.Database.BeginTransaction())
             {
                 if (appl.RISKRATINGID != null && model.isBusiness == false)
