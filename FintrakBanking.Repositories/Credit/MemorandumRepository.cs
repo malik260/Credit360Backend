@@ -365,7 +365,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
 
-                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted).ToList();
                 this.branchName = loanApplication.TBL_BRANCH?.BRANCHNAME;
                 if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
                 {
@@ -829,7 +829,7 @@ namespace FintrakBanking.Repositories.Credit
                 toApprovalLevelId = x.TOAPPROVALLEVELID ?? 0,
                 approvalStateId = x.APPROVALSTATEID,
                 approvalStatusId = x.APPROVALSTATUSID,
-                approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalState = x.APPROVALSTATEID == null ? "N/A" : context.TBL_APPROVAL_STATE.Where(a => a.APPROVALSTATEID == x.APPROVALSTATEID).Select(a => a.APPROVALSTATE).FirstOrDefault(),
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
@@ -1174,7 +1174,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000px cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000pxpx cellpadding=0 cellspacing=0>
                     < tr>
                         <th><b>S/N</b></th>
                         <th><b>Facility Type</b></th>
@@ -1201,10 +1201,16 @@ namespace FintrakBanking.Repositories.Credit
             var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).Take(3).ToList();
             foreach (var x in exchangeRates)
             {
+                var rate = financeTransaction.GetExchangeRate(DateTime.Now, x.TBL_CURRENCY1.CURRENCYID, loanApplication.COMPANYID);
+                if (rate?.sellingRate > 0)
+                {
+                    x.EXCHANGERATE = rate.sellingRate;
+                }
                 result = result + $@"
                         {x.TBL_CURRENCY1.CURRENCYCODE}: {x.EXCHANGERATE}   
                 ";
             }
+            context.SaveChanges();
             return result;
         }
         private string GetConditionsPrecedentToDrawdownMarkup()
@@ -1218,7 +1224,7 @@ namespace FintrakBanking.Repositories.Credit
                 var c = g.FirstOrDefault();
                 result += c.title;
                 result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=center width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
@@ -1299,7 +1305,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=center width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
@@ -1355,7 +1361,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=center width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility</b></th>
                         <th><b>LLL Impact(NGN)</b></th>
@@ -1404,7 +1410,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility</b></th>
                         <th><b>LLL Impact(NGN)</b></th>
@@ -3356,7 +3362,7 @@ namespace FintrakBanking.Repositories.Credit
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerCode);
             var n = 0;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 align=center cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Related Obligors(domestic)</b></th>
                         <th><b>Facility Name</b></th>
@@ -3819,7 +3825,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 align=center cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
@@ -4003,7 +4009,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             int n = 0;
             result = result + $@"
-                <table style='font face: arial; size:12px' border=1 width=1000 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>DESCRIPTION/SUMMARY</b></th>
@@ -4606,7 +4612,7 @@ namespace FintrakBanking.Repositories.Credit
                             outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                             pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
                             reviewDate = DateTime.Now,
-                            bookingDate = a.BOOKINGDATE,
+                            bookingDate = a.BOOKINGDATE ,
                             //maturityDateString = a.MATURITYDATE,
                             maturityDate = a.MATURITYDATE,
                             loanStatus = a.CBNCLASSIFICATION,

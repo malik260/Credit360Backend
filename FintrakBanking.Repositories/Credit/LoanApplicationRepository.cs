@@ -2576,7 +2576,6 @@ namespace FintrakBanking.Repositories.Credit
                 //}
 
             }
-            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
             //decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
             var loanStatusId = (short)LoanStatusEnum.Inactive;
 
@@ -2588,11 +2587,11 @@ namespace FintrakBanking.Repositories.Credit
                     loan.exclusiveOperationId = newWorkflowBaseRecord.OPERATIONID;
                 }
             }
-            
+
             loanData = new TBL_LOAN_APPLICATION
             {
                 REQUIRECOLLATERAL = loan.requireCollateral,
-                TOTALEXPOSUREAMOUNT = totalAmount,
+                //TOTALEXPOSUREAMOUNT = totalAmount,
                 PRODUCTCLASSID = productClassId,
                 APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
@@ -2633,6 +2632,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
                 PRODUCTID = workflowProductId,
             };
+            loanData.TOTALEXPOSUREAMOUNT = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount) + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
 
             if (isGroupLoan)
             {
@@ -2648,7 +2648,6 @@ namespace FintrakBanking.Repositories.Credit
                 loanData.ISRELATEDPARTY = GetCustomerIsRelatedParty((int)loan.customerId);
                 loanData.ISPOLITICALLYEXPOSED = GetCustomerIsPoliticallyExposed((int)loan.customerId);
             }
-            loanData.TOTALEXPOSUREAMOUNT = GetExposures(loanData).Sum(e => e.outstandingsLcy) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
             if (loan.loanPreliminaryEvaluationId != null && loan.loanPreliminaryEvaluationId != 0)
             {
                 var pen = context.TBL_LOAN_PRELIMINARY_EVALUATN.Find(loan.loanPreliminaryEvaluationId);
@@ -2686,20 +2685,13 @@ namespace FintrakBanking.Repositories.Credit
             var update = loan.LoanApplicationDetail.SingleOrDefault();
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
 
-
-            if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability))
-            {
-                throw new SecureException("Please select a repayment pattern for the product "+update.productName);
-            }
-
             if (update.productFees != null)
             {
                 if (update.productFees.Count > 0)
                 {
-                    UpdateLoanDetailFees(update.productFees, loan.loanApplicationDetailId, detail.CREATEDBY);
+                    UpdateLoanDetailFees(update.productFees, loan.loanApplicationDetailId, loan.createdBy);
                 }
             }
-
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
@@ -2725,7 +2717,15 @@ namespace FintrakBanking.Repositories.Credit
             detail.DATETIMEUPDATED = DateTime.Now;
             detail.LASTUPDATEDBY = loan.createdBy;
 
-            var productClassId = detail.TBL_PRODUCT1.PRODUCTCLASSID;
+            var currentProduct = context.TBL_PRODUCT.Find(detail.APPROVEDPRODUCTID);
+
+            var productClassId = currentProduct.PRODUCTCLASSID;
+
+            if (update.repaymentScheduleId <= 0 && (currentProduct.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability))
+            {
+                throw new SecureException("Please select a repayment pattern for the product " + update.productName);
+            }
+
 
             if (productClassId == (int)ProductClassEnum.InvoiceDiscountingFacility && update.invoiceDetails.Any())
             {
@@ -2818,16 +2818,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
 
-            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
+            //decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE);
 
             decimal totalApplicationAmount = 0; //loan.applicationAmount;
             foreach (var item in application)
             {
-                var exchangeValue = ((decimal)item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
+                var exchangeValue = (item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
                 totalApplicationAmount = totalApplicationAmount + exchangeValue;
             }
 
             this.loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+            decimal totalAmount = application.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE) + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
             this.loanData.REQUIRECOLLATERAL = loan.requireCollateral;
             this.loanData.TOTALEXPOSUREAMOUNT = totalAmount;
             this.loanData.INTERESTRATE = loan.interestRate;
@@ -3537,35 +3538,36 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var data in datadetail)
                 {
+                    DeleteLoanApplicationDetail(data.LOANAPPLICATIONDETAILID);
                     //int loanApplicationId = 0;
-                    var fees = data.TBL_LOAN_APPLICATION_DETL_FEE;
-                    if (fees.Count > 0)
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_FEE.RemoveRange(fees);
-                    }
+                    //var fees = data.TBL_LOAN_APPLICATION_DETL_FEE;
+                    //if (fees.Count > 0)
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_FEE.RemoveRange(fees);
+                    //}
 
-                    if (data.TBL_LOAN_APPLICATION_DETL_EDU.Any())
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_EDU.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_EDU);
-                    }
+                    //if (data.TBL_LOAN_APPLICATION_DETL_EDU.Any())
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_EDU.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_EDU);
+                    //}
 
-                    if (data.TBL_LOAN_APPLICATION_DETL_BG.Any())
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_BG.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_BG);
-                    }
+                    //if (data.TBL_LOAN_APPLICATION_DETL_BG.Any())
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_BG.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_BG);
+                    //}
 
-                    if (data.TBL_LOAN_APPLICATION_DETL_INV.Any())
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_INV.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_INV);
-                    }
+                    //if (data.TBL_LOAN_APPLICATION_DETL_INV.Any())
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_INV.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_INV);
+                    //}
 
-                    if (data.TBL_LOAN_APPLICATION_DETL_TRA.Any())
-                    {
-                        context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_TRA);
-                    }
+                    //if (data.TBL_LOAN_APPLICATION_DETL_TRA.Any())
+                    //{
+                    //    context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(data.TBL_LOAN_APPLICATION_DETL_TRA);
+                    //}
 
 
-                    context.TBL_LOAN_APPLICATION_DETAIL.Remove(data);
+                    //context.TBL_LOAN_APPLICATION_DETAIL.Remove(data);
                     // loanApplicationId = data.LOANAPPLICATIONID;
 
                     //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == loanApplicationId).ToList();
@@ -3648,6 +3650,24 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var tradders = context.TBL_LOAN_APPLICATION_DETL_TRA.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
                     context.TBL_LOAN_APPLICATION_DETL_TRA.RemoveRange(tradders);
+                }
+
+                if (context.TBL_LOAN_CONDITION_PRECEDENT.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var conds = context.TBL_LOAN_CONDITION_PRECEDENT.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_CONDITION_PRECEDENT.RemoveRange(conds);
+                }
+
+                if (context.TBL_LOAN_TRANSACTION_DYNAMICS.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var trans = context.TBL_LOAN_TRANSACTION_DYNAMICS.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_TRANSACTION_DYNAMICS.RemoveRange(trans);
+                }
+
+                if (context.TBL_LOAN_APPLICATION_COLLATERL.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
+                {
+                    var collaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+                    context.TBL_LOAN_APPLICATION_COLLATERL.RemoveRange(collaterals);
                 }
 
                 if (context.TBL_LOAN_APPLICATION_DETL_ARCH.Any(s => s.LOANAPPLICATIONDETAILID == loanApplicationDetailId))
@@ -4329,7 +4349,7 @@ namespace FintrakBanking.Repositories.Credit
                                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                         applicationDate = x.APPLICATIONDATE,
-                                        applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT),
+                                        applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE),
                                         //applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = x.APPROVEDAMOUNT,
                                         interestRate = x.INTERESTRATE,
@@ -4397,7 +4417,7 @@ namespace FintrakBanking.Repositories.Credit
                                              relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                              relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                              applicationDate = x.APPLICATIONDATE,
-                                             applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT),
+                                             applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE),
                                              //applicationAmount = x.APPLICATIONAMOUNT,
                                              approvedAmount = x.APPROVEDAMOUNT,
                                              interestRate = x.INTERESTRATE,
@@ -4554,7 +4574,7 @@ namespace FintrakBanking.Repositories.Credit
                                     applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                                     loanApplicationId = x.LOANAPPLICATIONID,
                                     loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
-                                    proposedAmount = a.PROPOSEDAMOUNT,
+                                    proposedAmount = a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE,
                                     approvedProductName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                     customerId = c.CUSTOMERID,
                                     branchId = c.BRANCHID,

@@ -647,6 +647,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string creditBureauType { get; set; }
         public string reportFileDateinPDF { get; set; }
         public string reportStatus { get; set; }                        //(positive = 1, Negative =0)
+        public string documentTypeId { get; set; }
     }
 
     public class CflLoanApplication : GeneralEntity
@@ -690,16 +691,19 @@ namespace FintrakBanking.ViewModels.Customer
 
         public string repaymentTerm { get; set; }
         public List<applicationDocument> loanApplicationFiles  { get; set; }
+        public List<ApiCreditBureauViewModel> creditBureauReport { get; set; }
 
 
-}
+    }
 
+    
     public class applicationDocument
     {
         public string fileData { get; set; }
         public string fileExtension { get; set; }
         public string caption { get; set; }
         public string contentDescription { get; set; }
+        public string documentTypeId { get; set; }
     }
 
     public class APIResponse

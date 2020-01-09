@@ -351,8 +351,8 @@ namespace FintrakBanking.Repositories.Credit
             items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
             var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
 
-            decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
-            decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
+            decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
+            decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
             using (var trans = context.Database.BeginTransaction())
             {
                 if (appl.RISKRATINGID != null && model.isBusiness == false)
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 //workflow.Amount = totalApplicationAmount; 
-                workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
+                workflow.Amount = appl.TOTALEXPOSUREAMOUNT = appl.TBL_LOAN_APPLICATION_DETAIL.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE) + (loanApp.GetExposures(appl).Sum(e => e.outstandingsLcy));
                 workflow.InvestmentGrade = model.investmentGrade;
                 //workflow.Tenor = model.applicationTenor;
                 workflow.PoliticallyExposed = model.politicallyExposed;
