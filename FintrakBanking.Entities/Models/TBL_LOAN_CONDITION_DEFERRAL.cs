@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISLMS { get; set; }
 
         [Required]
-        [StringLength(700)]
+        //[StringLength(700)]
         public string DEFERRALREASON { get; set; }
 
         public int CREATEDBY { get; set; }

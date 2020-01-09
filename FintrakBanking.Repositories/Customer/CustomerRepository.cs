@@ -3460,9 +3460,9 @@ namespace FintrakBanking.Repositories.Customer
                             createdBy = a.CREATEDBY,
                             creationMailSent = a.CREATIONMAILSENT,
                             customerCode = a.CUSTOMERCODE,
-                            customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
-                            customerTypeId = (short)a.CUSTOMERTYPEID,
-                            dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                            // customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                            customerTypeId = a.CUSTOMERTYPEID,
+                            dateOfBirth = a.DATEOFBIRTH,
                             customerId = a.CUSTOMERID,
                             emailAddress = a.EMAILADDRESS,
                             firstName = a.FIRSTNAME,
@@ -3478,17 +3478,17 @@ namespace FintrakBanking.Repositories.Customer
                             nationalityId = a.NATIONALITYID,
                             occupation = a.OCCUPATION,
                             placeOfBirth = a.PLACEOFBIRTH,
-                            relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                             spouse = a.SPOUSE,
                             isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
-                            sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
+                            sectorId = (short)(from e in context.TBL_SECTOR where e.SECTORID == (short)a.TBL_SUB_SECTOR.SECTORID select e.SECTORID).FirstOrDefault(),  //a.TBL_SUB_SECTOR.TBL_SECTOR?.SECTORID == null ?? 0,
                             sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                            subSectorId = (short)a.SUBSECTORID,
+                            subSectorId = a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
                             customerRating = a.CUSTOMERRATING,
                             ownership = a.OWNERSHIP,
-                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
+                            relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID.Value)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
@@ -5050,18 +5050,14 @@ namespace FintrakBanking.Repositories.Customer
                     var saved = context.SaveChanges() > 0;
                 }
             }
-            else if 
-                
-                
-                       (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Employment_History_Modification)
-
-                 {
-                               temp = context.TBL_TEMP_CUSTOMEREMPLOYMENT.FirstOrDefault(x => x.TEMPPLACEOFWORKID == targetId);
-                       if (temp != null) //If temp record is not null select the information from the main table
-                 {
-                              entity = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.FirstOrDefault(x =>
-                              x.PLACEOFWORKID == temp.PLACEOFWORKID);
-                              entity.ACTIVE = temp.ACTIVE;
+            else if (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Employment_History_Modification)
+            {
+                temp = context.TBL_TEMP_CUSTOMEREMPLOYMENT.FirstOrDefault(x => x.TEMPPLACEOFWORKID == targetId);
+                if (temp != null) //If temp record is not null select the information from the main table
+                {
+                    entity = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.FirstOrDefault(x =>
+                    x.PLACEOFWORKID == temp.PLACEOFWORKID);
+                    entity.ACTIVE = temp.ACTIVE;
                     entity.CUSTOMERID = temp.CUSTOMERID;
                     entity.EMPLOYDATE = temp.EMPLOYDATE;
                     entity.EMPLOYERADDRESS = temp.EMPLOYERADDRESS;
@@ -5650,7 +5646,7 @@ namespace FintrakBanking.Repositories.Customer
 
                 var audit = new TBL_AUDIT
                 {
-                    AUDITTYPEID = (short)AuditTypeEnum.CustomerRelatedPartyDeleted,
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerContactAddressDeleted,
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = "Deleted Customer Related Party with Related Party ID: ",
@@ -5668,6 +5664,101 @@ namespace FintrakBanking.Repositories.Customer
 
             return false;
         }
+
+
+        public bool Deletcontact(int phoneContactId, UserInfo user)
+        {
+            var child = context.TBL_CUSTOMER_PHONECONTACT.Find(phoneContactId);
+
+            if (child != null)
+            {
+                context.TBL_CUSTOMER_PHONECONTACT.Remove(child);
+
+                // Audit Section ---------------------------
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerPhoneContactDeleted,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = "Deleted Customer Related Party with Related Party ID: ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                auditTrail.AddAuditTrail(audit);
+                return context.SaveChanges() > 0;
+            }
+
+            return false;
+        }
+
+
+        public bool DeleteEmployment(int placeOfWorkId, UserInfo user)
+        {
+            var child = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Find(placeOfWorkId);
+
+            if (child != null)
+            {
+                context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Remove(child);
+
+                // Audit Section ---------------------------
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerEmploymentHistoryDeleted,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = "Deleted Customer Related Party with Related Party ID: ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                auditTrail.AddAuditTrail(audit);
+                return context.SaveChanges() > 0;
+            }
+
+            return false;
+        }
+
+        public bool DeleteNextOfKin(int nextOfKinId, UserInfo user)
+        {
+            var nextOfKin = context.TBL_CUSTOMER_NEXTOFKIN.Find(nextOfKinId);
+
+            if (nextOfKin != null)
+            {
+                context.TBL_CUSTOMER_NEXTOFKIN.Remove(nextOfKin);
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerDetailUpdated,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = "Deleted Customer Next of Kin with Next of Kin ID: ",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                auditTrail.AddAuditTrail(audit);
+                return context.SaveChanges() > 0;
+            }
+
+            return false;
+        }
+
 
 
         public bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity)

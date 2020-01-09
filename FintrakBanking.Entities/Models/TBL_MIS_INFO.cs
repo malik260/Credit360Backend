@@ -20,11 +20,11 @@ namespace FintrakBanking.Entities.Models
         public int MISINFOID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MISCODE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MISNAME { get; set; }
 
         public short? MISTYPEID { get; set; }

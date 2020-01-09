@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
         public decimal DEBITAMOUNT { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         //[Column(TypeName = "date")]

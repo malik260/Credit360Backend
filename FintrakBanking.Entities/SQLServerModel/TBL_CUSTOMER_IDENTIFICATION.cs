@@ -14,15 +14,15 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int CUSTOMERID { get; set; }
 
-        [StringLength(25)]
+        //[StringLength(25)]
         public string IDENTIFICATIONNO { get; set; }
 
         public int? IDENTIFICATIONMODEID { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string ISSUEPLACE { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string ISSUEAUTHORITY { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }

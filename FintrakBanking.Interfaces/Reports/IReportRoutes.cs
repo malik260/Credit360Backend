@@ -146,8 +146,8 @@ namespace FintrakBanking.Interfaces.Reports
         string RiskAssetsContigentReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string CopyOfRiskAssetByIfrsClassification(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
 
-        
+        string GetGeneratedCFLOfferLetter(string applicationRefNumber, string ActionByName);
     }
 
-   
+
 }

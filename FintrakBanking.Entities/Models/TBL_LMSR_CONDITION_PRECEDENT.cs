@@ -21,7 +21,7 @@
         public int? CONDITIONID { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string CONDITION { get; set; }
 
         public bool ISEXTERNAL { get; set; }

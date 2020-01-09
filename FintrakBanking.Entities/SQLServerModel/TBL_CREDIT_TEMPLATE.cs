@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string TEMPLATETITLE { get; set; }
 
         [Required]

@@ -1057,7 +1057,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_BRANCH>()
-                .Property(e => e.COMMENT)
+                .Property(e => e.COMMENT_)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_BRANCH>()
@@ -1184,15 +1184,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_CALL_MEMO>()
-                .Property(e => e.SUMMARY)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<TBL_CALL_MEMO>()
                 .Property(e => e.ACTION)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<TBL_CALL_MEMO>()
-                .Property(e => e.RECOMMENDATION)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_CALL_MEMO_LIMIT>()
@@ -1206,11 +1198,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CALL_MEMO_TYPE>()
                 .Property(e => e.NAME)
                 .IsUnicode(false);
-
-            modelBuilder.Entity<TBL_CALL_MEMO_TYPE>()
-                .HasMany(e => e.TBL_CALL_MEMO)
-                .WithRequired(e => e.TBL_CALL_MEMO_TYPE)
-                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CASA>()
                 .Property(e => e.PRODUCTACCOUNTNUMBER)
@@ -5191,7 +5178,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_COMMENT>()
-                .Property(e => e.COMMENT)
+                .Property(e => e.COMMENT_)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_COMMENT>()
@@ -7373,7 +7360,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_STAFF>()
-                .Property(e => e.COMMENT)
+                .Property(e => e.COMMENT_)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_STAFF>()
@@ -8920,7 +8907,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_TEMP_STAFF>()
-                .Property(e => e.COMMENT)
+                .Property(e => e.COMMENT_)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_TEMP_STAFF>()

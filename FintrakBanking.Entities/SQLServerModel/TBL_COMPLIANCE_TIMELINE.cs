@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int TIMELINEID { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string TIMELINE { get; set; }
 
         public int CREATEDBY { get; set; }

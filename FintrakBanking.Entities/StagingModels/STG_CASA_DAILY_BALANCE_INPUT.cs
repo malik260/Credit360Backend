@@ -11,7 +11,7 @@
         public DateTime BALANCEDATE { get; set; }
 
         [Required]
-        [StringLength(20)]
+        //[StringLength(20)]
         public string ACCOUNTNUMBER { get; set; }
     }
 }

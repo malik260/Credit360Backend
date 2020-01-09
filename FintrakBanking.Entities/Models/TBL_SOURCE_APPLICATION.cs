@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short APPLICATIONID { get; set; }
 
-        [StringLength(150)]
+        //[StringLength(150)]
         public string APPLICATIONNAME { get; set; }
     }
 }

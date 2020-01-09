@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int ESGSUBCATEGORYID { get; set; }
 
         [Required]
-        [StringLength(700)]
+        //[StringLength(700)]
         public string ESGSUBCATEGORYNAME { get; set; }
 
         public int ESGCATEGORYID { get; set; }

@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short COVENANTTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string COVENANTTYPENAME { get; set; }
 
         public bool REQUIREAMOUNT { get; set; }

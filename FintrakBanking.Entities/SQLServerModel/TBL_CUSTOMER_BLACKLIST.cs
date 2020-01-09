@@ -15,13 +15,13 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CUSTOMERCODE { get; set; }
 
         public DateTime DATEBLACKLISTED { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string REASON { get; set; }
 
         public bool ISCURRENT { get; set; }

@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CRMSTYPEID { get; set; }
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string CODE { get; set; }
 
         public string DESCRIPTION { get; set; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -62,6 +63,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
         public DateTime applicationDate { get; set; }
+        public DateTime? applicationDateArch { get; set; }
         public decimal applicationAmount { get; set; }
         public decimal approvedAmount { get; set; }
         public double applicationTenor { get; set; }
@@ -234,6 +236,8 @@ namespace FintrakBanking.ViewModels.Credit
             if (factor <= 100) return "danger";
             return "danger";
         }
+
+  
     }
 
     public class LoanApplicationUpdateMessage

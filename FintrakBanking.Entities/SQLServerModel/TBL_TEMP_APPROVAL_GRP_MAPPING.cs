@@ -42,7 +42,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public short APPROVALSTATUSID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string OPERATION { get; set; }
 
         public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }

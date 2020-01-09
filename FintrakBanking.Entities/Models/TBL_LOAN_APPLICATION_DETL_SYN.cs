@@ -17,11 +17,11 @@
 
         
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BANKCODE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BANKNAME { get; set; }
 
    

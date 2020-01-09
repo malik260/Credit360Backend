@@ -21,19 +21,19 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short ADDRESSTYPEID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string ADDRESS { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string HOMETOWN { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string POBOX { get; set; }
 
-        [StringLength(300)]
+        //[StringLength(300)]
         public string NEARESTLANDMARK { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ELECTRICMETERNUMBER { get; set; }
 
         public bool ACTIVE { get; set; }

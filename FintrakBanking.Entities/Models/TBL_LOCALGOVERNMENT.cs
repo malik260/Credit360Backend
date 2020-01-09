@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         public int LOCALGOVERNMENTID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string NAME { get; set; }
         public string LGACODE { get; set; }
         public string CRMSCODE { get; set; }

@@ -13,10 +13,10 @@ namespace FintrakBanking.Entities.Models
         public int CONTENTPLACEHOLDERID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CONTENTPLACEHOLDER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string COLLUMNNAME { get; set; }
     }
 }

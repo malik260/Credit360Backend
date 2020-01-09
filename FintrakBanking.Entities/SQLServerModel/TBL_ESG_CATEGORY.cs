@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int ESGCATEGORYID { get; set; }
 
         [Required]
-        [StringLength(700)]
+        //[StringLength(700)]
         public string ESGCATEGORYNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

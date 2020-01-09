@@ -17,19 +17,19 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFCODE1 { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFCODE2 { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFCODE3 { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFCODE4 { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }

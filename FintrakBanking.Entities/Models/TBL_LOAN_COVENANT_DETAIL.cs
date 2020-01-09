@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int LOANCOVENANTDETAILID { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string COVENANTDETAIL { get; set; }
 
         public int LOANID { get; set; }

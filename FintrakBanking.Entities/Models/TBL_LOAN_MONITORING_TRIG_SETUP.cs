@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         public int? OPERATIONID { get; set; }
 
         [Required]
-        [StringLength(800)]
+        //[StringLength(800)]
         public string MONITORING_TRIGGER_NAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -18,11 +18,11 @@ namespace FintrakBanking.Entities.Models
         public int RACINPUTTYPEID { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string INPUTTYPENAME { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string INPUTTAG { get; set; }
         
 

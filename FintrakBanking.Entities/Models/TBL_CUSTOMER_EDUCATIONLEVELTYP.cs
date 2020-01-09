@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public short EDUCATIONLEVELTYPEID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string EDUCATIONLEVEL { get; set; }
     }
 }

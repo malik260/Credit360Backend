@@ -10,11 +10,11 @@ namespace FintrakBanking.Entities.SQLServerModel
     public partial class TBL_CUSTOM_CRCBUREAU_PRODUCT
     {
         [Key]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTCODE { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string PRODUCTNAME { get; set; }
     }
 }

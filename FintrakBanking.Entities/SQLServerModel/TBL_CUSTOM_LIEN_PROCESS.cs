@@ -12,25 +12,25 @@ namespace FintrakBanking.Entities.SQLServerModel
         [Key]
         public int CUSTOMLIENID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LIENREFERENCENUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACCOUNTID { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? AMOUNT { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string CURRENCYCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string LIENTYPE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REASONCODE { get; set; }
 
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

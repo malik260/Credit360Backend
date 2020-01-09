@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int RISKRATINGID { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string RATES { get; set; }
 
         public decimal? MAXRANGE { get; set; }
@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
 
         public decimal? ADVICEDRATE { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string RATESDESCRIPTION { get; set; }
 
         public short PRODUCTID { get; set; }

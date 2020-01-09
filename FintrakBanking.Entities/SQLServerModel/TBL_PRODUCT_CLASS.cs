@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short PRODUCTCLASSID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTCLASSNAME { get; set; }
 
         public short PRODUCTCLASSTYPEID { get; set; }

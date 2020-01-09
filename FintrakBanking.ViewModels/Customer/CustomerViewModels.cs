@@ -96,7 +96,7 @@ namespace FintrakBanking.ViewModels.Customer
         public bool accountCreationComplete { get; set; }
         public bool creationMailSent { get; set; }
         public short customerSensitivityLevelId { get; set; }
-        public short subSectorId { get; set; }
+        public short? subSectorId { get; set; }
         public string subSectorName { get; set; }
         public short sectorId { get; set; }
         public string sectorName { get; set; }
@@ -261,7 +261,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string branchName { get; set; }
         public int customerSectorId { get; set; }
         public string customerSectorName { get; set; }
-        public short subSectorId { get; set; }
+        public short? subSectorId { get; set; }
         public string subSectorName { get; set; }
     }
     public class CustomerChildrenViewModel : GeneralEntity
@@ -325,6 +325,12 @@ namespace FintrakBanking.ViewModels.Customer
     //=================================================================================================================================================================
     public class IncomingCustomerViewModels
     {
+        public int? createdBy { get; set; }
+        public int? staffId { get; set; }
+        public int? companyId { get; set; }
+        public short? branchId { get; set; }
+
+        public string accountOfficerStaffCode { get; set; }
 
         public string customerType { get; set; }
         public string request_Id { get; set; }
@@ -641,10 +647,12 @@ namespace FintrakBanking.ViewModels.Customer
         public string creditBureauType { get; set; }
         public string reportFileDateinPDF { get; set; }
         public string reportStatus { get; set; }                        //(positive = 1, Negative =0)
+        public string documentTypeId { get; set; }
     }
 
     public class CflLoanApplication : GeneralEntity
     {
+        public string applicationReferenceNumber { get; set; }
         public string customerCode { get; set; }
 
         public string requestId { get; set; } 
@@ -683,16 +691,19 @@ namespace FintrakBanking.ViewModels.Customer
 
         public string repaymentTerm { get; set; }
         public List<applicationDocument> loanApplicationFiles  { get; set; }
+        public List<ApiCreditBureauViewModel> creditBureauReport { get; set; }
 
 
-}
+    }
 
+    
     public class applicationDocument
     {
         public string fileData { get; set; }
         public string fileExtension { get; set; }
         public string caption { get; set; }
         public string contentDescription { get; set; }
+        public string documentTypeId { get; set; }
     }
 
     public class APIResponse
@@ -711,6 +722,11 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class OfferLetterResponse 
     {
+        public OfferLetterResponse()
+        {
+            this.Attachment = new Attachment();
+        }
+
         public string StatusCode { get; set; }
         public string RequestId { get; set; }
         public string WorkflowStage { get; set; }
@@ -718,5 +734,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string ActionByName { get; set; }
         public string Comment { get; set; }
         public Attachment Attachment { get; set; }
+        public string Message { get; set; }
+
     }
 }

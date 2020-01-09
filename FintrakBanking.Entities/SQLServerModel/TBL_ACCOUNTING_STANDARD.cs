@@ -19,10 +19,10 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short ACCOUNTINGSTANDARDID { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string NAME { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string DESCRIPTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

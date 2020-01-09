@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
         public short GLCLASSID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string GLCLASSNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

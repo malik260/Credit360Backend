@@ -3102,11 +3102,6 @@ namespace FintrakBanking.Entities.SQLServerModel
                 .Property(e => e.MAXIMUMAMOUNT)
                 .HasPrecision(19, 4);
 
-            modelBuilder.Entity<TBL_CALL_MEMO_TYPE>()
-                .HasMany(e => e.TBL_CALL_MEMO)
-                .WithRequired(e => e.TBL_CALL_MEMO_TYPE)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<TBL_COLLATERAL_CASA>()
                 .Property(e => e.AVAILABLEBALANCE)
                 .HasPrecision(19, 4);

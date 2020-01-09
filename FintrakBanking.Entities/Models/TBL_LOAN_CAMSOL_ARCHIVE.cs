@@ -21,7 +21,7 @@
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CUSTOMERCODE { get; set; }
         public int? LOANID { get; set; }
         public decimal BALANCE { get; set; }

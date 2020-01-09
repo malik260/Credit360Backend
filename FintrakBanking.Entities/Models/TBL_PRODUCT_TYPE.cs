@@ -29,7 +29,7 @@ namespace FintrakBanking.Entities.Models
         public short PRODUCTTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTTYPENAME { get; set; }
 
         public short PRODUCTGROUPID { get; set; }

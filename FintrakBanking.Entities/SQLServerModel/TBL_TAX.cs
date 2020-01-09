@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int TAXID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string TAXNAME { get; set; }
 
         [Column(TypeName = "money")]

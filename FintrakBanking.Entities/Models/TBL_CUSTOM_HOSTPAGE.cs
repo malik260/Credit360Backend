@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int HOSTPAGEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string HOSTPAGE { get; set; }
 
         public int PARENTHOSTPAGEID { get; set; }

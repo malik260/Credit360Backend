@@ -24,6 +24,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public List<int> userGroupIds { get; set; }
         public List<int> activitieIds { get; set; }
+        public string staffRoleShortCode { get; set; }
     }
     
 }

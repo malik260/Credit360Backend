@@ -15,7 +15,7 @@
         public int JOBSOURCEID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string JOBSOURCENAME { get; set; }
 
 

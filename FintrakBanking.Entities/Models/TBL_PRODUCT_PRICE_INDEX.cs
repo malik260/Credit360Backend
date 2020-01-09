@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRICEINDEXNAME { get; set; }
 
         public double PRICEINDEXRATE { get; set; }
@@ -35,7 +35,7 @@ namespace FintrakBanking.Entities.Models
         public bool ALLOWAUTOMATICREPRICING { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string PRICEINDEXDESCRIPTION { get; set; }
 
         public int? CREATEDBY { get; set; }

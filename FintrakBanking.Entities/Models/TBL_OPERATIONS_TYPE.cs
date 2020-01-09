@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public short OPERATIONTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string OPERATIONTYPENAME { get; set; }
 
         public short? BINDINGTYPEID { get; set; }

@@ -39,7 +39,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CASAACCOUNTID2 { get; set; }
         public short PRODUCTID { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSCODE { get; set; }
 
         public int? OPERATIONID { get; set; }
@@ -51,14 +51,15 @@ namespace FintrakBanking.Entities.Models
         public int? CRMSFUNDINGSOURCEID { get; set; }
 
         public int? CRMSREPAYMENTSOURCEID { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMSFUNDINGSOURCECATEGORY { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CRMS_ECCI_NUMBER { get; set; }
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
         public bool? CRMSVALIDATED { get; set; }
 
         public DateTime? CRMSDATE { get; set; }
+        public int? TENOR { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

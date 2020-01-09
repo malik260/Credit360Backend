@@ -13,12 +13,12 @@ namespace FintrakBanking.Entities.Models
         public int TRANSACTIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string BATCHCODE { get; set; }
 
         public string BATCHCODE2 { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REVERSAL_BATCHCODE { get; set; }
 
         public int GLACCOUNTID { get; set; }
@@ -26,7 +26,7 @@ namespace FintrakBanking.Entities.Models
         public int OPERATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string SOURCEREFERENCENUMBER { get; set; }
 
         public int? CASAACCOUNTID { get; set; }
@@ -38,7 +38,7 @@ namespace FintrakBanking.Entities.Models
         public decimal CREDITAMOUNT { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         //[Column(TypeName = "date")]

@@ -28,11 +28,11 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int STAFFROLEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFROLECODE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFROLENAME { get; set; }
 
         public int COMPANYID { get; set; }

@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int? CHARGEFEEDETAILID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string DESCRIPTION { get; set; }
 
         public int TEMPCHARGEFEEID { get; set; }

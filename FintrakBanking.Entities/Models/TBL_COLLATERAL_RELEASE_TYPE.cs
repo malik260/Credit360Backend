@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
         public int COLLATERALRELEASETYPEID { get; set; }
 
         //[Required]
-        //[StringLength(150)]
+        ////[StringLength(150)]
         public string COLLATERALRELEASETYPENAME { get; set; }
 
      

@@ -164,7 +164,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerGroupCode = x.c.a.TBL_CUSTOMER_GROUP.GROUPCODE,
                     relationshipOfficerId = x.c.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.c.a.RELATIONSHIPMANAGERID,
-
+                    appraisalOperationId = x.c.a.OPERATIONID,
                     applicationDate = x.c.a.APPLICATIONDATE,
                     newApplicationDate = x.c.a.APPLICATIONDATE,
                     applicationAmount = x.c.a.APPLICATIONAMOUNT,

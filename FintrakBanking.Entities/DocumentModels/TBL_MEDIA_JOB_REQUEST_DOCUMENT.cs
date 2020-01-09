@@ -12,21 +12,21 @@ namespace FintrakBanking.Entities.DocumentModels
         public int DOCUMENTID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string JOBREQUESTCODE { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string DOCUMENTTITLE { get; set; }
 
         public short DOCUMENTTYPEID { get; set; }
 
         [Required]
-        [StringLength(400)]
+        //[StringLength(400)]
         public string FILENAME { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string FILEEXTENSION { get; set; }
 
         [Required]
@@ -34,10 +34,10 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public DateTime SYSTEMDATETIME { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PHYSICALFILENUMBER { get; set; }
 
-        [StringLength(250)]
+        //[StringLength(250)]
         public string PHYSICALLOCATION { get; set; }
 
         public int CREATEDBY { get; set; }

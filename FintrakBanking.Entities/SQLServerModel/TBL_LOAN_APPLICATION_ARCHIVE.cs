@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int LOANAPPLICATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string APPLICATIONREFERENCENUMBER { get; set; }
 
         public int? LOANPRELIMINARYEVALUATIONID { get; set; }
@@ -66,11 +66,11 @@ namespace FintrakBanking.Entities.SQLServerModel
         public string LOANINFORMATION { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MISCODE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TEAMMISCODE { get; set; }
 
         public bool ISINVESTMENTGRADE { get; set; }

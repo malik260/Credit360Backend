@@ -41,6 +41,7 @@ using System.Net.Http.Headers;
 using System.Net;
 using System.Text;
 using FintrakBanking.ViewModels.Flexcube;
+using FinTrakBanking.ThirdPartyIntegration.Finacle;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -67,6 +68,9 @@ namespace FintrakBanking.Repositories.Credit
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
         private IApprovalLevelRepository approvalLevelStaff;
+        private TransactionPosting transaction;
+        //private IAppraisalMemorandumRepository appraisalMemoRepo;
+
 
         //private CreditCommonRepository creditCommon;
 
@@ -83,7 +87,8 @@ namespace FintrakBanking.Repositories.Credit
                                         //IOverRideRepository _overrider, IntegrationWithFlexcube _integration, ILoanApplicationRepository _loanRepo,
                                         IOverRideRepository _overrider, IntegrationWithFlexcube _integration,
             IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin,//, CreditCommonRepository creditCommon
-            IApprovalLevelRepository _approvalLevelStaff
+            IApprovalLevelRepository _approvalLevelStaff, TransactionPosting _transaction
+            //, IAppraisalMemorandumRepository _appraisalMemoRepo
 
             )
         {
@@ -107,6 +112,8 @@ namespace FintrakBanking.Repositories.Credit
             this.transRepo = _transRepo;
             this.admin = _admin;
             this.approvalLevelStaff = _approvalLevelStaff;
+            this.transaction = _transaction;
+            //this.appraisalMemoRepo = _appraisalMemoRepo;
             //this.creditCommon = creditCommon;
 
 
@@ -2141,61 +2148,100 @@ namespace FintrakBanking.Repositories.Credit
             var casa = context.TBL_CASA.Find(model.casaAccountId);
             var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.loanApplicationDetailId);
             var app = facility.TBL_LOAN_APPLICATION;
+
             var loanLoanRequest = (from b in context.TBL_LOAN
                                   join r in context.TBL_LOAN_BOOKING_REQUEST on b.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID
                                   where b.LOANREFERENCENUMBER == loanReffernceNumber
-                                  select r).FirstOrDefault();
+                                  select b).FirstOrDefault();
 
-            var fee = (from lf in context.TBL_LOAN_FEE
+            var fee2 = (from lf in context.TBL_LOAN_FEE
                        join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
-                       join l in context.TBL_LOAN on lf.LOANID equals l.LOANAPPLICATIONDETAILID
-                       where l.LOANREFERENCENUMBER == loanReffernceNumber //&& (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
+                       join l in context.TBL_LOAN on lf.LOANID equals l.TERMLOANID
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
                        select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+
+            var lineFee = (from lf in context.TBL_LOAN_FEE
+                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                       join l in context.TBL_LOAN_APPLICATION_DETAIL on lf.LOANID equals l.LOANAPPLICATIONDETAILID
+                       where lf.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility && l.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId
+                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+
+            var prod = context.TBL_PRODUCT.Find(model.productId);
+
+            if(prod.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
+            {
+                fee2 = (from lf in context.TBL_LOAN_FEE
+                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                       join l in context.TBL_LOAN_REVOLVING on lf.LOANID equals l.REVOLVINGLOANID
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
+                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+            }
+            if (prod.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+            {
+                fee2 = (from lf in context.TBL_LOAN_FEE
+                       join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
+                       join l in context.TBL_LOAN_CONTINGENT on lf.LOANID equals l.CONTINGENTLOANID
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
+                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+            }
+
+           var fee = fee2.Union(lineFee.ToList());
+
+            var scheduleCount = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanLoanRequest.TERMLOANID).Count();
+
+            if(loanLoanRequest.SCHEDULEDAYCOUNTCONVENTIONID == (short)LoanScheduleTypeEnum.IrregularSchedule)
+            {
+                scheduleCount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanLoanRequest.TERMLOANID).Count();
+            }
 
             //var test = fee.ToList();
             var chargefeeIds = fee.Select(x => x.chargeFeeId).ToList();
 
             var feeVat = (from d in context.TBL_CHARGE_FEE_DETAIL
                          where chargefeeIds.Contains(d.CHARGEFEEID)
-                         && d.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax
+                         && d.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax  && d.VALUE > 0
                          select d).FirstOrDefault();
 
             var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == model.createdBy).FirstOrDefault().STAFFCODE;
+
+            var valueDate = model.effectiveDate;
+
+            var apiSetup = context.TBL_API_URL.Where(x => x.TYPENAME == "LOANCREATION").FirstOrDefault();
 
             loanCreationModel.account_no = casa?.PRODUCTACCOUNTNUMBER;
             loanCreationModel.amount_financed = model.principalAmount.ToString();
             loanCreationModel.interest_rate = model.interestRate.ToString();
             loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME.ToUpper();
             loanCreationModel.product_code = product.PRODUCTCODE; 
-            loanCreationModel.product_desc = product.PRODUCTNAME;
-            loanCreationModel.source = "FINTRAK";
+            loanCreationModel.product_desc = product.PRODUCTNAME; 
+            loanCreationModel.source = apiSetup.SOURCE; // "FINTRAK";
             loanCreationModel.sourceReferenceNumber = loanReffernceNumber;
-            loanCreationModel.tax_rate = feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
+            loanCreationModel.tax_rate =  feeVat != null ? String.Format("{0:0.00}", feeVat.VALUE) : "0";
             loanCreationModel.user_refno = model.loanApplicationDetailId.ToString(); //staff.STAFFCODE;
             loanCreationModel.app_branch_code = "099"; //app.TBL_BRANCH.BRANCHCODE;
-            loanCreationModel.app_user_id = "FINTRAKUSR";//"FINTRAKUSER"; //"";
+            loanCreationModel.app_user_id = apiSetup.USERID; //"FINTRAKUSR";  //"FINTRAKUSER";//;
             loanCreationModel.book_date = model.bookingDate.ToString("yyyy-MM-dd");
             loanCreationModel.effective_date = model.effectiveDate.ToString("yyyy-MM-dd");
-            loanCreationModel.value_date = systemDate.ToString("yyyy-MM-dd");
+            loanCreationModel.value_date = valueDate.ToString("yyyy-MM-dd");
             loanCreationModel.maturity_date = model.maturityDate.ToString("yyyy-MM-dd"); //.ToString("yyyy-MM-dd");
 
-            loanCreationModel.no_of_financials = "11";
-            loanCreationModel.due_dateson = "4";
-            loanCreationModel.inst_date = generalSetup.GetApplicationDate().ToString("yyyy-MM-dd");
+            loanCreationModel.no_of_financials = scheduleCount.ToString(); //"11";
+            loanCreationModel.due_dateson = loanLoanRequest.FIRSTPRINCIPALPAYMENTDATE.Value.Day.ToString(); //"4";
+            loanCreationModel.inst_date = loanLoanRequest.FIRSTPRINCIPALPAYMENTDATE.Value.ToString("yyyy-MM-dd");
             loanCreationModel.advisory_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "advisory_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.anniversary_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "anniversary_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.appraisal_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "appraisal_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.committment_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "committment_fee").FirstOrDefault()?.feeRate.ToString() : "0"); //"0";
             loanCreationModel.creditlife_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "creditlife_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.in_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "in_odchrg_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
-            loanCreationModel.mgt_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
+            loanCreationModel.mgt_fee =  String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "mgt_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.penal_charge = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "penal_charge").FirstOrDefault()?.feeRate.ToString() : "1");  //"1";
             loanCreationModel.prn_odchrg_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "prn_odchrg_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.processing_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "processing_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.renann_fee = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "renann_fee").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.vehicle_ins = String.Format("{0:0.00}", fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault() != null ? fee.Where(x => x.feeShortName == "vehicle_ins").FirstOrDefault()?.feeRate.ToString() : "0");  //"0";
             loanCreationModel.vehicle_value = "0";
-            loanCreationModel.crms_ref_number = loanLoanRequest.CRMSCODE; // "00044/20150613/356687"; //loanLoanRequest
+            loanCreationModel.crms_ref_number = (from b in context.TBL_LOAN join r in context.TBL_LOAN_BOOKING_REQUEST on b.LOAN_BOOKING_REQUESTID equals r.LOAN_BOOKING_REQUESTID where b.LOANREFERENCENUMBER == loanReffernceNumber select r).FirstOrDefault()?.CRMSCODE; //loanLoanRequest.CRMSCODE; // "00044/20150613/356687"; //loanLoanRequest
             loanCreationModel.comp_mis8 = "596912";
             loanCreationModel.freq_unit = "M";
             loanCreationModel.disbursement_type = "BOOKING";
@@ -2662,7 +2708,6 @@ namespace FintrakBanking.Repositories.Credit
                             requestedAmount = req.AMOUNT_REQUESTED,
                             customerId = m.CUSTOMERID ?? 0,
                             customerCode = cust.CUSTOMERCODE,
-
                             customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                             customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
@@ -2717,7 +2762,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
                             requestDate = req.DATETIMECREATED,
-
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == m.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                         }).ToList();
 
                  data = data.Where(x => x.applicationReferenceNumber != "-")
@@ -4031,9 +4076,11 @@ namespace FintrakBanking.Repositories.Credit
                 loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
                 totalBookedAmount = (from a in context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.PRINCIPALAMOUNT);
+                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+
                 if (totalBookedAmount >= loanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
                 {
-                    var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+                    //var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 }
 
@@ -4165,7 +4212,47 @@ namespace FintrakBanking.Repositories.Credit
 
                 CreateLoanOnThirdParty(loanApplication, loanReferenceNumber);
 
+                if(loanProductInfo.PRODUCTCODE == "EBFC")
+                {
+                    var statusCode = "15"; // Disbursement
+                    LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
+                }
+
             }
+        }
+
+        private void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode)
+        {
+            //string cflReport = builder.ToString();
+            string WorkflowStageName = "";
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == staffId).FirstOrDefault();
+            var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
+
+            if (WorkflowStage == "RM")
+            {
+                WorkflowStageName = "11";
+            }
+            if (WorkflowStage.Substring(0, 2) == "CR")
+            {
+                WorkflowStageName = "12";
+            }
+            if (WorkflowStage == "GH")
+            {
+                WorkflowStageName = "13";
+            }
+
+            var staffFullName = staff.FIRSTNAME + " " + staff.LASTNAME;
+
+            OfferLetterResponse offerLetters = new OfferLetterResponse();
+            offerLetters.StatusCode = statusCode;
+            offerLetters.Comment = comment;
+            offerLetters.RequestId = loanApplication.APIREQUESTID;
+            offerLetters.WorkflowStage = WorkflowStageName;
+            //offerLetters.Attachment.FileLink = cflReport;
+            //offerLetters.Attachment.FileType = "pdf";
+            //offerLetters.ReasonForRejection = ReasonForRejection;
+            offerLetters.ActionByName = staffFullName;
+            transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
         }
 
         private void ProcessRevolvingLoanFacilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_REVOLVING revolvingLoanRecord, ApprovalViewModel user, int createdBy)
@@ -6824,6 +6911,7 @@ namespace FintrakBanking.Repositories.Credit
                             //approvalStatusId = (short)atrail.APPROVALSTATUSID,
                             loanBookingRequestId = 0,
                             approvalTrailId = 0,
+                            appraisalOperationId = a.OPERATIONID,
                             //bookingAmountRequested = r.AMOUNT_REQUESTED,
                             requestedAmount = 0,
                             loanApplicationId = a.LOANAPPLICATIONID,
@@ -6924,6 +7012,7 @@ namespace FintrakBanking.Repositories.Credit
                             //bookingAmountRequested = r.AMOUNT_REQUESTED,
                             requestedAmount = r.AMOUNT_REQUESTED,
                             //approvalStatusId = (short) m.APPROVALSTATUSID,
+                            appraisalOperationId = m.OPERATIONID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
@@ -7434,6 +7523,11 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
             }
 
+            //if (entity.tenor > loanApplicationDetails.APPROVEDTENOR)
+            //{
+            //    throw new ConditionNotMetException("Requested Tenor cannot be greater than the approved tenor");
+            //}
+
             var requestedFacility = context.TBL_PRODUCT.Find(entity.productId);
 
             var operationId = 0;
@@ -7476,6 +7570,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTID = entity.productId,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = entity.createdBy,
+                TENOR = entity.tenor,
 
             };
             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
@@ -8247,7 +8342,7 @@ namespace FintrakBanking.Repositories.Credit
                             bookingRequestStatusId = s.APPROVALSTATUSID,
                             requestDate = s.DATETIMECREATED,
                             requestedBy = "",
-
+                            appraisalOperationId = m.OPERATIONID,
                             requestedAmount = s.AMOUNT_REQUESTED,
                             requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
                             approvalStatusId = (short)m.APPROVALSTATUSID,
@@ -9036,8 +9131,8 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
                         e.tenor = int.Parse(e.tenorString);
-                        e.bookingDate = e.bookingDate.Date;
-                        e.maturityDate = e.maturityDate.Date;
+                        e.bookingDate = e.bookingDate?.Date;
+                        e.maturityDate = e.maturityDate?.Date;
                         //e.productId = int.Parse(e.productIdString);
                         e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
                         e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
@@ -13743,13 +13838,13 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            /*string WorkflowStageName = "";
+            string WorkflowStageName = "";
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
-            if(WorkflowStage == "RM")
+            if (WorkflowStage == "RM")
             {
                 WorkflowStageName = "11";
             }
-            if (WorkflowStage.Substring(0,2) == "CR")
+            if (WorkflowStage.Substring(0, 2) == "CR")
             {
                 WorkflowStageName = "12";
             }
@@ -13757,12 +13852,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 WorkflowStageName = "13";
             }
-            
+
             var appl = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).FirstOrDefault();
-            if(appl != null && appl.APIREQUESTID != null)
+            if (appl != null && appl.APIREQUESTID != null)
             {
                 var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
-                if(product.PRODUCTCODE == "CFL")
+                if (product.PRODUCTCODE == "EBFC")
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
@@ -13771,11 +13866,10 @@ namespace FintrakBanking.Repositories.Credit
                     offerLetters.RequestId = appl.APIREQUESTID;
                     offerLetters.WorkflowStage = WorkflowStageName;
                     offerLetters.ActionByName = staffFullName;
-
                     ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
                 }
-            }*/
-            
+            }
+
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT
             //{
@@ -13797,6 +13891,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public async Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber)
         {
+
             HttpClientHandler handler = new HttpClientHandler();
             HttpClient httpClientInstance;
 
