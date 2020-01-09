@@ -55,7 +55,18 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     bool output = false;
                     TBL_TEMP_STAFF_RELIEF tempStaffRelief;
 
-                        tempStaffRelief = new TBL_TEMP_STAFF_RELIEF()
+            if (model.relievedStaffId <= 0)
+            {
+                throw new ConditionNotMetException("Please select a staff to relieve");
+            }
+
+            if(model.reliefStaffId <= 0)
+            {
+                throw new ConditionNotMetException("Please select a relieving staff");
+            }
+
+
+            tempStaffRelief = new TBL_TEMP_STAFF_RELIEF()
                         {
                             STAFFID = model.relievedStaffId,
                             RELIEFSTAFFID = model.reliefStaffId,
@@ -189,6 +200,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             {
                 tempApprovalRelief = new TBL_TEMP_STAFF_RELIEF()
                 {
+                    STAFFID = model.relievedStaffId,
                     RELIEFSTAFFID = model.reliefStaffId,
                     RELIEFREASON = model.reliefReason,
                     STARTDATE = model.startDate,
@@ -288,6 +300,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                && t.RESPONSESTAFFID == null
                                && t.OPERATIONID == (int)OperationsEnum.StaffReliefCreation
                            && ids.Contains((int)t.TOAPPROVALLEVELID)
+                          
                            select new ApprovalReliefViewModel
                            {
                                reliefId = a.TEMPRELIEFID,

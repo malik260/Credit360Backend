@@ -1293,7 +1293,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     && c.ISCURRENT == true
                     && c.DELETED == false
                     && atrail.OPERATIONID == (int) OperationsEnum.CustomerGroupMapping
-                    && atrail.RESPONSESTAFFID == null
+                    && atrail.RESPONSESTAFFID == null 
                     && ids.Contains((int) atrail.TOAPPROVALLEVELID)
                     orderby c.CUSTOMERGROUPMAPPINGID descending
                     select new CustomerGroupMappingViewModel()
