@@ -351,8 +351,8 @@ namespace FintrakBanking.Repositories.Credit
             items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
             var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
 
-            decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
-            decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
+            decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
+            decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
             using (var trans = context.Database.BeginTransaction())
             {
                 if (appl.RISKRATINGID != null && model.isBusiness == false)
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 //workflow.Amount = totalApplicationAmount; 
-                workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
+                workflow.Amount = appl.TOTALEXPOSUREAMOUNT = appl.TBL_LOAN_APPLICATION_DETAIL.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE) + (loanApp.GetExposures(appl).Sum(e => e.outstandingsLcy));
                 workflow.InvestmentGrade = model.investmentGrade;
                 //workflow.Tenor = model.applicationTenor;
                 workflow.PoliticallyExposed = model.politicallyExposed;
@@ -1706,7 +1706,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStatusId = x.APPROVALSTATUSID,
                     approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
                     approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                    applicationId = application.LOANAPPLICATIONID,
+                    //applicationId = application.LOANAPPLICATIONID,
                     commentStage = "Credit Appaisal",
                     toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                     fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
@@ -1726,7 +1726,10 @@ namespace FintrakBanking.Repositories.Credit
                         var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
                         foreach (var r in request)
                         {
-                            data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, r.OPERATIONID ?? 0, "Drawdown"));
+                            if (r?.OPERATIONID != null)
+                            {
+                                data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, r.OPERATIONID ?? 0, "Drawdown"));
+                            }
                             data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, (short)OperationsEnum.TermLoanBooking, "Booking"));
                             data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, (short)OperationsEnum.RevolvingLoanBooking, "Booking"));
                             data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, (short)OperationsEnum.ContigentLoanBooking, "Booking"));

@@ -834,13 +834,13 @@ namespace FintrakBanking.Repositories.Setups.General
             GetLoanRepaymentReminder();
             GetImminentMaturitiesAlertEmail();*/
 
-            //GetImminentMaturities();
+            GetImminentMaturities();
             //GetCreditCardMaturingObligations();
             //GetExpiringFacilityReport();
             //GetUnAuthorizedOverdraftReport();
             //GetOverlineMonitoringReport();
             //GetCreditCardDelinquencyMonitoringReport();
-            //GetPastDueObligationsReminder();
+            GetPastDueObligationsReminder();
             //GetRiskAssetsReportNotification();
             //GetDashboardReportNotification();
             //GetCACReport();
@@ -855,7 +855,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //GetOverlineFacilityNotification();
             //GetImminentObligationMaturityFacilityNotification();
             //GetNplOnCreditPortfolio();
-            GetLoanExpirationReminderAccountOfficer();
+            //GetLoanExpirationReminderAccountOfficer();
 
         }
 
@@ -937,9 +937,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
 
-                        var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var maturityDate = t.MATURITYDATE.ToString("dd-MM-yyyy");
-                        result = result + $@"
+                        //var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+                        var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
+                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
+                        //Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}
+                    result = result + $@"
                         <tr>
                             <td>{n}</td>
                             <td>{t.CUSTOMERNAME}</td>
@@ -954,7 +956,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                    var emailList2 = "benjamin.gbaaikye@fintraksoftware.com"; //emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                    var emailList2 = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
 
                     alert.receiverEmailList.Add(emailList2);
                     alert.template = alertTemplate;
@@ -1010,7 +1012,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
                         var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var maturityDate = t.MATURITYDATE.ToString("dd-MM-yyyy");
+                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
 
                         result = result + $@"
                         <tr>
@@ -1222,7 +1224,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
                         var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
-                        var maturityDate = t.MATURITYDATE.ToString("dd-MM-yyyy");
+                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
                         result = result + $@"
                         <tr>
                             <td>{n}</td>
@@ -1331,7 +1333,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         n++;
 
                         var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var maturityDate = t.MATURITYDATE.ToString("dd-MM-yyyy");
+                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
                         result = result + $@"
                         <tr>
                             <td>{n}</td>
@@ -1401,7 +1403,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
                         var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var maturityDate = t.MATURITYDATE.ToString("dd-MM-yyyy");
+                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
                         result = result + $@"
                         <tr>
                             <td>{n}</td>
@@ -1470,7 +1472,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     foreach (var t in loanInformation)
                     {
                         n++;
-                        var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
+                        
+                        var amount = Convert.ToDecimal(t.AMOUNTDUE).ToString();  //string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
                         result = result + $@"
                         <tr>
                             <td>{n}</td>
@@ -1656,7 +1659,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
                         var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var maturityDate = t.MATURITYDATE.ToString("dd-MM-yyyy");
+                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
 
                         result = result + $@"
                         <tr>
@@ -1903,7 +1906,7 @@ namespace FintrakBanking.Repositories.Setups.General
                      {
                          n++;
                          var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
-                         var scheduleDueDate = t.SCHEDULEDUEDATE.ToString("dd-MM-yyyy");
+                         var scheduleDueDate = t.SCHEDULEDUEDATE?.ToString("dd-MM-yyyy");
                          result = result + $@"
                          <tr>
                              <td>{n}</td>
@@ -2111,7 +2114,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
                         var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var maturityDate = t.MATURITYDATE.ToString("dd-MM-yyyy");
+                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
 
                         result = result + $@"
                         <tr>
@@ -2185,7 +2188,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         n++;
                         totalAmount = totalAmount + Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY);
                         var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var maturityDate = t.MATURITYDATE.ToString("dd-MM-yyyy");
+                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
                        
                         result = result + $@"
                         <tr>
@@ -2256,7 +2259,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
                         var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var maturityDate = t.MATURITYDATE.ToString("dd-MM-yyyy");
+                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
 
                         result = result + $@"
                         <tr>
@@ -2548,7 +2551,7 @@ namespace FintrakBanking.Repositories.Setups.General
             try
             {
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject +" TESTING ALERT SYSTEM";
+                string messageSubject = alertSubject +" ALERT";
                 string messageContent = messageBody;
                 //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
                 //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 
