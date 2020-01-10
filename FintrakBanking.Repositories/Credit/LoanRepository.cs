@@ -4215,7 +4215,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if(loanProductInfo.PRODUCTCODE == "EBFC")
                 {
-                    var statusCode = "15"; // Disbursement
+                    var statusCode = "90"; // Disbursement
                     LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
                 }
 
@@ -4229,18 +4229,13 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.Where(s => s.STAFFID == staffId).FirstOrDefault();
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
 
-            if (WorkflowStage == "RM")
-            {
-                WorkflowStageName = "11";
-            }
-            if (WorkflowStage.Substring(0, 2) == "CR")
-            {
-                WorkflowStageName = "12";
-            }
-            if (WorkflowStage == "GH")
-            {
-                WorkflowStageName = "13";
-            }
+            if (WorkflowStage == "RM") { WorkflowStageName = "11"; }
+
+            if (WorkflowStage.Substring(0, 2) == "CR") { WorkflowStageName = "12"; }
+
+            if (WorkflowStage == "GH") { WorkflowStageName = "13"; }
+
+            if (WorkflowStage == "COA") { WorkflowStageName = "15"; }
 
             var staffFullName = staff.FIRSTNAME + " " + staff.LASTNAME;
 
