@@ -840,7 +840,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //GetUnAuthorizedOverdraftReport();
             //GetOverlineMonitoringReport();
             //GetCreditCardDelinquencyMonitoringReport();
-            GetPastDueObligationsReminder();
+            //GetPastDueObligationsReminder();//
             //GetRiskAssetsReportNotification();
             //GetDashboardReportNotification();
             //GetCACReport();
@@ -937,8 +937,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
 
-                        //var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
+                        var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+                        // var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
                         var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
                         //Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}
                     result = result + $@"
@@ -966,7 +966,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alerts.Add(alert);
                 }
 
-                SendAlertNotification(alerts);
+                //SendAlertNotification(alerts);
             }
         }
         public void GetCreditCardMaturingObligations()
@@ -1473,7 +1473,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         n++;
                         
-                        var amount = Convert.ToDecimal(t.AMOUNTDUE).ToString();  //string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
+                        var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE)); //Convert.ToDecimal(t.AMOUNTDUE).ToString(); 
                         result = result + $@"
                         <tr>
                             <td>{n}</td>

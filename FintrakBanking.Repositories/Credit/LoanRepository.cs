@@ -9693,7 +9693,15 @@ namespace FintrakBanking.Repositories.Credit
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
             //var ids = generalSetup.GetStaffApprovalLevelIds(staffId, 0).ToList();
-            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LmsOperations).ToList();
+            var lmsOperations = context.TBL_OPERATIONS.Where(c => c.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication
+                && (c.PRODUCTTYPEID == 1 || c.PRODUCTTYPEID == null))
+                .Select(x => x.OPERATIONID).ToList();
+
+            List<int> ids = new List<int>(); //generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LmsOperations).ToList();
+            foreach(var i in lmsOperations)
+            {
+                ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList());
+            }
 
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
@@ -9704,7 +9712,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.OPERATIONPERFORMED == false
                                    && (a.OPERATIONID != (short)OperationsEnum.CommercialLoanBooking)
                                    && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                                   && atrail.OPERATIONID == (short)OperationsEnum.LmsOperations
+                                   && lmsOperations.Contains(atrail.OPERATIONID) //== (short)OperationsEnum.LmsOperations
                                    && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || atrail.REQUESTSTAFFID == staffId)
                                    && atrail.RESPONSESTAFFID == null //&& b.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                    && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId))
