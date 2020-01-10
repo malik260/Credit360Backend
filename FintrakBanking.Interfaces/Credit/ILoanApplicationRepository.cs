@@ -58,7 +58,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanApplicationViewModel> Search(string searchString, int staffId = 0);
 
-        
+        List<WorkflowTrackerViewModel> SearchBookedLoans(string searchString);
+
+
+
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
         bool ValidateDuplicateLoanApplication( LoanApplicationViewModel loan);
         string GetRefrenceNumber();

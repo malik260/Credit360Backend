@@ -325,6 +325,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public short branchId { get; set; }
         public DateTime applicationDate { get; set; }
         public string referenceNumber { get; set; }
+        public string relatedReferenceNumber { get; set; }
+
         //public double amount { get; set; }
         public DateTime effectiveDate { get; set; }
         //public double interest { get; set; }

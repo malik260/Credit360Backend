@@ -115,6 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                  createdBy = x.application.CREATEDBY,
                  loanReviewApplicationId = x.application.LOANAPPLICATIONID,
                  referenceNumber = x.application.APPLICATIONREFERENCENUMBER,
+                 relatedReferenceNumber = x.application.RELATEDREFERENCENUMBER,
                  branchId = x.branch.BRANCHID,
                  branchName = x.branch.BRANCHNAME,
                  customerId = x.customer.CUSTOMERID,
