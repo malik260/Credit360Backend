@@ -4349,7 +4349,7 @@ namespace FintrakBanking.Repositories.Credit
                                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                         applicationDate = x.APPLICATIONDATE,
-                                        applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT),
+                                        applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE),
                                         //applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = x.APPROVEDAMOUNT,
                                         interestRate = x.INTERESTRATE,
@@ -4417,7 +4417,7 @@ namespace FintrakBanking.Repositories.Credit
                                              relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                              relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                              applicationDate = x.APPLICATIONDATE,
-                                             applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT),
+                                             applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE),
                                              //applicationAmount = x.APPLICATIONAMOUNT,
                                              approvedAmount = x.APPROVEDAMOUNT,
                                              interestRate = x.INTERESTRATE,
@@ -4552,6 +4552,73 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public List<WorkflowTrackerViewModel> SearchBookedLoans(string searchString)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                int[] operations = new int[] { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.IndividualDrawdownRequest, (int)OperationsEnum.CorporateDrawdownRequest, (int)OperationsEnum.CRMSApproval,
+                (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking};
+                int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved, (int)ApprovalStatusEnum.Authorised };
+                List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
+
+                var records = (from a in context.TBL_APPROVAL_TRAIL
+                              join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
+                              join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
+                              join bo in context.TBL_LOAN_BOOKING_REQUEST on a.TARGETID equals bo.LOAN_BOOKING_REQUESTID
+                              join d in context.TBL_LOAN_APPLICATION_DETAIL on bo.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                              join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                              join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                              where (e.APPLICATIONREFERENCENUMBER == searchString && operations.Contains(a.OPERATIONID) && a.RESPONSESTAFFID == null 
+                                        && !approvals.Contains(a.APPROVALSTATUSID) && a.APPROVALSTATEID != (int)ApprovalState.Ended)
+                              select (new WorkflowTrackerViewModel
+                              {
+                                  approvalStatusId = a.APPROVALSTATUSID,
+                                  operationName = a.TBL_OPERATIONS.OPERATIONNAME,
+                                  currentLevel = context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault(),
+                                  approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
+                                  applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+                                  requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
+                                  responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                  comment = a.COMMENT,
+                                  systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                                  systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                                  requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                  responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                  customerName = d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
+                                  customerDivisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                                  //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : context.TBL_CUSTOMER.Where(q=>q.CUSTOMERID == d.CUSTOMERID).Select(cu=>cu.LASTNAME + " " + cu.MIDDLENAME + cu.LASTNAME).FirstOrDefault(),
+                                  responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
+                                  arrivalDate = a.ARRIVALDATE,
+                                  applicationDate = e.SYSTEMDATETIME,
+                                  amount = d.APPROVEDAMOUNT,
+                                  TargetId = a.TARGETID,
+                                  branchName = e.TBL_BRANCH.BRANCHNAME + " (" + e.TBL_BRANCH.BRANCHCODE + ") ",
+                                  loanApplicationId = d.LOANAPPLICATIONID,
+                                  loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                  approvalTrailId = a.APPROVALTRAILID,
+                                  productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                              })
+                           ).OrderByDescending(o => o.approvalTrailId);
+
+                //var test = preBookingrecord.ToList();
+                //var records = record.Union(preBookingrecord).OrderByDescending(a => a.approvalTrailId).ToList();
+
+                int serial = 1;
+                foreach (var item in records.ToList())
+                {
+                    int count = serial;
+
+                    serial += 1;
+                    item.serial = count;
+                    approvalRecord.Add(item);
+                }
+                //var test = approvalRecord.ToList();
+
+                return approvalRecord.OrderBy(o => o.serial).ToList();
+            }
+        }
+
 
         public IEnumerable<LoanApplicationViewModel> LoanSearch(string searchString)
         {
@@ -4574,7 +4641,7 @@ namespace FintrakBanking.Repositories.Credit
                                     applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                                     loanApplicationId = x.LOANAPPLICATIONID,
                                     loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
-                                    proposedAmount = a.PROPOSEDAMOUNT,
+                                    proposedAmount = a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE,
                                     approvedProductName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                     customerId = c.CUSTOMERID,
                                     branchId = c.BRANCHID,

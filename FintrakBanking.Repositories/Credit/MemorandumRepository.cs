@@ -526,7 +526,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            if (this.customerIds.Count > 0)
+            if (this.customerIds?.Count > 0)
             {
                 this.accountNumbers = AccountNumbersMarkup(this.customerIds?.Select(x => x.customerId).ToList());
             }

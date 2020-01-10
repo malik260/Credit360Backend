@@ -115,6 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                  createdBy = x.application.CREATEDBY,
                  loanReviewApplicationId = x.application.LOANAPPLICATIONID,
                  referenceNumber = x.application.APPLICATIONREFERENCENUMBER,
+                 relatedReferenceNumber = x.application.RELATEDREFERENCENUMBER,
                  branchId = x.branch.BRANCHID,
                  branchName = x.branch.BRANCHNAME,
                  customerId = x.customer.CUSTOMERID,
@@ -815,7 +816,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     }
 
-                    LogLMSOperationForRouting(model, items);
+                    LogLMSOperationForRouting(model, items,(short)operationId);
 
                     //if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
                      appl.APPROVALSTATUSID = (short)lastStatusId;
@@ -835,14 +836,15 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details)
+        private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short operationId)
         {
+            var synchOperationId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(x => x.SYNCHOPERATIONID).FirstOrDefault();
             foreach (var i in details)
             {
 
                 var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == model.companyId
-                                && x.OPERATIONID == (short)OperationsEnum.LmsOperations
+                                && x.OPERATIONID == synchOperationId //(short)OperationsEnum.LmsOperations
                                 && x.TARGETID == i.LOANREVIEWAPPLICATIONID
                                 && x.RESPONSESTAFFID == null
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
@@ -861,7 +863,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
                         workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
                         workflowlms.Comment = model.comment;
-                        workflowlms.OperationId = (short)OperationsEnum.LmsOperations;
+                        workflowlms.OperationId = synchOperationId; //(short)OperationsEnum.LmsOperations;
                         workflowlms.DeferredExecution = true;
                         workflowlms.ExternalInitialization = true;
 

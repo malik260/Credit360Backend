@@ -13,5 +13,6 @@ namespace FintrakBanking.Interfaces.Customer
         CustomerFSCaptionGroupViewModel GetCustomerFSCaptionGroupById(short fsCaptionGroupId);
         bool AddCustomerFSCaptionGroup(CustomerFSCaptionGroupViewModel entity);       
         bool UpdateCustomerFSCaptionGroup(short groupId, CustomerFSCaptionGroupViewModel entity);
+        bool DeleteCustomerFSCaptionGroup(int fsCaptionId, UserInfo user);
     }
 }

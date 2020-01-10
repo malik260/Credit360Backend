@@ -891,6 +891,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             //var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
             //if (customerExist == null)
             //{
+            if (customerAcct.Count == 0) { throw new SecureException("Core Banking API Error - The API returned empty!"); }
             this.context.TBL_CASA.AddRange(customerAcct);
             output = context.SaveChanges() > 0;
             //}
