@@ -840,7 +840,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //GetUnAuthorizedOverdraftReport();
             //GetOverlineMonitoringReport();
             //GetCreditCardDelinquencyMonitoringReport();
-            GetPastDueObligationsReminder();
+            //GetPastDueObligationsReminder();
             //GetRiskAssetsReportNotification();
             //GetDashboardReportNotification();
             //GetCACReport();
@@ -897,7 +897,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public void GetImminentMaturities()
         {
-                // GetImminentMaturities method
+                // Maturing Obligations/GetImminentMaturities method
                 var staffList = externalAlertRepository.GetAccountOfficersWithImminentMaturities();
                 var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities").FirstOrDefault();
 
@@ -933,15 +933,17 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td><b>Maturity Date</b></td>
                         </tr>
                      ";
-                    foreach (var t in loanInformation)
+                    if (loanInformation.Count() > 3)
                     {
-                        n++;
+                        foreach (var t in loanInformation)
+                        {
+                            n++;
 
-                        //var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                        var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
-                        var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
-                        //Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}
-                    result = result + $@"
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+                            // var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
+                            var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
+                            //Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}
+                            result = result + $@"
                         <tr>
                             <td>{n}</td>
                             <td>{t.CUSTOMERNAME}</td>
@@ -950,23 +952,25 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td>{$"{maturityDate}"}</td>
                         </tr>
                         ";
+                        }
+
+                        result = result + $"</table>";
+
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
+                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+
+                        emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                        var emailList2 = defaultEmail;
+                        alert.receiverEmailList.Add(emailList2);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+
+                        alerts.Add(alert);
                     }
-                    result = result + $"</table>";
-
-                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
-                    alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
-
-                    var emailList2 = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-
-                    alert.receiverEmailList.Add(emailList2);
-                    alert.template = alertTemplate;
-                    alert.alertTitle = alertTitle;
-                    alert.canFire = true;
-
-                    alerts.Add(alert);
                 }
 
-                SendAlertNotification(alerts);
+                //SendAlertNotification(alerts);
             }
         }
         public void GetCreditCardMaturingObligations()
@@ -1469,29 +1473,33 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td><b>Number Of Days</b></td>
                         </tr>
                      ";
-                    foreach (var t in loanInformation)
+                    if (loanInformation.Count() > 3)
                     {
-                        n++;
-                        
-                        var amount = Convert.ToDecimal(t.AMOUNTDUE).ToString();  //string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
-                        result = result + $@"
-                        <tr>
-                            <td>{n}</td>
-                            <td>{t.CUSTOMERNAME}</td>
-                            <td>{t.REFERENCENUMBER}</td>
-                            <td>{amount}</td>
-                            <td>{t.UNPODAYSOVERDUE}</td>
-                        </tr>
-                        ";
+                        foreach (var t in loanInformation)
+                        {
+                            n++;
+
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE)); //Convert.ToDecimal(t.AMOUNTDUE).ToString(); 
+                            result = result + $@"
+                            <tr>
+                                <td>{n}</td>
+                                <td>{t.CUSTOMERNAME}</td>
+                                <td>{t.REFERENCENUMBER}</td>
+                                <td>{amount}</td>
+                                <td>{t.UNPODAYSOVERDUE}</td>
+                            </tr>
+                            ";
+                        }
                     }
                     result = result + $"</table>";
 
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                    emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                    var emailList2 = defaultEmail;
+                    //emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
 
-                    alert.receiverEmailList.Add(emailList);
+                    alert.receiverEmailList.Add(emailList2);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;

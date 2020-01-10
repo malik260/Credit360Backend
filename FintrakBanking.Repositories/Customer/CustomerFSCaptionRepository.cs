@@ -240,8 +240,8 @@ namespace FintrakBanking.Repositories.Customer
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-
             var auditInfo = context.TBL_CUSTOMER_FS_CAPTION_GROUP.FirstOrDefault(x => x.FSCAPTIONGROUPID == data.FSCAPTIONGROUPID);
+
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionUpdated,
@@ -261,5 +261,6 @@ namespace FintrakBanking.Repositories.Customer
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
         }
+
     }
 }

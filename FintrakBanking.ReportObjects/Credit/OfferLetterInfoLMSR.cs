@@ -860,7 +860,7 @@ namespace FintrakBanking.ReportObjects.Credit
             foreach (var x in customers)
             {
                 var staffcode = context.TBL_STAFF.Where(o => o.STAFFID == x.rmId).Select(o => o.STAFFCODE).FirstOrDefault();
-                x.groupHead = staggingCon.STG_STAFFMIS.Where(m => m.USERNAME == staffcode).Select(m => m.GROUP_HUB).FirstOrDefault();
+                //x.groupHead = staggingCon.STG_STAFFMIS.Where(m => m.USERNAME == staffcode).Select(m => m.GROUP_HUB).FirstOrDefault();
             }
             return customers;
         }

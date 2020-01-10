@@ -16274,8 +16274,19 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public IEnumerable<LoanOperationTypeViewModel> GetOperationType()
+        public IEnumerable<LoanOperationTypeViewModel> GetOperationType(bool isFinalOperation = false)
         {
+            if (isFinalOperation)
+            {
+                return (from data in context.TBL_OPERATIONS
+                        where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                        && data.ISDISABLED == false
+                        select new LoanOperationTypeViewModel()
+                        {
+                            operationTypeId = data.OPERATIONID,
+                            operationTypeName = data.OPERATIONNAME,
+                        });
+            }
             return (from data in context.TBL_OPERATIONS
                     where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
                     && data.ISDISABLED == false
@@ -16284,14 +16295,7 @@ namespace FintrakBanking.Repositories.Credit
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME,
                     });
-            //return (from data in context.TBL_OPERATIONS
-            //        where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
-            //        && data.ISDISABLED == false
-            //        select new LoanOperationTypeViewModel()
-            //        {
-            //            operationTypeId = data.OPERATIONID,
-            //            operationTypeName = data.OPERATIONNAME,
-            //        }); 
+
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD()

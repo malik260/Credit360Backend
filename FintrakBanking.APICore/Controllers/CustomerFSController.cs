@@ -167,11 +167,41 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("customer-fs-caption-group/{fsCaptionGroupId}")]
+        public HttpResponseMessage DeleteCustomerFsCaptionGroup(int fsCaptionGroupId)
+        {
+            try
+            {
+                var user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host,
+                    createdBy = token.GetStaffId
+                };
+
+                _fsGroupRepo.DeleteCustomerFSCaptionGroup(fsCaptionGroupId, user);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = fsCaptionGroupId, message = "record has been deleted successfully" });
+            }
+            catch (SecureException ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         #endregion Customer FS Caption Group
 
         #region Customer FS Caption
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("customer-fs-caption")]
         public HttpResponseMessage AddCustomerFsCaption([FromBody] CustomerFSCaptionViewModel entity)
         {
@@ -359,11 +389,44 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("customer-fs-caption/{fsCaptionId}")]
+        public HttpResponseMessage DeleteCustomerFsCaption(int fsCaptionId)
+        {
+            try
+            {
+                var user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host,
+                    createdBy = token.GetStaffId
+                };
+
+                _fsCaptionRepo.DeleteCustomerFSCaption(fsCaptionId, user);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = fsCaptionId, message = "record has been deleted successfully" });
+            }
+            catch (SecureException ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
         #endregion Customer FS Caption
 
         #region Customer FS Caption Detail
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("customer-fs-caption-detail")]
         public HttpResponseMessage AddCustomerFsCaptionDetail([FromBody] CustomerFSCaptionDetailViewModel entity)
         {

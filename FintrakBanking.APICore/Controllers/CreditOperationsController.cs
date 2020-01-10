@@ -57,12 +57,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operationtype")]
-        public HttpResponseMessage GetOperationType()
+        [Route("loan-operationtype/isFinalOperation/{isFinalOperation}")]
+        public HttpResponseMessage GetOperationType(bool isFinalOperation)
         {
             try
             {
-                var data = repo.GetOperationType();
+                var data = repo.GetOperationType(isFinalOperation);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

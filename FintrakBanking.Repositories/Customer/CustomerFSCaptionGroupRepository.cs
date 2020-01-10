@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -132,6 +133,34 @@ namespace FintrakBanking.Repositories.Customer
                 DETAIL = $"Updated Customer FS Caption Group: { entity.fsCaptionGroupName } ",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -----------------------
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteCustomerFSCaptionGroup(int fsCaptionId, UserInfo user)
+        {
+            var data = context.TBL_CUSTOMER_FS_CAPTION_GROUP.Find(fsCaptionId);
+            data.DELETED = true;
+            data.DELETEDBY = (int)user.createdBy;
+            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionGroupDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Customer FS Caption Group: { data.FSCAPTIONGROUPNAME }",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
