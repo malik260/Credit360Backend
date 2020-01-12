@@ -115,6 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                  createdBy = x.application.CREATEDBY,
                  loanReviewApplicationId = x.application.LOANAPPLICATIONID,
                  referenceNumber = x.application.APPLICATIONREFERENCENUMBER,
+                 relatedReferenceNumber = x.application.RELATEDREFERENCENUMBER,
                  branchId = x.branch.BRANCHID,
                  branchName = x.branch.BRANCHNAME,
                  customerId = x.customer.CUSTOMERID,
@@ -1199,19 +1200,17 @@ namespace FintrakBanking.Repositories.Credit
            (int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
             int staffId = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault();
 
-            var applications = from a in context.TBL_LMSR_APPLICATION
+            var applications = (from a in context.TBL_LMSR_APPLICATION
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
-                               join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals y.TARGETID
+                               //join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals y.TARGETID
                               // let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
-                               where y.RESPONSESTAFFID == null
-                               && operations.Contains(y.OPERATIONID)
-                               && (a.APPLICATIONREFERENCENUMBER == searchString
+                               where //y.RESPONSESTAFFID == null && operations.Contains(y.OPERATIONID) &&
+                               (a.APPLICATIONREFERENCENUMBER == searchString
                                || g.FIRSTNAME.ToLower().Contains(searchString)
                                || g.LASTNAME.ToLower().Contains(searchString)
                                || g.MIDDLENAME.ToLower().Contains(searchString)
-                               || d.CREATEDBY == staffId
-                              )
+                               || d.CREATEDBY == staffId)
                                select new LoanApplicationViewModel
                                {
                                    firstName = g.FIRSTNAME,
@@ -1231,10 +1230,10 @@ namespace FintrakBanking.Repositories.Credit
                                    approvalStatusId = (short)a.APPROVALSTATUSID,
                                    approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == a.APPROVALSTATUSID).APPROVALSTATUSNAME,
 
-                                   currentApprovalLevel = y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                                   //currentApprovalLevel = y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                                   //approvalTrailId = y.APPROVALTRAILID,
+                                   //responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
 
-                                   approvalTrailId = y.APPROVALTRAILID,
-                                   responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
                                    applicationStatusId = a.APPLICATIONSTATUSID,
                                    applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(k => k.APPLICATIONSTATUSID == a.APPLICATIONSTATUSID).Select(k => k.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
                                    branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -1243,7 +1242,76 @@ namespace FintrakBanking.Repositories.Credit
                                    createdBy = a.CREATEDBY,
                                    operationId = a.OPERATIONID,
                                    isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()
-                               };
+                               }).ToList();
+
+            var groupApplications = (from a in context.TBL_LMSR_APPLICATION
+                                    join d in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                    join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID
+                                    //join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals y.TARGETID
+                                    // let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
+                                    where //y.RESPONSESTAFFID == null && operations.Contains(y.OPERATIONID) &&
+                                    (a.APPLICATIONREFERENCENUMBER == searchString
+                                    || c.GROUPNAME.ToLower().Contains(searchString)
+                                    || c.GROUPCODE.ToLower().Contains(searchString)
+                                    || c.GROUPDESCRIPTION.ToLower().Contains(searchString)
+                                    || d.CREATEDBY == staffId)
+                                    select new LoanApplicationViewModel
+                                    {
+                                        //firstName = c.FIRSTNAME,
+                                        //middleName = c.MIDDLENAME,
+                                        //lastName = c.LASTNAME,
+                                        customerName = c.GROUPNAME,
+                                        customerCode = c.GROUPCODE,
+                                        applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                        loanApplicationId = a.LOANAPPLICATIONID,
+                                        customerId = a.CUSTOMERID,
+                                        branchId = a.BRANCHID,
+                                        customerGroupId = a.CUSTOMERGROUPID,
+                                        applicationDate = a.APPLICATIONDATE,
+                                        applicationAmount = d.PROPOSEDAMOUNT,
+                                        approvedAmount = d.APPROVEDAMOUNT,
+                                        interestRate = d.PROPOSEDINTERESTRATE,
+                                        applicationTenor = d.PROPOSEDTENOR,
+                                        approvalStatusId = (short)a.APPROVALSTATUSID,
+                                        approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == a.APPROVALSTATUSID).APPROVALSTATUSNAME,
+
+                                        //currentApprovalLevel = y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                                        //approvalTrailId = y.APPROVALTRAILID,
+                                        //responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
+
+                                        applicationStatusId = a.APPLICATIONSTATUSID,
+                                        applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(k => k.APPLICATIONSTATUSID == a.APPLICATIONSTATUSID).Select(k => k.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
+                                        branchName = a.TBL_BRANCH.BRANCHNAME,
+                                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                        createdBy = a.CREATEDBY,
+                                        operationId = a.OPERATIONID,
+                                        isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()
+                                    });
+
+            var allRecord = applications.Union(groupApplications).ToList();
+
+            foreach (var x in allRecord)
+            {
+                var appRecord = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.loanApplicationId && operations.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).FirstOrDefault();
+                if (appRecord != null)
+                {
+                    var singleRec = appRecord;
+                    x.currentApprovalLevel = singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "DISBURSED" : "N/A"; // y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                    x.approvalTrailId = singleRec.APPROVALTRAILID;//y.APPROVALTRAILID,
+                                                                  //x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a" : singleRec.TBL_STAFF1.STAFFCODE + " - " + singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                    x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "DISBURSED" : "N/A" : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                    x.currentOperationId = singleRec.OPERATIONID;
+                }
+                else
+                {
+                    x.currentApprovalLevel = x.isFacilityCreated == true ? "DISBURSED" : "N/A";
+                    x.responsiblePerson = x.isFacilityCreated == true ? "DISBURSED" : "N/A";
+                }
+
+            }
+
+            return allRecord;
 
             //var applications = from a in context.TBL_LMSR_APPLICATION
             //                   join d in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
@@ -1286,7 +1354,7 @@ namespace FintrakBanking.Repositories.Credit
             //                       isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()
             //                   };
 
-            return applications;
+            //return applications;
         }
 
         private IQueryable<LoanApplicationViewModel> GetLoanApplications(int companyId)
