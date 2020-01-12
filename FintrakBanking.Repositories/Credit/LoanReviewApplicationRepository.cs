@@ -703,6 +703,8 @@ namespace FintrakBanking.Repositories.Credit
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
             int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
 
+            string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
+
             var checklistValidation = ChecklistCompleted(model.applicationId);
             if (appl.CREATEDBY == model.createdBy && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter && checklistValidation == false)
             {
@@ -712,6 +714,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Checklist not completed!");
             }
+
             var currentOperationType = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).FirstOrDefault()?.OPERATIONTYPEID;
 
             // customization for CAM approvals
@@ -721,6 +724,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 operationId = (int)appl.OPERATIONID;
                 nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
+                if(staffRole  == "CREDIT ADMIN") nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
             }
 
 
@@ -805,8 +809,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId)/* && model.operationId != 71*/ // jump process OR end flag
                     {
-                        if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
-                        if (operationIsCam) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
+                        //if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
+                        //if (operationIsCam) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
                         
                         //workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
                         workflow.SetResponse = false;
@@ -818,7 +822,6 @@ namespace FintrakBanking.Repositories.Credit
 
                     LogLMSOperationForRouting(model, items,(short)operationId);
 
-                    //if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
                      appl.APPROVALSTATUSID = (short)lastStatusId;
 
                     //generate offer letter doc
@@ -838,13 +841,21 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short operationId)
         {
-            var synchOperationId = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(x => x.SYNCHOPERATIONID).FirstOrDefault();
+            short? synchOperationId = null;
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            {
+                context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(x => x.SYNCHOPERATIONID).FirstOrDefault();
+
+                if (synchOperationId == null)
+                    throw new ConditionNotMetException("Operation not in synch with final operation");
+            }
+
             foreach (var i in details)
             {
-
+                var actualOperationId = synchOperationId ?? operationId;
                 var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == model.companyId
-                                && x.OPERATIONID == synchOperationId //(short)OperationsEnum.LmsOperations
+                                && x.OPERATIONID == actualOperationId //(short)OperationsEnum.LmsOperations
                                 && x.TARGETID == i.LOANREVIEWAPPLICATIONID
                                 && x.RESPONSESTAFFID == null
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
@@ -863,7 +874,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
                         workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
                         workflowlms.Comment = model.comment;
-                        workflowlms.OperationId = synchOperationId; //(short)OperationsEnum.LmsOperations;
+                        workflowlms.OperationId = actualOperationId; //(short)OperationsEnum.LmsOperations;
                         workflowlms.DeferredExecution = true;
                         workflowlms.ExternalInitialization = true;
 
