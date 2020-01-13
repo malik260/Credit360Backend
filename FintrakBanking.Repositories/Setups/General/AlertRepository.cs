@@ -923,7 +923,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
                     var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY>0).ToList();
 
-                    if (loanInformation != null && loanInformation.Count() > 4)
+                    if (loanInformation != null && loanInformation.Count() > 0)
                     {
                         var n = 0;
                         var result = $@"
@@ -1469,7 +1469,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
                     var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode && d.AMOUNTDUE > 0).ToList();
-                    if (loanInformation != null && loanInformation.Count() > 9)
+                    if (loanInformation != null && loanInformation.Count() > 0)
                     {
                         var n = 0;
                         var result = $@"
