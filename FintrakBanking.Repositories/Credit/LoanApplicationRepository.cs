@@ -5232,7 +5232,7 @@ namespace FintrakBanking.Repositories.Credit
         public string ReviewRequest(ForwardViewModel model)
         {
             var applArchive = context.TBL_LOAN_APPLICATION_ARCHIVE.Where(ar=>ar.LOANAPPLICATIONID == model.applicationId).FirstOrDefault();
-            var appl = context.TBL_LOAN_APPLICATION.Where(a => a.LOANAPPLICATIONID == model.applicationId && a.APPLICATIONSTATUSID ==model.applicationStatusId).Select(a=>a).FirstOrDefault();
+            var appl = context.TBL_LOAN_APPLICATION.Where(a => a.LOANAPPLICATIONID == model.applicationId).Select(a=>a).FirstOrDefault();
             if (context.TBL_LOAN_APPLICATION.Where(x => x.RELATEDREFERENCENUMBER == appl.APPLICATIONREFERENCENUMBER && x.APPLICATIONSTATUSID != model.applicationStatusId).Any())
             {
                 return "This application is already re-initiated!";

@@ -840,7 +840,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //GetUnAuthorizedOverdraftReport();
             //GetOverlineMonitoringReport();
             //GetCreditCardDelinquencyMonitoringReport();
-            //GetPastDueObligationsReminder();
+            GetPastDueObligationsReminder();
             //GetRiskAssetsReportNotification();
             //GetDashboardReportNotification();
             //GetCACReport();
@@ -904,7 +904,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var defaultEmail = "";
                 if (alertTitleInfo.DEFAULTEMAIL != null)
                 {
-                    defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+                    defaultEmail = ";" +alertTitleInfo.DEFAULTEMAIL;
                 }
             if (staffList != null && staffList.Count() > 0)
             {
@@ -921,9 +921,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
                     List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
-                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode).ToList();
-                    var n = 0;
-                    var result = $@"
+                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY>0).ToList();
+
+                    if (loanInformation != null && loanInformation.Count() > 4)
+                    {
+                        var n = 0;
+                        var result = $@"
                      <table cellpadding='0' cellspacing='0' border='1' width='800px'>
                         <tr>
                             <td><b>S/N</b></td>
@@ -931,18 +934,21 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td><b>Reference Number</b></td>
                             <td><b>Amount</b></td>
                             <td><b>Maturity Date</b></td>
+                            <td><b>Number Of Days</b></td>
                         </tr>
                      ";
-                    if (loanInformation.Count() > 3)
-                    {
+
                         foreach (var t in loanInformation)
                         {
                             n++;
 
                             var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
-                            // var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
                             var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
+
+                            int numberOfDays = (t.MATURITYDATE.Value - DateTime.Now).Days;
+
                             //Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}
+                            // var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
                             result = result + $@"
                         <tr>
                             <td>{n}</td>
@@ -950,6 +956,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td>{t.REFERENCENUMBER}</td>
                             <td>{$"{amount}"}</td>
                             <td>{$"{maturityDate}"}</td>
+                            <td>{numberOfDays}</td>
                         </tr>
                         ";
                         }
@@ -960,8 +967,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
                         emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                        var emailList2 = defaultEmail;
-                        alert.receiverEmailList.Add(emailList2);
+                        
+                        alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;
                         alert.canFire = true;
@@ -970,7 +977,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                 }
 
-                //SendAlertNotification(alerts);
+                SendAlertNotification(alerts);
             }
         }
         public void GetCreditCardMaturingObligations()
@@ -1461,9 +1468,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
-                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode).ToList();
-                    var n = 0;
-                    var result = $@"
+                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode && d.AMOUNTDUE > 0).ToList();
+                    if (loanInformation != null && loanInformation.Count() > 9)
+                    {
+                        var n = 0;
+                        var result = $@"
                      <table cellpadding='0' cellspacing='0' border='1' width='800px'>
                         <tr>
                             <td><b>S/N</b></td>
@@ -1473,13 +1482,13 @@ namespace FintrakBanking.Repositories.Setups.General
                             <td><b>Number Of Days</b></td>
                         </tr>
                      ";
-                    if (loanInformation.Count() > 3)
-                    {
+
                         foreach (var t in loanInformation)
                         {
                             n++;
 
-                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE)); //Convert.ToDecimal(t.AMOUNTDUE).ToString(); 
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
+                            //var amount = Convert.ToDecimal(t.AMOUNTDUE).ToString(); 
                             result = result + $@"
                             <tr>
                                 <td>{n}</td>
@@ -1490,23 +1499,22 @@ namespace FintrakBanking.Repositories.Setups.General
                             </tr>
                             ";
                         }
+
+                        result = result + $"</table>";
+
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
+                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+
+                        emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                        
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+
+                        alerts.Add(alert);
                     }
-                    result = result + $"</table>";
-
-                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
-                    alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
-
-                    var emailList2 = defaultEmail;
-                    //emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-
-                    alert.receiverEmailList.Add(emailList2);
-                    alert.template = alertTemplate;
-                    alert.alertTitle = alertTitle;
-                    alert.canFire = true;
-
-                    alerts.Add(alert);
                 }
-
                 SendAlertNotification(alerts);
             }
         }
