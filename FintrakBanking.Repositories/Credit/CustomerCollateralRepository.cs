@@ -8182,8 +8182,7 @@ namespace FintrakBanking.Repositories.Credit
                 targetId = collateral.COLLATERALCUSTOMERID;
                 jobReQuestCode = collateral.COLLATERALCODE;
                 alertSubject = "NOTIFICATION Collateral Valuation Reminder from FINTRAK 360TEST ALERT";
-                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com," +
-                    "paul.asiemo@accessbankplc.com";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staff.FIRSTNAME + " "+ staff.MIDDLENAME + " " + staff.LASTNAME} <br /><br />," +
                                $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer.LASTNAME + ", " + customer.FIRSTNAME + " " + customer.MIDDLENAME}" +
                                $"(Customer ID: {collateral.CUSTOMERCODE}) with OMV {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.OPENMARKETVALUE)} and FSV of {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.FORCEDSALEVALUE)} is due for revaluation on {nextVisit} <br /><br />" +
@@ -8225,8 +8224,7 @@ namespace FintrakBanking.Repositories.Credit
                 var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == collateral.CREATEDBY);
                 var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERCODE == collateral.CUSTOMERCODE);
                 alertSubject = "NOTIFICATION Collateral Valuation Reminder from FINTRAK 360TEST ALERT";
-                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com," +
-                    "paul.asiemo@accessbankplc.com";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME} <br /><br />," +
                                $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer.LASTNAME + ", " + customer.FIRSTNAME + " " + customer.MIDDLENAME}" +
                                $"(Customer ID: {collateral.CUSTOMERCODE}) with OMV {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.OPENMARKETVALUE)} and FSV of {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.FORCEDSALEVALUE)} is due for revaluation on {valuationDate.ToShortDateString()} <br /><br />" +
@@ -8273,8 +8271,7 @@ namespace FintrakBanking.Repositories.Credit
                 var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == collateral.CREATEDBY);
                 var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERCODE == collateral.CUSTOMERCODE);
                 alertSubject = "Collateral Status Update from FINTRAK 360TEST ALERT";
-                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com," +
-                    "paul.asiemo@accessbankplc.com";
+                recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME}, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
                                $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
@@ -8301,8 +8298,7 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == collateral.CREATEDBY);
             var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERCODE == collateral.CUSTOMERCODE);
             alertSubject = "Collateral Validity Update from FINTRAK 360TEST ALERT";
-            recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com," +
-                "paul.asiemo@accessbankplc.com";
+            recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
             messageBody = $"Dear {staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME}, <br /><br />" +
                            $"This is to inform you that, <br /><br />" +
                            $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {currency.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
