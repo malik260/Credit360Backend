@@ -4478,8 +4478,6 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
-
-
                 return allRecord;
 
                 /*var applications = context.TBL_LOAN_APPLICATION
