@@ -47,8 +47,10 @@ namespace FintrakBanking.Repositories.Credit
 {
     public class LoanRepository : ILoanRepository
     {
-        private string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
-        private string API_URL = "http://10.1.7.116:8989/";
+        private string API_KEY = string.Empty;
+        private string API_URL = string.Empty;
+        private IEnumerable<TBL_API_URL> APIUrlConfig;
+
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
@@ -116,7 +118,7 @@ namespace FintrakBanking.Repositories.Credit
             //this.appraisalMemoRepo = _appraisalMemoRepo;
             //this.creditCommon = creditCommon;
 
-
+            APIUrlConfig = context.TBL_API_URL;
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
 
@@ -13903,6 +13905,23 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion
 
+        private void getAPIURLSettings(string typeName = null)
+        {
+            var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
+            if (apiConfig != null)
+            {
+                API_URL = apiConfig.URL;
+                API_KEY = apiConfig.APIKEY;
+            }
+            if (apiConfig == null)
+            {
+                apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
+                API_URL = apiConfig.URL;
+                API_KEY = apiConfig.APIKEY;
+            }
+        }
+
+
         public async Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber)
         {
 
@@ -13916,8 +13935,9 @@ namespace FintrakBanking.Repositories.Credit
             OfferLetterResponse responseApi = new OfferLetterResponse();
             ResponseMessage responseMsg = null;
             string responseJson = "";
+            getAPIURLSettings("CASHFLOW");
+            string apiUrl = "CallBack/ReferBack";
 
-            string apiUrl = "api/CallBack/ReferBack";
             try
             {
                 var token = new AuthenticationHeaderValue("Basic", API_KEY);
