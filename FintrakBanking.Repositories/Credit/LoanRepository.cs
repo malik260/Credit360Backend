@@ -8010,7 +8010,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
                                    && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || staffIds.Contains(atrail.REQUESTSTAFFID))
                                    && operationIds.Contains(atrail.OPERATIONID)
-                                   && atrail.RESPONSESTAFFID == null
+                                   && atrail.RESPONSESTAFFID == null && !(atrail.RESPONSESTAFFID > 0)
                                    && s.CRMSVALIDATED == true
 
                                    orderby s.LOAN_BOOKING_REQUESTID descending

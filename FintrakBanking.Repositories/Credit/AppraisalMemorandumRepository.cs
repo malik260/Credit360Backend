@@ -381,6 +381,7 @@ namespace FintrakBanking.Repositories.Credit
                         currentTrail.RESPONSEDATE = DateTime.Now;
 
                         appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+                        appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         //workflow.SetResponse = false;
                         //workflow.ExternalInitialization = true;
                         //workflow.StaffId = model.staffId;
