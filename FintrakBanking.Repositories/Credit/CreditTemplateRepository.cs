@@ -436,6 +436,14 @@ var qry = Foo.GroupJoin(
                 });
             }
 
+            var oldSections = new List<TBL_DOC_TEMPLATE_DETAIL>();
+            foreach (var sect in loadedSections)
+            {
+                if (templateSections.Any(x => x.TEMPLATESECTIONID == sect.TEMPLATESECTIONID)) continue;
+                oldSections.Add(sect);
+            }
+
+            context.TBL_DOC_TEMPLATE_DETAIL.RemoveRange(oldSections);
             return context.SaveChanges() > 0;
         }
 
