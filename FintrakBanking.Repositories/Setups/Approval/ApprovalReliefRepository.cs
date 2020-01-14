@@ -73,7 +73,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             RELIEFREASON = model.reliefReason,
                             STARTDATE = model.startDate,
                             ENDDATE = model.endDate,
-                            ISACTIVE = model.isActive,
+                           // ISACTIVE = model.isActive,
+                            ISACTIVE = DateTime.Now.CompareTo(model.endDate) < 0,
                             CREATEDBY = (int)model.createdBy,
                             OPERATION = "insert",
                             DATETIMECREATED = DateTime.Now,
@@ -142,7 +143,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         public IEnumerable<ApprovalReliefViewModel> GetAllApprovalRelief(int companyId)
         {
 
-            return context.TBL_STAFF_RELIEF
+            var reliefs = context.TBL_STAFF_RELIEF
                 .Where(x => x.DELETED == false)
                 .OrderByDescending(x => x.RELIEFID)
                 .Select(x => new ApprovalReliefViewModel
@@ -159,8 +160,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     reliefReason = x.RELIEFREASON,
                     startDate = x.STARTDATE,
                     endDate = x.ENDDATE,
-                    isActive = x.ISACTIVE,
-                });
+                    //isActive = x.ISACTIVE,
+                    isActive = DateTime.Now.CompareTo(x.ENDDATE) < 0,
+
+                }).ToList();
+
+            return reliefs;
         }
         public async Task<bool> UpdateApprovalRelief(int reliefId, ApprovalReliefViewModel model)
         {
@@ -185,7 +190,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 tempApprovalReliefToUpdate.RELIEFREASON = model.reliefReason;
                 tempApprovalReliefToUpdate.STARTDATE = model.startDate;
                 tempApprovalReliefToUpdate.ENDDATE = model.endDate;
-                tempApprovalReliefToUpdate.ISACTIVE = model.isActive;
+                tempApprovalReliefToUpdate.ISACTIVE = DateTime.Now.CompareTo(model.endDate) < 0;
+                //tempApprovalReliefToUpdate.ISACTIVE = model.isActive;
                 tempApprovalReliefToUpdate.LASTUPDATEDBY = (int)model.createdBy;
                 tempApprovalReliefToUpdate.ISCURRENT = true;
                 tempApprovalReliefToUpdate.DATETIMEUPDATED = DateTime.Now;
@@ -205,7 +211,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     RELIEFREASON = model.reliefReason,
                     STARTDATE = model.startDate,
                     ENDDATE = model.endDate,
-                    ISACTIVE = model.isActive,
+                    //ISACTIVE = model.isActive,
+                    ISACTIVE = DateTime.Now.CompareTo(model.endDate) < 0,
                     LASTUPDATEDBY = model.lastUpdatedBy,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = DateTime.Now,
