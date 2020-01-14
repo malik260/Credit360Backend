@@ -34,12 +34,22 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-upload/operation/{operationId}/target/{targetId}/isOperationSpecific/{isOperationSpecific}")]
+        public HttpResponseMessage GetDocumentUploads(int operationId, int targetId, bool isOperationSpecific)
+        {
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId,  isOperationSpecific);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("document-upload/operation/{operationId}/target/{targetId}/isOperationSpecific/{isOperationSpecific}/isLms/{isLms}")]
         public HttpResponseMessage GetDocumentUploads(int operationId, int targetId, bool isOperationSpecific, bool isLms = false)
         {
-            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId,  isOperationSpecific, isLms);
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploadsLms(token.GetStaffId, operationId, targetId, isOperationSpecific, isLms);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 

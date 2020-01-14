@@ -339,6 +339,23 @@ namespace FintrakBanking.Repositories.Customer
                 //    return "0.00";
             }
 
+            // FS CaptionID Indicative Decisions
+            if (fsCaptionId == 29) {
+                var computedValue = CalculateFSRatioValue(customerId, 28, fsDate);
+
+                if ((double) computedValue <= 1.5) {
+                    return "OK"; 
+                }
+                else {
+                    return "DECLINED";
+                }
+            }
+
+            return string.Format("{0:n}", CalculateFSRatioValue(customerId, fsCaptionId, fsDate));
+        }
+
+        private decimal CalculateFSRatioValue(int customerId, short fsCaptionId, DateTime fsDate)
+        {
             var customerFS = from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
                              where a.CUSTOMERID == customerId && a.FSDATE == fsDate
                              select a;
@@ -363,17 +380,17 @@ namespace FintrakBanking.Repositories.Customer
 
             double demoninator = 0;
             if (demoninatorInfo.Count() > 0)
-                demoninator = (from a in demoninatorInfo select a.MULTIPLIER * (double) a.AMOUNT).Sum();
+                demoninator = (from a in demoninatorInfo select a.MULTIPLIER * (double)a.AMOUNT).Sum();
 
             // extending the financial 
             var additionInfo = from a in ratios
-                                join b in customerFS on a.FSCAPTIONID equals b.FSCAPTIONID
-                                where a.DIVISORTYPEID == 3
-                                select new { a.MULTIPLIER, b.AMOUNT };
+                               join b in customerFS on a.FSCAPTIONID equals b.FSCAPTIONID
+                               where a.DIVISORTYPEID == 3
+                               select new { a.MULTIPLIER, b.AMOUNT };
 
             double addition = 0;
             if (additionInfo.Count() > 0)
-                addition = (from a in additionInfo select a.MULTIPLIER * (double) a.AMOUNT).Sum();
+                addition = (from a in additionInfo select a.MULTIPLIER * (double)a.AMOUNT).Sum();
 
             var subtractionInfo = from a in ratios
                                   join b in customerFS on a.FSCAPTIONID equals b.FSCAPTIONID
@@ -382,13 +399,13 @@ namespace FintrakBanking.Repositories.Customer
 
             double subtraction = 0;
             if (subtractionInfo.Count() > 0)
-                subtraction = (from a in subtractionInfo select a.MULTIPLIER * (double) a.AMOUNT).Sum();
+                subtraction = (from a in subtractionInfo select a.MULTIPLIER * (double)a.AMOUNT).Sum();
 
 
             if (demoninator == 0)
-                return string.Format("{0:n}", numerator + addition - subtraction);
+                return (decimal) (numerator + addition - subtraction);
             else
-                return string.Format("{0:0.00}", ((decimal) numerator / (decimal) demoninator) + (decimal) addition - (decimal) subtraction);
+                return (((decimal)numerator / (decimal)demoninator) + (decimal)addition - (decimal)subtraction);
         }
 
 
