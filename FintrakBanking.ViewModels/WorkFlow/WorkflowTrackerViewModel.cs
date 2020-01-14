@@ -4,6 +4,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class WorkflowTrackerViewModel
     {
+        public object divisionCode { get; set; }
+        public string divisionName { get; set; }
+
         public string customerDivisionShortCode { get; set; }
 
         public int approvalTrailId { get; set; }

@@ -44,7 +44,6 @@ namespace FintrakBanking.Common
 
         public static string EmailValidator
         {
-            //return String.Format("{0:dd-MMM-yyyy}", date);
             get {
                 return "^([0-9a-zA-Z]([-\\.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$";
             }

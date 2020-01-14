@@ -4349,7 +4349,7 @@ namespace FintrakBanking.Repositories.Credit
                                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                         applicationDate = x.APPLICATIONDATE,
-                                        //applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE),
+                                        applicationAmount = x.APPLICATIONAMOUNT,
                                         //applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = x.APPROVEDAMOUNT,
                                         interestRate = x.INTERESTRATE,
@@ -4417,7 +4417,7 @@ namespace FintrakBanking.Repositories.Credit
                                              relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                              relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                              applicationDate = x.APPLICATIONDATE,
-                                             //applicationAmount = x.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT * (decimal) d.EXCHANGERATE),
+                                             applicationAmount = x.APPLICATIONAMOUNT,
                                              //applicationAmount = x.APPLICATIONAMOUNT,
                                              approvedAmount = x.APPROVEDAMOUNT,
                                              interestRate = x.INTERESTRATE,
@@ -4691,7 +4691,7 @@ namespace FintrakBanking.Repositories.Credit
                                     applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                                     loanApplicationId = x.LOANAPPLICATIONID,
                                     loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
-                                    proposedAmount = a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE,
+                                    proposedAmount = a.PROPOSEDAMOUNT,
                                     approvedProductName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                     customerId = c.CUSTOMERID,
                                     branchId = c.BRANCHID,
@@ -5282,22 +5282,20 @@ namespace FintrakBanking.Repositories.Credit
         public string ReviewRequest(ForwardViewModel model)
         {
             var applArchive = context.TBL_LOAN_APPLICATION_ARCHIVE.Where(ar=>ar.LOANAPPLICATIONID == model.applicationId).FirstOrDefault();
-            var appl = context.TBL_LOAN_APPLICATION.Where(a => a.LOANAPPLICATIONID == model.applicationId && a.APPLICATIONSTATUSID ==model.applicationStatusId).Select(a=>a).FirstOrDefault();
-            if (context.TBL_LOAN_APPLICATION.Where(x => x.RELATEDREFERENCENUMBER == appl.APPLICATIONREFERENCENUMBER && x.APPLICATIONSTATUSID != model.applicationStatusId).Any())
+            var appl = context.TBL_LOAN_APPLICATION.Where(a => a.LOANAPPLICATIONID == model.applicationId).Select(a=>a).FirstOrDefault();
+            List<int> LoanApplicationStatus = new List<int> { (int)LoanApplicationStatusEnum.ApplicationRejected, (int)LoanApplicationStatusEnum.OfferLetterRejected, (int)LoanApplicationStatusEnum.CancellationInProgress, (int)LoanApplicationStatusEnum.CancellationCompleted };
+            
+            if (context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == appl.APPLICATIONREFERENCENUMBER && !LoanApplicationStatus.Contains(x.APPLICATIONSTATUSID)).Any())
             {
                 return "This application is already re-initiated!";
             }
 
-            if ((context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPLICATIONSTATUSID != model.applicationStatusId).Any()) && applArchive == null)
+            if ((context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.applicationId && !LoanApplicationStatus.Contains(x.APPLICATIONSTATUSID)).Any()) && applArchive == null)
             {
                 ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID,0);
             }
 
-            if ((context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.applicationId && x.APPLICATIONSTATUSID == model.applicationStatusId).Any()) && applArchive == null)
-            {
-                ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID,0);
-            }
-
+            
 
             //var referenceNumber = GenerateLoanReferenceNumber();
             var applicationDate = genSetup.GetApplicationDate();
