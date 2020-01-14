@@ -874,7 +874,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
                         workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
                         workflowlms.Comment = model.comment;
-                        workflowlms.OperationId = actualOperationId; //(short)OperationsEnum.LmsOperations;
+                        workflowlms.OperationId = (int)synchOperationId; //(short)OperationsEnum.LmsOperations;
                         workflowlms.DeferredExecution = true;
                         workflowlms.ExternalInitialization = true;
 
