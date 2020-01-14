@@ -344,7 +344,7 @@ namespace FintrakBanking.Repositories.Customer
                 var computedValue = CalculateFSRatioValue(customerId, 28, fsDate);
 
                 if ((double) computedValue <= 1.5) {
-                    return "OK";
+                    return "OK"; 
                 }
                 else {
                     return "DECLINED";
