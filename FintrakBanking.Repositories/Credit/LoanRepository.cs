@@ -4214,7 +4214,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if(loanProductInfo.PRODUCTCODE == "EBFC")
                 {
-                    var statusCode = "15"; // Disbursement
+                    var statusCode = "90"; // Disbursement
                     LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
                 }
 
@@ -4228,18 +4228,13 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.Where(s => s.STAFFID == staffId).FirstOrDefault();
             var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
 
-            if (WorkflowStage == "RM")
-            {
-                WorkflowStageName = "11";
-            }
-            if (WorkflowStage.Substring(0, 2) == "CR")
-            {
-                WorkflowStageName = "12";
-            }
-            if (WorkflowStage == "GH")
-            {
-                WorkflowStageName = "13";
-            }
+            if (WorkflowStage == "RM") { WorkflowStageName = "11"; }
+
+            if (WorkflowStage.Substring(0, 2) == "CR") { WorkflowStageName = "12"; }
+
+            if (WorkflowStage == "GH") { WorkflowStageName = "13"; }
+
+            if (WorkflowStage == "COA") { WorkflowStageName = "15"; }
 
             var staffFullName = staff.FIRSTNAME + " " + staff.LASTNAME;
 
@@ -6892,13 +6887,16 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             var company = context.TBL_COMPANY.Find(companyId);
-             
+
+            var staffIds = generalSetup.GetStaffRlieved(staffId);
+
+
             //IEnumerable<CamProcessedLoanViewModel> data2;
 
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                         where a.COMPANYID == companyId && d.DELETED == false
-                        && a.CREATEDBY == staffId
+                        && staffIds.Contains(a.CREATEDBY)
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -7001,7 +6999,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on r.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                         where r.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                         && r.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved && atrail.RESPONSESTAFFID == null
-                        && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred) && (atrail.LOOPEDSTAFFID == staffId))
+                        && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred) && staffIds.Contains(atrail.LOOPEDSTAFFID ?? 0))
                         //&& ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
                         orderby atrail.SYSTEMARRIVALDATETIME descending, m.DATETIMECREATED descending
                         //orderby m.AVAILMENTDATE descending, m.DATETIMECREATED descending
@@ -7961,6 +7959,7 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.Find(staffId);
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
+            var staffIds = generalSetup.GetStaffRlieved(staffId);
 
             var termLoanOperationStaffRoleLevelIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
             var cpOperationStaffRoleLevelIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList();
@@ -8005,11 +8004,12 @@ namespace FintrakBanking.Repositories.Credit
                                    join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                    where m.COMPANYID == companyId
-                                   && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
+                                   && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)) || ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
+                                   //&& ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
                                    && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                                   && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
+                                   && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || staffIds.Contains(atrail.REQUESTSTAFFID))
                                    && operationIds.Contains(atrail.OPERATIONID)
-                                   && atrail.RESPONSESTAFFID == null
+                                   && atrail.RESPONSESTAFFID == null && !(atrail.RESPONSESTAFFID > 0)
                                    && s.CRMSVALIDATED == true
 
                                    orderby s.LOAN_BOOKING_REQUESTID descending
@@ -8065,7 +8065,8 @@ namespace FintrakBanking.Repositories.Credit
                                        toStaffId = atrail.TOSTAFFID,
                                        requestStaffId = atrail.REQUESTSTAFFID,
                                        isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
-                                       canReRouteBooking = canReRouteBooking
+                                       canReRouteBooking = canReRouteBooking,
+                                       approvalTrailId = atrail.APPROVALTRAILID,
                                    }).ToList();
 
             referredBackLoans = (from s in context.TBL_LOAN_BOOKING_REQUEST
@@ -8132,7 +8133,8 @@ namespace FintrakBanking.Repositories.Credit
                                      requestStaffId = atrail.REQUESTSTAFFID,
                                      isInEditMode = true,
                                      isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
-                                     canReRouteBooking = canReRouteBooking
+                                     canReRouteBooking = canReRouteBooking,
+                                     approvalTrailId = atrail.APPROVALTRAILID
                                  }).ToList();
 
             IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = bookingRequestLoans.Union(referredBackLoans);
@@ -8451,6 +8453,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (trail.RESPONSESTAFFID == null)
                         {
+                            item.currentApprovalLevelId = trail.TOAPPROVALLEVELID;
                             var routedStaffRecord = context.TBL_STAFF.Where(x => x.STAFFID == trail.TOSTAFFID).FirstOrDefault();
                             if (routedStaffRecord != null) item.routedToStaff = routedStaffRecord.FIRSTNAME + " " + routedStaffRecord.LASTNAME;
                         }
@@ -9695,7 +9698,15 @@ namespace FintrakBanking.Repositories.Credit
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
             //var ids = generalSetup.GetStaffApprovalLevelIds(staffId, 0).ToList();
-            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LmsOperations).ToList();
+            var lmsOperations = context.TBL_OPERATIONS.Where(c => c.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication
+                && (c.PRODUCTTYPEID == 1 || c.PRODUCTTYPEID == null))
+                .Select(x => x.OPERATIONID).ToList();
+
+            List<int> ids = new List<int>(); //generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LmsOperations).ToList();
+            foreach(var i in lmsOperations)
+            {
+                ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList());
+            }
 
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
@@ -9706,7 +9717,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.OPERATIONPERFORMED == false
                                    && (a.OPERATIONID != (short)OperationsEnum.CommercialLoanBooking)
                                    && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                                   && atrail.OPERATIONID == (short)OperationsEnum.LmsOperations
+                                   && lmsOperations.Contains(atrail.OPERATIONID) //== (short)OperationsEnum.LmsOperations
                                    && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || atrail.REQUESTSTAFFID == staffId)
                                    && atrail.RESPONSESTAFFID == null //&& b.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                    && ((cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId))

@@ -32,7 +32,7 @@ namespace FintrakBanking.Repositories.Risk
             this.context = _context;
             creditOfficerRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
         }
-
+         
         private bool Init(string username)
         {
             if (officer == null) officer = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == username.ToLower());
