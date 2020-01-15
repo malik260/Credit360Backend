@@ -69,7 +69,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_FULLANDFINAL_STATUS> TBL_LOAN_FULLANDFINAL_STATUS { get; set; }
 
         public virtual DbSet<TBL_APPROVAL_STATUS> TBL_APPROVAL_STATUS { get; set; }
-        public virtual DbSet<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
+        public virtual DbSet<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; } 
+        public virtual DbSet<TBL_APROVAL_SETUP> TBL_APROVAL_SETUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_VOTE_OPTION> TBL_APPROVAL_VOTE_OPTION { get; set; }
         public virtual DbSet<TBL_AUDIT> TBL_AUDIT { get; set; }
         public virtual DbSet<TBL_AUDIT_TYPE> TBL_AUDIT_TYPE { get; set; }
