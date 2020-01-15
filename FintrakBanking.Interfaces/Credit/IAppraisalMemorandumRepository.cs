@@ -64,7 +64,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId);
 
         List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user);
-
+        
         bool GetUntenoredStatus(int applicationId);
 
         PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity);
