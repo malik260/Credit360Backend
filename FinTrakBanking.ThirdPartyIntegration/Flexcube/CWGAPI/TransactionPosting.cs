@@ -1244,8 +1244,6 @@
 
             public async Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber)
             {
-                string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
-                string API_URL = "http://10.1.7.116:8989/";
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
@@ -1256,8 +1254,9 @@
                 OfferLetterResponse responseApi = new OfferLetterResponse();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
+                getAPIURLSettings("CASHFLOW");
+                string apiUrl = "CallBack/notify-status-change";
 
-                string apiUrl = "api/CallBack/notify-status-change";
                 try
                 {
                     var token = new AuthenticationHeaderValue("Basic", API_KEY);
@@ -1350,9 +1349,6 @@
 
             public async Task<ResponseMessage> ReferBackThroughAPI(OfferLetterResponse model, string refNumber)
             {
-                string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
-                string API_URL = "http://10.1.7.116:8989/";
-
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
@@ -1363,9 +1359,8 @@
                 OfferLetterResponse responseApi = new OfferLetterResponse();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
-
-                //string apiUrl = "api/CallBack/ReferBack";
-                string apiUrl = "api/CallBack/refer-back";
+                getAPIURLSettings("CASHFLOW");
+                string apiUrl = "CallBack/refer-back";
 
                 try
                 {
