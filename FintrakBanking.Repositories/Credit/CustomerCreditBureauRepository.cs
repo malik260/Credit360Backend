@@ -769,7 +769,15 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     var errorCode = searchResponse.SearchResult.Split(new string[] { "<ERROR-CODE>" }, StringSplitOptions.None)[1].Split('<')[0];
-                    var errorDescription = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(O => O.ERRORCODE == errorCode).FirstOrDefault().DESCRIPTION;
+                    var errorDescription = string.Empty;
+
+                    if (errorCode.ToLower().Contains("password")) {
+                        errorDescription = errorCode;
+                        errorCode = "0";
+                    }
+                    else {
+                        errorDescription = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(O => O.ERRORCODE == errorCode).FirstOrDefault().DESCRIPTION;
+                    }
 
                     throw new ConditionNotMetException($"Search Response - ERRORCODE: {errorCode} ERRORMESSAGE: {errorDescription}");
                 }
