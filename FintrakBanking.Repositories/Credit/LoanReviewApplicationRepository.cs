@@ -802,9 +802,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-                                
-
-           
+                context.SaveChanges();
+                
                 int lastStatusId = workflow.StatusId;
                 if (workflow.NewState == (int)ApprovalState.Ended)
                 {
@@ -832,7 +831,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     AddLoanCollateralMapping(model.applicationId);//, appl., (short)LoanSystemTypeEnum.OverdraftFacility);
                 }
-                context.SaveChanges();
+                
                 if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
                 return workflow.Response;
             }
