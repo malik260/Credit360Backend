@@ -456,6 +456,7 @@ namespace FintrakBanking.Common.Enum
 
         // Ade
         CustomerFSCaptionGroupDeleted = 557,
+        AlertGroupEmailAdded = 558,
 
     };
     public enum RegulatoryTypeEnum

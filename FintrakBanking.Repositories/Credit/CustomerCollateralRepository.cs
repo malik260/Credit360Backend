@@ -8178,7 +8178,7 @@ namespace FintrakBanking.Repositories.Credit
                 var lastVisit = visitation.VISITATIONDATE;
                 var nextVisit = visitation.NEXTVISITATIONDATE.Value;
                 var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == visitation.CREATEDBY);
-                var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERCODE == collateral.CUSTOMERCODE);
+                var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERID == collateral.CUSTOMERID);
                 targetId = collateral.COLLATERALCUSTOMERID;
                 jobReQuestCode = collateral.COLLATERALCODE;
                 alertSubject = "NOTIFICATION Collateral Valuation Reminder from FINTRAK 360TEST ALERT";
@@ -8222,7 +8222,7 @@ namespace FintrakBanking.Repositories.Credit
                 targetId = collateral.COLLATERALCUSTOMERID;
                 jobReQuestCode = collateral.COLLATERALCODE;
                 var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == collateral.CREATEDBY);
-                var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERCODE == collateral.CUSTOMERCODE);
+                var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERID == collateral.CUSTOMERID);
                 alertSubject = "NOTIFICATION Collateral Valuation Reminder from FINTRAK 360TEST ALERT";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME} <br /><br />," +
@@ -8269,12 +8269,12 @@ namespace FintrakBanking.Repositories.Credit
                     perfectionStatus = context.TBL_COLLATERAL_PERFECTN_STAT.FirstOrDefault(s => s.PERFECTIONSTATUSID == perfectionStatusId).PERFECTIONSTATUSNAME;
                 }
                 var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == collateral.CREATEDBY);
-                var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERCODE == collateral.CUSTOMERCODE);
+                var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERID == collateral.CUSTOMERID);
                 alertSubject = "Collateral Status Update from FINTRAK 360TEST ALERT";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME}, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
-                               $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                               $"The collateral, {collateral.COLLATERALSUMMARY} of {customer.LASTNAME} {customer.FIRSTNAME} {customer.MIDDLENAME} with customerId {customer.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
                                $" has it's perfection status updated as {perfectionStatus}"
                                ;
                 LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
@@ -8296,12 +8296,12 @@ namespace FintrakBanking.Repositories.Credit
             targetId = collateral.COLLATERALCUSTOMERID;
             jobReQuestCode = collateral.COLLATERALCODE;
             var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == collateral.CREATEDBY);
-            var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERCODE == collateral.CUSTOMERCODE);
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERID == collateral.CUSTOMERID);
             alertSubject = "Collateral Validity Update from FINTRAK 360TEST ALERT";
             recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
             messageBody = $"Dear {staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME}, <br /><br />" +
                            $"This is to inform you that, <br /><br />" +
-                           $"The collateral, {collateral.COLLATERALSUMMARY} of customer with customerId {collateral.CUSTOMERCODE} of value {currency.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                           $"The collateral, {collateral.COLLATERALSUMMARY} of {customer.LASTNAME} {customer.FIRSTNAME} {customer.MIDDLENAME} with customerId {customer.CUSTOMERCODE} of value {currency.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
                            $" now has a validity period that lasts till {newValidityDate.Value}"
                            ;
             LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
