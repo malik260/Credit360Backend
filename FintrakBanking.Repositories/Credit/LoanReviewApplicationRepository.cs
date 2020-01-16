@@ -123,7 +123,7 @@ namespace FintrakBanking.Repositories.Credit
                  customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                  atInitiator = x.application.CREATEDBY == staffId,
                  timeIn = x.trail.SYSTEMARRIVALDATETIME,
-
+                 currentApprovalStatus = x.trail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                  currentApprovalStateId = x.trail.APPROVALSTATEID,
                  responsiblePerson = context.TBL_STAFF
                                              .Where(s => s.STAFFID == x.trail.TOSTAFFID)
@@ -169,7 +169,7 @@ namespace FintrakBanking.Repositories.Credit
 
                  }).GroupBy(d => d.loanReviewApplicationId).ToList();
 
-            applications = query.AsQueryable()
+                 applications = query.AsQueryable()
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 .OrderByDescending(x => x.loanReviewApplicationId);
 
@@ -721,28 +721,29 @@ namespace FintrakBanking.Repositories.Credit
 
             // customization for CAM approvals
             bool operationIsCam = (currentOperationType == (int)OperationTypeEnum.LoanReviewApplication) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
-            if (camOperationIds.Contains(operationId) || operationIsCam)
-            {
-                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                operationId = (int)appl.OPERATIONID;
-                nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
-                if(staffRole  == "CREDIT ADMIN") nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
-            }
+            //if (camOperationIds.Contains(operationId) || operationIsCam)
+            //{
+            //    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            //    operationId = (int)appl.OPERATIONID;
+            //    nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
+            //    if(staffRole  == "CREDIT ADMIN") nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
+            //}
 
 
-            if (apsOperationIds.Contains(operationId) || operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter)
-            {
-                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                operationId = (int)appl.OPERATIONID;
-                nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment; // redefine
-                workflow.Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0;
-            }
+            //if (apsOperationIds.Contains(operationId) || operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter)
+            //{
+            //    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            //    operationId = (int)appl.OPERATIONID;
+            //    nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment; // redefine
+            //    workflow.Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0;
+            //}
 
             if (camOperationIds.Contains(operationId) || operationIsCam  || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
             {
                 workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
             }
-
+            using (var trans = context.Database.BeginTransaction())
+            {
 
             workflow.StaffId = model.lastUpdatedBy;
             workflow.CompanyId = appl.COMPANYID;
@@ -801,11 +802,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-
-            context.SaveChanges();
-
-            using (var trans = context.Database.BeginTransaction())
-            {
+                context.SaveChanges();
+                
                 int lastStatusId = workflow.StatusId;
                 if (workflow.NewState == (int)ApprovalState.Ended)
                 {
@@ -833,9 +831,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     AddLoanCollateralMapping(model.applicationId);//, appl., (short)LoanSystemTypeEnum.OverdraftFacility);
                 }
-
-                trans.Commit();
-                //return lastStatusId;
+                
+                if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
                 return workflow.Response;
             }
 

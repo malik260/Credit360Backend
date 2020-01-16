@@ -296,6 +296,8 @@ public int? newInterestFrequencyTypeId { get; set; }
 
     public class LoanReviewApplicationViewModel : GeneralEntity
     {
+        public string currentApprovalStatus;
+
         public int loanReviewApplicationId { get; set; }
         public int loanId { get; set; }
         public short productTypeId { get; set; }

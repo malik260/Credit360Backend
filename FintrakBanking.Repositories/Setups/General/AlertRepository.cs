@@ -73,6 +73,19 @@ namespace FintrakBanking.Repositories.Setups.General
             return staffRoles;
         }
 
+        public IEnumerable<StaffGroupEmailViewModel> GetAllStaffGroupEmail()
+        {
+            var staffRoles = (from a in context.TBL_ALERT_GROUP_EMAIL
+                              select new StaffGroupEmailViewModel
+                              {
+                                  groupEmailId = a.GROUPEMAILID,
+                                  groupCode = a.GROUPCODE,
+                                  groupName = a.GROUPNAME,
+                                  groupEmail = a.GROUPEMAIL
+                              });
+            return staffRoles;
+        }
+
         public IEnumerable<AlertTitleViewModel> GetAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE
@@ -567,6 +580,23 @@ namespace FintrakBanking.Repositories.Setups.General
             return alerts;
         }
 
+        public IEnumerable<AlertLevelViewModel> GetAllAlertGroupEmail()
+        {
+            var alerts = (from a in context.TBL_ALERT_STAFF_ROLE
+                          join b in context.TBL_ALERT_GROUP_EMAIL on a.STAFFROLEID equals b.GROUPEMAILID
+                          join c in context.TBL_ALERT_TITLE on a.ALERTTITLEID equals c.ALERTTITLEID
+                          select new AlertLevelViewModel
+                          {
+                              groupEmailId = b.GROUPEMAILID,
+                              groupCode = b.GROUPCODE,
+                              groupName = b.GROUPNAME,
+                              groupEmail = b.GROUPEMAIL,
+                              staffRoleId = a.STAFFROLEID,
+                              title = c.TITLE == null ? "N/A" : c.TITLE,
+                          });
+            return alerts;
+        }
+
         public bool AddAlertStaffRole(AlertLevelViewModel model)
         {
             var entity = new TBL_ALERT_STAFF_ROLE
@@ -585,6 +615,37 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddAlertGroupEmail(AlertLevelViewModel model)
+        {
+            var entity = new TBL_ALERT_GROUP_EMAIL
+            {
+                GROUPCODE = model.groupCode,
+                GROUPNAME = model.groupName,
+                GROUPEMAIL = model.groupEmail
+            };
+
+            context.TBL_ALERT_GROUP_EMAIL.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertGroupEmailAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_GROUP_EMAIL '{entity.ToString()}' created by {auditStaff}",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
@@ -840,7 +901,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //GetUnAuthorizedOverdraftReport();
             //GetOverlineMonitoringReport();
             //GetCreditCardDelinquencyMonitoringReport();
-            //GetPastDueObligationsReminder();
+            GetPastDueObligationsReminder();
             //GetRiskAssetsReportNotification();
             //GetDashboardReportNotification();
             //GetCACReport();
@@ -923,7 +984,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
                     var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY>0).ToList();
 
-                    if (loanInformation != null && loanInformation.Count() > 7)
+                    if (loanInformation != null && loanInformation.Count() > 0)
                     {
                         var n = 0;
                         var result = $@"
@@ -967,8 +1028,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
                         emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                        var em = "benjamin.gbaaikye@fintraksoftware.com";
-                        alert.receiverEmailList.Add(em);
+                        //var em = "benjamin.gbaaikye@fintraksoftware.com";
+                        alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;
                         alert.canFire = true;
@@ -1506,7 +1567,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
                         emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                        
                         alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;

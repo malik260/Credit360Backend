@@ -848,6 +848,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ForwardReviewViewModel : GeneralEntity
     {
+        public bool isFlowTest { get; set; }
         public int forwardAction { get; set; } // statusId
         public int applicationId { get; set; } // targetId
         public int appraisalMemorandumId { get; set; }
