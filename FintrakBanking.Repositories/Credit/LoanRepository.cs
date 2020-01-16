@@ -8527,6 +8527,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+
         public LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model)
         {
             var loanId = model.loanId ?? 0;
