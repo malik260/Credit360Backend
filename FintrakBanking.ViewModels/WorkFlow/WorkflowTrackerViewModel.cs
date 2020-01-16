@@ -4,6 +4,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class WorkflowTrackerViewModel
     {
+        public int dueDate;
+
         public object divisionCode { get; set; }
         public string divisionName { get; set; }
 

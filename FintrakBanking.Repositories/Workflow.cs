@@ -223,6 +223,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 { request.RESPONSESTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId; }
             }
 
+            //RandomnizeAllocation();
+
             MakerCheckerControl();
 
             SendNotifications();
@@ -263,6 +265,63 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.saved) return true;
 
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
+        }
+
+        private void RandomnizeAllocation()
+        {
+            var approvalSetup = context.TBL_APROVAL_SETUP.FirstOrDefault();
+            if(approvalSetup.USEROUNDROBIN == true)
+            {
+                List<StaffAllocatedjob> staffAllocations = new List<StaffAllocatedjob>();
+
+                if(this.toStaffId != null) { return; }
+
+                if(this.request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && this.StatusId == (int)ApprovalStatusEnum.Referred)
+                {
+                    var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                   x.COMPANYID == this.companyId
+                                   && x.OPERATIONID == this.operationId
+                                   && x.RESPONSESTAFFID == null
+                                   && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                                   ).ToList();
+
+                    //var staffRecord = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+                    //var staffBusinessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == staffRecord.BUSINESSUNITID).FirstOrDefault();
+                    //if(approvalSetup.ISRETAILONLYROUNDROBIN == true)
+                    //{
+                    //    if(staffBusinessUnit.BUSINESSCOMMONNAME.ToLower() != "retail") return;
+                    //}
+
+                    var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId);
+                    var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId);
+                    var staffInrole = context.TBL_STAFF.Where(x => approvalLevel.Select(c=>c.STAFFROLEID).Contains(x.STAFFROLEID));
+
+                   if(!context.TBL_STAFF_ROLE.Where(x => x.STAFFROLEID == staffInrole.Select(d => x.STAFFROLEID).FirstOrDefault() && x.USEROUNDROBIN == true).Any())
+                   {
+                        return;
+                   }
+
+
+                    foreach (var item in approvalStaff)
+                    {
+                        if(staffAllocations.Where(x=>x.staffId == item.STAFFID).Count() == 0)
+                        {
+                            StaffAllocatedjob staffAllocation = new StaffAllocatedjob();
+                            staffAllocation.pendingJobCount = pendingTrail.Where(x => x.TOSTAFFID == item.STAFFID).Count();
+                            staffAllocation.staffId = item.STAFFID;
+                            staffAllocation.counted = true;
+
+                            var isOnRelief = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == item.STAFFID && x.ENDDATE.Date < DateTime.Now.Date).Any();
+                            staffAllocation.isOnRelief = isOnRelief;
+                            staffAllocations.Add(staffAllocation);
+                        }
+                    }
+
+                    var orderedAllocation = staffAllocations.Where(x => x.isOnRelief == false && staffInrole.Select(c=>c.STAFFID).Contains(x.staffId)).OrderByDescending(x=>x.pendingJobCount).FirstOrDefault();
+                    if(this.toStaffId == null) { this.toStaffId = orderedAllocation.staffId; }
+                }
+            }
+          
         }
 
         private List<TBL_APPROVAL_TRAIL> GetAllTrail()
@@ -1511,6 +1570,15 @@ namespace FintrakBanking.Repositories.WorkFlow
         public List<int> levelIds { get; set; }
         public int levelRoleId { get; set; }
 
+    }
+
+    public class StaffAllocatedjob
+    {
+        internal bool isOnRelief { get; set; }
+
+        public int staffId { get; set; }
+        public int pendingJobCount { get; set; }
+        public bool counted { get; set; }
     }
 }
 
