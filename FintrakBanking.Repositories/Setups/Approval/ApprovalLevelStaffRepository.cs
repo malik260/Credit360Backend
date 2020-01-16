@@ -845,7 +845,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 List<int> operations = new List<int> { (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.LoanAvailment };
                 operations.AddRange(context.TBL_LOAN_APPLICATION.Select(x => x.OPERATIONID).Distinct());
 
-                int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved, (int)ApprovalStatusEnum.Authorised };
+                int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved,  }; //(int)ApprovalStatusEnum.Authorised
                 List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
 
                 //var recordApproved = (from a in context.TBL_APPROVAL_TRAIL
@@ -931,6 +931,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   divisionName = (from p in context.TBL_PROFILE_BUSINESS_UNIT join t in context.TBL_CUSTOMER on p.BUSINESSUNITID equals t.BUSINESSUNTID where t.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault(), 
                                   responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
                                   arrivalDate = a.ARRIVALDATE,
+                                  //dueDate = (DateTime.Now.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
                                   applicationDate = d.SYSTEMDATETIME,
                                   customerDivisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                   //  amount = d.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == d.LOANAPPLICATIONID).Select(x=>x.APPROVEDAMOUNT).FirstOrDefault(),
@@ -997,7 +998,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     (int)OperationsEnum.ForeignExchangeLoanBooking,
                     (int)OperationsEnum.RevolvingLoanBooking,
                     (int)OperationsEnum.ContigentLoanBooking};
-                int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved, (int)ApprovalStatusEnum.Authorised };
+                int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved }; //(int)ApprovalStatusEnum.Authorised
                 List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
 
 
@@ -1020,8 +1021,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                                             && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
 
-                                        && a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
-                                        && a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
+                                        //&& a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
+                                       // && a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
                                         select (new WorkflowTrackerViewModel
                                         {
                                             approvalStatusId = a.APPROVALSTATUSID,
@@ -1051,18 +1052,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                             branchName = e.TBL_BRANCH.BRANCHNAME + " (" + e.TBL_BRANCH.BRANCHCODE + ") ",
                                             loanApplicationId = d.LOANAPPLICATIONID,
                                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
-
+                                            //dueDate = (DateTime.Now.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
                                             approvalTrailId = a.APPROVALTRAILID,
                                             productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                                         })
                            ).OrderByDescending(o => o.approvalTrailId);
-
-
-
-
-
-
-
 
 
                 var record = (from a in context.TBL_APPROVAL_TRAIL
@@ -1076,6 +1070,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                  && DbFunctions.TruncateTime(a.SYSTEMARRIVALDATETIME) <= DbFunctions.TruncateTime(param.endDate)) &&
                                  operations.Contains(a.OPERATIONID) && a.RESPONSESTAFFID == null && !approvals.Contains(a.APPROVALSTATUSID)
                                  && a.APPROVALSTATEID != (int)ApprovalState.Ended
+                                 && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
+                                 && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                               // a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
                               //&& a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
                               select (new WorkflowTrackerViewModel
