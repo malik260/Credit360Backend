@@ -17,8 +17,8 @@ namespace FintrakBanking.Entities.Models
         public string BUSINESSUNITNAME { get; set; }
         public string BUSINESSUNITINITIALS { get; set; }
         public string BUSINESSUNITSHORTCODE { get; set; }
-        
 
+        public string BUSINESSCOMMONNAME { get; set; }
 
     }
 }

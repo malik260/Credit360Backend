@@ -414,10 +414,12 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
                     CREATEDBY = staffId,
                     DATETIMECREATED = applicationDate,
-                    PROPOSEDTENOR = tenor,
+                    //PROPOSEDTENOR = tenor,
+                    PROPOSEDTENOR = detail.duration == 0 ? tenor : detail.duration,
                     PROPOSEDINTERESTRATE = loan.interestRate,
                     PROPOSEDAMOUNT = loan.outstandingPrincipal,
-                    APPROVEDTENOR = tenor,
+                    //APPROVEDTENOR = tenor,
+                    APPROVEDTENOR = detail.duration == 0 ? tenor : detail.duration,
                     APPROVEDINTERESTRATE = loan.interestRate,
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
@@ -719,22 +721,22 @@ namespace FintrakBanking.Repositories.Credit
 
             // customization for CAM approvals
             bool operationIsCam = (currentOperationType == (int)OperationTypeEnum.LoanReviewApplication) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
-            if (camOperationIds.Contains(operationId) || operationIsCam)
-            {
-                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                operationId = (int)appl.OPERATIONID;
-                nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
-                if(staffRole  == "CREDIT ADMIN") nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
-            }
+            //if (camOperationIds.Contains(operationId) || operationIsCam)
+            //{
+            //    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            //    operationId = (int)appl.OPERATIONID;
+            //    nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
+            //    if(staffRole  == "CREDIT ADMIN") nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
+            //}
 
 
-            if (apsOperationIds.Contains(operationId) || operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter)
-            {
-                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                operationId = (int)appl.OPERATIONID;
-                nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment; // redefine
-                workflow.Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0;
-            }
+            //if (apsOperationIds.Contains(operationId) || operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter)
+            //{
+            //    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            //    operationId = (int)appl.OPERATIONID;
+            //    nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment; // redefine
+            //    workflow.Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0;
+            //}
 
             if (camOperationIds.Contains(operationId) || operationIsCam  || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
             {
