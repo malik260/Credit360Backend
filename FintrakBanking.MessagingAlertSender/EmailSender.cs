@@ -220,9 +220,11 @@ namespace FintrakBanking.MessagingAlertSender
                                 }
                                 
                             }
+                                //mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
+                                //mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
                                 mail.IsBodyHtml = true;
-                                mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
-                                mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
+                                mail.Subject = newMail.MESSAGESUBJECT;
+                                mail.Body = newMail.MESSAGEBODY;
                                 mailId = newMail.MESSAGEID;
 
                             if (newMail.ATTACHMENTTYPEID != null)

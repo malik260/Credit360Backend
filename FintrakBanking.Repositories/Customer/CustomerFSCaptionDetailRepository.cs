@@ -210,6 +210,7 @@ namespace FintrakBanking.Repositories.Customer
                             fsCaptionName = b.FSCAPTIONNAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
+                            textValue = a.TEXTVALUE,
                             fsCaptionPosition = b.POSITION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY

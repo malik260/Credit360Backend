@@ -163,7 +163,7 @@ namespace FintrakBanking.Repositories.Credit
                 //.Select(x => new { x.currencyId, x.sellingRate}).Distinct().ToList();
 
 
-
+               
                 var scheduledLoan = (//from a in context.TBL_LOAN_SCHEDULE_DAILY
                                      from b in context.TBL_LOAN // on a.LOANID equals b.TERMLOANID
                                                                 //join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
