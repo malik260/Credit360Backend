@@ -123,7 +123,7 @@ namespace FintrakBanking.Repositories.Credit
                  customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                  atInitiator = x.application.CREATEDBY == staffId,
                  timeIn = x.trail.SYSTEMARRIVALDATETIME,
-
+                 currentApprovalStatus = x.trail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                  currentApprovalStateId = x.trail.APPROVALSTATEID,
                  responsiblePerson = context.TBL_STAFF
                                              .Where(s => s.STAFFID == x.trail.TOSTAFFID)
@@ -169,7 +169,7 @@ namespace FintrakBanking.Repositories.Credit
 
                  }).GroupBy(d => d.loanReviewApplicationId).ToList();
 
-            applications = query.AsQueryable()
+                 applications = query.AsQueryable()
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 .OrderByDescending(x => x.loanReviewApplicationId);
 
@@ -414,10 +414,12 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
                     CREATEDBY = staffId,
                     DATETIMECREATED = applicationDate,
-                    PROPOSEDTENOR = tenor,
+                    //PROPOSEDTENOR = tenor,
+                    PROPOSEDTENOR = detail.duration == 0 ? tenor : detail.duration,
                     PROPOSEDINTERESTRATE = loan.interestRate,
                     PROPOSEDAMOUNT = loan.outstandingPrincipal,
-                    APPROVEDTENOR = tenor,
+                    //APPROVEDTENOR = tenor,
+                    APPROVEDTENOR = detail.duration == 0 ? tenor : detail.duration,
                     APPROVEDINTERESTRATE = loan.interestRate,
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
@@ -740,7 +742,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
             }
-
+            using (var trans = context.Database.BeginTransaction())
+            {
 
             workflow.StaffId = model.lastUpdatedBy;
             workflow.CompanyId = appl.COMPANYID;
@@ -799,11 +802,9 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
+                                
 
-            context.SaveChanges();
-
-            using (var trans = context.Database.BeginTransaction())
-            {
+           
                 int lastStatusId = workflow.StatusId;
                 if (workflow.NewState == (int)ApprovalState.Ended)
                 {
@@ -831,9 +832,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     AddLoanCollateralMapping(model.applicationId);//, appl., (short)LoanSystemTypeEnum.OverdraftFacility);
                 }
-
-                trans.Commit();
-                //return lastStatusId;
+                context.SaveChanges();
+                if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
                 return workflow.Response;
             }
 

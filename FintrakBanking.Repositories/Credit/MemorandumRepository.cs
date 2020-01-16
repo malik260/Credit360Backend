@@ -454,6 +454,8 @@ namespace FintrakBanking.Repositories.Credit
                 //string customerName = String.Empty;
                 // if (lmsrAppllication.CUSTOMERGROUPID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (lmsrApplication.CUSTOMERID != null) this.customerName = lmsrApplication.TBL_CUSTOMER.FIRSTNAME + " " + lmsrApplication.TBL_CUSTOMER.MIDDLENAME + " " + lmsrApplication.TBL_CUSTOMER.LASTNAME;
+                initLoanAppForLms();
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted).ToList();
 
                 this.branchName = lmsrApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = lmsrApplication.TBL_BRANCH.ADDRESSLINE1 + " " + lmsrApplication.TBL_BRANCH.ADDRESSLINE2;
@@ -466,10 +468,10 @@ namespace FintrakBanking.Repositories.Credit
                 //this.preparedBy = this.lmsrAppllication.TBL_STAFF.FIRSTNAME + " " + this.lmsrAppllication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLMS();
                 //this.exchangeRate = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().EXCHANGERATE.ToString();
-                this.obligorRiskRating = GetCustomerRiskRating();
+                this.obligorRiskRating = GetCustomerRiskRatingLMS();
                 this.obligorClassification = GetObligorClassification();
-                this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
-                this.exchangeRate = GetAllExchangeRates();
+                this.legalLendingLimit = (long)context.TBL_COMPANY.Find(lmsrApplication.COMPANYID).SINGLEOBLIGORLIMIT;
+                this.exchangeRate = GetAllExchangeRatesLMS();
                 //this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();//this.directFacilities = GetDirectFacilitiesMarkupLMS();
                 //this.totalDirectFacilities = GetTotalDirectFacilitiesMarkupLMS();
                 //this.contingentFacilities = GetContingentFacilitiesMarkupLMS();
@@ -485,12 +487,12 @@ namespace FintrakBanking.Repositories.Credit
                 this.groupExposure = GetGroupExposureMarkupLMS();
                 this.approvals = GetApprovalsMarkupLOS();
                 this.currentDate = DateTime.Now.ToShortDateString();
-                this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
+                this.annualReviewDate = this.lmsrApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.securityAnalysis = this.GetSecurityAnalysisMarkUP();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 this.managementProfile = GetManagementProfileMarkup();
                 this.ownership = GetOwnershipMarkup();
-                this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
+                //this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
 
 
                 // out ducument properties definition
@@ -541,6 +543,51 @@ namespace FintrakBanking.Repositories.Credit
             //this.customerTurnover = CustomerTurnoverMarkup(); // lazy loaded
 
             return true;
+        }
+
+        private void initLoanAppForLms()
+        {
+            var loanId = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().LOANID;
+            int lmsrSystemType = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().LOANSYSTEMTYPEID;
+            int loanAppId;
+            int detailId;
+            if (lmsrSystemType == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+            {
+                detailId = context.TBL_LOAN.Find(loanId).LOANAPPLICATIONDETAILID;
+                loanAppId = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId).LOANAPPLICATIONID;
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
+            }
+            if (lmsrSystemType == (int)LoanSystemTypeEnum.OverdraftFacility)
+            {
+                detailId = context.TBL_LOAN_REVOLVING.Find(loanId).LOANAPPLICATIONDETAILID;
+                loanAppId = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId).LOANAPPLICATIONID;
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
+            }
+            if (lmsrSystemType == (int)LoanSystemTypeEnum.ContingentLiability)
+            {
+                detailId = context.TBL_LOAN_CONTINGENT.Find(loanId).LOANAPPLICATIONDETAILID;
+                loanAppId = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId).LOANAPPLICATIONID;
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
+            }
+            if (lmsrSystemType == (int)LoanSystemTypeEnum.LineFacility)
+            {
+                detailId = context.TBL_LOAN.Find(loanId).LOANAPPLICATIONDETAILID;
+                loanAppId = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId).LOANAPPLICATIONID;
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
+            }
+            if (loanApplication != null)
+            {
+                if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
+                {
+                    this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+                    this.customerId = (int)loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
+                }
+                if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+                {
+                    this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+                    this.customerId = (int)loanApplication.CUSTOMERID;
+                }
+            }
         }
 
         private bool InitializeDrawdownMemoProperties(int targetId, int operationId) // feeder
@@ -1213,6 +1260,26 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
             return result;
         }
+
+        private string GetAllExchangeRatesLMS()
+        {
+            var result = String.Empty;
+            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).Take(3).ToList();
+            foreach (var x in exchangeRates)
+            {
+                var rate = financeTransaction.GetExchangeRate(DateTime.Now, x.TBL_CURRENCY1.CURRENCYID, lmsrApplication.COMPANYID);
+                if (rate?.sellingRate > 0)
+                {
+                    x.EXCHANGERATE = rate.sellingRate;
+                }
+                result = result + $@"
+                        {x.TBL_CURRENCY1.CURRENCYCODE}: {x.EXCHANGERATE}   
+                ";
+            }
+            context.SaveChanges();
+            return result;
+        }
+
         private string GetConditionsPrecedentToDrawdownMarkup()
         {
             var conditions = GetConditionsPrecedentToDrawdown().GroupBy(c => c.typeId); // new
@@ -1349,7 +1416,10 @@ namespace FintrakBanking.Repositories.Credit
         private string GetBusinessSectorsMarkupLMS()
         {
             var result = String.Empty;
-            result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR.TBL_SECTOR.NAME;
+            string sectorName;
+            var cust = context.TBL_CUSTOMER.Find(lmsrApplication.CUSTOMERID);
+            sectorName = context.TBL_SUB_SECTOR.Find(cust.SUBSECTORID)?.TBL_SECTOR.NAME;
+            result += sectorName;
             //foreach (var loanDetail in this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL)
             //{
             //    result = result + loanDetail.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
@@ -3704,13 +3774,13 @@ namespace FintrakBanking.Repositories.Credit
             if (lmsrApplication.CUSTOMERGROUPID > 0)
             {
                 customerIds.Add(new CustomerExposure { customerId = (int)lmsrApplication.CUSTOMERGROUPID });
-                exposures = GetCustomerExposure(customerIds, lmsrApplication.COMPANYID);
+                exposures = GetCustomerExposureLMS(customerIds, lmsrApplication.COMPANYID);
                 //exposures = GetCurrentSingleCustomerExposures();
             }
             else
             {
                 customerIds.Add(new CustomerExposure { customerId = (int)lmsrApplication.CUSTOMERID });
-                exposures = GetCustomerExposure(customerIds, lmsrApplication.COMPANYID);
+                exposures = GetCustomerExposureLMS(customerIds, lmsrApplication.COMPANYID);
                 //exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
             }
             return exposures;
@@ -3811,7 +3881,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private int GetCurrentOperationId()
         {
-            if (this.loanApplication.OPERATIONID > 0)
+            if (this.loanApplication?.OPERATIONID > 0 && this.loanApplication != null)
             {
                 return this.loanApplication.OPERATIONID;
             }else
@@ -4094,6 +4164,23 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
+            return result;
+        }
+
+        private string GetCustomerRiskRatingLMS()
+        {
+            var result = String.Empty;
+            if (lmsrApplication.CUSTOMERID > 0)
+            {
+                var rating = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrApplication.CUSTOMERID).CUSTOMERRATING;
+                result += rating;
+            }
+            else
+            {
+                var rating = context.TBL_CUSTOMER_GROUP.FirstOrDefault(c => c.CUSTOMERGROUPID == lmsrApplication.CUSTOMERGROUPID).RISKRATINGID;
+                result += rating;
+            }
+
             return result;
         }
 
@@ -4388,6 +4475,20 @@ namespace FintrakBanking.Repositories.Credit
         public List<CurrentCustomerExposure> GetCustomerExposure(List<CustomerExposure> customerIds, int companyId) // not used!
         {
             return loanRepo.GetCurrentCustomerExposure(customerIds, loanApplication.LOANAPPLICATIONTYPEID, companyId); // old ify impl
+        }
+
+        public List<CurrentCustomerExposure> GetCustomerExposureLMS(List<CustomerExposure> customerIds, int companyId) // not used!
+        {
+            int loanType;
+            if (lmsrApplication.CUSTOMERID > 0)
+            {
+                loanType = (int)LoanTypeEnum.Single;
+            }
+            else
+            {
+                loanType = (int)LoanTypeEnum.CustomerGroup;
+            }
+            return loanRepo.GetCurrentCustomerExposure(customerIds, loanType, companyId); // old ify impl
         }
 
         // html markup

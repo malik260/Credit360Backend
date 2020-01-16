@@ -2848,7 +2848,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return result;
         }
-
+        
         #endregion CAM Pending Applications
 
         public IEnumerable<CurrentCommitteeViewModel> GetCurrentCommittee(int loanApplicationId)
