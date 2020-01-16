@@ -73,6 +73,19 @@ namespace FintrakBanking.Repositories.Setups.General
             return staffRoles;
         }
 
+        public IEnumerable<StaffGroupEmailViewModel> GetAllStaffGroupEmail()
+        {
+            var staffRoles = (from a in context.TBL_ALERT_GROUP_EMAIL
+                              select new StaffGroupEmailViewModel
+                              {
+                                  groupEmailId = a.GROUPEMAILID,
+                                  groupCode = a.GROUPCODE,
+                                  groupName = a.GROUPNAME,
+                                  groupEmail = a.GROUPEMAIL
+                              });
+            return staffRoles;
+        }
+
         public IEnumerable<AlertTitleViewModel> GetAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE
@@ -567,6 +580,23 @@ namespace FintrakBanking.Repositories.Setups.General
             return alerts;
         }
 
+        public IEnumerable<AlertLevelViewModel> GetAllAlertGroupEmail()
+        {
+            var alerts = (from a in context.TBL_ALERT_STAFF_ROLE
+                          join b in context.TBL_ALERT_GROUP_EMAIL on a.STAFFROLEID equals b.GROUPEMAILID
+                          join c in context.TBL_ALERT_TITLE on a.ALERTTITLEID equals c.ALERTTITLEID
+                          select new AlertLevelViewModel
+                          {
+                              groupEmailId = b.GROUPEMAILID,
+                              groupCode = b.GROUPCODE,
+                              groupName = b.GROUPNAME,
+                              groupEmail = b.GROUPEMAIL,
+                              staffRoleId = a.STAFFROLEID,
+                              title = c.TITLE == null ? "N/A" : c.TITLE,
+                          });
+            return alerts;
+        }
+
         public bool AddAlertStaffRole(AlertLevelViewModel model)
         {
             var entity = new TBL_ALERT_STAFF_ROLE
@@ -585,6 +615,37 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddAlertGroupEmail(AlertLevelViewModel model)
+        {
+            var entity = new TBL_ALERT_GROUP_EMAIL
+            {
+                GROUPCODE = model.groupCode,
+                GROUPNAME = model.groupName,
+                GROUPEMAIL = model.groupEmail
+            };
+
+            context.TBL_ALERT_GROUP_EMAIL.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertGroupEmailAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_GROUP_EMAIL '{entity.ToString()}' created by {auditStaff}",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
