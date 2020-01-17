@@ -325,6 +325,8 @@ namespace FintrakBanking.ViewModels.Customer
     //=================================================================================================================================================================
     public class IncomingCustomerViewModels
     {
+        public short? sectorId { get; set; }
+        public short? subsectorId { get; set; }
         public int? createdBy { get; set; }
         public int? staffId { get; set; }
         public int? companyId { get; set; }
