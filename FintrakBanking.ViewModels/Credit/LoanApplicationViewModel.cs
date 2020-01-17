@@ -115,6 +115,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public string lastComment { get; set; }
         public int approvalTrailId { get; set; }
+        public int? responseStaffId { get; set; }
         // public decimal? approvedAmount { get; set; }
         public short applicationStatusId { get; set; }
 
