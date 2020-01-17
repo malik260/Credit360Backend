@@ -8067,7 +8067,9 @@ namespace FintrakBanking.Repositories.Credit
                                        toStaffId = atrail.TOSTAFFID,
                                        requestStaffId = atrail.REQUESTSTAFFID,
                                        isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
-                                       canReRouteBooking = canReRouteBooking
+                                       canReRouteBooking = canReRouteBooking,
+                                       approvalTrailId = atrail.APPROVALTRAILID,
+                                       responseStaffId = atrail.RESPONSESTAFFID
                                    }).ToList();
 
             referredBackLoans = (from s in context.TBL_LOAN_BOOKING_REQUEST
@@ -8094,7 +8096,6 @@ namespace FintrakBanking.Repositories.Credit
                                      requestedBy = "",
                                      requestedAmount = s.AMOUNT_REQUESTED,
                                      requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
-                                     appraisalOperationId = m.OPERATIONID,
                                      approvalStatusId = atrail.APPROVALSTATUSID,
                                      approvalStatusName = (from y in context.TBL_APPROVAL_STATUS.Where(i => i.APPROVALSTATUSID == atrail.APPROVALSTATUSID) select y).FirstOrDefault().APPROVALSTATUSNAME, //atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                      loanApplicationId = m.LOANAPPLICATIONID,
@@ -8102,43 +8103,46 @@ namespace FintrakBanking.Repositories.Credit
                                      applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                      applicationStatusId = m.APPLICATIONSTATUSID,
 
-                                     customerId = d.CUSTOMERID,
-                                     customerCode = cust.CUSTOMERCODE,
-                                     customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
-                                     customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
-                                     customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                                     customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
-                                     customerType = cust.TBL_CUSTOMER_TYPE.NAME,
+            //                         customerId = d.CUSTOMERID,
+            //                         customerCode = cust.CUSTOMERCODE,
+            //                         customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
+            //                         customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
+            //                         customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+            //                         customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
+            //                         customerType = cust.TBL_CUSTOMER_TYPE.NAME,
 
-                                     applicationTenor = m.APPLICATIONTENOR,
-                                     effectiveDate = (DateTime)d.EFFECTIVEDATE,
-                                     expiryDate = (DateTime)d.EXPIRYDATE,
+            //                         applicationTenor = m.APPLICATIONTENOR,
+            //                         effectiveDate = (DateTime)d.EFFECTIVEDATE,
+            //                         expiryDate = (DateTime)d.EXPIRYDATE,
 
-                                     currencyId = d.CURRENCYID,
-                                     currencyCode = (from y in context.TBL_CURRENCY.Where(i => i.CURRENCYID == d.CURRENCYID) select y.CURRENCYCODE).FirstOrDefault(), //d.TBL_CURRENCY.CURRENCYCODE,
-                                     exchangeRate = d.EXCHANGERATE,
-                                     loanTypeId = m.LOANAPPLICATIONTYPEID,
-                                     loanTypeName = (from y in context.TBL_LOAN_APPLICATION_TYPE.Where(i => i.LOANAPPLICATIONTYPEID == m.LOANAPPLICATIONTYPEID) select y).FirstOrDefault().LOANAPPLICATIONTYPENAME,
-                                     productId = s.PRODUCTID,
-                                     productTypeId = p.PRODUCTTYPEID,
-                                     productPriceIndexId = (short)d.PRODUCTPRICEINDEXID,
-                                     productTypeName = pt.PRODUCTTYPENAME,
-                                     productName = p.PRODUCTNAME,
+            //                         currencyId = d.CURRENCYID,
+            //                         currencyCode = (from y in context.TBL_CURRENCY.Where(i => i.CURRENCYID == d.CURRENCYID) select y.CURRENCYCODE).FirstOrDefault(), //d.TBL_CURRENCY.CURRENCYCODE,
+            //                         exchangeRate = d.EXCHANGERATE,
+            //                         loanTypeId = m.LOANAPPLICATIONTYPEID,
+            //                         loanTypeName = (from y in context.TBL_LOAN_APPLICATION_TYPE.Where(i => i.LOANAPPLICATIONTYPEID == m.LOANAPPLICATIONTYPEID) select y).FirstOrDefault().LOANAPPLICATIONTYPENAME,
+            //                         productId = s.PRODUCTID,
+            //                         productTypeId = p.PRODUCTTYPEID,
+            //                         productPriceIndexId = (short)d.PRODUCTPRICEINDEXID,
+            //                         productTypeName = pt.PRODUCTTYPENAME,
+            //                         productName = p.PRODUCTNAME,
 
-                                     interestRate = d.APPROVEDINTERESTRATE,
-                                     approvedInterestRate = d.APPROVEDINTERESTRATE,
-                                     approvedAmount = d.APPROVEDAMOUNT,
-                                     groupApprovedAmount = m.APPROVEDAMOUNT,
-                                     availmentDate = m.AVAILMENTDATE,
-                                     approvedTenor = d.APPROVEDTENOR,
-                                     toStaffId = atrail.TOSTAFFID,
-                                     requestStaffId = atrail.REQUESTSTAFFID,
-                                     isInEditMode = true,
-                                     isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
-                                     canReRouteBooking = canReRouteBooking
-                                 }).ToList();
+            //                         interestRate = d.APPROVEDINTERESTRATE,
+            //                         approvedInterestRate = d.APPROVEDINTERESTRATE,
+            //                         approvedAmount = d.APPROVEDAMOUNT,
+            //                         groupApprovedAmount = m.APPROVEDAMOUNT,
+            //                         availmentDate = m.AVAILMENTDATE,
+            //                         approvedTenor = d.APPROVEDTENOR,
+            //                         toStaffId = atrail.TOSTAFFID,
+            //                         requestStaffId = atrail.REQUESTSTAFFID,
+            //                         isInEditMode = true,
+            //                         isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
+            //                         canReRouteBooking = canReRouteBooking,
+            //                         approvalTrailId = atrail.APPROVALTRAILID,
+            //                         responseStaffId = atrail.RESPONSESTAFFID
+            //                     }).ToList();
 
-            IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = bookingRequestLoans.Union(referredBackLoans);
+            //IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = bookingRequestLoans.Union(referredBackLoans);
+            IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = bookingRequestLoans;
 
             List<CamProcessedLoanViewModel> lcyLoans = new List<CamProcessedLoanViewModel>();
             List<CamProcessedLoanViewModel> fcyLoans = new List<CamProcessedLoanViewModel>();
