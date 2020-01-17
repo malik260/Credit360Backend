@@ -223,7 +223,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 { request.RESPONSESTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId; }
             }
 
-            //RandomnizeAllocation();
+            RandomnizeAllocation();
 
             MakerCheckerControl();
 
@@ -269,19 +269,19 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void RandomnizeAllocation()
         {
-            var approvalSetup = context.TBL_APROVAL_SETUP.FirstOrDefault();
+            var approvalSetup = context.TBL_APPROVAL_SETUP.FirstOrDefault();
             if(approvalSetup.USEROUNDROBIN == true)
             {
                 List<StaffAllocatedjob> staffAllocations = new List<StaffAllocatedjob>();
 
                 if(this.toStaffId != null) { return; }
 
-                if(this.request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && this.StatusId == (int)ApprovalStatusEnum.Referred)
+                if(this.request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
                 {
                     var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                    x.COMPANYID == this.companyId
                                    && x.OPERATIONID == this.operationId
-                                   && x.RESPONSESTAFFID == null
+                                   && x.RESPONSESTAFFID == null 
                                    && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
                                    ).ToList();
 
@@ -292,32 +292,36 @@ namespace FintrakBanking.Repositories.WorkFlow
                     //    if(staffBusinessUnit.BUSINESSCOMMONNAME.ToLower() != "retail") return;
                     //}
 
-                    var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId);
-                    var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId);
-                    var staffInrole = context.TBL_STAFF.Where(x => approvalLevel.Select(c=>c.STAFFROLEID).Contains(x.STAFFROLEID));
+                    
+                    var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId).ToList();
+                    var roles = approvalLevel.Select(c => c.STAFFROLEID).ToList();
+                    var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID)).ToList();
 
-                   if(!context.TBL_STAFF_ROLE.Where(x => x.STAFFROLEID == staffInrole.Select(d => x.STAFFROLEID).FirstOrDefault() && x.USEROUNDROBIN == true).Any())
-                   {
+                    var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId).Select(d => d.STAFFID).ToList();
+                    approvalStaff.AddRange(staffInrole.Select(d => d.STAFFID).ToList());
+
+                    if (!context.TBL_STAFF_ROLE.Where(x => roles.Contains(x.STAFFROLEID) && x.USEROUNDROBIN == true).Any())
+                    {
                         return;
-                   }
+                    }
 
 
                     foreach (var item in approvalStaff)
                     {
-                        if(staffAllocations.Where(x=>x.staffId == item.STAFFID).Count() == 0)
+                        if(staffAllocations.Where(x=>x.staffId == item).Count() == 0)
                         {
                             StaffAllocatedjob staffAllocation = new StaffAllocatedjob();
-                            staffAllocation.pendingJobCount = pendingTrail.Where(x => x.TOSTAFFID == item.STAFFID).Count();
-                            staffAllocation.staffId = item.STAFFID;
+                            staffAllocation.pendingJobCount = pendingTrail.Where(x => x.TOSTAFFID == item).Count();
+                            staffAllocation.staffId = item;
                             staffAllocation.counted = true;
 
-                            var isOnRelief = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == item.STAFFID && x.ENDDATE.Date < DateTime.Now.Date).Any();
+                            var isOnRelief = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == item && x.ENDDATE < DateTime.Now).Any();
                             staffAllocation.isOnRelief = isOnRelief;
                             staffAllocations.Add(staffAllocation);
                         }
                     }
 
-                    var orderedAllocation = staffAllocations.Where(x => x.isOnRelief == false && staffInrole.Select(c=>c.STAFFID).Contains(x.staffId)).OrderByDescending(x=>x.pendingJobCount).FirstOrDefault();
+                    var orderedAllocation = staffAllocations.Where(x => x.isOnRelief == false && staffInrole.Select(c=>c.STAFFID).Contains(x.staffId)).OrderBy(x=>x.pendingJobCount).FirstOrDefault();
                     if(this.toStaffId == null) { this.toStaffId = orderedAllocation.staffId; }
                 }
             }
