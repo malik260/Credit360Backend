@@ -109,6 +109,13 @@ namespace FintrakBanking.Repositories.Credit
             model.companyId = accountOfficer.COMPANYID;
             model.branchId = accountOfficer.BRANCHID;
 
+            if (model.individualCustomerInformation.subSector == null) return fireResponse("Missing Sub-sector information", "99", "");
+
+            var subsector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.individualCustomerInformation.subSector).FirstOrDefault();
+            var sector = context.TBL_SECTOR.Where(x => x.SECTORID == subsector.SECTORID ).FirstOrDefault();
+            model.sectorId = sector.SECTORID;
+            model.subsectorId = subsector.SUBSECTORID;
+
             if (saveIndividualCustomerInformation(model))
             {
                 customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
@@ -182,9 +189,10 @@ namespace FintrakBanking.Repositories.Credit
                 ISPOLITICALLYEXPOSED = model.politicallyExposed == "1" ? true : false,
                 //ISINVESTMENTGRADE = model,
                 ISREALATEDPARTY = entity.insiderRelatedParties.Count > 0 ?  true : false,
-                ///RELATIONSHIPOFFICERID = model.relationshipManagerCode,
+                RELATIONSHIPOFFICERID = entity.createdBy,
                 SPOUSE = model.spouse,
-                //SUBSECTORID = model.,
+                SUBSECTORID = entity.subsectorId,
+                //se = entity.sectorId,
                 //RISKRATINGID = model.riskRatingId,
                 CUSTOMERBVN = model.customerBvn,
                 //PROSPECTCUSTOMERCODE = model.prospectCustomerCode,
@@ -230,11 +238,11 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 EMAILADDRESS = corporateDetails.emailAddress,
                 FIRSTNAME = corporateDetails.corporateName,
-                //MISCODE = model.misCode,
-                //MISSTAFF = model.misStaff,
-                //NATIONALITYID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfOrigin).FirstOrDefault()?.COUNTRYID,
-
-                ISPOLITICALLYEXPOSED = corporateDetails.politicallyExposed == "1" ? true : false,
+               //MISCODE = model.misCode,
+               //MISSTAFF = model.misStaff,
+               //NATIONALITYID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfOrigin).FirstOrDefault()?.COUNTRYID,
+               RELATIONSHIPOFFICERID = model.createdBy,
+               ISPOLITICALLYEXPOSED = corporateDetails.politicallyExposed == "1" ? true : false,
                 //ISINVESTMENTGRADE = model,
 
                 //SUBSECTORID = model.,
@@ -246,12 +254,12 @@ namespace FintrakBanking.Repositories.Credit
                 //CRMSLEGALSTATUSID = model.crmsLegalStatus,
                 CRMSRELATIONSHIPTYPEID = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == (corporateDetails.crmsRelationship))?.FirstOrDefault()?.CRMSREGULATORYID,
                // COUNTRYOFRESIDENTID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfResidence).FirstOrDefault()?.COUNTRYID,
-
-                //NUMBEROFLOANSTAKEN = model.numberOfLoansTaken,
-                //MONTHLYLOANREPAYMENT = model.loanMonthlyRepaymentFromOtherBanks,
-                //DATEOFRELATIONSHIPWITHBANK = model.dateOfRelationshipWithBank,
-                //RELATIONSHIPTYPEID = model.relationshipTypeCode,
-                TEAMLDR = corporateDetails.teamLdr,
+                SUBSECTORID = model.subsectorId,
+               //NUMBEROFLOANSTAKEN = model.numberOfLoansTaken,
+               //MONTHLYLOANREPAYMENT = model.loanMonthlyRepaymentFromOtherBanks,
+               //DATEOFRELATIONSHIPWITHBANK = model.dateOfRelationshipWithBank,
+               //RELATIONSHIPTYPEID = model.relationshipTypeCode,
+               TEAMLDR = corporateDetails.teamLdr,
                 TEAMNPL = corporateDetails.teamNpl,
                 APIREQUESTID = model.request_Id,
                 //CORR = model.corr,
