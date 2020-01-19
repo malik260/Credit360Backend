@@ -444,13 +444,13 @@ namespace FintrakBanking.Repositories.Credit
 
             if (assetManagement)
             {
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true,false, application.TBL_CUSTOMER?.BUSINESSUNTID);
                 application.OPERATIONID = (short)model.operationId;//79;
                 context.Entry(application).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true,false, application.TBL_CUSTOMER?.BUSINESSUNTID);
             }
 
             if (context.SaveChanges() > 0)
@@ -700,10 +700,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse ForwardApplication(ForwardReviewViewModel model)
         {
-            int nextProcessId = model.operationId ;
+            int nextProcessId = model.operationId;
             int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
-            int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
+            //int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
 
             string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
 
@@ -720,13 +720,13 @@ namespace FintrakBanking.Repositories.Credit
             var currentOperationType = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).FirstOrDefault()?.OPERATIONTYPEID;
 
             // customization for CAM approvals
-            bool operationIsCam = (currentOperationType == (int)OperationTypeEnum.LoanReviewApplication) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+            // bool operationIsCam = (currentOperationType == (int)OperationTypeEnum.LoanReviewApplication) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
             //if (camOperationIds.Contains(operationId) || operationIsCam)
             //{
             //    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             //    operationId = (int)appl.OPERATIONID;
             //    nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
-            //    if(staffRole  == "CREDIT ADMIN") nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
+            //  if(staffRole  == "CREDIT ADMIN") nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
             //}
 
 
@@ -738,123 +738,142 @@ namespace FintrakBanking.Repositories.Credit
             //    workflow.Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0;
             //}
 
-            if (camOperationIds.Contains(operationId) || operationIsCam  || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
-            {
-                workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
-            }
+            //if (camOperationIds.Contains(operationId) || operationIsCam  || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
+            //{
+            //    workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
+            //}
+
+            workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
+
             using (var trans = context.Database.BeginTransaction())
             {
+                
+                workflow.StaffId = model.lastUpdatedBy;
+                workflow.CompanyId = appl.COMPANYID;
+                workflow.OperationId = model.operationId;
+                workflow.TargetId = appl.LOANAPPLICATIONID;
+                workflow.ProductClassId = null;
+                workflow.StatusId = model.forwardAction;
+                workflow.ToStaffId = model.receiverStaffId;
+                workflow.NextLevelId = model.receiverLevelId ;
+                workflow.Comment = model.comment;
+                workflow.Vote = model.vote;
+                workflow.DeferredExecution = true;
+                if (model.receiverLevelId == 0) workflow.NextLevelId = null;
+                //workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
-            workflow.StaffId = model.lastUpdatedBy;
-            workflow.CompanyId = appl.COMPANYID;
-            workflow.OperationId = model.operationId;
-            workflow.TargetId = appl.LOANAPPLICATIONID;
-            workflow.ProductClassId = null;
-            workflow.StatusId = model.forwardAction;
-            workflow.ToStaffId = model.receiverStaffId;
-            workflow.NextLevelId = model.receiverLevelId;
-            workflow.Comment = model.comment;
-            workflow.Vote = model.vote;
-            workflow.DeferredExecution = true;
-            workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
-
-            if (model.forwardAction == (short)ApprovalStatusEnum.RePresent || model.forwardAction == (short)ApprovalStatusEnum.StepDown)
-            {
-                var dictionary = GetRepresentStepdownItems(appl.LOANAPPLICATIONID, model.forwardAction, operationId);
-                workflow.NextLevelId = dictionary["levelId"];
-                // workflow.ToStaffId = dictionary["staffId"];
-                // if (model.forwardAction == 8) workflow.ToStaffId = null;
-            }
-
-            workflow.LogActivity();
-
-            // DETAIL CHANGES
-            List<TBL_LMSR_APPLICATION_DETAIL> items = null;
-            items = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
-            if (model.recommendedChanges != null && model.recommendedChanges.Count() > 0) // only approving authority
-            {
-                //updateApprovedAmount = true;
-
-                foreach (var changed in model.recommendedChanges)
+                if (model.forwardAction == (short)ApprovalStatusEnum.RePresent || model.forwardAction == (short)ApprovalStatusEnum.StepDown)
                 {
-                    var detail = items.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == changed.detailId);
-                    if (detail != null)
-                    {
-                        //detail.APPROVEDPRODUCTID = (short)changed.productId;
-                        detail.APPROVEDAMOUNT = changed.amount;
-                        detail.APPROVEDINTERESTRATE = changed.interestRate;
-                        detail.APPROVEDTENOR = changed.tenor;
-                        detail.APPROVALSTATUSID = changed.statusId;
-                        //detail.LASTUPDATEDBY = model.createdBy;
-                        //detail.DATETIMEUPDATED = DateTime.Now;
+                    var dictionary = GetRepresentStepdownItems(appl.LOANAPPLICATIONID, model.forwardAction, operationId);
+                    workflow.NextLevelId = dictionary["levelId"];
+                    // workflow.ToStaffId = dictionary["staffId"];
+                    // if (model.forwardAction == 8) workflow.ToStaffId = null;
+                }
 
-                        if (model.isBusiness) // DELETE OR UPDATE PROPOSED
+                workflow.LogActivity();
+
+                // DETAIL CHANGES
+                List<TBL_LMSR_APPLICATION_DETAIL> items = null;
+                items = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
+                if (model.recommendedChanges != null && model.recommendedChanges.Count() > 0) // only approving authority
+                {
+                    //updateApprovedAmount = true;
+
+                    foreach (var changed in model.recommendedChanges)
+                    {
+                        var detail = items.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == changed.detailId);
+                        if (detail != null)
                         {
-                            if (detail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
-                            else
+                            //detail.APPROVEDPRODUCTID = (short)changed.productId;
+                            detail.APPROVEDAMOUNT = changed.amount;
+                            detail.APPROVEDINTERESTRATE = changed.interestRate;
+                            detail.APPROVEDTENOR = changed.tenor;
+                            detail.APPROVALSTATUSID = changed.statusId;
+                            //detail.LASTUPDATEDBY = model.createdBy;
+                            //detail.DATETIMEUPDATED = DateTime.Now;
+
+                            if (model.isBusiness) // DELETE OR UPDATE PROPOSED
                             {
-                                detail.PROPOSEDAMOUNT = changed.amount;
-                                detail.PROPOSEDINTERESTRATE = changed.interestRate;
-                                detail.PROPOSEDTENOR = changed.tenor;
+                                if (detail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
+                                else
+                                {
+                                    detail.PROPOSEDAMOUNT = changed.amount;
+                                    detail.PROPOSEDINTERESTRATE = changed.interestRate;
+                                    detail.PROPOSEDTENOR = changed.tenor;
+                                }
                             }
                         }
                     }
                 }
-            }
-
+                var level = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == workflow.NextLevelId).FirstOrDefault();
+                if( level != null)
+                {
+                    var nextStaffRole = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLEID == level.STAFFROLEID).FirstOrDefault();
+                    if (nextStaffRole.STAFFROLECODE.ToUpper() == "LEGAL")
+                    {
+                        //generate offer letter doc
+                        offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
+                        AddLoanCollateralMapping(model.applicationId);
+                    }
+                }
+               
                 context.SaveChanges();
-                
+
                 int lastStatusId = workflow.StatusId;
                 if (workflow.NewState == (int)ApprovalState.Ended)
                 {
-                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId)/* && model.operationId != 71*/ // jump process OR end flag
-                    {
-                        //if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
-                        //if (operationIsCam) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
-                        
-                        //workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
-                        workflow.SetResponse = false;
-                        nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
-                        workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, null, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
-                        //workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
+                    //if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId)/* && model.operationId != 71*/ // jump process OR end flag
+                    //{
+                    //    //if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
+                    //    //if (operationIsCam) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
 
+                    //    //workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
+                    //    workflow.SetResponse = false;
+                    //    nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment;
+                    //    workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, null, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
+                    //    //workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
+
+                    //}
+                    short nextOperatioId = 0;
+                    if(currentOperationType == (short)OperationTypeEnum.LoanReviewApplication)
+                    {
+                        nextOperatioId = (int)OperationsEnum.LoanReviewApprovalAvailment;
                     }
 
-                    LogLMSOperationForRouting(model, items,(short)operationId);
+                    LogLMSOperationForRouting(model, items, nextOperatioId,(short)operationId);
 
-                     appl.APPROVALSTATUSID = (short)lastStatusId;
-
-                    //generate offer letter doc
-                    offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
+                    appl.APPROVALSTATUSID = (short)lastStatusId;
 
                     context.SaveChanges();
-
-                    AddLoanCollateralMapping(model.applicationId);//, appl., (short)LoanSystemTypeEnum.OverdraftFacility);
                 }
-                
+
                 if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
                 return workflow.Response;
             }
-
         }
 
-        private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short operationId)
+        private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short nextOperationId, short lastOperationId)
         {
-            short? synchOperationId = null;
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
-                context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(x => x.SYNCHOPERATIONID).FirstOrDefault();
+                var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == nextOperationId)?.FirstOrDefault();
+                nextOperationId = (short)operation?.SYNCHOPERATIONID;
 
-                if (synchOperationId == null)
+                if (operation == null)
                     throw new ConditionNotMetException("Operation not in synch with final operation");
+
             }
+
+            //if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
+            //{
+            //    nextOperationId = nextOperationId;
+            //}
 
             foreach (var i in details)
             {
-                var actualOperationId = synchOperationId ?? operationId;
                 var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == model.companyId
-                                && x.OPERATIONID == actualOperationId //(short)OperationsEnum.LmsOperations
+                                && x.OPERATIONID == nextOperationId 
                                 && x.TARGETID == i.LOANREVIEWAPPLICATIONID
                                 && x.RESPONSESTAFFID == null
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
@@ -866,24 +885,26 @@ namespace FintrakBanking.Repositories.Credit
 
                     if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                         || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
-                        || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility) && model.isAvailment == true)
+                        || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
                     {
                         workflowlms.StaffId = model.createdBy;
                         workflowlms.CompanyId = model.companyId;
                         workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
                         workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
                         workflowlms.Comment = model.comment;
-                        workflowlms.OperationId = (int)synchOperationId; //(short)OperationsEnum.LmsOperations;
+                        workflowlms.OperationId = (int)nextOperationId;
                         workflowlms.DeferredExecution = true;
                         workflowlms.ExternalInitialization = true;
 
                         workflowlms.LogActivity();
-
+                        context.SaveChanges();
                     }
                 }
             }
         }
 
+
+      
         /*private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
