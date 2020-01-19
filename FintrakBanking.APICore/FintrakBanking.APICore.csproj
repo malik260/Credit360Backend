@@ -345,6 +345,7 @@
     <Compile Include="Controllers\CashBackController.cs" />
     <Compile Include="Controllers\CashFlowLendingController.cs" />
     <Compile Include="Controllers\CollateralValuationController.cs" />
+    <Compile Include="Controllers\CreditDrawdownController.cs" />
     <Compile Include="Controllers\DeferredFeeController.cs" />
     <Compile Include="Controllers\DocumentCategoryController.cs" />
     <Compile Include="Controllers\DocumentCategoryTypeController.cs" />
