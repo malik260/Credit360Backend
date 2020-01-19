@@ -834,8 +834,13 @@ namespace FintrakBanking.Repositories.Credit
                     //    //workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
 
                     //}
+                    short nextOperatioId = 0;
+                    if(currentOperationType == (short)OperationTypeEnum.LoanReviewApplication)
+                    {
+                        nextOperatioId = (int)OperationsEnum.LoanReviewApprovalAvailment;
+                    }
 
-                    LogLMSOperationForRouting(model, items, (short)operationId);
+                    LogLMSOperationForRouting(model, items, nextOperatioId,(short)operationId);
 
                     appl.APPROVALSTATUSID = (short)lastStatusId;
 
@@ -847,30 +852,28 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short operationId)
+        private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short nextOperationId, short lastOperationId)
         {
-            int? synchOperationId = null;
-            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            {
+                var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == nextOperationId)?.FirstOrDefault();
+                nextOperationId = (short)operation?.SYNCHOPERATIONID;
+
+                if (operation == null)
+                    throw new ConditionNotMetException("Operation not in synch with final operation");
+
+            }
+
+            //if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
             //{
-            //    context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(x => x.SYNCHOPERATIONID).FirstOrDefault();
-
-            //    if (synchOperationId == null)
-            //        throw new ConditionNotMetException("Operation not in synch with final operation");
+            //    nextOperationId = nextOperationId;
             //}
-
-            var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == (int)operationId)?.FirstOrDefault();
-
-            synchOperationId = operation?.SYNCHOPERATIONID;
-
-            if (synchOperationId == null)
-                throw new ConditionNotMetException("Operation not in synch with final operation");
 
             foreach (var i in details)
             {
-                //int actualOperationId = synchOperationId ?? operationId;
                 var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == model.companyId
-                                && x.OPERATIONID == synchOperationId //(short)OperationsEnum.LmsOperations
+                                && x.OPERATIONID == nextOperationId 
                                 && x.TARGETID == i.LOANREVIEWAPPLICATIONID
                                 && x.RESPONSESTAFFID == null
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
@@ -889,7 +892,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
                         workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
                         workflowlms.Comment = model.comment;
-                        workflowlms.OperationId = (int)synchOperationId; //(short)OperationsEnum.LmsOperations;
+                        workflowlms.OperationId = (int)nextOperationId;
                         workflowlms.DeferredExecution = true;
                         workflowlms.ExternalInitialization = true;
 
