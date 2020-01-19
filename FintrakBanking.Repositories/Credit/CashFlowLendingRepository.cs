@@ -344,7 +344,11 @@ namespace FintrakBanking.Repositories.Credit
             LoanApplicationViewModel loanApp = new LoanApplicationViewModel();
             loanApp.customerId = customer.CUSTOMERID;
             loanApp.proposedTenor = Convert.ToInt16(model.tenor);
-            loanApp.tenorModeId = (short)TenorModeEnum.Days;
+            var currentDate = genSetup.GetApplicationDate().Date;
+            var endDate = currentDate.AddMonths(loanApp.proposedTenor);
+            //var newTenor = 
+           // Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0)
+            loanApp.tenorModeId = (short)TenorModeEnum.Months;
             loanApp.proposedAmount = Convert.ToDecimal(model.loanAmount);
             loanApp.productId = product.PRODUCTID;
             loanApp.productClassId = product.PRODUCTCLASSID;
@@ -1396,7 +1400,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false, false,false);
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false, false,false, null);
                 context.SaveChanges();
                 return 1;
             }

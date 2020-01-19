@@ -2159,14 +2159,15 @@ namespace FintrakBanking.Repositories.Credit
             var fee2 = (from lf in context.TBL_LOAN_FEE
                        join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
                        join l in context.TBL_LOAN on lf.LOANID equals l.TERMLOANID
-                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
-                       select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID) && lf.ISPOSTED == false
+                       select new { chargeFeeId= f.CHARGEFEEID,  feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE, loanFeeId = lf.LOANCHARGEFEEID }).ToList();
 
             var lineFee = (from lf in context.TBL_LOAN_FEE
                        join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
                        join l in context.TBL_LOAN_APPLICATION_DETAIL on lf.LOANID equals l.LOANAPPLICATIONDETAILID
-                       where lf.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility && l.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId
-                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+                       where lf.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility 
+                       && l.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && lf.ISPOSTED == false
+                           select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE, loanFeeId = lf.LOANCHARGEFEEID }).ToList();
 
             var prod = context.TBL_PRODUCT.Find(model.productId);
 
@@ -2175,16 +2176,16 @@ namespace FintrakBanking.Repositories.Credit
                 fee2 = (from lf in context.TBL_LOAN_FEE
                        join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
                        join l in context.TBL_LOAN_REVOLVING on lf.LOANID equals l.REVOLVINGLOANID
-                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
-                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID) && lf.ISPOSTED == false
+                        select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE, loanFeeId = lf.LOANCHARGEFEEID }).ToList();
             }
             if (prod.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
             {
                 fee2 = (from lf in context.TBL_LOAN_FEE
                        join f in context.TBL_CHARGE_FEE on lf.CHARGEFEEID equals f.CHARGEFEEID
                        join l in context.TBL_LOAN_CONTINGENT on lf.LOANID equals l.CONTINGENTLOANID
-                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID)
-                       select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE }).ToList();
+                       where l.LOANREFERENCENUMBER == loanReffernceNumber && (lf.LOANSYSTEMTYPEID == l.LOANSYSTEMTYPEID) && lf.ISPOSTED == false
+                        select new { chargeFeeId = f.CHARGEFEEID, feeShortName = f.SHORTNAME, feeRate = lf.FEERATEVALUE , loanFeeId = lf.LOANCHARGEFEEID}).ToList();
             }
 
            var fee = fee2.Union(lineFee.ToList());
@@ -2257,8 +2258,13 @@ namespace FintrakBanking.Repositories.Credit
                 apiResult = integration.PostLoanCreationInputs(loanCreationModel, (short)LoanSystemTypeEnum.TermDisbursedFacility);
             }
 
+            var loanFeeIds = fee.Select(c => c.loanFeeId);
+            var loanFeeRecord = context.TBL_LOAN_FEE.Where(x => loanFeeIds.Contains(x.LOANCHARGEFEEID));
+
             if (apiResult.responseCode == "00") {
                 facility.ISFACILITYCREATED = true;
+
+                foreach(var record in loanFeeRecord) { record.ISPOSTED = true; }
                 context.SaveChanges();
             }
         }
@@ -3913,6 +3919,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId)
         {
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
+            var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
+
             using (var trans = context.Database.BeginTransaction())
             {
 
@@ -3924,6 +3933,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.OperationId = entity.operationId;
                 workflow.DeferredExecution = true;
                 workflow.ExternalInitialization = false;
+                if (appDetail != null) workflow.BusinessUnitId = appDetail.TBL_CUSTOMER?.BUSINESSUNTID;
 
                 workflow.LogActivity();
 

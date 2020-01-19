@@ -31,6 +31,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? destinationOperationId;
         private bool isFlowTest;
         private int? exclusiveFlowChangeId = null;
+        private int? businessUnitId = null;
 
         private int? productClassId = null;
         public int? productId = null;
@@ -104,7 +105,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
-        public int? ExclusiveFlowChangeId { get { return exclusiveFlowChangeId; } set { exclusiveFlowChangeId = value; } }
+        public int? ExclusiveFlowChangeId { get { return exclusiveFlowChangeId; } set { exclusiveFlowChangeId = value; } } 
+        public int? BusinessUnitId { get { return businessUnitId; } set { businessUnitId = value; } }
         public int? DestinationOperationId { get { return destinationOperationId; } set { destinationOperationId = value; } }
         public bool IsFlowTest { get { return isFlowTest; } set { isFlowTest = value; } }
         public int? LoopedRoleId { get { return loopedRoleId; } set { loopedRoleId = value; } }
@@ -223,7 +225,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 { request.RESPONSESTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId; }
             }
 
-            RandomnizeAllocation();
+            RandomizeAllocation();
 
             MakerCheckerControl();
 
@@ -267,7 +269,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
         }
 
-        private void RandomnizeAllocation()
+        private void RandomizeAllocation()
         {
             var approvalSetup = context.TBL_APPROVAL_SETUP.FirstOrDefault();
             if(approvalSetup.USEROUNDROBIN == true)
@@ -276,7 +278,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if(this.toStaffId != null) { return; }
 
-                if(this.request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
+                if(this.request?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
                 {
                     var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                    x.COMPANYID == this.companyId
@@ -285,14 +287,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                                    && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
                                    ).ToList();
 
-                    //var staffRecord = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
-                    //var staffBusinessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == staffRecord.BUSINESSUNITID).FirstOrDefault();
-                    //if(approvalSetup.ISRETAILONLYROUNDROBIN == true)
-                    //{
-                    //    if(staffBusinessUnit.BUSINESSCOMMONNAME.ToLower() != "retail") return;
-                    //}
+                    if(this.businessUnitId != null)
+                    {
+                        var staffBusinessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(this.businessUnitId);
+                        if (staffBusinessUnit != null && approvalSetup.ISRETAILONLYROUNDROBIN == true)
+                        {
+                            if (staffBusinessUnit.BUSINESSCOMMONNAME?.ToLower() != "retail") return;
+                        }
+                    }
 
-                    
+
                     var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId).ToList();
                     var roles = approvalLevel.Select(c => c.STAFFROLEID).ToList();
                     var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID)).ToList();
@@ -521,7 +525,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             bool external,
             bool deferred,
             bool sameDesk,
-            bool isFlowTest
+            bool isFlowTest,
+            int? businessUnitId
             )
         {
             InitializeOperation();
@@ -539,7 +544,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.sameDesk = sameDesk;
             this.isFlowTest = isFlowTest;
             this.statusId = (int)ApprovalStatusEnum.Pending;
-           
+            this.businessUnitId = businessUnitId;
+
+
             LogActivity();
         }
 
@@ -1481,6 +1488,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             deferredExecution = model.deferredExecution;
             IsFlowTest = model.isFlowTest;
             destinationOperationId = model.destinationOperationId;
+            businessUnitId = model.businessUnitId;
             var response = LogActivity();
 
             return response;

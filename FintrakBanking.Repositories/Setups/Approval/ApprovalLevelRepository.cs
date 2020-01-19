@@ -1100,7 +1100,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             }
 
             workflow.NextLevelId = model.nextApprovalLevelId;
-            workflow.NextProcess(model.companyId, model.createdBy, model.nextOperationId, null, model.targetId, null, "NIL", true, true, true);
+            workflow.NextProcess(model.companyId, model.createdBy, model.nextOperationId, null, model.targetId, null, "NIL", true, true, true, false, null);
 
             UpdateTarget(model.operationId,model.targetId, model.nextOperationId);
 
