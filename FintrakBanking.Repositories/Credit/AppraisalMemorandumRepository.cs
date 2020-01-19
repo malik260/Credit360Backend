@@ -1821,7 +1821,7 @@ namespace FintrakBanking.Repositories.Credit
             if (data.Count > 0 && currentLevelId > 0)
             {
                 var firstTrail = data.FirstOrDefault(t => t.toApprovalLevelId == currentLevelId);
-                data = data.Where(t => t.approvalTrailId <= firstTrail.approvalTrailId && t.fromApprovalLevelId > 0).ToList();
+                data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId && t.fromApprovalLevelId > 0).ToList();
             }
 
 
