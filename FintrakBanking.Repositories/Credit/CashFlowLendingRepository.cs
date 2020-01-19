@@ -336,7 +336,11 @@ namespace FintrakBanking.Repositories.Credit
             LoanApplicationViewModel loanApp = new LoanApplicationViewModel();
             loanApp.customerId = customer.CUSTOMERID;
             loanApp.proposedTenor = Convert.ToInt16(model.tenor);
-            loanApp.tenorModeId = (short)TenorModeEnum.Days;
+            var currentDate = genSetup.GetApplicationDate().Date;
+            var endDate = currentDate.AddMonths(loanApp.proposedTenor);
+            //var newTenor = 
+           // Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0)
+            loanApp.tenorModeId = (short)TenorModeEnum.Months;
             loanApp.proposedAmount = Convert.ToDecimal(model.loanAmount);
             loanApp.productId = product.PRODUCTID;
             loanApp.productClassId = product.PRODUCTCLASSID;
