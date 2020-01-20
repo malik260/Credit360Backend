@@ -858,22 +858,11 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short nextOperationId, short lastOperationId)
         {
-           
-
-            //if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
-            //{
-            //    nextOperationId = nextOperationId;
-            //}
 
             foreach (var i in details)
             {
                 if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
                 {
-                    //var availmentTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
-                    //      x.COMPANYID == model.companyId
-                    //      && x.OPERATIONID == i.OPERATIONID
-                    //      && x.TARGETID == i.LOANREVIEWAPPLICATIONID
-                    //  ).FirstOrDefault(); 
 
                     var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == i.OPERATIONID)?.FirstOrDefault();
                     nextOperationId = (short)operation?.SYNCHOPERATIONID;
