@@ -9711,7 +9711,7 @@ namespace FintrakBanking.Repositories.Credit
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
             //var ids = generalSetup.GetStaffApprovalLevelIds(staffId, 0).ToList();
-            var lmsOperations = context.TBL_OPERATIONS.Where(c => c.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication
+            var lmsOperations = context.TBL_OPERATIONS.Where(c => c.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement
                 && (c.PRODUCTTYPEID == 1 || c.PRODUCTTYPEID == null))
                 .Select(x => x.OPERATIONID).ToList();
 

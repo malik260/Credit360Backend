@@ -228,11 +228,13 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             MakerCheckerControl();
 
+            RandomizeAllocation();
+
             SendNotifications();
 
             SetResponseInformation();
 
-            RandomizeAllocation();
+            
 
             if (statusOnly) return true;
 
