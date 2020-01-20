@@ -839,7 +839,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //}
                     short nextOperatioId = 0;
-                    if(currentOperationType == (short)OperationTypeEnum.LoanReviewApplication)
+                    if(currentOperationType == (short)OperationTypeEnum.LoanReviewApplication && operationId != (short)OperationsEnum.LoanReviewApprovalAvailment)
                     {
                         nextOperatioId = (int)OperationsEnum.LoanReviewApprovalAvailment;
                     }
@@ -858,15 +858,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short nextOperationId, short lastOperationId)
         {
-            if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
-            {
-                var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == nextOperationId)?.FirstOrDefault();
-                nextOperationId = (short)operation?.SYNCHOPERATIONID;
-
-                if (operation == null)
-                    throw new ConditionNotMetException("Operation not in synch with final operation");
-
-            }
+           
 
             //if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
             //{
@@ -875,6 +867,22 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var i in details)
             {
+                if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+                {
+                    //var availmentTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
+                    //      x.COMPANYID == model.companyId
+                    //      && x.OPERATIONID == i.OPERATIONID
+                    //      && x.TARGETID == i.LOANREVIEWAPPLICATIONID
+                    //  ).FirstOrDefault(); 
+
+                    var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == i.OPERATIONID)?.FirstOrDefault();
+                    nextOperationId = (short)operation?.SYNCHOPERATIONID;
+
+                    if (operation == null)
+                        throw new ConditionNotMetException("Operation not in synch with final operation");
+
+                }
+
                 var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == model.companyId
                                 && x.OPERATIONID == nextOperationId 
@@ -886,13 +894,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     Workflow workflowlms = new Workflow(context, general);
 
-                    var availmentTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
-                                x.COMPANYID == model.companyId
-                                && x.OPERATIONID == (int)OperationsEnum.LoanReviewApprovalAvailment
-                                && x.TARGETID == i.LOANREVIEWAPPLICATIONID 
-                            ).FirstOrDefault();
+                  
 
-                    if(availmentTrail != null) nextOperationId = (short) availmentTrail.DESTINATIONOPERATIONID;
+                   
+
+                   // if (availmentTrail != null) nextOperationId = (short) availmentTrail.DESTINATIONOPERATIONID;
 
                     if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                       || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility

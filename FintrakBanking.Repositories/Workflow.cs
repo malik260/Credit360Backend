@@ -225,13 +225,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                 { request.RESPONSESTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId; }
             }
 
-            RandomizeAllocation();
 
             MakerCheckerControl();
 
             SendNotifications();
 
             SetResponseInformation();
+
+            RandomizeAllocation();
 
             if (statusOnly) return true;
 
