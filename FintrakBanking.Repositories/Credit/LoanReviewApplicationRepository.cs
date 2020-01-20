@@ -854,16 +854,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short nextOperationId, short lastOperationId)
         {
-            if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
-            {
-                var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == nextOperationId)?.FirstOrDefault();
-                nextOperationId = (short)operation?.SYNCHOPERATIONID;
-
-                if (operation == null)
-                    throw new ConditionNotMetException("Operation not in synch with final operation");
-
-            }
-
+           
             //if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
             //{
             //    nextOperationId = nextOperationId;
@@ -881,6 +872,22 @@ namespace FintrakBanking.Repositories.Credit
                 if (existingTrail.Count() == 0)
                 {
                     Workflow workflowlms = new Workflow(context, general);
+
+                    if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+                    {
+                        var existingTrail2 = context.TBL_APPROVAL_TRAIL.Where(x =>
+                               x.COMPANYID == model.companyId
+                               && x.OPERATIONID == nextOperationId
+                               && x.TARGETID == i.LOANREVIEWAPPLICATIONID
+                           ).FirstOrDefault();
+
+                        var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == existingTrail2.DESTINATIONOPERATIONID)?.FirstOrDefault();
+                        nextOperationId = (short)operation?.SYNCHOPERATIONID;
+
+                        if (operation == null)
+                            throw new ConditionNotMetException("Operation not in synch with final operation");
+
+                    }
 
 
                     if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
