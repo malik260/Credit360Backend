@@ -759,6 +759,10 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Comment = model.comment;
                 workflow.Vote = model.vote;
                 workflow.DeferredExecution = true;
+
+                if(currentOperationType == (short)OperationTypeEnum.LoanReviewApplication) { workflow.DestinationOperationId = model.operationId; }
+               
+
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
                 //workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
@@ -882,10 +886,17 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     Workflow workflowlms = new Workflow(context, general);
 
+                    var availmentTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == model.companyId
+                                && x.OPERATIONID == (int)OperationsEnum.LoanReviewApprovalAvailment
+                                && x.TARGETID == i.LOANREVIEWAPPLICATIONID 
+                            ).FirstOrDefault();
+
+                    if(availmentTrail != null) nextOperationId = (short) availmentTrail.DESTINATIONOPERATIONID;
 
                     if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-                        || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
-                        || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
+                      || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                      || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
                     {
                         workflowlms.StaffId = model.createdBy;
                         workflowlms.CompanyId = model.companyId;
@@ -895,7 +906,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflowlms.OperationId = (int)nextOperationId;
                         workflowlms.DeferredExecution = true;
                         workflowlms.ExternalInitialization = true;
-
+                        if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment) workflow.DestinationOperationId = lastOperationId;
                         workflowlms.LogActivity();
                         context.SaveChanges();
                     }
