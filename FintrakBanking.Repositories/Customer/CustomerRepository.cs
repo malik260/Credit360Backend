@@ -2345,8 +2345,6 @@ namespace FintrakBanking.Repositories.Customer
                            maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                            title = a.TITLE,
                            middleName = a.MIDDLENAME,
-                           //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                           // customerTypeName =  context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                            misCode = a.MISCODE,
                            misStaff = a.MISSTAFF,
                            nationalityId = a.NATIONALITYID,
@@ -2363,8 +2361,12 @@ namespace FintrakBanking.Repositories.Customer
                            taxNumber = a.TAXNUMBER,
                            riskRatingId = a.RISKRATINGID,
                            ownership = a.OWNERSHIP,
-                           //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                            customerBVN = a.CUSTOMERBVN,
+
+
+                           //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                           //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                           // customerTypeName =  context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                            //CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
                            //{
                            //    address = x.ADDRESS,
@@ -3371,10 +3373,10 @@ namespace FintrakBanking.Repositories.Customer
             var loanCust = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                             where a.LOANAPPLICATIONID == loanApplicationId
                             select a.CUSTOMERID).ToList();
-            var customers = GetCustomers();
+            var customers = GetCustomers().Where(x => loanCust.Contains(x.customerId)).ToList();
             if (loanCust.Any())
             {
-                customers = customers.Where(x => loanCust.Contains(x.customerId));
+                customers = customers.Where(x => loanCust.Contains(x.customerId)).ToList();
             }
 
             return customers;
