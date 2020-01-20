@@ -894,10 +894,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     Workflow workflowlms = new Workflow(context, general);
 
-                  
-
-                   
-
                    // if (availmentTrail != null) nextOperationId = (short) availmentTrail.DESTINATIONOPERATIONID;
 
                     if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility

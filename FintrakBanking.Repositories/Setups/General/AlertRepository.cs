@@ -901,7 +901,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //GetUnAuthorizedOverdraftReport();
             //GetOverlineMonitoringReport();
             //GetCreditCardDelinquencyMonitoringReport();
-            //GetPastDueObligationsReminder();//
+            GetPastDueObligationsReminder();
             //GetRiskAssetsReportNotification();
             //GetDashboardReportNotification();
             //GetCACReport();
