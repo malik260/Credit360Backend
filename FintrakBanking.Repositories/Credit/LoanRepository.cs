@@ -9705,6 +9705,7 @@ namespace FintrakBanking.Repositories.Credit
                 && (c.PRODUCTTYPEID == 1 || c.PRODUCTTYPEID == null))
                 .Select(x => x.OPERATIONID).ToList();
 
+
             List<int> ids = new List<int>(); //generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LmsOperations).ToList();
             foreach(var i in lmsOperations)
             {
