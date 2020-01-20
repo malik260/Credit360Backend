@@ -883,8 +883,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     Workflow workflowlms = new Workflow(context, general);
 
-                   // if (availmentTrail != null) nextOperationId = (short) availmentTrail.DESTINATIONOPERATIONID;
-
                     if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                       || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
                       || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
@@ -897,7 +895,6 @@ namespace FintrakBanking.Repositories.Credit
                         workflowlms.OperationId = (int)nextOperationId;
                         workflowlms.DeferredExecution = true;
                         workflowlms.ExternalInitialization = true;
-                        if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment) workflow.DestinationOperationId = lastOperationId;
                         workflowlms.LogActivity();
                         context.SaveChanges();
                     }
