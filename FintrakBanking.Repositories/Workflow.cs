@@ -228,11 +228,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             MakerCheckerControl();
 
+            RandomizeAllocation();
+
             SendNotifications();
 
             SetResponseInformation();
-
-            RandomizeAllocation();
 
             if (statusOnly) return true;
 
@@ -309,7 +309,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         return;
                     }
-
 
                     foreach (var item in approvalStaff)
                     {
