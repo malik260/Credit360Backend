@@ -234,8 +234,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             SetResponseInformation();
 
-            
-
             if (statusOnly) return true;
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
@@ -311,7 +309,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         return;
                     }
-
 
                     foreach (var item in approvalStaff)
                     {
