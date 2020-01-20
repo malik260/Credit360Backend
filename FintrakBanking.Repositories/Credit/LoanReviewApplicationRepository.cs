@@ -863,23 +863,20 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short nextOperationId, short lastOperationId)
         {
-            if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
-            {
-                var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == nextOperationId)?.FirstOrDefault();
-                nextOperationId = (short)operation?.SYNCHOPERATIONID;
-
-                if (operation == null)
-                    throw new ConditionNotMetException("Operation not in synch with final operation");
-
-            }
-
-            //if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
-            //{
-            //    nextOperationId = nextOperationId;
-            //}
 
             foreach (var i in details)
             {
+
+                if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+                {
+                    var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == i.OPERATIONID)?.FirstOrDefault();
+                    nextOperationId = (short)operation?.SYNCHOPERATIONID;
+
+                    if (operation == null)
+                        throw new ConditionNotMetException("Operation not in synch with final operation");
+
+                }
+
                 var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == model.companyId
                                 && x.OPERATIONID == nextOperationId 
@@ -891,8 +888,6 @@ namespace FintrakBanking.Repositories.Credit
                 if (existingTrail.Count() == 0)
                 {
                     Workflow workflowlms = new Workflow(context, general);
-
-                   // if (availmentTrail != null) nextOperationId = (short) availmentTrail.DESTINATIONOPERATIONID;
 
                     if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                       || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
