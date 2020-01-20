@@ -225,13 +225,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                 { request.RESPONSESTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId; }
             }
 
-            RandomizeAllocation();
 
             MakerCheckerControl();
 
             SendNotifications();
 
             SetResponseInformation();
+
+            RandomizeAllocation();
 
             if (statusOnly) return true;
 
@@ -278,7 +279,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if(this.toStaffId != null) { return; }
 
-                if(this.request?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
+                if(this.request!= null && this.request?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
                 {
                     var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                    x.COMPANYID == this.companyId
