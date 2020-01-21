@@ -291,7 +291,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if(this.businessUnitId != null)
                     {
                         var staffBusinessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(this.businessUnitId);
-                        if (staffBusinessUnit != null && approvalSetup.ISRETAILONLYROUNDROBIN == true)
+                        if (staffBusinessUnit == null && approvalSetup.ISRETAILONLYROUNDROBIN == true)
                         {
                             if (staffBusinessUnit.BUSINESSCOMMONNAME?.ToLower() != "retail") return;
                         }
