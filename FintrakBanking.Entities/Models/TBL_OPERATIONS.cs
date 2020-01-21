@@ -32,6 +32,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int OPERATIONID { get; set; }
+        public int? SYNCHOPERATIONID { get; set; }
 
         [Required]
         //[StringLength(150)]

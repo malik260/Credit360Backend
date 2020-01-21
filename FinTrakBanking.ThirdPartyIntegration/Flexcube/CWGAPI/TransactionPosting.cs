@@ -88,12 +88,13 @@
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
+                    responseDateTime = DateTime.Now;
+
                     //HttpResponseMessage response = await client.GetAsync($"api/ExchangeRate/GetExchangeRateProduct?rateProduct.fromCurrencyCode={fromCurrencyCode}&rateProduct.toCurrencyCode={toCurrencyCode}&rateProduct.rateCode={rateCode}");
                     response = await client.GetAsync(
                     //$"GetExchangeRateWithDate/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}/{DateTime.Now.Date}");
                     $"GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}");
                     //$"api/ExchangeRate/GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}"); GetExchangeRateWithDate
-                    responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
                         var rep = await response.Content.ReadAsAsync<ExchangeRateViewModel>();
@@ -1244,8 +1245,6 @@
 
             public async Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber)
             {
-                string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
-                string API_URL = "http://10.1.7.116:8989/";
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
@@ -1256,8 +1255,9 @@
                 OfferLetterResponse responseApi = new OfferLetterResponse();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
+                getAPIURLSettings("CASHFLOW");
+                string apiUrl = "CallBack/notify-status-change";
 
-                string apiUrl = "api/CallBack/notify-status-change";
                 try
                 {
                     var token = new AuthenticationHeaderValue("Basic", API_KEY);
@@ -1350,9 +1350,6 @@
 
             public async Task<ResponseMessage> ReferBackThroughAPI(OfferLetterResponse model, string refNumber)
             {
-                string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
-                string API_URL = "http://10.1.7.116:8989/";
-
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
@@ -1363,9 +1360,8 @@
                 OfferLetterResponse responseApi = new OfferLetterResponse();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
-
-                //string apiUrl = "api/CallBack/ReferBack";
-                string apiUrl = "api/CallBack/refer-back";
+                getAPIURLSettings("CASHFLOW");
+                string apiUrl = "CallBack/refer-back";
 
                 try
                 {

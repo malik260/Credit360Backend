@@ -6,6 +6,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
     public interface IWorkflow
     {
         int OperationId { set; }
+        int? BusinessUnitId { get; set; }
         int? DestinationOperationId { get; set; }
         bool IsFlowTest { get; set; }
         int? ExclusiveFlowChangeId { get; set; }
@@ -56,7 +57,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
                 bool external,
                 bool deferred,
                 bool sameDesk = false,
-                bool isFlowTest = false
+                bool isFlowTest = false,
+                int? businessUnitId = null
             );
    
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
@@ -78,6 +80,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public bool success { get; set; }
         public int? fromLevelId { get; set; }
         public bool isFinal { get; set; }
+        public int? businessUnitId { get; set; }
     }
 
     public class AlertPlaceholders

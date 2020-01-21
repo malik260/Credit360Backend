@@ -20,6 +20,7 @@ namespace FintrakBanking.Entities.Models
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; } 
         //public virtual DbSet<TBL_ENDOFDAY_MONITORING> TBL_ENDOFDAY_MONITORING { get; set; } 
         public virtual DbSet<TBL_LOAN_DETAIL_REVIEW_TYPE> TBL_LOAN_DETAIL_REVIEW_TYPE { get; set; }
+        public virtual DbSet<TBL_ALERT_GROUP_EMAIL> TBL_ALERT_GROUP_EMAIL { get; set; }
         public virtual DbSet<TBL_GLOBAL_EXPOSURE_MANUAL> TBL_GLOBAL_EXPOSURE_MANUAL { get; set; }
         public virtual DbSet<TBL_DOC_TEMPLATE_SAVED> TBL_DOC_TEMPLATE_SAVED { get; set; }
         public virtual DbSet<TBL_ALERT_DAILYREPORT> TBL_ALERT_DAILYREPORT { get; set; }
@@ -69,7 +70,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_FULLANDFINAL_STATUS> TBL_LOAN_FULLANDFINAL_STATUS { get; set; }
 
         public virtual DbSet<TBL_APPROVAL_STATUS> TBL_APPROVAL_STATUS { get; set; }
-        public virtual DbSet<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
+        public virtual DbSet<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; } 
+        public virtual DbSet<TBL_APPROVAL_SETUP> TBL_APPROVAL_SETUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_VOTE_OPTION> TBL_APPROVAL_VOTE_OPTION { get; set; }
         public virtual DbSet<TBL_AUDIT> TBL_AUDIT { get; set; }
         public virtual DbSet<TBL_AUDIT_TYPE> TBL_AUDIT_TYPE { get; set; }

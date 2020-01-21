@@ -48,5 +48,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool DeleteAlertCondition(int id, UserInfo user);
         IEnumerable<TblOperationsViewModel> GetAllOperations();
         IEnumerable<StaffRoleViewModel> GetAllStaffRoles();
+        IEnumerable<StaffGroupEmailViewModel> GetAllStaffGroupEmail();
+        IEnumerable<AlertLevelViewModel> GetAllAlertGroupEmail();
+        bool AddAlertGroupEmail(AlertLevelViewModel model);
     }
 }

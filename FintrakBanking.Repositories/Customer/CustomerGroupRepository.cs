@@ -1292,7 +1292,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending 
                     && c.ISCURRENT == true
                     && c.DELETED == false
-                    && atrail.OPERATIONID == (int) OperationsEnum.CustomerGroupMapping 
+                    && atrail.OPERATIONID == (int) OperationsEnum.CustomerGroupMapping
+                    && atrail.RESPONSESTAFFID == null 
                     && ids.Contains((int) atrail.TOAPPROVALLEVELID)
                     orderby c.CUSTOMERGROUPMAPPINGID descending
                     select new CustomerGroupMappingViewModel()
