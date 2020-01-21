@@ -388,6 +388,9 @@ namespace FintrakBanking.Repositories.Credit
                 SYSTEMDATETIME = DateTime.Now,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 APPLICATIONSTATUSID = (short)1, // remove magic numbers
+               // PROPOSEDTENOR = model.proposedTenor,
+               // PROPOSEDINTEREST = model.proposedInterest,
+                
             });
 
             List<int> customerIds = new List<int>();
@@ -402,7 +405,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     LOANAPPLICATIONID = application.LOANAPPLICATIONID,
                     LOANID = detail.loanId,
-                    LOANSYSTEMTYPEID = detail.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facility..Contingent Liability*/
+                    LOANSYSTEMTYPEID = detail.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facilizzty..Contingent Liability*/
                     OPERATIONID = (short) model.operationId, // detail.operationId, // refactor to operationId from ui!
                     REVIEWDETAILS = detail.reviewDetails,
                     PRODUCTID = detail.productId,

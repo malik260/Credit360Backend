@@ -355,6 +355,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int? toApprovalLevelId { get; set; }
         public bool atInitiator { get; set; }
         public int? regionId { get; set; }
+        public int proposedTenor { get; set; }
+        public int proposedInterest { get; set; }
         public string timeLapse
         {
             get
@@ -383,16 +385,17 @@ public int? newInterestFrequencyTypeId { get; set; }
         //public string loanSystemType { get; set; }
         public string loanSystemTypeName { get; set; }
         public string operationName { get; set; }
-        public short productId { get; set; }
+        public short productId { get; set; } 
 
         public string obligorName { get; set; }
-        public int proposedTenor { get; set; }
+        public decimal? proposedTenor { get; set; }
         public double proposedRate { get; set; }
         public decimal proposedAmount { get; set; }
         public int approvedTenor { get; set; }
         public double approvedRate { get; set; }
         public decimal approvedAmount { get; set; }
         public decimal? customerProposedAmount { get; set; }
+        public decimal? proposedInterest { get; set; }
 
         public string proposedTenorString
         {
@@ -400,7 +403,7 @@ public int? newInterestFrequencyTypeId { get; set; }
             {
                 var units = proposedTenor == 1 ? " day" : " days";
                 if (proposedTenor < 15) return proposedTenor.ToString() + units;
-                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                var months = Math.Ceiling((Math.Floor((int)proposedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
                 return months.ToString() + " " + units;
             }
