@@ -4198,31 +4198,31 @@ namespace FintrakBanking.Repositories.Credit
                     userDetail.companyId = loanRecord.COMPANYID;
 
                     loanRecords.Add(loanRecord);
-                   // createLoanOnThirdParty(loanRecords, userDetail);
+                    // createLoanOnThirdParty(loanRecords, userDetail);
+
+                    LoanViewModel loanApplication = new LoanViewModel()
+                    {
+                        bookingDate = loanRecord.BOOKINGDATE,
+                        effectiveDate = loanRecord.EFFECTIVEDATE,
+                        maturityDate = loanRecord.MATURITYDATE,
+                        sourceReferenceNumber = loanRecord.LOANREFERENCENUMBER,
+                        userBranchId = (short)user.BranchId,
+                        branchId = (short)user.BranchId,
+                        companyId = user.companyId,
+                        principalAmount = loanRecord.PRINCIPALAMOUNT,
+                        interestRate = loanRecord.INTERESTRATE,
+                        productId = loanRecord.PRODUCTID,
+                        casaAccountId = loanRecord.CASAACCOUNTID,
+                        loanApplicationDetailId = loanRecord.LOANAPPLICATIONDETAILID,
+                        description = "Loan Creation From Flexcube API Call",
+                        createdBy = user.createdBy,
+                        userIPAddress = user.userIPAddress,
+                        applicationUrl = user.applicationUrl,
+                    };
+
+                    CreateLoanOnThirdParty(loanApplication, loanReferenceNumber);
                 }
                 //DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
-
-                LoanViewModel loanApplication = new LoanViewModel()
-                {
-                    bookingDate = loanRecord.BOOKINGDATE,
-                    effectiveDate = loanRecord.EFFECTIVEDATE,
-                    maturityDate = loanRecord.MATURITYDATE,
-                    sourceReferenceNumber = loanRecord.LOANREFERENCENUMBER,
-                    userBranchId = (short) user.BranchId,
-                    branchId = (short) user.BranchId,
-                    companyId = user.companyId,
-                    principalAmount = loanRecord.PRINCIPALAMOUNT,
-                    interestRate = loanRecord.INTERESTRATE,
-                    productId = loanRecord.PRODUCTID,
-                    casaAccountId = loanRecord.CASAACCOUNTID,
-                    loanApplicationDetailId = loanRecord.LOANAPPLICATIONDETAILID,
-                    description = "Loan Creation From Flexcube API Call",
-                    createdBy = user.createdBy,
-                    userIPAddress = user.userIPAddress,
-                    applicationUrl = user.applicationUrl,
-                };
-
-                CreateLoanOnThirdParty(loanApplication, loanReferenceNumber);
 
                 if(loanProductInfo.PRODUCTCODE == "EBFC")
                 {
