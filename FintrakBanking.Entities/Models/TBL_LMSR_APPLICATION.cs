@@ -71,6 +71,10 @@
 
         public int? CAPREGIONID { get; set; }
 
+        //public int? PROPOSEDTENOR { get; set; }
+
+        //public int? PROPOSEDINTEREST { get; set; }
+
         // public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }

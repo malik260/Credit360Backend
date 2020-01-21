@@ -2604,15 +2604,14 @@ namespace FintrakBanking.Repositories.Setups.General
         public string GetAllStaffRoleEmails(int alerttitleId)
         {
             var list = "";
-            var roleEmail = (from r in context.TBL_STAFF_ROLE
-                            join s in context.TBL_STAFF on r.STAFFROLEID equals s.STAFFROLEID
-                            join t in context.TBL_ALERT_STAFF_ROLE on r.STAFFROLEID equals t.STAFFROLEID
+            var roleEmail = (from r in context.TBL_ALERT_GROUP_EMAIL
+                            join t in context.TBL_ALERT_STAFF_ROLE on r.GROUPEMAILID equals t.STAFFROLEID
                             where t.ALERTTITLEID == alerttitleId
                               select new simpleStaffModel
                               {
-                                   staffCode= s.STAFFCODE,
-                                   staffRoleId = s.STAFFROLEID,
-                                   email = s.EMAIL,
+                                   staffCode= r.GROUPCODE,
+                                   staffRoleId = r.GROUPEMAILID,
+                                   email = r.GROUPEMAIL,
                               }).ToList();
 
             foreach (var t in roleEmail)

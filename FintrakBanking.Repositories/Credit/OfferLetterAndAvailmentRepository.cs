@@ -2554,7 +2554,7 @@ namespace FintrakBanking.Repositories.Credit
                 int nextOperationId = (int)OperationsEnum.LoanAvailment;
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
                 workflow.NextLevelId = GetFirstReceiverLevel(model.createdBy, nextOperationId, null, true);
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, nextOperationId, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New application", true, true, false, model.isFlowTest); // model.operationId must be used here!
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, nextOperationId, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New application", true, true, false, model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID); // model.operationId must be used here!
                 // PassApplicationToOperation(model.companyId, model.createdBy, (int)OperationsEnum.LoanAvailment, model.applicationId, "B&G application for availment...");
             }
 
@@ -2564,51 +2564,52 @@ namespace FintrakBanking.Repositories.Credit
         #endregion Bonds and Guarantees
 
 
-        public bool OfferLetterRejectionOld(ForwardViewModel model)
-        {
-            var operationId = model.operationId;
-            var o = context.TBL_APPROVAL_TRAIL.Find(model.trailId); // here we try to get the staffid on the trail row
-            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+        //public bool OfferLetterRejectionOld(ForwardViewModel model)
+        //{
+        //    var operationId = model.operationId;
+        //    var o = context.TBL_APPROVAL_TRAIL.Find(model.trailId); // here we try to get the staffid on the trail row
+        //    var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
 
-            var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                x.OPERATIONID == operationId
-                && x.TARGETID == appl.LOANAPPLICATIONID
-                && x.REQUESTSTAFFID == o.REQUESTSTAFFID
-            );
+        //    var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+        //        x.OPERATIONID == operationId
+        //        && x.TARGETID == appl.LOANAPPLICATIONID
+        //        && x.REQUESTSTAFFID == o.REQUESTSTAFFID
+        //    );
 
-            workflow.StaffId = model.createdBy;
-            workflow.OperationId = operationId;
-            workflow.TargetId = model.applicationId;
-            workflow.CompanyId = appl.COMPANYID;
-            workflow.ProductClassId = appl.PRODUCTCLASSID;
-            workflow.ProductId = model.productId;
-            workflow.NextLevelId = trail.FROMAPPROVALLEVELID;//
-            workflow.ToStaffId = o.REQUESTSTAFFID;
-            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
-            workflow.Comment = model.comment;
-            workflow.DeferredExecution = true;
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
+        //    workflow.StaffId = model.createdBy;
+        //    workflow.OperationId = operationId;
+        //    workflow.TargetId = model.applicationId;
+        //    workflow.CompanyId = appl.COMPANYID;
+        //    workflow.ProductClassId = appl.PRODUCTCLASSID;
+        //    workflow.ProductId = model.productId;
+        //    workflow.NextLevelId = trail.FROMAPPROVALLEVELID;//
+        //    workflow.ToStaffId = o.REQUESTSTAFFID;
+        //    workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+        //    workflow.Comment = model.comment;
+        //    workflow.DeferredExecution = true;
+        //    workflow.ExternalInitialization = true;
+        //    workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
+        //    workflow.LogActivity();
 
-            // Take out of offer letter screen
-            var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
-                && x.RESPONSESTAFFID == null
-                && x.TARGETID == appl.LOANAPPLICATIONID
-            );
-            if (currentTrail != null)
-            {
-                currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
-                currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                currentTrail.COMMENT = model.comment;
-                currentTrail.TOAPPROVALLEVELID = null;
-                currentTrail.TOSTAFFID = null;
-            }
-            appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
-            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
+        //    // Take out of offer letter screen
+        //    var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+        //        x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
+        //        && x.RESPONSESTAFFID == null
+        //        && x.TARGETID == appl.LOANAPPLICATIONID
+        //    );
+        //    if (currentTrail != null)
+        //    {
+        //        currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+        //        currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+        //        currentTrail.COMMENT = model.comment;
+        //        currentTrail.TOAPPROVALLEVELID = null;
+        //        currentTrail.TOSTAFFID = null;
+        //    }
+        //    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+        //    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
 
-            return context.SaveChanges() > 0;
-        }
+        //    return context.SaveChanges() > 0;
+        //}
 
         public bool OfferLetterRejection(ForwardViewModel model)
         {

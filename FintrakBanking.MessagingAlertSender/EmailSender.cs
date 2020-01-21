@@ -110,7 +110,7 @@ namespace FintrakBanking.MessagingAlertSender
                 {
                     if (emailAddy != null && emailAddy != string.Empty)
                     {
-                        mail.To.Add(new MailAddress(emailAddy));
+                        mail.To.Add(new MailAddress(emailAddy.Trim()));
                     }
                 }
                 mail.IsBodyHtml = true;
@@ -215,7 +215,7 @@ namespace FintrakBanking.MessagingAlertSender
 
                                     if (emailAddy != null && emailAddy != string.Empty)
                                     {
-                                        mail.To.Add(new MailAddress(emailAddy));
+                                        mail.To.Add(new MailAddress(emailAddy.Trim()));
                                     }
                                 }
                                 
