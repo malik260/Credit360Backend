@@ -668,6 +668,34 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return models;
         }
 
+
+        public CreditLimitValidationsModel ValidateObligorRistRating(LoanApplicationViewModel application)
+        {
+            List<CurrentCustomerExposure> exposures;
+            CreditLimitValidationsModel models = new CreditLimitValidationsModel();
+            var company = context.TBL_COMPANY.FirstOrDefault(c => c.COMPANYID == application.companyId);
+            var globalLimit = company.SINGLEOBLIGORLIMIT;
+            if (!(globalLimit > 0) || globalLimit == null)
+            {
+                throw new SecureException("Single Obligor Limit has not been setup for" + company.NAME + " !");
+            }
+            if (application.loanTypeId == (int)LoanTypeEnum.Single)
+            {
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == application.customerId).CUSTOMERCODE;
+                var customerCodes = new List<string>();
+                customerCodes.Add(customerCode);
+                exposures = GetGlobalCustomerExposure(customerCodes);
+            }
+            else
+            {
+                exposures = GetGroupCustomerGlobalExposure((int)application.customerGroupId);
+            }
+
+            models.maximumAllowedLimit = (decimal?)globalLimit ?? 0;
+            models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
+            return models;
+        }
+
         public CreditLimitValidationsModel ValidateNPLByDirectors(LoanApplicationViewModel application)
         {
             List<CurrentCustomerExposure> exposures;
