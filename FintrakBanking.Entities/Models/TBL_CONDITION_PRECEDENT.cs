@@ -48,6 +48,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? OPERATIONID { get; set; }
 
+        public int? SECTORID { get; set; }
+        public int? SUBSECTORID { get; set; }
+
         public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }

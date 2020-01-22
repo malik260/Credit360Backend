@@ -1207,7 +1207,7 @@ namespace FintrakBanking.Repositories.Credit
                                join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals y.TARGETID
                               // let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
                                where y.RESPONSESTAFFID == null
-                               && operations.Contains(y.OPERATIONID)
+                               && operations.Contains(y.OPERATIONID)  
                                && (a.APPLICATIONREFERENCENUMBER == searchString
                                || g.FIRSTNAME.ToLower().Contains(searchString)
                                || g.LASTNAME.ToLower().Contains(searchString)

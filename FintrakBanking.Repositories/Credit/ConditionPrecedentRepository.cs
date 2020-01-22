@@ -187,7 +187,7 @@ namespace FintrakBanking.Repositories.Credit
                     s => s.STAFFID,
                     (c, s) => new ConditionPrecedentViewModel
                     {
-                        loanConditionId = c.LOANCONDITIONID,
+                        loanConditionId = c.LOANCONDITIONID, 
                         condition = c.CONDITION,
                         conditionId = c.CONDITIONID == null ? 0 : (int)c.CONDITIONID,
                         isExternal = c.ISEXTERNAL,
@@ -199,6 +199,7 @@ namespace FintrakBanking.Repositories.Credit
                         responseTypeId = c.RESPONSE_TYPEID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
+                        
                     });
 
             var test = x.ToList();
