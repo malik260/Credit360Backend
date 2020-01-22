@@ -496,14 +496,15 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 // out ducument properties definition
-                /*this.memoData = MemoMarkupHtml();
-                this.facilityUpgradeSupportSchemeData = Fa;
-                this.invoiceDiscountingData;
-                this.cashCollaterizedData;
-                this.staffcarLoansData;
-                this.staffMortgageLoansData;
-                this.staffPersonalLoansAGMData;
-                this.staffPersonalLoanData;*/
+                this.memoData = MemoMarkupHtml();
+                this.facilityUpgradeSupportSchemeData = FacilityUpgradeSupportSchemeHtml();
+                this.invoiceDiscountingData = InvoiceDiscountingHtml();
+                this.cashCollaterizedData = CashCollaterizedHtml();
+                this.staffcarLoansData = StaffCarLoansHtml();
+                this.staffMortgageLoansData = StaffMortgageLoansHtml();
+                this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
+                this.staffPersonalLoanData = StaffPersonalLoanHtml();
+                this.temporaryOverdraftData = TemporaryOverdraftHtml();
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);

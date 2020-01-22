@@ -58,7 +58,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string nameOfRM { get; set; }
         public decimal facilityRate { get; set; }
         public string operationTypeName { get; set; }
-        public int? currentApprovalLevelId { get; set; }
+        public int? currentApprovalLevelId { get; set; } 
         public int approvedTenor { get; set; }
         public string staffCode { get; set; }
         public int tenorToDate { get; set; }
