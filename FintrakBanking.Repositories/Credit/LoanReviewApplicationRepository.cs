@@ -444,13 +444,13 @@ namespace FintrakBanking.Repositories.Credit
 
             if (assetManagement)
             {
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
                 application.OPERATIONID = (short)model.operationId;//79;
                 context.Entry(application).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
             }
 
             if (context.SaveChanges() > 0)
