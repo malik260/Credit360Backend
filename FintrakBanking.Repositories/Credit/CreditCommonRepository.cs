@@ -63,7 +63,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //            }).Distinct().ToList();
 
-            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));//.Select(x => x.CUSTOMERCODE);
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID)).ToList();//.Select(x => x.CUSTOMERCODE);
             
             foreach (var customer in customers)
             {

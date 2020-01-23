@@ -144,6 +144,7 @@ namespace FintrakBanking.Repositories.Credit
                     .Select(d => new applicationDetails
                       {
                           detailId = d.LOANREVIEWAPPLICATIONID,
+                          loanApplicationId = d.LOANAPPLICATIONID,
                           operationId = d.OPERATIONID,
                           operationName = d.TBL_OPERATIONS.OPERATIONNAME,
                           reviewDetails = d.REVIEWDETAILS,
