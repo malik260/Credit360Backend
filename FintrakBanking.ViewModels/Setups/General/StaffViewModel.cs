@@ -118,6 +118,11 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string email { get; set; }
         public int staffRoleId { get; set; }
         public string staffRoleName { get; set; }
+
+        public int groupEmailId { get; set; }
+        public string groupCode { get; set; }
+        public string groupName { get; set; }
+        public string groupEmail { get; set; }
     }
 
     public class StaffDetailsModel : StaffInfoViewModel

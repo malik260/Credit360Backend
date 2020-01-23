@@ -668,6 +668,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return models;
         }
 
+
         public CreditLimitValidationsModel ValidateNPLByDirectors(LoanApplicationViewModel application)
         {
             List<CurrentCustomerExposure> exposures;
@@ -708,8 +709,11 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public bool CustomerIsDirector(int? customerId)
         {
-
-            var bvn = context.TBL_CUSTOMER.Find(customerId)?.CUSTOMERBVN;
+            if (customerId == null || customerId == 0)
+            {
+                return false;
+            }
+            var bvn = context.TBL_CUSTOMER.Find(customerId).CUSTOMERBVN;
             if (String.IsNullOrEmpty(bvn) || String.IsNullOrEmpty(bvn)) return false;
             var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
             if (isDirector) return isDirector;

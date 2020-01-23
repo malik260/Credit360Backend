@@ -146,7 +146,7 @@ namespace FintrakBanking.MessagingAlertSender
                     _log.ErrorFormat("Email Sender has failed with error : " + ex.ToString() + " at : "  + DateTime.Now);
                     _log.ErrorFormat("");
                     _log.ErrorFormat("==================================================================");
-                    if (ex.InnerException!=null)
+                    if (ex.InnerException !=null)
                     {
                         _log.ErrorFormat("InnerException  :  " + ex.InnerException);
                         _log.ErrorFormat("");

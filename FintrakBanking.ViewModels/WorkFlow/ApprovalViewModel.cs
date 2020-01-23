@@ -7,6 +7,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class ApprovalViewModel : UserInfo
     {
+        public int? businessUnitId { get; set; }
         public int? destinationOperationId { get; set; }
         private bool _keepPending = true;
         public int? toStaffId { get; set; }

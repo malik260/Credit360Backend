@@ -2052,7 +2052,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }

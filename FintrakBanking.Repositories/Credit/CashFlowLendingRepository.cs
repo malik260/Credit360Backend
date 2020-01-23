@@ -82,9 +82,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             APIResponse response = new APIResponse();
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
+            //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
+            //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
             //if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
@@ -109,6 +109,13 @@ namespace FintrakBanking.Repositories.Credit
             model.companyId = accountOfficer.COMPANYID;
             model.branchId = accountOfficer.BRANCHID;
 
+            if (model.individualCustomerInformation.subSector == null) return fireResponse("Missing Sub-sector information", "99", "");
+
+            var subsector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.individualCustomerInformation.subSector).FirstOrDefault();
+            var sector = context.TBL_SECTOR.Where(x => x.SECTORID == subsector.SECTORID ).FirstOrDefault();
+            model.sectorId = sector.SECTORID;
+            model.subsectorId = subsector.SUBSECTORID;
+
             if (saveIndividualCustomerInformation(model))
             {
                 customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
@@ -123,9 +130,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             APIResponse response = new APIResponse();
 
-            if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
+            //if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
+            //if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
             var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
             if (accountOfficer == null) return fireResponse("Account officer does not exist in Fintrak Credit360", "99", "");
@@ -182,9 +189,10 @@ namespace FintrakBanking.Repositories.Credit
                 ISPOLITICALLYEXPOSED = model.politicallyExposed == "1" ? true : false,
                 //ISINVESTMENTGRADE = model,
                 ISREALATEDPARTY = entity.insiderRelatedParties.Count > 0 ?  true : false,
-                ///RELATIONSHIPOFFICERID = model.relationshipManagerCode,
+                RELATIONSHIPOFFICERID = entity.createdBy,
                 SPOUSE = model.spouse,
-                //SUBSECTORID = model.,
+                SUBSECTORID = entity.subsectorId,
+                //se = entity.sectorId,
                 //RISKRATINGID = model.riskRatingId,
                 CUSTOMERBVN = model.customerBvn,
                 //PROSPECTCUSTOMERCODE = model.prospectCustomerCode,
@@ -230,11 +238,11 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 EMAILADDRESS = corporateDetails.emailAddress,
                 FIRSTNAME = corporateDetails.corporateName,
-                //MISCODE = model.misCode,
-                //MISSTAFF = model.misStaff,
-                //NATIONALITYID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfOrigin).FirstOrDefault()?.COUNTRYID,
-
-                ISPOLITICALLYEXPOSED = corporateDetails.politicallyExposed == "1" ? true : false,
+               //MISCODE = model.misCode,
+               //MISSTAFF = model.misStaff,
+               //NATIONALITYID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfOrigin).FirstOrDefault()?.COUNTRYID,
+               RELATIONSHIPOFFICERID = model.createdBy,
+               ISPOLITICALLYEXPOSED = corporateDetails.politicallyExposed == "1" ? true : false,
                 //ISINVESTMENTGRADE = model,
 
                 //SUBSECTORID = model.,
@@ -246,12 +254,12 @@ namespace FintrakBanking.Repositories.Credit
                 //CRMSLEGALSTATUSID = model.crmsLegalStatus,
                 CRMSRELATIONSHIPTYPEID = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == (corporateDetails.crmsRelationship))?.FirstOrDefault()?.CRMSREGULATORYID,
                // COUNTRYOFRESIDENTID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfResidence).FirstOrDefault()?.COUNTRYID,
-
-                //NUMBEROFLOANSTAKEN = model.numberOfLoansTaken,
-                //MONTHLYLOANREPAYMENT = model.loanMonthlyRepaymentFromOtherBanks,
-                //DATEOFRELATIONSHIPWITHBANK = model.dateOfRelationshipWithBank,
-                //RELATIONSHIPTYPEID = model.relationshipTypeCode,
-                TEAMLDR = corporateDetails.teamLdr,
+                SUBSECTORID = model.subsectorId,
+               //NUMBEROFLOANSTAKEN = model.numberOfLoansTaken,
+               //MONTHLYLOANREPAYMENT = model.loanMonthlyRepaymentFromOtherBanks,
+               //DATEOFRELATIONSHIPWITHBANK = model.dateOfRelationshipWithBank,
+               //RELATIONSHIPTYPEID = model.relationshipTypeCode,
+               TEAMLDR = corporateDetails.teamLdr,
                 TEAMNPL = corporateDetails.teamNpl,
                 APIREQUESTID = model.request_Id,
                 //CORR = model.corr,
@@ -296,6 +304,10 @@ namespace FintrakBanking.Repositories.Credit
                 var application = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
                 if (application == null) { return fireResponse("Application does not exist in Fintrak Credit360", "99", ""); }
 
+                if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99", ""); }
+
+                if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99", ""); }
+
                 model.createdBy = accountOfficer1.STAFFID;
                 model.customerCode = context.TBL_CUSTOMER.Find(application.CUSTOMERID)?.CUSTOMERCODE;
                 SaveLoanDocument(model);
@@ -332,7 +344,12 @@ namespace FintrakBanking.Repositories.Credit
             LoanApplicationViewModel loanApp = new LoanApplicationViewModel();
             loanApp.customerId = customer.CUSTOMERID;
             loanApp.proposedTenor = Convert.ToInt16(model.tenor);
-            loanApp.tenorModeId = (short)TenorModeEnum.Days;
+
+            var currentDate = genSetup.GetApplicationDate();
+            var endDate = currentDate.AddMonths(loanApp.proposedTenor);
+            loanApp.proposedTenor = (int)(endDate - currentDate).TotalDays;
+
+            loanApp.tenorModeId = (short)TenorModeEnum.Months;
             loanApp.proposedAmount = Convert.ToDecimal(model.loanAmount);
             loanApp.productId = product.PRODUCTID;
             loanApp.productClassId = product.PRODUCTCLASSID;
@@ -350,6 +367,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.casaAccountId = casa?.CASAACCOUNTID;
             loanApp.branchId = accountOfficer.BRANCHID;
             loanApp.createdBy = accountOfficer.STAFFID;
+
 
             if(context.TBL_LOAN_APPLICATION.Any(x=>x.APIREQUESTID == model.requestId && x.DELETED != true))
             {
@@ -379,7 +397,11 @@ namespace FintrakBanking.Repositories.Credit
                  && o.APPROVEDINTERESTRATE == loanApp.interestRate && o.APPROVEDTENOR == loanApp.proposedTenor && o.CURRENCYID == currency.CURRENCYID && o.CUSTOMERID == customer.CUSTOMERID
                  && o.SUBSECTORID == loanApp.sectorId && o.CREATEDBY == 1 && o.DELETED != true);
 
-            if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");  
+            if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");
+
+            if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99", ""); }
+
+            if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99", ""); }
 
             response.applicationReferenceNumber = AddLoanApplication(loanApp, model.requestId);
             model.createdBy = accountOfficer.STAFFID;
@@ -400,13 +422,14 @@ namespace FintrakBanking.Repositories.Credit
         //private void SaveLoanDocument(CflLoanApplication model)
         private void SaveLoanDocument(CflLoanApplication model)
         {
+            
             FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
             var staffId = context.TBL_STAFF.Where(s => s.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
             foreach (var loanFile in model.loanApplicationFiles)
             {
                 var document = new TBL_DOCUMENT_UPLOAD()
                 {
-                    DOCUMENTTYPEID = 236, //Offer Letter
+                    DOCUMENTTYPEID = Convert.ToInt32( loanFile.documentTypeId), // ?? 236, //Offer Letter
                     FILENAME = loanFile.caption+"."+loanFile.fileExtension,
                     FILEEXTENSION = loanFile.fileExtension,
                     FILESIZE = loanFile.fileData.Length,
@@ -434,6 +457,48 @@ namespace FintrakBanking.Repositories.Credit
                 });
             }
 
+            foreach (var loanFile in model.creditBureauReport)
+            {
+                var caption = string.Empty;
+                if (Convert.ToInt16(loanFile.creditBureauType) == (short)CreditBureauEnum.CRCCreditBureau) caption = "CRCCreditBureau";
+                if (Convert.ToInt16(loanFile.creditBureauType) == (short)CreditBureauEnum.XDSCreditBureau) caption = "FirstCentralCreditBureau";
+                if (Convert.ToInt16(loanFile.creditBureauType) == (short)CreditBureauEnum.CRMS) caption = "CRMSCreditBureau";
+
+                if (loanFile.reportFileDateinPDF == null || loanFile.reportFileDateinPDF == string.Empty) continue;
+
+                var b = loanFile.reportFileDateinPDF.Base64ToByte();
+                var a = (int)loanFile.reportFileDateinPDF.Length;
+                var document = new TBL_DOCUMENT_UPLOAD()
+                {
+                    DOCUMENTTYPEID = Convert.ToInt32(loanFile.documentTypeId), 
+                    FILENAME = caption + "." + "pdf",
+                    FILEEXTENSION = "pdf",
+                    FILESIZE = (int)loanFile.reportFileDateinPDF.Length,
+                    FILEDATA = loanFile.reportFileDateinPDF.Base64ToByte(),
+                    COMPANYID = model.companyId,
+                    DELETED = false,
+                    DATETIMECREATED = DateTime.Now,
+                    CREATEDBY = staffId.STAFFID,
+                };
+
+                docContext.TBL_DOCUMENT_UPLOAD.Add(document);
+                docContext.SaveChanges();
+
+                var p = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID;
+                docContext.TBL_DOCUMENT_USAGE.Add(new TBL_DOCUMENT_USAGE()
+                {
+                    DOCUMENTUPLOADID = document.DOCUMENTUPLOADID,
+                    TARGETID = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID,
+                    TARGETREFERENCENUMBER = model.applicationReferenceNumber,
+                    CUSTOMERCODE = model.customerCode,
+                    OPERATIONID = (int)OperationsEnum.CreditAppraisal,
+                    ISPRIMARYDOCUMENT = false,
+                    DELETED = false,
+                    CREATEDBY = staffId.STAFFID,
+                    DATETIMECREATED = DateTime.Now
+                });
+            }
+            var n = docContext;
             docContext.SaveChanges();
         }
 
@@ -526,6 +591,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONID = app.LOANAPPLICATIONID,
                 STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
                 
+                
                 //EQUITYCASAACCOUNTID = a?.equityCasaAccountId,
                 //EQUITYAMOUNT = a?.equityAmount ,
                 
@@ -567,14 +633,60 @@ namespace FintrakBanking.Repositories.Credit
 
             var appl = context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
 
-            //if (a.productFees.Count > 0)
-            //{
-            //    ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
-            //}
+            context.SaveChanges();
 
-           return context.SaveChanges() > 0;
+            var productFeesModel = new List<ProductFeesViewModel>();
+            var productFees = context.TBL_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == app.PRODUCTID);
+
+            foreach(var productFee in productFees)
+            {
+                var feeModel = new ProductFeesViewModel()
+                {
+                    loanChargeFeeId = productFee.CHARGEFEEID,
+                    defaultfeeRateValue = productFee.RATEVALUE,
+                    recommededFeeRateValue = productFee.RATEVALUE,
+                    rate = productFee.RATEVALUE,
+                    feeId = productFee.CHARGEFEEID,
+                    loanApplicationDetailId = appl.LOANAPPLICATIONDETAILID,
+                };
+
+                productFeesModel.Add(feeModel);
+            }
+
+
+            ProductFees(productFeesModel, appl.LOANAPPLICATIONDETAILID, loan.createdBy);
+            
+
+            return context.SaveChanges() > 0;
 
         }
+
+        //private void saveFacilityFees(List<productFees> fees )
+        //{
+        //    foreach(var fee in fees)
+        //    {
+        //        var chargeFeeSetup = context.TBL_CHARGE_FEE.Where(x=>x.SHORTNAME == fee.feeCode ).Join(context.TBL_CHARGE_FEE_DETAIL.Where(x=>x. .FirstOrDefault();
+
+        //        //var chargeFeeSetup = (from x in context.TBL_CHARGE_FEE
+        //        //                      join d in context.TBL_CHARGE_FEE_DETAIL on x.CHARGEFEEID equals d.CHARGEFEEID
+        //        //                      where x.SHORTNAME == fee.feeCode && d.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Primary  ).FirstOrDefault();
+
+        //        var facilityFee = new TBL_LOAN_APPLICATION_DETL_FEE
+        //        {
+        //            CHARGEFEEID = chargeFeeSetup.CHARGEFEEID,
+        //            HASCONSESSION = false,
+        //            APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+        //            LOANAPPLICATIONDETAILID = 1,
+        //            DEFAULT_FEERATEVALUE = chargeFeeSetup.,
+        //            RECOMMENDED_FEERATEVALUE = Convert.ToDecimal(fee.feeRate),
+        //            CREATEDBY = 1,
+        //            DATETIMECREATED = DateTime.Now,
+        //            DELETED = false,
+
+        //        };
+        //    }
+
+        //}
 
         private TBL_LOAN_APPLICATION AddloanApplicationSub(LoanApplicationViewModel loan, string apiRequestId)
         {
@@ -756,13 +868,145 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
+        {
+            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                        where a.DELETED == false
+                                        select new CustomerGroupMappingViewModel
+                                        {
+                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                            customerGroupId = a.CUSTOMERGROUPID,
+                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                            //createdBy = a.CreatedBy,
+                                            customerId = a.CUSTOMERID,
+                                            //dateTimeCreated = a.DateTimeCreated
+                                        }).ToList();
+
+            return customerGroupMapping;
+        }
+
+        public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int loanTypeId, int companyId)
+        {
+            IEnumerable<CurrentCustomerExposure> exposure = null;
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+
+            if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
+            {
+                var customerGroupMappings = new List<CustomerGroupMappingViewModel>();
+                var customerId = customer.FirstOrDefault().customerId;
+                var customerGroups = GetCustomerGroupMapping().Where(m => m.customerGroupId == customerId).ToList();
+                foreach (var customerGroup in customerGroups)
+                {
+                    var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                                where a.CUSTOMERGROUPID == customerGroup.customerGroupId && a.DELETED == false
+                                                select new CustomerGroupMappingViewModel
+                                                {
+                                                    customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                                    customerGroupId = a.CUSTOMERGROUPID,
+                                                    relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                                    relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                                    customerId = a.CUSTOMERID,
+                                                    customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                                    customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                                    customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                                }).ToList();
+                    if (customerGroupMapping.Count() > 0) customerGroupMappings.AddRange(customerGroupMapping);
+                }
+
+                if (customerGroupMappings.Count() > 0)
+                {
+                    customer = customerGroupMappings.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                }
+            }
+
+            foreach (var item in customer)
+            {
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERCODE.Trim();
+                //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+
+                exposure = (from a in context.TBL_GLOBAL_EXPOSURE
+                            where a.CUSTOMERID.Contains(customerCode)
+                            select new CurrentCustomerExposure
+                            {
+                                customerName = a.CUSTOMERNAME,
+                                customerCode = a.CUSTOMERID.Trim(),
+                                facilityType = a.ADJFACILITYTYPE,
+                                approvedAmount = a.LOANAMOUNYTCY ?? 0,
+                                approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
+                                currency = a.CURRENCYNAME,
+                                exposureTypeCodeString = a.EXPOSURETYPECODE,
+                                adjFacilityTypeString = a.ADJFACILITYTYPE,
+                                adjFacilityTypeCode = a.ADJFACILITYTYPEid,
+                                productIdString = a.PRODUCTID,
+                                productCode = a.PRODUCTCODE,
+                                tenorString = a.TENOR,
+                                productName = a.PRODUCTNAME,
+                                //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                //proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                                outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
+                                outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                                reviewDate = DateTime.Now,
+                                bookingDate = a.BOOKINGDATE,
+                                maturityDate = a.MATURITYDATE,
+                                //maturityDateString = a.MATURITYDATE,
+                                loanStatus = a.CBNCLASSIFICATION,
+                                referenceNumber = a.REFERENCENUMBER,
+                            }).ToList();
+
+                if (exposure.Count() > 0)
+                {
+                    foreach (var e in exposure)
+                    {
+                        e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
+                        e.tenor = int.Parse(e.tenorString);
+                        e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
+                        e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
+                        //e.bookingDate = e.bookingDateString;
+                        //e.maturityDate = DateTime.Parse(e.maturityDateString);
+                        //e.productId = int.Parse(e.productIdString);
+                    }
+                    exposures.AddRange(exposure);
+                }
+
+            }
+
+            if (exposures.Count() == 0)
+            {
+                return exposures;
+            }
+
+            return exposures;
+        }
+
+        public List<CurrentCustomerExposure> GetCustomerExposure(List<CustomerExposure> customerIds, int companyId, short loantypeId) // not used!
+        {
+            return GetCurrentCustomerExposure(customerIds, loantypeId, companyId); // old ify impl
+        }
+
+        public List<CurrentCustomerExposure> GetExposures(TBL_LOAN_APPLICATION loanApplication)
+        {
+            var exposures = new List<CurrentCustomerExposure>();
+            var customerIds = new List<CustomerExposure>();
+            if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERID });
+                exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID, loanApplication.LOANAPPLICATIONTYPEID);
+            }
+            else
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERGROUPID });
+                exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID, loanApplication.LOANAPPLICATIONTYPEID);
+            }
+            return exposures;
+        }
+
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
         {
             var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
 
-            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
-
-           // decimal totalApplicationAmount = 0; 
+            // decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
+            // decimal totalApplicationAmount = 0; 
             //foreach (var item in application)
             //{
             //    var exchangeValue = ((decimal)item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
@@ -770,6 +1014,7 @@ namespace FintrakBanking.Repositories.Credit
             //}
 
             var loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+            decimal totalAmount = application.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE) + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
 
             loanData.REQUIRECOLLATERAL = loan.requireCollateral;
             loanData.TOTALEXPOSUREAMOUNT = totalAmount;
@@ -1098,20 +1343,22 @@ namespace FintrakBanking.Repositories.Credit
 
         private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
         {
-            var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
+            foreach (var fee in fees)
             {
-                CHARGEFEEID = c.feeId,
-                RECOMMENDED_FEERATEVALUE = c.rate,
-                DATETIMECREATED = DateTime.Now,
-                CREATEDBY = createdBy,
-                HASCONSESSION = false,
-                APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
-                LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
-                DEFAULT_FEERATEVALUE = c.rate
-            });
-
-            context.TBL_LOAN_APPLICATION_DETL_FEE.AddRange(data);
-
+                var feeRecord = new TBL_LOAN_APPLICATION_DETL_FEE()
+                {
+                    CHARGEFEEID = fee.feeId,
+                    RECOMMENDED_FEERATEVALUE = fee.rate,
+                    DATETIMECREATED = DateTime.Now,
+                    CREATEDBY = createdBy,
+                    HASCONSESSION = false,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                    LOANAPPLICATIONDETAILID = fee.loanApplicationDetailId,
+                    DEFAULT_FEERATEVALUE = fee.rate
+                };
+                context.TBL_LOAN_APPLICATION_DETL_FEE.Add(feeRecord);
+            }
+         
         }
 
         private string GenerateLoanReference(int customerId)
@@ -1154,7 +1401,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false, false,false);
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false, false,false, null);
                 context.SaveChanges();
                 return 1;
             }
@@ -1175,9 +1422,9 @@ namespace FintrakBanking.Repositories.Credit
             operationId = appl.OPERATIONID; 
             workflow.OperationId = operationId;
             appl.OPERATIONID = operationId;
-            receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
-            workflow.NextLevelId = receiverLevelId; 
-
+            receiverLevelId = GetFirstReceiverLevel(staffId, (short)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID, appl.PRODUCTID);
+            workflow.NextLevelId = receiverLevelId;
+            workflow.ToStaffId = staffId;
 
             workflow.StaffId = staffId;
             workflow.ToStaffId = staffId;

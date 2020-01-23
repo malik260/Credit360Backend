@@ -1284,7 +1284,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = ok, result = response });
             
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             
         }
 
@@ -1328,13 +1328,19 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-detail-search")]
         public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
         {
-                var response = repo.Search(model.searchString);
+            var response = repo.Search(model.searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });            
+            
+        }
 
-              return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("search-booked-loans")]
+        public HttpResponseMessage SearchBookedLoans([FromBody] SearchViewModel model)
+        {
+            var response = repo.SearchBookedLoans(model.searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
 
-            
-            
-            
         }
 
         // search loan application by either reference number or name =======by benjamin

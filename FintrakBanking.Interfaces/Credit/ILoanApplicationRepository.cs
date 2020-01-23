@@ -58,7 +58,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanApplicationViewModel> Search(string searchString, int staffId = 0);
 
-        
+        List<WorkflowTrackerViewModel> SearchBookedLoans(string searchString);
+
+
+
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
         bool ValidateDuplicateLoanApplication( LoanApplicationViewModel loan);
         string GetRefrenceNumber();
@@ -198,6 +201,7 @@ namespace FintrakBanking.Interfaces.Credit
         RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId);
         CurrentCustomerExposure GetTotalBankExposure();
         IEnumerable<LoanDetailReviewTypeViewModel> GetAllLoanDetailReviewTypes();
+        List<CurrentCustomerExposure> GetExposures(TBL_LOAN_APPLICATION loanApplication);
         //IEnumerable<LoanApplicationLienViewModel> GetRacDetails();
     }
 }

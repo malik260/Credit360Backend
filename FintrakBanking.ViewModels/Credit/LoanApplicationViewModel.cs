@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -114,6 +115,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public string lastComment { get; set; }
         public int approvalTrailId { get; set; }
+        public int? responseStaffId { get; set; }
         // public decimal? approvedAmount { get; set; }
         public short applicationStatusId { get; set; }
 
@@ -235,6 +237,8 @@ namespace FintrakBanking.ViewModels.Credit
             if (factor <= 100) return "danger";
             return "danger";
         }
+
+  
     }
 
     public class LoanApplicationUpdateMessage
@@ -845,6 +849,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ForwardReviewViewModel : GeneralEntity
     {
+        public bool isFlowTest { get; set; }
         public int forwardAction { get; set; } // statusId
         public int applicationId { get; set; } // targetId
         public int appraisalMemorandumId { get; set; }

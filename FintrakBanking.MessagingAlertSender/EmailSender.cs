@@ -110,7 +110,7 @@ namespace FintrakBanking.MessagingAlertSender
                 {
                     if (emailAddy != null && emailAddy != string.Empty)
                     {
-                        mail.To.Add(new MailAddress(emailAddy));
+                        mail.To.Add(new MailAddress(emailAddy.Trim()));
                     }
                 }
                 mail.IsBodyHtml = true;
@@ -215,14 +215,16 @@ namespace FintrakBanking.MessagingAlertSender
 
                                     if (emailAddy != null && emailAddy != string.Empty)
                                     {
-                                        mail.To.Add(new MailAddress(emailAddy));
+                                        mail.To.Add(new MailAddress(emailAddy.Trim()));
                                     }
                                 }
                                 
                             }
+                                //mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
+                                //mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
                                 mail.IsBodyHtml = true;
-                                mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
-                                mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
+                                mail.Subject = newMail.MESSAGESUBJECT;
+                                mail.Body = newMail.MESSAGEBODY;
                                 mailId = newMail.MESSAGEID;
 
                             if (newMail.ATTACHMENTTYPEID != null)
