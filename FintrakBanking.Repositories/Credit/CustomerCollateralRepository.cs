@@ -6987,14 +6987,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteDuplicatedCollateral(CollateralViewModel model)
         {
+            bool status = false;
             var data = context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == model.collateralCustomerId && o.CREATEDBY == model.createdBy).Select(o => o).FirstOrDefault();
             if (data != null)
             {
                 data.DELETED = true;
                 data.DELETEDBY = model.deletedBy;
                 data.DATETIMEDELETED = genSetup.GetApplicationDate();
+                if (context.SaveChanges() > 0)
+                {
+                    status = true;
+                }
+                else
+                {
+                    status = false;
+                }
+                
             }
-            return context.SaveChanges() > 0;
+            return status;
         }
 
         #region Collateral Information View
@@ -8021,13 +8031,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             DateTime date = DateTime.Now;
             var xchRate = repo.GetExchangeRate(date, model.currencyId, model.companyId);
-            if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
+            if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication && (model.collateralCode == "" || model.collateralCode == null))
             {
                 var mainCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE.Trim() == model.collateralCode.Trim()).Select(x => x).FirstOrDefault();
 
                 if (mainCollateral != null)
                 {
-                    throw new ConditionNotMetException("Collateral Code Already Exists, Kindly enter a unique code or leave the field blank for Auto-Generation");
+                    throw new ConditionNotMetException("Collateral Reg/Ref Number Already Exists, Kindly enter a unique code or leave the field blank for Auto-Generation");
                     //if (mainCollateral.VALIDTILL != model.validTill)
                     //{
                     //    NotifyForCollateralValidity(mainCollateral, model.validTill);
