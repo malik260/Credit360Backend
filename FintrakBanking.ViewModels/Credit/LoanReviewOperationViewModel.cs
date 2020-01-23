@@ -381,10 +381,12 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int operationTypeId { get; set; } // remove after refactor
         public string reviewDetails { get; set; }
         public int duration { get; set; }
-        //public string operationType { get; set; } // not relevant
+        //public string operationType { get; set; } // not relevant 
         public int loanId { get; set; }
         public int customerId { get; set; }
         public int detailId { get; set; }
+        public int loanApplicationId { get; set; }
+
         public short loanSystemTypeId { get; set; }
         public int operationId { get; set; }
         //public string loanSystemType { get; set; }
