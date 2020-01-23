@@ -556,6 +556,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("load-customer-turnover-lms/{loanApplicationId}")]
+        public HttpResponseMessage LoadCustomerTurnoverLms(int loanApplicationId)
+        {
+            try
+            {
+                repo.LoadCustomerTurnoverLms(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-facility-rating/{loanApplicationDetailId}")]
         public HttpResponseMessage GetFacilityRating(int loanApplicationDetailId)
         {

@@ -88,6 +88,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         void LoadCustomerTurnover(int applicationId, int staffId);
 
+        void LoadCustomerTurnoverLms(int applicationId, int staffId);
+
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
 
         List<FacilityRatingViewModel> GetFacilityRating(int applicationDetailId);
