@@ -3500,8 +3500,8 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             
-            if (((result.limit == 0) || ((double)amount + result.outstandingBalance) <= result.outstandingBalance) == false)
-                throw new SecureException("Customer limit validation failed!");
+            //if (((result.limit == 0) || ((double)amount + result.outstandingBalance) <= result.outstandingBalance) == false)
+            //    throw new SecureException("Customer limit validation failed!");
         }
         private void SendEmailToCustomerForLoanApproval(int loanApplicationId, int companyId)
         {
