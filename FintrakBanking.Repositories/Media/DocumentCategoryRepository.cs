@@ -38,13 +38,14 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<DocumentCategoryViewModel> GetDocumentCategorys()
         {
-            return context.TBL_DOCUMENT_CATEGORY.Where(x => x.DELETED == false)
+            var docCategories = context.TBL_DOCUMENT_CATEGORY.Where(x => x.DELETED == false)
                 .Select(x => new DocumentCategoryViewModel
                 {
-                    documentCategoryId = (int) x.DOCUMENTCATEGORYID,
+                    documentCategoryId = (int)x.DOCUMENTCATEGORYID,
                     documentCategoryName = x.DOCUMENTCATEGORYNAME,
-                })?.OrderBy(l => l.documentCategoryName)
-                ?.ToList();
+                }).ToArray(); 
+
+            return docCategories?.OrderBy(l => l.documentCategoryName); ;
         }
 
         public DocumentCategoryViewModel GetDocumentCategory(int id)

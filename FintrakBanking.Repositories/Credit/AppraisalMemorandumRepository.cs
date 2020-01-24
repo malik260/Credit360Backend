@@ -399,6 +399,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.Amount = model.amount;
                         workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                         workflow.LogActivity();
+                        
                         //workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
                         context.SaveChanges();
                         if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
@@ -2573,6 +2574,7 @@ namespace FintrakBanking.Repositories.Credit
                                         .FirstOrDefault(),
             productClassId = x.a.PRODUCTCLASSID,
             productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+            
             customerGroupId = x.a.CUSTOMERGROUPID,
             loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
@@ -2629,6 +2631,7 @@ namespace FintrakBanking.Repositories.Credit
             operationId = x.a.OPERATIONID,
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
             tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
+            
             //jumpedDestination = x.b.OPERATIONID == (short)OperationsEnum.InitiationLevelAppraisal,
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
