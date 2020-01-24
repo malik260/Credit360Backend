@@ -496,14 +496,15 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 // out ducument properties definition
-                /*this.memoData = MemoMarkupHtml();
-                this.facilityUpgradeSupportSchemeData = Fa;
-                this.invoiceDiscountingData;
-                this.cashCollaterizedData;
-                this.staffcarLoansData;
-                this.staffMortgageLoansData;
-                this.staffPersonalLoansAGMData;
-                this.staffPersonalLoanData;*/
+                this.memoData = MemoMarkupHtml();
+                this.facilityUpgradeSupportSchemeData = FacilityUpgradeSupportSchemeHtml();
+                this.invoiceDiscountingData = InvoiceDiscountingHtml();
+                this.cashCollaterizedData = CashCollaterizedHtml();
+                this.staffcarLoansData = StaffCarLoansHtml();
+                this.staffMortgageLoansData = StaffMortgageLoansHtml();
+                this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
+                this.staffPersonalLoanData = StaffPersonalLoanHtml();
+                this.temporaryOverdraftData = TemporaryOverdraftHtml();
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
@@ -5591,6 +5592,10 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -5639,7 +5644,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
@@ -5813,6 +5818,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -5847,7 +5857,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             return result;
         }
 
@@ -6105,6 +6115,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+           /* result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -6153,7 +6168,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
@@ -6420,6 +6435,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>Concurrences:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -6454,7 +6474,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             return result;
         }
 
@@ -6734,6 +6754,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -6782,7 +6807,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
@@ -6892,6 +6917,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>APPROVALS:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>APPROVALS:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -6926,7 +6956,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             return result;
         }
 
@@ -7046,8 +7076,9 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h4>Collateral/Support/Justification:</h4>
                 <p><ul><li>List the supporting documents and their perfection status.</li></ul></p>
-                <br />
-                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                <br />";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"<table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='2'><strong>APPROVAL INFORMATION</strong></td>                     
@@ -7089,7 +7120,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>_______________</td>
                     </tr>  
                    ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
+
             result = result + $@"
                 <br />
                 <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
@@ -7596,48 +7628,49 @@ namespace FintrakBanking.Repositories.Credit
                     </tr> 
                  ";
             result = result + $"</table>";
-           
+
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+            /* result = result + $@" <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                      <tr>
+                         <th></th>
+                         <th><b>NAME</b></th>
+                         <th><b>SIGNATURE & DATE</b></th>
+                     </tr> 
+                    <tr>
+                         <td>Staff / Applicant </td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                    <tr>
+                         <td>Staff’s Group Head </td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                    <tr>
+                         <td>HR Officer</td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
                      <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>Staff / Applicant </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>Staff’s Group Head </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>HR Officer</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Group Head, CRM – PBD </td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>Group Head, Credit Admin & Portfolio Management</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Approval: Group Head, Human Resources </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";
+                         <td>Group Head, CRM – PBD </td>
+                         <td></td>
+                         <td></td>
+                     </tr>  
+                     <tr>
+                         <td>Group Head, Credit Admin & Portfolio Management</td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                     <tr>
+                         <td>Approval: Group Head, Human Resources </td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                  ";
+             result = result + $"</table>";*/
             return result;
         }
 
@@ -8150,8 +8183,10 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -8193,7 +8228,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>                           
@@ -8714,8 +8749,9 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -8752,7 +8788,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
@@ -9270,8 +9306,9 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -9308,7 +9345,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>

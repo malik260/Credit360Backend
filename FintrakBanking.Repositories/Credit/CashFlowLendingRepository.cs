@@ -120,9 +120,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
                 //SaveLoanDocument();
-                return fireResponse("Success","00",model.request_Id);
+                return fireResponse("Success","00", model.request_Id);
             }
-            else { return fireResponse("Unresolved error: could not save customer information","99",""); }
+            else { return fireResponse("Unresolved error: could not save customer information", "99", ""); }
 
         }
 
@@ -160,6 +160,11 @@ namespace FintrakBanking.Repositories.Credit
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
         {
             var model = entity.individualCustomerInformation;
+            var existingCustomer = context.TBL_CUSTOMER.Where(O => O.CUSTOMERCODE == model.customerCode).FirstOrDefault();
+
+            if (existingCustomer != null) {
+                return true;
+            }
            
             var customer = new TBL_CUSTOMER
             {
@@ -222,9 +227,14 @@ namespace FintrakBanking.Repositories.Credit
         private bool saveCorporateCustomerInformation(IncomingCustomerViewModels model)
         {
             ApiCustomerBusinessDetailsViewModel corporateDetails = model.corporateCustomerInformation;
+            var crmsType = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == corporateDetails.crmsCompanySize).FirstOrDefault();
+            var existingCustomer = context.TBL_CUSTOMER.Where(O => O.CUSTOMERCODE == corporateDetails.customerCode).FirstOrDefault();
 
-           var crmsType = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == corporateDetails.crmsCompanySize).FirstOrDefault();
-           var customer = new TBL_CUSTOMER
+            if (existingCustomer != null) {
+                return true;
+            }
+
+            var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
                 BRANCHID = (short)model.branchId, //entity.userBranchId,
@@ -269,8 +279,6 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             context.TBL_CUSTOMER.Add(customer);
-
-
             return context.SaveChanges() > 0;
         }
 
