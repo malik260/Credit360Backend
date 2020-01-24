@@ -229,8 +229,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             //RandomizeAllocation();
 
-
-
             SendNotifications();
 
             SetResponseInformation();
