@@ -140,7 +140,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application/request-booking/{applicationId}")]
-        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] List<LoanBookingRequestViewModel> models)
+        public HttpResponseMessage AddLoanBookingRequest([FromUri] int applicationId, [FromBody] List<LoanBookingRequestViewModel> models)
         {
             foreach (var model in models)
             {

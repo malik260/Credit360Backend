@@ -228,7 +228,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             MakerCheckerControl();
 
-            RandomizeAllocation();
+            //RandomizeAllocation();
 
             SendNotifications();
 
