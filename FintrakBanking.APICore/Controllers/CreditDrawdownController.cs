@@ -70,19 +70,19 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
 
-        //[HttpGet]
-        //[Route("loan-booking/request/approval")]
-        //public HttpResponseMessage GetInitiatedLoanApplicationAwaitingApproval()
-        //{
-        //    TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //    var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId, false);
+        [HttpGet]
+        [Route("loan-booking/request/approval")]
+        public HttpResponseMessage GetInitiatedLoanApplicationAwaitingApproval()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId, false);
 
-        //    if (data.Any() == false)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-        //    }
-        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-        //}
+            if (data.Any() == false)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
 
         [HttpPost]
         [ClaimsAuthorization]
