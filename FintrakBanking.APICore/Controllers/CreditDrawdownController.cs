@@ -1,5 +1,4 @@
 ﻿using FintrakBanking.APICore.JWTAuth;
-using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -7,11 +6,7 @@ using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Extensions;
 
 
@@ -47,6 +42,9 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+
+
+
         //[HttpGet]
         //[ClaimsAuthorization]
         //[Route("loan-transaction-dynamics/{loanApplicationDetailId}")]
@@ -71,7 +69,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
- 
+
         //[HttpGet]
         //[Route("loan-booking/request/approval")]
         //public HttpResponseMessage GetInitiatedLoanApplicationAwaitingApproval()
@@ -86,56 +84,56 @@ namespace FintrakBanking.APICore.Controllers
         //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
         //}
 
-        //[HttpPost]
-        //[ClaimsAuthorization]
-        //[Route("loan-request/approval/{loanBookingRequestId}")]
-        //public HttpResponseMessage ApproveInitiatedLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
-        //{
-        //    model.applicationUrl = HttpContext.Current.Request.Path;
-        //    model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-        //    model.createdBy = token.GetStaffId;
-        //    model.companyId = token.GetCompanyId;
-        //    model.BranchId = (short)token.GetBranchId;
-        //    model.staffId = token.GetStaffId;
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-request/approval/{loanBookingRequestId}")]
+        public HttpResponseMessage ApproveInitiatedLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
+        {
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            model.BranchId = (short)token.GetBranchId;
+            model.staffId = token.GetStaffId;
 
-        //    var responseId = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
+            var responseId = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
 
-        //    if (responseId == 1)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //            new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-        //    }
-        //    else if (responseId == 0)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //                                new { success = true, message = "Loan request has been successfully approved" });
-        //    }
-        //    else if (responseId == 3)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //                                new { success = true, message = "Loan request was successfully disapproved" });
-        //    }
-        //    else
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //            new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
-        //    }
-        //}
+            if (responseId == 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            else if (responseId == 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = true, message = "Loan request has been successfully approved" });
+            }
+            else if (responseId == 3)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = true, message = "Loan request was successfully disapproved" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
+            }
+        }
 
 
-        //[HttpGet]
-        //[Route("loan-application/availment-completed")]
-        //public HttpResponseMessage GetAvailedLoanApplicationsDueForInitiateBooking()
-        //{
-        //    TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //    var response = repo.GetAvailedLoanApplicationsDueForInitiateBooking(token.GetCompanyId, token.GetStaffId, token.GetBranchId);
-        //    if (!response.Any())
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //    }
+        [HttpGet]
+        [Route("loan-application/availment-completed")]
+        public HttpResponseMessage GetAvailedLoanApplicationsDueForInitiateBooking()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var response = repo.GetAvailedLoanApplicationsDueForInitiateBooking(token.GetCompanyId, token.GetStaffId, token.GetBranchId);
+            if (!response.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
 
-        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        //}
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
 
         //[HttpPost]
         //[ClaimsAuthorization]

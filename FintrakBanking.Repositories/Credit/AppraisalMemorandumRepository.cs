@@ -2963,7 +2963,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID, model.applicationId, null, "New pproved application", true, false, false, model.isFlowTest,null);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID, model.applicationId, null, "New pproved application", true, false, false, model.isFlowTest,appl.TBL_CUSTOMER.BUSINESSUNTID);
             }
 
             return response;
