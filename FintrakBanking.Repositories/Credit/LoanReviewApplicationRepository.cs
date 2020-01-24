@@ -447,21 +447,13 @@ namespace FintrakBanking.Repositories.Credit
 
             if (assetManagement)
             {
-<<<<<<< HEAD
                 workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
-=======
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true,false, application.TBL_CUSTOMER?.BUSINESSUNTID);
->>>>>>> master
                 application.OPERATIONID = (short)model.operationId;//79;
                 context.Entry(application).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
-<<<<<<< HEAD
                 workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
-=======
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true,false, application.TBL_CUSTOMER?.BUSINESSUNTID);
->>>>>>> master
             }
 
             if (context.SaveChanges() > 0)
@@ -1242,14 +1234,10 @@ namespace FintrakBanking.Repositories.Credit
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
                                //join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals y.TARGETID
                               // let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
-<<<<<<< HEAD
-                               where y.RESPONSESTAFFID == null
-                               && operations.Contains(y.OPERATIONID)  
-                               && (a.APPLICATIONREFERENCENUMBER == searchString
-=======
+
                                where //y.RESPONSESTAFFID == null && operations.Contains(y.OPERATIONID) &&
                                (a.APPLICATIONREFERENCENUMBER == searchString
->>>>>>> master
+
                                || g.FIRSTNAME.ToLower().Contains(searchString)
                                || g.LASTNAME.ToLower().Contains(searchString)
                                || g.MIDDLENAME.ToLower().Contains(searchString)
