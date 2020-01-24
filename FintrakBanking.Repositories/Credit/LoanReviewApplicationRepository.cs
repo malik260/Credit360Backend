@@ -1319,7 +1319,7 @@ namespace FintrakBanking.Repositories.Credit
                                         createdBy = a.CREATEDBY,
                                         operationId = a.OPERATIONID,
                                         isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()
-                                    });
+                                    }).ToList();
 
             var allRecord = applications.Union(groupApplications).ToList();
 
