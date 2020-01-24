@@ -8029,6 +8029,11 @@ namespace FintrakBanking.Repositories.Credit
         }
         private int AddTempCollateralMainForm(CollateralViewModel model)
         {
+            if (String.IsNullOrWhiteSpace(model.collateralCode) || String.IsNullOrEmpty(model.collateralCode))
+            {
+                var refNo = CommonHelpers.GenerateRandomDigitCode(7);
+                model.collateralCode = refNo;
+            }
             DateTime date = DateTime.Now;
             var xchRate = repo.GetExchangeRate(date, model.currencyId, model.companyId);
             if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication && (model.collateralCode == "" || model.collateralCode == null))
