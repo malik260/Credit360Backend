@@ -8,6 +8,9 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class ConditionPrecedentViewModel : GeneralEntity
     {
+        public int? sectorId { get; set; }
+        public int? subSectorId { get; set; }
+
         public int conditionId { get; set; }
         public string condition { get; set; }
         public bool isExternal { get; set; }

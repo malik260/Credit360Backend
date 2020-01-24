@@ -6987,14 +6987,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteDuplicatedCollateral(CollateralViewModel model)
         {
+            bool status = false;
             var data = context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == model.collateralCustomerId && o.CREATEDBY == model.createdBy).Select(o => o).FirstOrDefault();
             if (data != null)
             {
                 data.DELETED = true;
                 data.DELETEDBY = model.deletedBy;
                 data.DATETIMEDELETED = genSetup.GetApplicationDate();
+                if (context.SaveChanges() > 0)
+                {
+                    status = true;
+                }
+                else
+                {
+                    status = false;
+                }
+                
             }
-            return context.SaveChanges() > 0;
+            return status;
         }
 
         #region Collateral Information View
@@ -8019,6 +8029,11 @@ namespace FintrakBanking.Repositories.Credit
         }
         private int AddTempCollateralMainForm(CollateralViewModel model)
         {
+            if (String.IsNullOrWhiteSpace(model.collateralCode) || String.IsNullOrEmpty(model.collateralCode))
+            {
+                var refNo = CommonHelpers.GenerateRandomDigitCode(7);
+                model.collateralCode = refNo;
+            }
             DateTime date = DateTime.Now;
             var xchRate = repo.GetExchangeRate(date, model.currencyId, model.companyId);
             if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
@@ -8027,7 +8042,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (mainCollateral != null)
                 {
-                    throw new ConditionNotMetException("Collateral Code Already Exists, Kindly enter a unique code or leave the field blank for Auto-Generation");
+                    throw new ConditionNotMetException("Collateral Reg/Ref Number Already Exists, Kindly enter a unique code or leave the field blank for Auto-Generation");
                     //if (mainCollateral.VALIDTILL != model.validTill)
                     //{
                     //    NotifyForCollateralValidity(mainCollateral, model.validTill);
@@ -8205,7 +8220,7 @@ namespace FintrakBanking.Repositories.Credit
                 alertSubject = "NOTIFICATION Collateral Valuation Reminder from FINTRAK 360TEST ALERT";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staffFullName} <br /><br />," +
-                               $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer.LASTNAME + ", " + customer.FIRSTNAME + " " + customer.MIDDLENAME}" +
+                               $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer?.LASTNAME + ", " + customer?.FIRSTNAME + " " + customer?.MIDDLENAME}" +
                                $"(Customer ID: {collateral.CUSTOMERCODE}) with OMV {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.OPENMARKETVALUE)} and FSV of {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.FORCEDSALEVALUE)} is due for revaluation on {nextVisit} <br /><br />" +
                                $"Kindly inform the customer, and initiate request for revaluation on Fintrak <br /><br />" +
                                $"Regards"
@@ -8256,7 +8271,7 @@ namespace FintrakBanking.Repositories.Credit
                 alertSubject = "NOTIFICATION Collateral Valuation Reminder from FINTRAK 360TEST ALERT";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staffFullName} <br /><br />," +
-                               $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer.LASTNAME + ", " + customer.FIRSTNAME + " " + customer.MIDDLENAME}" +
+                               $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer?.LASTNAME + ", " + customer?.FIRSTNAME + " " + customer?.MIDDLENAME}" +
                                $"(Customer ID: {collateral.CUSTOMERCODE}) with OMV {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.OPENMARKETVALUE)} and FSV of {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.FORCEDSALEVALUE)} is due for revaluation on {valuationDate.ToShortDateString()} <br /><br />" +
                                $"Kindly inform the customer, and initiate request for revaluation on Fintrak <br /><br />" +
                                $"Regards"
@@ -8313,7 +8328,7 @@ namespace FintrakBanking.Repositories.Credit
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staffFullName}, <br /><br />" +
                                $"This is to inform you that, <br /><br />" +
-                               $"The collateral, {collateral.COLLATERALSUMMARY} of {customer.LASTNAME} {customer.FIRSTNAME} {customer.MIDDLENAME} with customerId {customer.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                               $"The collateral, {collateral.COLLATERALSUMMARY} of {customer?.LASTNAME} {customer?.FIRSTNAME} {customer?.MIDDLENAME} with customerId {customer?.CUSTOMERCODE} of value {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
                                $" has it's perfection status updated as {perfectionStatus}"
                                ;
                 LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
@@ -8349,7 +8364,7 @@ namespace FintrakBanking.Repositories.Credit
             recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
             messageBody = $"Dear {staffFullName}, <br /><br />" +
                            $"This is to inform you that, <br /><br />" +
-                           $"The collateral, {collateral.COLLATERALSUMMARY} of {customer.LASTNAME} {customer.FIRSTNAME} {customer.MIDDLENAME} with customerId {customer.CUSTOMERCODE} of value {currency.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
+                           $"The collateral, {collateral.COLLATERALSUMMARY} of {customer?.LASTNAME} {customer?.FIRSTNAME} {customer?.MIDDLENAME} with customerId {customer?.CUSTOMERCODE} of value {currency.CURRENCYCODE} {String.Format("{0:0,0.00}", collateral.COLLATERALVALUE)}" +
                            $" now has a validity period that lasts till {newValidityDate.Value}"
                            ;
             LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);

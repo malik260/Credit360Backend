@@ -144,6 +144,7 @@ namespace FintrakBanking.Repositories.Credit
                     .Select(d => new applicationDetails
                       {
                           detailId = d.LOANREVIEWAPPLICATIONID,
+                          loanApplicationId = d.LOANAPPLICATIONID,
                           operationId = d.OPERATIONID,
                           operationName = d.TBL_OPERATIONS.OPERATIONNAME,
                           reviewDetails = d.REVIEWDETAILS,
@@ -761,7 +762,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Comment = model.comment;
                 workflow.Vote = model.vote;
                 workflow.DeferredExecution = true;
-                if (operationId == (short)OperationsEnum.LoanReviewApprovalAvailment) workflow.StaffId = (short)ApprovalStatusEnum.Approved;
+                //if (operationId == (short)OperationsEnum.LoanReviewApprovalAvailment) workflow.StaffId = (short)ApprovalStatusEnum.Approved;
 
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
 
