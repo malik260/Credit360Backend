@@ -30,6 +30,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId);
         IEnumerable<CamProcessedLoanViewModel> getApplicationsToBeAdhocApprovedForInitiateBooking(int companyId, int staffId, int branchId);
         bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> models);
+
       //  Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId);
     }
 }
