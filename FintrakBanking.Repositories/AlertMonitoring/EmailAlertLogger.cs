@@ -30,7 +30,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 MessageStatusId = 1,
                 MessageTypeId = 1,
                 FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                ToAddress = $"{recipientEmail}",
+                ToAddress = $"{recipientEmail.Trim()}",
                 DateTimeReceived = DateTime.Now,
                 SendOnDateTime = DateTime.Now
             };
