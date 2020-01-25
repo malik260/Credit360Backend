@@ -729,8 +729,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var conditions = GetConditionsPrecedentToDrawdownFacility(LOANAPPLICATIONDETAILID).GroupBy(c => c.typeId).ToList(); // new
-            result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=center width=900 cellpadding=0 cellspacing=0>
+            result = result + $@"<br />
+                <h3><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></h3>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
@@ -3973,7 +3974,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrail(targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
-                <br/><b>APPROVALS</b>
+                <br/><h3><b>APPROVALS</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Role</b></th>
