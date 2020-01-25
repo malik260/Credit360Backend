@@ -1336,18 +1336,25 @@ namespace FintrakBanking.Repositories.Credit
             if (requestedFacility.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
             {
                 LogApproval(approvalModel, (short)OperationsEnum.CreditCardDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                request.OPERATIONID = (short)OperationsEnum.CreditCardDrawdownRequest;
             }
             else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
             {
                 if (requestedFacility.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
                 {
                     LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
                 }
-                else LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                else
+                {
+                        LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                        request.OPERATIONID = (short)OperationsEnum.IndividualDrawdownRequest;
+                }
             }
             else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
             {
                 LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
             }
 
 
@@ -1357,7 +1364,8 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.LoanBookingRequested,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Request to book loan of amount '{ entity.amount_Requested }' for customer'{entity.customerName}'",
+                TARGETID = request.LOAN_BOOKING_REQUESTID,
+                DETAIL = $"Request to book loan of amount '{ entity.amount_Requested }' for customer id'{loanApplicationDetails.TBL_CUSTOMER.CUSTOMERCODE}'",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
@@ -1365,7 +1373,7 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
-            this.audit.AddAuditTrail(audit);
+            context.TBL_AUDIT.Add(audit);
             // End of Audit Section ---------------------
 
             return context.SaveChanges() > 0;
