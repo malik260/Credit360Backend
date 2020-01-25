@@ -2087,31 +2087,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("loan-application/request-booking/{applicationId}")]
-        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] List<LoanBookingRequestViewModel> models)
-        {
-            foreach (var model in models)
-            {
-                model.userBranchId = (short)token.GetBranchId;
-                model.applicationUrl = HttpContext.Current.Request.Path;
-                model.createdBy = token.GetStaffId;
-                model.companyId = token.GetCompanyId;
-            }
-            
-
-            var data = repo.AddLoanBookingRequest(applicationId, models);
-            if (data)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Drawdown Request successfully sent for processing!" });
-            }
-            return Request.CreateResponse(HttpStatusCode.OK,
-
-                new { success = false, message = "Initiating Drawdown Request was unsuccessful!" });
-           
-        }
+  
 
 
         [HttpGet]

@@ -7342,53 +7342,53 @@ namespace FintrakBanking.Repositories.Credit
             return count == 0;
         }
 
-        public bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> models)
-        {
-            using (var trans = context.Database.BeginTransaction())
-            {
-                foreach (var model in models)
-                {
-                    if (model.approvalStatusId != (short)ApprovalStatusEnum.Referred)
-                    {
-                        if (!AddLoanBookingRequests(applicationStatusId, model))
-                        {
-                            //if (model.isLienPlacementForLoan)
-                            //{
-                            //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
-                            //    {
-                            //        username = model.username,
-                            //        passcode = model.passCode
-                            //    };
-                            //    PlaceLien(model.loanApplicationDetailId, twoFactorAuthDetails);
-                            //}
-                            trans.Rollback();
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if (!UpdateLoanBookingRequests(applicationStatusId, model))
-                        {
-                            trans.Rollback();
-                            return false;
-                        }
-                    }
+        //public bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> models)
+        //{
+        //    using (var trans = context.Database.BeginTransaction())
+        //    {
+        //        foreach (var model in models)
+        //        {
+        //            if (model.approvalStatusId != (short)ApprovalStatusEnum.Referred)
+        //            {
+        //                if (!AddLoanBookingRequests(applicationStatusId, model))
+        //                {
+        //                    //if (model.isLienPlacementForLoan)
+        //                    //{
+        //                    //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+        //                    //    {
+        //                    //        username = model.username,
+        //                    //        passcode = model.passCode
+        //                    //    };
+        //                    //    PlaceLien(model.loanApplicationDetailId, twoFactorAuthDetails);
+        //                    //}
+        //                    trans.Rollback();
+        //                    return false;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (!UpdateLoanBookingRequests(applicationStatusId, model))
+        //                {
+        //                    trans.Rollback();
+        //                    return false;
+        //                }
+        //            }
 
-                    //if (model.isLienPlacementForLoan)
-                    //{
-                    //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
-                    //    {
-                    //        username = model.username,
-                    //        passcode = model.passCode
-                    //    };
+        //            //if (model.isLienPlacementForLoan)
+        //            //{
+        //            //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+        //            //    {
+        //            //        username = model.username,
+        //            //        passcode = model.passCode
+        //            //    };
 
-                    //    PlaceLienForLoan(model, twoFactorAuthDetails);
-                    //}
-                }
-                trans.Commit();
-                return true;
-            }
-        }
+        //            //    PlaceLienForLoan(model, twoFactorAuthDetails);
+        //            //}
+        //        }
+        //        trans.Commit();
+        //        return true;
+        //    }
+        //}
 
 
         private void PlaceLien(int loanApplicationDetailId, TwoFactorAutheticationViewModel twoFactorAuthDetails, int createdBy)
