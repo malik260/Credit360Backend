@@ -3514,7 +3514,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanApplicationDetailViewModel
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            email = c.EMAILADDRESS,
+                            email = c.EMAILADDRESS.Trim(),
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID
@@ -3545,7 +3545,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanApplicationDetailViewModel
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            email = c.EMAILADDRESS,
+                            email = c.EMAILADDRESS.Trim(),
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID
