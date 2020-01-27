@@ -224,6 +224,7 @@ namespace FintrakBanking.Repositories.Credit
                         responseTypeId = c.RESPONSE_TYPEID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
+                        //sectorId = s.
                         
                         
                     });

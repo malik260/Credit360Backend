@@ -51,6 +51,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public int? TIMELINEID { get; set; }
+        public int? SECTORID { get; set; }
+        public int? SUBSECTORID { get; set; }
 
         //public bool DELETED { get; set; }
 
