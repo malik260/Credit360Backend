@@ -339,7 +339,7 @@ namespace FintrakBanking.Repositories.Customer
                 //    return "0.00";
             }
 
-            // FS CaptionID Indicative Decisions
+            // FS CaptionID for Indicative Decisions
             if (fsCaptionId == 29) {
                 var computedValue = CalculateFSRatioValue(customerId, 28, fsDate);
 
@@ -351,6 +351,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
             }
 
+            // it is ratio (derived)
             return string.Format("{0:n}", CalculateFSRatioValue(customerId, fsCaptionId, fsDate));
         }
 

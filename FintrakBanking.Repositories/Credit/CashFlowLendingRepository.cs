@@ -62,18 +62,33 @@ namespace FintrakBanking.Repositories.Credit
         {
            APIResponse response = new APIResponse();
 
-            if (model.accountOfficerStaffCode == string.Empty || model.accountOfficerStaffCode == null) { return fireResponse("Missing Account Officer Code", "99",""); }
-            
+           if (model.accountOfficerStaffCode == string.Empty || model.accountOfficerStaffCode == null) { return fireResponse("Missing Account Officer Code", "99",""); }
 
            if (model.customerType == "1")
            {
-               if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
-               return AddIndividualCustomer(model);
+                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
+
+                var businessunit = context.TBL_PROFILE_BUSINESS_UNIT.Where(O => O.BUSINESSUNITSHORTCODE == model.individualCustomerInformation.businessUnit.ToUpper()).FirstOrDefault();
+                if (businessunit == null) { return fireResponse("Customer's business unit does not exist in Fintrak!", "99", ""); }
+
+                var existingCustomer = context.TBL_CUSTOMER.Where(O => O.CUSTOMERCODE == model.individualCustomerInformation.customerCode).FirstOrDefault();
+                if (existingCustomer != null) { return fireResponse("Customer already exist in Fintrak!", "99", ""); }
+
+                model.individualCustomerInformation.businessUnitId = businessunit.BUSINESSUNITID;
+                return AddIndividualCustomer(model);
            }
            else if (model.customerType == "2")
            {
-               if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",model.request_Id); }
-               return AddCorporateCustomer(model);
+                if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99", model.request_Id); }
+
+                var businessunit = context.TBL_PROFILE_BUSINESS_UNIT.Where(O => O.BUSINESSUNITSHORTCODE == model.corporateCustomerInformation.businessUnit.ToUpper()).FirstOrDefault();
+                if (businessunit == null) { return fireResponse("Customer's business unit does not exist in Fintrak!", "99", ""); }
+
+                var existingCustomer = context.TBL_CUSTOMER.Where(O => O.CUSTOMERCODE == model.corporateCustomerInformation.customerCode).FirstOrDefault();
+                if (existingCustomer != null) { return fireResponse("Customer already exist in Fintrak!", "99", ""); }
+
+                model.corporateCustomerInformation.businessUnitId = businessunit.BUSINESSUNITID;
+                return AddCorporateCustomer(model);
            }
            else { return fireResponse("Uknown Customer Type","99",""); }
         }
@@ -120,9 +135,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 customer.UpdateCustomerCollateralId(model.individualCustomerInformation.customerCode);
                 //SaveLoanDocument();
-                return fireResponse("Success","00",model.request_Id);
+                return fireResponse("Success","00", model.request_Id);
             }
-            else { return fireResponse("Unresolved error: could not save customer information","99",""); }
+            else { return fireResponse("Unresolved error: could not save customer information", "99", ""); }
 
         }
 
@@ -160,7 +175,7 @@ namespace FintrakBanking.Repositories.Credit
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
         {
             var model = entity.individualCustomerInformation;
-           
+            
             var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
@@ -211,8 +226,7 @@ namespace FintrakBanking.Repositories.Credit
                 //CORR = model.corr,
                 PASTDUEOBLIGATIONS = Convert.ToDecimal(model.pastDueObligation),
                 APIREQUESTID = entity.request_Id,
-                //BUSINESSUNTID = model.businessUnitId
-
+                BUSINESSUNTID = model.businessUnitId
             };
 
             context.TBL_CUSTOMER.Add(customer);
@@ -222,9 +236,9 @@ namespace FintrakBanking.Repositories.Credit
         private bool saveCorporateCustomerInformation(IncomingCustomerViewModels model)
         {
             ApiCustomerBusinessDetailsViewModel corporateDetails = model.corporateCustomerInformation;
+            var crmsType = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == corporateDetails.crmsCompanySize).FirstOrDefault();
 
-           var crmsType = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == corporateDetails.crmsCompanySize).FirstOrDefault();
-           var customer = new TBL_CUSTOMER
+            var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
                 BRANCHID = (short)model.branchId, //entity.userBranchId,
@@ -264,13 +278,11 @@ namespace FintrakBanking.Repositories.Credit
                 APIREQUESTID = model.request_Id,
                 //CORR = model.corr,
                 //PASTDUEOBLIGATIONS = Convert.ToDecimal(corporateDetails.pastDueObligation),
-                //BUSINESSUNTID = model.businessUnitId
+                BUSINESSUNTID = corporateDetails.businessUnitId
 
             };
 
             context.TBL_CUSTOMER.Add(customer);
-
-
             return context.SaveChanges() > 0;
         }
 
@@ -418,6 +430,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return response;
         }
+
 
         //private void SaveLoanDocument(CflLoanApplication model)
         private void SaveLoanDocument(CflLoanApplication model)
