@@ -581,7 +581,7 @@ namespace FintrakBanking.Repositories.Credit
                             var memo = _context.TBL_CALL_MEMO.Find(entity.callMemoId);
                             var emailList = memo.CC;
                             var subject = $"Call Memo Approved Notification";
-                            var messageBody = $"Dear All,<br/> Call Memo with purpose " + memo.PURPOSE + " has been approve.<br/> Kindly see details below.";
+                            var messageBody = $"Dear All,<br/> Call Memo with purpose " + memo.PURPOSE + " has been approved.<br/> Kindly see details below.";
                                 messageBody = messageBody + " " + _memorandum.GetCallMemoMarkup(entity.callMemoId);
 
                             message = new TBL_MESSAGE_LOG 
