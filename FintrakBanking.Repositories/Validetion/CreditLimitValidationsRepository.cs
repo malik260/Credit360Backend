@@ -668,6 +668,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return models;
         }
 
+
         public CreditLimitValidationsModel ValidateNPLByDirectors(LoanApplicationViewModel application)
         {
             List<CurrentCustomerExposure> exposures;

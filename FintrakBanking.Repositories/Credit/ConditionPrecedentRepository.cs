@@ -62,6 +62,31 @@ namespace FintrakBanking.Repositories.Credit
             //return conditions.ToList();
         }
 
+        private List<ConditionPrecedentViewModel> GetSectorConditionPrecedentDefault()
+        {
+            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => x.SECTORID != null || x.SUBSECTORID != null).ToList();
+            var test = conditions.Select(c => new ConditionPrecedentViewModel
+            {
+                conditionId = c.CONDITIONID,
+                condition = c.CONDITION,
+                isExternal = c.ISEXTERNAL,
+                isSubsequent = c.ISSUBSEQUENT,
+                corporate = c.CORPORATE,
+                retail = c.RETAIL,
+                productId = c.PRODUCTID,
+                product = context.TBL_PRODUCT.Where(p => p.PRODUCTID == c.PRODUCTID).Select(p => p.PRODUCTNAME).FirstOrDefault() ?? "N/A",
+                timelineId = c.TIMELINEID,
+                dateTimeCreated = c.DATETIMECREATED,
+                dateTimeUpdated = c.DATETIMEUPDATED,
+                operationId = c.OPERATIONID,
+                isCheckListSpecific = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == c.OPERATIONID)?.ISCHECKLISTSPECIFIC.Value
+            })
+            .OrderBy(x => x.isSubsequent).ThenByDescending(x => x.isExternal);
+
+            return test.ToList();
+            //return conditions.ToList();
+        }
+
         public bool AddConditionPrecedent(ConditionPrecedentViewModel model)
         {
             var data = new TBL_LOAN_CONDITION_PRECEDENT
@@ -187,7 +212,7 @@ namespace FintrakBanking.Repositories.Credit
                     s => s.STAFFID,
                     (c, s) => new ConditionPrecedentViewModel
                     {
-                        loanConditionId = c.LOANCONDITIONID,
+                        loanConditionId = c.LOANCONDITIONID, 
                         condition = c.CONDITION,
                         conditionId = c.CONDITIONID == null ? 0 : (int)c.CONDITIONID,
                         isExternal = c.ISEXTERNAL,
@@ -199,6 +224,8 @@ namespace FintrakBanking.Repositories.Credit
                         responseTypeId = c.RESPONSE_TYPEID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
+                        
+                        
                     });
 
             var test = x.ToList();
@@ -214,16 +241,24 @@ namespace FintrakBanking.Repositories.Credit
         public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByApplicationIdAndOperationLms(int detailId, int? operationId)
         {
             var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(detailId);
+
+            var customer = context.TBL_CUSTOMER.Find(applicationDetail.CUSTOMERID);
+            List<ConditionPrecedentViewModel> sectorConditions = new List<ConditionPrecedentViewModel>();
+
+            sectorConditions.AddRange(GetSectorConditionPrecedentDefault().Where(x => x.subSectorId == customer?.SUBSECTORID).ToList());
+
             if (operationId != null)
             {
                 var operation = context.TBL_OPERATIONS.Find(operationId);
                 if (operation.ISCHECKLISTSPECIFIC.Value)
                 {
                     var output = GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID).Where(x => x.operationId == operationId).ToList();
-                    return output;
+
+                    return output.Union(sectorConditions).ToList();
                 }
             }
-            return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID);
+             
+            return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID).Union(sectorConditions).ToList();
         }
 
         #region CP Template
@@ -256,6 +291,8 @@ namespace FintrakBanking.Repositories.Credit
                 ISSUBSEQUENT = model.isSubsequent,
                 PRODUCTID = model.productId,
                 TIMELINEID = model.timelineId,
+                SECTORID = model.sectorId,
+                SUBSECTORID = model.subSectorId,
                 CORPORATE = true,
                 RETAIL = false,
                 RESPONSE_TYPEID = model.responseTypeId,

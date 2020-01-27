@@ -144,6 +144,7 @@ namespace FintrakBanking.Repositories.Credit
                     .Select(d => new applicationDetails
                       {
                           detailId = d.LOANREVIEWAPPLICATIONID,
+                          loanApplicationId = d.LOANAPPLICATIONID,
                           operationId = d.OPERATIONID,
                           operationName = d.TBL_OPERATIONS.OPERATIONNAME,
                           reviewDetails = d.REVIEWDETAILS,
@@ -389,6 +390,9 @@ namespace FintrakBanking.Repositories.Credit
                 SYSTEMDATETIME = DateTime.Now,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 APPLICATIONSTATUSID = (short)1, // remove magic numbers
+               // PROPOSEDTENOR = model.proposedTenor,
+               // PROPOSEDINTEREST = model.proposedInterest,
+                
             });
 
             List<int> customerIds = new List<int>();
@@ -403,7 +407,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     LOANAPPLICATIONID = application.LOANAPPLICATIONID,
                     LOANID = detail.loanId,
-                    LOANSYSTEMTYPEID = detail.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facility..Contingent Liability*/
+                    LOANSYSTEMTYPEID = detail.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facilizzty..Contingent Liability*/
                     OPERATIONID = (short) model.operationId, // detail.operationId, // refactor to operationId from ui!
                     REVIEWDETAILS = detail.reviewDetails,
                     PRODUCTID = detail.productId,
@@ -444,13 +448,13 @@ namespace FintrakBanking.Repositories.Credit
 
             if (assetManagement)
             {
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true,false, application.TBL_CUSTOMER?.BUSINESSUNTID);
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
                 application.OPERATIONID = (short)model.operationId;//79;
                 context.Entry(application).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "NIL", true, true, true,false, application.TBL_CUSTOMER?.BUSINESSUNTID);
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
             }
 
             if (context.SaveChanges() > 0)
@@ -703,7 +707,6 @@ namespace FintrakBanking.Repositories.Credit
             int nextProcessId = model.operationId;
             int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
-            //int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
 
             string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
 
@@ -720,7 +723,7 @@ namespace FintrakBanking.Repositories.Credit
             var currentOperationType = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).FirstOrDefault()?.OPERATIONTYPEID;
 
             // customization for CAM approvals
-            // bool operationIsCam = (currentOperationType == (int)OperationTypeEnum.LoanReviewApplication) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+             bool operationIsCam = (currentOperationType == (int)OperationTypeEnum.LoanReviewApplication) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
             //if (camOperationIds.Contains(operationId) || operationIsCam)
             //{
             //    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
@@ -738,10 +741,10 @@ namespace FintrakBanking.Repositories.Credit
             //    workflow.Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0;
             //}
 
-            //if (camOperationIds.Contains(operationId) || operationIsCam  || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
-            //{
-            //    workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
-            //}
+            if (camOperationIds.Contains(operationId) || operationIsCam || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
+            {
+                workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
+            }
 
             workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
 
@@ -753,18 +756,15 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.OperationId = model.operationId;
                 workflow.TargetId = appl.LOANAPPLICATIONID;
                 workflow.ProductClassId = null;
-                workflow.StatusId = model.forwardAction;
+                workflow.StatusId = model.forwardAction == (short)ApprovalStatusEnum.Pending ? (short)ApprovalStatusEnum.Processing : model.forwardAction;
                 workflow.ToStaffId = model.receiverStaffId;
                 workflow.NextLevelId = model.receiverLevelId ;
                 workflow.Comment = model.comment;
                 workflow.Vote = model.vote;
                 workflow.DeferredExecution = true;
-
-                if(currentOperationType == (short)OperationTypeEnum.LoanReviewApplication) { workflow.DestinationOperationId = model.operationId; }
-               
+                //if (operationId == (short)OperationsEnum.LoanReviewApprovalAvailment) workflow.StaffId = (short)ApprovalStatusEnum.Approved;
 
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
-                //workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
                 if (model.forwardAction == (short)ApprovalStatusEnum.RePresent || model.forwardAction == (short)ApprovalStatusEnum.StepDown)
                 {
@@ -883,8 +883,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     Workflow workflowlms = new Workflow(context, general);
 
-                   // if (availmentTrail != null) nextOperationId = (short) availmentTrail.DESTINATIONOPERATIONID;
-
                     if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                       || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
                       || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
@@ -897,7 +895,6 @@ namespace FintrakBanking.Repositories.Credit
                         workflowlms.OperationId = (int)nextOperationId;
                         workflowlms.DeferredExecution = true;
                         workflowlms.ExternalInitialization = true;
-                        if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment) workflow.DestinationOperationId = lastOperationId;
                         workflowlms.LogActivity();
                         context.SaveChanges();
                     }
@@ -1238,8 +1235,10 @@ namespace FintrakBanking.Repositories.Credit
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
                                //join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals y.TARGETID
                               // let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
+
                                where //y.RESPONSESTAFFID == null && operations.Contains(y.OPERATIONID) &&
                                (a.APPLICATIONREFERENCENUMBER == searchString
+
                                || g.FIRSTNAME.ToLower().Contains(searchString)
                                || g.LASTNAME.ToLower().Contains(searchString)
                                || g.MIDDLENAME.ToLower().Contains(searchString)
@@ -1320,7 +1319,7 @@ namespace FintrakBanking.Repositories.Credit
                                         createdBy = a.CREATEDBY,
                                         operationId = a.OPERATIONID,
                                         isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()
-                                    });
+                                    }).ToList();
 
             var allRecord = applications.Union(groupApplications).ToList();
 

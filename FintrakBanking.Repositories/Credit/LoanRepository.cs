@@ -768,7 +768,7 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                confirmCustomerAccountFunded(model.loanChargeFee, model.casaAccountId, model.companyId, model.customerId, loanReferenceNumber);
+                //confirmCustomerAccountFunded(model.loanChargeFee, model.casaAccountId, model.companyId, model.customerId, loanReferenceNumber);
                 model.feeOverride = true;
 
                 var loan = context.TBL_LOAN_REVOLVING.Add(data);
@@ -976,7 +976,7 @@ namespace FintrakBanking.Repositories.Credit
             using (var trans = context.Database.BeginTransaction())
             {
                 // ............. Checking customer balance, and fee override ......
-                confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
+               // confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
                 entity.feeOverride = true;
 
                 //...................Adding Contingent Loan Record.........................
@@ -1660,7 +1660,7 @@ namespace FintrakBanking.Repositories.Credit
             using (var trans = context.Database.BeginTransaction())
             {
                 // ............. Checking customer balance, and fee override ......
-                confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
+                //confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
                 entity.feeOverride = true;
 
                 //...................Adding Commercial Loan Record.........................
@@ -1967,7 +1967,7 @@ namespace FintrakBanking.Repositories.Credit
             using (var trans = context.Database.BeginTransaction())
             {
                 //...Checking customer balance, and fee override...
-                confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
+                //confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
                 entity.feeOverride = true;
 
                 //...Adding Commercial Loan Record...
@@ -4198,31 +4198,31 @@ namespace FintrakBanking.Repositories.Credit
                     userDetail.companyId = loanRecord.COMPANYID;
 
                     loanRecords.Add(loanRecord);
-                   // createLoanOnThirdParty(loanRecords, userDetail);
+                    // createLoanOnThirdParty(loanRecords, userDetail);
+
+                    LoanViewModel loanApplication = new LoanViewModel()
+                    {
+                        bookingDate = loanRecord.BOOKINGDATE,
+                        effectiveDate = loanRecord.EFFECTIVEDATE,
+                        maturityDate = loanRecord.MATURITYDATE,
+                        sourceReferenceNumber = loanRecord.LOANREFERENCENUMBER,
+                        userBranchId = (short)user.BranchId,
+                        branchId = (short)user.BranchId,
+                        companyId = user.companyId,
+                        principalAmount = loanRecord.PRINCIPALAMOUNT,
+                        interestRate = loanRecord.INTERESTRATE,
+                        productId = loanRecord.PRODUCTID,
+                        casaAccountId = loanRecord.CASAACCOUNTID,
+                        loanApplicationDetailId = loanRecord.LOANAPPLICATIONDETAILID,
+                        description = "Loan Creation From Flexcube API Call",
+                        createdBy = user.createdBy,
+                        userIPAddress = user.userIPAddress,
+                        applicationUrl = user.applicationUrl,
+                    };
+
+                    CreateLoanOnThirdParty(loanApplication, loanReferenceNumber);
                 }
                 //DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
-
-                LoanViewModel loanApplication = new LoanViewModel()
-                {
-                    bookingDate = loanRecord.BOOKINGDATE,
-                    effectiveDate = loanRecord.EFFECTIVEDATE,
-                    maturityDate = loanRecord.MATURITYDATE,
-                    sourceReferenceNumber = loanRecord.LOANREFERENCENUMBER,
-                    userBranchId = (short) user.BranchId,
-                    branchId = (short) user.BranchId,
-                    companyId = user.companyId,
-                    principalAmount = loanRecord.PRINCIPALAMOUNT,
-                    interestRate = loanRecord.INTERESTRATE,
-                    productId = loanRecord.PRODUCTID,
-                    casaAccountId = loanRecord.CASAACCOUNTID,
-                    loanApplicationDetailId = loanRecord.LOANAPPLICATIONDETAILID,
-                    description = "Loan Creation From Flexcube API Call",
-                    createdBy = user.createdBy,
-                    userIPAddress = user.userIPAddress,
-                    applicationUrl = user.applicationUrl,
-                };
-
-                CreateLoanOnThirdParty(loanApplication, loanReferenceNumber);
 
                 if(loanProductInfo.PRODUCTCODE == "EBFC")
                 {
@@ -7341,53 +7341,53 @@ namespace FintrakBanking.Repositories.Credit
             return count == 0;
         }
 
-        public bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> models)
-        {
-            using (var trans = context.Database.BeginTransaction())
-            {
-                foreach (var model in models)
-                {
-                    if (model.approvalStatusId != (short)ApprovalStatusEnum.Referred)
-                    {
-                        if (!AddLoanBookingRequests(applicationStatusId, model))
-                        {
-                            //if (model.isLienPlacementForLoan)
-                            //{
-                            //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
-                            //    {
-                            //        username = model.username,
-                            //        passcode = model.passCode
-                            //    };
-                            //    PlaceLien(model.loanApplicationDetailId, twoFactorAuthDetails);
-                            //}
-                            trans.Rollback();
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if (!UpdateLoanBookingRequests(applicationStatusId, model))
-                        {
-                            trans.Rollback();
-                            return false;
-                        }
-                    }
+        //public bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> models)
+        //{
+        //    using (var trans = context.Database.BeginTransaction())
+        //    {
+        //        foreach (var model in models)
+        //        {
+        //            if (model.approvalStatusId != (short)ApprovalStatusEnum.Referred)
+        //            {
+        //                if (!AddLoanBookingRequests(applicationStatusId, model))
+        //                {
+        //                    //if (model.isLienPlacementForLoan)
+        //                    //{
+        //                    //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+        //                    //    {
+        //                    //        username = model.username,
+        //                    //        passcode = model.passCode
+        //                    //    };
+        //                    //    PlaceLien(model.loanApplicationDetailId, twoFactorAuthDetails);
+        //                    //}
+        //                    trans.Rollback();
+        //                    return false;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (!UpdateLoanBookingRequests(applicationStatusId, model))
+        //                {
+        //                    trans.Rollback();
+        //                    return false;
+        //                }
+        //            }
 
-                    //if (model.isLienPlacementForLoan)
-                    //{
-                    //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
-                    //    {
-                    //        username = model.username,
-                    //        passcode = model.passCode
-                    //    };
+        //            //if (model.isLienPlacementForLoan)
+        //            //{
+        //            //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+        //            //    {
+        //            //        username = model.username,
+        //            //        passcode = model.passCode
+        //            //    };
 
-                    //    PlaceLienForLoan(model, twoFactorAuthDetails);
-                    //}
-                }
-                trans.Commit();
-                return true;
-            }
-        }
+        //            //    PlaceLienForLoan(model, twoFactorAuthDetails);
+        //            //}
+        //        }
+        //        trans.Commit();
+        //        return true;
+        //    }
+        //}
 
 
         private void PlaceLien(int loanApplicationDetailId, TwoFactorAutheticationViewModel twoFactorAuthDetails, int createdBy)
@@ -8398,8 +8398,11 @@ namespace FintrakBanking.Repositories.Credit
 
                             relationshipOfficerId = m.RELATIONSHIPOFFICERID,
                             relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
-                            relationshipManagerId = m.RELATIONSHIPMANAGERID,
-                            relationshipManagerName = m.TBL_STAFF1.FIRSTNAME + " " + m.TBL_STAFF1.MIDDLENAME + " " + m.TBL_STAFF1.LASTNAME,
+                            //relationshipManagerId = m.RELATIONSHIPMANAGERID,
+                            //relationshipManagerName = m.TBL_STAFF1.FIRSTNAME + " " + m.TBL_STAFF1.MIDDLENAME + " " + m.TBL_STAFF1.LASTNAME,
+                            relationshipManagerId = m.TBL_STAFF.SUPERVISOR_STAFFID.Value,
+                            relationshipManagerName = context.TBL_STAFF.Where(O => O.STAFFID == m.TBL_STAFF.SUPERVISOR_STAFFID.Value).FirstOrDefault().FIRSTNAME + " " + context.TBL_STAFF.Where(O => O.STAFFID == m.TBL_STAFF.SUPERVISOR_STAFFID.Value).FirstOrDefault().MIDDLENAME + " " + context.TBL_STAFF.Where(O => O.STAFFID == m.TBL_STAFF.SUPERVISOR_STAFFID.Value).FirstOrDefault().LASTNAME,
+
 
                             currencyId = d.CURRENCYID,
                             currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
@@ -9711,7 +9714,7 @@ namespace FintrakBanking.Repositories.Credit
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
             //var ids = generalSetup.GetStaffApprovalLevelIds(staffId, 0).ToList();
-            var lmsOperations = context.TBL_OPERATIONS.Where(c => c.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication
+            var lmsOperations = context.TBL_OPERATIONS.Where(c => c.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement
                 && (c.PRODUCTTYPEID == 1 || c.PRODUCTTYPEID == null))
                 .Select(x => x.OPERATIONID).ToList();
 

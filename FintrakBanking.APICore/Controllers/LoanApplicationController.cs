@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
           //  this.loanRepository = _loanRepository;
            // this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
-            //errorLogger = _errorLogger;
+      
            // repaymentRepo = _repaymentRepo;
         }
 
@@ -546,6 +546,22 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 repo.LoadCustomerTurnover(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("load-customer-turnover-lms/{loanApplicationId}")]
+        public HttpResponseMessage LoadCustomerTurnoverLms(int loanApplicationId)
+        {
+            try
+            {
+                repo.LoadCustomerTurnoverLms(loanApplicationId, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
             }
             catch (SecureException ex)
@@ -1874,9 +1890,9 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage AddLoanApplicationFlowChange([FromBody] LoanApplicationFlowChangeViewModel model)
         {
             model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress; 
             model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
+            model.createdBy = token.GetStaffId; 
             model.companyId = token.GetCompanyId;
             var response = repo.AddLoanApplicationFlowChange(model);
             if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });

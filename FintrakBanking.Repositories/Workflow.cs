@@ -183,7 +183,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestLevelId = request.FROMAPPROVALLEVELID;
                 this.isCrossOperationProcess = request.OPERATIONID != this.operationId;
                 this.ResolveExternalFlowLoop(request, initiatingRequest);
-                //throw new SecureException(""); for test purposes pls!!!!
+
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(request.TOSTAFFID); }
                 if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(request.REQUESTSTAFFID, request.FROMAPPROVALLEVELID, request.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
@@ -214,7 +214,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             this.applicationDate = GetApplicationDate();
 
-
             if (request != null)
             {
                 request.RESPONSEDATE = this.applicationDate;
@@ -228,11 +227,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             MakerCheckerControl();
 
+            //RandomizeAllocation();
+
             SendNotifications();
 
             SetResponseInformation();
-
-            RandomizeAllocation();
 
             if (statusOnly) return true;
 
@@ -291,7 +290,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if(this.businessUnitId != null)
                     {
                         var staffBusinessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(this.businessUnitId);
-                        if (staffBusinessUnit != null && approvalSetup.ISRETAILONLYROUNDROBIN == true)
+                        if (staffBusinessUnit == null && approvalSetup.ISRETAILONLYROUNDROBIN == true)
                         {
                             if (staffBusinessUnit.BUSINESSCOMMONNAME?.ToLower() != "retail") return;
                         }
@@ -309,7 +308,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         return;
                     }
-
 
                     foreach (var item in approvalStaff)
                     {
@@ -1230,6 +1228,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
+                //this.levelBusinessRule = level?.LevelBusinessRule;
+
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) continue;
                 //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;

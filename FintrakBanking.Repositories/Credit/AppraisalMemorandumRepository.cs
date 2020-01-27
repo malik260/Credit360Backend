@@ -399,6 +399,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.Amount = model.amount;
                         workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                         workflow.LogActivity();
+                        
                         //workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null, model.applicationId, null, "New approved application", true, false, false, model.isFlowTest);
                         context.SaveChanges();
                         if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
@@ -2573,6 +2574,7 @@ namespace FintrakBanking.Repositories.Credit
                                         .FirstOrDefault(),
             productClassId = x.a.PRODUCTCLASSID,
             productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+            
             customerGroupId = x.a.CUSTOMERGROUPID,
             loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
@@ -2629,6 +2631,7 @@ namespace FintrakBanking.Repositories.Credit
             operationId = x.a.OPERATIONID,
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
             tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
+            
             //jumpedDestination = x.b.OPERATIONID == (short)OperationsEnum.InitiationLevelAppraisal,
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
@@ -2960,7 +2963,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID, model.applicationId, null, "New pproved application", true, false, false, model.isFlowTest,null);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID, model.applicationId, null, "New pproved application", true, false, false, model.isFlowTest,appl.TBL_CUSTOMER.BUSINESSUNTID);
             }
 
             return response;
@@ -3496,8 +3499,9 @@ namespace FintrakBanking.Repositories.Credit
                 customerGroupId = customerGroupId
             });
 
-            if (((result.limit == 0) || ((double)amount + result.outstandingBalance) <= result.outstandingBalance) == false)
-                throw new SecureException("Customer limit validation failed!");
+            
+            //if (((result.limit == 0) || ((double)amount + result.outstandingBalance) <= result.outstandingBalance) == false)
+            //    throw new SecureException("Customer limit validation failed!");
         }
         private void SendEmailToCustomerForLoanApproval(int loanApplicationId, int companyId)
         {
@@ -3510,7 +3514,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanApplicationDetailViewModel
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            email = c.EMAILADDRESS,
+                            email = c.EMAILADDRESS.Trim(),
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID
@@ -3541,7 +3545,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanApplicationDetailViewModel
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            email = c.EMAILADDRESS,
+                            email = c.EMAILADDRESS.Trim(),
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID

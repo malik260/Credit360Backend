@@ -1431,6 +1431,16 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public void LoadCustomerTurnoverLms(int applicationId, int staffId)
+        {
+            var loanApplicationDetails = context.TBL_LMSR_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId).ToList();
+
+            if (loanApplicationDetails != null)
+            {
+                creditCommon.LoadCustomerTurnover(applicationId, loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(), staffId);
+            }
+        }
+
         private void AddFacilityRating(List<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails, int staffId)
         {
             foreach (var item in loanApplicationDetails) {

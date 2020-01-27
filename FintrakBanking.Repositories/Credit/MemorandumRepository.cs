@@ -157,6 +157,7 @@ namespace FintrakBanking.Repositories.Credit
 
         // properties to have getter methods for interfacing
         private string customerName;
+        private string applicationReferenceNumber;
         private string branchName;
         private string locationName;
         private string managementProfile;
@@ -496,14 +497,15 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 // out ducument properties definition
-                /*this.memoData = MemoMarkupHtml();
-                this.facilityUpgradeSupportSchemeData = Fa;
-                this.invoiceDiscountingData;
-                this.cashCollaterizedData;
-                this.staffcarLoansData;
-                this.staffMortgageLoansData;
-                this.staffPersonalLoansAGMData;
-                this.staffPersonalLoanData;*/
+                this.memoData = MemoMarkupHtml();
+                this.facilityUpgradeSupportSchemeData = FacilityUpgradeSupportSchemeHtml();
+                this.invoiceDiscountingData = InvoiceDiscountingHtml();
+                this.cashCollaterizedData = CashCollaterizedHtml();
+                this.staffcarLoansData = StaffCarLoansHtml();
+                this.staffMortgageLoansData = StaffMortgageLoansHtml();
+                this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
+                this.staffPersonalLoanData = StaffPersonalLoanHtml();
+                this.temporaryOverdraftData = TemporaryOverdraftHtml();
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
@@ -606,7 +608,7 @@ namespace FintrakBanking.Repositories.Credit
                 string customerName = String.Empty;
                 if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
-
+                this.applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
                 this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
@@ -649,7 +651,7 @@ namespace FintrakBanking.Repositories.Credit
             string customerName = String.Empty;
             if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
             if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
-
+            this.applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
             this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
             this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
             this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID)?.Select(O => O.PRODUCTNAME)?.FirstOrDefault();
@@ -704,6 +706,57 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             return result;
+        }
+
+        public List<DropDownSelect> GetConditionsPrecedentToDrawdownFacility(int LOANAPPLICATIONDETAILID)
+        {
+            var result = new List<DropDownSelect>();
+            var conditions = conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == LOANAPPLICATIONDETAILID);
+
+            foreach (var d in conditions)
+                {
+                    if (d.condition != null)
+                    {
+                        var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == d.loanApplicationDetailId).FirstOrDefault();
+                        result.Add(new DropDownSelect { typeId = d.loanApplicationDetailId, id = d.conditionId, name = d.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
+                    }
+                }
+            
+            return result;
+        }
+
+        private string GetConditionsPrecedentToDrawdownFacilityMarkup(int LOANAPPLICATIONDETAILID)
+        {
+            var result = String.Empty;
+            var conditions = GetConditionsPrecedentToDrawdownFacility(LOANAPPLICATIONDETAILID).GroupBy(c => c.typeId).ToList(); // new
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 align=center width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
+                    </tr>
+                 ";
+            
+            foreach (var g in conditions)
+            {
+                var n = 0;
+                var c = g.FirstOrDefault();
+                result += c.title;
+                foreach (var e in g)
+                {
+                    n++;
+                    result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{e.name}</td>
+                    </tr>
+                    ";
+                }
+                
+            }
+            result = result + $"</table>";
+            return result;
+
         }
 
         public List<DropDownSelect> GetTransactionsDynamics()
@@ -961,6 +1014,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
+                        <td><b>Reference Number:</b></td>
+                        <td>{applicationReferenceNumber}</td>
+                    </tr>
+                   ";
+            result = result + $"</table>";
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
                         <th><b>NAME OF CUSTOMER:</b></th>
                         <th><b>{customerName}</b></th>
                         <th><b>CURRENT/APG A/C NO:</b></th>
@@ -1011,7 +1072,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetDrawdownApprovalsMarkupLOS2(targetId,operationId) + GetOtherConditionsHtml();
+            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(this.loanApplicationDetail.LOANAPPLICATIONDETAILID) + GetApprovalsMarkupForAllLOS(this.loanApplication.LOANAPPLICATIONID) + GetOtherConditionsHtml();
             return result;
         }
 
@@ -1031,14 +1092,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     n++;
                     var name = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().DESCRIPTION;
-                    //var value = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().VALUE;
                     result = result + $@"
-                    < tr>
-                        <td>{n}</td>
-                        <td>{name.ToUpper()}:</td>
-                        <td>{e.DEFAULT_FEERATEVALUE}</td>
-                    </tr>
-                ";
+                    <tr><td>{n}</td><td>{name.ToUpper()}:</td><td>{e.DEFAULT_FEERATEVALUE}</td></tr>";
                 }
             }
             result = result + $"</table> <br />";
@@ -1047,11 +1102,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public string GetTrancheDisbursementHtml()
         {
-             //< tr >
-             //           < th >< b ></ b ></ th >
-             //           < th >< b ></ b ></ th >
-             //           < th >< b ></ b ></ th >
-             //       </ tr >
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
@@ -1076,11 +1126,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public string GetRequestTypeHtml()
         {
-             //< tr >
-             //           < th >< b ></ b ></ th >
-             //           < th >< b ></ b ></ th >
-             //       </ tr >
-
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
@@ -3922,6 +3967,41 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+
+        private string GetApprovalsMarkupForAllLOS(int targetId)
+        {
+            var appraisals = GetAppraisalMemorandumTrail(targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
+            var result = String.Empty;
+            result = result + $@"
+                <br/><b>APPROVALS</b>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
+
         private string GetDrawdownApprovalsMarkupLOS()
         {
             var appraisals = GetAppraisalMemorandumTrailDrawdown(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
@@ -5637,6 +5717,10 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -5685,7 +5769,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
@@ -5859,6 +5943,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -5893,7 +5982,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             return result;
         }
 
@@ -6151,6 +6240,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+           /* result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -6199,7 +6293,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
@@ -6466,6 +6560,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>Concurrences:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -6500,7 +6599,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             return result;
         }
 
@@ -6780,6 +6879,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -6828,7 +6932,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
@@ -6938,6 +7042,11 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>APPROVALS:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>APPROVALS:</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
@@ -6972,7 +7081,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             return result;
         }
 
@@ -7092,8 +7201,9 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h4>Collateral/Support/Justification:</h4>
                 <p><ul><li>List the supporting documents and their perfection status.</li></ul></p>
-                <br />
-                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                <br />";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"<table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='2'><strong>APPROVAL INFORMATION</strong></td>                     
@@ -7135,7 +7245,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>_______________</td>
                     </tr>  
                    ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
+
             result = result + $@"
                 <br />
                 <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
@@ -7642,48 +7753,49 @@ namespace FintrakBanking.Repositories.Credit
                     </tr> 
                  ";
             result = result + $"</table>";
-           
+
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+            /* result = result + $@" <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                      <tr>
+                         <th></th>
+                         <th><b>NAME</b></th>
+                         <th><b>SIGNATURE & DATE</b></th>
+                     </tr> 
+                    <tr>
+                         <td>Staff / Applicant </td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                    <tr>
+                         <td>Staff’s Group Head </td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                    <tr>
+                         <td>HR Officer</td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
                      <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>Staff / Applicant </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>Staff’s Group Head </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>HR Officer</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Group Head, CRM – PBD </td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>Group Head, Credit Admin & Portfolio Management</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Approval: Group Head, Human Resources </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";
+                         <td>Group Head, CRM – PBD </td>
+                         <td></td>
+                         <td></td>
+                     </tr>  
+                     <tr>
+                         <td>Group Head, Credit Admin & Portfolio Management</td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                     <tr>
+                         <td>Approval: Group Head, Human Resources </td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                  ";
+             result = result + $"</table>";*/
             return result;
         }
 
@@ -8196,8 +8308,10 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -8239,7 +8353,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>                           
@@ -8760,8 +8874,9 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -8798,7 +8913,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
@@ -9316,8 +9431,9 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -9354,7 +9470,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>

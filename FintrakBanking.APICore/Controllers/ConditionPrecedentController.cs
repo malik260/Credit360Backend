@@ -189,7 +189,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("condition-precedent/application-detail/{detailId}")]
+        [Route("condition-precedent/application-detail/{detailId}")]     
         public HttpResponseMessage GetConditionPrecedentByApplicationId(int detailid)
         {
             try

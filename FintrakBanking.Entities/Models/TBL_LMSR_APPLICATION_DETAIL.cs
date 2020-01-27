@@ -33,6 +33,8 @@
         public string REVIEWDETAILS { get; set; } 
         public short REVIEWSTAGEID { get; set; }
 
+       
+
         //[StringLength(2000)]
         public string REPAYMENTTERMS { get; set; }
 
@@ -47,7 +49,7 @@
 
         public int PROPOSEDTENOR { get; set; }
 
-        public double PROPOSEDINTERESTRATE { get; set; }
+        public double PROPOSEDINTERESTRATE { get; set; } 
         
         public decimal PROPOSEDAMOUNT { get; set; }
 
