@@ -1073,7 +1073,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(this.loanApplicationDetail.LOANAPPLICATIONDETAILID) + GetApprovalsMarkupForAllLOS(this.loanApplication.LOANAPPLICATIONID) + GetOtherConditionsHtml();
+            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(this.loanApplicationDetail.LOANAPPLICATIONDETAILID) + GetDrawdownApprovalsMarkupLOS2(this.targetId, this.operationId) + GetOtherConditionsHtml();
             return result;
         }
 
@@ -4017,7 +4017,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
                         <th><b>Comment</b></th>
-                       
+                        <th><b>Date</b></th>
                     </tr>
                     ";
             foreach (var trail in appraisals)
@@ -4027,6 +4027,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
                         <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
                     </tr>
                 ";
             }
@@ -4043,6 +4044,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
+                <br/>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
@@ -4052,7 +4054,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
                         <th><b>Comment</b></th>
-                       
+                       <th><b>Date</b></th>
                     </tr>
                     ";
             foreach (var trail in appraisals)
@@ -4062,6 +4064,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
                         <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
                     </tr>
                 ";
             }
