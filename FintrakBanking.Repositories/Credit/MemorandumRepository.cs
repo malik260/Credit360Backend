@@ -4612,7 +4612,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return context.TBL_ESG_CHECKLIST_SUMMARY
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.targetId) 
-                , s => s.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (s, d) => new { s, d })
+                , s => s.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (s, d) => new { s, d }).Where(x => x.s.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist)
                 .Select(x => new ESGChecklistSummaryViewModel
                 {
                     loanApplicationDetailId = x.s.LOANAPPLICATIONDETAILID,
@@ -4620,6 +4620,52 @@ namespace FintrakBanking.Repositories.Credit
                     ratingId = x.s.RATINGID,
                     productCustomerName = x.d.TBL_PRODUCT.PRODUCTNAME + " -- " + x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME
                 }).ToList();
+        }
+
+        public IEnumerable<ESGChecklistSummaryViewModel> GetGreenRatingSummary()
+        {
+            return context.TBL_ESG_CHECKLIST_SUMMARY
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.targetId)
+                , s => s.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (s, d) => new { s, d }).Where(x => x.s.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating)
+                .Select(x => new ESGChecklistSummaryViewModel
+                {
+                    loanApplicationDetailId = x.s.LOANAPPLICATIONDETAILID,
+                    comment = x.s.COMMENT_,
+                    ratingId = x.s.RATINGID,
+                    productCustomerName = x.d.TBL_PRODUCT.PRODUCTNAME + " -- " + x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME
+                }).ToList();
+        }
+
+        private string GetGreenRatingSummaryMarkup() // TODO RATINGIS
+        {
+            var result = String.Empty;
+            var summary = GetGreenRatingSummary().FirstOrDefault();
+
+            var n = 0;
+            //result = result + $@"
+            //    <table style='font face: arial; size:12px' border=1>
+            //        <tr>
+            //            <th><b>S/N</b></th>
+            //            <th><b>Facility</b></th>
+            //            <th><b>Summary</b></th>
+            //            <th><b>Rating</b></th>
+            //        </tr>
+            //     ";
+            //foreach (var s in summary)
+            //{
+            //    n++;
+            //    result = result + $@"
+            //        <tr>
+            //            <td>{n}</td>
+            //            <td>{s.productCustomerName}</td>
+            //            <td>{s.comment}</td>
+            //            <td>{GetESGRating(s.ratingId)}</td>
+            //        </tr>
+            //    ";
+            //}
+            //result = result + $"</table>";
+            result = result + $@"{ summary.comment }";
+            return result;
         }
 
         private string GetEnvironmentalSocialRiskMarkup() // TODO RATINGIS

@@ -20,7 +20,9 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string overSummary { get; set; }
         public string categoryName { get; set; }
         public string subCategoryName { get; set; }
-        public string esgCheckListItemName { get; set; }    
+        public string esgCheckListItemName { get; set; }
+        public string sectorName { get; set; }
+        public short sectorId { get; set; }
     }
     public class ESGChecklistDefinitionViewModel : GeneralEntity
     {
@@ -34,6 +36,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public bool isCompulsory { get; set; }
         public string itemDescription { get; set; }
         public int gradeScore { get; set; }
+        public int checklistScoresId { get; set; }
         public string grade { get; set; }
 
     }
@@ -90,6 +93,29 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int loanApplicationDetailId { get; set; }
         public short? esgClassId { get; set; }
         public short? esgTypeId { get; set; }
+        public string sectorName { get; set; }
+        public short sectorId { get; set; }
+
+        public List<CheckListStatusViewModel> responseTypes { get; set; }
+    }
+
+    public class GreenRatingDefinitionAndDetailViewModel
+    {
+        public GreenRatingDefinitionAndDetailViewModel()
+        {
+            responseTypes = new List<CheckListStatusViewModel>();
+        }
+        public int checkListDefinitionId { get; set; }
+        public long checkListDetailId { get; set; }
+        public int responseTypeId { get; set; }
+        public bool requireComment { get; set; }
+        public int checkListItemId { get; set; }
+        public string checkListItemName { get; set; }
+        public string comment { get; set; }
+        public int checklistStatusId { get; set; }
+        public string sectorName { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public short sectorId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }
     }

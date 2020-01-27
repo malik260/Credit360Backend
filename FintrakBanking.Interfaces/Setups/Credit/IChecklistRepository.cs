@@ -94,6 +94,8 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ESGChecklistDefinitionViewModel> GetESGChecklistDefinition();
         IEnumerable<ESGChecklistDetailViewModel> GetESGChecklistDetail(int loanApplicationDetailId);
         IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetESGChecklistStatus(int loanApplicationDetailId);
+        IEnumerable<ESGChecklistDetailViewModel> GetGreenRatingDetail(int loanApplicationDetailId);
+        IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetGreenRatingStatus(int loanApplicationDetailId);
         ESGChecklistSummaryViewModel CalculateESGChecklistSummary(List<ESGChecklistDetailViewModel> models);
         IEnumerable<LoanApplicationDetailViewModel> GetAllFacilityDetails(int loanApplicationId, int companyId);
         bool AddESGCategory(ESGChecklistDefinitionViewModel model);

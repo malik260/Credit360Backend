@@ -1707,6 +1707,52 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("green-rating-status")]
+        public HttpResponseMessage GetGreenRatingDefinition(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetGreenRatingStatus(loanApplicationId);
+                if (data.Count() > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("green-rating-detail")]
+        public HttpResponseMessage GetGreenRatingDetail(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetGreenRatingDetail(loanApplicationId);
+                if (data.Count() > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+
         //[HttpGet]
         //[ClaimsAuthorization]
         //[Route("esg-checklist-detail")]

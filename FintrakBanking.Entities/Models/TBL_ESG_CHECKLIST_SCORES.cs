@@ -20,6 +20,7 @@ namespace FintrakBanking.Entities.Models
         public string GRADE { get; set; }
 
         public int? SCORE { get; set; }
+        public int CHECKLIST_TYPEID { get; set; }
 
         public string STATUSNAME { get; set; }
 
