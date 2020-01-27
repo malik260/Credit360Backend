@@ -2677,8 +2677,6 @@ namespace FintrakBanking.Repositories.Credit
 
             List<CamProcessedLoanViewModel> data = new List<CamProcessedLoanViewModel>();
 
-            //try
-            //{
                 data = (from req in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on req.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
@@ -2810,15 +2808,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
                     }
-
                 }
-            //}
-            //catch (Exception ex)
-            //{
-
-            //    throw;
-            //}
-
 
             return data.ToList();
         }
@@ -2841,6 +2831,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.Add(applicationRecord);
                 }
             }
+
             foreach (var item in revolvingFacilityRecord)
             {
                 var applicationRecord = GetAvailedLoanApplicationDetailById(staffId, companyId, item.loanApplicationDetailId, item.loanBookingRequestId).FirstOrDefault();
@@ -2850,6 +2841,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
                 data.Add(applicationRecord);
             }
+
             return data;
         }
 
@@ -2866,7 +2858,6 @@ namespace FintrakBanking.Repositories.Credit
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
-
             var data = (from ln in context.TBL_LOAN
                         join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
                         join req in context.TBL_LOAN_BOOKING_REQUEST on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
@@ -2875,7 +2866,7 @@ namespace FintrakBanking.Repositories.Credit
                         join cust in context.TBL_CUSTOMER on ln.CUSTOMERID equals cust.CUSTOMERID
                         join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
-                        join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                        join atrail in context.TBL_APPROVAL_TRAIL.Distinct() on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
 
                         where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                               && operationIds.Contains(atrail.OPERATIONID)
@@ -2978,9 +2969,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerName = cust.LASTNAME + " " + cust.FIRSTNAME + " " + cust.MIDDLENAME,
                             currencyId = ln.CURRENCYID,
                             branchName = (from y in context.TBL_BRANCH.Where(i => i.BRANCHID == ln.BRANCHID) select y.BRANCHNAME).FirstOrDefault(),// ln.TBL_BRANCH.BRANCHNAME,
-                                                                                                                                                   //relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
-                                                                                                                                                   //relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
-
+                                                                                                                                                   //relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,                                                                                                                                              //relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
                             productClassId = p.PRODUCTCLASSID,
                             productTypeId = p.PRODUCTTYPEID,
                             productName = p.PRODUCTNAME,
@@ -3007,9 +2996,6 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
 
                             //crmsRepaymentAgreementTypeId = ln.CRMSREPAYMENTAGREEMENTID,
-
-
-
 
                             loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING
                                               join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
