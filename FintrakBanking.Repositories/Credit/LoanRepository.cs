@@ -3060,7 +3060,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            return data.Where(x=>x.loanReferenceNumber != null).ToList();
+            return data.Where(x=>x.loanReferenceNumber != null).Distinct().ToList();
         }
 
         public IEnumerable<LoanViewModel> GetLoanFacilityBookingAwaitingApproval(int staffId, int companyId)
@@ -3084,7 +3084,7 @@ namespace FintrakBanking.Repositories.Credit
                         join cust in context.TBL_CUSTOMER on ln.CUSTOMERID equals cust.CUSTOMERID
                         join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
-                        join atrail in context.TBL_APPROVAL_TRAIL.Distinct() on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                        join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
 
                         where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                               && operationIds.Contains(atrail.OPERATIONID)
@@ -3252,7 +3252,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                monitoringTriggerSetupName = (from y in context.TBL_LOAN_MONITORING_TRIG_SETUP.Where(d => d.MONITORING_TRIGGERID == i.MONITORING_TRIGGERID) select y.MONITORING_TRIGGER_NAME).FirstOrDefault(), // i.TBL_LOAN_MONITORING_TRIG_SETUP.MONITORING_TRIGGER_NAME,
                                                            })).ToList(),
 
-                        }).Distinct().ToList();
+                        }).ToList();
 
 
             List<LoanViewModel> lcyLoans = new List<LoanViewModel>();
@@ -3275,7 +3275,7 @@ namespace FintrakBanking.Repositories.Credit
 
             data = lcyLoans.Union(fcyLoans).ToList();
 
-            return data;
+            return data.Distinct();
 
 
         }
