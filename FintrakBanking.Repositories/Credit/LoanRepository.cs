@@ -2823,7 +2823,8 @@ namespace FintrakBanking.Repositories.Credit
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                        where  d.DELETED == false && s.DELETED == false && m.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
+                        where  d.DELETED == false && s.DELETED == false 
+                        && m.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
                         && s.ISUSED == true
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
 
@@ -2918,7 +2919,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
                             crmsCode = s.CRMSCODE,
-                        }).Distinct().ToList();
+                        }).ToList();
 
 
             foreach (var item in data)
@@ -3027,8 +3028,8 @@ namespace FintrakBanking.Repositories.Credit
 
             data = data.Where(x => x.customerAvailableAmount!= null && x.customerAvailableAmount > 0 ).ToList();
 
-            IEnumerable<LoanViewModel> bookedDataRecord = GetLoanFacilityBookingAwaitingApproval(staffId, companyId).ToList();
-            IEnumerable<RevolvingLoanViewModel> revolvingFacilityRecord = GetRevolvingFacilityBookingAwaitingApproval(staffId, companyId).ToList();
+            IEnumerable<LoanViewModel> bookedDataRecord = GetLoanFacilityBookingAwaitingApproval(staffId, companyId).Where(x=>x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
+            IEnumerable<RevolvingLoanViewModel> revolvingFacilityRecord = GetRevolvingFacilityBookingAwaitingApproval(staffId, companyId).Where(x => x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
 
             foreach (var item in bookedDataRecord)
             {
@@ -3060,7 +3061,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            return data.Where(x=>x.loanReferenceNumber != null).Distinct().ToList();
+            return data.Where(x=>x.loanReferenceNumber != null).ToList();
         }
 
         public IEnumerable<LoanViewModel> GetLoanFacilityBookingAwaitingApproval(int staffId, int companyId)
@@ -3274,7 +3275,7 @@ namespace FintrakBanking.Repositories.Credit
 
             data = lcyLoans.Union(fcyLoans).ToList();
 
-            return data.Distinct();
+            return data;
 
 
         }

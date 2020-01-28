@@ -975,7 +975,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool IsLLLViolated()
         {
-            return ((getTotalLLLImpact() > legalLendingLimit) ? true : false);
+            return false;
+            //return ((getTotalLLLImpact() > legalLendingLimit) ? true : false);
         }
 
         private IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId)
