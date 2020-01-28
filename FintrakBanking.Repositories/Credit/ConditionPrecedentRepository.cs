@@ -28,18 +28,19 @@ namespace FintrakBanking.Repositories.Credit
         public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailId(int detailId)
         {
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId);
-            return GetConditionPrecedentDefaultByProductId(applicationDetail.APPROVEDPRODUCTID);
+            var sectorId = context.TBL_SUB_SECTOR.Where(s => s.SUBSECTORID == applicationDetail.SUBSECTORID).Select(s=>s.SUBSECTORID).FirstOrDefault();
+            return GetConditionPrecedentDefaultByProductId(applicationDetail.APPROVEDPRODUCTID, sectorId, applicationDetail.SUBSECTORID);
         }
 
         public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailIdLms(int detailId)
         {
             var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(detailId);
-            return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID);
+            return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID, 1,1);
         }
 
-        public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByProductId(int? productId)
+        public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByProductId(int? productId, int sectorId,int subSectorId)
         {
-            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => x.PRODUCTID == productId).ToList();
+            var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => x.PRODUCTID == productId || x.SECTORID == sectorId || x.SUBSECTORID == subSectorId).ToList();
             var test = conditions.Select(c => new ConditionPrecedentViewModel
             {
                 conditionId = c.CONDITIONID,
@@ -242,7 +243,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByApplicationIdAndOperationLms(int detailId, int? operationId)
         {
             var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(detailId);
-
+           
             var customer = context.TBL_CUSTOMER.Find(applicationDetail.CUSTOMERID);
             List<ConditionPrecedentViewModel> sectorConditions = new List<ConditionPrecedentViewModel>();
 
@@ -253,13 +254,13 @@ namespace FintrakBanking.Repositories.Credit
                 var operation = context.TBL_OPERATIONS.Find(operationId);
                 if (operation.ISCHECKLISTSPECIFIC.Value)
                 {
-                    var output = GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID).Where(x => x.operationId == operationId).ToList();
+                    var output = GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID,1,1).Where(x => x.operationId == operationId).ToList();
 
                     return output.Union(sectorConditions).ToList();
                 }
             }
              
-            return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID).Union(sectorConditions).ToList();
+            return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID,1,1).Union(sectorConditions).ToList();
         }
 
         #region CP Template
