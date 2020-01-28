@@ -894,7 +894,7 @@ namespace FintrakBanking.Repositories.Setups.General
             GetUnpaidObligationReminder();
             GetLoanRepaymentReminder();
             GetImminentMaturitiesAlertEmail();*/
-            //GroupImminentMaturitiesByGroupHeads();
+            GroupImminentMaturitiesByGroupHeads();
             //GetImminentMaturities();
             //GetCreditCardMaturingObligations();
             //GetExpiringFacilityReport();
