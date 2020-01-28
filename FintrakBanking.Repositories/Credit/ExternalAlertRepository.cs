@@ -70,6 +70,27 @@ namespace FintrakBanking.Repositories.Credit
             return staffList;
         }
 
+
+        public IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads() 
+        {
+            List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+            var groupHeadsEmails = context.TBL_GLOBAL_EXPOSURE.Where(d =>
+            days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value))
+            .Select(d => d.ACCOUNTOFFICERCODE).ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where groupHeadsEmails.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
+
+            return staffList;
+        }
+
         public IEnumerable<StaffInfoViewModel> GetCreditCardMaturingObligations() //done
         {
             List<int> days = new List<int> { 60, 89 };
@@ -201,6 +222,24 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public IEnumerable<StaffInfoViewModel> GetPastDueObligationsReminder()
+        {
+            var query = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
+               .Select(d => d.ACCOUNTOFFICERCODE).ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where query.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
+
+            return staffList;
+        }
+
+        public IEnumerable<StaffInfoViewModel> GetPastDueObligationsReminderByGroupHeads()
         {
             var query = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
                .Select(d => d.ACCOUNTOFFICERCODE).ToList();
