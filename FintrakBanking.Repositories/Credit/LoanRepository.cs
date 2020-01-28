@@ -2817,13 +2817,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var company = context.TBL_COMPANY.Find(companyId);
             var canReRouteBooking = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == staffId && x.ACTIVITYID == 177).Any();
+
             var newApplicationDate = generalSetup.GetApplicationDate();
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                        where  d.DELETED == false && s.DELETED == false && m.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
+                        where  d.DELETED == false && s.DELETED == false 
+                        && m.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
                         && s.ISUSED == true
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
 
@@ -3025,7 +3027,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            data = data.Where(x => x.customerAvailableAmount!= null && x.customerAvailableAmount > 0 ).ToList();
+            ///data = data.Where(x => x.customerAvailableAmount!= null && x.customerAvailableAmount > 0 ).ToList();
 
             IEnumerable<LoanViewModel> bookedDataRecord = GetLoanFacilityBookingAwaitingApproval(staffId, companyId).ToList();
             IEnumerable<RevolvingLoanViewModel> revolvingFacilityRecord = GetRevolvingFacilityBookingAwaitingApproval(staffId, companyId).ToList();
@@ -3078,13 +3080,13 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from ln in context.TBL_LOAN
                         join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
-                        join req in context.TBL_LOAN_BOOKING_REQUEST.Distinct() on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
+                        join req in context.TBL_LOAN_BOOKING_REQUEST on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on req.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                         join cust in context.TBL_CUSTOMER on ln.CUSTOMERID equals cust.CUSTOMERID
                         join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
-                        join atrail in context.TBL_APPROVAL_TRAIL.Distinct() on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                        join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
 
                         where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                               && operationIds.Contains(atrail.OPERATIONID)
