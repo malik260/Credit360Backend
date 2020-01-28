@@ -303,7 +303,7 @@ namespace FintrakBanking.Repositories.Credit
             operationIds.Add((int)OperationsEnum.CreditCardDrawdownRequest);
 
             List<int> levelIds = new List<int>();
-            foreach(var i in operationIds) { levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList()); }
+            foreach (var i in operationIds) { levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList()); }
 
             //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList());
             //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IndividualDrawdownRequest).ToList());
@@ -319,18 +319,18 @@ namespace FintrakBanking.Repositories.Credit
                     join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                     join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                     join atrail in context.TBL_APPROVAL_TRAIL.Distinct() on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
-                    where   operationIds.Contains(atrail.OPERATIONID)
+                    where operationIds.Contains(atrail.OPERATIONID)
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                            && (  req.DELETED == false && req.ISUSED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
-                                  && (((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) 
+                            && (req.DELETED == false && req.ISUSED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                                  && (((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                                            || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)) 
+                                            || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                                             && (levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) && (atrail.LOOPEDSTAFFID == null))
-                                  //&& ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
-                                  && atrail.RESPONSESTAFFID == null )
+                                  || ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
+                                  && atrail.RESPONSESTAFFID == null)
                           || (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
-                          
+
                     orderby d.LOANAPPLICATIONDETAILID descending
 
                     select new CamProcessedLoanViewModel
@@ -343,7 +343,7 @@ namespace FintrakBanking.Repositories.Credit
                         applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                         applicationStatusId = m.APPLICATIONSTATUSID,
                         appraisalOperationId = m.OPERATIONID,
-                        operationId = atrail.OPERATIONID, 
+                        operationId = atrail.OPERATIONID,
                         requestedAmount = req.AMOUNT_REQUESTED,
                         customerId = m.CUSTOMERID ?? 0,
                         customerCode = cust.CUSTOMERCODE,
