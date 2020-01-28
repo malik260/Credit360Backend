@@ -367,6 +367,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string emailAddress { get; set; }
         public string tin { get; set; }
         public string businessUnit { get; set; }
+        public int businessUnitId { get; set; }
+
         public string relationshipTypeWithBank { get; set; }
         public string teamLdr { get; set; }
         public string teamNpl { get; set; }
@@ -420,6 +422,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string companyStructure { get; set; }
         public string businessSector { get; set; }
         public string shareholdersFund { get; set; }
+        public int businessUnitId { get; set; }
 
         public string relationshipManagerCode { get; set; }
         public string title { get; set; }
