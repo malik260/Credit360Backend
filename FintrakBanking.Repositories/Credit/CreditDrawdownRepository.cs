@@ -347,6 +347,7 @@ namespace FintrakBanking.Repositories.Credit
                         requestedAmount = req.AMOUNT_REQUESTED,
                         customerId = m.CUSTOMERID ?? 0,
                         customerCode = cust.CUSTOMERCODE,
+                        systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                         customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
                         customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                         customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",

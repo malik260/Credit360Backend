@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.Credit
             List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
             var groupHeadsEmails = context.TBL_GLOBAL_EXPOSURE.Where(d =>
             days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value))
-            .Select(d => d.ACCOUNTOFFICERCODE).ToList();
+            .Select(d => d.GROUPCODE).Distinct().ToList();
 
             var staffList = (from s in context.TBL_STAFF
                              where groupHeadsEmails.Contains(s.MISCODE)
