@@ -2817,15 +2817,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             var company = context.TBL_COMPANY.Find(companyId);
             var canReRouteBooking = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == staffId && x.ACTIVITYID == 177).Any();
-
             var newApplicationDate = generalSetup.GetApplicationDate();
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                        where  d.DELETED == false && s.DELETED == false 
-                        && m.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
+                        where  d.DELETED == false && s.DELETED == false && m.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
                         && s.ISUSED == true
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
 
@@ -2956,9 +2954,9 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
 
-                var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && tl.LOANSTATUSID == (short)LoanStatusEnum.Inactive);
-                var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && tl.LOANSTATUSID == (short)LoanStatusEnum.Inactive);
-                var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && tl.LOANSTATUSID == (short)LoanStatusEnum.Inactive);
+                var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
 
 
                 var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == item.productId).FirstOrDefault();
@@ -3086,7 +3084,7 @@ namespace FintrakBanking.Repositories.Credit
                         join cust in context.TBL_CUSTOMER on ln.CUSTOMERID equals cust.CUSTOMERID
                         join p in context.TBL_PRODUCT on ln.PRODUCTID equals p.PRODUCTID
                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
-                        join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                        join atrail in context.TBL_APPROVAL_TRAIL.Distinct() on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
 
                         where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                               && operationIds.Contains(atrail.OPERATIONID)
@@ -3253,7 +3251,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                monitoringTriggerSetupName = (from y in context.TBL_LOAN_MONITORING_TRIG_SETUP.Where(d => d.MONITORING_TRIGGERID == i.MONITORING_TRIGGERID) select y.MONITORING_TRIGGER_NAME).FirstOrDefault(), // i.TBL_LOAN_MONITORING_TRIG_SETUP.MONITORING_TRIGGER_NAME,
                                                            })).ToList(),
 
-                        }).ToList();
+                        }).Distinct().ToList();
 
 
             List<LoanViewModel> lcyLoans = new List<LoanViewModel>();
