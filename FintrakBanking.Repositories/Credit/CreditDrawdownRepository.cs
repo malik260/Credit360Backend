@@ -322,14 +322,15 @@ namespace FintrakBanking.Repositories.Credit
                     where operationIds.Contains(atrail.OPERATIONID)
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                            && (req.DELETED == false && req.ISUSED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                            && req.ISUSED == false && atrail.RESPONSESTAFFID == null
+                            && (req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                                   && (((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                                             && (levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) && (atrail.LOOPEDSTAFFID == null))
                                   || ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
-                                  && atrail.RESPONSESTAFFID == null)
-                          || (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
+                                  )
+                          //|| (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
 
                     orderby d.LOANAPPLICATIONDETAILID descending
 
