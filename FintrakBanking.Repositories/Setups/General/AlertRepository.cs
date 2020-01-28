@@ -894,14 +894,14 @@ namespace FintrakBanking.Repositories.Setups.General
             GetUnpaidObligationReminder();
             GetLoanRepaymentReminder();
             GetImminentMaturitiesAlertEmail();*/
-
-            GetImminentMaturities();
+            GroupImminentMaturitiesByGroupHeads();
+            //GetImminentMaturities();
             //GetCreditCardMaturingObligations();
             //GetExpiringFacilityReport();
             //GetUnAuthorizedOverdraftReport();
             //GetOverlineMonitoringReport();
             //GetCreditCardDelinquencyMonitoringReport();
-            GetPastDueObligationsReminder();
+            //GetPastDueObligationsReminder();
             //GetRiskAssetsReportNotification();
             //GetDashboardReportNotification();
             //GetCACReport();
@@ -956,6 +956,184 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return emailList;
         }
+
+        public void GroupImminentMaturitiesByGroupHeads()
+        {
+            // Maturing Obligations/GetImminentMaturities method by group heads
+            var groupHeadsList = externalAlertRepository.GetImminentMaturitiesGroupHeads();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (groupHeadsList != null && groupHeadsList.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var groupHead in groupHeadsList)
+                {
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                        string emailList = "";
+                        var groupHeadDetail = context.TBL_STAFF.Where(b => b.STAFFCODE == groupHead.misCode).FirstOrDefault();
+                        var accountOfficers = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == groupHeadDetail.MISCODE).ToList();
+                        var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
+                   foreach (var accountOfficer in accountOfficers)
+                   {
+                        var accountOfficerFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == accountOfficer.ACCOUNTOFFICERCODE).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
+                        if (accountOfficerFullName == "Vacant!" || accountOfficerFullName == "")
+                        {
+                            accountOfficerFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == accountOfficer.ACCOUNTOFFICERCODE).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+                        }
+
+                        List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+                        var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == accountOfficer.ACCOUNTOFFICERCODE && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
+
+                        if (loanInformation != null && loanInformation.Count() > 0)
+                        {
+                            var n = 0;
+                            var result = $@"
+                             <h3><b>{accountOfficerFullName.ToUpper()} RECORDS</b><h3>
+                             <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                                <tr>
+                                    <td><b>S/N</b></td>
+                                    <td><b>Customer Name</b></td>
+                                    <td><b>Reference Number</b></td>
+                                    <td><b>Amount</b></td>
+                                    <td><b>Maturity Date</b></td>
+                                    <td><b>Number Of Days</b></td>
+                                </tr>
+                             ";
+
+                            foreach (var t in loanInformation)
+                            {
+                                n++;
+
+                                var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+                                var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
+                                int numberOfDays = (t.MATURITYDATE.Value - DateTime.Now).Days;
+
+                                result = result + $@"
+                                <tr>
+                                    <td>{n}</td>
+                                    <td>{t.CUSTOMERNAME}</td>
+                                    <td>{t.REFERENCENUMBER}</td>
+                                    <td>{$"{amount}"}</td>
+                                    <td>{$"{maturityDate}"}</td>
+                                    <td>{numberOfDays}</td>
+                                </tr>
+                                ";
+                            }
+
+                                result = result + $"</table>";
+
+                                alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
+                                alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+
+                                emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                                //var em = "benjamin.gbaaikye@fintraksoftware.com";
+                                alert.receiverEmailList.Add(emailList);
+                                alert.template = alertTemplate;
+                                alert.alertTitle = alertTitle;
+                                alert.canFire = true;
+
+                                alerts.Add(alert);
+                        }
+                    }
+                }
+
+                SendAlertNotification(alerts);
+            }
+        }
+
+
+        public void GetPastDueObligationsReminderByGroupHeads()
+        {
+            // GetPastDueObligationsReminder method by group heads
+            var groupHeadsList = externalAlertRepository.GetPastDueObligationsReminderByGroupHeads();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetPastDueObligationsReminder").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (groupHeadsList != null && groupHeadsList.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var groupHead in groupHeadsList)
+                {
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                        string emailList = "";
+                        var groupHeadDetail = context.TBL_STAFF.Where(b => b.STAFFCODE == groupHead.misCode).FirstOrDefault();
+                        var accountOfficers = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == groupHeadDetail.MISCODE).ToList();
+                        var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
+
+                    foreach (var accountOfficer in accountOfficers)
+                    {
+                            var accountOfficerFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == accountOfficer.ACCOUNTOFFICERCODE).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
+                            if (accountOfficerFullName == "Vacant!" || accountOfficerFullName == "")
+                            {
+                                accountOfficerFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == accountOfficer.ACCOUNTOFFICERCODE).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+                            }
+
+                            var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == accountOfficer.ACCOUNTOFFICERCODE && d.AMOUNTDUE > 0).ToList();
+                        if (loanInformation != null && loanInformation.Count() > 0)
+                        {
+                             var n = 0;
+                             var result = $@"
+                             <h3><b>{accountOfficerFullName.ToUpper()} RECORDS</b><h3>
+                             <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                                <tr>
+                                    <td><b>S/N</b></td>
+                                    <td><b>Customer Name</b></td>
+                                    <td><b>Reference Number</b></td>
+                                    <td><b>Amount</b></td>
+                                    <td><b>Number Of Days</b></td>
+                                </tr>
+                             ";
+
+                            foreach (var t in loanInformation)
+                            {
+                                    n++;
+
+                                    var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
+                                    result = result + $@"
+                                    <tr>
+                                        <td>{n}</td>
+                                        <td>{t.CUSTOMERNAME}</td>
+                                        <td>{t.REFERENCENUMBER}</td>
+                                        <td>{amount}</td>
+                                        <td>{t.UNPODAYSOVERDUE}</td>
+                                    </tr>
+                                    ";
+                            }
+
+                                result = result + $"</table>";
+
+                                alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
+                                alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+
+                                emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                                alert.receiverEmailList.Add(emailList);
+                                alert.template = alertTemplate;
+                                alert.alertTitle = alertTitle;
+                                alert.canFire = true;
+
+                                alerts.Add(alert);
+                        }
+                    }
+                }
+                SendAlertNotification(alerts);
+            }
+        }
+
         public void GetImminentMaturities()
         {
                 // Maturing Obligations/GetImminentMaturities method
@@ -978,7 +1156,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTemplate = alertTitleInfo.TEMPLATE;
                     string emailList = "";
                     var staffFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == staff.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
-
+                    if(staffFullName == "vacant" || staffFullName == "")
+                    {
+                        staffFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == staff.misCode).Select(b => b.FIRSTNAME +""+b.MIDDLENAME+ ""+b.LASTNAME).FirstOrDefault();
+                    }
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
                     List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
@@ -1005,11 +1186,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
                             var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
                             var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
-
                             int numberOfDays = (t.MATURITYDATE.Value - DateTime.Now).Days;
 
-                            //Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}
-                            // var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
                             result = result + $@"
                         <tr>
                             <td>{n}</td>
@@ -1526,7 +1704,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTemplate = alertTitleInfo.TEMPLATE;
                     string emailList = "";
                     var staffFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == staff.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
-
+                    if (staffFullName == "vacant" || staffFullName == "")
+                    {
+                        staffFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == staff.misCode).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+                    }
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
                     var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode && d.AMOUNTDUE > 0).ToList();

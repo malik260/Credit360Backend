@@ -678,6 +678,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public DateTime systemArrivalDateTime;
+
         public int appraisalOperationId { get; set; }
 
         public int appraiselOperationId { get; set; }
