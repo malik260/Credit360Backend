@@ -87,6 +87,8 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string GROUPHEADNAME { get; set; }
         public string GROUPNAME { get; set; }
         public string GROUPCODE { get; set; }
-        
+        public string DIVISIONCODE { get; set; }
+        public string DIVISIONNAME { get; set; }
+
     }
 }
