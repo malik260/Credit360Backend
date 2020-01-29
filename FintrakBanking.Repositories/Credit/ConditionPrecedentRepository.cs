@@ -129,6 +129,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loanconditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.CONDITIONID != null
                 && x.LOANAPPLICATIONDETAILID == entity.detailId
+
             );
 
             var conditions = context.TBL_CONDITION_PRECEDENT.Where(x => entity.selectedIds.Contains(x.CONDITIONID)).ToList();
@@ -141,6 +142,7 @@ namespace FintrakBanking.Repositories.Credit
                         CONDITION = c.CONDITION,
                         CONDITIONID = c.CONDITIONID,
                         ISEXTERNAL = (bool)c.ISEXTERNAL,
+
                         ISSUBSEQUENT = c.ISSUBSEQUENT,
                         CREATEDBY = c.CREATEDBY,
                         //CHECKLISTVALIDATED=false,
