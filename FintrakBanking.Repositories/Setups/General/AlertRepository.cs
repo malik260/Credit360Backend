@@ -1048,8 +1048,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
                     
                     emailList = groupHeadDetail.EMAIL +";"+ GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE)+";"+ defaultEmail;
-                    //var em = "benjamin.gbaaikye@fintraksoftware.com";
-                    alert.receiverEmailList.Add(emailList);
+                    var em = "benjamin.gbaaikye@fintraksoftware.com;paul.asiemo@accessbankplc.com";
+                    alert.receiverEmailList.Add(em);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
@@ -1146,8 +1146,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
                     emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail;
-                    //var em = "benjamin.gbaaikye@fintraksoftware.com";
-                    alert.receiverEmailList.Add(emailList);
+                    var em = "benjamin.gbaaikye@fintraksoftware.com;paul.asiemo@accessbankplc.com";
+                    alert.receiverEmailList.Add(em);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
