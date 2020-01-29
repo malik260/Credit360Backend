@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime APPLICATIONDATE { get; set; }
 
-        [Required]
+       // [Required]
         ////[StringLength(4000)]
         public string DETAIL { get; set; }
 

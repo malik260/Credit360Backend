@@ -3372,7 +3372,7 @@ namespace FintrakBanking.Repositories.Customer
             var loanCust = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                             where a.LOANAPPLICATIONID == loanApplicationId
                             select a.CUSTOMERID).ToList();
-            var customers = GetCustomers().Where(x => loanCust.Contains(x.customerId)).ToList();
+            var customers = GetCustomers().Where(x => loanCust.Contains(x.customerId))?.ToList();
             if (loanCust.Any())
             {
                 customers = customers.Where(x => loanCust.Contains(x.customerId)).ToList();
