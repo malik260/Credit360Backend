@@ -353,9 +353,10 @@ namespace FintrakBanking.Repositories.Customer
 
             if (isRatio) {
                 var details = (from c in context.TBL_CUSTOMER_FS_RATIO_DETAIL
-                                join t in context.TBL_CUSTOMER_FS_CAPTION on c.FSCAPTIONID equals t.FSCAPTIONID
-                                where c.FSCAPTIONID == fsCaptionId
-                                select new { c.FSCAPTIONID, c.DIVISORTYPEID, t.ISRATIO}).ToList().OrderBy(O => O.DIVISORTYPEID);
+                               join f in context.TBL_CUSTOMER_FS_CAPTION on c.FSCAPTIONID equals f.FSCAPTIONID
+                               join t in context.TBL_CUSTOMER_FS_CAPTION_DETAIL on c.FSCAPTIONID equals t.FSCAPTIONID
+                               where c.FSCAPTIONID == fsCaptionId && t.FSDATE == fsDate
+                               select new { c.FSCAPTIONID, c.DIVISORTYPEID, f.ISRATIO}).ToList().OrderBy(O => O.DIVISORTYPEID);
 
                 if (details != null) {
                     decimal sum = 0;
