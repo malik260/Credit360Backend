@@ -35,10 +35,10 @@ namespace FintrakBanking.Repositories.Credit
         public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailIdLms(int detailId)
         {
             var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(detailId);
-            return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID, 1,1);
+            return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID,1,1);
         }
 
-        public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByProductId(int? productId, int sectorId,int subSectorId)
+        public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByProductId(int? productId,int sectorId,int subSectorId)
         {
             var conditions = this.context.TBL_CONDITION_PRECEDENT.Where(x => x.PRODUCTID == productId || x.SECTORID == sectorId || x.SUBSECTORID == subSectorId).ToList();
             var test = conditions.Select(c => new ConditionPrecedentViewModel
@@ -142,7 +142,6 @@ namespace FintrakBanking.Repositories.Credit
                         CONDITION = c.CONDITION,
                         CONDITIONID = c.CONDITIONID,
                         ISEXTERNAL = (bool)c.ISEXTERNAL,
-
                         ISSUBSEQUENT = c.ISSUBSEQUENT,
                         CREATEDBY = c.CREATEDBY,
                         //CHECKLISTVALIDATED=false,
