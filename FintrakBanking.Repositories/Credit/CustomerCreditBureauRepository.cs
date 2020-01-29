@@ -456,7 +456,7 @@ namespace FintrakBanking.Repositories.Credit
                                                     createdBy = a.CREATEDBY,
                                                     debitBusiness = a.DEBITBUSINESS,
                                                     dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
-                                                }).ToList();
+                                                }).Distinct().ToList();
             return customerLoanCreditBureauData;
         }
 
