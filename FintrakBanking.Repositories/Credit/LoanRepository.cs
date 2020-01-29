@@ -3026,7 +3026,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            data = data.Where(x => x.customerAvailableAmount!= null && x.customerAvailableAmount > 0 ).ToList();
+           // data = data.Where(x => x.customerAvailableAmount!= null && x.customerAvailableAmount > 0 ).ToList();
 
             IEnumerable<LoanViewModel> bookedDataRecord = GetLoanFacilityBookingAwaitingApproval(staffId, companyId).Where(x=>x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
             IEnumerable<RevolvingLoanViewModel> revolvingFacilityRecord = GetRevolvingFacilityBookingAwaitingApproval(staffId, companyId).Where(x => x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
@@ -3061,7 +3061,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            return data.Where(x=>x.loanReferenceNumber != null).ToList();
+            return data.Where(x=>x.loanReferenceNumber != null).Distinct().ToList();
         }
 
         public IEnumerable<LoanViewModel> GetLoanFacilityBookingAwaitingApproval(int staffId, int companyId)
@@ -8804,8 +8804,8 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                             //relationshipManagerId = m.RELATIONSHIPMANAGERID,
                             //relationshipManagerName = m.TBL_STAFF1.FIRSTNAME + " " + m.TBL_STAFF1.MIDDLENAME + " " + m.TBL_STAFF1.LASTNAME,
-                            relationshipManagerId = m.TBL_STAFF.SUPERVISOR_STAFFID.Value,
-                            relationshipManagerName = context.TBL_STAFF.Where(O => O.STAFFID == m.TBL_STAFF.SUPERVISOR_STAFFID.Value).FirstOrDefault().FIRSTNAME + " " + context.TBL_STAFF.Where(O => O.STAFFID == m.TBL_STAFF.SUPERVISOR_STAFFID.Value).FirstOrDefault().MIDDLENAME + " " + context.TBL_STAFF.Where(O => O.STAFFID == m.TBL_STAFF.SUPERVISOR_STAFFID.Value).FirstOrDefault().LASTNAME,
+                            relationshipManagerId = m.TBL_STAFF.SUPERVISOR_STAFFID,
+                            relationshipManagerName = m.TBL_STAFF.SUPERVISOR_STAFFID != null ? context.TBL_STAFF.Where(O => O.STAFFID == m.TBL_STAFF.SUPERVISOR_STAFFID).FirstOrDefault().FIRSTNAME + " " + context.TBL_STAFF.Where(O => O.STAFFID == m.TBL_STAFF.SUPERVISOR_STAFFID).FirstOrDefault().MIDDLENAME + " " + context.TBL_STAFF.Where(O => O.STAFFID == m.TBL_STAFF.SUPERVISOR_STAFFID).FirstOrDefault().LASTNAME : null,
 
 
                             currencyId = d.CURRENCYID,
@@ -9464,7 +9464,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int loanTypeId, int companyId)
         {
             IEnumerable<CurrentCustomerExposure> exposure = null;
-            var customerId = customer.FirstOrDefault().customerId;
+            var customerId = customer.Count > 0 ? customer.FirstOrDefault().customerId : 0;
             var allGroupMappings = GetCustomerGroupMapping();
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
             var customerIsAGroupMember = allGroupMappings.Any(m => m.customerId == customerId);

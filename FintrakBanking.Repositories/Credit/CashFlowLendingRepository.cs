@@ -62,17 +62,17 @@ namespace FintrakBanking.Repositories.Credit
         {
            APIResponse response = new APIResponse();
 
-           if (model.accountOfficerStaffCode == string.Empty || model.accountOfficerStaffCode == null) { return fireResponse("Missing Account Officer Code", "99",""); }
+           if (model.accountOfficerStaffCode == string.Empty || model.accountOfficerStaffCode == null) { return fireResponse("Missing Account Officer Code", "99", ""); }
 
            if (model.customerType == "1")
            {
-                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
+                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99", ""); }
 
                 var businessunit = context.TBL_PROFILE_BUSINESS_UNIT.Where(O => O.BUSINESSUNITSHORTCODE == model.individualCustomerInformation.businessUnit.ToUpper()).FirstOrDefault();
                 if (businessunit == null) { return fireResponse("Customer's business unit does not exist in Fintrak!", "99", ""); }
 
                 var existingCustomer = context.TBL_CUSTOMER.Where(O => O.CUSTOMERCODE == model.individualCustomerInformation.customerCode).FirstOrDefault();
-                if (existingCustomer != null) { return fireResponse("Customer already exist in Fintrak!", "99", ""); }
+                if (existingCustomer != null) { return fireResponse("Customer already exist in Fintrak!", "77", ""); }
 
                 model.individualCustomerInformation.businessUnitId = businessunit.BUSINESSUNITID;
                 return AddIndividualCustomer(model);
@@ -85,12 +85,12 @@ namespace FintrakBanking.Repositories.Credit
                 if (businessunit == null) { return fireResponse("Customer's business unit does not exist in Fintrak!", "99", ""); }
 
                 var existingCustomer = context.TBL_CUSTOMER.Where(O => O.CUSTOMERCODE == model.corporateCustomerInformation.customerCode).FirstOrDefault();
-                if (existingCustomer != null) { return fireResponse("Customer already exist in Fintrak!", "99", ""); }
+                if (existingCustomer != null) { return fireResponse("Customer already exist in Fintrak!", "77", ""); }
 
                 model.corporateCustomerInformation.businessUnitId = businessunit.BUSINESSUNITID;
                 return AddCorporateCustomer(model);
            }
-           else { return fireResponse("Uknown Customer Type","99",""); }
+           else { return fireResponse("Uknown Customer Type", "99", ""); }
         }
 
         private APIResponse AddIndividualCustomer(IncomingCustomerViewModels model)
@@ -107,14 +107,14 @@ namespace FintrakBanking.Repositories.Credit
             //if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99",""); }
 
             DateTime dateTime12;
-            if (!DateTime.TryParse(model.individualCustomerInformation.dateOfBirth, out dateTime12)) { return fireResponse("Date of birth not in the right format", "99",""); }
+            if (!DateTime.TryParse(model.individualCustomerInformation.dateOfBirth, out dateTime12)) { return fireResponse("Date of birth not in the right format", "99", ""); }
 
             List<string> mStatus = new List<string> { "single", "married", "divorced", "widowed" };
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "single") { model.individualCustomerInformation.maritalStatus = "1"; }
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "married") { model.individualCustomerInformation.maritalStatus = "2"; }
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "divorced") { model.individualCustomerInformation.maritalStatus = "3"; }
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "widowed") { model.individualCustomerInformation.maritalStatus = "4"; }
-            if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.","99",""); }
+            if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.","99", ""); }
             if (!mStatus.Contains(model.individualCustomerInformation.maritalStatus)) { fireResponse($"Value, '{model.individualCustomerInformation.maritalStatus}' is not a valid marital status.", "99",""); }
 
             var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
@@ -166,9 +166,9 @@ namespace FintrakBanking.Repositories.Credit
             if (saveCorporateCustomerInformation(model))
             {
                 customer.UpdateCustomerCollateralId(model.corporateCustomerInformation.customerCode);
-                return fireResponse("Success", "00",model.request_Id);
+                return fireResponse("Success", "00", model.request_Id);
             }
-            else { return fireResponse("Unresolved error: could not save customer information", "99",""); }
+            else { return fireResponse("Unresolved error: could not save customer information", "99", ""); }
 
         }
 

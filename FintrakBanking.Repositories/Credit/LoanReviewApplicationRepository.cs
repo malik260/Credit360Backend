@@ -61,7 +61,8 @@ namespace FintrakBanking.Repositories.Credit
 
             bool ignoreBranch = true; // rm = false, ho = true
             if (operationId == 47) if (ProcessInitiator(staffId, operationId, classId, 2)) ignoreBranch = false;
-            if (camOperationIds.Contains(operationId)) if (ProcessInitiator(staffId, operationId, classId, 1)) ignoreBranch = false;
+            if (approvalOperations.Contains(operationId)) if (ProcessInitiator(staffId, operationId, classId, 1)) ignoreBranch = false;
+            //if (camOperationIds.Contains(operationId)) if (ProcessInitiator(staffId, operationId, classId, 1)) ignoreBranch = false;
 
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
@@ -90,7 +91,7 @@ namespace FintrakBanking.Repositories.Credit
              .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
                      && x.APPROVALSTATEID != (int)ApprovalState.Ended
                      && x.RESPONSESTAFFID == null
-                     && (x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2 || operationIds.Contains(48))
+                     //&& (x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2 || operationIds.Contains(48))
                      && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                      && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
              ),
