@@ -9464,7 +9464,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int loanTypeId, int companyId)
         {
             IEnumerable<CurrentCustomerExposure> exposure = null;
-            var customerId = customer.FirstOrDefault().customerId;
+            var customerId = customer.Count > 0 ? customer.FirstOrDefault().customerId : 0;
             var allGroupMappings = GetCustomerGroupMapping();
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
             var customerIsAGroupMember = allGroupMappings.Any(m => m.customerId == customerId);
