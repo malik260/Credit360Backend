@@ -303,11 +303,11 @@ namespace FintrakBanking.Repositories.Credit
             operationIds.Add((int)OperationsEnum.CreditCardDrawdownRequest);
 
             List<int> levelIds = new List<int>();
-            foreach (var i in operationIds) { levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList()); }
+            foreach(var i in operationIds) { levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList()); }
 
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IndividualDrawdownRequest).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditCardDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IndividualDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditCardDrawdownRequest).ToList());
 
             List<CamProcessedLoanViewModel> data = new List<CamProcessedLoanViewModel>();
 
@@ -322,17 +322,15 @@ namespace FintrakBanking.Repositories.Credit
                     where operationIds.Contains(atrail.OPERATIONID)
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                            && req.ISUSED == false && atrail.RESPONSESTAFFID == null
-                            && (req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
-                                  && (
-                                            ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                            && (  req.DELETED == false && req.ISUSED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                                  && (((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) 
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                                             && (levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) && (atrail.LOOPEDSTAFFID == null))
-                                  || ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
-                                  )
-                          //|| (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
-
+                                  //&& ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
+                                  && atrail.RESPONSESTAFFID == null )
+                          || (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
+                          
                     orderby d.LOANAPPLICATIONDETAILID descending
 
                     select new CamProcessedLoanViewModel
@@ -349,7 +347,6 @@ namespace FintrakBanking.Repositories.Credit
                         requestedAmount = req.AMOUNT_REQUESTED,
                         customerId = m.CUSTOMERID ?? 0,
                         customerCode = cust.CUSTOMERCODE,
-                        systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                         customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
                         customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                         customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
