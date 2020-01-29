@@ -3590,7 +3590,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>{n}</td>
                         <td>{f.TBL_PRODUCT1.PRODUCTNAME}</td>
-                        <td>{f.APPROVEDAMOUNT}</td>
+                        <td>{string.Format("{0:#,##.00}", Convert.ToDecimal(f.APPROVEDAMOUNT))}</td>
                         <td>{f.APPROVEDINTERESTRATE}</td>
                         <td>{f.APPROVEDTENOR}</td>
                     </tr>

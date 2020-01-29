@@ -1308,7 +1308,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var setup = context.TBL_SETUP_GLOBAL.Find(1);
                 var operation = context.TBL_OPERATIONS.Find(this.operationId);
                 var applicationUrl = setup.APPLICATION_URL.Length == 0 ? "#" : setup.APPLICATION_URL;
-                var links = "<p>Click <a href=\"" + applicationUrl + "\">here to continue...</a></p>";
+                var applicationUrls = "https://credit360.accessbankplc.com";
+                var links = "<p>Click <a href=\"" + applicationUrls + "\">here to continue...</a></p>";
 
                 TBL_STAFF owner;
                 if (trailLog.Count() == 0)
