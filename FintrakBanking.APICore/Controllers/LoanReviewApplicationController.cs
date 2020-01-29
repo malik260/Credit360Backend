@@ -197,21 +197,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-review-application/forward-application")]
         public HttpResponseMessage ForwardApplication([FromBody] ForwardReviewViewModel model)
         {
-            try
-            {
-                model.userBranchId = (short)token.GetBranchId;
-                model.companyId = token.GetCompanyId;
-                model.lastUpdatedBy = token.GetStaffId;
-                model.createdBy = token.GetStaffId;
-                model.applicationUrl = HttpContext.Current.Request.Path;
+            model.userBranchId = (short)token.GetBranchId;
+            model.companyId = token.GetCompanyId;
+            model.lastUpdatedBy = token.GetStaffId;
+            model.createdBy = token.GetStaffId;
+            model.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.ForwardApplication(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            WorkflowResponse response = repo.ForwardApplication(model);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
 
