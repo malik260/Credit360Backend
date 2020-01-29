@@ -2688,9 +2688,8 @@ namespace FintrakBanking.Repositories.Customer
                 maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,
                 title = a.TITLE,
                 middleName = a.MIDDLENAME,
-                customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                customerTypeName =
-                a.TBL_CUSTOMER_TYPE.NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID) != null ? context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER : null,
+                customerTypeName = a.TBL_CUSTOMER_TYPE.NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                 misCode = a.MISCODE,
                 misStaff = a.MISSTAFF,
                 nationalityId = a.NATIONALITYID,
@@ -3322,8 +3321,8 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.customerCode.StartsWith(searchQuery)
-                                   || x.branchName.StartsWith(searchQuery)
-                                   || x.customerId.ToString().StartsWith(searchQuery))
+                                   || x.branchName.StartsWith(searchQuery))
+                                   || x.customerId.ToString().StartsWith(searchQuery)
                                    && (x.customerTypeId == 2)
                              select x);
             //var customerInfo = new List<CustomerViewModels>();
@@ -3339,8 +3338,7 @@ namespace FintrakBanking.Repositories.Customer
             //{
             //    return customerInfo;
             //}
-            return customers.ToList();
-            //return null;
+           return customers.ToList();
         }
 
         public IEnumerable<CustomerViewModels> SearchRandomGroupCustomersBySearchQuery(string searchQuery)
