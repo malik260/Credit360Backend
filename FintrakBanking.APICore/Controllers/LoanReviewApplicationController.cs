@@ -75,6 +75,50 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("review-availment")]
+        public HttpResponseMessage GetLoanReviewAvailmentAwaitingApproval(
+         [FromUri] int page,
+         [FromUri] int itemsPerPage,
+         [FromUri] int operationId,
+         [FromUri] int? classId,
+         [FromUri] string searchString
+         )
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+
+            try
+            {
+                IQueryable<LoanReviewApplicationViewModel> items;
+                items = repo.GetLoanReviewAvailmentAwaitingApproval(user, operationId, classId);
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    searchString = searchString.Trim().ToLower();
+                    items = items.Where(x =>
+                        x.referenceNumber.Contains(searchString)
+                        || x.customerName.Contains(searchString)
+                        ).Take(itemsPerPage);
+                }
+
+                var data = items
+                    .OrderByDescending(x => x.loanReviewApplicationId) // OrderBy() must be called for Skip() to work!
+                    .Skip(page).Take(itemsPerPage);//.ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
         [HttpGet, Route("loan-review-application/select-list")]
         public HttpResponseMessage GetAllSelectList()
         {
