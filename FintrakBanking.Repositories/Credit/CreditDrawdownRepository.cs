@@ -322,15 +322,14 @@ namespace FintrakBanking.Repositories.Credit
                     where operationIds.Contains(atrail.OPERATIONID)
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                            && (  req.DELETED == false && req.ISUSED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
-                                  && (((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) 
+                            && req.ISUSED == false && atrail.RESPONSESTAFFID == null
+                            && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
-                                            && (levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) && (atrail.LOOPEDSTAFFID == null))
-                                  //&& ((!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
-                                  && atrail.RESPONSESTAFFID == null )
-                          || (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
-                          
+                            && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                            && ((levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) && (atrail.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
+                          //|| (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
+
                     orderby d.LOANAPPLICATIONDETAILID descending
 
                     select new CamProcessedLoanViewModel

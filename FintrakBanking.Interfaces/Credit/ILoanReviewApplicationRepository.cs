@@ -34,6 +34,7 @@ namespace FintrakBanking.Interfaces.Credit
         //List<CamViewModel> GetCamDocuments(int applicationId);
 
         WorkflowResponse ForwardApplication(ForwardReviewViewModel model);
+        WorkflowResponse ForwardApplicationAppraisal(ForwardReviewViewModel model);
 
         LoanApplicationDetailViewModel GetLoanApplicationDetail(int loanId, int loanTypeId);
 
