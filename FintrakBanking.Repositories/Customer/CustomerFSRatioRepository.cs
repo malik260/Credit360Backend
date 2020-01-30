@@ -340,25 +340,13 @@ namespace FintrakBanking.Repositories.Customer
                 //    return "0.00";
             }
 
-            // FS CaptionID for Indicative Decisions
-            //if (fsCaptionId == 29) {
-            //    var computedValue = CalculateFSRatioValue(customerId, 28, fsDate);
-
-            //    if ((double) computedValue <= 1.5) {
-            //        return "OK"; 
-            //    }
-            //    else {
-            //        return "DECLINED";
-            //    }
-            //}
-
             // it is ratio (derived)
             if (isRatio) {
                 var details = (from c in context.TBL_CUSTOMER_FS_RATIO_DETAIL
                                join f in context.TBL_CUSTOMER_FS_CAPTION on c.FSCAPTIONID equals f.FSCAPTIONID
                                join t in context.TBL_CUSTOMER_FS_CAPTION_DETAIL on c.FSCAPTIONID equals t.FSCAPTIONID
-                               where c.FSCAPTIONID == fsCaptionId && t.FSDATE == fsDate
-                               select new { c.FSCAPTIONID, c.DIVISORTYPEID, f.ISRATIO}).ToList().OrderBy(O => O.DIVISORTYPEID);
+                               where c.RATIOCAPTIONID == fsCaptionId && t.FSDATE == fsDate
+                               select new { c.FSCAPTIONID, c.DIVISORTYPEID, f.ISRATIO}).ToList().OrderBy(O => O.DIVISORTYPEID).ToList();
 
                 if (details != null) {
                     decimal sum = 0;
@@ -366,30 +354,7 @@ namespace FintrakBanking.Repositories.Customer
                     foreach (var detail in details) {
                         if (detail.ISRATIO) {
                             var calculatedValue = CalculateFSRatioValue(customerId, (short) detail.FSCAPTIONID, fsDate);
-
                             sum = CalculateFSRatioValueDerived(sum, detail.DIVISORTYPEID, calculatedValue);
-                            //if (detail.DIVISORTYPEID == 1) {
-                            //    if (sum == 0) {
-                            //        sum = 1 * calculatedValue;
-                            //    }
-                            //    else {
-                            //        sum = sum * calculatedValue;
-                            //    }
-                            //}
-                            //else if (detail.DIVISORTYPEID == 2) {
-                            //    if (sum == 0) {
-                            //        sum = 1 * (1 / calculatedValue);
-                            //    }
-                            //    else {
-                            //        sum = sum * (1 / calculatedValue);
-                            //    }
-                            //}
-                            //else if (detail.DIVISORTYPEID == 3) {
-                            //        sum = sum + calculatedValue;
-                            //}
-                            //else {
-                            //        sum = sum - calculatedValue;
-                            //}
                         }
                         else {
                             var captionDetail = (from O in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
@@ -402,7 +367,9 @@ namespace FintrakBanking.Repositories.Customer
                         }
                     }
 
+                    // Indicative Decisions
                     if (fsCaptionId == 29) {
+                        // var computedValue = CalculateFSRatioValue(customerId, 28, fsDate);
                         if ((double) sum <= 1.5) {
                             return "OK"; 
                         }
