@@ -293,7 +293,6 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CallMemoViewModel> GetCustomerApprovedCallMemo(int staffId, int customerId)
         {
             var data = (from a in _context.TBL_CALL_MEMO
-                            //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where a.STAFFID == staffId && a.CUSTOMERID == customerId && a.APPROVALSTATUSID == (int) ApprovalStatusEnum.Approved
                         orderby a.CALLMEMOID
@@ -301,7 +300,6 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             callMemoId = a.CALLMEMOID,
                             loanApplicationId = a.LOANAPPLICATIONID,
-                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
@@ -325,18 +323,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CallMemoViewModel> SearchCallMemo(int staffId, CallMemoViewModel model)
         {
+            var customer = model.customerName;
             var data = (from a in _context.TBL_CALL_MEMO
-                            //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                        where (c.FIRSTNAME + " " + c.LASTNAME).ToLower().Contains(model.customerName.ToLower())
-                        && a.NEXTCALLDATE >= model.startDate && a.NEXTCALLDATE <= model.endDate
+                        where (c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).ToLower().Contains(customer.ToLower())
+                        && a.MEMODATE >= model.startDate && a.MEMODATE <= model.endDate
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
                             callMemoId = a.CALLMEMOID,
                             loanApplicationId = a.LOANAPPLICATIONID,
-                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
