@@ -9784,7 +9784,7 @@ namespace FintrakBanking.Repositories.Credit
             var nextDateTime = data.NEXTCALLDATE;
             var date = nextDateTime?.ToString("yyyy-MM-dd");
             var nextCallTime = data.NEXTCALLTIME;
-            var time = nextCallTime.ToString("hh:mm:ss");
+            var time = nextCallTime?.ToString("hh:mm:ss");
 
             var result = String.Empty;
             result = result + $@"
