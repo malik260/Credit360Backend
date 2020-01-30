@@ -98,7 +98,7 @@ namespace FintrakBanking.ViewModels.Customer
         public short customerSensitivityLevelId { get; set; }
         public short? subSectorId { get; set; }
         public string subSectorName { get; set; }
-        public short sectorId { get; set; }
+        public short? sectorId { get; set; }
         public string sectorName { get; set; }
         public string taxNumber { get; set; }
         public string businessTaxIdNumber { get; set; }
@@ -259,7 +259,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string relationshipOfficerName { get; set; }
         public int? branchId { get; set; }
         public string branchName { get; set; }
-        public int customerSectorId { get; set; }
+        public int? customerSectorId { get; set; }
         public string customerSectorName { get; set; }
         public short? subSectorId { get; set; }
         public string subSectorName { get; set; }

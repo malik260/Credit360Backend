@@ -5872,23 +5872,23 @@ namespace FintrakBanking.Repositories.Credit
         public int SaveCancelledApplcation(LoanApplicationViewModel data)
         {
 
-            //try
-            //{
-                var appl = context.TBL_LOAN_APPLICATION.Find(data.loanApplicationId);
-                var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId(appl.OPERATIONID, data.loanApplicationId, data.companyId, data.createdBy);
-                //var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
-                var ApprovalStaffCount = ApprovalTrail.Where(a => a.requestStaffId != data.createdBy).Count();
-                if (ApprovalStaffCount == 0)
-                {
-                    LaonApplcationCancelllationCompelted(data);
+            var appl = context.TBL_LOAN_APPLICATION.Find(data.loanApplicationId);
+            var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId(appl.OPERATIONID, data.loanApplicationId, data.companyId, data.createdBy);
+            //var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
+            var ApprovalStaffCount = ApprovalTrail.Where(a => a.requestStaffId != data.createdBy).Count();
+            var staffRecord = context.TBL_STAFF.Find();
+            var userAdminRole = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLENAME.ToUpper().Contains("USER ADMIN")).FirstOrDefault();
+            if (ApprovalStaffCount == 0 || (staffRecord != null && staffRecord.STAFFROLEID == userAdminRole?.STAFFROLEID))
+            {
+                LaonApplcationCancelllationCompelted(data);
 
-                    if (context.SaveChanges() > 0)
-                    {
-                        return 1;
-                    }
-                    return 0;
+                if (context.SaveChanges() > 0)
+                {
+                    return 1;
                 }
-                var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
+                return 0;
+            }
+            var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
                 if (isCancellatuionInProgress == true)
                     throw new ConditionNotMetException(" This Loan is currently under going cancellation process");
 

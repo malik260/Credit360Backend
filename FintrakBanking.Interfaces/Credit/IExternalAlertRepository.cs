@@ -10,6 +10,9 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        IEnumerable<StaffInfoViewModel> GetPasDueObligationsAccountOfficersByGroupHeads(string groupHeadCode);
+        IEnumerable<StaffInfoViewModel> GetDivisionalOfficersByGroupHeads(string groupHeadCode);
+        IEnumerable<StaffInfoViewModel> GetAccountOfficersByGroupHeads(string groupHeadCode);
         IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads();
         IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturities();
         IEnumerable<StaffInfoViewModel> GetCreditCardDelinquencyMonitoringReport();

@@ -3026,7 +3026,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            data = data.Where(x => x.customerAvailableAmount!= null && x.customerAvailableAmount > 0 ).ToList();
+           // data = data.Where(x => x.customerAvailableAmount!= null && x.customerAvailableAmount > 0 ).ToList();
 
             IEnumerable<LoanViewModel> bookedDataRecord = GetLoanFacilityBookingAwaitingApproval(staffId, companyId).Where(x=>x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
             IEnumerable<RevolvingLoanViewModel> revolvingFacilityRecord = GetRevolvingFacilityBookingAwaitingApproval(staffId, companyId).Where(x => x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
@@ -3061,7 +3061,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            return data.Where(x=>x.loanReferenceNumber != null).ToList();
+            return data.Where(x=>x.loanReferenceNumber != null).Distinct().ToList();
         }
 
         public IEnumerable<LoanViewModel> GetLoanFacilityBookingAwaitingApproval(int staffId, int companyId)
