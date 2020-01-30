@@ -91,7 +91,7 @@ namespace FintrakBanking.Repositories.Credit
              .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
                      && x.APPROVALSTATEID != (int)ApprovalState.Ended
                      && x.RESPONSESTAFFID == null
-                     //&& (x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2 || operationIds.Contains(48))
+                    // && (x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2 || operationIds.Contains(48))
                      && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                      && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
              ),
@@ -583,7 +583,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public WorkflowResponse ForwardApplication(ForwardReviewViewModel model)
+        public WorkflowResponse ForwardApplicationAppraisal (ForwardReviewViewModel model)
         {
             int nextProcessId = model.operationId + 1;
             int operationId = model.operationId; // beware of nplappraisal!
@@ -703,7 +703,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public WorkflowResponse ForwardApplicationAppraisal(ForwardReviewViewModel model)
+        public WorkflowResponse ForwardApplication(ForwardReviewViewModel model)
         {
             //int nextProcessId = model.operationId;
             int operationId = model.operationId; // beware of nplappraisal!
@@ -742,7 +742,9 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Comment = model.comment;
                 workflow.Vote = model.vote;
                 workflow.DeferredExecution = true;
-              
+                workflow.IsFlowTest = model.isFlowTest;
+
+
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
 
                 if (model.forwardAction == (short)ApprovalStatusEnum.RePresent || model.forwardAction == (short)ApprovalStatusEnum.StepDown)
@@ -784,7 +786,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 int lastStatusId = workflow.StatusId;
-                if (workflow.NewState == (int)ApprovalState.Ended)
+                if (workflow.NewState == (int)ApprovalState.Ended && model.isFlowTest == false)
                 {
                     short nextOperatioId = 0;
                     var flowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == model.operationId).FirstOrDefault();
@@ -829,9 +831,7 @@ namespace FintrakBanking.Repositories.Credit
                     context.SaveChanges();
                 }
 
-                if (currentOperationType == (short)OperationTypeEnum.LoanReviewApplication
-                        && (operationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
-                        && (operationId != (int)OperationsEnum.LoanReviewApprovalOfferLetter)) appl.APPROVALSTATUSID = (short)lastStatusId;
+                if (currentOperationType == (short)OperationsEnum.LoanReviewApprovalAvailment) appl.APPROVALSTATUSID = (short)lastStatusId;
 
                 if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
 
