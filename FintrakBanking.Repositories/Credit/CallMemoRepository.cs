@@ -360,12 +360,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CallMemoViewModel> GetAllCallMemo(int staffId)
         {
-           
-                var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.CallMemo).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+            var staffs = from s in _context.TBL_STAFF select s;
+            var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.CallMemo).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
 
                 var firstQuery = (from a in _context.TBL_CALL_MEMO
                                   join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                  where a.STAFFID == staffId && (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                                  where a.STAFFID == staffId && (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                                   orderby a.CALLMEMOID
                                   select new CallMemoViewModel
                                   {
@@ -418,11 +418,15 @@ namespace FintrakBanking.Repositories.Credit
                                        loopedStaffId = trail.LOOPEDSTAFFID,
                                        approvalStatusId = trail.APPROVALSTATUSID,
                                        approvalTrailId = trail.APPROVALTRAILID,
+                                       fromApprovalLevelName = trail.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == trail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                        approvalStatusName = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
-                                   }).GroupBy(x => x.callMemoId).Select(x => x.OrderByDescending(p => p.approvalTrailId).FirstOrDefault()).Where((trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
-                                              && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)).ToList();
-                var data = firstQuery.Union(secondQuery).ToList();
-                return data;
+                                   }).GroupBy(l => l.callMemoId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                        .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                        || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                        && l.loopedStaffId == staffId)).ToList();
+
+            var data = firstQuery.Union(secondQuery).ToList();
+            return data;
         }
 
         public int AddCallMemo(CallMemoViewModel model)

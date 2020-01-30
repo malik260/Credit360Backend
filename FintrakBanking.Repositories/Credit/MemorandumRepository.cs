@@ -9813,7 +9813,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</p><br/>";
             result = result + $"<p><strong>RECENT UPDATE</strong><br/>{data.RECENTUPDATE}";
             result = result + $"</p><br/>";
-            result = result + $"<p><strong>PURPOSE</strong><br/>{data.PURPOSE}";
+            result = result + $"<p><strong>PURPOSE OF THE MEETING</strong><br/>{data.PURPOSE}";
             result = result + $"</p><br/>";
             result = result + $"<p><strong>MEETING HIGHLIGHTS</strong><br/>{data.DISCUSION}";
             result = result + $"</p><br/>";
