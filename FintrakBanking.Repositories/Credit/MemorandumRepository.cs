@@ -9788,7 +9788,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=1 width=750 cellpadding=5 cellspacing=0>
                     <tr>
                       <td><strong>Date</strong></td>
                       <td>{data.DATECREATED}</td>  

@@ -323,12 +323,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CallMemoViewModel> SearchCallMemo(int staffId, CallMemoViewModel model)
         {
+            var staffs = from s in _context.TBL_STAFF select s;
+            var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.CallMemo).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+            //&& a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
             var customer = model.customerName;
-            var data = (from a in _context.TBL_CALL_MEMO
+            var firstQuery = (from a in _context.TBL_CALL_MEMO
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where (c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).ToLower().Contains(customer.ToLower())
                         && a.MEMODATE >= model.startDate && a.MEMODATE <= model.endDate
-                        && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
@@ -352,6 +354,43 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(O => O.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(O => O.APPROVALSTATUSNAME).FirstOrDefault(),
                             operationId = (int)OperationsEnum.CallMemo
                         }).ToList();
+            var secondQuery = (from x in _context.TBL_CALL_MEMO
+                               join trail in _context.TBL_APPROVAL_TRAIL on x.CALLMEMOID equals trail.TARGETID
+                               join c in _context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                               where trail.OPERATIONID == (short)OperationsEnum.CallMemo
+                                    && trail.TARGETID == x.CALLMEMOID
+                               orderby trail.APPROVALTRAILID descending
+                               select new CallMemoViewModel
+                               {
+                                   callMemoId = x.CALLMEMOID,
+                                   loanApplicationId = x.LOANAPPLICATIONID,
+                                   participants = x.PARTICIPANTS,
+                                   location = x.LOCATION,
+                                   customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                   customerId = c.CUSTOMERID,
+                                   memoDate = x.MEMODATE,
+                                   nextCallDate = x.NEXTCALLDATE,
+                                   purpose = x.PURPOSE,
+                                   discusion = x.DISCUSION,
+                                   action = x.ACTION,
+                                   cc = x.CC,
+                                   background = x.BACKGROUND,
+                                   recentUpdate = x.RECENTUPDATE,
+                                   createdBy = x.CREATEDBY,
+                                   dateTimeCreated = x.DATECREATED,
+                                   operationId = (int)OperationsEnum.CallMemo,
+                                   loopedStaffId = trail.LOOPEDSTAFFID,
+                                   approvalStatusId = trail.APPROVALSTATUSID,
+                                   approvalTrailId = trail.APPROVALTRAILID,
+                                   toApprovalLevelName = trail.TOAPPROVALLEVELID == null ? "N/A" : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                   fromApprovalLevelName = trail.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == trail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                   approvalStatusName = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                               }).GroupBy(l => l.callMemoId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                        .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                        || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                        && l.loopedStaffId == staffId)).ToList();
+
+            var data = firstQuery.Union(secondQuery).ToList();
             return data;
         }
 
@@ -415,6 +454,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loopedStaffId = trail.LOOPEDSTAFFID,
                                        approvalStatusId = trail.APPROVALSTATUSID,
                                        approvalTrailId = trail.APPROVALTRAILID,
+                                       toApprovalLevelName = trail.TOAPPROVALLEVELID == null ? "N/A" : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                        fromApprovalLevelName = trail.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == trail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                        approvalStatusName = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                                    }).GroupBy(l => l.callMemoId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
@@ -656,9 +696,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int) OperationsEnum.CallMemo).ToList();
             var staffs = _genSetup.GetStaffRlieved(staffId);
-
+            var staffss = from s in _context.TBL_STAFF select s;
             var data = (from a in _context.TBL_CALL_MEMO
-                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         join atrail in _context.TBL_APPROVAL_TRAIL on a.CALLMEMOID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing 
@@ -671,7 +710,6 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             callMemoId = a.CALLMEMOID,
                             loanApplicationId = a.LOANAPPLICATIONID,
-                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
@@ -686,7 +724,10 @@ namespace FintrakBanking.Repositories.Credit
                             recentUpdate = a.RECENTUPDATE,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
-                            operationId = (int)OperationsEnum.CallMemo
+                            operationId = (int)OperationsEnum.CallMemo,
+                            toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staffss.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            approvalStatusName = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         }).ToList();
             return data;
         }
