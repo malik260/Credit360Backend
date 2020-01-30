@@ -283,11 +283,11 @@ namespace FintrakBanking.Repositories.Customer
 
             int count = lastFourDates.Count;
 
-            var ratioCaptions = from a in context.TBL_CUSTOMER_FS_CAPTION
+            var ratioCaptions = (from a in context.TBL_CUSTOMER_FS_CAPTION
                                 join b in context.TBL_CUSTOMER_FS_CAPTION_GROUP on a.FSCAPTIONGROUPID equals b.FSCAPTIONGROUPID
                                 //where customerFSCaptionIds.Contains(a.FSCAPTIONID) 
                                 orderby b.POSITION, a.POSITION 
-                                select a;
+                                select a).ToList();
 
             List<CustomerFSRatioCaptionReportViewModel> output = new List<CustomerFSRatioCaptionReportViewModel>();
             foreach (var item in ratioCaptions)
@@ -323,6 +323,7 @@ namespace FintrakBanking.Repositories.Customer
 
         private string GetCustomerFSRatio(bool isRatio, int customerId, short fsCaptionId, DateTime fsDate)
         {
+            // it is not ratio (not derived)
             if (isRatio == false)
             {
                 var fsAmount = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
@@ -351,6 +352,7 @@ namespace FintrakBanking.Repositories.Customer
             //    }
             //}
 
+            // it is ratio (derived)
             if (isRatio) {
                 var details = (from c in context.TBL_CUSTOMER_FS_RATIO_DETAIL
                                join f in context.TBL_CUSTOMER_FS_CAPTION on c.FSCAPTIONID equals f.FSCAPTIONID
@@ -412,10 +414,11 @@ namespace FintrakBanking.Repositories.Customer
                     return string.Format("{0:n}", sum);
                 }
 
+                return string.Format("{0:n}", CalculateFSRatioValue(customerId, fsCaptionId, fsDate));
             }
 
-            // it is ratio (derived)
-            return string.Format("{0:n}", CalculateFSRatioValue(customerId, fsCaptionId, fsDate));
+            // neither ratio nor non ratio
+            return string.Format("{0:n}", 0);
         }
 
         private decimal CalculateFSRatioValueDerived(decimal sum, short divisorTypeId, decimal calculatedValue)
