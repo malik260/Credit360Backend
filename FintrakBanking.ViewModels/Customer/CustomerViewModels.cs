@@ -340,6 +340,8 @@ namespace FintrakBanking.ViewModels.Customer
         public ApiIndividualCustomerDetails individualCustomerInformation { get; set; }
         public List<ApiAddressesViewModel> customerAddresses { get; set; }
         public List<ApicontactViewModel> contacts { get; set; }
+        public List<ApicontactViewModel> customerContacts { get; set; }
+
         public List<ApiDirectorViewModel> companyDirectors { get; set; }
         public List<ApiCompanySignatoriesViewModel> companySignatories { get; set; }
         public List<ApiIndividualSupplierViewModel> individualSuppliers { get; set; }

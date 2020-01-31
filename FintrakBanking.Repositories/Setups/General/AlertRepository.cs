@@ -895,13 +895,13 @@ namespace FintrakBanking.Repositories.Setups.General
             GetLoanRepaymentReminder();
             GetImminentMaturitiesAlertEmail();*/
             GroupImminentMaturitiesByGroupHeads();
-            //GetImminentMaturities();
+            GetImminentMaturities();
             //GetCreditCardMaturingObligations();
             //GetExpiringFacilityReport();
             //GetUnAuthorizedOverdraftReport();
             //GetOverlineMonitoringReport();
             //GetCreditCardDelinquencyMonitoringReport();
-            //GetPastDueObligationsReminder();
+            GetPastDueObligationsReminder();
             GetPastDueObligationsReminderByGroupHeads();
             //GetRiskAssetsReportNotification();
             //GetDashboardReportNotification();
@@ -1047,9 +1047,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
                     
-                    emailList = groupHeadDetail.EMAIL +";"+ GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE)+";"+ defaultEmail;
-                    var em = "benjamin.gbaaikye@fintraksoftware.com;paul.asiemo@accessbankplc.com";
-                    alert.receiverEmailList.Add(em);
+                    emailList = groupHeadDetail.EMAIL +";"+ GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE)+";"+ defaultEmail+ ";jobomeg@accessbankplc.com";
+                    //var em = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com";
+                    alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
@@ -1145,9 +1145,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                    emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail;
-                    var em = "benjamin.gbaaikye@fintraksoftware.com;paul.asiemo@accessbankplc.com";
-                    alert.receiverEmailList.Add(em);
+                    emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
+                    //var em = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com";
+                    alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
@@ -2835,6 +2835,10 @@ namespace FintrakBanking.Repositories.Setups.General
             foreach (var t in regionEmails)
             {
                 list = list + ";" + t.Email;
+                if(t.misCode == "IBG800")
+                {
+                    list = list + ";ogbonnar@accessbankplc.com;Soji-OkusanyaI@accessbankplc.com";
+                }
             }
             return list;
         }
@@ -2844,7 +2848,7 @@ namespace FintrakBanking.Repositories.Setups.General
             try
             {
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject +" ALERT TEST";
+                string messageSubject = alertSubject +" ALERT";
                 string messageContent = messageBody;
                 //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
                 //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 

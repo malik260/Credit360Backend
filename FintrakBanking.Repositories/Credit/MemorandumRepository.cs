@@ -9785,11 +9785,11 @@ namespace FintrakBanking.Repositories.Credit
             var nextDateTime = data.NEXTCALLDATE;
             var date = nextDateTime?.ToString("yyyy-MM-dd");
             var nextCallTime = data.NEXTCALLTIME;
-            var time = nextCallTime.ToString("hh:mm:ss");
+            var time = nextCallTime?.ToString("hh:mm:ss");
 
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=1 width=750 cellpadding=5 cellspacing=0>
                     <tr>
                       <td><strong>Date</strong></td>
                       <td>{data.DATECREATED}</td>  
@@ -9814,7 +9814,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</p><br/>";
             result = result + $"<p><strong>RECENT UPDATE</strong><br/>{data.RECENTUPDATE}";
             result = result + $"</p><br/>";
-            result = result + $"<p><strong>PURPOSE</strong><br/>{data.PURPOSE}";
+            result = result + $"<p><strong>PURPOSE OF THE MEETING</strong><br/>{data.PURPOSE}";
             result = result + $"</p><br/>";
             result = result + $"<p><strong>MEETING HIGHLIGHTS</strong><br/>{data.DISCUSION}";
             result = result + $"</p><br/>";

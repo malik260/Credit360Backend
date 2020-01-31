@@ -124,9 +124,11 @@ namespace FintrakBanking.Repositories.Credit
             model.companyId = accountOfficer.COMPANYID;
             model.branchId = accountOfficer.BRANCHID;
 
-            if (model.individualCustomerInformation.subSector == null) return fireResponse("Missing Sub-sector information", "99", "");
+            if (model.individualCustomerInformation.subSector == null) return fireResponse("Missing Sub-Sector Code", "99", "");
 
             var subsector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.individualCustomerInformation.subSector).FirstOrDefault();
+            if (subsector == null) return fireResponse("Sub-Sector does not exist in Fintrak Credit360", "99", "");
+
             var sector = context.TBL_SECTOR.Where(x => x.SECTORID == subsector.SECTORID ).FirstOrDefault();
             model.sectorId = sector.SECTORID;
             model.subsectorId = subsector.SUBSECTORID;
@@ -156,6 +158,14 @@ namespace FintrakBanking.Repositories.Credit
             model.companyId = accountOfficer.COMPANYID;
             model.branchId = accountOfficer.BRANCHID;
 
+            if (model.corporateCustomerInformation.subSector == null) return fireResponse("Missing Sub-Sector Code", "99", "");
+
+            var subsector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.corporateCustomerInformation.subSector).FirstOrDefault();
+            if (subsector == null) return fireResponse("Sub-Sector does not exist in Fintrak Credit360", "99", "");
+
+            var sector = context.TBL_SECTOR.Where(x => x.SECTORID == subsector.SECTORID).FirstOrDefault();
+            model.sectorId = sector.SECTORID;
+            model.subsectorId = subsector.SUBSECTORID;
 
             // List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
 
@@ -174,7 +184,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
         {
-            var model = entity.individualCustomerInformation;
+            ApiIndividualCustomerDetails model = entity.individualCustomerInformation;
             
             var customer = new TBL_CUSTOMER
             {
@@ -229,6 +239,22 @@ namespace FintrakBanking.Repositories.Credit
                 BUSINESSUNTID = model.businessUnitId
             };
 
+            foreach (var address in entity.customerAddresses)
+            {
+                var state = context.TBL_STATE.Where(O => O.STATENAME.ToLower() == address.state.ToLower()).FirstOrDefault();
+
+                customer.TBL_CUSTOMER_ADDRESS.Add(new TBL_CUSTOMER_ADDRESS()
+                {
+                    ADDRESS = address.address,
+                    STATEID = state != null ? state.STATEID : 1,
+                    CITYID = 1,
+                    ADDRESSTYPEID = 1,
+                    ACTIVE = true,
+                    NEARESTLANDMARK = address.nearestLandmark,
+                    ELECTRICMETERNUMBER = address.utilityBillNumber,
+                });
+            }
+
             context.TBL_CUSTOMER.Add(customer);
             return context.SaveChanges() > 0;
         }
@@ -278,9 +304,58 @@ namespace FintrakBanking.Repositories.Credit
                 APIREQUESTID = model.request_Id,
                 //CORR = model.corr,
                 //PASTDUEOBLIGATIONS = Convert.ToDecimal(corporateDetails.pastDueObligation),
-                BUSINESSUNTID = corporateDetails.businessUnitId
-
+                BUSINESSUNTID = corporateDetails.businessUnitId,
             };
+
+            foreach(var address in model.customerAddresses) {
+                var state = context.TBL_STATE.Where(O => O.STATENAME.ToLower() == address.state.ToLower()).FirstOrDefault();
+
+                customer.TBL_CUSTOMER_ADDRESS.Add(new TBL_CUSTOMER_ADDRESS()
+                {
+                    ADDRESS = address.address,
+                    STATEID = state != null ? state.STATEID : 1,
+                    CITYID = 1,
+                    ADDRESSTYPEID = 1,
+                    ACTIVE = true,
+                    NEARESTLANDMARK = address.nearestLandmark,
+                    ELECTRICMETERNUMBER = address.utilityBillNumber,
+                });
+            }
+
+            foreach (var contact in model.customerContacts) {
+                customer.TBL_CUSTOMER_PHONECONTACT.Add(new TBL_CUSTOMER_PHONECONTACT()
+                {
+                    ACTIVE = true,
+                    PHONE = contact.officeMobileNumber,
+                    PHONENUMBER = contact.officeLandNumber,
+                });
+            }
+
+            foreach (var director in model.companyDirectors) {
+                customer.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(new TBL_CUSTOMER_COMPANY_DIRECTOR()
+                {
+                    FIRSTNAME = director.firstName,
+                    CUSTOMERTYPEID = short.Parse(model.customerType),
+                    COMPANYDIRECTORTYPEID = 1,
+                    SHAREHOLDINGPERCENTAGE = 0,
+                    ISPOLITICALLYEXPOSED = director.politicallyExposed == "1" ? true : false,
+                    CREATEDBY = model.staffId.Value,
+                    DATECREATED = DateTime.Now,
+                    SURNAME = director.lastName,
+                    MIDDLENAME = director.otherNames,
+                    GENDER = director.gender,
+                    MARITALSTATUSID = director.maritalStatus.ToLower() == "single" ? 1 : director.maritalStatus.ToLower() == "married" ? 2 : 0,
+                    CUSTOMERBVN = director.bvn,
+                    CUSTOMERNIN = director.nin,
+                    ADDRESS = director.address,
+                    EMAILADDRESS = director.email,
+                    PHONENUMBER = director.phoneNumber,
+                    //REGISTRATION_NUMBER = null,
+                    //TAX_NUMBER = null,
+                    DATEOFBIRTH = DateTime.Parse(director.dateOfBirth)
+                });
+
+            }
 
             context.TBL_CUSTOMER.Add(customer);
             return context.SaveChanges() > 0;
@@ -446,7 +521,8 @@ namespace FintrakBanking.Repositories.Credit
                     FILENAME = loanFile.caption+"."+loanFile.fileExtension,
                     FILEEXTENSION = loanFile.fileExtension,
                     FILESIZE = loanFile.fileData.Length,
-                    FILEDATA = loanFile.fileData.Base64ToByte(),
+                    //FILEDATA = loanFile.fileData.Base64ToByte(),
+                    FILEDATA = loanFile.fileData.ToByteArray(),
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = DateTime.Now,
@@ -487,7 +563,8 @@ namespace FintrakBanking.Repositories.Credit
                     FILENAME = caption + "." + "pdf",
                     FILEEXTENSION = "pdf",
                     FILESIZE = (int)loanFile.reportFileDateinPDF.Length,
-                    FILEDATA = loanFile.reportFileDateinPDF.Base64ToByte(),
+                    FILEDATA = loanFile.reportFileDateinPDF.ToByteArray(),
+                    //FILEDATA = loanFile.reportFileDateinPDF.Base64ToByte(),
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = DateTime.Now,
