@@ -283,11 +283,11 @@ namespace FintrakBanking.Repositories.Customer
 
             int count = lastFourDates.Count;
 
-            var ratioCaptions = from a in context.TBL_CUSTOMER_FS_CAPTION
+            var ratioCaptions = (from a in context.TBL_CUSTOMER_FS_CAPTION
                                 join b in context.TBL_CUSTOMER_FS_CAPTION_GROUP on a.FSCAPTIONGROUPID equals b.FSCAPTIONGROUPID
                                 //where customerFSCaptionIds.Contains(a.FSCAPTIONID) 
                                 orderby b.POSITION, a.POSITION 
-                                select a;
+                                select a).ToList();
 
             List<CustomerFSRatioCaptionReportViewModel> output = new List<CustomerFSRatioCaptionReportViewModel>();
             foreach (var item in ratioCaptions)
@@ -323,6 +323,7 @@ namespace FintrakBanking.Repositories.Customer
 
         private string GetCustomerFSRatio(bool isRatio, int customerId, short fsCaptionId, DateTime fsDate)
         {
+            // it is not ratio (not derived)
             if (isRatio == false)
             {
                 var fsAmount = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
@@ -339,22 +340,83 @@ namespace FintrakBanking.Repositories.Customer
                 //    return "0.00";
             }
 
-            // FS CaptionID Indicative Decisions
-            if (fsCaptionId == 29) {
-                var computedValue = CalculateFSRatioValue(customerId, 28, fsDate);
+            // it is ratio (derived)
+            if (isRatio) {
+                var details = (from c in context.TBL_CUSTOMER_FS_RATIO_DETAIL
+                               join f in context.TBL_CUSTOMER_FS_CAPTION on c.FSCAPTIONID equals f.FSCAPTIONID
+                               join t in context.TBL_CUSTOMER_FS_CAPTION_DETAIL on c.FSCAPTIONID equals t.FSCAPTIONID
+                               where c.RATIOCAPTIONID == fsCaptionId && t.FSDATE == fsDate
+                               select new { c.FSCAPTIONID, c.DIVISORTYPEID, f.ISRATIO}).ToList().OrderBy(O => O.DIVISORTYPEID).ToList();
 
-                if ((double) computedValue <= 1.5) {
-                    return "OK"; 
+                if (details != null) {
+                    decimal sum = 0;
+
+                    foreach (var detail in details) {
+                        if (detail.ISRATIO) {
+                            var calculatedValue = CalculateFSRatioValue(customerId, (short) detail.FSCAPTIONID, fsDate);
+                            sum = CalculateFSRatioValueDerived(sum, detail.DIVISORTYPEID, calculatedValue);
+                        }
+                        else {
+                            var captionDetail = (from O in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
+                                                where O.FSCAPTIONID == detail.FSCAPTIONID && O.CUSTOMERID == customerId
+                                                select O).FirstOrDefault();
+
+                            if (captionDetail != null && captionDetail.AMOUNT > 0) {
+                                sum = CalculateFSRatioValueDerived(sum, detail.DIVISORTYPEID, captionDetail.AMOUNT);
+                            }
+                        }
+                    }
+
+                    // Indicative Decisions
+                    if (fsCaptionId == 29) {
+                        // var computedValue = CalculateFSRatioValue(customerId, 28, fsDate);
+                        if ((double) sum <= 1.5) {
+                            return "OK"; 
+                        }
+                        else {
+                            return "DECLINED";
+                        }
+                    }
+
+                    return string.Format("{0:n}", sum);
                 }
-                else {
-                    return "DECLINED";
-                }
+
+                return string.Format("{0:n}", CalculateFSRatioValue(customerId, fsCaptionId, fsDate));
             }
 
-            return string.Format("{0:n}", CalculateFSRatioValue(customerId, fsCaptionId, fsDate));
+            // neither ratio nor non ratio
+            return string.Format("{0:n}", 0);
         }
 
-        private decimal CalculateFSRatioValue(int customerId, short fsCaptionId, DateTime fsDate)
+        private decimal CalculateFSRatioValueDerived(decimal sum, short divisorTypeId, decimal calculatedValue)
+        {
+            if (divisorTypeId == 1) {
+                if (sum == 0) {
+                    sum = 1 * calculatedValue;
+                }
+                else {
+                    sum = sum * calculatedValue;
+                }
+            }
+            else if (divisorTypeId == 2) {
+                if (sum == 0) {
+                    sum = 1 * (1 / calculatedValue);
+                }
+                else {
+                    sum = sum * (1 / calculatedValue);
+                }
+            }
+            else if (divisorTypeId == 3) {
+                    sum = sum + calculatedValue;
+            }
+            else {
+                    sum = sum - calculatedValue;
+            }
+
+            return sum;
+        }
+
+            private decimal CalculateFSRatioValue(int customerId, short fsCaptionId, DateTime fsDate)
         {
             var customerFS = from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
                              where a.CUSTOMERID == customerId && a.FSDATE == fsDate

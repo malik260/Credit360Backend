@@ -2012,6 +2012,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw ex;
                 }
+                return true;
             }
 
             return false;

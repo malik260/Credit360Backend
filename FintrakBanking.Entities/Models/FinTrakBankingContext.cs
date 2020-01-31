@@ -260,7 +260,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_KYC_DOCUMENTTYPE> TBL_KYC_DOCUMENTTYPE { get; set; }
         public virtual DbSet<TBL_KYC_ITEM> TBL_KYC_ITEM { get; set; }
         public virtual DbSet<TBL_LANGUAGE> TBL_LANGUAGE { get; set; }
-        public virtual DbSet<TBL_LMSR_APPLICATION> TBL_LMSR_APPLICATION { get; set; }
+        public virtual DbSet<TBL_LMSR_APPLICATION> TBL_LMSR_APPLICATION { get; set; } 
+        public virtual DbSet<TBL_LMSR_FLOW_ORDER> TBL_LMSR_FLOW_ORDER { get; set; }
         public virtual DbSet<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
         public virtual DbSet<TBL_LOAN> TBL_LOAN { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_PAYMENT> TBL_LOAN_RECOVERY_PAYMENT { get; set; }

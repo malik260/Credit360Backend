@@ -729,8 +729,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var conditions = GetConditionsPrecedentToDrawdownFacility(LOANAPPLICATIONDETAILID).GroupBy(c => c.typeId).ToList(); // new
-            result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=center width=900 cellpadding=0 cellspacing=0>
+            result = result + $@"<br />
+                <h3><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></h3>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
@@ -977,7 +978,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool IsLLLViolated()
         {
-            return ((getTotalLLLImpact() > legalLendingLimit) ? true : false);
+            return false;
+            //return ((getTotalLLLImpact() > legalLendingLimit) ? true : false);
         }
 
         private IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId)
@@ -1075,7 +1077,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(this.loanApplicationDetail.LOANAPPLICATIONDETAILID) + GetApprovalsMarkupForAllLOS(this.loanApplication.LOANAPPLICATIONID) + GetOtherConditionsHtml();
+            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(this.loanApplicationDetail.LOANAPPLICATIONDETAILID) + GetDrawdownApprovalsMarkupLOS2(this.targetId, this.operationId) + GetOtherConditionsHtml();
             return result;
         }
 
@@ -3980,7 +3982,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrail(targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
-                <br/><b>APPROVALS</b>
+                <br/><h3><b>APPROVALS</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Role</b></th>
@@ -4023,7 +4025,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
                         <th><b>Comment</b></th>
-                       
+                        <th><b>Date</b></th>
                     </tr>
                     ";
             foreach (var trail in appraisals)
@@ -4033,6 +4035,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
                         <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
                     </tr>
                 ";
             }
@@ -4049,6 +4052,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
+                <br/>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
@@ -4058,7 +4062,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
                         <th><b>Comment</b></th>
-                       
+                       <th><b>Date</b></th>
                     </tr>
                     ";
             foreach (var trail in appraisals)
@@ -4068,6 +4072,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
                         <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
                     </tr>
                 ";
             }
@@ -9811,11 +9816,11 @@ namespace FintrakBanking.Repositories.Credit
             var nextDateTime = data.NEXTCALLDATE;
             var date = nextDateTime?.ToString("yyyy-MM-dd");
             var nextCallTime = data.NEXTCALLTIME;
-            var time = nextCallTime.ToString("hh:mm:ss");
+            var time = nextCallTime?.ToString("hh:mm:ss");
 
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=1 width=750 cellpadding=5 cellspacing=0>
                     <tr>
                       <td><strong>Date</strong></td>
                       <td>{data.DATECREATED}</td>  
@@ -9840,7 +9845,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</p><br/>";
             result = result + $"<p><strong>RECENT UPDATE</strong><br/>{data.RECENTUPDATE}";
             result = result + $"</p><br/>";
-            result = result + $"<p><strong>PURPOSE</strong><br/>{data.PURPOSE}";
+            result = result + $"<p><strong>PURPOSE OF THE MEETING</strong><br/>{data.PURPOSE}";
             result = result + $"</p><br/>";
             result = result + $"<p><strong>MEETING HIGHLIGHTS</strong><br/>{data.DISCUSION}";
             result = result + $"</p><br/>";
