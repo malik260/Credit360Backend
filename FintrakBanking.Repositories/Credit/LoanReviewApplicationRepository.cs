@@ -957,39 +957,30 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short nextOperationId, short lastOperationId)
         {
-
-            foreach (var i in details)
+            var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+            if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
-                if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
-                {
-
-                    var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == i.OPERATIONID)?.FirstOrDefault();
-                    nextOperationId = (short)operation?.SYNCHOPERATIONID;
-
-                    if (operation == null)
-                        throw new ConditionNotMetException("Operation not in synch with final operation");
-
-                }
-
                 var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
-                                x.COMPANYID == model.companyId
-                                && x.OPERATIONID == nextOperationId 
-                                && x.TARGETID == i.LOANREVIEWAPPLICATIONID
-                                && x.RESPONSESTAFFID == null
-                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
-                            ).ToList();
+                               x.COMPANYID == model.companyId
+                               && x.OPERATIONID == nextOperationId
+                               //&& x.TARGETID == appl.LOANAPPLICATIONID
+                               && x.TARGETID == appl.LOANAPPLICATIONID
+                               && x.RESPONSESTAFFID == null
+                               && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                           ).ToList();
                 if (existingTrail.Count() == 0)
                 {
                     Workflow workflowlms = new Workflow(context, general);
 
-                    if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-                      || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
-                      || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
+                    if ((appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                      || appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                      || appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
                     {
                         workflowlms.StaffId = model.createdBy;
                         workflowlms.CompanyId = model.companyId;
                         workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
-                        workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
+                        //workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
+                        workflowlms.TargetId = appl.LOANAPPLICATIONID;
                         workflowlms.Comment = model.comment;
                         workflowlms.OperationId = (int)nextOperationId;
                         workflowlms.DeferredExecution = true;
@@ -997,6 +988,49 @@ namespace FintrakBanking.Repositories.Credit
                         workflowlms.LogActivity();
                         context.SaveChanges();
                     }
+                }
+            }
+
+            if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            {
+                foreach (var i in details)
+                {
+                    var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == i.OPERATIONID)?.FirstOrDefault();
+                    nextOperationId = (short)operation?.SYNCHOPERATIONID;
+
+                    if (operation == null)
+                        throw new ConditionNotMetException("Operation not in synch with final operation");
+
+                    var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                    x.COMPANYID == model.companyId
+                                    && x.OPERATIONID == nextOperationId
+                                    && x.TARGETID == i.LOANREVIEWAPPLICATIONID
+                                    && x.TARGETID == appl.LOANAPPLICATIONID
+                                    && x.RESPONSESTAFFID == null
+                                    && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                                ).ToList();
+                    if (existingTrail.Count() == 0)
+                    {
+                        Workflow workflowlms = new Workflow(context, general);
+
+                        if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                          || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                          || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
+                        {
+                            workflowlms.StaffId = model.createdBy;
+                            workflowlms.CompanyId = model.companyId;
+                            workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
+                            //workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
+                            workflowlms.TargetId = appl.LOANAPPLICATIONID;
+                            workflowlms.Comment = model.comment;
+                            workflowlms.OperationId = (int)nextOperationId;
+                            workflowlms.DeferredExecution = true;
+                            workflowlms.ExternalInitialization = true;
+                            workflowlms.LogActivity();
+                            context.SaveChanges();
+                        }
+                    }
+
                 }
             }
         }
