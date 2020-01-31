@@ -57,6 +57,8 @@ namespace FintrakBanking.Entities.Models
             TBL_LC_ISSUANCE = new HashSet<TBL_LC_ISSUANCE>();
             TBL_LETTER_GENERATION_REQUEST = new HashSet<TBL_LETTER_GENERATION_REQUEST>();
             TBL_COLLATERAL_SWAP_REQUEST = new HashSet<TBL_COLLATERAL_SWAP_REQUEST>();
+
+            TBL_CUSTOMER_COMPANY_DIRECTOR = new HashSet<TBL_CUSTOMER_COMPANY_DIRECTOR>();
         }
 
         [Key]
@@ -355,5 +357,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LC_ISSUANCE> TBL_LC_ISSUANCE { get; set; }
         public virtual ICollection<TBL_COLLATERAL_SWAP_REQUEST> TBL_COLLATERAL_SWAP_REQUEST { get; set; }
         public virtual ICollection<TBL_LETTER_GENERATION_REQUEST> TBL_LETTER_GENERATION_REQUEST { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_COMPANY_DIRECTOR> TBL_CUSTOMER_COMPANY_DIRECTOR { get; set; }
+
     }
 }
