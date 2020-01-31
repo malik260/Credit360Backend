@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface ILoanReviewApplicationRepository
     {
         IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
-
+        IQueryable<LoanReviewApplicationViewModel> GetLoanReviewAvailmentAwaitingApproval(UserInfo user, int operationId, int? classId);
         SelectListViewModel GetAllSelectList();
         SelectListViewModel GetAllLMSApprovalOperationList();
         LoanChargeFeeViewModel GetChargeFeeDetails(int id);
@@ -34,6 +34,7 @@ namespace FintrakBanking.Interfaces.Credit
         //List<CamViewModel> GetCamDocuments(int applicationId);
 
         WorkflowResponse ForwardApplication(ForwardReviewViewModel model);
+        WorkflowResponse ForwardApplicationAppraisal(ForwardReviewViewModel model);
 
         LoanApplicationDetailViewModel GetLoanApplicationDetail(int loanId, int loanTypeId);
 

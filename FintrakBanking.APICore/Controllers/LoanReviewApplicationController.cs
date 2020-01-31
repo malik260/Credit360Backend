@@ -75,6 +75,50 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("review-availment")]
+        public HttpResponseMessage GetLoanReviewAvailmentAwaitingApproval(
+         [FromUri] int page,
+         [FromUri] int itemsPerPage,
+         [FromUri] int operationId,
+         [FromUri] int? classId,
+         [FromUri] string searchString
+         )
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+
+            try
+            {
+                IQueryable<LoanReviewApplicationViewModel> items;
+                items = repo.GetLoanReviewAvailmentAwaitingApproval(user, operationId, classId);
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    searchString = searchString.Trim().ToLower();
+                    items = items.Where(x =>
+                        x.referenceNumber.Contains(searchString)
+                        || x.customerName.Contains(searchString)
+                        ).Take(itemsPerPage);
+                }
+
+                var data = items
+                    .OrderByDescending(x => x.loanReviewApplicationId) // OrderBy() must be called for Skip() to work!
+                    .Skip(page).Take(itemsPerPage);//.ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
         [HttpGet, Route("loan-review-application/select-list")]
         public HttpResponseMessage GetAllSelectList()
         {
@@ -197,6 +241,22 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-review-application/forward-application")]
         public HttpResponseMessage ForwardApplication([FromBody] ForwardReviewViewModel model)
         {
+            model.userBranchId = (short)token.GetBranchId;
+            model.companyId = token.GetCompanyId;
+            model.lastUpdatedBy = token.GetStaffId;
+            model.createdBy = token.GetStaffId;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.ForwardApplication(model);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-review-application/forward-appraisal")]
+        public HttpResponseMessage ForwardApplicationAppraisal([FromBody] ForwardReviewViewModel model)
+        {
             try
             {
                 model.userBranchId = (short)token.GetBranchId;
@@ -205,7 +265,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.ForwardApplication(model);
+                WorkflowResponse response = repo.ForwardApplicationAppraisal(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException e)
@@ -213,6 +273,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
 
         [HttpGet]
         [ClaimsAuthorization]

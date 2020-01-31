@@ -30,6 +30,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalStatusId;
         public int approvalTrailId;
         public string approvalStatusName;
+        public string fromApprovalLevelName;
+        public string toApprovalLevelName;
 
         public int callMemoId { get; set; }
         public int? approvalLevelId { get; set; }
@@ -68,7 +70,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime endDate { get; set; }
         public string searchName { get; set; }
         public DateTime callTime { get; set; }
-        public DateTime nextCallTime { get; set; }
+        public DateTime? nextCallTime { get; set; }
         public string comment { get; set; }
     }
     public class CallLimitViewModel : GeneralEntity

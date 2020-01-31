@@ -895,13 +895,13 @@ namespace FintrakBanking.Repositories.Setups.General
             GetLoanRepaymentReminder();
             GetImminentMaturitiesAlertEmail();*/
             GroupImminentMaturitiesByGroupHeads();
-            //GetImminentMaturities();
+            GetImminentMaturities();
             //GetCreditCardMaturingObligations();
             //GetExpiringFacilityReport();
             //GetUnAuthorizedOverdraftReport();
             //GetOverlineMonitoringReport();
             //GetCreditCardDelinquencyMonitoringReport();
-            //GetPastDueObligationsReminder();
+            GetPastDueObligationsReminder();
             GetPastDueObligationsReminderByGroupHeads();
             //GetRiskAssetsReportNotification();
             //GetDashboardReportNotification();
@@ -1047,7 +1047,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
                     
-                    emailList = groupHeadDetail.EMAIL +";"+ GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE)+";"+ defaultEmail;
+                    emailList = groupHeadDetail.EMAIL +";"+ GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE)+";"+ defaultEmail+ ";jobomeg@accessbankplc.com";
                     //var em = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com";
                     alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
@@ -1145,7 +1145,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                    emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail;
+                    emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
                     //var em = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com";
                     alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;

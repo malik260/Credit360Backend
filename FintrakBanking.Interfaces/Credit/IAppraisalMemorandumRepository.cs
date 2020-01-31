@@ -15,6 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface IAppraisalMemorandumRepository
     {
         //IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId);
+        IEnumerable<ApprovalTrailViewModel> GetCallmemoApprovalTrail(int applicationId, int operationId);
         AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId);
 
         IEnumerable<DocumentationViewModel> GetAllDocumentation(int applicationId);
