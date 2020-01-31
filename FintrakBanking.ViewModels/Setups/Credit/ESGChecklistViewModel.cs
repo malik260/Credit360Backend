@@ -29,7 +29,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int esgChecklistDefinitionId { get; set; }
         public int checklistItemId { get; set; }
         public string checklistItemName { get; set; }
-        public int esgCategoryId { get; set; }
+        public int? esgCategoryId { get; set; }
         public string esgCategoryName { get; set; }
         public int? esgSubCategoryId { get; set; }
         public string esgSubCategoryName { get; set; }
@@ -38,8 +38,12 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int gradeScore { get; set; }
         public int checklistScoresId { get; set; }
         public string grade { get; set; }
-
+        public string sectorName { get; set; }
+        public string scoreWeight { get; set; }
+        public string scoreColourCode { get; set; }
+        public int? sectorId { get; set; }
     }
+
     public class ESGChecklistSummaryViewModel : GeneralEntity
     {
         public int esgChecklistSummaryId { get; set; }
@@ -47,6 +51,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int loanApplicationDetailId { get; set; }
 
         public string comment { get; set; }
+        public string colourCode { get; set; }
 
         public int ratingId { get; set; }
         public string productCustomerName { get; set; }
@@ -94,7 +99,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public short? esgClassId { get; set; }
         public short? esgTypeId { get; set; }
         public string sectorName { get; set; }
-        public short sectorId { get; set; }
+        public int? sectorId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }
     }

@@ -18,8 +18,9 @@
         public bool ISCOMPULSORY { get; set; }
         public string ITEMDESCRIPTION { get; set; }
         public int CHECKLISTSCORESID { get; set; }
+        public int CHECKLIST_TYPEID { get; set; }
         public int? SECTORID { get; set; }
-        public int SCORE { get; set; }
+        //public int SCORE { get; set; }
         public int COMPANYID { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }

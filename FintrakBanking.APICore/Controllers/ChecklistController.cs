@@ -1567,6 +1567,7 @@ namespace FintrakBanking.APICore.Controllers
               new { success = false, message = $"There was an error fetching this record {ex.Message}" });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("esg-sub-categories")]
@@ -1590,6 +1591,7 @@ namespace FintrakBanking.APICore.Controllers
               new { success = false, message = $"There was an error fetching this record {ex.Message}" });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("esg-checklist-definition")]
@@ -1684,6 +1686,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("green-rating-calculate")]
+        public HttpResponseMessage CalculateGreenRatingSummary([FromBody] List<ESGChecklistDetailViewModel> model)
+        {
+            try
+            {
+                var data = repo.CalculateGreenRatingSummary(model);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error calculating the summary {ex.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("esg-checklist-detail")]
@@ -1705,6 +1730,110 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
               new { success = false, message = $"There was an error fetching this record {ex.Message}" });
             }
+        }
+
+
+        #region GreenRating
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("checklist-scores")]
+        public HttpResponseMessage GetCheckListScores()
+        {
+            try
+            {
+                var data = repo.GetCheckListScores();
+                if (data.Count() > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("checklist-item/{checkListTypeId}")]
+        public HttpResponseMessage GetAllChecklistItemBycheckListTypeId(int checkListTypeId)
+        {
+            try
+            {
+                var data = repo.GetAllChecklistItemBycheckListTypeId(checkListTypeId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("green-rating-definition")]
+        public HttpResponseMessage GetGreenRatingDefinition()
+        {
+            try
+            {
+                var data = repo.GetGreenRatingDefinition();
+                if (data.Count() > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("green-rating-definition")]
+        public HttpResponseMessage AddGreenRatingChecklistDefinition([FromBody] List<ESGChecklistDefinitionViewModel> model)
+        {
+            try
+            {
+                foreach (var item in model)
+                {
+                    item.userBranchId = (short)token.GetBranchId;
+                    item.userIPAddress = CommonHelpers.GetUserIP();
+                    item.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                    item.createdBy = token.GetStaffId;
+                    item.companyId = token.GetCompanyId;
+                }
+
+                var data = repo.AddGreenRatingDefinition(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error creating record" });
+            }
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+
         }
 
         [HttpGet]
@@ -1752,6 +1881,94 @@ namespace FintrakBanking.APICore.Controllers
               new { success = false, message = $"There was an error fetching this record {ex.Message}" });
             }
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("green-rating-detail")]
+        public HttpResponseMessage AddGreenRatingDetail([FromBody] List<ESGChecklistDetailViewModel> model)
+        {
+            try
+            {
+                foreach (var item in model)
+                {
+                    item.userBranchId = (short)token.GetBranchId;
+                    item.userIPAddress = CommonHelpers.GetUserIP();
+                    item.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                    item.createdBy = token.GetStaffId;
+                    item.companyId = token.GetCompanyId;
+                }
+
+                var data = repo.AddGreenRatingDetail(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been saved successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error creating record" });
+            }
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("green-rating-summary")]
+        public HttpResponseMessage AddGreenRatingSummary([FromBody] ESGChecklistSummaryViewModel model)
+        {
+            try
+            {
+
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddGreenRatingSummary(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been added successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error creating record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("green-rating-definition/delete/{esgChecklistDefinitionId}")]
+        public HttpResponseMessage DeleteGreenRatingDefinition(int esgChecklistDefinitionId)
+        {
+            try
+            {
+                var data = repo.DeleteGreenRatingDefinition(esgChecklistDefinitionId);
+                if (data == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+        #endregion GreenRating
 
         //[HttpGet]
         //[ClaimsAuthorization]

@@ -232,7 +232,7 @@ namespace FintrakBanking.Repositories.Setups.General
             FinTrakBankingContext db = new FinTrakBankingContext();
 
             var result = _sessionInfo;
-
+            username = username.Trim();
             if (result.state > 0)
                 result = new SessionStatusInfo
                 {
@@ -318,6 +318,7 @@ namespace FintrakBanking.Repositories.Setups.General
             FinTrakBankingContext db = new FinTrakBankingContext();
 
             var result = _sessionInfo;
+            username = username.Trim();
 
             if (result.state > 0)
                 result = new SessionStatusInfo

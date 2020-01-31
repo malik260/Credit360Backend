@@ -8348,6 +8348,7 @@ namespace FintrakBanking.Repositories.Credit
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         where d.LOANAPPLICATIONDETAILID == applicationDetailId && d.DELETED == false && s.DELETED == false
                         && s.LOAN_BOOKING_REQUESTID == loanBookingRequestId
+                        && m.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
 
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel

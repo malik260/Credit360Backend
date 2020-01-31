@@ -58,6 +58,18 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public bool isAvailmentChecklist { get; set; }
     }
 
+    public class CheckListScores : GeneralEntity
+    {
+        public int checklistScoresId { get; set; }
+        public int? esgChecklistDefinitionId { get; set; }
+        public string grade { get; set; }
+        public int gradeScore { get; set; }
+        public int checkListTypeId { get; set; }
+        public string scoreWeight { get; set; }
+        public string colourCode { get; set; }
+        public string checklistStatusName { get; set; }
+    }
+
     public class ChecklistItemViewModel : GeneralEntity
     {
         public int checkListItemId { get; set; }
