@@ -890,34 +890,35 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public void validateAlertCheck()
         {
+            GroupImminentMaturitiesByGroupHeads();
+            GetImminentMaturities();
+            GetPastDueObligationsReminder();
+            GetPastDueObligationsReminderByGroupHeads();
+
             /*GetLoanExpirationReminder(); 
             GetUnpaidObligationReminder();
             GetLoanRepaymentReminder();
-            GetImminentMaturitiesAlertEmail();*/
-            GroupImminentMaturitiesByGroupHeads();
-            GetImminentMaturities();
-            //GetCreditCardMaturingObligations();
-            //GetExpiringFacilityReport();
-            //GetUnAuthorizedOverdraftReport();
-            //GetOverlineMonitoringReport();
-            //GetCreditCardDelinquencyMonitoringReport();
-            GetPastDueObligationsReminder();
-            GetPastDueObligationsReminderByGroupHeads();
-            //GetRiskAssetsReportNotification();
-            //GetDashboardReportNotification();
-            //GetCACReport();
-            //GetOverlineCreditCardPosition();
-            //GetPastDueFacilitiesNotification();
-            //GetExpiredFacilityNotification();
-            //GetLoanExpirationReminderAccountOfficer();
-            //GetLoanRepaymentReminderAccountOfficer();
-            //GetUnpaidObligationReminderAccountOfficer();
-            //GetOverlineReminder();
-            //GetMaturingObligationsReport();
-            //GetOverlineFacilityNotification();
-            //GetImminentObligationMaturityFacilityNotification();
-            //GetNplOnCreditPortfolio();
-            //GetLoanExpirationReminderAccountOfficer();
+            GetImminentMaturitiesAlertEmail();
+            GetCreditCardMaturingObligations();
+            GetExpiringFacilityReport();
+            GetUnAuthorizedOverdraftReport();
+            GetOverlineMonitoringReport();
+            GetCreditCardDelinquencyMonitoringReport();
+            GetRiskAssetsReportNotification();
+            GetDashboardReportNotification();
+            GetCACReport();
+            GetOverlineCreditCardPosition();
+            GetPastDueFacilitiesNotification();
+            GetExpiredFacilityNotification();
+            GetLoanExpirationReminderAccountOfficer();
+            GetLoanRepaymentReminderAccountOfficer();
+            GetUnpaidObligationReminderAccountOfficer();
+            GetOverlineReminder();
+            GetMaturingObligationsReport();
+            GetOverlineFacilityNotification();
+            GetImminentObligationMaturityFacilityNotification();
+            GetNplOnCreditPortfolio();
+            GetLoanExpirationReminderAccountOfficer();*/
 
         }
 
