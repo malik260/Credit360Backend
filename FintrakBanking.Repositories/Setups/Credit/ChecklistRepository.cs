@@ -1287,6 +1287,7 @@ namespace FintrakBanking.Repositories.Credit
                 RESPONSE_TYPEID = model.responseTypeId,
                 REQUIREUPLOAD = model.requireUpload,
                 DATETIMECREATED = _genSetup.GetApplicationDate(),
+                CHECKLIST_TYPEID = model.checkListTypeId,
                 CREATEDBY = (int)model.createdBy,
                 DELETED = false
             };

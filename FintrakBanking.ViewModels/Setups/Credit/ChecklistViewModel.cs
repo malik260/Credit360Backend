@@ -73,6 +73,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
     public class ChecklistItemViewModel : GeneralEntity
     {
         public int checkListItemId { get; set; }
+        public int checkListTypeId { get; set; }
         public string checkListItemName { get; set; }
         public short responseTypeId { get; set; }
         public string responseTypeName { get; set; }
