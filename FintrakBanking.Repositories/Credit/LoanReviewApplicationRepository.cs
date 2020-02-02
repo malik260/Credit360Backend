@@ -995,17 +995,18 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var i in details)
                 {
-                    var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == i.OPERATIONID)?.FirstOrDefault();
-                    nextOperationId = (short)operation?.SYNCHOPERATIONID;
+                    var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == appl.OPERATIONID)?.FirstOrDefault();
+                    var synchOperationId  = operation?.SYNCHOPERATIONID;
 
-                    if (operation == null)
+                    if (synchOperationId == null)
                         throw new ConditionNotMetException("Operation not in synch with final operation");
+
+                    nextOperationId = (short)synchOperationId;
 
                     var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
                                     x.COMPANYID == model.companyId
                                     && x.OPERATIONID == nextOperationId
                                     && x.TARGETID == i.LOANREVIEWAPPLICATIONID
-                                    && x.TARGETID == appl.LOANAPPLICATIONID
                                     && x.RESPONSESTAFFID == null
                                     && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
                                 ).ToList();
@@ -1020,8 +1021,7 @@ namespace FintrakBanking.Repositories.Credit
                             workflowlms.StaffId = model.createdBy;
                             workflowlms.CompanyId = model.companyId;
                             workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
-                            //workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
-                            workflowlms.TargetId = appl.LOANAPPLICATIONID;
+                            workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
                             workflowlms.Comment = model.comment;
                             workflowlms.OperationId = (int)nextOperationId;
                             workflowlms.DeferredExecution = true;
