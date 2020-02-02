@@ -99,6 +99,8 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public short? esgClassId { get; set; }
         public short? esgTypeId { get; set; }
         public string sectorName { get; set; }
+        public string checklistStatusName { get; set; }
+        public string grade { get; set; }
         public int? sectorId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }

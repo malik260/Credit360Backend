@@ -1258,6 +1258,7 @@ namespace FintrakBanking.Repositories.Credit
                             responseTypeName = a.TBL_CHECKLIST_RESPONSE_TYPE.RESPONSE_TYPE_NAME,
                             responseTypeId = a.RESPONSE_TYPEID,
                             requireUpload = a.REQUIREUPLOAD,
+                            checkListTypeId = a.CHECKLIST_TYPEID,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = (int)a.CREATEDBY
                         }).ToList();
@@ -2549,6 +2550,35 @@ namespace FintrakBanking.Repositories.Credit
                         select a).ToList();
             return data.Any();
         }
+
+        public bool DeleteChecklistTypeMapping(int checklistTypeMappingId, UserInfo user)
+        {
+            var data = this.context.TBL_CHECKLIST_TYPE_APROV_LEVL.Find(checklistTypeMappingId);
+            if (data != null)
+            {
+                context.TBL_CHECKLIST_TYPE_APROV_LEVL.Remove(data);
+            }
+
+            // Audit Section ---------------------------
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Checklist Type Mapping with Id ' + {checklistTypeMappingId} ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            return context.SaveChanges() != 0;
+        }
         #endregion
 
         #region EGS Checklist
@@ -2636,13 +2666,14 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public bool DeleteESGChecklistDefinition(int esgChecklistDefinitionId)
+        public bool DeleteESGChecklistDefinition(int esgChecklistDefinitionId, int staffId)
         {
             var checklist = context.TBL_ESG_CHECKLIST_DEFINITION.Where(o => o.ESGCHECKLISTDEFINITIONID == esgChecklistDefinitionId).Select(o=>o).FirstOrDefault();
             if (checklist != null)
             {
                 checklist.DELETED = true;
                 checklist.DATETIMEUPDATED = DateTime.Now;
+                checklist.DELETEDBY = staffId;
             }
 
             if (context.SaveChanges() > 0)
@@ -3059,7 +3090,7 @@ namespace FintrakBanking.Repositories.Credit
                               join c in context.TBL_ESG_CATEGORY on k.ESGCATEGORYID equals c.ESGCATEGORYID
                               join q in context.TBL_ESG_SUB_CATEGORY on k.ESGSUBCATEGORYID equals q.ESGSUBCATEGORYID into gg
                               from q in gg.DefaultIfEmpty()
-                              where s.LOANAPPLICATIONDETAILID == loanApplicationDetailId && s.DELETED == false
+                              where s.LOANAPPLICATIONDETAILID == loanApplicationDetailId && k.DELETED == false
                               && k.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
                               select new ESGChecklistDefinitionAndDetailViewModel
                               {
@@ -3092,7 +3123,7 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_ESG_CATEGORY on k.ESGCATEGORYID equals c.ESGCATEGORYID
                         join q in context.TBL_ESG_SUB_CATEGORY on k.ESGSUBCATEGORYID equals q.ESGSUBCATEGORYID
                         into gg
-                        where k.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
+                        where k.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist && k.DELETED == false
                         from q in gg.DefaultIfEmpty()
                         select new ESGChecklistDefinitionAndDetailViewModel
                         {
@@ -3321,13 +3352,14 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public bool DeleteGreenRatingDefinition(int esgChecklistDefinitionId)
+        public bool DeleteGreenRatingDefinition(int esgChecklistDefinitionId, int staffId)
         {
             var checklist = context.TBL_ESG_CHECKLIST_DEFINITION.Where(o => o.ESGCHECKLISTDEFINITIONID == esgChecklistDefinitionId).Select(o => o).FirstOrDefault();
             if (checklist != null)
             {
                 checklist.DELETED = true;
                 checklist.DATETIMEUPDATED = DateTime.Now;
+                checklist.DELETEDBY = staffId;
             }
 
             if (context.SaveChanges() > 0)
@@ -3344,7 +3376,7 @@ namespace FintrakBanking.Repositories.Credit
                               join k in context.TBL_ESG_CHECKLIST_DEFINITION on s.ESGCHECKLISTDEFINITIONID equals k.ESGCHECKLISTDEFINITIONID
                               join i in context.TBL_CHECKLIST_ITEM on k.CHECKLISTITEMID equals i.CHECKLISTITEMID
                               join c in context.TBL_SECTOR on k.SECTORID equals c.SECTORID
-                              where l.LOANAPPLICATIONID == loanApplicationId && s.DELETED == false
+                              where l.LOANAPPLICATIONID == loanApplicationId && k.DELETED == false
                               && k.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
                               select new ESGChecklistDefinitionAndDetailViewModel
                               {
@@ -3359,6 +3391,8 @@ namespace FintrakBanking.Repositories.Credit
                                   checkListItemName = i.CHECKLISTITEMNAME,
                                   comment = s.COMMENT_,
                                   checklistStatusId = s.CHECKLISTSTATUSID,
+                                  checklistStatusName = context.TBL_ESG_CHECKLIST_SCORES.FirstOrDefault(x => x.SCORE == s.CHECKLISTSTATUSID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating).STATUSNAME,
+                                  grade = context.TBL_ESG_CHECKLIST_SCORES.FirstOrDefault(x => x.SCORE == s.CHECKLISTSTATUSID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating).GRADE,
                                   //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.SCORE == k.SCORE || x.SCORE == 6).OrderBy(a => a.SCORE)
                                   responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.CHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating)).OrderBy(a => a.SCORE).
                             Select(x => new CheckListStatusViewModel()
@@ -3376,7 +3410,7 @@ namespace FintrakBanking.Repositories.Credit
                         join k in context.TBL_ESG_CHECKLIST_DEFINITION on c.SECTORID equals k.SECTORID
                         join i in context.TBL_CHECKLIST_ITEM on k.CHECKLISTITEMID equals i.CHECKLISTITEMID
                         where k.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
-                        && ln.LOANAPPLICATIONID == loanApplicationId
+                        && ln.LOANAPPLICATIONID == loanApplicationId && k.DELETED == false
                         select new ESGChecklistDefinitionAndDetailViewModel
                         {
                             checkListDetailId = 0,

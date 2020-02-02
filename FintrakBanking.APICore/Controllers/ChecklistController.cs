@@ -300,6 +300,36 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("checklist-type-mapping/{checklistTypeMappingId}")]
+        public HttpResponseMessage DeleteChecklistTypeMapping(int checklistTypeMappingId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = CommonHelpers.GetUserIP()
+                };
+
+                repo.DeleteChecklistTypeMapping(checklistTypeMappingId, user);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = true, result = checklistTypeMappingId, message = "record has been deleted successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = ex.Message });
+            }
+        }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("checklist-definition/{CheckListDefinitionId}")]
@@ -1623,7 +1653,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.DeleteESGChecklistDefinition(esgChecklistDefinitionId);
+                var data = repo.DeleteESGChecklistDefinition(esgChecklistDefinitionId, token.GetStaffId);
                 if (data == true)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1952,7 +1982,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.DeleteGreenRatingDefinition(esgChecklistDefinitionId);
+                var data = repo.DeleteGreenRatingDefinition(esgChecklistDefinitionId, token.GetStaffId);
                 if (data == true)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
