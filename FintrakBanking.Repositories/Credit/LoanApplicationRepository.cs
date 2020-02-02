@@ -5876,7 +5876,7 @@ namespace FintrakBanking.Repositories.Credit
             var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId(appl.OPERATIONID, data.loanApplicationId, data.companyId, data.createdBy);
             //var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
             var ApprovalStaffCount = ApprovalTrail.Where(a => a.requestStaffId != data.createdBy).Count();
-            var staffRecord = context.TBL_STAFF.Find();
+            var staffRecord = context.TBL_STAFF.Find(data.createdBy);
             var userAdminRole = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLENAME.ToUpper().Contains("USER ADMIN")).FirstOrDefault();
             if (ApprovalStaffCount == 0 || (staffRecord != null && staffRecord.STAFFROLEID == userAdminRole?.STAFFROLEID))
             {

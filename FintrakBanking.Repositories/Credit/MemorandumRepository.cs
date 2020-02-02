@@ -5708,58 +5708,8 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CONCURRENCES:</b></h4> <br />";
-            result = result + GetApprovalsMarkupLOS();
-            /*result = result + $@"
-                <br />
-                <h4><b>CONCURRENCES:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>ACCOUNT OFFICER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>TEAM LEAD /REL. MANAGER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>RETAIL SALES MANAGER</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>ZONAL HEAD</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>PRODUCT MGT (HEAD)</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                  <tr>
-                        <td>GH, PRODUCT & CHANNELS MGT</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>CREDIT RISK MANAGEMENT </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                     <tr>
-                        <td><strong>APPROVAL:</strong></td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";*/
+            //result = result + GetApprovalsMarkupLOS();
+            
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
@@ -5932,47 +5882,7 @@ namespace FintrakBanking.Repositories.Credit
                    ";
             result = result + $"</table>";
             result = result + $@"
-                <br />
-                <h4><b>CONCURRENCES:</b></h4> <br />";
-            result = result + GetApprovalsMarkupLOS();
-
-            /*result = result + $@"
-                <br />
-                <h4><b>CONCURRENCES:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>ACCOUNT OFFICER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>TEAM LEAD /REL. MANAGER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>PRODUCT MGT GROUP</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>CORPORATE COUNSEL</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                   
-                    <tr>
-                        <td>CREDIT RISK MANAGEMENT </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";*/
+                 <br />";
             return result;
         }
 
@@ -6229,61 +6139,8 @@ namespace FintrakBanking.Repositories.Credit
                  ";
             result = result + $"</table>";
             result = result + $@"
-                <br />
-                <h4><b>CONCURRENCES:</b></h4> <br />";
-            result = result + GetApprovalsMarkupLOS();
-
-           /* result = result + $@"
-                <br />
-                <h4><b>CONCURRENCES:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>ACCOUNT OFFICER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>TEAM LEAD /REL. MANAGER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>RETAIL SALES MANAGER</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>ZONAL HEAD</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>PRODUCT MGT (HEAD)</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                  <tr>
-                        <td>GH, PRODUCT & CHANNELS MGT</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>CREDIT RISK MANAGEMENT </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                     <tr>
-                        <td><strong>APPROVAL:</strong></td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";*/
+                <br />";
+            
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
@@ -6549,47 +6406,7 @@ namespace FintrakBanking.Repositories.Credit
                  ";
             result = result + $"</table>";
             result = result + $@"
-                <br />
-                <h4><b>CONCURRENCES:</b></h4> <br />";
-            result = result + GetApprovalsMarkupLOS();
-
-            /*result = result + $@"
-                <br />
-                <h4><b>Concurrences:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>ACCOUNT OFFICER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>TEAM LEAD /REL. MANAGER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>PRODUCT MGT GROUP</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>CORPORATE COUNSEL</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                   
-                    <tr>
-                        <td>CREDIT RISK MANAGEMENT </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";*/
+               <br />";
             return result;
         }
 
@@ -6868,61 +6685,8 @@ namespace FintrakBanking.Repositories.Credit
                  ";
             result = result + $"</table>";
             result = result + $@"
-                <br />
-                <h4><b>CONCURRENCES:</b></h4> <br />";
-            result = result + GetApprovalsMarkupLOS();
-
-            /*result = result + $@"
-                <br />
-                <h4><b>CONCURRENCES:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>ACCOUNT OFFICER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>TEAM LEAD /REL. MANAGER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>RETAIL SALES MANAGER</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>ZONAL HEAD</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>PRODUCT MGT (HEAD)</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                  <tr>
-                        <td>GH, PRODUCT & CHANNELS MGT</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>CREDIT RISK MANAGEMENT </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                     <tr>
-                        <td><strong>APPROVAL:</strong></td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";*/
+                <br />";
+            
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
@@ -7031,47 +6795,7 @@ namespace FintrakBanking.Repositories.Credit
                  ";
             result = result + $"</table>";
             result = result + $@"
-                <br />
-                <h4><b>APPROVALS:</b></h4> <br />";
-            result = result + GetApprovalsMarkupLOS();
-
-            /*result = result + $@"
-                <br />
-                <h4><b>APPROVALS:</b></h4>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>RELATIONSHIP OFFICER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>RELATIONSHIP MANAGER </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>GROUP HEAD</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>CREDIT RISK MANAGEMENT </td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                   
-                    <tr>
-                        <td>APPROVAL </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";*/
+               <br />";
             return result;
         }
 
@@ -7192,50 +6916,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4>Collateral/Support/Justification:</h4>
                 <p><ul><li>List the supporting documents and their perfection status.</li></ul></p>
                 <br />";
-            result = result + GetApprovalsMarkupLOS();
-            /*result = result + $@"<table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
-                     
-                   <tr>
-                        <td colspan='2'><strong>APPROVAL INFORMATION</strong></td>                     
-                    </tr> 
-                    <tr>
-                        <td><strong>Name</strong></td>
-                        <td><strong>SIGNATURE</strong></td>
-                    </tr> 
-                   <tr>
-                        <td><strong>Relationship Officer.</strong></td>
-                        <td>_______________</td>
-                    </tr> 
-                    <tr>
-                        <td><strong>Relationship Manager.</strong></td>
-                        <td>_______________</td>
-                    </tr> 
-                     <tr>
-                        <td><strong>Zonal/Group Head</strong></td>
-                        <td>_______________</td>
-                    </tr> 
-                    <tr>
-                        <td><strong>Zonal/Group Head</strong></td>
-                        <td>_______________</td>
-                    </tr> 
-                     <tr>
-                        <td><strong>Credit Risk Mgt.</strong></td>
-                        <td>_______________</td>
-                    </tr> 
-                    <tr>
-                        <td><strong>APPROVAL	Executive Director</strong></td>
-                        <td>_______________</td>
-                    </tr>  
-                    <tr>
-                        <td>GDMD</td>
-                        <td>_______________</td>
-                    </tr>  
-                    <tr>
-                        <td>GMD</td>
-                        <td>_______________</td>
-                    </tr>  
-                   ";
-            result = result + $"</table>";*/
+           
 
             result = result + $@"
                 <br />
@@ -7251,6 +6932,7 @@ namespace FintrakBanking.Repositories.Credit
                  ";
             result = result + $"</table>";    
             return result;
+            //result = result + GetApprovalsMarkupLOS();
         }
 
         public string StaffCarLoansHtml()
@@ -7746,46 +7428,7 @@ namespace FintrakBanking.Repositories.Credit
 
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>";
-            result = result + GetApprovalsMarkupLOS();
-            /* result = result + $@" <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                      <tr>
-                         <th></th>
-                         <th><b>NAME</b></th>
-                         <th><b>SIGNATURE & DATE</b></th>
-                     </tr> 
-                    <tr>
-                         <td>Staff / Applicant </td>
-                         <td></td>
-                         <td></td>
-                     </tr> 
-                    <tr>
-                         <td>Staff’s Group Head </td>
-                         <td></td>
-                         <td></td>
-                     </tr> 
-                    <tr>
-                         <td>HR Officer</td>
-                         <td></td>
-                         <td></td>
-                     </tr> 
-                     <tr>
-                         <td>Group Head, CRM – PBD </td>
-                         <td></td>
-                         <td></td>
-                     </tr>  
-                     <tr>
-                         <td>Group Head, Credit Admin & Portfolio Management</td>
-                         <td></td>
-                         <td></td>
-                     </tr> 
-                     <tr>
-                         <td>Approval: Group Head, Human Resources </td>
-                         <td></td>
-                         <td></td>
-                     </tr> 
-                  ";
-             result = result + $"</table>";*/
+                ";
             return result;
         }
 
@@ -8298,52 +7941,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>";
-            result = result + GetApprovalsMarkupLOS();
-
-            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>Staff / Applicant </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>Line Supervisor/ Group Head</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>Group Head, Human Resources</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Group Head, CRM – PBD</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>Group Head, Credit Admin & Portfolio Management</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td><strong>Approval:</strong> Line ED </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                     <tr>
-                        <td><strong>Approval:</strong> GMD </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";*/
+                ";
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>                           
@@ -8864,46 +8462,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>";
-            result = result + GetApprovalsMarkupLOS();
-            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>Staff / Applicant </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>Line Supervisor/ Group Head</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>Group Head, Human Resources</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Group Head, CRM – PBD</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>Group Head, Credit Admin & Portfolio Management</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                     <tr>
-                        <td><strong>Approval:</strong> GMD </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";*/
+                ";
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
@@ -9421,46 +8980,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>";
-            result = result + GetApprovalsMarkupLOS();
-            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>Staff / Applicant </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>Staff’s Group Head</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>HR Officer</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Group Head, CRM – PBD</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>Group Head, Credit Admin & Portfolio Management</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                     <tr>
-                        <td><strong>Approval:</strong> Group Head, Human Resources </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";*/
+                ";
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
