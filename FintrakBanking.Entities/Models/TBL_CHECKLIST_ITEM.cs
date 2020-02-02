@@ -24,6 +24,7 @@ namespace FintrakBanking.Entities.Models
 
         public short RESPONSE_TYPEID { get; set; }
 
+        public int CHECKLIST_TYPEID { get; set; }
         public bool REQUIREUPLOAD { get; set; }
 
         public int CREATEDBY { get; set; }
