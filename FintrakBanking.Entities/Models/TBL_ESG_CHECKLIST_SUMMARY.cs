@@ -13,7 +13,8 @@
         public int ESGCHECKLISTSUMMARYID { get; set; }
 
         public int LOANAPPLICATIONDETAILID { get; set; }
-       
+        public int CHECKLIST_TYPEID { get; set; }
+
         public string COMMENT_ { get; set; }
 
         public int RATINGID { get; set; }

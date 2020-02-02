@@ -884,6 +884,9 @@ namespace FintrakBanking.Repositories.Credit
             var totalSummary2 = GetTotalForeignFacilitiesLOS();
             totalSummary.AddRange(totalSummary2);
             var exposureLLL = (GetTotalGroupLendingLimit().totalLLLImpact - GetTotalGroupLendingLimit(true).totalLLLImpact);
+            var test = (totalSummary.Sum(f => f.totalLLLImpact));
+            var test2 = (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
+
             return (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
         }
 
@@ -1517,6 +1520,10 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td><b>Environmental And Social Risk Summary:</b></td>
                         <td>{GetEnvironmentalSocialRiskMarkup()}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Overall Green Category:</b></td>
+                        <td>{GetGreenRatingSummaryMarkup()}</td>
                     </tr>
                  ";
             result = result + $"</table>";
@@ -4697,7 +4704,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return context.TBL_ESG_CHECKLIST_SUMMARY
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.targetId) 
-                , s => s.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (s, d) => new { s, d })
+                , s => s.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (s, d) => new { s, d }).Where(x => x.s.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist)
                 .Select(x => new ESGChecklistSummaryViewModel
                 {
                     loanApplicationDetailId = x.s.LOANAPPLICATIONDETAILID,
@@ -4705,6 +4712,30 @@ namespace FintrakBanking.Repositories.Credit
                     ratingId = x.s.RATINGID,
                     productCustomerName = x.d.TBL_PRODUCT.PRODUCTNAME + " -- " + x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME
                 }).ToList();
+        }
+
+        public IEnumerable<ESGChecklistSummaryViewModel> GetGreenRatingSummary()
+        {
+            return context.TBL_ESG_CHECKLIST_SUMMARY
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.targetId)
+                , s => s.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONID, (s, d) => new { s, d }).Where(x => x.s.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating)
+                .Select(x => new ESGChecklistSummaryViewModel
+                {
+                    loanApplicationDetailId = x.s.LOANAPPLICATIONDETAILID,
+                    comment = x.s.COMMENT_,
+                    ratingId = x.s.RATINGID,
+                    productCustomerName = x.d.TBL_PRODUCT.PRODUCTNAME + " -- " + x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME
+                }).ToList();
+        }
+
+        private string GetGreenRatingSummaryMarkup() // TODO RATINGIS
+        {
+            var result = String.Empty;
+            var summary = GetGreenRatingSummary().FirstOrDefault();
+
+            var n = 0;
+            result = result + $@"{ summary?.comment }";
+            return result;
         }
 
         private string GetEnvironmentalSocialRiskMarkup() // TODO RATINGIS

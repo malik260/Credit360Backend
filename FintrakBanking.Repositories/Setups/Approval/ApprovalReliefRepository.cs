@@ -383,12 +383,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 targetApprovalRelief = new TBL_STAFF_RELIEF()
                 {
                     RELIEFREASON = tempApprovalRelief.RELIEFREASON,
-                RELIEFSTAFFID = tempApprovalRelief.RELIEFSTAFFID,
-                STAFFID = tempApprovalRelief.STAFFID,
-                STARTDATE = tempApprovalRelief.STARTDATE,
-                ENDDATE = tempApprovalRelief.ENDDATE,
-                ISACTIVE = tempApprovalRelief.ISACTIVE,
-                CREATEDBY = (int)tempApprovalRelief.CREATEDBY,
+                    RELIEFSTAFFID = tempApprovalRelief.RELIEFSTAFFID,
+                    STAFFID = tempApprovalRelief.STAFFID,
+                    STARTDATE = tempApprovalRelief.STARTDATE,
+                    ENDDATE = tempApprovalRelief.ENDDATE,
+                    ISACTIVE = tempApprovalRelief.ISACTIVE,
+                    CREATEDBY = (int)tempApprovalRelief.CREATEDBY,
                     DATETIMECREATED = general.GetApplicationDate(),
 
 

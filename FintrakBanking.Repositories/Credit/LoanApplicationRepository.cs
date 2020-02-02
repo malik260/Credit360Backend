@@ -1291,7 +1291,7 @@ namespace FintrakBanking.Repositories.Credit
                                 var count1 = checklistDefinitions.Count();
                                 var count2 = checklistDetails.Count();
 
-                                if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
+                                if (checklistType.CHECKLIST_TYPEID == (short)CheckListTypeEnum.RegulatoryChecklist)
                                     continue;
 
                                 if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
@@ -1309,7 +1309,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 if (detailsCount != validationCount)
                                 {
-                                    if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
+                                    if (checklistType.CHECKLIST_TYPEID == (short)CheckListTypeEnum.RegulatoryChecklist)
                                         continue;
 
                                     isCheckListDone = false;
