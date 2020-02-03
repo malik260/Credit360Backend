@@ -402,6 +402,8 @@ namespace FintrakBanking.ViewModels.Credit
         public List<string> errorMessage { get; set; }
         public string pricipalFrequencyTypeName { get; set; }
         public string responsiblePerson { get; set; }
+        public short productClassProcessId { get; set; }
+        public short loanApplicationTypeId { get; set; }
 
 
 

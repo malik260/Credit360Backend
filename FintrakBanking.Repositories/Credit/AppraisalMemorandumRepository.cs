@@ -2665,7 +2665,7 @@ namespace FintrakBanking.Repositories.Credit
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
             tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
             
-            //jumpedDestination = x.b.OPERATIONID == (short)OperationsEnum.InitiationLevelAppraisal,
+            
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA)
