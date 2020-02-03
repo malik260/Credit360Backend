@@ -4,7 +4,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class WorkflowTrackerViewModel
     {
-        public int dueHours { get; set; }
+        public string dueHours { get; set; }
 
         //public int dueDate;
         public int dueDay { get; set; }
