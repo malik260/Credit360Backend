@@ -204,8 +204,6 @@ namespace FintrakBanking.Repositories.Credit
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && x.RESPONSESTAFFID == null
-                     // && (x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2 || operationIds.Contains(48))
-                     && x.RESPONSESTAFFID == null
                      && ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
                      || (!levelIds.Contains((int)x.TOAPPROVALLEVELID)) && (x.TOSTAFFID == staffId))
              ),
@@ -219,7 +217,7 @@ namespace FintrakBanking.Repositories.Credit
                  approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
                  currentApprovalLevel = x.trail == null ? "" : x.trail.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                                                                                                       // currentApprovalLevelTypeId = x.trail == null ? null : x.trail.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
-                     currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
+                 currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
                  lastComment = x.trail == null ? "" : x.trail.COMMENT,
                  toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
                  requestStaffId = x.trail == null ? 0 : x.trail.REQUESTSTAFFID,
@@ -238,8 +236,23 @@ namespace FintrakBanking.Repositories.Credit
                  customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                  atInitiator = x.application.CREATEDBY == staffId,
                  timeIn = x.trail.SYSTEMARRIVALDATETIME,
+                 slaTime = x.trail.SLADATETIME,
                  currentApprovalStatus = x.trail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                  currentApprovalStateId = x.trail.APPROVALSTATEID,
+                 customerGroupName = context.TBL_CUSTOMER_GROUP.Where(c=>c.CUSTOMERGROUPID == x.application.CUSTOMERGROUPID).Select(c=>c.GROUPNAME).FirstOrDefault() ?? "",
+
+                 loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(l=>l.LOANAPPLICATIONTYPEID == x.application.LOANAPPLICATIONTYPEID).Select(l=>l.LOANAPPLICATIONTYPENAME).FirstOrDefault() ?? "N/A",
+                 facility = context.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + context.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LMSR_APPLICATION_DETAIL
+                                        .Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED == false)
+                                        .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                        .FirstOrDefault() ?? "N/A",
+                 approvedAmount = x.application.APPROVEDAMOUNT == null ? 0 : x.application.APPROVEDAMOUNT,
+                 productClassProcessId = x.application.PRODUCT_CLASS_PROCESSID == null ? 0 : x.application.PRODUCT_CLASS_PROCESSID,
+                 divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.application.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                 globalsla = context.TBL_PRODUCT_CLASS.Where(c=>c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c=>c.GLOBALSLA).FirstOrDefault() == null ? 0 : context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault(),
+                 currentApprovalLevelSlaInterval = x.trail.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
+                 dateTimeCreated = x.application.DATETIMECREATED,
+
                  responsiblePerson = context.TBL_STAFF
                                              .Where(s => s.STAFFID == x.trail.TOSTAFFID)
                                              .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
@@ -507,6 +520,11 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONSTATUSID = (short)1, // remove magic numbers
                // PROPOSEDTENOR = model.proposedTenor,
                // PROPOSEDINTEREST = model.proposedInterest,
+               PRODUCTCLASSID = model.productClassId,
+               PRODUCTID = model.productId,
+               LOANAPPLICATIONTYPEID = model.loanApplicationTypeId,
+               PRODUCT_CLASS_PROCESSID = model.productClassProcessId,
+               APPROVEDAMOUNT = model.approvedAmount,
                 
             });
 
@@ -957,39 +975,30 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogLMSOperationForRouting(ForwardReviewViewModel model, List<TBL_LMSR_APPLICATION_DETAIL> details, short nextOperationId, short lastOperationId)
         {
-
-            foreach (var i in details)
+            var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+            if (lastOperationId != (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
-                if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
-                {
-
-                    var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == i.OPERATIONID)?.FirstOrDefault();
-                    nextOperationId = (short)operation?.SYNCHOPERATIONID;
-
-                    if (operation == null)
-                        throw new ConditionNotMetException("Operation not in synch with final operation");
-
-                }
-
                 var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
-                                x.COMPANYID == model.companyId
-                                && x.OPERATIONID == nextOperationId 
-                                && x.TARGETID == i.LOANREVIEWAPPLICATIONID
-                                && x.RESPONSESTAFFID == null
-                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
-                            ).ToList();
+                               x.COMPANYID == model.companyId
+                               && x.OPERATIONID == nextOperationId
+                               //&& x.TARGETID == appl.LOANAPPLICATIONID
+                               && x.TARGETID == appl.LOANAPPLICATIONID
+                               && x.RESPONSESTAFFID == null
+                               && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                           ).ToList();
                 if (existingTrail.Count() == 0)
                 {
                     Workflow workflowlms = new Workflow(context, general);
 
-                    if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-                      || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
-                      || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
+                    if ((appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                      || appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                      || appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
                     {
                         workflowlms.StaffId = model.createdBy;
                         workflowlms.CompanyId = model.companyId;
                         workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
-                        workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
+                        //workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
+                        workflowlms.TargetId = appl.LOANAPPLICATIONID;
                         workflowlms.Comment = model.comment;
                         workflowlms.OperationId = (int)nextOperationId;
                         workflowlms.DeferredExecution = true;
@@ -997,6 +1006,49 @@ namespace FintrakBanking.Repositories.Credit
                         workflowlms.LogActivity();
                         context.SaveChanges();
                     }
+                }
+            }
+
+            if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            {
+                foreach (var i in details)
+                {
+                    var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == appl.OPERATIONID)?.FirstOrDefault();
+                    var synchOperationId  = operation?.SYNCHOPERATIONID;
+
+                    if (synchOperationId == null)
+                        throw new ConditionNotMetException("Operation not in synch with final operation");
+
+                    nextOperationId = (short)synchOperationId;
+
+                    var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                    x.COMPANYID == model.companyId
+                                    && x.OPERATIONID == nextOperationId
+                                    && x.TARGETID == i.LOANREVIEWAPPLICATIONID
+                                    && x.RESPONSESTAFFID == null
+                                    && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                                ).ToList();
+                    if (existingTrail.Count() == 0)
+                    {
+                        Workflow workflowlms = new Workflow(context, general);
+
+                        if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                          || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                          || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
+                        {
+                            workflowlms.StaffId = model.createdBy;
+                            workflowlms.CompanyId = model.companyId;
+                            workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
+                            workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
+                            workflowlms.Comment = model.comment;
+                            workflowlms.OperationId = (int)nextOperationId;
+                            workflowlms.DeferredExecution = true;
+                            workflowlms.ExternalInitialization = true;
+                            workflowlms.LogActivity();
+                            context.SaveChanges();
+                        }
+                    }
+
                 }
             }
         }

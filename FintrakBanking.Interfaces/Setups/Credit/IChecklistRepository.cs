@@ -14,6 +14,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<CheckListResponseTypeViewModel> GetAllChecklistResponseType();
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType();
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();
+        bool DeleteChecklistTypeMapping(int checklistTypeMappingId, UserInfo user);
         IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId, int productClassProcessId);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId);
         List<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId);
@@ -91,9 +92,22 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ESGTypeViewModel> GetESGType();
         IEnumerable<ESGCategoryViewModel> GetESGCategory();
         IEnumerable<ESGSubCategoryViewModel> GetESGSubCategory(int categoryId);
-        IEnumerable<ESGChecklistDefinitionViewModel> GetESGChecklistDefinition();
+         IEnumerable<ESGChecklistDefinitionViewModel> GetESGChecklistDefinition();
         IEnumerable<ESGChecklistDetailViewModel> GetESGChecklistDetail(int loanApplicationDetailId);
         IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetESGChecklistStatus(int loanApplicationDetailId);
+
+        IEnumerable<CheckListScores> GetCheckListScores();
+        IEnumerable<ChecklistItemViewModel> GetAllChecklistItemBycheckListTypeId(int checkListTypeId);
+        IEnumerable<ESGChecklistDefinitionViewModel> GetGreenRatingDefinition();
+        IEnumerable<ESGChecklistDetailViewModel> GetGreenRatingDetail(int loanApplicationDetailId);
+        IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetGreenRatingStatus(int loanApplicationDetailId);
+        ESGChecklistSummaryViewModel CalculateGreenRatingSummary(List<ESGChecklistDetailViewModel> models);
+        bool AddGreenRatingDetail(List<ESGChecklistDetailViewModel> models);
+        bool AddGreenRatingSummary(ESGChecklistSummaryViewModel models);
+        bool AddGreenRatingDefinition(List<ESGChecklistDefinitionViewModel> models);
+        bool DeleteGreenRatingDefinition(int esgChecklistDefinitionId, int staffId);
+
+
         ESGChecklistSummaryViewModel CalculateESGChecklistSummary(List<ESGChecklistDetailViewModel> models);
         IEnumerable<LoanApplicationDetailViewModel> GetAllFacilityDetails(int loanApplicationId, int companyId);
         bool AddESGCategory(ESGChecklistDefinitionViewModel model);
@@ -106,7 +120,7 @@ namespace FintrakBanking.Interfaces.Setups
         bool AddESGChecklistDetail(List<ESGChecklistDetailViewModel> models);
         bool AddESGChecklistSummary(ESGChecklistSummaryViewModel models);
 
-        bool DeleteESGChecklistDefinition(int esgChecklistDefinitionId);
+        bool DeleteESGChecklistDefinition(int esgChecklistDefinitionId, int staffId);
 
         #endregion
 

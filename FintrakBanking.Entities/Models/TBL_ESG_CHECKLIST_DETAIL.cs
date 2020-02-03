@@ -15,6 +15,7 @@
         public int ESGCHECKLISTDEFINITIONID { get; set; }
 
         public int LOANAPPLICATIONDETAILID { get; set; }
+        public int CHECKLIST_TYPEID { get; set; }
         public short ESGCLASSID { get; set; }
         public short ESGTYPEID { get; set; }
         public short CHECKLISTSTATUSID { get; set; }

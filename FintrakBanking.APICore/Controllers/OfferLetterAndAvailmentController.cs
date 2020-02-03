@@ -167,7 +167,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("updateFinalOfferLetter/{loanApplicationId}")]
-        public HttpResponseMessage UpdateFinalOfferLetter(int loanApplicationId, OfferLetterTemplateViewModel model)
+        public HttpResponseMessage UpdateFinalOfferLetter([FromUri] int loanApplicationId, [FromBody] OfferLetterTemplateViewModel model)
         {
             try
             {
