@@ -30,6 +30,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalStatusId;
         public int approvalTrailId;
         public string approvalStatusName;
+        public string fromApprovalLevelName;
+        public string toApprovalLevelName;
 
         public int callMemoId { get; set; }
         public int? approvalLevelId { get; set; }

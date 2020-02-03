@@ -23,10 +23,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
         public BaselIntegration(FinTrakBankingContext context)
         {
             _context = context;
-            //API_KEY = "WzKQBRQXboWsIVI";
-            API_KEY = "XtSREijsrZYkt9S";
-            API_URL = "http://10.1.12.186:94/api/Credit360API/";
-            //API_URL = "http://10.1.9.197:94/api/Credit360API/";
+            API_KEY = "WzKQBRQXboWsIVI";
+            //API_KEY = "XtSREijsrZYkt9S";
+            //API_URL = "http://10.1.12.186:94/api/Credit360API/";
+            API_URL = "http://10.1.9.197:94/api/Credit360API/";
 
             //var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
             //if (configdata != null)

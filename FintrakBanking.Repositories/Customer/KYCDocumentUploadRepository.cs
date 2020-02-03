@@ -190,7 +190,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId, bool isProductBased, int? customerId=null,int? checkListItemId = null, int? checkListTypeId=null, DateTime ? checklistDate = null)
         {
-            if (checkListTypeId == (int)CheckTypeEnum.RegulatoryChecklist)
+            if (checkListTypeId == (int)CheckListTypeEnum.RegulatoryChecklist)
             {
                 var creditBureauId = _finContext.TBL_CREDIT_BUREAU.Where(o => o.CHECKLISTITEMID == checkListItemId).Select(o=>o.CREDITBUREAUID).FirstOrDefault();
                 if (creditBureauId!=null)
@@ -230,7 +230,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 var checklistDoc = new CheckListDocumentUploadViewModel();
 
-                if (checkListTypeId == (int)CheckTypeEnum.PreLendingCallGrid)
+                if (checkListTypeId == (int)CheckListTypeEnum.PreLendingCallGrid)
                 {
                     checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
                                     where ck.CHECKLISTDEFINITIONID == definitionId

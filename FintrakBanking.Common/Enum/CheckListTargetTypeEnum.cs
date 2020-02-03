@@ -14,14 +14,18 @@ namespace FintrakBanking.Common.Enum
         LoanApplicationCustomerChecklist = 3
     }
 
-    public enum CheckTypeEnum
+    public enum CheckListTypeEnum
     {
         EligibilityChecklist = 1,
         RegulatoryChecklist = 2,
         ESGMChecklist = 3,
         PreLendingCallGrid = 4,
         CAPChecklist = 5,
-        AvailmentCheckList = 6
+        AvailmentCheckList = 6,
+        OfferLetterChecklist = 7,
+        BlackBookCheck = 8,
+        WriteOffCheck = 9,
+        GreenRating = 10
     }
 
     public enum ESGScoreGradeEnum
