@@ -204,8 +204,6 @@ namespace FintrakBanking.Repositories.Credit
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && x.RESPONSESTAFFID == null
-                     // && (x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2 || operationIds.Contains(48))
-                     && x.RESPONSESTAFFID == null
                      && ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
                      || (!levelIds.Contains((int)x.TOAPPROVALLEVELID)) && (x.TOSTAFFID == staffId))
              ),
@@ -219,7 +217,7 @@ namespace FintrakBanking.Repositories.Credit
                  approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
                  currentApprovalLevel = x.trail == null ? "" : x.trail.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                                                                                                       // currentApprovalLevelTypeId = x.trail == null ? null : x.trail.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
-                     currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
+                 currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
                  lastComment = x.trail == null ? "" : x.trail.COMMENT,
                  toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
                  requestStaffId = x.trail == null ? 0 : x.trail.REQUESTSTAFFID,
@@ -238,8 +236,23 @@ namespace FintrakBanking.Repositories.Credit
                  customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                  atInitiator = x.application.CREATEDBY == staffId,
                  timeIn = x.trail.SYSTEMARRIVALDATETIME,
+                 slaTime = x.trail.SLADATETIME,
                  currentApprovalStatus = x.trail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                  currentApprovalStateId = x.trail.APPROVALSTATEID,
+                 customerGroupName = context.TBL_CUSTOMER_GROUP.Where(c=>c.CUSTOMERGROUPID == x.application.CUSTOMERGROUPID).Select(c=>c.GROUPNAME).FirstOrDefault() ?? "",
+
+                 loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(l=>l.LOANAPPLICATIONTYPEID == x.application.LOANAPPLICATIONTYPEID).Select(l=>l.LOANAPPLICATIONTYPENAME).FirstOrDefault() ?? "N/A",
+                 facility = context.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + context.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LMSR_APPLICATION_DETAIL
+                                        .Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED == false)
+                                        .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                        .FirstOrDefault() ?? "N/A",
+                 approvedAmount = x.application.APPROVEDAMOUNT == null ? 0 : x.application.APPROVEDAMOUNT,
+                 productClassProcessId = x.application.PRODUCT_CLASS_PROCESSID == null ? 0 : x.application.PRODUCT_CLASS_PROCESSID,
+                 divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.application.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                 globalsla = context.TBL_PRODUCT_CLASS.Where(c=>c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c=>c.GLOBALSLA).FirstOrDefault() == null ? 0 : context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault(),
+                 currentApprovalLevelSlaInterval = x.trail.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
+                 dateTimeCreated = x.application.DATETIMECREATED,
+
                  responsiblePerson = context.TBL_STAFF
                                              .Where(s => s.STAFFID == x.trail.TOSTAFFID)
                                              .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
@@ -507,6 +520,11 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONSTATUSID = (short)1, // remove magic numbers
                // PROPOSEDTENOR = model.proposedTenor,
                // PROPOSEDINTEREST = model.proposedInterest,
+               PRODUCTCLASSID = model.productClassId,
+               PRODUCTID = model.productId,
+               LOANAPPLICATIONTYPEID = model.loanApplicationTypeId,
+               PRODUCT_CLASS_PROCESSID = model.productClassProcessId,
+               APPROVEDAMOUNT = model.approvedAmount,
                 
             });
 

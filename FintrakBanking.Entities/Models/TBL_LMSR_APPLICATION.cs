@@ -100,5 +100,10 @@
         public virtual ICollection<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
         public int OPERATIONID { get; set; }
         public short? RISKRATINGID { get; set; }
+        public short? PRODUCTCLASSID { get; set; }
+        public int? PRODUCTID { get; set; }
+        public short? LOANAPPLICATIONTYPEID { get; set; }
+        public short? PRODUCT_CLASS_PROCESSID { get; set; }
+        public decimal? APPROVEDAMOUNT { get; set; }
     }
 }
