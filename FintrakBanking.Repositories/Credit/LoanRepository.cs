@@ -2817,7 +2817,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var company = context.TBL_COMPANY.Find(companyId);
             var canReRouteBooking = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == staffId && x.ACTIVITYID == 177).Any();
+
             var newApplicationDate = generalSetup.GetApplicationDate();
+
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
@@ -2875,7 +2877,7 @@ namespace FintrakBanking.Repositories.Credit
                             canReRouteBooking = canReRouteBooking,
                             ////isTemporaryOverdraft = p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault() != null ? p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault().ISTEMPORARYOVERDRAFT : false,
 
-                            //relationshipOfficerId = m.RELATIONSHIPOFFICERID,
+                           // relationshipOfficerId = m.RELATIONSHIPOFFICERID,
                             relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                             //relationshipManagerId = m.RELATIONSHIPMANAGERID,
                             
@@ -3061,7 +3063,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            return data.Where(x=>x.loanReferenceNumber != null).Distinct().ToList();
+            return data.Where(x => x.loanReferenceNumber != null);//.Distinct().ToList();
         }
 
         public IEnumerable<LoanViewModel> GetLoanFacilityBookingAwaitingApproval(int staffId, int companyId)
@@ -3344,6 +3346,7 @@ namespace FintrakBanking.Repositories.Credit
                             disburserComment = ln.DISBURSERCOMMENT,
                             disburseDate = ln.DISBURSEDATE,
                             loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                            loanStatusId = ln.LOANSTATUSID,
                             comment = atrail.COMMENT,
                             overdraftLimit = ln.OVERDRAFTLIMIT,
                             bookedAmount = ln.OVERDRAFTLIMIT,
@@ -3435,7 +3438,7 @@ namespace FintrakBanking.Repositories.Credit
             data = lcyLoans.Union(fcyLoans).ToList();
 
 
-            return data;
+            return data.ToList();
 
         }
 
