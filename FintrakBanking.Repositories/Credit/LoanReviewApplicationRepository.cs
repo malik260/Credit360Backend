@@ -252,7 +252,7 @@ namespace FintrakBanking.Repositories.Credit
                  globalsla = context.TBL_PRODUCT_CLASS.Where(c=>c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c=>c.GLOBALSLA).FirstOrDefault() == null ? 0 : context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault(),
                  currentApprovalLevelSlaInterval = x.trail.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
                  dateTimeCreated = x.application.DATETIMECREATED,
-
+                 //submittedForAppraisal = x.trail.SUBMITTEDFORAPPRAISAL,
                  responsiblePerson = context.TBL_STAFF
                                              .Where(s => s.STAFFID == x.trail.TOSTAFFID)
                                              .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
@@ -845,7 +845,8 @@ namespace FintrakBanking.Repositories.Credit
 
             //string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
 
-            var checklistValidation = ChecklistCompleted(model.applicationId);
+            //var checklistValidation = ChecklistCompleted(model.applicationId);
+            bool checklistValidation = true;
             if (appl.CREATEDBY == model.createdBy && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter && checklistValidation == false)
             {
                 throw new SecureException("Checklist not completed!");
