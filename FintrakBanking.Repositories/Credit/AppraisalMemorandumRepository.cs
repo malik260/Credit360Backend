@@ -741,7 +741,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveApprovedDocumentation(int staffId, int operationId, int targetId)
         {
-            // int staffId, is REDUNDANT!
+            // int staffId, is REDUNDANT! 
             var printedDoc = "";
             var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)

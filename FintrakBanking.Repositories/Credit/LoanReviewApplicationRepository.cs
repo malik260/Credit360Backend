@@ -242,10 +242,10 @@ namespace FintrakBanking.Repositories.Credit
                  customerGroupName = context.TBL_CUSTOMER_GROUP.Where(c=>c.CUSTOMERGROUPID == x.application.CUSTOMERGROUPID).Select(c=>c.GROUPNAME).FirstOrDefault() ?? "",
 
                  loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(l=>l.LOANAPPLICATIONTYPEID == x.application.LOANAPPLICATIONTYPEID).Select(l=>l.LOANAPPLICATIONTYPENAME).FirstOrDefault() ?? "N/A",
-                 facility = context.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + context.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LMSR_APPLICATION_DETAIL
+                 facility = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.application.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LMSR_APPLICATION_DETAIL
                                         .Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED == false)
                                         .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
-                                        .FirstOrDefault() ?? "N/A",
+                                        .FirstOrDefault(),
                  approvedAmount = x.application.APPROVEDAMOUNT == null ? 0 : x.application.APPROVEDAMOUNT,
                  productClassProcessId = x.application.PRODUCT_CLASS_PROCESSID == null ? 0 : x.application.PRODUCT_CLASS_PROCESSID,
                  divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.application.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
