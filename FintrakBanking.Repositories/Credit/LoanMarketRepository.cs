@@ -81,8 +81,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = expo.approvedAmount,
                     IMPACT = expo.impact, 
                     LOANAPPLICATIONID = expo.loanApplicationId,
-                    CUSTOMERID = expo.customerId
-                   
+                    CUSTOMERID = expo.customerId,
+                    TENOR =expo.tenor
                     
                 };
 
@@ -183,6 +183,7 @@ namespace FintrakBanking.Repositories.Credit
                             productName = p.PRODUCTNAME,
                             approvedAmount = o.APPROVEDAMOUNT,
                             impact = o.IMPACT,
+                            tenor = o.TENOR,
                             currencyCode = c.CURRENCYCODE,
                             loanReferenceNumber = _context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPLICATIONID == o.LOANAPPLICATIONID).Select(l => l.APPLICATIONREFERENCENUMBER).FirstOrDefault()?? "N/A",
                             customerName  = _context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == o.CUSTOMERID).Select(x => x.FIRSTNAME +" "+x.LASTNAME).FirstOrDefault() ?? "N/A"
@@ -249,7 +250,8 @@ namespace FintrakBanking.Repositories.Credit
                     val.EXPOSURE = expo.outstandingExpo;
                     val.PRODUCTID = expo.facilityName;
                     val.APPROVEDAMOUNT = expo.approvedAmount;
-                    val.IMPACT = expo.impact;  
+                    val.IMPACT = expo.impact;
+                    val.TENOR = expo.tenor;
                 
                 _context.SaveChanges();
 
