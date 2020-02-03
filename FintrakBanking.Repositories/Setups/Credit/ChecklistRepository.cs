@@ -1336,6 +1336,7 @@ namespace FintrakBanking.Repositories.Credit
             data.REQUIREUPLOAD = model.requireUpload;
             data.RESPONSE_TYPEID = model.responseTypeId;
             data.CHECKLISTITEMNAME = model.checkListItemName;
+            data.CHECKLIST_TYPEID = model.checkListTypeId;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = (int)model.createdBy;
 
