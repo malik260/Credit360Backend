@@ -38,5 +38,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? legalLendingUnit { get; set; }
         public int? customerId { get; set; }
         public string customerName { get; set; }
+        public int? tenor { get; set; }
     }
 }
