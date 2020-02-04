@@ -2304,6 +2304,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             model.createdBy = token.GetStaffId;
             model.deletedBy = token.GetStaffId;
+            
             var response = repo.DeleteDuplicatedCollateral(model);
             if (response)
             {
