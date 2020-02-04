@@ -350,7 +350,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
             }
 
-            if(this.request.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred && this.statusId != (short)ApprovalStatusEnum.Referred)
+            if(this.request != null && this.request.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred && this.statusId != (short)ApprovalStatusEnum.Referred)
             {
                 var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
                 var destinationLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.nextLevelId).FirstOrDefault();
@@ -1242,7 +1242,6 @@ namespace FintrakBanking.Repositories.WorkFlow
            
             List<WorkflowSetup> grid = new List<WorkflowSetup>();
             //bool canSkipRule = levelBusinessRule.InsiderRelated == true;
-            levelBusinessRule.Amount = this.amount;
 
             int n = 0;
             foreach (WorkflowSetup level in levels)
