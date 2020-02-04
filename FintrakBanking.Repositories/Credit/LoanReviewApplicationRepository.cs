@@ -102,8 +102,26 @@ namespace FintrakBanking.Repositories.Credit
                  customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                  atInitiator = x.application.CREATEDBY == staffId,
                  timeIn = x.trail.SYSTEMARRIVALDATETIME,
+                 slaTime = x.trail.SLADATETIME,
                  currentApprovalStatus = x.trail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                  currentApprovalStateId = x.trail.APPROVALSTATEID,
+
+
+                 customerGroupName = context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == x.application.CUSTOMERGROUPID).Select(c => c.GROUPNAME).FirstOrDefault() ?? "",
+
+                 loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(l => l.LOANAPPLICATIONTYPEID == x.application.LOANAPPLICATIONTYPEID).Select(l => l.LOANAPPLICATIONTYPENAME).FirstOrDefault() ?? "N/A",
+                 facility = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.application.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LMSR_APPLICATION_DETAIL
+                                        .Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED == false)
+                                        .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                        .FirstOrDefault(),
+                 approvedAmount = x.application.APPROVEDAMOUNT == null ? 0 : x.application.APPROVEDAMOUNT,
+                 productClassProcessId = x.application.PRODUCT_CLASS_PROCESSID == null ? 0 : x.application.PRODUCT_CLASS_PROCESSID,
+                 divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.application.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                 globalsla = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault() == null ? 0 : context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault(),
+                 currentApprovalLevelSlaInterval = x.trail.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
+                 dateTimeCreated = x.application.DATETIMECREATED,
+                 operationTypeName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == x.application.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+
                  responsiblePerson = context.TBL_STAFF
                                              .Where(s => s.STAFFID == x.trail.TOSTAFFID)
                                              .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
@@ -239,20 +257,22 @@ namespace FintrakBanking.Repositories.Credit
                  slaTime = x.trail.SLADATETIME,
                  currentApprovalStatus = x.trail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                  currentApprovalStateId = x.trail.APPROVALSTATEID,
+
                  customerGroupName = context.TBL_CUSTOMER_GROUP.Where(c=>c.CUSTOMERGROUPID == x.application.CUSTOMERGROUPID).Select(c=>c.GROUPNAME).FirstOrDefault() ?? "",
 
                  loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(l=>l.LOANAPPLICATIONTYPEID == x.application.LOANAPPLICATIONTYPEID).Select(l=>l.LOANAPPLICATIONTYPENAME).FirstOrDefault() ?? "N/A",
-                 facility = context.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + context.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LMSR_APPLICATION_DETAIL
+                 facility = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.application.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LMSR_APPLICATION_DETAIL
                                         .Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED == false)
                                         .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
-                                        .FirstOrDefault() ?? "N/A",
+                                        .FirstOrDefault(),
                  approvedAmount = x.application.APPROVEDAMOUNT == null ? 0 : x.application.APPROVEDAMOUNT,
                  productClassProcessId = x.application.PRODUCT_CLASS_PROCESSID == null ? 0 : x.application.PRODUCT_CLASS_PROCESSID,
                  divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.application.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                  globalsla = context.TBL_PRODUCT_CLASS.Where(c=>c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c=>c.GLOBALSLA).FirstOrDefault() == null ? 0 : context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault(),
                  currentApprovalLevelSlaInterval = x.trail.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
                  dateTimeCreated = x.application.DATETIMECREATED,
-
+                 operationTypeName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID == x.application.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
+                 //submittedForAppraisal = x.trail.SUBMITTEDFORAPPRAISAL,
                  responsiblePerson = context.TBL_STAFF
                                              .Where(s => s.STAFFID == x.trail.TOSTAFFID)
                                              .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
@@ -845,7 +865,8 @@ namespace FintrakBanking.Repositories.Credit
 
             //string staffRole = (from x in context.TBL_STAFF join r in context.TBL_STAFF_ROLE on x.STAFFROLEID equals r.STAFFROLEID where x.STAFFID == model.staffId select r.STAFFROLECODE).FirstOrDefault();
 
-            var checklistValidation = ChecklistCompleted(model.applicationId);
+            //var checklistValidation = ChecklistCompleted(model.applicationId);
+            bool checklistValidation = true;
             if (appl.CREATEDBY == model.createdBy && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter && checklistValidation == false)
             {
                 throw new SecureException("Checklist not completed!");

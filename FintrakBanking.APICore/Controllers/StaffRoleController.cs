@@ -29,7 +29,7 @@ namespace FintrakBanking.APICore.Controllers
       [HttpGet] [ClaimsAuthorization]  
         [Route("staff-role")]
         public HttpResponseMessage GetStaffRole()
-        {
+        { 
             try
             {
                 var data = repo.GetStaffRole();
