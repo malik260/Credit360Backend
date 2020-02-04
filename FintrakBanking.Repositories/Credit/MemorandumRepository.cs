@@ -912,7 +912,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId).ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId && x.OPERATIONID == operationId).ToList();
             }
 
             var data = trail.Select(x => new ApprovalTrailViewModel
@@ -3977,38 +3977,38 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private string GetApprovalsMarkupForAllLOS(int targetId)
-        {
-            var appraisals = GetAppraisalMemorandumTrail(targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
-            var result = String.Empty;
-            result = result + $@"
-                <br/><h3><b>APPROVALS</b></h3>
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
-                    <tr>
-                        <th><b>Role</b></th>
-                        <th><b>Name</b></th>
-                        <th><b>Decision</b></th>
-                        <th><b>Comment</b></th>
-                        <th><b>Date</b></th>
-                    </tr>
-                    ";
-            foreach (var trail in appraisals)
-            {
-                result = result + $@"
-                    <tr>
-                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
-                        <td>{trail.fromStaffName}</td>
-                        <td>{GetDecision(trail.vote)}</td>
-                        <td>{trail.comment}</td>
-                        <td>{trail.systemArrivalDateTime}</td>
-                    </tr>
-                ";
-            }
+        //private string GetApprovalsMarkupForAllLOS(int targetId)
+        //{
+        //    var appraisals = GetAppraisalMemorandumTrail(targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
+        //    var result = String.Empty;
+        //    result = result + $@"
+        //        <br/><h3><b>APPROVALS</b></h3>
+        //        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+        //            <tr>
+        //                <th><b>Role</b></th>
+        //                <th><b>Name</b></th>
+        //                <th><b>Decision</b></th>
+        //                <th><b>Comment</b></th>
+        //                <th><b>Date</b></th>
+        //            </tr>
+        //            ";
+        //    foreach (var trail in appraisals)
+        //    {
+        //        result = result + $@"
+        //            <tr>
+        //                <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+        //                <td>{trail.fromStaffName}</td>
+        //                <td>{GetDecision(trail.vote)}</td>
+        //                <td>{trail.comment}</td>
+        //                <td>{trail.systemArrivalDateTime}</td>
+        //            </tr>
+        //        ";
+        //    }
 
-            result = result + $"</table>";
-            return result;
+        //    result = result + $"</table>";
+        //    return result;
 
-        }
+        //}
 
 
         private string GetDrawdownApprovalsMarkupLOS()
