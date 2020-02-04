@@ -6988,8 +6988,9 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteDuplicatedCollateral(CollateralViewModel model)
         {
             bool status = false;
-            var data = context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == model.collateralCustomerId && o.CREATEDBY == model.createdBy).Select(o => o).FirstOrDefault();
-            if (data != null)
+            var data = context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == model.collateralCustomerId).Select(o => o).FirstOrDefault();
+            var staff = context.TBL_STAFF.Find(model.createdBy);
+            if (data != null && data.CREATEDBY == model.createdBy || staff.STAFFROLEID == 2)
             {
                 data.DELETED = true;
                 data.DELETEDBY = model.deletedBy;
