@@ -224,7 +224,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             var searchString = search.searchString.Trim();
             //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
-            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString);//.Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
+            //var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString);
+            var data = loanRepo.SearchForLoanAndRevolvingLoan(searchString);//.Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
         [HttpPost]

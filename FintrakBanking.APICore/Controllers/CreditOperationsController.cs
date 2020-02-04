@@ -314,7 +314,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.SearchForLoanAndRevolvingLoan(productTypeId, searchQuery);
+                //var data = loanRepo.SearchForLoanAndRevolvingLoan(productTypeId, searchQuery);
+                var data = loanRepo.SearchForLoanAndRevolvingLoan(searchQuery);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)
