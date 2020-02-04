@@ -120,6 +120,7 @@ namespace FintrakBanking.Repositories.Credit
                  globalsla = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault() == null ? 0 : context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault(),
                  currentApprovalLevelSlaInterval = x.trail.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
                  dateTimeCreated = x.application.DATETIMECREATED,
+                 operationTypeName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == x.application.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
 
                  responsiblePerson = context.TBL_STAFF
                                              .Where(s => s.STAFFID == x.trail.TOSTAFFID)
@@ -270,6 +271,7 @@ namespace FintrakBanking.Repositories.Credit
                  globalsla = context.TBL_PRODUCT_CLASS.Where(c=>c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c=>c.GLOBALSLA).FirstOrDefault() == null ? 0 : context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.application.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault(),
                  currentApprovalLevelSlaInterval = x.trail.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
                  dateTimeCreated = x.application.DATETIMECREATED,
+                 operationTypeName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID == x.application.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
                  //submittedForAppraisal = x.trail.SUBMITTEDFORAPPRAISAL,
                  responsiblePerson = context.TBL_STAFF
                                              .Where(s => s.STAFFID == x.trail.TOSTAFFID)
