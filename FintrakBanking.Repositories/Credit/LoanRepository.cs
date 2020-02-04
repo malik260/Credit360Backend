@@ -2950,6 +2950,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (trail.RESPONSESTAFFID == null)
                         {
+                            item.currentApprovalLevelId = trail.TOAPPROVALLEVELID;
                             var routedStaffRecord = context.TBL_STAFF.Where(x => x.STAFFID == trail.TOSTAFFID).FirstOrDefault();
                             if (routedStaffRecord != null) item.routedToStaff = routedStaffRecord.FIRSTNAME + " " + routedStaffRecord.LASTNAME;
                         }
@@ -3386,7 +3387,6 @@ namespace FintrakBanking.Repositories.Credit
 
                             relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
                             relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
-
 
                             loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING
                                               join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
@@ -8481,6 +8481,7 @@ namespace FintrakBanking.Repositories.Credit
                                        approvedTenor = d.APPROVEDTENOR,
                                        toStaffId = atrail.TOSTAFFID,
                                        requestStaffId = atrail.REQUESTSTAFFID,
+                                       isInEditMode = s.ISUSED ?? false,
                                        isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                        canReRouteBooking = canReRouteBooking,
                                        approvalTrailId = atrail.APPROVALTRAILID,
@@ -10883,8 +10884,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId)
         {
-            try
-            {
                 decimal overDraftLimit = 0;
                 decimal availableBalance = 0;
                 var odDetail = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == revolvingLoanId).Select(x => x).FirstOrDefault();
@@ -11034,11 +11033,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 return overDraftDetail;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            
         }
 
         public IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial(int userId, int companyId)
