@@ -892,7 +892,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 //     return x;
 
                 // }).OrderBy(o => o.approvalTrailId);
-
+                var currentDate = DateTime.Now;
 
                 var record = (from a in context.TBL_APPROVAL_TRAIL
                               join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
@@ -922,8 +922,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
                                   comment = a.COMMENT,
                                   systemArrivalDate = a.SYSTEMARRIVALDATETIME,
-                                  dueDay = (a.SYSTEMARRIVALDATETIME - DateTime.Now).Days,
-                                  dueHours = (a.SYSTEMARRIVALDATETIME - DateTime.Now).Hours,
+                                  //dueDay = (int)(currentDate.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
+                                  //dueHours = (currentDate - a.SYSTEMARRIVALDATETIME.Date).TotalHours.ToString(),
                                   systemResponseDate = a.SYSTEMRESPONSEDATETIME,
                                   requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
                                   responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
