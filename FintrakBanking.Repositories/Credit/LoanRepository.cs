@@ -13067,6 +13067,10 @@ namespace FintrakBanking.Repositories.Credit
 
                                    });
             var j = allFilteredLoan.ToList();
+            //if(j == null)
+            //{
+            //    allFilteredLoan = SearchRevolvingLoan(searchQuery);
+            //}
             return allFilteredLoan;
         }
 
