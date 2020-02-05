@@ -168,7 +168,7 @@ namespace FintrakBanking.Repositories.Credit
                     applicationDate = x.c.a.APPLICATIONDATE,
                     newApplicationDate = x.c.a.APPLICATIONDATE,
                     applicationAmount = x.c.a.APPLICATIONAMOUNT,
-                    approvedAmount = x.c.b.APPROVEDAMOUNT,
+                    approvedAmount = x.c.a.TBL_LOAN_APPLICATION_DETAIL.Sum(o => o.APPROVEDAMOUNT), //x.c.b.APPROVEDAMOUNT,
                     interestRate = x.c.a.INTERESTRATE,
                     applicationTenor = x.c.a.APPLICATIONTENOR,
                     relationshipOfficerName = x.c.a.TBL_STAFF.FIRSTNAME + " " + x.c.a.TBL_STAFF.MIDDLENAME + " " + x.c.a.TBL_STAFF.LASTNAME,
