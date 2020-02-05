@@ -472,6 +472,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string disburserComment { get; set; }
         public DateTime? disburseDate { get; set; }
         public int? operationId { get; set; }
+        public int? currentApprovalLevelId { get; set; }
         public int? operationTypeId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
