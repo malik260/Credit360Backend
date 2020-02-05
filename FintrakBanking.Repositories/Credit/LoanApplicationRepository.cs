@@ -23,7 +23,7 @@ using System.Data.Entity;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
 using GemBox.Spreadsheet;
-using System.IO;
+using System.IO; 
 
 namespace FintrakBanking.Repositories.Credit
 {
