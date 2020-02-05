@@ -2817,7 +2817,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var company = context.TBL_COMPANY.Find(companyId);
             var canReRouteBooking = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == staffId && x.ACTIVITYID == 177).Any();
+
             var newApplicationDate = generalSetup.GetApplicationDate();
+
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
@@ -2875,7 +2877,7 @@ namespace FintrakBanking.Repositories.Credit
                             canReRouteBooking = canReRouteBooking,
                             ////isTemporaryOverdraft = p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault() != null ? p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault().ISTEMPORARYOVERDRAFT : false,
 
-                            //relationshipOfficerId = m.RELATIONSHIPOFFICERID,
+                           // relationshipOfficerId = m.RELATIONSHIPOFFICERID,
                             relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                             //relationshipManagerId = m.RELATIONSHIPMANAGERID,
                             
@@ -2948,6 +2950,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (trail.RESPONSESTAFFID == null)
                         {
+                            item.currentApprovalLevelId = trail.TOAPPROVALLEVELID;
                             var routedStaffRecord = context.TBL_STAFF.Where(x => x.STAFFID == trail.TOSTAFFID).FirstOrDefault();
                             if (routedStaffRecord != null) item.routedToStaff = routedStaffRecord.FIRSTNAME + " " + routedStaffRecord.LASTNAME;
                         }
@@ -3061,7 +3064,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            return data.Where(x=>x.loanReferenceNumber != null).Distinct().ToList();
+            return data.Where(x => x.loanReferenceNumber != null);//.Distinct().ToList();
         }
 
         public IEnumerable<LoanViewModel> GetLoanFacilityBookingAwaitingApproval(int staffId, int companyId)
@@ -3344,6 +3347,7 @@ namespace FintrakBanking.Repositories.Credit
                             disburserComment = ln.DISBURSERCOMMENT,
                             disburseDate = ln.DISBURSEDATE,
                             loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                            loanStatusId = ln.LOANSTATUSID,
                             comment = atrail.COMMENT,
                             overdraftLimit = ln.OVERDRAFTLIMIT,
                             bookedAmount = ln.OVERDRAFTLIMIT,
@@ -3383,7 +3387,6 @@ namespace FintrakBanking.Repositories.Credit
 
                             relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
                             relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
-
 
                             loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING
                                               join cc in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
@@ -3435,7 +3438,7 @@ namespace FintrakBanking.Repositories.Credit
             data = lcyLoans.Union(fcyLoans).ToList();
 
 
-            return data;
+            return data.ToList();
 
         }
 
@@ -8478,6 +8481,7 @@ namespace FintrakBanking.Repositories.Credit
                                        approvedTenor = d.APPROVEDTENOR,
                                        toStaffId = atrail.TOSTAFFID,
                                        requestStaffId = atrail.REQUESTSTAFFID,
+                                       isInEditMode = s.ISUSED ?? false,
                                        isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                        canReRouteBooking = canReRouteBooking,
                                        approvalTrailId = atrail.APPROVALTRAILID,
@@ -10880,8 +10884,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId)
         {
-            try
-            {
                 decimal overDraftLimit = 0;
                 decimal availableBalance = 0;
                 var odDetail = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == revolvingLoanId).Select(x => x).FirstOrDefault();
@@ -11031,11 +11033,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 return overDraftDetail;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            
         }
 
         public IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial(int userId, int companyId)
@@ -13062,6 +13060,10 @@ namespace FintrakBanking.Repositories.Credit
 
                                    });
             var j = allFilteredLoan.ToList();
+            //if(j == null)
+            //{
+            //    allFilteredLoan = SearchRevolvingLoan(searchQuery);
+            //}
             return allFilteredLoan;
         }
 

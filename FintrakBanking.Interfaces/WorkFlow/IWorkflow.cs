@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.Interfaces.WorkFlow
 {
     public interface IWorkflow
     {
         int OperationId { set; }
+        TBL_APPROVAL_TRAIL ApprovalTrail { get; set; }
         int? BusinessUnitId { get; set; }
         int? DestinationOperationId { get; set; }
         bool IsFlowTest { get; set; }

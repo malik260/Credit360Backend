@@ -477,8 +477,6 @@ namespace FintrakBanking.Repositories.Credit
                 //}
                 workflow.DeferredExecution = true;
 
-
-
                 workflow.LogActivity();
 
                 WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
@@ -558,8 +556,6 @@ namespace FintrakBanking.Repositories.Credit
                 ////////////////////// Call Status Change API /////////////////
 
 
-
-
                 if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                 {
                     appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
@@ -571,14 +567,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             appl.APPROVALSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
                             appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-
                         }
 
                         if (appl.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
                         {
                             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
                             appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-
                         }
 
                         //Send Email to Customer
@@ -594,9 +588,7 @@ namespace FintrakBanking.Repositories.Credit
                         SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
                         loanApp.ArchiveLoanApplication(model.applicationId, operationId, (short)LoanApplicationStatusEnum.ApplicationRejected);
 
-                    }
-
-                    //applid, 
+                    } 
 
                     if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
                     if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
@@ -646,7 +638,11 @@ namespace FintrakBanking.Repositories.Credit
                 if (model.comment == "debug_test") throw new SecureException("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
                 LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate, model.vote, (short)model.forwardAction); // LOG CHANGES
+
                 context.SaveChanges();
+
+                ///ResolveBusinessUnitForED(appl);
+
                 if (model.isFlowTest == false) { trans.Commit(); }
                 else { trans.Rollback(); }
 
@@ -669,6 +665,22 @@ namespace FintrakBanking.Repositories.Credit
             
         }
 
+        private void ResolveBusinessUnitForED(TBL_LOAN_APPLICATION appl)
+        {
+            var edRoles = context.TBL_STAFF_ROLE.Where(d => d.STAFFROLESHORTCODE == "ED").Select(x => x.STAFFROLEID).ToList();
+            var edLevels = context.TBL_APPROVAL_LEVEL.Where(x => edRoles.Contains(x.STAFFROLEID.Value)).Select(c => c.APPROVALLEVELID).ToList();
+            if (edLevels.Contains(workflow.NextLevelId.Value))
+            {
+                var trailLog = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALTRAILID == workflow.ApprovalTrail.APPROVALTRAILID).FirstOrDefault();
+                if (trailLog != null)
+                {
+                    var allEDRecord = context.TBL_STAFF.Where(x => x.BUSINESSUNITID == appl.TBL_CUSTOMER.BUSINESSUNTID && x.STAFFROLEID == edRoles.FirstOrDefault());
+                    trailLog.TOSTAFFID = allEDRecord.FirstOrDefault()?.STAFFID;
+                    context.SaveChanges();
+                }
+
+            }
+        }
         public void LoanStatusChangeThroughAPI(TBL_LOAN_APPLICATION loanApplication, string comment, int staffId, string statusCode)
         {
             //string cflReport = builder.ToString();
@@ -741,7 +753,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveApprovedDocumentation(int staffId, int operationId, int targetId)
         {
-            // int staffId, is REDUNDANT!
+            // int staffId, is REDUNDANT! 
             var printedDoc = "";
             var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
@@ -2629,8 +2641,8 @@ namespace FintrakBanking.Repositories.Credit
             currentApprovalLevelTypeId = x.b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
             approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
             toStaffId = x.b.TOSTAFFID,
-            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
-            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
             customerBusinessUnitId = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == x.a.CUSTOMERID).Select(c => c.BUSINESSUNTID).FirstOrDefault(),
             timeIn = x.b.SYSTEMARRIVALDATETIME,
             slaTime = x.b.SLADATETIME,

@@ -19,25 +19,35 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
     {
         private FinTrakBankingContext _context;
         private string API_KEY, API_URL = string.Empty;
+        private IEnumerable<TBL_API_URL> APIUrlConfig;
 
         public BaselIntegration(FinTrakBankingContext context)
         {
-            _context = context;
-            API_KEY = "WzKQBRQXboWsIVI";
-            //API_KEY = "XtSREijsrZYkt9S";
-            //API_URL = "http://10.1.12.186:94/api/Credit360API/";
-            API_URL = "http://10.1.9.197:94/api/Credit360API/";
+            this._context = context;
+            //API_URL = "http://10.1.12.186:94/api/Credit360API/"; API_KEY = "XtSREijsrZYkt9S";
+            // API_URL = "http://10.1.9.197:94/api/Credit360API/";  API_KEY = "WzKQBRQXboWsIVI";
 
-            //var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
-            //if (configdata != null)
-            //{
-            //    API_KEY = configdata.APIKEY;
-            //    API_URL = configdata.APIURL;
-            //}
+            var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
+            APIUrlConfig = context.TBL_API_URL;
+            API_KEY = configdata.APIKEY;
+            API_URL = configdata.APIURL;
         }
-        // private static HttpClient _httpClientInstance;
 
-        // private ResponseMessageViewModel responseAPI;
+        private void getAPIURLSettings(string typeName = null)
+        {
+            var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
+            if (apiConfig != null)
+            {
+                API_URL = apiConfig.URL;
+                API_KEY = apiConfig.APIKEY;
+            }
+            if (apiConfig == null)
+            {
+                apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
+                API_URL = apiConfig.URL;
+                API_KEY = apiConfig.APIKEY;
+            }
+        }
 
         public async Task<List<SubGroupRatingAndRatioViewModel>> GetCustomerRatio( string customerNumber)
         {
@@ -49,6 +59,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
+
+            getAPIURLSettings("BASEL");
             string endPointUrl = $"{API_URL}GetCorporateRatioPDConsolidatedByCustomerID/{customerNumber}?key={API_KEY}";
             //string endPointUrl = $"{API_URL}GetCorporateRatioPDConsolidatedByCustomerID/{"000077293"}?key={API_KEY}";
 
@@ -129,6 +141,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
+
+            getAPIURLSettings("BASEL");
             string endPointUrl = $"{API_URL}GetAllCorporateRatios/{customerNumber}?key={API_KEY}";
             //string endPointUrl = $"{API_URL}GetAllCorporateRatios/{"107220"}?key={API_KEY}";
 
@@ -209,7 +223,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
+
+            getAPIURLSettings("BASEL");
             string endPointUrl = $"{API_URL}GetCorporatePDByCustomerID/{customerNumber}?key={API_KEY}";
+
             try 
             {
                 handler.UseDefaultCredentials = true;
@@ -286,7 +303,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
+
+            getAPIURLSettings("BASEL");
             string endPointUrl = $"{API_URL}GetPersonalLoansRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
+
             try
             {
                 handler.UseDefaultCredentials = true;
@@ -364,7 +384,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
+
+            getAPIURLSettings("BASEL");
             string endPointUrl = $"{API_URL}GetcreditCardRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
+
             try
             {
                 handler.UseDefaultCredentials = true;
@@ -442,7 +465,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
+
+            getAPIURLSettings("BASEL");
             string endPointUrl = $"{API_URL}GetAutoLoanRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
+
             try
             {
                 handler.UseDefaultCredentials = true;
