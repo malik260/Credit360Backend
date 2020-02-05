@@ -356,10 +356,8 @@ namespace FintrakBanking.Repositories.Credit
                         customerSensitivityLevelId = cust.CUSTOMERSENSITIVITYLEVELID,
                         customerOccupation = cust.OCCUPATION,
                         customerType = cust.TBL_CUSTOMER_TYPE.NAME,
-
                         isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                         isInvestmentGrade = m.ISINVESTMENTGRADE,
-
                         companyId = m.COMPANYID,
                         branchId = m.BRANCHID,
                         branchName = m.TBL_BRANCH.BRANCHNAME,
