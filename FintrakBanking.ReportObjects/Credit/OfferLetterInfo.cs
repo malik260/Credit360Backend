@@ -231,7 +231,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        exchangeRate = b.EXCHANGERATE,
                                        currencyId = b.CURRENCYID,
                                        companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
-                                       customerName = a.LOANAPPLICATIONTYPEID != 3 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
+                                       customerName = a.LOANAPPLICATIONTYPEID == 1 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
                                        customerAddress = e.ADDRESS ?? " ", //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                        applicationDate = a.APPLICATIONDATE,
                                        customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
