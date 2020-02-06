@@ -55,6 +55,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public IEnumerable<StaffRoleViewModel> GetStaffRoleByCompanyId(int companyId)
         {
+           
             return from a in context.TBL_STAFF_ROLE
                    where a.COMPANYID == companyId
                    select new StaffRoleViewModel
@@ -66,6 +67,9 @@ namespace FintrakBanking.Repositories.Setups.General
                        staffRoleShortCode = a.STAFFROLESHORTCODE,
                        workEndDuration = a.WORKENDDURATION,
                        workStartDuration = a.WORKSTARTDURATION,
+                       useRoundRublin = a.USEROUNDROBIN,
+                       
+
                        userGroup = a.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == a.STAFFROLEID).Select(x => new UserGroup
                        {
                            groupId = x.GROUPID,
@@ -108,7 +112,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleCode = a.STAFFROLECODE,
                             staffRoleShortCode = a.STAFFROLESHORTCODE,
                             workEndDuration = a.WORKENDDURATION,
-                            workStartDuration = a.WORKSTARTDURATION,
+                            workStartDuration = a.WORKSTARTDURATION
                         });
             return role;
         }
@@ -423,6 +427,18 @@ namespace FintrakBanking.Repositories.Setups.General
                 OSNAME = CommonHelpers.FriendlyName(),
             });
             // Audit Section ---------------------------
+        }
+
+        public bool AddApprovalSetUp(ApprovalSetUpViewModel entity)
+        {
+            var data = new TBL_APPROVAL_SETUP()
+            {
+                USEROUNDROBIN = entity.useRoundRublin,
+                ISRETAILONLYROUNDROBIN = entity.isRetailOnlyRoundRobin
+            };
+            context.TBL_APPROVAL_SETUP.Add(data);
+
+            return context.SaveChanges() > 0;
         }
     }
 }

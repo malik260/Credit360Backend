@@ -170,7 +170,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("staff-role-approval")]
         public HttpResponseMessage GetStaffRoleAwaitingApproval()
         {
@@ -209,6 +210,33 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Staff Role has been approved successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (SecureException ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("approval-setup")]
+        public HttpResponseMessage AddApprovalSetUp([FromBody] ApprovalSetUpViewModel entity)
+        {
+            try
+            {
+                var data = repo.AddApprovalSetUp(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "SetUp has been added successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
