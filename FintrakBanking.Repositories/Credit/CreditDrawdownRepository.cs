@@ -348,6 +348,7 @@ namespace FintrakBanking.Repositories.Credit
                         requestedAmount = req.AMOUNT_REQUESTED,
                         customerId = d.CUSTOMERID,
                         customerCode = cust.CUSTOMERCODE,
+                        systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                         customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
                         customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                         customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
@@ -500,6 +501,7 @@ namespace FintrakBanking.Repositories.Credit
                              applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              customerId = d.CUSTOMERID,
+                             
                              //customerCode = from cust in context.TBL_CUSTOMER where cust.CUSTOMERID == d.CUSTOMERID select cust.CUSTOMERCODE.FirstOrDefault( ,
                              customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                              customerGroupId = a.CUSTOMERGROUPID.HasValue ? a.CUSTOMERGROUPID : 0,
@@ -599,6 +601,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                             applicationStatusId = m.APPLICATIONSTATUSID,
                             customerId = d.CUSTOMERID,
+                            systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                             //customerCode = from cust in context.TBL_CUSTOMER where cust.CUSTOMERID == d.CUSTOMERID select cust.CUSTOMERCODE.FirstOrDefault( ,
                             customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
