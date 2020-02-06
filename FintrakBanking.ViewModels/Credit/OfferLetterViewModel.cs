@@ -58,7 +58,9 @@ namespace FintrakBanking.ViewModels.Credit
             get { return this.loanAmount * (decimal)this.exchangeRate; }
         }
 
-        public List<ProductFeeViewModel> fees { get; set; }
+        public List<ProductFeeViewModel> feesList { get; set; }
+
+        public string fees { get; set; }
         
         public int tenor { get; set; }
         public double interestRate { get; set; }
