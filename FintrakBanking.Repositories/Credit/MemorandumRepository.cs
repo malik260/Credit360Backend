@@ -366,7 +366,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
 
-                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted).ToList();
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
                 this.branchName = loanApplication.TBL_BRANCH?.BRANCHNAME;
                 if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
                 {
@@ -456,7 +456,7 @@ namespace FintrakBanking.Repositories.Credit
                 // if (lmsrAppllication.CUSTOMERGROUPID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (lmsrApplication.CUSTOMERID != null) this.customerName = lmsrApplication.TBL_CUSTOMER.FIRSTNAME + " " + lmsrApplication.TBL_CUSTOMER.MIDDLENAME + " " + lmsrApplication.TBL_CUSTOMER.LASTNAME;
                 initLoanAppForLms();
-                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted).ToList();
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
 
                 this.branchName = lmsrApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = lmsrApplication.TBL_BRANCH.ADDRESSLINE1 + " " + lmsrApplication.TBL_BRANCH.ADDRESSLINE2;
