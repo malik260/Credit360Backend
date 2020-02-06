@@ -366,7 +366,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
 
-                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted).ToList();
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
                 this.branchName = loanApplication.TBL_BRANCH?.BRANCHNAME;
                 if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
                 {
@@ -456,7 +456,7 @@ namespace FintrakBanking.Repositories.Credit
                 // if (lmsrAppllication.CUSTOMERGROUPID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (lmsrApplication.CUSTOMERID != null) this.customerName = lmsrApplication.TBL_CUSTOMER.FIRSTNAME + " " + lmsrApplication.TBL_CUSTOMER.MIDDLENAME + " " + lmsrApplication.TBL_CUSTOMER.LASTNAME;
                 initLoanAppForLms();
-                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted).ToList();
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
 
                 this.branchName = lmsrApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = lmsrApplication.TBL_BRANCH.ADDRESSLINE1 + " " + lmsrApplication.TBL_BRANCH.ADDRESSLINE2;
@@ -9331,8 +9331,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = context.TBL_CALL_MEMO.Find(id);
             var staff = context.TBL_STAFF.Where(s => s.STAFFID == data.CREATEDBY).Select(s => s).FirstOrDefault();
             var branch = context.TBL_BRANCH.Where(c => c.BRANCHID == staff.BRANCHID).Select(c => c.BRANCHNAME).FirstOrDefault();
-
-
+            var customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == data.CUSTOMERID).Select(c=>c).FirstOrDefault();
+            var customerName = customer.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
             var nextDateTime = data.NEXTCALLDATE;
             var date = nextDateTime?.ToString("yyyy-MM-dd");
             var nextCallTime = data.NEXTCALLTIME;
@@ -9352,6 +9352,10 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                       <td><strong>Location of the meeting</strong></td>
                       <td>{data.LOCATION}</td>  
+                    </tr>
+                    <tr>
+                      <td><strong>Customer</strong></td>
+                      <td>{customerName.ToUpper()}</td>  
                     </tr>
                      <tr>
                       <td><strong>Time</strong></td>

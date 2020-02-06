@@ -13,7 +13,7 @@
     <Shape ID="DesignTable:GroupWorkFlowSetup" ZOrder="26" X="1035" Y="157" Height="257" Width="195" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="253" />
     <Shape ID="DesignTable:SectorialLimits" ZOrder="25" X="1404" Y="71" Height="257" Width="152" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="253" />
     <Shape ID="DesignTable:WorkFlow" ZOrder="24" X="1512" Y="299" Height="257" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="253" />
-    <Shape ID="DesignTable:OfferLetterDetail" ZOrder="1" X="1171" Y="107" Height="389" Width="246" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="385" />
+    <Shape ID="DesignTable:OfferLetterDetail" ZOrder="1" X="1171" Y="107" Height="388" Width="246" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="384" />
     <Shape ID="DesignTable:OfferLetterConditionPrecident" ZOrder="30" X="1866" Y="83" Height="67" Width="243" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="63" />
     <Shape ID="DesignTable:DisbursedLoans" ZOrder="29" X="1932" Y="198" Height="257" Width="200" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="253" />
     <Shape ID="DesignTable:FinanceTransaction" ZOrder="23" X="2167" Y="165" Height="257" Width="177" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="253" />

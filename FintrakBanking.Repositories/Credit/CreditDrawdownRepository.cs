@@ -406,7 +406,7 @@ namespace FintrakBanking.Repositories.Credit
                     }).ToList();
 
             data = data.Where(x => x.applicationReferenceNumber != "-")
-              .GroupBy(p => p.applicationReferenceNumber)
+              .GroupBy(p => p.loanBookingRequestId)
               .Select(g => g.First())
                   .ToList();
 
@@ -797,7 +797,7 @@ namespace FintrakBanking.Repositories.Credit
                              productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                              productName = d.TBL_PRODUCT.PRODUCTNAME,
                              productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
-                             productClassId = a.PRODUCTCLASSID,
+                             productClassId = d.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSID,
                              misCode = a.MISCODE,
                              teamMisCode = a.TEAMMISCODE,
                              casaAccountId = d.CASAACCOUNTID,
@@ -840,10 +840,12 @@ namespace FintrakBanking.Repositories.Credit
                 { item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED); }
 
                 if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                { item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
+                //{ item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
+                { item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED); }
 
                 if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                { item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
+                //{ item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
+                { item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED); }
 
                 item.disapprovedCount = (int)requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Count();
 
@@ -856,7 +858,8 @@ namespace FintrakBanking.Repositories.Credit
                     item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
                 }
 
-                item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
+                //item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
+                item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount);
                 if (lcApprovedAmounts > 0)
                 {
                     item.customerAvailableAmount -= lcApprovedAmounts;
