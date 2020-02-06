@@ -9331,8 +9331,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = context.TBL_CALL_MEMO.Find(id);
             var staff = context.TBL_STAFF.Where(s => s.STAFFID == data.CREATEDBY).Select(s => s).FirstOrDefault();
             var branch = context.TBL_BRANCH.Where(c => c.BRANCHID == staff.BRANCHID).Select(c => c.BRANCHNAME).FirstOrDefault();
-            var customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == data.CUSTOMERID).FirstOrDefault();
-            
+            var customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == data.CUSTOMERID).Select(c=>c).FirstOrDefault();
+            var customerName = customer.FIRSTNAME + " " + customer?.MIDDLENAME + " " + customer?.LASTNAME;
             var nextDateTime = data.NEXTCALLDATE;
             var date = nextDateTime?.ToString("yyyy-MM-dd");
             var nextCallTime = data.NEXTCALLTIME;
@@ -9355,7 +9355,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                       <td><strong>Customer</strong></td>
-                      <td>{customer.FIRSTNAME.ToUpper()} {customer.MAIDENNAME.ToUpper()} {customer.LASTNAME.ToUpper()}</td>  
+                      <td>{customerName.ToUpper()}</td>  
                     </tr>
                      <tr>
                       <td><strong>Time</strong></td>
