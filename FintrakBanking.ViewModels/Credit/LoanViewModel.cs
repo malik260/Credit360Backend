@@ -587,6 +587,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? disburseDate { get; set; }
         public int? operationId { get; set; }
         public int? operationTypeId { get; set; }
+        public int? appraisalOperationId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public string trancheBatchCode { get; set; }
@@ -681,7 +682,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public DateTime systemArrivalDateTime;
+        public DateTime systemArrivalDateTime { get; set; }
 
         public int appraisalOperationId { get; set; }
 

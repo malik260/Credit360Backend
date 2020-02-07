@@ -171,18 +171,6 @@ namespace FintrakBanking.ReportObjects.Credit
                 }
 
                 
-                //var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
-                //            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                //            join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
-                //            join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                //            where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                //            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                //            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                //            select new ProductFeeViewModel()
-                //            {
-                //                feeName = c.CHARGEFEENAME,
-                //                rateValue = a.RECOMMENDED_FEERATEVALUE
-                //            }).ToList();
 
             }
             catch (Exception ex)
@@ -195,6 +183,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
         }
 
+        
         public List<OfferLetterDetailViewModel> GetLoanApplicationDetail(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -222,10 +211,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                        //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        approvedProductId = b.APPROVEDPRODUCTID,
                                        productClassId = a.PRODUCTCLASSID,
-                                       productTypeId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTTYPEID,
-                                       currencyName = h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
+                                       currencyName = "NGN",//h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
                                        tenor = b.APPROVEDTENOR,
-                                       //approvedTenorString = b.APPROVEDTENOR,
                                        interestRate = b.APPROVEDINTERESTRATE,
                                        loanAmount = b.APPROVEDAMOUNT,
                                        exchangeRate = b.EXCHANGERATE,
@@ -260,10 +247,11 @@ namespace FintrakBanking.ReportObjects.Credit
                                                     }).ToList(),
                                        //GetLoanApplicationFee(applicationRefNumber, b.LOANAPPLICATIONDETAILID) feeName = $"{cf.CHARGEFEENAME} {df.RECOMMENDED_FEERATEVALUE}",
                                    }).ToList();
-                
+
                 if (loanDetails != null)
                 {
-                    foreach(var detail in loanDetails) {
+                    foreach (var detail in loanDetails)
+                    {
                         foreach (var fee in detail.feesList)
                         {
                             detail.fees += $"{fee.feeName} {fee.rateValue}, ";
@@ -402,7 +390,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                    currencyName = b.TBL_CURRENCY.CURRENCYNAME,
                                    tenor = b.APPROVEDTENOR,
                                    interestRate = b.APPROVEDINTERESTRATE,
-                                   loanAmount = b.APPROVEDAMOUNT,
+                                   loanAmount = a.APPROVEDAMOUNT,
                                    exchangeRate = b.EXCHANGERATE,
                                    loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                    productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
