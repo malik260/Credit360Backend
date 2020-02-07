@@ -171,18 +171,6 @@ namespace FintrakBanking.ReportObjects.Credit
                 }
 
                 
-                //var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
-                //            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                //            join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
-                //            join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                //            where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                //            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                //            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                //            select new ProductFeeViewModel()
-                //            {
-                //                feeName = c.CHARGEFEENAME,
-                //                rateValue = a.RECOMMENDED_FEERATEVALUE
-                //            }).ToList();
 
             }
             catch (Exception ex)
@@ -195,6 +183,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
         }
 
+        
         public List<OfferLetterDetailViewModel> GetLoanApplicationDetail(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -203,16 +192,16 @@ namespace FintrakBanking.ReportObjects.Credit
             {
                 var loanDetails = (from a in context.TBL_LOAN_APPLICATION
                                    join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                                   join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                   //from c in cc.DefaultIfEmpty()
-                                   //join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
-                                   //from d in cg.DefaultIfEmpty()
-                                   //join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
-                                   //from e in dg.DefaultIfEmpty()
-                                   //join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
-                                   //from g in gg.DefaultIfEmpty()
-                                   //join h in context.TBL_CURRENCY on b.CURRENCYID equals h.CURRENCYID into hh
-                                   //from h in hh.DefaultIfEmpty()
+                                   join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                                   from c in cc.DefaultIfEmpty()
+                                   join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
+                                   from d in cg.DefaultIfEmpty()
+                                   join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
+                                   from e in dg.DefaultIfEmpty()
+                                   join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
+                                   from g in gg.DefaultIfEmpty()
+                                   join h in context.TBL_CURRENCY on b.CURRENCYID equals h.CURRENCYID into hh
+                                   from h in hh.DefaultIfEmpty()
                                    where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                          b.STATUSID == (int)ApprovalStatusEnum.Approved
                                    select new OfferLetterDetailViewModel()
@@ -222,21 +211,19 @@ namespace FintrakBanking.ReportObjects.Credit
                                        //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        approvedProductId = b.APPROVEDPRODUCTID,
                                        productClassId = a.PRODUCTCLASSID,
-                                       productTypeId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTTYPEID,
-                                       currencyName = b.TBL_CURRENCY.CURRENCYCODE,
+                                       currencyName = h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
                                        tenor = b.APPROVEDTENOR,
-                                       //approvedTenorString = b.APPROVEDTENOR,
                                        interestRate = b.APPROVEDINTERESTRATE,
                                        loanAmount = b.APPROVEDAMOUNT,
                                        exchangeRate = b.EXCHANGERATE,
                                        currencyId = b.CURRENCYID,
                                        companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x => x.NAME).FirstOrDefault(),
-                                       customerName = a.LOANAPPLICATIONTYPEID == 1 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : a.TBL_CUSTOMER_GROUP.GROUPNAME + " - " + a.TBL_CUSTOMER_GROUP.GROUPCODE,
-                                       customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
+                                       customerName = a.LOANAPPLICATIONTYPEID == 1 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
+                                       customerAddress = e.ADDRESS ?? " ", //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                        applicationDate = a.APPLICATIONDATE,
-                                       customerGroupName = a.TBL_CUSTOMER_GROUP.GROUPNAME + " - " + a.TBL_CUSTOMER_GROUP.GROUPCODE,
+                                       customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
-                                       customerPhoneNumber = a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
+                                       customerPhoneNumber = g.PHONENUMBER,//a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
                                        loanApplicationId = applicationRefNumber,
                                        repaymentSchedule = b.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL ?? "Not applicable",
                                        repaymentTerms = b.REPAYMENTTERMS ?? "Not applicable",
@@ -244,25 +231,26 @@ namespace FintrakBanking.ReportObjects.Credit
                                        productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
                                        newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                                        feesList = (from df in context.TBL_LOAN_APPLICATION_DETL_FEE
-                                                                join ad in context.TBL_LOAN_APPLICATION_DETAIL on df.LOANAPPLICATIONDETAILID equals ad.LOANAPPLICATIONDETAILID
-                                                                join cf in context.TBL_CHARGE_FEE on df.CHARGEFEEID equals cf.CHARGEFEEID
-                                                                join la in context.TBL_LOAN_APPLICATION on ad.LOANAPPLICATIONID equals la.LOANAPPLICATIONID
-                                                                join p in context.TBL_PRODUCT on ad.PROPOSEDPRODUCTID equals p.PRODUCTID
-                                                                where ad.LOANAPPLICATIONDETAILID == b.LOANAPPLICATIONDETAILID //la.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                                                                      && la.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                                                                && la.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                                                                 && ad.STATUSID == (int)ApprovalStatusEnum.Approved
-                                                                select new ProductFeeViewModel()
-                                                                {
-                                                                    feeName = cf.CHARGEFEENAME,
-                                                                    rateValue = df.RECOMMENDED_FEERATEVALUE,
-                                                                    productName = p.PRODUCTNAME
-                                                                }).ToList(),
-                                        }).ToList();
-                
+                                                   join ad in context.TBL_LOAN_APPLICATION_DETAIL on df.LOANAPPLICATIONDETAILID equals ad.LOANAPPLICATIONDETAILID
+                                                   join cf in context.TBL_CHARGE_FEE on df.CHARGEFEEID equals cf.CHARGEFEEID
+                                                   join la in context.TBL_LOAN_APPLICATION on ad.LOANAPPLICATIONID equals la.LOANAPPLICATIONID
+                                                   join p in context.TBL_PRODUCT on ad.PROPOSEDPRODUCTID equals p.PRODUCTID
+                                                   where ad.LOANAPPLICATIONDETAILID == b.LOANAPPLICATIONDETAILID //la.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                                         && la.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                                   && la.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                                    && ad.STATUSID == (int)ApprovalStatusEnum.Approved
+                                                   select new ProductFeeViewModel()
+                                                   {
+                                                       feeName = cf.CHARGEFEENAME,
+                                                       rateValue = df.RECOMMENDED_FEERATEVALUE,
+                                                       productName = p.PRODUCTNAME
+                                                   }).ToList(),
+                                   }).ToList();
+
                 if (loanDetails != null)
                 {
-                    foreach(var detail in loanDetails) {
+                    foreach (var detail in loanDetails)
+                    {
                         foreach (var fee in detail.feesList)
                         {
                             detail.fees += $"{fee.feeName} {fee.rateValue}, ";
