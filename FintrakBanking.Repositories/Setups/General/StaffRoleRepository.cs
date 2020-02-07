@@ -440,5 +440,28 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() > 0;
         }
+
+        public IEnumerable<ApprovalSetUpViewModel> GetApprovalSetup()
+        {
+            return from a in context.TBL_APPROVAL_SETUP
+                   select new ApprovalSetUpViewModel
+                   {
+                       approvalsetupId = a.APPROVALSETUPID,
+                       useRoundRublin = a.USEROUNDROBIN,
+                       isRetailOnlyRoundRobin = a.ISRETAILONLYROUNDROBIN
+                   };
+        }
+
+
+        public bool UpdateApprovalSetUp(ApprovalSetUpViewModel entity)
+        {
+            var data = this.context.TBL_APPROVAL_SETUP.Find(entity.approvalsetupId);
+            {
+                data.APPROVALSETUPID = entity.approvalsetupId;
+            }
+            context.TBL_APPROVAL_SETUP.Add(data);
+
+            return context.SaveChanges() > 0;
+        }
     }
 }

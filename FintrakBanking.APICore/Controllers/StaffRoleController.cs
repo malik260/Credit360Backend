@@ -249,5 +249,53 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approval-setup-table")]
+        public HttpResponseMessage GetApprovalSetUp()
+        {
+            try
+            {
+                var data = repo.GetApprovalSetup();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("approval-setup-update")]
+        public HttpResponseMessage UpdateApprovalSetUp([FromBody] ApprovalSetUpViewModel entity)
+        {
+            try
+            {
+                var data = repo.UpdateApprovalSetUp(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "SetUp has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful" });
+            }
+            catch (SecureException ex)
+            {
+               
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

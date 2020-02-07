@@ -35,6 +35,8 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class ApprovalSetUpViewModel: GeneralEntity
     {
+        
+        public int approvalsetupId { get; set; }
         public bool useRoundRublin { get; set; }
         public bool isRetailOnlyRoundRobin { get; set; }
 

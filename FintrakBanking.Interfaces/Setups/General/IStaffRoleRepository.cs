@@ -26,5 +26,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<StaffRoleViewModel> GetStaffRoleAwaitingApproval(int staffId, int companyId);
 
         bool AddApprovalSetUp(ApprovalSetUpViewModel entity);
+        IEnumerable<ApprovalSetUpViewModel> GetApprovalSetup();
+        bool UpdateApprovalSetUp(ApprovalSetUpViewModel entity);
     }
 }
