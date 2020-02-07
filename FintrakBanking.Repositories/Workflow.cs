@@ -46,6 +46,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool sameDesk = false;
 
         private int? fromLevelId = null;
+        private int? reliefStaffId = null;
         private int? requestLevelId = null;
         private int currentStateId;
         private int newStateId = (int)ApprovalState.Processing;
@@ -230,6 +231,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             //RandomizeAllocation();
 
+            AllocateBySBU();
+
             SendNotifications();
 
             SetResponseInformation();
@@ -297,7 +300,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                         }
                     }
 
-
                     var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId).ToList();
                     var roles = approvalLevel.Select(c => c.STAFFROLEID).ToList();
                     var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID)).ToList();
@@ -330,6 +332,56 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
             }
           
+        }
+
+        private void AllocateBySBU()
+        {
+            List<StaffAllocatedjob> staffAllocations = new List<StaffAllocatedjob>();
+
+            if (this.toStaffId != null) { return; }
+
+            if (this.request != null && this.request?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
+            {
+                var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                  x.COMPANYID == this.companyId
+                                  && x.OPERATIONID == this.operationId
+                                  && x.RESPONSESTAFFID == null
+                                  && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                                  ).ToList();
+
+                if (this.businessUnitId != null) return;
+
+                var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId).ToList();
+                var roles = approvalLevel.Select(c => c.STAFFROLEID).ToList();
+                var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID) && x.BUSINESSUNITID == this.businessUnitId).ToList();
+
+                var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId).Select(d => d.STAFFID).ToList();
+                approvalStaff.AddRange(staffInrole.Select(d => d.STAFFID).ToList());
+
+                if (!context.TBL_STAFF_ROLE.Where(x => roles.Contains(x.STAFFROLEID) && x.USESBUROUTING == true).Any())
+                {
+                    return;
+                }
+
+                foreach (var item in approvalStaff)
+                {
+                    if (staffAllocations.Where(x => x.staffId == item).Count() == 0)
+                    {
+                        StaffAllocatedjob staffAllocation = new StaffAllocatedjob();
+                        staffAllocation.pendingJobCount = pendingTrail.Where(x => x.TOSTAFFID == item).Count();
+                        staffAllocation.staffId = item;
+                        staffAllocation.counted = true;
+
+                        var isOnRelief = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == item && x.ENDDATE < DateTime.Now).Any();
+                        staffAllocation.isOnRelief = isOnRelief;
+                        staffAllocations.Add(staffAllocation);
+                    }
+                }
+
+                var orderedAllocation = staffAllocations.Where(x => staffInrole.Select(c => c.STAFFID).Contains(x.staffId)).OrderBy(x => x.pendingJobCount).FirstOrDefault();
+                if (this.toStaffId == null) { this.toStaffId = orderedAllocation.staffId; }
+
+            }
         }
 
         private List<TBL_APPROVAL_TRAIL> GetAllTrail()
@@ -1360,11 +1412,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     reciever = context.TBL_STAFF.Find(this.toStaffId);
                     recipientName = reciever.FIRSTNAME;
+                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && x.ENDDATE < DateTime.Now).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
                 }
                 else if (this.loopedStaffId != null)
                 {
                     reciever = context.TBL_STAFF.Find(this.loopedStaffId);
                     recipientName = reciever.FIRSTNAME;
+                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && x.ENDDATE < DateTime.Now).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                 }
                 else
                 {
@@ -1390,6 +1444,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                         {
                             var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.STAFFROLEID).Select(x => x.EMAIL);
                             emails = actorIds.Union(levelStaffEmails).Union(nextLevelStaffEmails).ToList();
+                        }
+
+                        if (this.reliefStaffId != null)
+                        {
+                            var reliefRecord = context.TBL_STAFF.Find(this.reliefStaffId);
+                           // emails.Add(reliefRecord.EMAIL);
                         }
                     }
                 }
@@ -1463,6 +1523,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         };
                         context.TBL_MESSAGE_LOG.Add(message);
                     }
+
                 }
             }
         }
