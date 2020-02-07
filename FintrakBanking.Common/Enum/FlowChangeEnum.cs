@@ -12,7 +12,8 @@ namespace FintrakBanking.Common.Enum
         CLEANCARD = 2,
         SALARYBACKED = 3,
         TEMPORARYOVERDRAFT = 4,
-        FAM = 5
+        FAM = 5,
+        CASHCOLLATERIZED = 10
     }
 
     public enum CreditCardEnum
