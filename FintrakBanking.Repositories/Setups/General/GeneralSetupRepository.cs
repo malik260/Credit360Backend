@@ -290,6 +290,8 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
+        
+
         public IEnumerable<SectorViewModel> GetAllSubSectors()
         {
             var data = (from cs in context.TBL_SUB_SECTOR
@@ -653,6 +655,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return staffs;
         }
+
+
+        
     }
 
 }

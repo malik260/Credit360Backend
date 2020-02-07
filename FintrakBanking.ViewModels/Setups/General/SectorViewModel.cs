@@ -33,7 +33,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public decimal? AccountOfficerNPLExposure { get; set; }
         public decimal? AccountOfficerMaximumNPLExposure { get; set; }
 
-        public decimal? BranchNPLLimit { get; set; } 
+        public decimal? BranchNPLLimit { get; set; }
         public decimal? BranchNPLExposure { get; set; }
         public decimal? BranchMaximumNPLExposure { get; set; }
 
@@ -84,52 +84,56 @@ namespace FintrakBanking.ViewModels.Setups.General
         //        return string.Format("{0:#,0.00}", ObligorLimit);
         //    }
         //}
-    }
 
-    public class ExposureLimitRequestModel
-    {
-        public int companyId { get; set; } // required!
-        public int? staffId { get; set; }
-        public int? customerId { get; set; }
-        public int? customerGroupId { get; set; }
-        public int? branchId { get; set; }
-        public int? sectorId { get; set; }
-        public int? applicationId { get; set; }
-    }
 
-    public class RequestExposureLimit
-    {
-        public RequestExposureLimit()
+
+
+        public class ExposureLimitRequestModel
         {
-            SectorLimit = 0;
-            SectorMaximumExposure = 0;
+            public int companyId { get; set; } // required!
+            public int? staffId { get; set; }
+            public int? customerId { get; set; }
+            public int? customerGroupId { get; set; }
+            public int? branchId { get; set; }
+            public int? sectorId { get; set; }
+            public int? applicationId { get; set; }
         }
 
-        public string productCustomerName { get; set; }
-
-        public decimal? ObligorLimit { get; set; }
-        public decimal? ObligorExposure { get; set; }
-        public decimal? ObligorMaximumExposure { get; set; }
-
-        public decimal? SectorLimit { get; set; }
-        public decimal? SectorExposure { get; set; }
-        public decimal? SectorMaximumExposure { get; set; }
-
-        public string SectorLimitString
+       
+        public class RequestExposureLimit
         {
-            get
+            public RequestExposureLimit()
             {
-                if (SectorMaximumExposure == 0 || SectorMaximumExposure == null) return "No limit";
-                return string.Format("{0:#,0.00}", SectorLimit);
+                SectorLimit = 0;
+                SectorMaximumExposure = 0;
             }
-        }
 
-        public string ObligorLimitString
-        {
-            get
+            public string productCustomerName { get; set; }
+
+            public decimal? ObligorLimit { get; set; }
+            public decimal? ObligorExposure { get; set; }
+            public decimal? ObligorMaximumExposure { get; set; }
+
+            public decimal? SectorLimit { get; set; }
+            public decimal? SectorExposure { get; set; }
+            public decimal? SectorMaximumExposure { get; set; }
+
+            public string SectorLimitString
             {
-                if (ObligorMaximumExposure == 0 || ObligorMaximumExposure == null) return "No limit";
-                return string.Format("{0:#,0.00}", ObligorLimit);
+                get
+                {
+                    if (SectorMaximumExposure == 0 || SectorMaximumExposure == null) return "No limit";
+                    return string.Format("{0:#,0.00}", SectorLimit);
+                }
+            }
+
+            public string ObligorLimitString
+            {
+                get
+                {
+                    if (ObligorMaximumExposure == 0 || ObligorMaximumExposure == null) return "No limit";
+                    return string.Format("{0:#,0.00}", ObligorLimit);
+                }
             }
         }
     }

@@ -457,11 +457,24 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = this.context.TBL_APPROVAL_SETUP.Find(entity.approvalsetupId);
             {
-                data.APPROVALSETUPID = entity.approvalsetupId;
+                data.ISRETAILONLYROUNDROBIN = entity.isRetailOnlyRoundRobin;
+                data.USEROUNDROBIN = entity.useRoundRublin;
             }
-            context.TBL_APPROVAL_SETUP.Add(data);
 
             return context.SaveChanges() > 0;
+        }
+
+
+        public IEnumerable<OperationPageOrderViewModel> GetAllOperationOrder()
+        {
+            var data = (from cs in context.TBL_LMSR_FLOW_ORDER
+                        select new OperationPageOrderViewModel()
+                        {
+                           operationId = cs.OPERATIONID,
+                           // sectorName = cs.NAME,
+                        });
+
+            return data;
         }
     }
 }
