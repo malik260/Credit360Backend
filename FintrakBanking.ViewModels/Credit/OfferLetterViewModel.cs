@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Setups.General;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,6 +58,9 @@ namespace FintrakBanking.ViewModels.Credit
             get { return this.loanAmount * (decimal)this.exchangeRate; }
         }
 
+        public List<ProductFeeViewModel> feesList { get; set; }
+
+        public string fees { get; set; }
         
         public int tenor { get; set; }
         public double interestRate { get; set; }
@@ -90,6 +94,9 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " " + units;
             }
         }
+
+        public string feeName { get; set; }
+        public decimal rateValue { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity

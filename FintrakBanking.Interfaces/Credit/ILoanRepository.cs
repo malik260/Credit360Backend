@@ -159,7 +159,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         //void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
-        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery);
+        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(string searchQuery);
+        //IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery);
         //IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanReviewFeeCharge(int loanSystemTypeId, string searchQuery);
         IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanFeeCharge(int loanSystemTypeId, string searchQuery);
 
