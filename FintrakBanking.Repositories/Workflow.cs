@@ -1450,7 +1450,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if (this.reliefStaffId != null)
                         {
                             var reliefRecord = context.TBL_STAFF.Find(this.reliefStaffId);
-                            emails.Add(reliefRecord.EMAIL);
+                           // emails.Add(reliefRecord.EMAIL);
                         }
                     }
                 }
