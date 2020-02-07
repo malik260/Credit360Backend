@@ -177,6 +177,10 @@
           <DataField>approvedTenorString</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="fees">
+          <DataField>fees</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
@@ -885,7 +889,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail") &amp; Format(Fields!loanAmount.Value,"#,#.00")</Value>
+                                  <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail") &amp; Format(Fields!baseCurrencyLoanAmount.Value,"#,#.00")</Value>
                                   <Style>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1326,83 +1330,33 @@
                     </TablixCell>
                   </TablixCells>
                 </TablixRow>
-              </TablixRows>
-            </TablixBody>
-            <TablixColumnHierarchy>
-              <TablixMembers>
-                <TablixMember />
-                <TablixMember />
-              </TablixMembers>
-            </TablixColumnHierarchy>
-            <TablixRowHierarchy>
-              <TablixMembers>
-                <TablixMember>
-                  <Group Name="Details" />
-                  <TablixMembers>
-                    <TablixMember />
-                    <TablixMember />
-                    <TablixMember />
-                    <TablixMember />
-                    <TablixMember />
-                    <TablixMember />
-                    <TablixMember />
-                  </TablixMembers>
-                </TablixMember>
-              </TablixMembers>
-            </TablixRowHierarchy>
-            <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>4.06107in</Top>
-            <Left>0.20361in</Left>
-            <Height>1.75in</Height>
-            <Width>6.58873in</Width>
-            <ZIndex>4</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Tablix>
-          <Tablix Name="Tablix5">
-            <TablixBody>
-              <TablixColumns>
-                <TablixColumn>
-                  <Width>2.74238in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>3.82061in</Width>
-                </TablixColumn>
-              </TablixColumns>
-              <TablixRows>
                 <TablixRow>
-                  <Height>0.25in</Height>
+                  <Height>0.23622in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="feeName">
+                        <Textbox Name="Textbox14">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!feeName.Value</Value>
+                                  <Value>Fees:</Value>
                                   <Style>
+                                    <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>:</Value>
-                                  <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>feeName</rd:DefaultName>
+                          <rd:DefaultName>Textbox14</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1417,22 +1371,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="rateValue">
+                        <Textbox Name="fees">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!rateValue.Value</Value>
-                                  <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <Format>0.00;(0.00)</Format>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>% flat of facility amount</Value>
+                                  <Value>=Fields!fees.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -1443,12 +1389,10 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
+                              <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>rateValue</rd:DefaultName>
+                          <rd:DefaultName>fees</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1474,16 +1418,26 @@
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="Details4" />
+                  <Group Name="Details" />
+                  <TablixMembers>
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                  </TablixMembers>
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <DataSetName>OfferLetterFee</DataSetName>
-            <Top>5.85274in</Top>
-            <Left>0.22935in</Left>
-            <Height>0.25in</Height>
-            <Width>6.56299in</Width>
-            <ZIndex>5</ZIndex>
+            <DataSetName>OfferLetterLoanDetail</DataSetName>
+            <Top>4.06107in</Top>
+            <Left>0.20361in</Left>
+            <Height>1.98622in</Height>
+            <Width>6.58873in</Width>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1590,7 +1544,7 @@
             <Left>2.11301in</Left>
             <Height>0.25in</Height>
             <Width>4.69066in</Width>
-            <ZIndex>6</ZIndex>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1788,7 +1742,7 @@
             <Left>0.22935in</Left>
             <Height>0.5in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1804,7 +1758,7 @@
             <Left>0.18628in</Left>
             <Height>0.07479in</Height>
             <Width>6.60354in</Width>
-            <ZIndex>8</ZIndex>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1834,7 +1788,7 @@
             <Left>0.18628in</Left>
             <Height>1.25248in</Height>
             <Width>6.60606in</Width>
-            <ZIndex>9</ZIndex>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1854,7 +1808,7 @@
             <Left>0.57892in</Left>
             <Height>0.07292in</Height>
             <Width>5.72917in</Width>
-            <ZIndex>10</ZIndex>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1885,7 +1839,7 @@
             <Left>0.22935in</Left>
             <Height>0.25in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>11</ZIndex>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1920,7 +1874,7 @@
             <Left>0.22935in</Left>
             <Height>0.25in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>12</ZIndex>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1939,7 +1893,7 @@
             <Left>5.00236in</Left>
             <Height>0.48959in</Height>
             <Width>1.88464in</Width>
-            <ZIndex>13</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2250,7 +2204,7 @@
             <Left>0.2432in</Left>
             <Height>0.75in</Height>
             <Width>6.56047in</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2283,7 +2237,7 @@
             <Left>0.22935in</Left>
             <Height>0.2889in</Height>
             <Width>1.86977in</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2319,7 +2273,7 @@
             <Left>2.11301in</Left>
             <Height>0.2889in</Height>
             <Width>4.67681in</Width>
-            <ZIndex>16</ZIndex>
+            <ZIndex>15</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>

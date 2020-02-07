@@ -211,7 +211,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        approvedProductId = b.APPROVEDPRODUCTID,
                                        productClassId = a.PRODUCTCLASSID,
-                                       currencyName = h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
+                                       currencyName = "NGN",//h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
                                        tenor = b.APPROVEDTENOR,
                                        interestRate = b.APPROVEDINTERESTRATE,
                                        loanAmount = b.APPROVEDAMOUNT,
