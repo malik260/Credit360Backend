@@ -375,7 +375,29 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc ("the Lender") has approved a term loan ("facility") under the following terms and conditions:</Value>
+                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc has approved a term loan </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!productName.Value, "OfferLetterLoanDetail")</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value> under the following terms and conditions:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -920,7 +942,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail") &amp; Format(Fields!loanAmount.Value,"#,#.00")</Value>
+                                  <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail") &amp; Format(Fields!baseCurrencyLoanAmount.Value,"#,#.00")</Value>
                                   <Style>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -941,6 +963,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1291,7 +1314,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>

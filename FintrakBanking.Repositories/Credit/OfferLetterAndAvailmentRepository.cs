@@ -3495,11 +3495,12 @@ namespace FintrakBanking.Repositories.Credit
                               select new OfferLetterViewModel
                               {
                                   customerName = context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  customerName2 = context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPCONTACTPERSON).FirstOrDefault(),
                                   offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   // offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   offerLetterClauses = clause,
                                   customerId = c.CUSTOMERID,
-                                  customerAddress = "",
+                                  customerAddress = context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPADDRESS).FirstOrDefault(),
                                   title = "",
 
                               }).FirstOrDefault();
@@ -3510,7 +3511,7 @@ namespace FintrakBanking.Repositories.Credit
             var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
             if (offerLetterDoc != null)
             {
-                offerLetterDoc.OFFERLETTERSALUTATION = "The Managing Director, <br /><br /> " + detail.customerName + "<br /><br />" + detail.customerAddress + "<br /><br /> Attention: " + detail.title + " " + detail.customerName;
+                offerLetterDoc.OFFERLETTERSALUTATION = "The Managing Director, <br /><br /> " + detail.customerName + "<br /><br />" + detail.customerAddress + "<br /><br /> Attention: " + detail.title + " " + detail.customerName2;
                 // offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
 
                 if (!context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Any())
