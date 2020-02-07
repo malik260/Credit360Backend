@@ -181,6 +181,7 @@
               <xs:element name="offerLetterIntroduction" msprop:Generator_ColumnVarNameInTable="columnofferLetterIntroduction" msprop:Generator_ColumnPropNameInRow="offerLetterIntroduction" msprop:Generator_ColumnPropNameInTable="offerLetterIntroductionColumn" msprop:Generator_UserColumnName="offerLetterIntroduction" type="xs:string" minOccurs="0" />
               <xs:element name="isRenewal" msprop:Generator_ColumnVarNameInTable="columnisRenewal" msprop:Generator_ColumnPropNameInRow="isRenewal" msprop:Generator_ColumnPropNameInTable="isRenewalColumn" msprop:Generator_UserColumnName="isRenewal" type="xs:string" minOccurs="0" />
               <xs:element name="approvedTenorString" msprop:Generator_ColumnVarNameInTable="columnapprovedTenorString" msprop:Generator_ColumnPropNameInRow="approvedTenorString" msprop:Generator_ColumnPropNameInTable="approvedTenorStringColumn" msprop:Generator_UserColumnName="approvedTenorString" type="xs:string" minOccurs="0" />
+              <xs:element name="fees" msprop:Generator_ColumnVarNameInTable="columnfees" msprop:Generator_ColumnPropNameInRow="fees" msprop:Generator_ColumnPropNameInTable="feesColumn" msprop:Generator_UserColumnName="fees" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

@@ -1291,7 +1291,7 @@ namespace FintrakBanking.Repositories.Credit
                                 var count1 = checklistDefinitions.Count();
                                 var count2 = checklistDetails.Count();
 
-                                if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
+                                if (checklistType.CHECKLIST_TYPEID == (short)CheckListTypeEnum.RegulatoryChecklist)
                                     continue;
 
                                 if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
@@ -1309,7 +1309,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 if (detailsCount != validationCount)
                                 {
-                                    if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
+                                    if (checklistType.CHECKLIST_TYPEID == (short)CheckListTypeEnum.RegulatoryChecklist)
                                         continue;
 
                                     isCheckListDone = false;
@@ -4741,7 +4741,7 @@ namespace FintrakBanking.Repositories.Credit
                 //ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditAppraisal).ToList();
                 applications = context.TBL_LOAN_APPLICATION
                     //.Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
-                    .Join(context.TBL_CUSTOMER, a => a.CUSTOMERID, c => c.CUSTOMERID, (a, c) => new { a, c })
+                    .Join(context.TBL_CUSTOMER, a => a.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID, c => c.CUSTOMERID, (a, c) => new { a, c })
                     .Join(context.TBL_APPROVAL_TRAIL.Where(t => ExclusiveOperations.Contains(t.OPERATIONID)
                             && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended
                             && ids.Contains((int)t.TOAPPROVALLEVELID)
@@ -5876,7 +5876,7 @@ namespace FintrakBanking.Repositories.Credit
             var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId(appl.OPERATIONID, data.loanApplicationId, data.companyId, data.createdBy);
             //var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
             var ApprovalStaffCount = ApprovalTrail.Where(a => a.requestStaffId != data.createdBy).Count();
-            var staffRecord = context.TBL_STAFF.Find();
+            var staffRecord = context.TBL_STAFF.Find(data.createdBy);
             var userAdminRole = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLENAME.ToUpper().Contains("USER ADMIN")).FirstOrDefault();
             if (ApprovalStaffCount == 0 || (staffRecord != null && staffRecord.STAFFROLEID == userAdminRole?.STAFFROLEID))
             {

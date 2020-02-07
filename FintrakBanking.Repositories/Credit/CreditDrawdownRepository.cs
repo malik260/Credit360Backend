@@ -326,7 +326,7 @@ namespace FintrakBanking.Repositories.Credit
                             && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
-                            && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                            && (req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                             && ( (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) 
                               || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
                           //|| (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
@@ -336,6 +336,7 @@ namespace FintrakBanking.Repositories.Credit
                     select new CamProcessedLoanViewModel
                     {
                         loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
+                        approvalTrailId = atrail.APPROVALTRAILID,
                         approvalStatusId = (short)atrail.APPROVALSTATUSID,
                         approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                         loanApplicationId = m.LOANAPPLICATIONID,
@@ -345,7 +346,7 @@ namespace FintrakBanking.Repositories.Credit
                         appraisalOperationId = m.OPERATIONID,
                         operationId = atrail.OPERATIONID,
                         requestedAmount = req.AMOUNT_REQUESTED,
-                        customerId = m.CUSTOMERID ?? 0,
+                        customerId = d.CUSTOMERID,
                         customerCode = cust.CUSTOMERCODE,
                         systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                         customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
@@ -356,10 +357,8 @@ namespace FintrakBanking.Repositories.Credit
                         customerSensitivityLevelId = cust.CUSTOMERSENSITIVITYLEVELID,
                         customerOccupation = cust.OCCUPATION,
                         customerType = cust.TBL_CUSTOMER_TYPE.NAME,
-
                         isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                         isInvestmentGrade = m.ISINVESTMENTGRADE,
-
                         companyId = m.COMPANYID,
                         branchId = m.BRANCHID,
                         branchName = m.TBL_BRANCH.BRANCHNAME,
@@ -402,11 +401,12 @@ namespace FintrakBanking.Repositories.Credit
                         dateTimeCreated = d.DATETIMECREATED,
                         availmentDate = m.AVAILMENTDATE,
                         requestDate = req.DATETIMECREATED,
-                        divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == m.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                        //staffId = (atrail.LOOPEDSTAFFID != null ? atrail.LOOPEDSTAFFID : atrail.TOSTAFFID),
+                        divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                     }).ToList();
 
             data = data.Where(x => x.applicationReferenceNumber != "-")
-              .GroupBy(p => p.applicationReferenceNumber)
+              .GroupBy(p => p.loanBookingRequestId)
               .Select(g => g.First())
                   .ToList();
 
@@ -795,7 +795,7 @@ namespace FintrakBanking.Repositories.Credit
                              productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                              productName = d.TBL_PRODUCT.PRODUCTNAME,
                              productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
-                             productClassId = a.PRODUCTCLASSID,
+                             productClassId = d.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSID,
                              misCode = a.MISCODE,
                              teamMisCode = a.TEAMMISCODE,
                              casaAccountId = d.CASAACCOUNTID,
@@ -838,10 +838,12 @@ namespace FintrakBanking.Repositories.Credit
                 { item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED); }
 
                 if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                { item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
+                //{ item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
+                { item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED); }
 
                 if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                { item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
+                //{ item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
+                { item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED); }
 
                 item.disapprovedCount = (int)requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Count();
 
@@ -854,7 +856,8 @@ namespace FintrakBanking.Repositories.Credit
                     item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
                 }
 
-                item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
+                //item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
+                item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount);
                 if (lcApprovedAmounts > 0)
                 {
                     item.customerAvailableAmount -= lcApprovedAmounts;

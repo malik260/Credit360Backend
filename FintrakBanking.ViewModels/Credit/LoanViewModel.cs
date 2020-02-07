@@ -402,6 +402,8 @@ namespace FintrakBanking.ViewModels.Credit
         public List<string> errorMessage { get; set; }
         public string pricipalFrequencyTypeName { get; set; }
         public string responsiblePerson { get; set; }
+        public short productClassProcessId { get; set; }
+        public short loanApplicationTypeId { get; set; }
 
 
 
@@ -469,6 +471,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string disburserComment { get; set; }
         public DateTime? disburseDate { get; set; }
         public int? operationId { get; set; }
+        public int? currentApprovalLevelId { get; set; }
         public int? operationTypeId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
@@ -678,7 +681,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public DateTime systemArrivalDateTime;
+        public DateTime systemArrivalDateTime { get; set; }
 
         public int appraisalOperationId { get; set; }
 

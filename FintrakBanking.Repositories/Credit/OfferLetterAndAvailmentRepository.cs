@@ -159,16 +159,17 @@ namespace FintrakBanking.Repositories.Credit
                     customerCode = x.c.a.TBL_CUSTOMER.CUSTOMERCODE,
                     //customerName = x.c.a.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME : x.c.a.TBL_CUSTOMER.FIRSTNAME + " " + x.c.a.TBL_CUSTOMER.MIDDLENAME + " " + x.c.a.TBL_CUSTOMER.LASTNAME,
                     customerName = x.c.b.TBL_CUSTOMER.FIRSTNAME + " " + x.c.b.TBL_CUSTOMER.MIDDLENAME + " " + x.c.b.TBL_CUSTOMER.LASTNAME,
-                    customerId = x.c.a.CUSTOMERID,
+                    customerId = x.c.a.CUSTOMERID != null ? x.c.a.CUSTOMERID : x.c.b.CUSTOMERID,
                     customerGroupName = x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME,
                     customerGroupCode = x.c.a.TBL_CUSTOMER_GROUP.GROUPCODE,
+                    customerGroupId = x.c.a.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID,
                     relationshipOfficerId = x.c.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.c.a.RELATIONSHIPMANAGERID,
                     appraisalOperationId = x.c.a.OPERATIONID,
                     applicationDate = x.c.a.APPLICATIONDATE,
                     newApplicationDate = x.c.a.APPLICATIONDATE,
                     applicationAmount = x.c.a.APPLICATIONAMOUNT,
-                    approvedAmount = x.c.b.APPROVEDAMOUNT,
+                    approvedAmount = x.c.a.APPLICATIONAMOUNT, //x.c.b.APPROVEDAMOUNT,
                     interestRate = x.c.a.INTERESTRATE,
                     applicationTenor = x.c.a.APPLICATIONTENOR,
                     relationshipOfficerName = x.c.a.TBL_STAFF.FIRSTNAME + " " + x.c.a.TBL_STAFF.MIDDLENAME + " " + x.c.a.TBL_STAFF.LASTNAME,
@@ -266,7 +267,7 @@ namespace FintrakBanking.Repositories.Credit
                     applicationDate = x.c.a.APPLICATIONDATE,
                     newApplicationDate = x.c.a.APPLICATIONDATE,
                     applicationAmount = x.c.a.APPLICATIONAMOUNT,
-                    approvedAmount = x.c.b.APPROVEDAMOUNT,
+                    approvedAmount = x.c.a.APPLICATIONAMOUNT, //x.c.b.APPROVEDAMOUNT,
                     interestRate = x.c.a.INTERESTRATE,
                     applicationTenor = x.c.a.APPLICATIONTENOR,
                     relationshipOfficerName = x.c.a.TBL_STAFF.FIRSTNAME + " " + x.c.a.TBL_STAFF.MIDDLENAME + " " + x.c.a.TBL_STAFF.LASTNAME,
@@ -2012,6 +2013,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw ex;
                 }
+                return true;
             }
 
             return false;
@@ -3084,7 +3086,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID3 == false || c.CHECKLISTSTATUSID3 == null); //c.CHECKLISTSTATUSID2 == false ||
 
-                    if (item.CHECKLIST_TYPEID == (short)(int)CheckTypeEnum.CAPChecklist) return;
+                    if (item.CHECKLIST_TYPEID == (short)(int)CheckListTypeEnum.CAPChecklist) return;
 
                     if (omission.Any()) throw new SecureException($"One or more {item.CHECKLIST_TYPE_NAME} item(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
 
@@ -3418,8 +3420,7 @@ namespace FintrakBanking.Repositories.Credit
             this.auditTrail.AddAuditTrail(audit);
 
 
-            if (context.SaveChanges() > 0)
-                return true;
+            if (context.SaveChanges() > 0) return true;
 
             return false;
         }
@@ -3488,6 +3489,7 @@ namespace FintrakBanking.Repositories.Credit
                 else
                 {
                     detail = (from a in context.TBL_LOAN_APPLICATION
+                              join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                               join b in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals b.CUSTOMERGROUPID
                               where a.LOANAPPLICATIONID == applicationId
                               select new OfferLetterViewModel
@@ -3496,7 +3498,7 @@ namespace FintrakBanking.Repositories.Credit
                                   offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   // offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   offerLetterClauses = clause,
-                                  customerId = b.CUSTOMERGROUPID,
+                                  customerId = c.CUSTOMERID,
                                   customerAddress = "",
                                   title = "",
 

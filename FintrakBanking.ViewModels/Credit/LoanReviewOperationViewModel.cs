@@ -296,7 +296,50 @@ public int? newInterestFrequencyTypeId { get; set; }
 
     public class LoanReviewApplicationViewModel : GeneralEntity
     {
-        public string currentApprovalStatus;
+        public string slaGlobalStatus
+        {
+            get
+            {
+                float sla = globalsla;
+                int? elapse = (DateTime.Now - dateTimeCreated).Hours;
+                return SlaStatus(sla, elapse);
+            }
+        }
+
+        public string slaInduvidualStatus
+        {
+            get
+            {
+                float sla = currentApprovalLevelSlaInterval;
+                int? elapse = (DateTime.Now - timeIn)?.Hours;
+                return SlaStatus(sla, elapse);
+            }
+        }
+
+        private string SlaStatus(float sla, int? elapse)
+        {
+            if (sla == 0) return "success";
+            if (elapse == 0 || elapse == null) return "success";
+            float factor = (float)(elapse / sla) * 100;
+            if (factor <= 30) return "success";
+            if (factor <= 70) return "warning";
+            if (factor <= 100) return "danger";
+            return "danger";
+        }
+        public string currentApprovalStatus { get; set; }
+        public DateTime? slaTime { get; set; }
+        public int currentApprovalLevelSlaInterval { get; set; }
+
+        public string loanTypeName { get; set; }
+        public string facility { get; set; }
+        public string customerGroupName { get; set; }
+        public decimal? approvedAmount { get; set; }
+        public short? productClassProcessId { get; set; }
+
+        public short? productClassId { get; set; }
+        public int? productId { get; set; }
+        public short? loanApplicationTypeId { get; set; }
+
 
         public int loanReviewApplicationId { get; set; }
         public int loanId { get; set; }
@@ -372,6 +415,10 @@ public int? newInterestFrequencyTypeId { get; set; }
                 return count.ToString() + units;
             }
         }
+
+        public string divisionShortCode { get; set; }
+        public int globalsla { get; set; }
+        public string operationTypeName { get; set; }
     }
 
     public class applicationDetails
@@ -410,6 +457,7 @@ public int? newInterestFrequencyTypeId { get; set; }
             {
                 var units = proposedTenor == 1 ? " day" : " days";
                 if (proposedTenor < 15) return proposedTenor.ToString() + units;
+                if(proposedTenor == null) { proposedTenor = 1; }
                 var months = Math.Ceiling((Math.Floor((int)proposedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
                 return months.ToString() + " " + units;
@@ -421,6 +469,7 @@ public int? newInterestFrequencyTypeId { get; set; }
             {
                 var units = approvedTenor == 1 ? " day" : " days";
                 if (approvedTenor < 15) return approvedTenor.ToString() + units;
+                if (proposedTenor == null) { proposedTenor = 1; }
                 var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
                 return months.ToString() + " " + units;

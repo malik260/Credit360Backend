@@ -620,7 +620,8 @@ namespace FintrakBanking.Repositories.Credit
                         if (_workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                         {
                             var memo = _context.TBL_CALL_MEMO.Find(entity.callMemoId);
-                            var emailList = memo.CC;
+                            var accountOfficer = _context.TBL_STAFF.Where(s => s.STAFFID == memo.CREATEDBY).FirstOrDefault();
+                            var emailList = GetBusinessUsersEmails(accountOfficer.MISCODE) +";"+memo.CC;
                             var subject = $"Call Memo Approved Notification";
                             var messageBody = $"Dear All,<br/> Call Memo with purpose " + memo.PURPOSE + " has been approved.<br/> Kindly see details below.";
                                 messageBody = messageBody + " " + _memorandum.GetCallMemoMarkup(entity.callMemoId);
@@ -652,6 +653,42 @@ namespace FintrakBanking.Repositories.Credit
             return _context.SaveChanges() != 0;
         }
 
+        private string GetBusinessUsersEmails(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = _context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = _context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = _context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = _context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
         public bool SubmitApproval(CallMemoViewModel model)
         {
             bool response = false;

@@ -400,10 +400,10 @@ namespace FintrakBanking.Repositories.Customer
             }
             else if (divisorTypeId == 2) {
                 if (sum == 0) {
-                    sum = 1 * (1 / calculatedValue);
+                    sum = calculatedValue == 0 ? 0 : 1 * (1 / calculatedValue);
                 }
                 else {
-                    sum = sum * (1 / calculatedValue);
+                    sum = calculatedValue == 0 ? 0 : sum * (1 / calculatedValue);
                 }
             }
             else if (divisorTypeId == 3) {

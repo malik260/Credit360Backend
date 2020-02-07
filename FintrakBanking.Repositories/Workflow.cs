@@ -402,7 +402,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
             }
 
-            if(this.request.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred && this.statusId != (short)ApprovalStatusEnum.Referred)
+            if(this.request != null && this.request.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred && this.statusId != (short)ApprovalStatusEnum.Referred)
             {
                 var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
                 var destinationLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.nextLevelId).FirstOrDefault();
@@ -1294,7 +1294,7 @@ namespace FintrakBanking.Repositories.WorkFlow
            
             List<WorkflowSetup> grid = new List<WorkflowSetup>();
             //bool canSkipRule = levelBusinessRule.InsiderRelated == true;
-            levelBusinessRule.Amount = this.amount;
+            //levelBusinessRule.Amount = this.amount;
 
             int n = 0;
             foreach (WorkflowSetup level in levels)
@@ -1354,9 +1354,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             if ((minimumAmount == 0 && maximumAmount > 0) && (levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
             if ((minimumAmount > 0 && maximumAmount > 0) && (minimumAmount < levelBusinessRule.Amount && levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
 
-            if ((rule.PEP && pepAmount > 0) && (pepAmount <= levelBusinessRule.PepAmount)) limitChecked = true;
+            if ((rule.PEP && pepAmount > 0) && (levelBusinessRule.Pep && pepAmount <= levelBusinessRule.PepAmount)) limitChecked = flagChecked = true;
 
-            if (rule.PEP && levelBusinessRule.Pep == true) flagChecked = true;
+            //if (rule.PEP && levelBusinessRule.Pep == true) flagChecked = true;
             if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == true) flagChecked = true;
             if (rule.PROJECTRELATED && levelBusinessRule.ProjectRelated == true) flagChecked = true;
             if (rule.ONLENDING && levelBusinessRule.OnLending == true) flagChecked = true;
