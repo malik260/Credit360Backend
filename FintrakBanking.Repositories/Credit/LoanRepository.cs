@@ -1238,7 +1238,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
 
             var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -2207,6 +2206,16 @@ namespace FintrakBanking.Repositories.Credit
             var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == model.createdBy).FirstOrDefault().STAFFCODE;
 
             var valueDate = model.effectiveDate;
+
+            //DateTime instDate = model.effectiveDate.AddDays(30);
+            //if(loanLoanRequest.PRINCIPALFREQUENCYTYPEID == (short)FrequencyTypeEnum.Quarterly)
+            //{
+            //    instDate = model.effectiveDate.AddDays(90);
+            //}
+            //if (loanLoanRequest.PRINCIPALFREQUENCYTYPEID == (short)FrequencyTypeEnum.Yearly)
+            //{
+            //    instDate = model.effectiveDate.AddYears(1);
+            //}
 
             var apiSetup = context.TBL_API_URL.Where(x => x.TYPENAME == "LOANCREATION").FirstOrDefault();
 
