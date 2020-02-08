@@ -231,20 +231,21 @@ namespace FintrakBanking.ReportObjects.Credit
                                        productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
                                        newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                                        feesList = (from df in context.TBL_LOAN_APPLICATION_DETL_FEE
-                                                   join ad in context.TBL_LOAN_APPLICATION_DETAIL on df.LOANAPPLICATIONDETAILID equals ad.LOANAPPLICATIONDETAILID
-                                                   join cf in context.TBL_CHARGE_FEE on df.CHARGEFEEID equals cf.CHARGEFEEID
-                                                   join la in context.TBL_LOAN_APPLICATION on ad.LOANAPPLICATIONID equals la.LOANAPPLICATIONID
-                                                   join p in context.TBL_PRODUCT on ad.PROPOSEDPRODUCTID equals p.PRODUCTID
-                                                   where ad.LOANAPPLICATIONDETAILID == b.LOANAPPLICATIONDETAILID //la.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                                                         && la.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                                                   && la.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                                                    && ad.STATUSID == (int)ApprovalStatusEnum.Approved
-                                                   select new ProductFeeViewModel()
-                                                   {
-                                                       feeName = cf.CHARGEFEENAME,
-                                                       rateValue = df.RECOMMENDED_FEERATEVALUE,
-                                                       productName = p.PRODUCTNAME
-                                                   }).ToList(),
+                                                    join ad in context.TBL_LOAN_APPLICATION_DETAIL on df.LOANAPPLICATIONDETAILID equals ad.LOANAPPLICATIONDETAILID
+                                                    join cf in context.TBL_CHARGE_FEE on df.CHARGEFEEID equals cf.CHARGEFEEID
+                                                    join la in context.TBL_LOAN_APPLICATION on ad.LOANAPPLICATIONID equals la.LOANAPPLICATIONID
+                                                    join p in context.TBL_PRODUCT on ad.PROPOSEDPRODUCTID equals p.PRODUCTID
+                                                    where ad.LOANAPPLICATIONDETAILID == b.LOANAPPLICATIONDETAILID //la.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                                            && la.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                                    && la.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                                        && ad.STATUSID == (int)ApprovalStatusEnum.Approved
+                                                    select new ProductFeeViewModel()
+                                                    {
+                                                        feeName = cf.CHARGEFEENAME,
+                                                        rateValue = df.RECOMMENDED_FEERATEVALUE,
+                                                        productName = p.PRODUCTNAME
+                                                    }).ToList(),
+                                       //GetLoanApplicationFee(applicationRefNumber, b.LOANAPPLICATIONDETAILID) feeName = $"{cf.CHARGEFEENAME} {df.RECOMMENDED_FEERATEVALUE}",
                                    }).ToList();
 
                 if (loanDetails != null)
