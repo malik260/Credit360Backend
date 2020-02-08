@@ -2692,7 +2692,7 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
 
-            
+
             var query2 = context.TBL_LOAN_APPLICATION.Where(x =>
                 x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
@@ -2791,7 +2791,7 @@ namespace FintrakBanking.Repositories.Credit
             dateTimeCreated = x.a.DATETIMECREATED,
         }).ToList();
 
-            // var test = applications.Count();
+            var test = applications.Count();
 
             if (staffProfile.Select(d => d.STAFFROLESHORTCODE).Contains("ED"))
             {
@@ -2810,7 +2810,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var relisfApplications = applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d => d.MISCODE).Contains(x.divisionCode));
                     var app1ForFilter = relisfApplications.ToList();
-                    foreach(var app in applications2)
+                    foreach (var app in applications2)
                     {
                         if (app1ForFilter.Any(a => a.approvalTrailId == app.approvalTrailId))
                         {
