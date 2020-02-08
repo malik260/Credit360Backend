@@ -422,6 +422,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+       
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("sectors")]
@@ -557,6 +559,8 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        
 
 
         //[HttpGet]
