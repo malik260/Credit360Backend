@@ -463,18 +463,70 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() > 0;
         }
-
-
         public IEnumerable<OperationPageOrderViewModel> GetAllOperationOrder()
         {
             var data = (from cs in context.TBL_LMSR_FLOW_ORDER
+                        join b in context.TBL_OPERATIONS on cs.OPERATIONID equals b.OPERATIONID
                         select new OperationPageOrderViewModel()
                         {
+                            tag = cs.TAG,
                            operationId = cs.OPERATIONID,
-                           // sectorName = cs.NAME,
-                        });
+                           operationName = b.OPERATIONNAME,
+                           floworderId = cs.FLOWORDERID,
+                           requiredAppraisal = cs.REQUIREAPPRAISAL,
+                           requiredAvailment = cs.REQUIREAVAILMENT,
+                           requiredOfferLetter = cs.REQUIREOFFERLETTER,
+                        }).ToList();
 
             return data;
+        }
+
+        public IEnumerable<OperationPageOrderViewModel> GetAllOperations()
+        {
+            var data = (from b in context.TBL_OPERATIONS 
+                        select new OperationPageOrderViewModel()
+                        {
+                            operationId = b.OPERATIONID,
+                            operationName = b.OPERATIONNAME,
+                        }).ToList();
+
+            return data;
+        }
+
+        public bool AddFlowOrder(OperationPageOrderViewModel entity)
+        {
+            var data = new TBL_LMSR_FLOW_ORDER()
+            {
+                TAG = entity.tag,
+                REQUIREAPPRAISAL = entity.requiredAppraisal,
+                REQUIREAVAILMENT = entity.requiredAvailment,
+                REQUIREOFFERLETTER = entity.requiredOfferLetter,
+                OPERATIONID = (short)entity.operationId,
+                CREATEDBY = entity.createdBy,
+                COMPANYID = entity.companyId,
+                DATETIMECREATED = DateTime.Now,
+            };
+
+            context.TBL_LMSR_FLOW_ORDER.Add(data);
+
+            return context.SaveChanges() > 0;
+        }
+
+        public bool UpdateFlowOrder(OperationPageOrderViewModel entity)
+        {
+            var data = this.context.TBL_LMSR_FLOW_ORDER.Find(entity.floworderId);
+            {
+              
+                data.REQUIREOFFERLETTER = entity.requiredOfferLetter;
+                data.REQUIREAVAILMENT = entity.requiredAvailment;
+                data.REQUIREAPPRAISAL = entity.requiredAppraisal;
+                data.TAG = entity.tag;
+                data.DATETIMEUPDATED = DateTime.Now;
+                data.UPDATEDBY = entity.staffId;
+                data.OPERATIONID =(short)entity.operationId;
+            }
+
+            return context.SaveChanges() > 0;
         }
     }
 }

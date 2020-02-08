@@ -27,6 +27,54 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool allowOverride { get; set; }
     }
 
+    public class ExposureLimitRequestModel
+    {
+        public int companyId { get; set; } // required!
+        public int? staffId { get; set; }
+        public int? customerId { get; set; }
+        public int? customerGroupId { get; set; }
+        public int? branchId { get; set; }
+        public int? sectorId { get; set; }
+        public int? applicationId { get; set; }
+    }
+
+    public class RequestExposureLimit
+    {
+        public RequestExposureLimit()
+        {
+            SectorLimit = 0;
+            SectorMaximumExposure = 0;
+        }
+
+        public string productCustomerName { get; set; }
+
+        public decimal? ObligorLimit { get; set; }
+        public decimal? ObligorExposure { get; set; }
+        public decimal? ObligorMaximumExposure { get; set; }
+
+        public decimal? SectorLimit { get; set; }
+        public decimal? SectorExposure { get; set; }
+        public decimal? SectorMaximumExposure { get; set; }
+
+        public string SectorLimitString
+        {
+            get
+            {
+                if (SectorMaximumExposure == 0 || SectorMaximumExposure == null) return "No limit";
+                return string.Format("{0:#,0.00}", SectorLimit);
+            }
+        }
+
+        public string ObligorLimitString
+        {
+            get
+            {
+                if (ObligorMaximumExposure == 0 || ObligorMaximumExposure == null) return "No limit";
+                return string.Format("{0:#,0.00}", ObligorLimit);
+            }
+        }
+    }
+
     public class TotalExposureLimit
     {
         public decimal? AccountOfficerNPLLimit { get; set; }
@@ -84,57 +132,6 @@ namespace FintrakBanking.ViewModels.Setups.General
         //        return string.Format("{0:#,0.00}", ObligorLimit);
         //    }
         //}
-
-
-
-
-        public class ExposureLimitRequestModel
-        {
-            public int companyId { get; set; } // required!
-            public int? staffId { get; set; }
-            public int? customerId { get; set; }
-            public int? customerGroupId { get; set; }
-            public int? branchId { get; set; }
-            public int? sectorId { get; set; }
-            public int? applicationId { get; set; }
-        }
-
-       
-        public class RequestExposureLimit
-        {
-            public RequestExposureLimit()
-            {
-                SectorLimit = 0;
-                SectorMaximumExposure = 0;
-            }
-
-            public string productCustomerName { get; set; }
-
-            public decimal? ObligorLimit { get; set; }
-            public decimal? ObligorExposure { get; set; }
-            public decimal? ObligorMaximumExposure { get; set; }
-
-            public decimal? SectorLimit { get; set; }
-            public decimal? SectorExposure { get; set; }
-            public decimal? SectorMaximumExposure { get; set; }
-
-            public string SectorLimitString
-            {
-                get
-                {
-                    if (SectorMaximumExposure == 0 || SectorMaximumExposure == null) return "No limit";
-                    return string.Format("{0:#,0.00}", SectorLimit);
-                }
-            }
-
-            public string ObligorLimitString
-            {
-                get
-                {
-                    if (ObligorMaximumExposure == 0 || ObligorMaximumExposure == null) return "No limit";
-                    return string.Format("{0:#,0.00}", ObligorLimit);
-                }
-            }
-        }
+        
     }
 }

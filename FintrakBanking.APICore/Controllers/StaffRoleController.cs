@@ -298,6 +298,9 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("operation-all")]
@@ -315,6 +318,83 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("all-operations")]
+        public HttpResponseMessage GetAllOperation()
+        {
+            try
+            {
+                var data = repo.GetAllOperations();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("flow-order-add")]
+        public HttpResponseMessage AddFlowOrder([FromBody] OperationPageOrderViewModel entity)
+        {
+            try
+            {
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                
+                bool data = repo.AddFlowOrder(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "FlowOrder has been added successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (SecureException ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("update-flow-order")]
+        public HttpResponseMessage UpdateFlowOrder([FromBody] OperationPageOrderViewModel entity)
+        {
+            try
+            {
+                entity.lastUpdatedBy = token.GetStaffId;
+                bool data = repo.UpdateFlowOrder(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "SetUp has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful" });
+            }
+            catch (SecureException ex)
+            {
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }

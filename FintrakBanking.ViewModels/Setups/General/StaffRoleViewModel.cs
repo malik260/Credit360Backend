@@ -45,6 +45,12 @@ namespace FintrakBanking.ViewModels.Setups.General
     public class OperationPageOrderViewModel: GeneralEntity
     {
         public int operationId { get; set; }
+        public short floworderId { get; set; }
+        public string operationName { get; set; }
+        public string tag { get; set; }
+        public bool requiredAppraisal { get; set; }
+        public bool requiredAvailment { get; set; }
+        public bool requiredOfferLetter { get; set; }
     }
 
     public class StaffGroupEmailViewModel : GeneralEntity

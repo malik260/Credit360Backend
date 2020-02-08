@@ -29,5 +29,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ApprovalSetUpViewModel> GetApprovalSetup();
         bool UpdateApprovalSetUp(ApprovalSetUpViewModel entity);
         IEnumerable<OperationPageOrderViewModel> GetAllOperationOrder();
+        IEnumerable<OperationPageOrderViewModel> GetAllOperations();
+        bool UpdateFlowOrder(OperationPageOrderViewModel entity);
+        bool AddFlowOrder(OperationPageOrderViewModel entity);
     }
 }
