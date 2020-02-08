@@ -62,5 +62,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<ProfileBusinessUnitViewModel> GetProfileBusinessUnits();
         List<int> GetStaffRlieved(int staffId);
+
+      
     }
 }
