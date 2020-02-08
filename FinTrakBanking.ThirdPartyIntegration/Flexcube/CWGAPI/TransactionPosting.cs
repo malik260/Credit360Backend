@@ -46,13 +46,13 @@
                 var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
                 if(apiConfig != null)
                 {
-                    API_URL = apiConfig.URL;
+                    API_URL = apiConfig.URL.Trim();
                     API_KEY = apiConfig.APIKEY;
                 }
                 if (apiConfig == null)
                 {
                     apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
-                    API_URL = apiConfig.URL;
+                    API_URL = apiConfig.URL.Trim();
                     API_KEY = apiConfig.APIKEY;
                 }
             }
@@ -147,7 +147,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"{API_URL}GetExchangeRateProduct /{fromCurrencyCode}/{toCurrencyCode}/{rateCode}/{DateTime.Now.Date}",
+                        APIURL = $"{API_URL}GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}/{DateTime.Now.Date}",
                         LOGTYPEID = 3,
                         REFERENCENUMBER = fromCurrencyCode + "--" +   toCurrencyCode + "--" + rateCode,
                         REQUESTDATETIME = requestDatetime,

@@ -38,13 +38,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
             if (apiConfig != null)
             {
-                API_URL = apiConfig.URL;
+                API_URL = apiConfig.URL.Trim();
                 API_KEY = apiConfig.APIKEY;
             }
             if (apiConfig == null)
             {
                 apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
-                API_URL = apiConfig.URL;
+                API_URL = apiConfig.URL.Trim();
                 API_KEY = apiConfig.APIKEY;
             }
         }

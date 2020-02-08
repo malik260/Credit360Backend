@@ -3483,10 +3483,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             loanId = ln.CONTINGENTLOANID,
                             operationId = (int)OperationsEnum.ContigentLoanBooking,
+                            appraisalOperationId = (short)a.OPERATIONID ,
                             operationTypeId = (int)OperationsEnum.ContigentLoanBooking,
                             loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
                             customerId = ln.CUSTOMERID,
                             productId = ln.PRODUCTID,
+
                             casaAccountId = ln.CASAACCOUNTID,
                             casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
                             casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
