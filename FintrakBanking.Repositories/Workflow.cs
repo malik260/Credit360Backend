@@ -349,7 +349,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                   && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
                                   ).ToList();
 
-                if (this.businessUnitId != null) return;
+                if (this.businessUnitId == null) return;
 
                 var businessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(this.businessUnitId);
                 var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId).ToList();
