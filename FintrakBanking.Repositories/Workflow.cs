@@ -349,11 +349,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                                   && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
                                   ).ToList();
 
-                if (this.businessUnitId != null) return;
+                if (this.businessUnitId == null) return;
 
+                var businessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(this.businessUnitId);
                 var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId).ToList();
                 var roles = approvalLevel.Select(c => c.STAFFROLEID).ToList();
-                var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID) && x.BUSINESSUNITID == this.businessUnitId).ToList();
+                var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID) && ((x.BUSINESSUNITID == this.businessUnitId && x.BUSINESSUNITID != null) || x.MISCODE.Trim() == businessUnit.BUSINESSUNITINITIALS)).ToList();
 
                 var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId).Select(d => d.STAFFID).ToList();
                 approvalStaff.AddRange(staffInrole.Select(d => d.STAFFID).ToList());
