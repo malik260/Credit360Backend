@@ -13864,7 +13864,7 @@ namespace FintrakBanking.Repositories.Credit
             //bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();
 
-            IEnumerable<LoanViewModel> allFilteredLoan = null;
+            List<LoanViewModel> allFilteredLoan = new List<LoanViewModel>();
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 searchQuery = searchQuery.ToLower();
@@ -13872,31 +13872,46 @@ namespace FintrakBanking.Repositories.Credit
 
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
-                allFilteredLoan = SearchTermLoan(searchQuery);
+                var termLoan = SearchTermLoan(searchQuery).ToList();
+                if (termLoan.Count > 0)
+                {
+                    allFilteredLoan.AddRange(termLoan);
+                }
+                var revolving = SearchRevolvingLoan(searchQuery).ToList();
+                if (revolving.Count > 0)
+                {
+                    allFilteredLoan.AddRange(revolving);
+                }
+                var contingent = SearchContigentLoan(searchQuery).ToList();
+                if (contingent.Count > 0)
+                {
+                    allFilteredLoan.AddRange(contingent);
+                }
+                var line = SearchLoanLine(searchQuery).ToList();
+                if (line.Count > 0)
+                {
+                    allFilteredLoan.AddRange(line);
+                }
                 //if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
                 //{
-                //    allFilteredLoan = SearchTermLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
+                //allFilteredLoan = SearchTermLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
                 //}
                 //else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
                 //{
-                //    allFilteredLoan = SearchRevolvingLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
+                //allFilteredLoan = SearchRevolvingLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
                 //}
                 //else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
                 //{
-                //    allFilteredLoan = SearchContigentLoan(searchQuery);
+                //allFilteredLoan = SearchContigentLoan(searchQuery);
                 //}
                 //else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
                 //{
-                //    allFilteredLoan = SearchLoanLine(searchQuery);
-                //}
-                //else
-                //{
-                //    throw new SecureException("Not Implemented!");
-                //}
-
+                //allFilteredLoan = SearchLoanLine(searchQuery);
             }
-
-
+            else
+            {
+                throw new SecureException("Not Implemented!");
+            }
             return allFilteredLoan;
         }
 
