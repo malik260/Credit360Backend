@@ -38,6 +38,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string slaDifferenceMinute { get { return $"{de.Days}day(s) {de.Hours}h {de.Minutes}m {de.Seconds}s"; } }
         public string timespan { get { return (de).ToString(@"dd\.hh\:mm\:ss"); } }
         public int approvalStatusId { get; set; }
+        public int loanBookingRequestId { get; set; }
         public DateTime? systemResponseDate { get; set; }
         public DateTime? systemArrivalDate { get; set; }
         public int operationId { get; set; }
