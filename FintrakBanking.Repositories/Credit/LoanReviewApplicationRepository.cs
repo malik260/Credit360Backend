@@ -1039,7 +1039,7 @@ namespace FintrakBanking.Repositories.Credit
                     var synchOperationId  = operation?.SYNCHOPERATIONID;
 
                     if (synchOperationId == null)
-                        throw new ConditionNotMetException("Operation not in synch with final operation");
+                        throw new ConditionNotMetException("Operation not in synch with final operation.");
 
                     nextOperationId = (short)synchOperationId;
 
