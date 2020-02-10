@@ -21,6 +21,7 @@
         public DateTime? DATETIMEUPDATED { get; set; }
         public int? UPDATEDBY            { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
+        public string TAG { get; set; }
 
     }
 }
