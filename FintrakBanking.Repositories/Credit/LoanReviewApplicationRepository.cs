@@ -1039,7 +1039,7 @@ namespace FintrakBanking.Repositories.Credit
                     var synchOperationId  = operation?.SYNCHOPERATIONID;
 
                     if (synchOperationId == null)
-                        throw new ConditionNotMetException("Operation not in synch with final operation");
+                        throw new ConditionNotMetException("Operation not in synch with final operation.");
 
                     nextOperationId = (short)synchOperationId;
 
@@ -1056,6 +1056,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                           || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                          || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
                           || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
                         {
                             workflowlms.StaffId = model.createdBy;
