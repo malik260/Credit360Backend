@@ -83,7 +83,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CustomerDocumentUploadViewModel> GetKYCDocumentUploadByCustomerId(int customerId)
         {
-            return this.context.TBL_MEDIA_KYC_DOCUMENTS.Where(x => x.CUSTOMERID == customerId).Select(x => new CustomerDocumentUploadViewModel
+            var kycDocuments = from x in context.TBL_MEDIA_KYC_DOCUMENTS where x.CUSTOMERID == customerId select new CustomerDocumentUploadViewModel
             {
                 documentId = x.DOCUMENTID,
                 customerId = x.CUSTOMERID,
@@ -96,7 +96,24 @@ namespace FintrakBanking.Repositories.Customer
                 systemDateTime = x.SYSTEMDATETIME,
                 physicalFileNumber = x.PHYSICALFILENUMBER,
                 physicalLocation = x.PHYSICALLOCATION,
-            });
+            };
+
+            return kycDocuments;
+
+            //return this.context.TBL_MEDIA_KYC_DOCUMENTS.Where(x => x.CUSTOMERID == customerId).Select(x => new CustomerDocumentUploadViewModel
+            //{
+            //    documentId = x.DOCUMENTID,
+            //    customerId = x.CUSTOMERID,
+            //    customerCode = x.CUSTOMERCODE,
+            //    documentTitle = x.DOCUMENTTITLE,
+            //    documentTypeId = (short)x.DOCUMENTTYPEID,
+            //    fileData = x.FILEDATA,
+            //    fileName = x.FILENAME,
+            //    fileExtension = x.FILEEXTENSION,
+            //    systemDateTime = x.SYSTEMDATETIME,
+            //    physicalFileNumber = x.PHYSICALFILENUMBER,
+            //    physicalLocation = x.PHYSICALLOCATION,
+            //});
         }
         #endregion
 
