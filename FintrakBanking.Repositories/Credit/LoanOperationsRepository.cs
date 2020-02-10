@@ -17119,7 +17119,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (model.operationTypeId != (int)OperationsEnum.Prepayment && (int)OperationsEnum.LoanTermination != model.operationTypeId)
                         {
-                            LogLMSOperationRouteWorkflow(model, (int)loanReviewApplicationId, loanSystemTypeId);
+                            //LogLMSOperationRouteWorkflow(model, (int)loanReviewApplicationId, loanSystemTypeId);
                         }
 
 
