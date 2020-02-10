@@ -17101,7 +17101,7 @@ namespace FintrakBanking.Repositories.Credit
                         workFlow.Comment = "Review operation";
                         workFlow.OperationId = model.operationTypeId;
                         workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                        workFlow.ExternalInitialization = true;
+                        workFlow.ExternalInitialization = false;
                         if ((int)OperationsEnum.Prepayment == model.operationTypeId || (int)OperationsEnum.LoanTermination == model.operationTypeId)
                         {
                             var loggedInStaff = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == model.createdBy);

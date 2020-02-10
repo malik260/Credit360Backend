@@ -164,6 +164,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? appraisalOperationId { get; set; }
         public int? operationTypeId { get; set; }
         public string operationName { get; set; }
+        public string reviewLoanDetaile { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public decimal overDraft { get; set; }
