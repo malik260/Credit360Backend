@@ -1056,6 +1056,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                           || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                          || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
                           || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
                         {
                             workflowlms.StaffId = model.createdBy;
