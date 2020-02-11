@@ -17024,7 +17024,7 @@ namespace FintrakBanking.Repositories.Credit
                         _operationTypeId = model.productTypeId;
                     }
 
-                    // if (reviewApplicationDetail == null) throw new SecureException("Review application details not found!");
+                    if (reviewApplicationDetail == null) throw new SecureException("Review application details not found!");
 
                     int? loanReviewApplicationId = null;
                     if (reviewApplicationDetail != null)
@@ -17096,12 +17096,13 @@ namespace FintrakBanking.Repositories.Credit
 
                         workFlow.StaffId = model.createdBy;
                         workFlow.CompanyId = model.companyId;
-                        workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Processing;
                         workFlow.TargetId = reviewOperation.LOANREVIEWOPERATIONID; // model.loanReviewOperationsId;
                         workFlow.Comment = "Review operation";
                         workFlow.OperationId = model.operationTypeId;
                         workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                         workFlow.ExternalInitialization = false;
+
                         if ((int)OperationsEnum.Prepayment == model.operationTypeId || (int)OperationsEnum.LoanTermination == model.operationTypeId)
                         {
                             var loggedInStaff = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == model.createdBy);
@@ -17116,12 +17117,10 @@ namespace FintrakBanking.Repositories.Credit
                         var response = workFlow.LogActivity();
 
                         //LOF ACTIVITY TO END WORKFLOW
-
                         if (model.operationTypeId != (int)OperationsEnum.Prepayment && (int)OperationsEnum.LoanTermination != model.operationTypeId)
                         {
-                            //LogLMSOperationRouteWorkflow(model, (int)loanReviewApplicationId, loanSystemTypeId);
+                            LogLMSOperationRouteWorkflow(model, (int)loanReviewApplicationId, loanSystemTypeId);
                         }
-
 
                         result = false;
 
@@ -17149,11 +17148,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 result = false;
                             }
-
                         }
-
-
-                        //return result;
                     }
                     else
                     {
@@ -17200,9 +17195,6 @@ namespace FintrakBanking.Repositories.Credit
                             OSNAME = CommonHelpers.FriendlyName()
                         });
 
-
-                        //bool result = false;
-
                         result = false;
 
                         if (model.fees != null)
@@ -17222,14 +17214,8 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             result = context.SaveChanges() > 0;
                         }
-
-
-
                     }
-
-
                     transactionScope.Complete();
-
 
                     transactionScope.Dispose();
                 }
@@ -17245,19 +17231,13 @@ namespace FintrakBanking.Repositories.Credit
 
                     // stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
 
-
                     //context.SaveChanges();
 
                     throw ex;
                 }
-
             }
 
-
-
             return result;
-
-
         }
 
         private void LogLMSOperationRouteWorkflow(LoanReviewOperationViewModel model, int loanReviewApplicationId, int loanSystemTypeId)
@@ -17272,7 +17252,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflowLmsOperation.StatusId = (short)ApprovalStatusEnum.Processing;
                 workflowLmsOperation.TargetId = (int)loanReviewApplicationId;
                 workflowLmsOperation.Comment = "Review Operation Initiated - pending approval";
-                workflowLmsOperation.OperationId = (short)OperationsEnum.LmsOperations;
+                workflowLmsOperation.OperationId = model.operationTypeId; // (short)OperationsEnum.LmsOperations;
                 workflowLmsOperation.DeferredExecution = true;
                 workflowLmsOperation.ExternalInitialization = true;
 
@@ -17401,13 +17381,13 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)// || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)// || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                             && atrail.OPERATIONID == op.OPERATIONTYPEID
-                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
+                           // && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                            && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
+                           // && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
                             && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId)
-                            && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)// currency filter
+                           // && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)// currency filter
 
                             orderby op.DATECREATED descending
 
