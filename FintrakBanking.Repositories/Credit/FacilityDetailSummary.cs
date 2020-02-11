@@ -349,6 +349,7 @@ namespace FintrakBanking.Repositories.Credit
             var loanDetails = (from a in context.TBL_LOAN_REVOLVING
                                join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                               join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
                                join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
                                join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
@@ -429,7 +430,7 @@ namespace FintrakBanking.Repositories.Credit
                                    externalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.EXT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                    // internalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.INT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                    userPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.USER_PRUDENTIAL_GUIDE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
-                                   crmsCode = ld.CRMSCODE
+                                   crmsCode = lr.CRMSCODE
                                }).FirstOrDefault();
 
             loanDetails.availableBalance = availableBalance;
@@ -543,6 +544,7 @@ namespace FintrakBanking.Repositories.Credit
             var loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                               join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
                                join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
                                join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
@@ -614,7 +616,7 @@ namespace FintrakBanking.Repositories.Credit
                                    istenored = a.ISTENORED ? "Yes" : "No",
                                    isbankFormat = a.ISBANKFORMAT ? "Yes" : "No",
                                    productPriceIndex = ld.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == ld.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
-                                   crmsCode = ld.CRMSCODE
+                                   crmsCode = lr.CRMSCODE
                                }).FirstOrDefault();
             return loanDetails;
         }
@@ -623,6 +625,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loanDetails = (from a in context.TBL_LOAN
                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                               join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
                                join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                join f in context.TBL_PRODUCT on a.PRODUCTID equals f.PRODUCTID
                                join pt in context.TBL_PRODUCT_TYPE on f.PRODUCTTYPEID equals pt.PRODUCTTYPEID
@@ -737,7 +740,7 @@ namespace FintrakBanking.Repositories.Credit
                                    productPriceIndex = d.PRODUCTPRICEINDEXID != null ? context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == d.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
                                    //accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.TERMLOANID && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault(),  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
                                    //productPriceIndex = d.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == d.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
-                                   crmsCode = d.CRMSCODE
+                                   crmsCode = lr.CRMSCODE
                                }).FirstOrDefault();
             var applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
             loanDetails.accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanDetails.loanId && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault();

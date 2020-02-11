@@ -319,7 +319,7 @@ namespace FintrakBanking.Repositories.Credit
                     join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                     join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                     join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
-                    join atrail in context.TBL_APPROVAL_TRAIL.Distinct() on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                    join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                     where operationIds.Contains(atrail.OPERATIONID)
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                             && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
