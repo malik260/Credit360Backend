@@ -10228,6 +10228,14 @@ namespace FintrakBanking.Repositories.Credit
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = b.OPERATIONID,
+
+                                       appraisalOperationId = e.OPERATIONID,
+                                       appraisalApplicationId = e.LOANAPPLICATIONID,
+                                       appraisalCustomerId = e.CUSTOMERID,
+                                       appraisalGroupCustomerId = e.CUSTOMERGROUPID,
+                                       appraisalLoanReviewApplicationId = b.LOANREVIEWAPPLICATIONID,
+                                       appraisalApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+
                                        operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
@@ -11621,6 +11629,13 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TERMLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
+                                   appraisalOperationId = e.OPERATIONID,
+                                   appraisalApplicationId = e.LOANAPPLICATIONID,
+                                   appraisalCustomerId = e.CUSTOMERID,
+                                   appraisalGroupCustomerId = e.CUSTOMERGROUPID,
+                                   appraisalLoanReviewApplicationId = d.LOANAPPLICATIONDETAILID,
+                                   appraisalApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+
                                    loanId = a.TERMLOANID,
                                    loanApplicationId = a.LOANAPPLICATIONDETAILID,
                                    customerId = a.CUSTOMERID,

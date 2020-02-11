@@ -405,6 +405,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string responsiblePerson { get; set; }
         public short productClassProcessId { get; set; }
         public short loanApplicationTypeId { get; set; }
+        public int appraisalOperationId { get; set; }
+        public int appraisalApplicationId { get; set; }
+        public int? appraisalCustomerId { get; set; }
+        public int? appraisalGroupCustomerId { get; set; }
+        public int appraisalLoanReviewApplicationId { get; set; }
+        public string appraisalApplicationReferenceNumber { get; set; }
 
 
 
