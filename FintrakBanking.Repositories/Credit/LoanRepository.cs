@@ -14933,7 +14933,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                    where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                  && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                                  && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
                                   && b.OPERATIONPERFORMED == false
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
