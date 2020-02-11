@@ -16857,9 +16857,6 @@ namespace FintrakBanking.Repositories.Credit
 
                 try
                 {
-
-
-
                     var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
                     if (model.operationTypeId == (int)OperationsEnum.TenorChange)
                     {
@@ -17119,7 +17116,7 @@ namespace FintrakBanking.Repositories.Credit
                         //LOF ACTIVITY TO END WORKFLOW
                         if (model.operationTypeId != (int)OperationsEnum.Prepayment && (int)OperationsEnum.LoanTermination != model.operationTypeId)
                         {
-                            LogLMSOperationRouteWorkflow(model, (int)loanReviewApplicationId, loanSystemTypeId);
+                            //LogLMSOperationRouteWorkflow(model, (int)loanReviewApplicationId, loanSystemTypeId);
                         }
 
                         result = false;
@@ -17383,11 +17380,11 @@ namespace FintrakBanking.Repositories.Credit
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
                             where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)// || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                             && atrail.OPERATIONID == op.OPERATIONTYPEID
-                           // && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                           // && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
+                            && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
                             && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId)
-                           // && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)// currency filter
+                            && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)// currency filter
 
                             orderby op.DATECREATED descending
 
@@ -18067,7 +18064,7 @@ namespace FintrakBanking.Repositories.Credit
                         workFlow.Comment = entity.comment;
                         workFlow.DeferredExecution = true;
 
-                        workFlow.LogActivity();
+                       // workFlow.LogActivity();
 
                         var lmsrRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
                         if (lmsrRecord != null)
@@ -18121,17 +18118,18 @@ namespace FintrakBanking.Repositories.Credit
                         return 2;
                     }
 
-                    if (workFlow.NewState != (int)ApprovalState.Ended)
+                    var ended = true;
+                    //if (workFlow.NewState != (int)ApprovalState.Ended)
+                    if (ended)
                     {
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                         output = context.SaveChanges() > 0;
                         trans.Commit();
                         data = 3;
                     }
-                    else if (workFlow.NewState == (int)ApprovalState.Ended)
+                    //else if (workFlow.NewState == (int)ApprovalState.Ended)
+                    else if (ended)
                     {
-
-
                         //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
                         if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
                         {
@@ -18145,9 +18143,6 @@ namespace FintrakBanking.Repositories.Credit
 
 
                         var validate = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == 0).ToList();
-
-
-
 
                         foreach (var item in validate)
                         {
@@ -18185,9 +18180,6 @@ namespace FintrakBanking.Repositories.Credit
 
                                 var me = ex;
                             }
-
-
-
                         }
                         if (output == true && result == true)
                         {

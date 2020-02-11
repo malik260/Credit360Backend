@@ -1031,49 +1031,49 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            //if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
-            //{
-            //    foreach (var i in details)
-            //    {
-            //        var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == appl.OPERATIONID)?.FirstOrDefault();
-            //        var synchOperationId  = operation?.SYNCHOPERATIONID;
+            if (lastOperationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            {
+                foreach (var i in details)
+                {
+                    var operation = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == appl.OPERATIONID)?.FirstOrDefault();
+                    var synchOperationId = operation?.SYNCHOPERATIONID;
 
-            //        if (synchOperationId == null)
-            //            throw new ConditionNotMetException("Operation not in synch with final operation.");
+                    if (synchOperationId == null)
+                        throw new ConditionNotMetException("Operation not in synch with final operation.");
 
-            //        nextOperationId = (short)synchOperationId;
+                    nextOperationId = (short)synchOperationId;
 
-            //        var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
-            //                        x.COMPANYID == model.companyId
-            //                        && x.OPERATIONID == nextOperationId
-            //                        && x.TARGETID == i.LOANREVIEWAPPLICATIONID
-            //                        && x.RESPONSESTAFFID == null
-            //                        && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
-            //                    ).ToList();
-            //        if (existingTrail.Count() == 0)
-            //        {
-            //            Workflow workflowlms = new Workflow(context, general);
+                    var existingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                    x.COMPANYID == model.companyId
+                                    && x.OPERATIONID == nextOperationId
+                                    && x.TARGETID == i.LOANREVIEWAPPLICATIONID
+                                    && x.RESPONSESTAFFID == null
+                                    && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                                ).ToList();
+                    if (existingTrail.Count() == 0)
+                    {
+                        Workflow workflowlms = new Workflow(context, general);
 
-            //            if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-            //              || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
-            //              || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
-            //              || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
-            //            {
-            //                workflowlms.StaffId = model.createdBy;
-            //                workflowlms.CompanyId = model.companyId;
-            //                workflowlms.StatusId = (short)ApprovalStatusEnum.Processing;
-            //                workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
-            //                workflowlms.Comment = model.comment;
-            //                workflowlms.OperationId = (int)nextOperationId;
-            //                workflowlms.DeferredExecution = true;
-            //                workflowlms.ExternalInitialization = true;
-            //                workflowlms.LogActivity();
-            //                context.SaveChanges();
-            //            }
-            //        }
+                        if ((i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                          || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                          || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
+                          || i.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility))
+                        {
+                            workflowlms.StaffId = model.createdBy;
+                            workflowlms.CompanyId = model.companyId;
+                            workflowlms.StatusId = (short)ApprovalStatusEnum.Pending;
+                            workflowlms.TargetId = i.LOANREVIEWAPPLICATIONID;
+                            workflowlms.Comment = model.comment;
+                            workflowlms.OperationId = (int)nextOperationId;
+                            workflowlms.DeferredExecution = true;
+                            workflowlms.ExternalInitialization = true;
+                            workflowlms.LogActivity();
+                            context.SaveChanges();
+                        }
+                    }
 
-            //    }
-            //}
+                }
+            }
         }
 
 
