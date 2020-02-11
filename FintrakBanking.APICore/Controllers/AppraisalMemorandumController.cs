@@ -214,6 +214,18 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("appraisal-memorandum-lms/trail/{applicationId}/operation/{operationId}")]
+        public HttpResponseMessage GetAppraisalMemorandumTrailLms(int applicationId, int operationId)
+        {
+            var data = repo.GetCallmemoApprovalTrail(applicationId, operationId);
+            if (data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
+        }
+
+        [HttpGet]
         [Route("call-memo/trail/{applicationId}/operation/{operationId}")]
         public HttpResponseMessage GetCallMemoApprovalTrail(int applicationId, int operationId)
         {
