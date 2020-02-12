@@ -17353,7 +17353,7 @@ namespace FintrakBanking.Repositories.Credit
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
             //var activities = admin.GetUserActivitiesByUser(staffId);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
-            UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
+            UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);`
 
 
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, 0).ToList();
@@ -18067,7 +18067,7 @@ namespace FintrakBanking.Repositories.Credit
                         workFlow.Comment = entity.comment;
                         workFlow.DeferredExecution = true;
 
-                        workFlow.LogActivity();
+                       // workFlow.LogActivity();
 
                         var lmsrRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
                         if (lmsrRecord != null)
@@ -18089,7 +18089,7 @@ namespace FintrakBanking.Repositories.Credit
                     workFlow.Comment = entity.comment;
                     workFlow.OperationId = entity.operationId;
                     workFlow.DeferredExecution = true;
-                    workFlow.LogActivity();
+                   // workFlow.LogActivity();
 
 
                     bool output = false;
@@ -18120,15 +18120,17 @@ namespace FintrakBanking.Repositories.Credit
                         trans.Commit();
                         return 2;
                     }
-
-                    if (workFlow.NewState != (int)ApprovalState.Ended)
+                    var ended = true;
+                    //if (workFlow.NewState != (int)ApprovalState.Ended)
+                    if (!ended)
                     {
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                         output = context.SaveChanges() > 0;
                         trans.Commit();
                         data = 3;
                     }
-                    else if (workFlow.NewState == (int)ApprovalState.Ended)
+                    //else if (workFlow.NewState == (int)ApprovalState.Ended)
+                    else if (ended)
                     {
 
 
