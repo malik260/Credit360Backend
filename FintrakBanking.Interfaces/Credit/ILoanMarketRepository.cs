@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
         string UpdateLoanMarket(int markeetId, LoanMarketViewModel loanMarket);
         string updateExposure(int exposureId, ExposureViewModel expo);
         string DeleteLoanMarket(int markeetId, LoanMarketViewModel loanMarket);
-        IEnumerable<ExposureViewModel> GetExposureManual();
+        IEnumerable<ExposureViewModel> GetExposureManual(int loanApplicationId); 
         bool DeleteExposure(int exposureId, int staffId);
     }
 }

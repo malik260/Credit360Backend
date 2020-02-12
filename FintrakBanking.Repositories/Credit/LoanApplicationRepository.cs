@@ -1450,7 +1450,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId)
+        public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId) 
         {
             var facilityRating = context.TBL_FACILITY_RATING.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetailId)
                                         .OrderByDescending(O => O.FACILITYRATINGID).Select(O => new FacilityRatingViewModel
