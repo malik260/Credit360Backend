@@ -11423,6 +11423,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
+
         public LoanViewModel GetDisbursedODByODId(int loanId)//GetDisbursedODByODId
         {
 
