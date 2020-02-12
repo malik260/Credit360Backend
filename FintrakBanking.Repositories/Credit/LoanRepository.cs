@@ -9277,7 +9277,7 @@ namespace FintrakBanking.Repositories.Credit
                                      productId = k.PRODUCTID,
                                      customerId = k.CUSTOMERID,
                                      isCurrentAccount = k.ISCURRENTACCOUNT,
-                                     tenor = (int)k.TENOR,
+                                     tenor = k.TENOR ?? 0,
                                  })).ToList(),
                             loanInformation = m.LOANINFORMATION,
                             companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION
