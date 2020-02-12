@@ -9279,7 +9279,7 @@ namespace FintrakBanking.Repositories.Credit
                                      productId = k.PRODUCTID,
                                      customerId = k.CUSTOMERID,
                                      isCurrentAccount = k.ISCURRENTACCOUNT,
-                                     tenor = (int)k.TENOR,
+                                     tenor = k.TENOR ?? 0,
                                  })).ToList(),
                             loanInformation = m.LOANINFORMATION,
                             companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION
@@ -10230,6 +10230,14 @@ namespace FintrakBanking.Repositories.Credit
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = b.OPERATIONID,
+
+                                       appraisalOperationId = e.OPERATIONID,
+                                       appraisalApplicationId = e.LOANAPPLICATIONID,
+                                       appraisalCustomerId = e.CUSTOMERID,
+                                       appraisalGroupCustomerId = e.CUSTOMERGROUPID,
+                                       appraisalLoanReviewApplicationId = b.LOANREVIEWAPPLICATIONID,
+                                       appraisalApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+
                                        operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
@@ -11417,6 +11425,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
+
         public LoanViewModel GetDisbursedODByODId(int loanId)//GetDisbursedODByODId
         {
 
@@ -11623,6 +11632,13 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TERMLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
+                                   appraisalOperationId = e.OPERATIONID,
+                                   appraisalApplicationId = e.LOANAPPLICATIONID,
+                                   appraisalCustomerId = e.CUSTOMERID,
+                                   appraisalGroupCustomerId = e.CUSTOMERGROUPID,
+                                   appraisalLoanReviewApplicationId = d.LOANAPPLICATIONDETAILID,
+                                   appraisalApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+
                                    loanId = a.TERMLOANID,
                                    loanApplicationId = a.LOANAPPLICATIONDETAILID,
                                    customerId = a.CUSTOMERID,
@@ -14954,22 +14970,35 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
+            //var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement).Select(c => c.OPERATIONID).ToList();
+            //List<int> ids = new List<int>();
+
+            //foreach (var operationId in operationIds)
+            //{
+            //    ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
+            //}
+
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
+                                   join atrail in context.TBL_APPROVAL_TRAIL on b.LOANREVIEWAPPLICATIONID equals atrail.TARGETID
                                    join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                   where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                  && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
-                                  && b.OPERATIONPERFORMED == false
-                                  && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-                                  && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
-                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
-                                  && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter
-                                                                                                                                                                            //&& a.LOANREFERENCENUMBER == "406-0056-0000036"
-                                                                                                                                                                            //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
-                                                                                                                                                                            //orderby b.DATECREATED descending
+                                    where a.ISDISBURSED == true 
+                                   && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                   //&& (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                                  // && ids.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)
+                                 //  && atrail.RESPONSESTAFFID == null
+                                   && b.OPERATIONPERFORMED == false
+                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
+                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
+                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter
+                                                                                                                                                                            //&& a.LOANREFERENCENUMBER == "406-0056-0000036"                                                                                                                                   //orderby b.DATECREATED descending
                                    select new LoanViewModel
                                    {
+                                       appraisalOperationId = e.OPERATIONID,
+                                       appraisalLoanApplicationId = e.LOANAPPLICATIONID,
+
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
@@ -15019,7 +15048,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = b.OPERATIONID,
-                                       operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                       operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == e.OPERATIONID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                        casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,

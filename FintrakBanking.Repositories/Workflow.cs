@@ -438,7 +438,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.fromLevelId = request.TOAPPROVALLEVELID;
                     this.nextLevelId = request.TOAPPROVALLEVELID; 
                     this.loopedStaffId = (this.loopedStaffId != null && this.loopedStaffId > 0) ? this.loopedStaffId : initiatorRequest.REQUESTSTAFFID;
-                    this.toStaffId = staffId;
+                    this.toStaffId = null;
+                    //this.toStaffId = staffId;
                     //this.initiatorOrLooped = true;
                 }
             }
@@ -461,10 +462,14 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && this.StatusId != (int)ApprovalStatusEnum.Referred)
             {
-               if(this.referredLog.Count <= 0) request.REFEREBACKSTATEID = (short)ApprovalState.Ended;
+                if (this.referredLog.Count <= 0)
+                {
+                    request.REFEREBACKSTATEID = (short)ApprovalState.Ended;
+                    this.toStaffId = request.REQUESTSTAFFID;
+                } 
 
                 this.nextLevelId = request.FROMAPPROVALLEVELID;
-                if(this.referredLog.Count <= 0)this.toStaffId = request.REQUESTSTAFFID;
+                //if(this.referredLog.Count <= 0)this.toStaffId = request.REQUESTSTAFFID;
             }
 
             if (this.referredLog.Count > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred )
@@ -1413,13 +1418,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     reciever = context.TBL_STAFF.Find(this.toStaffId);
                     recipientName = reciever.FIRSTNAME;
-                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && x.ENDDATE < DateTime.Now).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
+                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.DELETED == false).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
                 }
                 else if (this.loopedStaffId != null)
                 {
                     reciever = context.TBL_STAFF.Find(this.loopedStaffId);
                     recipientName = reciever.FIRSTNAME;
-                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && x.ENDDATE < DateTime.Now).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
+                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && DateTime.Now <= x.ENDDATE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                 }
                 else
                 {
@@ -1450,7 +1455,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if (this.reliefStaffId != null)
                         {
                             var reliefRecord = context.TBL_STAFF.Find(this.reliefStaffId);
-                           // emails.Add(reliefRecord.EMAIL);
+                            if (!(String.IsNullOrEmpty(reliefRecord.EMAIL)) && !(String.IsNullOrWhiteSpace(reliefRecord.EMAIL)))
+                            {
+                                emails.Add(reliefRecord.EMAIL);
+                            }
                         }
                     }
                 }
@@ -1511,7 +1519,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         message = new TBL_MESSAGE_LOG // RECIEVERS
                         {
-                            TOADDRESS = this.toStaffId != null ? reciever.EMAIL : string.Join(";", emails.Distinct()),
+                            TOADDRESS = this.toStaffId != null ? (reciever.EMAIL == null ? "N/A" : reciever.EMAIL) : string.Join(";", emails.Distinct()),
                             MESSAGESUBJECT = messageSubject,
                             MESSAGEBODY = messageBody + links,
                             MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
