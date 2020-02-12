@@ -226,12 +226,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 { request.RESPONSESTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId; }
             }
 
+            AllocateBySBU();
 
             MakerCheckerControl();
 
             //RandomizeAllocation();
-
-            AllocateBySBU();
 
             SendNotifications();
 
@@ -407,6 +406,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
                 var destinationLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.nextLevelId).FirstOrDefault();
+
                 if(this.statusId != (short)ApprovalStatusEnum.Approved && this.newStateId != (short)ApprovalState.Ended)
                 {
                     if(currentLevel != null && destinationLevel != null)
