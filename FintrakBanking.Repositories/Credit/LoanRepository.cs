@@ -11423,6 +11423,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
+
         public LoanViewModel GetDisbursedODByODId(int loanId)//GetDisbursedODByODId
         {
 
@@ -14983,6 +14984,9 @@ namespace FintrakBanking.Repositories.Credit
                                                                                                                                                                             //orderby b.DATECREATED descending
                                    select new LoanViewModel
                                    {
+                                       appraisalOperationId = e.OPERATIONID,
+                                       appraisalLoanApplicationId = e.LOANAPPLICATIONID,
+
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
@@ -15032,7 +15036,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = b.OPERATIONID,
-                                       operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                       operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == e.OPERATIONID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                        casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,

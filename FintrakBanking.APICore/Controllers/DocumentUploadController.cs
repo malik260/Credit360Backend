@@ -55,8 +55,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("document-upload-lms/operation/{operationId}/target/{targetId}")]
-        public HttpResponseMessage GetDocumentUploadsLms(int operationId, int targetId)
+        [Route("document-uploadlms/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetDocumentUploadsLmss([FromUri] int operationId, [FromUri] int targetId)
         {
             IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploadsLmss(token.GetStaffId, operationId, targetId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
