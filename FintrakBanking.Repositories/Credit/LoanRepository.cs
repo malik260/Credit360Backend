@@ -14968,20 +14968,30 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
+            //var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement).Select(c => c.OPERATIONID).ToList();
+            //List<int> ids = new List<int>();
+
+            //foreach (var operationId in operationIds)
+            //{
+            //    ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
+            //}
+
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
+                                   join atrail in context.TBL_APPROVAL_TRAIL on b.LOANREVIEWAPPLICATIONID equals atrail.TARGETID
                                    join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                   where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                  && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
-                                  && b.OPERATIONPERFORMED == false
-                                  && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-                                  && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
-                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
-                                  && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter
-                                                                                                                                                                            //&& a.LOANREFERENCENUMBER == "406-0056-0000036"
-                                                                                                                                                                            //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
-                                                                                                                                                                            //orderby b.DATECREATED descending
+                                    where a.ISDISBURSED == true 
+                                   && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                   //&& (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                                  // && ids.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)
+                                 //  && atrail.RESPONSESTAFFID == null
+                                   && b.OPERATIONPERFORMED == false
+                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
+                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
+                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter
+                                                                                                                                                                            //&& a.LOANREFERENCENUMBER == "406-0056-0000036"                                                                                                                                   //orderby b.DATECREATED descending
                                    select new LoanViewModel
                                    {
                                        appraisalOperationId = e.OPERATIONID,
