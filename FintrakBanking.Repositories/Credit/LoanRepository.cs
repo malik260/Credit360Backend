@@ -9284,7 +9284,7 @@ namespace FintrakBanking.Repositories.Credit
                                      productId = k.PRODUCTID,
                                      customerId = k.CUSTOMERID,
                                      isCurrentAccount = k.ISCURRENTACCOUNT,
-                                     tenor = (int)k.TENOR,
+                                     tenor = k.TENOR ?? 0,
                                  })).ToList(),
                             loanInformation = m.LOANINFORMATION,
                             companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION
@@ -10235,6 +10235,14 @@ namespace FintrakBanking.Repositories.Credit
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = b.OPERATIONID,
+
+                                       appraisalOperationId = e.OPERATIONID,
+                                       appraisalApplicationId = e.LOANAPPLICATIONID,
+                                       appraisalCustomerId = e.CUSTOMERID,
+                                       appraisalGroupCustomerId = e.CUSTOMERGROUPID,
+                                       appraisalLoanReviewApplicationId = b.LOANREVIEWAPPLICATIONID,
+                                       appraisalApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+
                                        operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
@@ -11422,6 +11430,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
+
         public LoanViewModel GetDisbursedODByODId(int loanId)//GetDisbursedODByODId
         {
 
@@ -11628,6 +11637,13 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TERMLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
+                                   appraisalOperationId = e.OPERATIONID,
+                                   appraisalApplicationId = e.LOANAPPLICATIONID,
+                                   appraisalCustomerId = e.CUSTOMERID,
+                                   appraisalGroupCustomerId = e.CUSTOMERGROUPID,
+                                   appraisalLoanReviewApplicationId = d.LOANAPPLICATIONDETAILID,
+                                   appraisalApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+
                                    loanId = a.TERMLOANID,
                                    loanApplicationId = a.LOANAPPLICATIONDETAILID,
                                    customerId = a.CUSTOMERID,
@@ -14985,6 +15001,9 @@ namespace FintrakBanking.Repositories.Credit
                                                                                                                                                                             //&& a.LOANREFERENCENUMBER == "406-0056-0000036"                                                                                                                                   //orderby b.DATECREATED descending
                                    select new LoanViewModel
                                    {
+                                       appraisalOperationId = e.OPERATIONID,
+                                       appraisalLoanApplicationId = e.LOANAPPLICATIONID,
+
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
@@ -15034,7 +15053,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = b.OPERATIONID,
-                                       operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                       operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == e.OPERATIONID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                        casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
