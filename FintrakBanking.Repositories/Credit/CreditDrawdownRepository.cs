@@ -330,7 +330,7 @@ namespace FintrakBanking.Repositories.Credit
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                             && (req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                             && ( (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) 
-                              || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
+                              || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && staffs.Contains((int)atrail.LOOPEDSTAFFID)))
                           //|| (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
 
                     orderby d.LOANAPPLICATIONDETAILID descending
@@ -1275,6 +1275,11 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.amount_Requested > loanApplicationDetails.APPROVEDAMOUNT)
             {
                 throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
+            }
+
+            if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved).Any())
+            {
+                throw new ConditionNotMetException("This facility already has a running tranche disbursement request currently undergoing approval.");
             }
 
             //if (entity.tenor > loanApplicationDetails.APPROVEDTENOR)

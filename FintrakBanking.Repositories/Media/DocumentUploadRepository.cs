@@ -310,14 +310,12 @@ namespace FintrakBanking.Repositories.Media
                    documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
                    documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
                    documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                   uploadedBy = context.TBL_STAFF.Where(s=>s.STAFFID == us.CREATEDBY).Select(s=>s.FIRSTNAME +" "+s.MIDDLENAME +" "+s.LASTNAME).FirstOrDefault(),
+                   //uploadedBy = context.TBL_STAFF.Where(s=>s.STAFFID == us.CREATEDBY).Select(s=>s.FIRSTNAME +" "+s.MIDDLENAME +" "+s.LASTNAME).FirstOrDefault(),
                    owner = up.CREATEDBY == staffId,
                    dateTimeCreated = us.DATETIMECREATED,
                    dateTimeUpdated = us.DATETIMEUPDATED,
                    createdBy = us.CREATEDBY.Value,
-               }
-                )
-                .AsEnumerable()
+               }).AsEnumerable()
                 .Select(up => new DocumentUploadViewModel
                 {
                     documentUploadId = up.documentUploadId,
