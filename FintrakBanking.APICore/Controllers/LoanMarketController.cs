@@ -118,11 +118,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("exposure-manual")]
         [HttpGet]
         [ClaimsAuthorization]
-        public HttpResponseMessage GetAllExposureManual(int loanApplicationId)
+        public HttpResponseMessage GetAllExposureManual()
         {
             try
             {
-                var data = repo.GetExposureManual(loanApplicationId);
+                var data = repo.GetExposureManual();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)

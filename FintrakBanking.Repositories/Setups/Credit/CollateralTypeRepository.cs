@@ -87,7 +87,13 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 .Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x=>x.PROPOSEDPRODUCTID)
                 .Distinct();
-
+            if (productIds == null || productIds.Count()<1)
+            {
+                 productIds = context.TBL_LMSR_APPLICATION_DETAIL
+                    .Where(x => x.LOANREVIEWAPPLICATIONID == applicationId)
+                    .Select(x => x.PRODUCTID)
+                    .Distinct();
+            }
             var typeIds = context.TBL_PRODUCT_COLLATERALTYPE.Where(x => productIds.Contains(x.PRODUCTID))
                 .Select(x => x.COLLATERALTYPEID)
                 .Distinct();

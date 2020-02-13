@@ -319,7 +319,7 @@ namespace FintrakBanking.Repositories.Credit
                     join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                     join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                     join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
-                    join atrail in context.TBL_APPROVAL_TRAIL.Distinct() on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                    join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                     where operationIds.Contains(atrail.OPERATIONID)
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                             && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
@@ -330,7 +330,7 @@ namespace FintrakBanking.Repositories.Credit
                                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                             && (req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                             && ( (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) 
-                              || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId))
+                              || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && staffs.Contains((int)atrail.LOOPEDSTAFFID)))
                           //|| (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
 
                     orderby d.LOANAPPLICATIONDETAILID descending
@@ -1275,6 +1275,11 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.amount_Requested > loanApplicationDetails.APPROVEDAMOUNT)
             {
                 throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
+            }
+
+            if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved).Any())
+            {
+                throw new ConditionNotMetException("This facility already has a running tranche disbursement request currently undergoing approval.");
             }
 
             //if (entity.tenor > loanApplicationDetails.APPROVEDTENOR)

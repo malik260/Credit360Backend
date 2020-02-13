@@ -253,12 +253,12 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId != null)
             {
                 var operation = context.TBL_OPERATIONS.Find(operationId);
-                if (operation.ISCHECKLISTSPECIFIC !=null)
-                {
+                //if (operation.ISCHECKLISTSPECIFIC.Value)
+                //{
                     var output = GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID,1,1).Where(x => x.operationId == operationId).ToList();
 
                     return output.Union(sectorConditions).ToList();
-                }
+                //}
             }
              
             return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID,1,1).Union(sectorConditions).ToList();
