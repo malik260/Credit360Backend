@@ -91,7 +91,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 responseMessage = await response.Content.ReadAsStringAsync();
                 List<SubGroupRatingAndRatioViewModel> customerRatios = new List<SubGroupRatingAndRatioViewModel>();
 
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode && responseMessage.Contains("financial_Period"))
                 {
                     var result = await response.Content.ReadAsAsync<List<SubGroupRatingAndRatioViewModel>>();
                     var responseData = await response.Content.ReadAsStringAsync();
