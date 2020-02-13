@@ -952,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (flowOrder == null) 
                     {
-                        if (defaultFlowOrder.REQUIREOFFERLETTER)
+                        if (defaultFlowOrder.REQUIREOFFERLETTER && currentOperationType != (short)OperationsEnum.LoanReviewApprovalAvailment)
                         {
                             nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
                             LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
