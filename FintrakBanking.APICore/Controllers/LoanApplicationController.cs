@@ -548,9 +548,13 @@ namespace FintrakBanking.APICore.Controllers
                 repo.LoadCustomerTurnover(loanApplicationId, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
             }
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, errorCode = "99" });
+            }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed!" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Turnover!" });
             }
         }
 
@@ -564,9 +568,13 @@ namespace FintrakBanking.APICore.Controllers
                 repo.LoadCustomerTurnoverLms(loanApplicationId, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
             }
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, errorCode = "99" });
+            }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed!" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Turnover!" });
             }
         }
 

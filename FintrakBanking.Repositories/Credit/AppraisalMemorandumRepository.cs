@@ -352,7 +352,9 @@ namespace FintrakBanking.Repositories.Credit
             var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
 
             decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
-            decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
+            //decimal totalApplicationAmount = appl.TBL_LOAN_APPLICATION_DETAIL.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE) + (loanApp.GetExposures(appl).Sum(e => e.outstandingsLcy));
+            decimal totalApplicationAmount = model.legalLendingLimit;
+            //decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
             using (var trans = context.Database.BeginTransaction())
             {
                 if (appl.RISKRATINGID != null && model.isBusiness == false)
@@ -420,7 +422,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.ToStaffId = model.receiverStaffId;
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
-                workflow.Amount = appl.TOTALEXPOSUREAMOUNT = appl.TBL_LOAN_APPLICATION_DETAIL.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE) + (loanApp.GetExposures(appl).Sum(e => e.outstandingsLcy));
+                workflow.Amount = appl.TOTALEXPOSUREAMOUNT = totalApplicationAmount;
                 workflow.InvestmentGrade = model.investmentGrade;
                 workflow.PoliticallyExposed = model.politicallyExposed;
                 workflow.Untenored = model.untenored;
@@ -2684,6 +2686,7 @@ namespace FintrakBanking.Repositories.Credit
                                             .FirstOrDefault(),
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
+            apiRequestId = x.a.APIREQUESTID
         }).ToList();
             //}
 
@@ -3482,7 +3485,7 @@ namespace FintrakBanking.Repositories.Credit
                    // exchangeRate = x.d.EXCHANGERATE,
                     terms = x.d.REPAYMENTTERMS,
                     repaymentScheduleId = x.d.REPAYMENTSCHEDULEID,
-                    schedule = context.TBL_REPAYMENT_TERM.Find(x.d.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
+                    schedule = context.TBL_REPAYMENT_TERM.Where(t => t.REPAYMENTSCHEDULEID == x.d.REPAYMENTSCHEDULEID).FirstOrDefault().REPAYMENTTERMDETAIL,
                     // securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                     //  crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
                     //   isSpecialised = x.d.ISSPECIALISED

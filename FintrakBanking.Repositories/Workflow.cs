@@ -1316,9 +1316,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
+                var testField = level.Level.LEVELNAME;
                 //this.levelBusinessRule = level?.LevelBusinessRule;
 
-                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) continue;
+                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule))
+                {
+                    continue;
+                }
                 //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
                 grid.Add(new WorkflowSetup

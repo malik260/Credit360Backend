@@ -177,7 +177,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
-                getAPIURLSettings("OverDraft");
+                getAPIURLSettings("OverdraftWithoutLien");
                 string apiUrl = "FCUBSCreateOverdraftWithoutLien";
 
                 try
@@ -304,7 +304,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
-                getAPIURLSettings("OverDraft");
+                getAPIURLSettings("Lien");
                 string apiUrl = "FCUBSCreateLien";
 
                 try

@@ -60,6 +60,7 @@ namespace FintrakBanking.Repositories.Credit
         // init
         private int targetId;
         private int operationId;
+        public decimal LLL;
         List<CustomerExposure> customerIds; // init
 
         // field variables
@@ -399,6 +400,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (this.loanApplication.TBL_CUSTOMER?.CUSTOMERTYPEID == (int)CustomerTypeEnum.Individual)
                 {
                     //continue
+                    this.globalExposure = GetGloabalExposures();
                 }
                 else
                 {
@@ -573,7 +575,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (lmsrSystemType == (int)LoanSystemTypeEnum.LineFacility)
             {
-                detailId = context.TBL_LOAN.Find(loanId).LOANAPPLICATIONDETAILID;
+                detailId = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanId).LOANAPPLICATIONDETAILID;
                 loanAppId = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId).LOANAPPLICATIONID;
                 this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
             }
@@ -878,7 +880,7 @@ namespace FintrakBanking.Repositories.Credit
             return "No";
         }
 
-        private decimal getTotalLLLImpact()
+        public decimal getTotalLLLImpact()
         {
             var totalSummary = GetTotalFacilitiesNGNLOS();
             var totalSummary2 = GetTotalForeignFacilitiesLOS();
@@ -887,6 +889,7 @@ namespace FintrakBanking.Repositories.Credit
             var test = (totalSummary.Sum(f => f.totalLLLImpact));
             var test2 = (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
 
+            //LLL = totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL;
             return (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
         }
 
@@ -4587,48 +4590,48 @@ namespace FintrakBanking.Repositories.Credit
 
         private string CustomerExposureMarkup()
         {
-            if (this.loanApplication.LOANAPPLICATIONTYPEID != (int)LoanTypeEnum.Single)
-            {
+            //if (this.loanApplication.LOANAPPLICATIONTYPEID != (int)LoanTypeEnum.Single)
+            //{
                 return null;
-            }
-            // var exposures = GetCustomerExposure(customerIds, companyId); // old maurer impl
-            var exposures = GetCurrentSingleCustomerExposures(); // new
+            //}
+            //// var exposures = GetCustomerExposure(customerIds, companyId); // old maurer impl
+            //var exposures = GetCurrentSingleCustomerExposures(); // new
 
-            var result = String.Empty;
-            var n = 0;
-            result = result + $@"
-                <table style='font face: arial; size:12px' border=1>
-                    <tr>
-                        <th><b>S/N</b></th>
-                        <th><b>Facility Type</b></th>
-                        <th><b>Existing Limit</b></th>
-                        <th><b>Proposed Limit</b></th>
-                        <th><b>Change</b></th>
-                        <th><b>Outstandings</b></th>
-                        <th><b>Past Due Obligations Principal</b></th>
-                        <th><b>Past Due Obligations Interest</b></th>
-                        <th><b>Review Date</b></th>
-                    </tr>
-                 ";
-            foreach (var e in exposures)
-            {
-                n++;
-                result = result + $@"
-                    <tr>
-                        <td>{n}</td>
-                        <td>{e.facilityType}</td>
-                        <td>{String.Format("{0:n}", e.existingLimit)}</td>
-                        <td>{String.Format("{0:n}", e.proposedLimit)}</td>
-                        <td>{String.Format("{0:n}", e.change)}</td>
-                        <td>{String.Format("{0:n}", e.outstandings)}</td>
-                        <td>{String.Format("{0:n}", e.pastDueObligationsPrincipal)}</td>
-                        <td>{String.Format("{0:n}", e.PastDueObligationsInterest)}</td>
-                        <td>{e.reviewDate.ToShortDateString()}</td>
-                    </tr>
-                ";
-            }
-            result = result + $"</table>";
-            return result;
+            //var result = String.Empty;
+            //var n = 0;
+            //result = result + $@"
+            //    <table style='font face: arial; size:12px' border=1>
+            //        <tr>
+            //            <th><b>S/N</b></th>
+            //            <th><b>Facility Type</b></th>
+            //            <th><b>Existing Limit</b></th>
+            //            <th><b>Proposed Limit</b></th>
+            //            <th><b>Change</b></th>
+            //            <th><b>Outstandings</b></th>
+            //            <th><b>Past Due Obligations Principal</b></th>
+            //            <th><b>Past Due Obligations Interest</b></th>
+            //            <th><b>Review Date</b></th>
+            //        </tr>
+            //     ";
+            //foreach (var e in exposures)
+            //{
+            //    n++;
+            //    result = result + $@"
+            //        <tr>
+            //            <td>{n}</td>
+            //            <td>{e.facilityType}</td>
+            //            <td>{String.Format("{0:n}", e.existingLimit)}</td>
+            //            <td>{String.Format("{0:n}", e.proposedLimit)}</td>
+            //            <td>{String.Format("{0:n}", e.change)}</td>
+            //            <td>{String.Format("{0:n}", e.outstandings)}</td>
+            //            <td>{String.Format("{0:n}", e.pastDueObligationsPrincipal)}</td>
+            //            <td>{String.Format("{0:n}", e.PastDueObligationsInterest)}</td>
+            //            <td>{e.reviewDate.ToShortDateString()}</td>
+            //        </tr>
+            //    ";
+            //}
+            //result = result + $"</table>";
+            //return result;
 
             /*
             int number = 1234567890;
@@ -4792,62 +4795,62 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CurrentCustomerExposure> GetCurrentSingleCustomerExposures()
         {
-            List<CustomerProduct> details = new List<CustomerProduct>();
-            IEnumerable<CurrentCustomerExposure> exposure = null;
-            //IQueryable<CurrentCustomerExposure> exposure = null;
+            //List<CustomerProduct> details = new List<CustomerProduct>();
+            //IEnumerable<CurrentCustomerExposure> exposure = null;
+            ////IQueryable<CurrentCustomerExposure> exposure = null;
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
 
-            if (operationId == (int)OperationsEnum.CreditAppraisal)
-                details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.APPROVEDPRODUCTID }).ToList();
-            else
-                details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.PRODUCTID }).ToList();
+            //if (operationId == (int)OperationsEnum.CreditAppraisal)
+            //    details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.APPROVEDPRODUCTID }).ToList();
+            //else
+            //    details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.PRODUCTID }).ToList();
 
             
-            var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == loanApplication.CUSTOMERID).CUSTOMERCODE.Trim();
-            //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+            //var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == loanApplication.CUSTOMERID).CUSTOMERCODE.Trim();
+            ////var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
-            exposure = (from a in context.TBL_GLOBAL_EXPOSURE
-                        where a.CUSTOMERID.Contains(customerCode)
-                        select new CurrentCustomerExposure
-                        {
-                            customerName = a.CUSTOMERNAME,
-                            customerCode = a.CUSTOMERID.Trim(),
-                            facilityType = a.ADJFACILITYTYPE,
-                            approvedAmount = a.LOANAMOUNYTCY ?? 0,
-                            approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
-                            currency = a.CURRENCYNAME,
-                            exposureTypeCodeString = a.EXPOSURETYPECODE,
-                            adjFacilityTypeString = a.ADJFACILITYTYPE,
-                            adjFacilityTypeCode = a.ADJFACILITYTYPEid,
-                            productCode = a.PRODUCTCODE,
-                            productIdString = a.PRODUCTID,
-                            productName = a.PRODUCTNAME,
-                            tenorString = a.TENOR,
-                            //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                            //proposedLimit = a.LOANAMOUNYLCY ?? 0,
-                            outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
-                            outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                            pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
-                            reviewDate = DateTime.Now,
-                            bookingDate = a.BOOKINGDATE ,
-                            //maturityDateString = a.MATURITYDATE,
-                            maturityDate = a.MATURITYDATE,
-                            loanStatus = a.CBNCLASSIFICATION,
-                            referenceNumber = a.REFERENCENUMBER,
-                        }).ToList();
+            //exposure = (from a in context.TBL_GLOBAL_EXPOSURE
+            //            where a.CUSTOMERID.Contains(customerCode)
+            //            select new CurrentCustomerExposure
+            //            {
+            //                customerName = a.CUSTOMERNAME,
+            //                customerCode = a.CUSTOMERID.Trim(),
+            //                facilityType = a.ADJFACILITYTYPE,
+            //                approvedAmount = a.LOANAMOUNYTCY ?? 0,
+            //                approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
+            //                currency = a.CURRENCYNAME,
+            //                exposureTypeCodeString = a.EXPOSURETYPECODE,
+            //                adjFacilityTypeString = a.ADJFACILITYTYPE,
+            //                adjFacilityTypeCode = a.ADJFACILITYTYPEid,
+            //                productCode = a.PRODUCTCODE,
+            //                productIdString = a.PRODUCTID,
+            //                productName = a.PRODUCTNAME,
+            //                tenorString = a.TENOR,
+            //                //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+            //                //proposedLimit = a.LOANAMOUNYLCY ?? 0,
+            //                outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
+            //                outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+            //                pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+            //                reviewDate = DateTime.Now,
+            //                bookingDate = a.BOOKINGDATE ,
+            //                //maturityDateString = a.MATURITYDATE,
+            //                maturityDate = a.MATURITYDATE,
+            //                loanStatus = a.CBNCLASSIFICATION,
+            //                referenceNumber = a.REFERENCENUMBER,
+            //            }).ToList();
 
-            if (exposure.Count() > 0)
-            {
-                foreach(var e in exposure)
-                {
-                    e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
-                    e.tenor = int.Parse(e.tenorString);
-                    //e.productId = int.Parse(e.productIdString);
-                    e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
-                    e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
-                }
-                exposures.AddRange(exposure);
-            }
+            //if (exposure.Count() > 0)
+            //{
+            //    foreach(var e in exposure)
+            //    {
+            //        e.exposureTypeId = int.Parse(String.IsNullOrEmpty(e.exposureTypeCodeString) ? "0" : e.exposureTypeCodeString);
+            //        e.tenor = int.Parse(String.IsNullOrEmpty(e.tenorString) ? "0" : e.tenorString);
+            //        //e.productId = int.Parse(e.productIdString);
+            //        e.exposureTypeCode = int.Parse(String.IsNullOrEmpty(e.exposureTypeCodeString) ? "0" : e.exposureTypeCodeString);
+            //        e.adjFacilityTypeId = int.Parse(String.IsNullOrEmpty(e.adjFacilityTypeCode) ? "0" : e.adjFacilityTypeCode);
+            //    }
+            //    exposures.AddRange(exposure);
+            //}
             //foreach (var detail in details)
             //{
             //    exposure = context.TBL_LOAN

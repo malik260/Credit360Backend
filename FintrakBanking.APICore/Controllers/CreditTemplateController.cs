@@ -640,6 +640,26 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("document-template-lms/load")]
+        public HttpResponseMessage LoadDocumentTemplateLms([FromBody] DocumentTemplateViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                bool response = repo.LoadDocumentTemplateLMS(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("document-section")]
         public HttpResponseMessage SaveLoadedDocumentSection([FromBody] LoadedDocumentSectionViewModel entity)
         {
@@ -665,7 +685,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                bool response = repo.GetIsLLLVilated(operationId, targetId);
+                dynamic response = repo.GetIsLLLVilated(operationId, targetId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
