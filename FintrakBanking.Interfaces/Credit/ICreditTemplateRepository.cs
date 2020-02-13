@@ -6,6 +6,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICreditTemplateRepository
     {
+        bool LoadDocumentTemplateLMS(DocumentTemplateViewModel entity);
         CreditTemplateViewModel GetCreditTemplate(int creditTemplateId);
 
         IEnumerable<CreditTemplateViewModel> GetAllCreditTemplate();

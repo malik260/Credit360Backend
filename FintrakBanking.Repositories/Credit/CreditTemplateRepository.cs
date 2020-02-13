@@ -447,6 +447,47 @@ var qry = Foo.GroupJoin(
             return context.SaveChanges() > 0;
         }
 
+
+        public bool LoadDocumentTemplateLMS(DocumentTemplateViewModel entity)
+        {
+            var templateSections = context.TBL_DOC_TEMPLATE_SECTION
+                .Where(x => x.TEMPLATEID == entity.templateId && x.ISDISABLED == false && x.DELETED == false)
+                .ToList();
+
+            var loadedSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.TARGETID == entity.targetId && x.OPERATIONID == entity.lmsOperationId)
+                .ToList();
+
+            foreach (var temp in templateSections)
+            {
+                if (loadedSections.Any(x => x.TEMPLATESECTIONID == temp.TEMPLATESECTIONID)) continue;
+
+                context.TBL_DOC_TEMPLATE_DETAIL.Add(new TBL_DOC_TEMPLATE_DETAIL
+                {
+                    OPERATIONID = entity.lmsOperationId,
+                    TARGETID = entity.targetId,
+                    TEMPLATESECTIONID = temp.TEMPLATESECTIONID,
+                    TITLE = temp.TITLE,
+                    DESCRIPTION = temp.DESCRIPTION,
+                    TEMPLATEDOCUMENT = temp.TEMPLATEDOCUMENT,
+                    POSITION = temp.POSITION,
+                    CANEDIT = temp.CANEDIT,
+                    CREATEDBY = entity.staffId,
+                    DATETIMECREATED = DateTime.Now,
+                });
+            }
+
+            var oldSections = new List<TBL_DOC_TEMPLATE_DETAIL>();
+            foreach (var sect in loadedSections)
+            {
+                if (templateSections.Any(x => x.TEMPLATESECTIONID == sect.TEMPLATESECTIONID)) continue;
+                oldSections.Add(sect);
+            }
+
+            context.TBL_DOC_TEMPLATE_DETAIL.RemoveRange(oldSections);
+            return context.SaveChanges() > 0;
+        }
+
         public bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity) // dont call if not editable
         {
             var detail = context.TBL_DOC_TEMPLATE_DETAIL.Find(entity.sectionId);

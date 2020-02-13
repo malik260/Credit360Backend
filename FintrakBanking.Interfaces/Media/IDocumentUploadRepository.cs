@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Media
 {
     public interface IDocumentUploadRepository
     {
+        IEnumerable<DocumentUploadViewModel> GetDocumentUploadsLmss(int staffId, int operationId, int targetId);
         DocumentUploadViewModel GetDocumentUpload(int id);
         DocumentUploadViewModel GetDocumentCreditBereau(int documentId);
         IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId);

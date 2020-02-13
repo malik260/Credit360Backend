@@ -244,11 +244,15 @@ namespace FintrakBanking.Repositories.Customer
 
             return result;    
         }
+
         private bool fetchCustomerAccountBalance(TBL_CUSTOMER data)
         {
-            bool result;
-            result = integration.AddCustomerAccounts(data.CUSTOMERCODE);
-
+            bool result = false;
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            {
+                result = integration.AddCustomerAccounts(data.CUSTOMERCODE);
+            }
             return result;
         }
 

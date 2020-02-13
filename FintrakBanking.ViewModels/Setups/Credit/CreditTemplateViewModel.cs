@@ -36,6 +36,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string templateName { get; set; }
         public int staffRoleId { get; set; }
         public int operationId { get; set; }
+        public int lmsOperationId { get; set; }
         public int targetId { get; set; }
     }
     public class DocumentTemplateSectionViewModel : GeneralEntity

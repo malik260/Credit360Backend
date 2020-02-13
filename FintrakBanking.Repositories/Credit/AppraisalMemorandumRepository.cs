@@ -2686,6 +2686,7 @@ namespace FintrakBanking.Repositories.Credit
                                             .FirstOrDefault(),
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
+            apiRequestId = x.a.APIREQUESTID
         }).ToList();
             //}
 
