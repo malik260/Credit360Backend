@@ -9571,7 +9571,7 @@ namespace FintrakBanking.Repositories.Credit
                                 currencyType = a.CURRENCYTYPE,
                                 exposureTypeCodeString = a.EXPOSURETYPECODE,
                                 adjFacilityTypeString = a.ADJFACILITYTYPE,
-                                adjFacilityTypeCode = a.ADJFACILITYTYPEid,
+                                adjFacilityTypeCode = a.ADJFACILITYTYPEid.Trim(),
                                 productIdString = a.PRODUCTID,
                                 productCode = a.PRODUCTCODE,
                                 productName = a.PRODUCTNAME,
@@ -9595,12 +9595,12 @@ namespace FintrakBanking.Repositories.Credit
                     foreach (var e in exposure)
                     {
                         e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
-                        e.tenor = int.Parse(e.tenorString);
+                        e.tenor = int.Parse(String.IsNullOrEmpty(e.tenorString) ? "0" : e.tenorString);
                         e.bookingDate = e.bookingDate?.Date;
                         e.maturityDate = e.maturityDate?.Date;
                         //e.productId = int.Parse(e.productIdString);
-                        e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
-                        e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
+                        e.exposureTypeCode = int.Parse(String.IsNullOrEmpty(e.exposureTypeCodeString) ? "0" : e.exposureTypeCodeString);
+                        e.adjFacilityTypeId = int.Parse(String.IsNullOrEmpty(e.adjFacilityTypeCode) ? "0" : e.adjFacilityTypeCode);
                     }
                     exposures.AddRange(exposure);
                 }

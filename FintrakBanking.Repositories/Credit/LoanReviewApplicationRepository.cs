@@ -1390,10 +1390,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
 
-
-           
             return applications;
-
         }
 
         #region
@@ -1401,8 +1398,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             searchString = searchString.Trim().ToLower(); //46, 71, 79
 
-            int[] operations = { (int)OperationsEnum.LoanReviewApprovalAppraisal, (int)OperationsEnum.LoanReviewApprovalOfferLetter, (int)OperationsEnum.LoanReviewApprovalAvailment ,
-           (int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
+            // int[] operations = { (int)OperationsEnum.LoanReviewApprovalAppraisal, (int)OperationsEnum.LoanReviewApprovalOfferLetter, (int)OperationsEnum.LoanReviewApprovalAvailment ,
+            //(int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
+
+            var operations = context.TBL_OPERATIONS.Where(o => o.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication).Select(o => o.OPERATIONID).ToList();
             int staffId = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault();
 
             var applications = (from a in context.TBL_LMSR_APPLICATION

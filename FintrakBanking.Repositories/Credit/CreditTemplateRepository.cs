@@ -554,10 +554,16 @@ var qry = Foo.GroupJoin(
                 .ToList();
         }
 
-        public bool GetIsLLLVilated(int operationId, int targetId)
+        public dynamic GetIsLLLVilated(int operationId, int targetId)
         {
             memo.Init(operationId, targetId);
-            return memo.IsLLLViolated();
+            //return new ()
+            //{
+            //    isLLLViolated = memo.IsLLLViolated(),
+            //    legalLendingLimit = memo.getTotalLLLImpact()
+            //}
+            Tuple<bool, decimal> result = new Tuple<bool, decimal>(memo.IsLLLViolated(), memo.getTotalLLLImpact());
+            return result;
         }
 
         #endregion DOCUMENT TEMPLATE IMPL
