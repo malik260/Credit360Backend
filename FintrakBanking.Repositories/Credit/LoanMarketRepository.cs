@@ -13,7 +13,7 @@ using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    public class LoanMarketRepository : ILoanMarketRepository
+    public class LoanMarketRepository : ILoanMarketRepository 
     {
         private readonly FinTrakBankingContext _context;
         private readonly IGeneralSetupRepository _genSetup;
@@ -169,7 +169,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<ExposureViewModel> GetExposureManual(int loanApplicationId) 
+        public IEnumerable<ExposureViewModel> GetExposureManual() 
         {
             var data = (from o in _context.TBL_GLOBAL_EXPOSURE_MANUAL 
                         join c in _context.TBL_CURRENCY on o.CURRENCYID equals c.CURRENCYID
@@ -282,5 +282,6 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section ---------------------------
         }
 
+        
     }
 }
