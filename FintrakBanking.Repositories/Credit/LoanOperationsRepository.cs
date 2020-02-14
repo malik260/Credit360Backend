@@ -19579,8 +19579,6 @@ namespace FintrakBanking.Repositories.Credit
 
         //}
 
-
-
         #region contingient liability operations
         private bool CancelContingentLiability(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment, int staffId)
         {
