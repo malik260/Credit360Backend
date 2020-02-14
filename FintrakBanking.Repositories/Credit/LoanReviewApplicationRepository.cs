@@ -311,6 +311,8 @@ namespace FintrakBanking.Repositories.Credit
                           approvedAmount = d.APPROVEDAMOUNT,
                           customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                           statusId = d.APPROVALSTATUSID,
+                          accountName = d.TBL_CUSTOMER.TBL_CASA.FirstOrDefault().PRODUCTACCOUNTNAME,
+                          accountNumber = d.TBL_CUSTOMER.TBL_CASA.FirstOrDefault().PRODUCTACCOUNTNUMBER,
                           terms = d.REPAYMENTTERMS,
                           schedule = context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault() == null ? "" : context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault(),
 
