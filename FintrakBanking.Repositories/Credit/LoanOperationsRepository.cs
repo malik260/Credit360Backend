@@ -22963,7 +22963,9 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                         where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
                         && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                        || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                        || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                        || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                        || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised)
                          && atrail.OPERATIONID == ln.OPERATIONTYPEID
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null && ln.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
