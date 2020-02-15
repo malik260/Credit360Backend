@@ -851,29 +851,30 @@
                                 decimal sms_Alert = 0;
                                 Decimal.TryParse(item.Account[i].sms_Alert.Replace(",", ""), out lc_Commission);
 
-                                accounts.Add(new CustomerTurnoverViewModel
-                                {
-                                    accountNumber = item.Account[i].foracid,
-                                    customerCode = item.Account[i].cust_Id,
-                                    period = item.Account[i].period,
-                                    productName = item.Account[i].schm_Type,
-                                    max_Credit_Balance = item.Account[i].max_Credit_Balance,
-                                    max_Debit_Balance = item.Account[i].max_Debit_Balance,
-                                    min_Credit_Balance = item.Account[i].min_Credit_Balance,
-                                    min_Debit_Balance = item.Account[i].min_Debit_Balance,
-                                    credit_Turnover = item.Account[i].credit_Turnover,
-                                    debit_Turnover = item.Account[i].debit_Turnover,
-                                    amc = amc,
-                                    vat = vat,
-                                    management_Fee = management_Fee,
-                                    commitment_Fees = commitment_Fees,
-                                    com_Contigent_Liab = com_Contigent_Liab,
-                                    lc_Commission = lc_Commission,
-                                    sms_Alert = sms_Alert,
-                                    month = item.Account[i].month,
-                                    year = item.Account[i].year,
-
-                                });
+                                if (item.Account[i].max_Credit_Balance != null || item.Account[i].max_Debit_Balance != null || item.Account[i].min_Credit_Balance != null || item.Account[i].min_Debit_Balance != null || item.Account[i].credit_Turnover != null || item.Account[i].debit_Turnover != null) {
+                                    accounts.Add(new CustomerTurnoverViewModel
+                                    {
+                                        accountNumber = item.Account[i].foracid,
+                                        customerCode = item.Account[i].cust_Id,
+                                        period = item.Account[i].period,
+                                        productName = item.Account[i].schm_Type,
+                                        max_Credit_Balance = item.Account[i].max_Credit_Balance,
+                                        max_Debit_Balance = item.Account[i].max_Debit_Balance,
+                                        min_Credit_Balance = item.Account[i].min_Credit_Balance,
+                                        min_Debit_Balance = item.Account[i].min_Debit_Balance,
+                                        credit_Turnover = item.Account[i].credit_Turnover,
+                                        debit_Turnover = item.Account[i].debit_Turnover,
+                                        amc = amc,
+                                        vat = vat,
+                                        management_Fee = management_Fee,
+                                        commitment_Fees = commitment_Fees,
+                                        com_Contigent_Liab = com_Contigent_Liab,
+                                        lc_Commission = lc_Commission,
+                                        sms_Alert = sms_Alert,
+                                        month = item.Account[i].month,
+                                        year = item.Account[i].year,
+                                    });
+                                }
 
                             }
 
