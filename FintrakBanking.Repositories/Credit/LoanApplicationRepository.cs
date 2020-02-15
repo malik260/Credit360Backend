@@ -1386,6 +1386,7 @@ namespace FintrakBanking.Repositories.Credit
                         //);
 
                         //AddFacilityRating(loanApplicationDetails.ToList(), staffId);
+
                     }
 
                     return new LoanApplicationUpdateMessage

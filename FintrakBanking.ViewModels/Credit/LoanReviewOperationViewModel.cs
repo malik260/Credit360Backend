@@ -482,6 +482,10 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int repaymentScheduleId { get; set; }
         public string schedule { get; set; }
         public int loanApplicationDetailId { get; set; }
+
+        public string accountName { get; set; }
+        public string accountNumber { get; set; }
+
     }
 
     public class LMSOperationListViewModel
