@@ -91,10 +91,10 @@ namespace FintrakBanking.Repositories.Setups.General
                         where a.STAFFID == staffId
                         select new StaffRoleViewModel
                         {
-                            staffRoleName = b.STAFFROLENAME,
+                            staffRoleName = b.STAFFROLENAME.Trim(),
                             companyId = (short)a.COMPANYID,
                             staffRoleId = a.STAFFROLEID,
-                            staffRoleCode = b.STAFFROLECODE,
+                            staffRoleCode = b.STAFFROLECODE.Trim(),
                             workEndDuration = a.WORKENDDURATION,
                             workStartDuration = a.WORKSTARTDURATION,
                         }).FirstOrDefault();

@@ -15005,7 +15005,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        appraisalOperationId = e.OPERATIONID,
                                        appraisalLoanApplicationId = e.LOANAPPLICATIONID,
-
+                                       synOperationId = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == b.OPERATIONID).Select(o => o.SYNCHOPERATIONID).FirstOrDefault(),
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
@@ -15090,8 +15090,10 @@ namespace FintrakBanking.Repositories.Credit
                                        accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.TERMLOANID && x.DATE == applicationDate).Select(x => x.ACCRUEDINTEREST).FirstOrDefault(),  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
                                        systemCurrentDate = applicationDate,
                                        lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
-                                       operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
+                                       operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                        {
+                                           //&& m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                                           loanApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                            loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                            operationTypeId = op.OPERATIONTYPEID,
                                            operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,

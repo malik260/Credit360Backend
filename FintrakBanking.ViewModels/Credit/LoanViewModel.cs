@@ -412,6 +412,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int appraisalLoanReviewApplicationId { get; set; }
         public string appraisalApplicationReferenceNumber { get; set; }
         public int appraisalLoanApplicationId { get; set; }
+        public int? synOperationId { get; set; }
 
 
 
