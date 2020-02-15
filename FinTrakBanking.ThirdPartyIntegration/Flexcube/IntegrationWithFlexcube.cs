@@ -840,6 +840,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
             if (customerCode == null)
                 return false;
 
+            if (customerCode.Contains("PROS")) { throw new APIErrorException("Core Banking API Info - The Customer is a Prospective Customer!"); }
+
             var customerId = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).Select(b => b.CUSTOMERID).FirstOrDefault();
             //var customerId = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERCODE == customerCode).CUSTOMERID;
             bool output = false;
@@ -895,8 +897,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
             //var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
             //if (customerExist == null)
             //{
-            if (customerAcct.Count == 0) { throw new SecureException("Core Banking API Error - The API returned empty!"); }
-            this.context.TBL_CASA.AddRange(customerAcct);
+            if (customerAcct.Count == 0) { throw new APIErrorException("Core Banking API Info - The API returned empty!"); }
+
+            context.TBL_CASA.AddRange(customerAcct);
             output = context.SaveChanges() > 0;
             //}
             //else
