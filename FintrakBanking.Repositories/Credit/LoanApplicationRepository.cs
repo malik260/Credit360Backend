@@ -679,10 +679,16 @@ namespace FintrakBanking.Repositories.Credit
                 trail.APPROVALSTATEID = (int)ApprovalState.Ended;
                 trail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
                 trail.VOTE = (int)ApprovalStatusEnum.Referred;
-                trail.COMMENT += "Sent to Applications to edit Application with loan Referrence Id: " + loan.APPLICATIONREFERENCENUMBER;
+                trail.COMMENT += " Sent to Applications to edit Application with loan Referrence Id: " + loan.APPLICATIONREFERENCENUMBER;
                 trail.SYSTEMRESPONSEDATETIME = DateTime.Now;
                 trail.RESPONSEDATE = DateTime.Now;
                 trail.RESPONSESTAFFID = accountOfficerId;
+                trail.REFEREBACKSTATEID = (int)ApprovalState.Ended;
+            }
+            var refers = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == loanApplicationId && t.OPERATIONID == operationId && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred);
+            foreach (var refer in refers)
+            {
+                refer.REFEREBACKSTATEID = (int)ApprovalState.Ended;
             }
             ArchiveLoanApplication(loanApplicationId, (int)OperationsEnum.LoanApplication, 0);
             loan.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress;

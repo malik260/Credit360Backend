@@ -174,7 +174,7 @@ namespace FintrakBanking.Repositories.Credit
                     applicationTenor = x.c.a.APPLICATIONTENOR,
                     relationshipOfficerName = x.c.a.TBL_STAFF.FIRSTNAME + " " + x.c.a.TBL_STAFF.MIDDLENAME + " " + x.c.a.TBL_STAFF.LASTNAME,
                     relationshipManagerName = x.c.a.TBL_STAFF1.FIRSTNAME + " " + x.c.a.TBL_STAFF1.MIDDLENAME + " " + x.c.a.TBL_STAFF1.LASTNAME,
-
+                    currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
                     loanTypeId = x.c.a.LOANAPPLICATIONTYPEID,
                     productTypeId = x.c.b.TBL_PRODUCT.PRODUCTTYPEID,
                     productTypeName = x.c.b.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
