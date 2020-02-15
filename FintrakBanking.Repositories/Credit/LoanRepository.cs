@@ -10524,8 +10524,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var applicationDate = generalSetup.GetApplicationDate();
             IQueryable<LoanViewModel> allFilteredLoan = null;
+            if(searchQuery != null) searchQuery = searchQuery.Trim();
 
-            searchQuery = searchQuery.Trim();
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 var loans = (from a in context.TBL_LOAN_CONTINGENT
@@ -12452,8 +12452,10 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals b.LOANID
                                    join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                   where a.ISDISBURSED == true && (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook) && //(int)LoanSystemTypeEnum.OverdraftFacility &&
-                                   e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.OPERATIONPERFORMED == false && a.LOANSTATUSID != (short)LoanStatusEnum.Terminated
+                                   where a.ISDISBURSED == true 
+                                   //&& (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook) 
+                                   && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability 
+                                   && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.OPERATIONPERFORMED == false && a.LOANSTATUSID != (short)LoanStatusEnum.Terminated
                                    orderby b.DATETIMECREATED descending
                                    select new LoanViewModel
                                    {
@@ -15003,7 +15005,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        appraisalOperationId = e.OPERATIONID,
                                        appraisalLoanApplicationId = e.LOANAPPLICATIONID,
-
+                                       synOperationId = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == b.OPERATIONID).Select(o => o.SYNCHOPERATIONID).FirstOrDefault(),
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
@@ -15088,8 +15090,10 @@ namespace FintrakBanking.Repositories.Credit
                                        accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.TERMLOANID && x.DATE == applicationDate).Select(x => x.ACCRUEDINTEREST).FirstOrDefault(),  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
                                        systemCurrentDate = applicationDate,
                                        lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
-                                       operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
+                                       operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                        {
+                                           //&& m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                                           loanApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                            loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                            operationTypeId = op.OPERATIONTYPEID,
                                            operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,

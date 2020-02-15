@@ -1391,16 +1391,8 @@ namespace FintrakBanking.Repositories.Credit
                              staffId
                         );
 
-                        AddFacilityRating(loanApplicationDetails.ToList(), staffId);
+                        //AddFacilityRating(loanApplicationDetails.ToList(), staffId);
 
-                        //if (casa != null)
-                        //{
-                        //    creditCommon.LoadCustomerTurnover(
-                        //        applicationId,
-                        //        loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                        //        staffId
-                        //    );
-                        //}
                     }
 
                     return new LoanApplicationUpdateMessage

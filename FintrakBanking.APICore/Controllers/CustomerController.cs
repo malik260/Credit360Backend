@@ -192,7 +192,11 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error occurred, Please Contact the System Administrator" });
                 }
             }
-            catch(SecureException ex)
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, errorCode = "99" });
+            }
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }

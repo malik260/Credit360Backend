@@ -220,6 +220,7 @@ namespace FintrakBanking.Repositories.Credit
                     // && x.APPROVALSTATEID != (int)ApprovalState.Ended
                     && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                    || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Authorised
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && x.RESPONSESTAFFID == null
                      && ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
@@ -311,9 +312,10 @@ namespace FintrakBanking.Repositories.Credit
                           approvedAmount = d.APPROVEDAMOUNT,
                           customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                           statusId = d.APPROVALSTATUSID,
+                          accountName = d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME,
+                          accountNumber = d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER,
                           terms = d.REPAYMENTTERMS,
                           schedule = context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault() == null ? "" : context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault(),
-
                       })
 
                  }).GroupBy(d => d.loanReviewApplicationId).ToList();
@@ -952,7 +954,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (flowOrder == null) 
                     {
-                        if (defaultFlowOrder.REQUIREOFFERLETTER)
+                        if (defaultFlowOrder.REQUIREOFFERLETTER && currentOperationType != (short)OperationsEnum.LoanReviewApprovalAvailment)
                         {
                             nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
                             LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);

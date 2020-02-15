@@ -394,6 +394,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 //&& (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
                             ).ToList();
         }
+
         private void MakerCheckerControl()
         {
             if (statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
@@ -402,11 +403,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
             }
 
-            if(this.request != null && this.request.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred && this.statusId != (short)ApprovalStatusEnum.Referred)
-            {
-                var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
-                var destinationLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.nextLevelId).FirstOrDefault();
+            var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
+            var destinationLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.nextLevelId).FirstOrDefault();
 
+            if (this.request != null && this.request.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred && this.statusId != (short)ApprovalStatusEnum.Referred)
+            {
+                
                 if(this.statusId != (short)ApprovalStatusEnum.Approved && this.newStateId != (short)ApprovalState.Ended)
                 {
                     if(currentLevel != null && destinationLevel != null)
@@ -420,6 +422,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if(!context.TBL_APPROVAL_GROUP_MAPPING.Where(x=>x.OPERATIONID == this.operationId).Select(x => x.GROUPID).Contains(currentLevel.GROUPID))
                     {
                         throw new SecureException("Target level is not in the same workflow group setup.");
+                    }
+                }
+
+                if (this.statusId == (short)ApprovalStatusEnum.Approved || this.newStateId == (short)ApprovalState.Ended)
+                {
+                    var currentGridRecord = approvalGrid.Where(x => x.ApprovalLevelId == currentLevel.APPROVALLEVELID).FirstOrDefault();
+                    var destinationGridRecord = approvalGrid.Where(x => x.ApprovalLevelId == destinationLevel?.APPROVALLEVELID).FirstOrDefault();
+                    if(currentGridRecord != null && destinationGridRecord != null && currentGridRecord.GroupPosition < destinationGridRecord.GroupPosition)
+                    {
+                        throw new SecureException("You cannot move transaction downward on workflow groups.");
                     }
                 }
             }
@@ -447,7 +459,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && this.StatusId == (int)ApprovalStatusEnum.Referred)
             {
                 request.REFEREBACKSTATEID = (short)ApprovalState.Processing;
-               
             }
 
             if (request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred)
@@ -472,7 +483,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //if(this.referredLog.Count <= 0)this.toStaffId = request.REQUESTSTAFFID;
             }
 
-            if (this.referredLog.Count > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred )
+            if (this.referredLog.Count > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred)
             {
                 var initialReferrer = this.referredLog.Where(x => x.REFEREBACKSTATEID == (short)ApprovalState.Initiation).FirstOrDefault();
                 var referrer = initialReferrer == null ? this.referredLog.FirstOrDefault() : initialReferrer;
