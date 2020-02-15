@@ -60,8 +60,10 @@ namespace FintrakBanking.MonitoringMessageLogger
             {
                 try
                 {
-                        // SEND EMAILS
-                        bool response = emailSender.SendEmails();
+
+                   bool response = true;
+                  
+                    //bool response = true; //emailSender.SendEmails();
                         if (response == true)
                         {
                             _log.Info("");
@@ -155,5 +157,7 @@ namespace FintrakBanking.MonitoringMessageLogger
                 }
             }
         }
+
+       
     }
 }

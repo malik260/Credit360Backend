@@ -888,7 +888,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         #endregion end of code logic
 
-        public void validateAlertCheck()
+        public bool validateAlertCheck()
         {
             GroupImminentMaturitiesByGroupHeads();
             GetImminentMaturities();
@@ -919,7 +919,7 @@ namespace FintrakBanking.Repositories.Setups.General
             GetImminentObligationMaturityFacilityNotification();
             GetNplOnCreditPortfolio();
             GetLoanExpirationReminderAccountOfficer();*/
-
+            return true;
         }
 
         private string GetBusinessUsersEmails(string accountOfficerMIsCode)
