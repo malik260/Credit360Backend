@@ -94,7 +94,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 if (response.IsSuccessStatusCode && responseMessage.Contains("financial_Period"))
                 {
                     var result = await response.Content.ReadAsAsync<List<SubGroupRatingAndRatioViewModel>>();
-                    var responseData = await response.Content.ReadAsStringAsync();
+                    //var responseData = await response.Content.ReadAsStringAsync();
                     //JObject responseDataJsonString = JObject.Parse(responseData);
                     //var data = responseDataJsonString["data"].ToString();
                     customerRatios = result;// JsonConvert.DeserializeObject<List<RatingAndRatioViewModel>>(data);
@@ -175,7 +175,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 if (response.IsSuccessStatusCode && responseMessage.Contains("financial_Period"))
                 {
                     var result = await response.Content.ReadAsAsync<List<MainGroupRatingAndRatioViewModel>>();
-                    var responseData = await response.Content.ReadAsStringAsync();
+                    //var responseData = await response.Content.ReadAsStringAsync();
                     customerGroupRatios = result;
                 }
 
@@ -252,7 +252,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 if (response.IsSuccessStatusCode && responseMessage.Contains("companY_RATING"))
                 {
                     var result = await response.Content.ReadAsAsync<CutomerRatingViewModel>();
-                    var responseData = await response.Content.ReadAsStringAsync();
+                    //var responseData = await response.Content.ReadAsStringAsync();
                     customerRating = result;
                 }
 
