@@ -679,10 +679,16 @@ namespace FintrakBanking.Repositories.Credit
                 trail.APPROVALSTATEID = (int)ApprovalState.Ended;
                 trail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
                 trail.VOTE = (int)ApprovalStatusEnum.Referred;
-                trail.COMMENT += "Sent to Applications to edit Application with loan Referrence Id: " + loan.APPLICATIONREFERENCENUMBER;
+                trail.COMMENT += " Sent to Applications to edit Application with loan Referrence Id: " + loan.APPLICATIONREFERENCENUMBER;
                 trail.SYSTEMRESPONSEDATETIME = DateTime.Now;
                 trail.RESPONSEDATE = DateTime.Now;
                 trail.RESPONSESTAFFID = accountOfficerId;
+                trail.REFEREBACKSTATEID = (int)ApprovalState.Ended;
+            }
+            var refers = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == loanApplicationId && t.OPERATIONID == operationId && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred);
+            foreach (var refer in refers)
+            {
+                refer.REFEREBACKSTATEID = (int)ApprovalState.Ended;
             }
             ArchiveLoanApplication(loanApplicationId, (int)OperationsEnum.LoanApplication, 0);
             loan.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress;
@@ -1367,23 +1373,23 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
-                        creditCommon.LoadCustomerRatios(
-                             applicationId,
-                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                             staffId
-                        );
+                        //creditCommon.LoadCustomerRatios(
+                        //     applicationId,
+                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //     staffId
+                        //);
 
-                        creditCommon.LoadCustomerGroupRatios(
-                             applicationId,
-                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                             staffId
-                        );
+                        //creditCommon.LoadCustomerGroupRatios(
+                        //     applicationId,
+                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //     staffId
+                        //);
 
-                        creditCommon.GetCorporateCustomerRating(
-                             applicationId,
-                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                             staffId
-                        );
+                        //creditCommon.GetCorporateCustomerRating(
+                        //     applicationId,
+                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //     staffId
+                        //);
 
                         //AddFacilityRating(loanApplicationDetails.ToList(), staffId);
 
@@ -1433,8 +1439,40 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private void AddFacilityRating(List<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails, int staffId)
+        public void GetCustomerRatiosFromBasel(int applicationId, int staffId)
         {
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+
+            if (loanApplicationDetails != null)
+            {
+                creditCommon.LoadCustomerRatios(applicationId, loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(), staffId);
+            }
+        }
+
+        public void GetCustomerGroupRatiosFromBasel(int applicationId, int staffId)
+        {
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+
+            if (loanApplicationDetails != null)
+            {
+                creditCommon.LoadCustomerGroupRatios(applicationId, loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(), staffId);
+            }
+        }
+
+        public void GetCorporateCustomerRatingFromBasel(int applicationId, int staffId)
+        {
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+
+            if (loanApplicationDetails != null)
+            {
+                creditCommon.GetCorporateCustomerRating(applicationId, loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(), staffId);
+            }
+        }
+
+        public void GetFacilityRatingFromBasel(int applicationId, int staffId)
+        {
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+
             foreach (var item in loanApplicationDetails) {
                 creditCommon.GetAutoLoansRetail(item.LOANAPPLICATIONDETAILID, item.CUSTOMERID, staffId);
                 creditCommon.GetPersonalLoansRetail(item.LOANAPPLICATIONDETAILID, item.CUSTOMERID, staffId);
