@@ -72,7 +72,24 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+        public List<CollateralViewModel> CollateralByLoanId(int loanId)
+        {
+            var data = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
+                        join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                        join ct in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                        join cs in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals cs.COLLATERALSUBTYPEID
+                        where x.LOANID == loanId
+                        select new CollateralViewModel
+                        {
+                            collateralType = ct.COLLATERALTYPENAME,
+                            collateralSubTypeName = cs.COLLATERALSUBTYPENAME,
+                            collateralCode = c.COLLATERALCODE,
+                            collateralValue = c.COLLATERALVALUE,
+                            haircut = c.HAIRCUT
 
+                        }).ToList();
+            return data;
+        }
 
 
         public LoanViewModel FacilityDetail(int loanId)
