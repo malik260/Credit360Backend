@@ -16294,13 +16294,12 @@ namespace FintrakBanking.Repositories.Credit
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME,
                     });
-
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD()
         {
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft && data.ISDISABLED == false
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
