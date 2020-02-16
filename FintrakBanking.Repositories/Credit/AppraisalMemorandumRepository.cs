@@ -1872,6 +1872,32 @@ namespace FintrakBanking.Repositories.Credit
                 data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId && t.fromApprovalLevelId > 0).ToList();
             }
 
+            if (data.Count == 0)
+            {
+                data = trail.Where(x => x.FROMAPPROVALLEVELID > 0).Select(x => new ApprovalTrailViewModel
+                {
+                    approvalTrailId = x.APPROVALTRAILID,
+                    comment = x.COMMENT,
+                    targetId = x.TARGETID,
+                    arrivalDate = x.ARRIVALDATE,
+                    systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                    responseDate = x.RESPONSEDATE,
+                    systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                    responseStaffId = x.RESPONSESTAFFID,
+                    requestStaffId = x.REQUESTSTAFFID,
+                    fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                    fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                    toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                    toApprovalLevelId = x.TOAPPROVALLEVELID,
+                    approvalStateId = x.APPROVALSTATEID,
+                    approvalStatusId = x.APPROVALSTATUSID,
+                    approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                    approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                    toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                    fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+                })?.OrderBy(x => x.approvalTrailId).ToList();
+            }
+
 
             var data2 = data.ToList();
             var testData = data.ToList();
@@ -2654,7 +2680,7 @@ namespace FintrakBanking.Repositories.Credit
             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
             isRelatedParty = x.a.ISRELATEDPARTY,
             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
-            approvalStatusId = (short)x.a.APPROVALSTATUSID,
+            approvalStatusId = x.b.APPROVALSTATUSID,
             applicationStatusId = x.a.APPLICATIONSTATUSID,
             branchName = x.a.TBL_BRANCH.BRANCHNAME,
             relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
@@ -2761,7 +2787,7 @@ namespace FintrakBanking.Repositories.Credit
             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
             isRelatedParty = x.a.ISRELATEDPARTY,
             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
-            approvalStatusId = (short)x.a.APPROVALSTATUSID,
+            approvalStatusId = x.b.APPROVALSTATUSID,
             applicationStatusId = x.a.APPLICATIONSTATUSID,
             branchName = x.a.TBL_BRANCH.BRANCHNAME,
             relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
