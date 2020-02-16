@@ -88,6 +88,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool canFire { get; set; }
         public int alertTitleId { get; set; }
         public string accountOfficerEmail { get; set; }
+        public string operationMethod { get; set; }
     }
 
     public class AlertMisViewModel : GeneralEntity

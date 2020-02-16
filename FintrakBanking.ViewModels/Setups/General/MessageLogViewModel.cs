@@ -15,6 +15,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string ToAddress { get; set; }
 
         public string MessageBody { get; set; }
+        public string operationMethod { get; set; }
 
         public string MessageSubject { get; set; }
 
