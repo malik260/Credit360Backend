@@ -129,6 +129,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string legalContingentCode { get; set; }
 
         public int? loanReviewApplicationId { get; set; }
+        public int? appraisalOperationId { get; set; }
         public string currencyCode { get; set; }
         public bool isBankFormat { get; set; }
         public int companyId { get; set; }
