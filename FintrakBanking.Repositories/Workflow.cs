@@ -1373,7 +1373,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if ((minimumAmount > 0 && maximumAmount == 0) && (minimumAmount < levelBusinessRule.Amount)) limitChecked = true;
             if ((minimumAmount == 0 && maximumAmount > 0) && (levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
-            if ((minimumAmount > 0 && maximumAmount > 0) && (minimumAmount < levelBusinessRule.Amount && levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
+            if ((minimumAmount > 0 && maximumAmount > 0) && (minimumAmount < levelBusinessRule.Amount && levelBusinessRule.Amount >= maximumAmount)) limitChecked = true;
 
             if ((rule.PEP && pepAmount > 0) && (levelBusinessRule.Pep && pepAmount <= levelBusinessRule.PepAmount)) limitChecked = flagChecked = true;
 

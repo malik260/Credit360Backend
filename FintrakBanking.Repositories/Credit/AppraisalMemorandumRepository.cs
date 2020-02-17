@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.ExternalInitialization = true;
                         workflow.ToStaffId = currentTrail.REQUESTSTAFFID;
                         workflow.StatusId = (short)ApprovalStatusEnum.Pending;
-                        workflow.Amount = model.amount;
+                        workflow.Amount = model.legalLendingLimit;
                         workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                         workflow.LogActivity();
                         
@@ -1999,6 +1999,15 @@ namespace FintrakBanking.Repositories.Credit
 
         private PrivilegeViewModel GetRelieverPrivilege(AuthoritySignatureViewModel entity)
         {
+            var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+            List<int> ExclusiveOperations = new List<int>(); // (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
+            List<int> levelIds = new List<int>();
+
+            //ExclusiveOperations.Add(entity.operationId);
+            if (appl != null)
+            {
+                ExclusiveOperations.Add(appl.OPERATIONID);
+            }
             var now = DateTime.Now;
             var relieverStaff = context.TBL_STAFF_RELIEF
                     .FirstOrDefault(x => x.DELETED == false
@@ -2020,7 +2029,7 @@ namespace FintrakBanking.Repositories.Credit
             // check default role
             var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
 
-            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
                 .Join(context.TBL_APPROVAL_GROUP,
                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
@@ -2042,7 +2051,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (grants.Any() == false) // check specific
             {
-                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
                  .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
                      m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                  .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
