@@ -855,6 +855,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? capRegionId { get; set; }
+        public string apiRequestId { get; set; }
+
 
         //......End f Loan Relational Table View Mapping Models......//
     }
