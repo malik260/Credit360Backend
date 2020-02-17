@@ -196,12 +196,12 @@ namespace FintrakBanking.Repositories.Credit
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
             operationIds.AddRange(approvalOperations);
-            // TODO
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(79);
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(107);
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(108);
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(109);
+            //// TODO
+            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(79);
+            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(107);
+            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(108);
+            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(109);
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
@@ -964,6 +964,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
                             LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
+                            //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                         }
                         else
                         {
@@ -982,6 +983,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
                             LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
+                            //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                         }
                         else
                         {

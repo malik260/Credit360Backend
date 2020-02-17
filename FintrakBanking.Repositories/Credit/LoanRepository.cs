@@ -12468,7 +12468,9 @@ namespace FintrakBanking.Repositories.Credit
                                    where a.ISDISBURSED == true 
                                    //&& (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook) 
                                    && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability 
-                                   && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.OPERATIONPERFORMED == false && a.LOANSTATUSID != (short)LoanStatusEnum.Terminated
+                                   && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
+                                   && b.OPERATIONPERFORMED == false 
+                                   && a.LOANSTATUSID != (short)LoanStatusEnum.Terminated
                                    orderby b.DATETIMECREATED descending
                                    select new LoanViewModel
                                    {
