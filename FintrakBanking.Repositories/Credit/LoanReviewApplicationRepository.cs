@@ -963,7 +963,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
                             LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
-                            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                         }
                         else
                         {
@@ -982,7 +982,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
                             LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
-                            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                         }
                         else
                         {
