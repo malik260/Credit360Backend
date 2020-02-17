@@ -1,8 +1,11 @@
-﻿using FintrakBanking.Repositories.AlertMonitoring;
+﻿using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Repositories.AlertMonitoring;
 using FintrakBanking.Repositories.Setups.General;
+using Ninject;
 using System;
 using System.Configuration;
 using System.Data.Entity.Validation;
+using System.Reflection;
 using System.Threading;
 using System.Timers;
 using Topshelf;
@@ -16,8 +19,8 @@ namespace FintrakBanking.MonitoringMessageLogger
     {
         private Timer _syncTimer;
         private static object s_lock = new object();
-        //EmailSender emailSender = new EmailSender();
-        private AlertRepository alert = new AlertRepository();
+        EmailSender emailSender = new EmailSender();
+        //private AlertRepository alert = new AlertRepository();
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string slaEscalationIntervalInHours = ConfigurationManager.AppSettings["SLAEscalationIntervalInHours"];
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
@@ -60,9 +63,12 @@ namespace FintrakBanking.MonitoringMessageLogger
             {
                 try
                 {
-
+                    var kernel = new StandardKernel();
+                    kernel.Load(Assembly.GetExecutingAssembly());
+                    var alert = kernel.Get<IAlertRepository>();
                     bool response = alert.validateAlertCheck();
-                    //bool response = true; //emailSender.SendEmails();
+                    //bool response = alert.validateAlertCheck();
+                    // bool response = true; //emailSender.SendEmails();
                     if (response == true)
                         {
                             _log.Info("");
@@ -112,7 +118,7 @@ namespace FintrakBanking.MonitoringMessageLogger
                     _log.ErrorFormat("==================================================================");
                     Console.WriteLine(ex.Message);
 
-                    //emailSender.SendEmailOfException(ex.ToString());
+                    emailSender.SendEmailOfException(ex.ToString());
                 }
                 
                 finally

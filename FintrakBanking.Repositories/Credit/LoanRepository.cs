@@ -12475,6 +12475,8 @@ namespace FintrakBanking.Repositories.Credit
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        loanId = a.CONTINGENTLOANID,
                                        customerId = a.CUSTOMERID,
+                                       reviewLoanDetaile = b.REVIEWDETAILS,
+                                       operationTypeName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID == e.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        currencyId = a.CURRENCYID,
@@ -12491,7 +12493,6 @@ namespace FintrakBanking.Repositories.Credit
                                        systemCurrentDate = currentDate,
                                        lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                        loanSystemTypeId = b.LOANSYSTEMTYPEID,
-                                       operationTypeName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == e.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                                        legalContingentCode = a.LEGALCONTINGENTCODE,
                                        operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                        {
@@ -13093,14 +13094,10 @@ namespace FintrakBanking.Repositories.Credit
             loanStatus.Add((short)LoanStatusEnum.Terminated);
             loanStatus.Add((short)LoanStatusEnum.Inactive);
             loanStatus.Add((short)LoanStatusEnum.Completed);
-            
-            List<LoanViewModel> searchRevolvingLoan = null;
-            List<LoanViewModel> searchAllOverdraft = null;
-            List<LoanViewModel> searchContigentLoan = null;
-            List<LoanViewModel> searchLoanLine = null;
-            IEnumerable<LoanViewModel> searchResult = null;
 
-             var searchResult2 = (from a in context.TBL_LOAN
+            List<LoanViewModel> allFilteredLoan = new List<LoanViewModel>();
+
+            var searchResult2 = (from a in context.TBL_LOAN
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true &&  // a.MATURITYDATE >=      &&  //a.LOANSTATUSID != 7 &&
@@ -13125,7 +13122,7 @@ namespace FintrakBanking.Repositories.Credit
                                        principalAmount = a.PRINCIPALAMOUNT,
                                        effectiveDate = a.EFFECTIVEDATE,
                                        maturityDate = a.MATURITYDATE,
-                                       //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
@@ -13139,32 +13136,54 @@ namespace FintrakBanking.Repositories.Credit
                                        loanApplicationTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                                        approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPROVEDAMOUNT,
 
-                                   });
+                                   }).ToList();
 
-            searchResult = searchResult2.ToList();
-            if (searchResult == null || searchResult.Count() < 1)
+            //allFilteredLoan = searchResult2.ToList();
+
+            if (searchResult2.Count > 0)
             {
-                searchRevolvingLoan = SearchRevolvingLoan(searchQuery).ToList();
-                searchResult = searchRevolvingLoan;
-
-                if (searchRevolvingLoan == null || searchRevolvingLoan.Count() < 1)
-                {
-                    searchAllOverdraft = SearchAllOverdraft(searchQuery).ToList();
-                    searchResult = searchAllOverdraft;
-
-                    if (searchAllOverdraft == null || searchAllOverdraft.Count() < 1)
-                    {
-                        searchContigentLoan = SearchContigentLoan(searchQuery).ToList();
-                        searchResult = searchContigentLoan;
-                    }
-                    else
-                    {
-                        searchLoanLine = SearchLoanLine(searchQuery).ToList();
-                        searchResult = searchLoanLine;
-                    }
-                }
+                allFilteredLoan.AddRange(searchResult2);
             }
-            return searchResult.ToList();
+            var revolving = SearchRevolvingLoan(searchQuery).ToList();
+            if (revolving.Count > 0)
+            {
+                allFilteredLoan.AddRange(revolving);
+            }
+            var contingent = SearchContigentLoan(searchQuery).ToList();
+            if (contingent.Count > 0)
+            {
+                allFilteredLoan.AddRange(contingent);
+            }
+            var line = SearchLoanLine(searchQuery).ToList();
+            if (line.Count > 0)
+            {
+                allFilteredLoan.AddRange(line);
+            }
+
+            //if (searchResult == null || searchResult.Count() < 1)
+            //{
+            //    searchRevolvingLoan = SearchRevolvingLoan(searchQuery).ToList();
+            //    searchResult = searchRevolvingLoan;
+
+            //    if (searchRevolvingLoan == null || searchRevolvingLoan.Count() < 1)
+            //    {
+            //        searchAllOverdraft = SearchAllOverdraft(searchQuery).ToList();
+            //        searchResult = searchAllOverdraft;
+
+            //        if (searchAllOverdraft == null || searchAllOverdraft.Count() < 1)
+            //        {
+            //            searchContigentLoan = SearchContigentLoan(searchQuery).ToList();
+            //            searchResult = searchContigentLoan;
+            //        }
+            //        else
+            //        {
+            //            searchLoanLine = SearchLoanLine(searchQuery).ToList();
+            //            searchResult = searchLoanLine;
+            //        }
+            //    }
+            //}
+
+            return allFilteredLoan.ToList();
         }
 
         //private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery)
@@ -13898,8 +13917,6 @@ namespace FintrakBanking.Repositories.Credit
         //public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery)
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(string searchQuery)
         {
-            //bool all = (performanceTypeId != 1) && (performanceTypeId != 2);
-            //bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();
 
             List<LoanViewModel> allFilteredLoan = new List<LoanViewModel>();
@@ -13910,42 +13927,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
-                var termLoan = SearchTermLoan(searchQuery).ToList();
-                if (termLoan.Count > 0)
-                {
-                    allFilteredLoan.AddRange(termLoan);
-                }
-                var revolving = SearchRevolvingLoan(searchQuery).ToList();
-                if (revolving.Count > 0)
-                {
-                    allFilteredLoan.AddRange(revolving);
-                }
-                var contingent = SearchContigentLoan(searchQuery).ToList();
-                if (contingent.Count > 0)
-                {
-                    allFilteredLoan.AddRange(contingent);
-                }
-                var line = SearchLoanLine(searchQuery).ToList();
-                if (line.Count > 0)
-                {
-                    allFilteredLoan.AddRange(line);
-                }
-                //if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
-                //{
-                //allFilteredLoan = SearchTermLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
-                //}
-                //else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
-                //{
-                //allFilteredLoan = SearchRevolvingLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
-                //}
-                //else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
-                //{
-                //allFilteredLoan = SearchContigentLoan(searchQuery);
-                //}
-                //else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
-                //{
-                //allFilteredLoan = SearchLoanLine(searchQuery);
-            }
+                allFilteredLoan = SearchTermLoan(searchQuery).ToList();
+              }
             else
             {
                 throw new SecureException("Not Implemented!");
@@ -15028,6 +15011,7 @@ namespace FintrakBanking.Repositories.Credit
                                        companyId = a.COMPANYID,
                                        casaAccountId = a.CASAACCOUNTID,
                                        branchId = a.BRANCHID,
+                                       reviewLoanDetaile = b.REVIEWDETAILS,
                                        branchName = a.TBL_BRANCH.BRANCHNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
