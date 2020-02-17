@@ -548,9 +548,77 @@ namespace FintrakBanking.APICore.Controllers
                 repo.LoadCustomerTurnover(loanApplicationId, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
             }
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, errorCode = "99" });
+            }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed!" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Turnover!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-customer-ratios-basel/{loanApplicationId}")]
+        public HttpResponseMessage GetCustomerRatiosFromBasel(int loanApplicationId)
+        {
+            try
+            {
+                repo.GetCustomerRatiosFromBasel(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Ratios!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-customer-group-ratios-basel/{loanApplicationId}")]
+        public HttpResponseMessage GetCustomerGroupRatiosFromBasel(int loanApplicationId)
+        {
+            try
+            {
+                repo.GetCustomerGroupRatiosFromBasel(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Group Ratios!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-corporate-customer-rating-basel/{loanApplicationId}")]
+        public HttpResponseMessage GetCorporateCustomerRatingFromBasel(int loanApplicationId)
+        {
+            try
+            {
+                repo.GetCorporateCustomerRatingFromBasel(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Corporate Customer Rating!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-facility-rating-basel/{loanApplicationId}")]
+        public HttpResponseMessage GetFacilityRatingFromBasel(int loanApplicationId)
+        {
+            try
+            {
+                repo.GetFacilityRatingFromBasel(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Facility Rating!" });
             }
         }
 
@@ -564,9 +632,13 @@ namespace FintrakBanking.APICore.Controllers
                 repo.LoadCustomerTurnoverLms(loanApplicationId, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
             }
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, errorCode = "99" });
+            }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed!" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Turnover!" });
             }
         }
 

@@ -129,6 +129,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string legalContingentCode { get; set; }
 
         public int? loanReviewApplicationId { get; set; }
+        public int? appraisalOperationId { get; set; }
         public string currencyCode { get; set; }
         public bool isBankFormat { get; set; }
         public int companyId { get; set; }
@@ -482,6 +483,10 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int repaymentScheduleId { get; set; }
         public string schedule { get; set; }
         public int loanApplicationDetailId { get; set; }
+
+        public string accountName { get; set; }
+        public string accountNumber { get; set; }
+
     }
 
     public class LMSOperationListViewModel

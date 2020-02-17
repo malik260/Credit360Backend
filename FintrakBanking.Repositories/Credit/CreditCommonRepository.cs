@@ -76,6 +76,10 @@ namespace FintrakBanking.Repositories.Credit
                     //apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("0689601167");
                     apiTransactions = integration.GetCustomerAccountTurnover(customer.CUSTOMERCODE, turnoverDuration);
 
+                    if (apiTransactions.Count <= 0) {
+                        throw new APIErrorException("Core Banking API error, No Record Found!");
+                    }
+
                     foreach (var transaction in apiTransactions)
                     {
                         context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS

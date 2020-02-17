@@ -16083,7 +16083,6 @@ namespace FintrakBanking.Repositories.Credit
             return loanModel;
         }
 
-
         public LoanViewModel GetRunningLoanOpeningBalance(int companyId, string refNo, DateTime effectiveDate)
         {
 
@@ -16295,13 +16294,12 @@ namespace FintrakBanking.Repositories.Credit
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME,
                     });
-
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD()
         {
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft && data.ISDISABLED == false
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
@@ -16487,12 +16485,10 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
-
         public TBL_LOAN GetLoanInformation(int loanid)
         {
             return context.TBL_LOAN.Where(x => x.TERMLOANID == loanid).FirstOrDefault();
         }
-
 
         //public bool AddOperationReview(LoanReviewOperationViewModel model)
         //{
@@ -17384,7 +17380,11 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)// || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            where 
+                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised)
                             && atrail.OPERATIONID == op.OPERATIONTYPEID
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
@@ -17397,6 +17397,7 @@ namespace FintrakBanking.Repositories.Credit
                             select new LoanReviewOperationApprovalViewModel
                             {
                                 loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
@@ -17535,7 +17536,11 @@ namespace FintrakBanking.Repositories.Credit
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                      //join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
 
-                                     where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)// || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                                     where 
+                                     (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                     || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                                     || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
+                                     || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                                      && atrail.OPERATIONID == op.OPERATIONTYPEID
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                      && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
@@ -17657,7 +17662,11 @@ namespace FintrakBanking.Repositories.Credit
                                       join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                       join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
 
-                                      where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)// || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                                      where 
+                                      (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                      || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                                      || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
+                                      || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                                       && atrail.OPERATIONID == op.OPERATIONTYPEID
                                       && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                       && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
@@ -17746,7 +17755,6 @@ namespace FintrakBanking.Repositories.Credit
                                           //lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.CONTINGENTLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                           dateTimeCreated = op.DATECREATED,
 
-
                                           currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                           productAccountNumber = ch.ACCOUNTCODE,
                                           productAccountName = ch.ACCOUNTNAME,
@@ -17811,8 +17819,6 @@ namespace FintrakBanking.Repositories.Credit
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
-                                
-                                
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
                                 customerId = ln.CUSTOMERID,
@@ -17835,7 +17841,7 @@ namespace FintrakBanking.Repositories.Credit
                                 effectiveDate = ln.EFFECTIVEDATE,
                                 maturityDate = ln.MATURITYDATE,
                                 bookingDate = ln.BOOKINGDATE,
-                                principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL, 
                                 principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
                                 interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
                                 approvalStatusId = op.APPROVALSTATUSID,
@@ -19572,8 +19578,6 @@ namespace FintrakBanking.Repositories.Credit
 
 
         //}
-
-
 
         #region contingient liability operations
         private bool CancelContingentLiability(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment, int staffId)
@@ -22959,7 +22963,9 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                         where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
                         && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                        || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                        || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                        || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                        || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised)
                          && atrail.OPERATIONID == ln.OPERATIONTYPEID
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null && ln.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved

@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
         //[Required]
         ////[StringLength(1000)]
         public string FROMADDRESS { get; set; }
+        public string OPERATIONMETHOD { get; set; }
 
         //[Required]
         ////[StringLength(2000)]
