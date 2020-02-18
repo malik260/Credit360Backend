@@ -888,13 +888,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
         #endregion end of code logic
 
-        public void validateAlertCheck()
+        public bool validateAlertCheck()
         {
-            GroupImminentMaturitiesByGroupHeads();
-            GetImminentMaturities();
-            GetPastDueObligationsReminder();
-            GetPastDueObligationsReminderByGroupHeads();
+            bool state = false;
+            if (CompareDate() == true)
+            {
+                TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
+                TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
+                TimeSpan now = DateTime.Now.TimeOfDay;
 
+                if ((now >= start) && (now <= end))
+                {
+                    GroupImminentMaturitiesByGroupHeads();
+                    GetImminentMaturities();
+                    GetPastDueObligationsReminder();
+                    GetPastDueObligationsReminderByGroupHeads();
+                    state = true;
+                }
+
+            }
+            return state;
             /*GetLoanExpirationReminder(); 
             GetUnpaidObligationReminder();
             GetLoanRepaymentReminder();
@@ -919,9 +932,20 @@ namespace FintrakBanking.Repositories.Setups.General
             GetImminentObligationMaturityFacilityNotification();
             GetNplOnCreditPortfolio();
             GetLoanExpirationReminderAccountOfficer();*/
-
+            
         }
 
+        private bool CompareDate()
+        {
+            DateTime currentDate = DateTime.Now;
+           var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate) && (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminder")).FirstOrDefault();
+            
+            if (DBdate == null)
+            {
+                return true;
+            }else
+            return false;
+        }
         private string GetBusinessUsersEmails(string accountOfficerMIsCode)
         {
             string emailList = "";
@@ -985,8 +1009,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
 
 
-                    var result = string.Empty;
-                    var tempResult = string.Empty;
+                        var result = string.Empty;
+                        var tempResult = string.Empty;
                    foreach (var accountOfficer in accountOfficers)
                    {
                         var accountOfficerFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == accountOfficer.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
@@ -1049,11 +1073,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
                     
                     emailList = groupHeadDetail.EMAIL +";"+ GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE)+";"+ defaultEmail+ ";jobomeg@accessbankplc.com";
-                    //var em = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com";
+                    //var em = "benjamin.gbaaikye@fintraksoftware.com";
                     alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
                     alerts.Add(alert);
                 }
@@ -1106,7 +1131,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             var n = 0;
                            
 
-                        var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == accountOfficer.misCode && d.AMOUNTDUE > 0).ToList();
+                        var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == accountOfficer.misCode && d.TOTALUNPAIDOBLIGATION > 0).ToList();
                         if (loanInformation != null && loanInformation.Count() > 0)
                         {
                             tempResult = $@"
@@ -1125,8 +1150,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             {
                                     n++;
 
-                                    var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
-                                tempResult = tempResult + $@"
+                                    var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.TOTALUNPAIDOBLIGATION));
+                                    tempResult = tempResult + $@"
                                     <tr>
                                         <td>{n}</td>
                                         <td>{t.CUSTOMERNAME}</td>
@@ -1147,11 +1172,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
                     emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
-                    //var em = "benjamin.gbaaikye@fintraksoftware.com;PAUL.ASIEMO@accessbankplc.com";
+                    //var em = "OLUKAYODE.AJAYI@ACCESSBANKPLC.com"; //"benjamin.gbaaikye@fintraksoftware.com";
                     alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
                     alerts.Add(alert);
                 }
@@ -1236,6 +1262,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;
                         alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
                         alerts.Add(alert);
                     }
@@ -1735,7 +1762,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
-                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode && d.AMOUNTDUE > 0).ToList();
+                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode && d.TOTALUNPAIDOBLIGATION > 0).ToList();
                     if (loanInformation != null && loanInformation.Count() > 0)
                     {
                         var n = 0;
@@ -1754,7 +1781,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             n++;
 
-                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.TOTALUNPAIDOBLIGATION));
                             //var amount = Convert.ToDecimal(t.AMOUNTDUE).ToString(); 
                             result = result + $@"
                             <tr>
@@ -1773,10 +1800,12 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
                         emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                        //var em = "benjamin.gbaaikye@fintraksoftware.com";
                         alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;
                         alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
                         alerts.Add(alert);
                     }
@@ -2723,7 +2752,7 @@ namespace FintrakBanking.Repositories.Setups.General
            
                 foreach (var alert in alerts)
                 {
-                    if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0);
+                    if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0,alert.operationMethod);
                 }
             
         }
@@ -2844,7 +2873,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return list;
         }
 
-        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId)
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
         {
             try
             {
@@ -2865,6 +2894,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     SendOnDateTime = DateTime.Now,
                     ReferenceCode = referenceCode,
                     targetId = targetId,
+                    operationMethod = operationMehtod,
                 };
                 SaveMessageDetails(messageModel);
             }
@@ -2889,7 +2919,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 SENDONDATETIME = model.SendOnDateTime,
                 ATTACHMENTCODE = model.ReferenceCode,
                 ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
-                TARGETID = (int)model.targetId
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
             };
 
             context.TBL_MESSAGE_LOG.Add(message);

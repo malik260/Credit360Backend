@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.ExternalInitialization = true;
                         workflow.ToStaffId = currentTrail.REQUESTSTAFFID;
                         workflow.StatusId = (short)ApprovalStatusEnum.Pending;
-                        workflow.Amount = model.amount;
+                        workflow.Amount = model.legalLendingLimit;
                         workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                         workflow.LogActivity();
                         
@@ -1731,7 +1731,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var t in data.ToList())
                 {
-                    var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == t.applicationId).ToList();
+                    var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId).ToList();
                     foreach (var f in facilities)
                     {
                         var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
@@ -1872,6 +1872,32 @@ namespace FintrakBanking.Repositories.Credit
                 data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId && t.fromApprovalLevelId > 0).ToList();
             }
 
+            if (data.Count == 0)
+            {
+                data = trail.Where(x => x.FROMAPPROVALLEVELID > 0).Select(x => new ApprovalTrailViewModel
+                {
+                    approvalTrailId = x.APPROVALTRAILID,
+                    comment = x.COMMENT,
+                    targetId = x.TARGETID,
+                    arrivalDate = x.ARRIVALDATE,
+                    systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                    responseDate = x.RESPONSEDATE,
+                    systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                    responseStaffId = x.RESPONSESTAFFID,
+                    requestStaffId = x.REQUESTSTAFFID,
+                    fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                    fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                    toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                    toApprovalLevelId = x.TOAPPROVALLEVELID,
+                    approvalStateId = x.APPROVALSTATEID,
+                    approvalStatusId = x.APPROVALSTATUSID,
+                    approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                    approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                    toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                    fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+                })?.OrderBy(x => x.approvalTrailId).ToList();
+            }
+
 
             var data2 = data.ToList();
             var testData = data.ToList();
@@ -1973,6 +1999,15 @@ namespace FintrakBanking.Repositories.Credit
 
         private PrivilegeViewModel GetRelieverPrivilege(AuthoritySignatureViewModel entity)
         {
+            var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+            List<int> ExclusiveOperations = new List<int>(); // (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
+            List<int> levelIds = new List<int>();
+
+            //ExclusiveOperations.Add(entity.operationId);
+            if (appl != null)
+            {
+                ExclusiveOperations.Add(appl.OPERATIONID);
+            }
             var now = DateTime.Now;
             var relieverStaff = context.TBL_STAFF_RELIEF
                     .FirstOrDefault(x => x.DELETED == false
@@ -1994,7 +2029,7 @@ namespace FintrakBanking.Repositories.Credit
             // check default role
             var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
 
-            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
                 .Join(context.TBL_APPROVAL_GROUP,
                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
@@ -2016,7 +2051,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (grants.Any() == false) // check specific
             {
-                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && ((x.OPERATIONID == entity.operationId && x.PRODUCTCLASSID == entity.productClassId) || (ExclusiveOperations.Contains(x.OPERATIONID))))
                  .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
                      m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                  .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
@@ -2654,7 +2689,7 @@ namespace FintrakBanking.Repositories.Credit
             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
             isRelatedParty = x.a.ISRELATEDPARTY,
             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
-            approvalStatusId = (short)x.a.APPROVALSTATUSID,
+            approvalStatusId = x.b.APPROVALSTATUSID,
             applicationStatusId = x.a.APPLICATIONSTATUSID,
             branchName = x.a.TBL_BRANCH.BRANCHNAME,
             relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
@@ -2761,7 +2796,7 @@ namespace FintrakBanking.Repositories.Credit
             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
             isRelatedParty = x.a.ISRELATEDPARTY,
             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
-            approvalStatusId = (short)x.a.APPROVALSTATUSID,
+            approvalStatusId = x.b.APPROVALSTATUSID,
             applicationStatusId = x.a.APPLICATIONSTATUSID,
             branchName = x.a.TBL_BRANCH.BRANCHNAME,
             relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
