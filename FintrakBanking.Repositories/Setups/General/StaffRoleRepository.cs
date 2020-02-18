@@ -240,7 +240,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 throw new SecureException("There is an operation that is yet to be approved on this item!");
             }
 
-                using (var trans = context.Database.BeginTransaction())
+            using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
