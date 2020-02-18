@@ -226,6 +226,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerType { get; set; }
         public string isProjectRelated { get; set; }
         public decimal facilityAmount { get; set; }
+        public object operationTypeName { get; set; }
+        public string reviewLoanDetaile { get; set; }
+        public string referenceNumber { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {
