@@ -535,7 +535,7 @@ namespace FintrakBanking.Repositories.Credit
                 DISPUTED = false,
                 REQUIRECOLLATERAL = false,
                 APPLICATIONDATE = applicationDate,
-                CREATEDBY = staffId,
+                CREATEDBY = model.createdBy,
                 DATETIMECREATED = applicationDate,
                 SYSTEMDATETIME = DateTime.Now,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -1513,6 +1513,7 @@ namespace FintrakBanking.Repositories.Credit
                                         referenceNumber = a.APPLICATIONREFERENCENUMBER,
                                         applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                         loanApplicationId = a.LOANAPPLICATIONID,
+                                        
                                         customerId = a.CUSTOMERID,
                                         branchId = a.BRANCHID,
                                         customerGroupId = a.CUSTOMERGROUPID,

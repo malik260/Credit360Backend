@@ -420,6 +420,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string divisionShortCode { get; set; }
         public int globalsla { get; set; }
         public string operationTypeName { get; set; }
+        public string createdByName { get; set; }
     }
 
     public class applicationDetails

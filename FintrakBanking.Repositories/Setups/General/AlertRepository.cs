@@ -891,7 +891,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool validateAlertCheck()
         {
             bool state = false;
-            if (CompareDate() == false)
+            if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
                 TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
