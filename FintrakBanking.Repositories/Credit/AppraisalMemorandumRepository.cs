@@ -1731,7 +1731,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var t in data.ToList())
                 {
-                    var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == t.applicationId).ToList();
+                    var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId).ToList();
                     foreach (var f in facilities)
                     {
                         var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
