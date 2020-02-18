@@ -535,7 +535,7 @@ namespace FintrakBanking.Repositories.Credit
                 DISPUTED = false,
                 REQUIRECOLLATERAL = false,
                 APPLICATIONDATE = applicationDate,
-                CREATEDBY = staffId,
+                CREATEDBY = model.createdBy,
                 DATETIMECREATED = applicationDate,
                 SYSTEMDATETIME = DateTime.Now,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -963,7 +963,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
                             LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
-                            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                         }
                         else
                         {
@@ -982,7 +982,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
                             LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
-                            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                         }
                         else
                         {
@@ -1442,6 +1442,7 @@ namespace FintrakBanking.Repositories.Credit
                                {
                                    relatedReferenceNumber = x1 != null ? x1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (y1 != null ? y1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (z1 != null ? z1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "N/A")),
                                    firstName = g.FIRSTNAME,
+                                   referenceNumber= a.APPLICATIONREFERENCENUMBER,
                                    middleName = g.MIDDLENAME,
                                    lastName = g.LASTNAME,
                                    customerCode = g.CUSTOMERCODE,
@@ -1452,6 +1453,8 @@ namespace FintrakBanking.Repositories.Credit
                                    customerGroupId = a.CUSTOMERGROUPID,
                                    applicationDate = a.APPLICATIONDATE,
                                    applicationAmount = d.PROPOSEDAMOUNT,
+                                   reviewLoanDetaile = d.REVIEWDETAILS,
+                                   operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                    approvedAmount = d.APPROVEDAMOUNT,
                                    interestRate = d.PROPOSEDINTERESTRATE,
                                    applicationTenor = d.PROPOSEDTENOR,
@@ -1509,12 +1512,16 @@ namespace FintrakBanking.Repositories.Credit
                                         relatedReferenceNumber = x1 != null ? x1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (y1 != null ? y1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (z1 != null ? z1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "N/A")),
                                         customerName = c.GROUPNAME,
                                         customerCode = c.GROUPCODE,
+                                        referenceNumber = a.APPLICATIONREFERENCENUMBER,
                                         applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                         loanApplicationId = a.LOANAPPLICATIONID,
+                                        
                                         customerId = a.CUSTOMERID,
                                         branchId = a.BRANCHID,
                                         customerGroupId = a.CUSTOMERGROUPID,
                                         applicationDate = a.APPLICATIONDATE,
+                                        reviewLoanDetaile = d.REVIEWDETAILS,
+                                        operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                         applicationAmount = d.PROPOSEDAMOUNT,
                                         approvedAmount = d.APPROVEDAMOUNT,
                                         interestRate = d.PROPOSEDINTERESTRATE,

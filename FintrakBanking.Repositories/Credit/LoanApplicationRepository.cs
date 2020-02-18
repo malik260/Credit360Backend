@@ -5244,6 +5244,87 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
         }
 
+        public IQueryable<LoanReviewApplicationViewModel> GetRejectedReviewLoanApplications(UserInfo user)
+        {
+
+            bool isHeadOffice = (user.BranchId == 1) ? true : false;
+
+            var applications = context.TBL_LMSR_APPLICATION
+                .Where(x => (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected
+                || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted)
+                )
+            .Select(x => new LoanReviewApplicationViewModel
+            {
+                applicationDate = x.APPLICATIONDATE,
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                approvalStatusId = (int)x.APPROVALSTATUSID,
+                createdByName = context.TBL_STAFF.Where(s => s.STAFFID == x.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+                loanReviewApplicationId = x.LOANAPPLICATIONID,
+                referenceNumber = x.APPLICATIONREFERENCENUMBER,
+                relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
+                branchId = x.BRANCHID,
+                branchName = x.TBL_BRANCH.BRANCHNAME,
+                customerId = (int)x.CUSTOMERID,
+                operationId = x.OPERATIONID,
+                customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME,
+
+                customerGroupName = context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == x.CUSTOMERGROUPID).Select(c => c.GROUPNAME).FirstOrDefault() ?? "",
+
+                loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(l => l.LOANAPPLICATIONTYPEID == x.LOANAPPLICATIONTYPEID).Select(l => l.LOANAPPLICATIONTYPENAME).FirstOrDefault() ?? "N/A",
+                facility = x.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.TBL_LMSR_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LMSR_APPLICATION_DETAIL
+                                        .Where(s => s.LOANAPPLICATIONID == x.LOANAPPLICATIONID && s.DELETED == false)
+                                        .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                        .FirstOrDefault(),
+                approvedAmount = x.APPROVEDAMOUNT == null ? 0 : x.APPROVEDAMOUNT,
+                productClassProcessId = x.PRODUCT_CLASS_PROCESSID == null ? 0 : x.PRODUCT_CLASS_PROCESSID,
+                divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                globalsla = !context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(c => c.GLOBALSLA).Any() ? 0 : context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(c => c.GLOBALSLA).FirstOrDefault(),
+
+                dateTimeCreated = x.DATETIMECREATED,
+                operationTypeName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == x.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+
+                creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Count() > 1
+                     ? "Multiple"
+                     : context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID ==
+                             context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).OPERATIONID
+                         ).OPERATIONNAME,
+
+                facilityType = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+
+                applicationDetails = x.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
+                    .Select(d => new applicationDetails
+                    {
+                        detailId = d.LOANREVIEWAPPLICATIONID,
+                        loanApplicationId = d.LOANAPPLICATIONID,
+                        operationId = d.OPERATIONID,
+                        operationName = d.TBL_OPERATIONS.OPERATIONNAME,
+                        reviewDetails = d.REVIEWDETAILS,
+                        reviewStageId = d.REVIEWSTAGEID,
+                        loanId = d.LOANID,
+                        loanSystemTypeId = d.LOANSYSTEMTYPEID,
+                        loanSystemTypeName = d.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
+                        productId = d.PRODUCTID,
+                        customerId = d.CUSTOMERID,
+                        obligorName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+                        proposedTenor = d.PROPOSEDTENOR,
+                        proposedRate = d.PROPOSEDINTERESTRATE,
+                        proposedAmount = d.PROPOSEDAMOUNT,
+                        approvedTenor = d.APPROVEDTENOR,
+                        approvedRate = d.APPROVEDINTERESTRATE,
+                        approvedAmount = d.APPROVEDAMOUNT,
+                        customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
+                        statusId = d.APPROVALSTATUSID,
+                        accountName = d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME,
+                        accountNumber = d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER,
+                        terms = d.REPAYMENTTERMS,
+                        schedule = context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault() == null ? "" : context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault(),
+                    })
+
+            }).OrderByDescending(d => d.loanReviewApplicationId);
+
+            return applications;
+        }
+
         public IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user)
         {
             bool isHeadOffice = (user.BranchId == 1) ? true : false;
