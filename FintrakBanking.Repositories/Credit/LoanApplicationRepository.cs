@@ -662,13 +662,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SendApplicationToEdit(int loanApplicationId, int operationId, int accountOfficerId)
         {
+            var staffs = genSetup.GetStaffRlieved(accountOfficerId);
+
             var loan = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
             if (loan == null)
             {
                 throw new SecureException("This Loan doesn't exist on the System");
             }
 
-            if (loan.CREATEDBY != accountOfficerId)
+            if (!(staffs.Contains(loan.CREATEDBY)))
             {
                 throw new SecureException("You cannot modify a Loan you didn't initiate!");
             }
@@ -1503,6 +1505,7 @@ namespace FintrakBanking.Repositories.Credit
             * 2 = successfuly moved to drawdown **/
 
             var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            appl.TOTALEXPOSUREAMOUNT = 0;
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId).FirstOrDefault();
 
             if (appl.LOANAPPROVEDLIMITID > 0)
