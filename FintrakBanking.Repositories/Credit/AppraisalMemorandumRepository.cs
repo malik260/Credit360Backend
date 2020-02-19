@@ -353,6 +353,10 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
             //decimal totalApplicationAmount = appl.TBL_LOAN_APPLICATION_DETAIL.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE) + (loanApp.GetExposures(appl).Sum(e => e.outstandingsLcy));
+            if (!(model.legalLendingLimit > 0))
+            {
+                throw new SecureException("Please Kindly refresh your browser and try again, Thanks");
+            }
             decimal totalApplicationAmount = model.legalLendingLimit;
             //decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
             using (var trans = context.Database.BeginTransaction())
