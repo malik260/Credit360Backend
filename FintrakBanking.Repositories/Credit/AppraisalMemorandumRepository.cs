@@ -353,6 +353,10 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
             //decimal totalApplicationAmount = appl.TBL_LOAN_APPLICATION_DETAIL.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE) + (loanApp.GetExposures(appl).Sum(e => e.outstandingsLcy));
+            if (!(model.legalLendingLimit > 0))
+            {
+                throw new SecureException("Please Kindly refresh your browser and try again, Thanks");
+            }
             decimal totalApplicationAmount = model.legalLendingLimit;
             //decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
             using (var trans = context.Database.BeginTransaction())
@@ -3053,10 +3057,12 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId)
-        {
-            var operationId = (int)OperationsEnum.CreditAppraisal;
+        { 
 
-            List<int> levels = general.GetRouteLevels(operationId, 1);//.ToList().Distinct();
+            var operationIds = context.TBL_LOAN_APPLICATION.Select(x => x.OPERATIONID).Distinct().ToList();
+            //var operationId = (int)OperationsEnum.CreditAppraisal;
+
+            //List<int> levels = general.GetRouteLevels(operationId, 1);//.ToList().Distinct();
 
             //var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
             //                .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
@@ -3077,7 +3083,8 @@ namespace FintrakBanking.Repositories.Credit
             //                .ToList();
 
             var applications = context.TBL_LOAN_APPLICATION
-                .Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                .Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
+                            && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                     //&& regions.Contains((int)x.CAPREGIONID)
                     // && branches.Contains(x.BRANCHID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
@@ -3085,9 +3092,11 @@ namespace FintrakBanking.Repositories.Credit
                     && x.SUBMITTEDFORAPPRAISAL == true
                 )
                 .OrderByDescending(x => x.LOANAPPLICATIONID)
-                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
                         && (x.RESPONSESTAFFID == null || (x.RESPONSESTAFFID == staffId && x.TOSTAFFID != null))
-                        && x.TOAPPROVALLEVELID != null && levels.Contains((int)x.TOAPPROVALLEVELID)),
+                        && x.TOAPPROVALLEVELID != null 
+                        //&& levels.Contains((int)x.TOAPPROVALLEVELID)
+                        ),
                     a => a.LOANAPPLICATIONID, b => b.TARGETID, (a, b) => new { a, b })
                 .Select(x => new RegionLoanApplicationViewModel
                     {
