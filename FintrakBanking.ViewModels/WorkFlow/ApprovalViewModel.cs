@@ -43,8 +43,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
 
         public int approvalStatusIdUI { get; set; }
-        
 
+        public bool forbidExternalNotification { get; set; }
     }
     public class ApprovalResponse
     {
