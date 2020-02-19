@@ -309,8 +309,15 @@ namespace FintrakBanking.Repositories.Customer
                 ////if (Convert.ToDecimal(value.ratioValue1) > 0 || Convert.ToDecimal(value.ratioValue2) > 0 ||
                 ////    Convert.ToDecimal(value.ratioValue3) > 0 || Convert.ToDecimal(value.ratioValue4) > 0)
                 ////{
-                if (!string.IsNullOrEmpty(value.ratioValue1) && (value.ratioValue1 != "0.00") || !string.IsNullOrEmpty(value.ratioValue2) && (value.ratioValue2 != "0.00") ||
-                    !string.IsNullOrEmpty(value.ratioValue3) && (value.ratioValue3 != "0.00") || !string.IsNullOrEmpty(value.ratioValue4) && (value.ratioValue4 != "0.00"))
+
+                //if (!string.IsNullOrEmpty(value.ratioValue1) && (value.ratioValue1 != "0.00") || !string.IsNullOrEmpty(value.ratioValue2) && (value.ratioValue2 != "0.00") ||
+                //    !string.IsNullOrEmpty(value.ratioValue3) && (value.ratioValue3 != "0.00") || !string.IsNullOrEmpty(value.ratioValue4) && (value.ratioValue4 != "0.00"))
+                //{
+                //    output.Add(value);
+                //}
+
+                if (!string.IsNullOrEmpty(value.ratioValue1) || !string.IsNullOrEmpty(value.ratioValue2) ||
+                    !string.IsNullOrEmpty(value.ratioValue3) || !string.IsNullOrEmpty(value.ratioValue4))
                 {
                     output.Add(value);
                 }
@@ -348,13 +355,46 @@ namespace FintrakBanking.Repositories.Customer
                                where c.RATIOCAPTIONID == fsCaptionId && t.FSDATE == fsDate
                                select new { c.FSCAPTIONID, c.DIVISORTYPEID, f.ISRATIO}).ToList().OrderBy(O => O.DIVISORTYPEID).ToList();
 
-                if (details != null) {
-                    decimal sum = 0;
+                if (details.Count > 0) {
+                    decimal sum = 0, newSum = 0;
 
                     foreach (var detail in details) {
                         if (detail.ISRATIO) {
-                            var calculatedValue = CalculateFSRatioValue(customerId, (short) detail.FSCAPTIONID, fsDate);
-                            sum = CalculateFSRatioValueDerived(sum, detail.DIVISORTYPEID, calculatedValue);
+
+                            // testing 
+                            //var newDetails = (from c in context.TBL_CUSTOMER_FS_RATIO_DETAIL
+                            //               join f in context.TBL_CUSTOMER_FS_CAPTION on c.FSCAPTIONID equals f.FSCAPTIONID
+                            //               join t in context.TBL_CUSTOMER_FS_CAPTION_DETAIL on c.FSCAPTIONID equals t.FSCAPTIONID
+                            //               where c.RATIOCAPTIONID == detail.FSCAPTIONID && t.FSDATE == fsDate
+                            //               select new { c.FSCAPTIONID, c.DIVISORTYPEID, f.ISRATIO }).ToList().OrderBy(O => O.DIVISORTYPEID).ToList();
+
+                            //if (newDetails.Count > 0) {
+                            //    foreach (var newDetail in newDetails)
+                            //    {
+                            //        if (newDetail.ISRATIO) {
+                            //            var newCalculatedValue = CalculateFSRatioValue(customerId, (short)detail.FSCAPTIONID, fsDate);
+                            //            newSum = CalculateFSRatioValueDerived(newSum, detail.DIVISORTYPEID, newCalculatedValue);
+                            //        }
+                            //        else
+                            //        {
+                            //            var captionDetail = (from O in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
+                            //                                 where O.FSCAPTIONID == detail.FSCAPTIONID && O.CUSTOMERID == customerId
+                            //                                 select O).FirstOrDefault();
+
+                            //            if (captionDetail != null && captionDetail.AMOUNT > 0)
+                            //            {
+                            //                newSum = CalculateFSRatioValueDerived(newSum, detail.DIVISORTYPEID, captionDetail.AMOUNT);
+                            //            }
+                            //        }
+                            //    }
+
+                            //    sum = newSum;
+                            //}
+                            //else {
+                                var calculatedValue = CalculateFSRatioValue(customerId, (short)detail.FSCAPTIONID, fsDate);
+                                sum = CalculateFSRatioValueDerived(sum, detail.DIVISORTYPEID, calculatedValue);
+                            //}
+
                         }
                         else {
                             var captionDetail = (from O in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
