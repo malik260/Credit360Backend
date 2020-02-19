@@ -191,6 +191,8 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string todCustomerAccountActivityHolder = "@{{todCustomerAccountActivityData}}";
         private readonly string todCustomerFacilityHolder = "@{{todCustomerFacilityData}}";
         private readonly string todBackgroungInformationHolder = "@{{todBackgroungInformationData}}";
+        private readonly string currentLMSFlowHolder = "@{{currentLMSFlowData}}";
+        
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -404,7 +406,7 @@ namespace FintrakBanking.Repositories.Credit
         private string todCustomerAccountActivityData;
         private string todCustomerFacilityData;
         private string todBackgroungInformationData;
-
+        private string currentLMSFlowData;
 
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
@@ -654,6 +656,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.todCustomerAccountActivityData = TodCustomerAccountActivityHtml();
                 this.todCurrentRequestData = TodCurrentRequestHtml();
                 this.todBackgroungInformationData = TodBackgroungInformationHtml();
+                this.currentLMSFlowData = CurrentLMSFlowHtml();
+                
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
@@ -4742,6 +4746,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(todCustomerAccountActivityHolder, todCustomerFacilityData);
             content = content.Replace(todCurrentRequestHolder, todCustomerAccountActivityData);
             content = content.Replace(todBackgroungInformationHolder, todCurrentRequestData);
+            content = content.Replace(currentLMSFlowHolder, currentLMSFlowData);
 
             return content;
         }
@@ -6092,13 +6097,13 @@ namespace FintrakBanking.Repositories.Credit
                         <td>Location</td>
                         <td>{address}</td>
                         <td>Customer Risk Rating</td>
-                        <td>{customer.CUSTOMERRATING}</td>
+                        <td>{customer?.CUSTOMERRATING}</td>
                     </tr> 
                      <tr>
                         <td>Business</td>
                         <td>{customer.OCCUPATION}</td>
                         <td>Classification</td>
-                        <td>{riskRating.CLASSIFICATION}</td>
+                        <td>{riskRating?.CLASSIFICATION}</td>
                     </tr>
                    <tr>
                         <td>Account Number</td>
@@ -7382,13 +7387,13 @@ namespace FintrakBanking.Repositories.Credit
                         <td>Location</td>
                         <td>{address}-</td>
                         <td>Customer Risk Rating</td>
-                        <td>{customer.CUSTOMERRATING}</td>
+                        <td>{customer?.CUSTOMERRATING}</td>
                     </tr> 
                      <tr>
                         <td>Business</td>
                         <td>{customer.OCCUPATION}</td>
                         <td>Classification</td>
-                        <td>{riskRating.CLASSIFICATION}</td>
+                        <td>{riskRating?.CLASSIFICATION}</td>
                     </tr>
                    <tr>
                         <td>Account Number</td>
@@ -8155,6 +8160,28 @@ namespace FintrakBanking.Repositories.Credit
                         <td><strong>Signature & Date<strong></td>
                         <td>__________________</td>
                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            return result;
+
+        }
+
+        public string CurrentLMSFlowHtml()
+        {
+            var currentOperation = context.TBL_OPERATIONS.Where(l => l.OPERATIONID == this.loanApplication.OPERATIONID).Select(l => l.OPERATIONNAME).FirstOrDefault();
+            var reviewDetails = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).Select(l => l.REVIEWDETAILS).FirstOrDefault();
+
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <h4><strong>CURRENT OPERATION DETAILS</strong></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                   <tr>
+                        <td>Operation Type:</td>
+                         <td>{currentOperation}</td>
+                        <td>Review Detail:</td>
+                         <td>{reviewDetails}</td>
+                    </tr> 
                  ";
             result = result + $"</table>";
             return result;
