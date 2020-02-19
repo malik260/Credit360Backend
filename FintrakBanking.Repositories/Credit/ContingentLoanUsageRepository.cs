@@ -48,7 +48,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                int[] operations = { (int)OperationsEnum.APS_RelaseChecklist, (int)OperationsEnum.APS_ReleaseCAP, (int)OperationsEnum.APS_ReleasePrincipaRequest };
+                int[] operations = {
+                    (int)OperationsEnum.APS_RelaseChecklist,
+                    (int)OperationsEnum.APS_ReleaseCAP,
+                    (int)OperationsEnum.APS_ReleasePrincipaRequest,
+                    (int)OperationsEnum.APSReleaseApproval
+                };
 
 
                 List<ContingentLoansViewModel> contingentData = new List<ContingentLoansViewModel>();
