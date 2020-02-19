@@ -1152,7 +1152,7 @@ namespace FintrakBanking.Repositories.Credit
             loanData.DATETIMECREATED = genSetup.GetApplicationDate();
             loanData.SYSTEMDATETIME = DateTime.Now;
             loanData.CASAACCOUNTID = loan.casaAccountId;
-           // loanData.APPLICATIONAMOUNT = totalApplicationAmount;
+            loanData.APPLICATIONAMOUNT = loan.proposedAmount;
             loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             loanData.COLLATERALDETAIL = loan.collateralDetail;
             loanData.CAPREGIONID = loan.regionId;
