@@ -6203,19 +6203,19 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var f in accountActivity)
             {
                 result = result + $@"
-                        < tr >
-                        < td > {f.accountNumber}</ td >
-                        < td > {f.productAccountName}</ td >
-                        < td > {f.period}</ td >
-                        < td > {string.Format("{0:#,##.00}", Convert.ToDecimal(f.max_Debit_Balance))}</ td >
-                        < td > {string.Format("{0:#,##.00}", Convert.ToDecimal(f.min_Debit_Balance))}</ td >
-                        < td > {string.Format("{0:#,##.00}", Convert.ToDecimal(f.max_Credit_Balance))}</ td >
-                        < td > {string.Format("{0:#,##.00}", Convert.ToDecimal(f.min_Credit_Balance))}</ td >
-                        < td > {string.Format("{0:#,##.00}", Convert.ToDecimal(f.debit_Turnover))}</ td >
-                        < td > {string.Format("{0:#,##.00}", Convert.ToDecimal(f.credit_Turnover))}</ td >
-                        < td > {f.month}</ td >
-                        < td > {f.year}</ td >
-                    </tr >";
+                        <tr>
+                        <td> {f.accountNumber}</td>
+                        <td> {f.productAccountName}</td>
+                        <td> {f.period}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.max_Debit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.min_Debit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.max_Credit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.min_Credit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.debit_Turnover))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.credit_Turnover))}</td>
+                        <td> {f.month}</td>
+                        <td> {f.year}</td>
+                    </tr>";
 
             }
 
@@ -8165,7 +8165,6 @@ namespace FintrakBanking.Repositories.Credit
             return result;
 
         }
-
         public string CurrentLMSFlowHtml()
         {
             var currentOperation = context.TBL_OPERATIONS.Where(l => l.OPERATIONID == this.loanApplication.OPERATIONID).Select(l => l.OPERATIONNAME).FirstOrDefault();
@@ -10534,7 +10533,6 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-
         private string GetCashBackApprovalsMarkupLOS(int targetId, int operationId)
         {
             var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,true).OrderBy(a => a.approvalTrailId);
@@ -10566,8 +10564,6 @@ namespace FintrakBanking.Repositories.Credit
             return result;
 
         }
-
-
 
         public string GetCallMemoMarkup(int id)
         {
