@@ -193,6 +193,7 @@ namespace FintrakBanking.Repositories.Credit
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
                     undergoingConcession = exceptIds.Contains(x.c.a.LOANAPPLICATIONID),
+                    apiRequestId = x.c.a.APIREQUESTID,
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
 
                 });
