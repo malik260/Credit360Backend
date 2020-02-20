@@ -11114,7 +11114,7 @@ namespace FintrakBanking.Repositories.Credit
                                        //join f in context.TBL_LOAN_CAMSOL on a.TERMLOANID equals f.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                        //&& b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanSales
-                                       && b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanRecovery
+                                       && (b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanRecovery || b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanRecoveryApproval)
                                        && b.OPERATIONPERFORMED == false
                                        //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending

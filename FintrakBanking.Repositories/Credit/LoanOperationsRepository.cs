@@ -15864,7 +15864,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //decimal totalamount = (accruedInterest + outStandingBalance + pastDue + pastDuePrincipal);
             decimal balance = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.BALANCE).FirstOrDefault();
-            decimal? writtenOffAccruedAmount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.WRITTENOFFACCRUALAMOUNT).FirstOrDefault();
+            decimal? writtenOffAccruedAmount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.WRITTENOFFACCRUALAMOUNT).FirstOrDefault() ?? 0;
             decimal totalamount = balance + (decimal)writtenOffAccruedAmount;
 
             var runningLoan = (from l in context.TBL_LOAN
