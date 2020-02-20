@@ -11536,6 +11536,8 @@ namespace FintrakBanking.Repositories.Credit
                                join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
                                join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
                                join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
+                               join lr in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals lr.LOANID into final
+                               from lr in final.DefaultIfEmpty()
                                where a.REVOLVINGLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
@@ -11556,6 +11558,8 @@ namespace FintrakBanking.Repositories.Credit
                                    productTypeId = pr.PRODUCTTYPEID,
                                    productName = pr.PRODUCTNAME,
                                    loanPurpose = ld.LOANPURPOSE,
+                                   reviewDetails = lr.REVIEWDETAILS,
+                                   operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == lr.OPERATIONID).OPERATIONNAME,
 
                                    productTypeName = pr.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
@@ -11645,6 +11649,8 @@ namespace FintrakBanking.Repositories.Credit
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                join ro in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals ro.STAFFID
                                join rm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals rm.STAFFID
+                               join ld in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals ld.LOANID into final
+                               from ld in final.DefaultIfEmpty()
                                where a.TERMLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
@@ -11669,6 +11675,7 @@ namespace FintrakBanking.Repositories.Credit
                                    branchName = br.BRANCHNAME,
                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
                                    applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER ?? "N/A",
+
                                    principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
                                    principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                    interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
@@ -11738,6 +11745,8 @@ namespace FintrakBanking.Repositories.Credit
                                    interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                    pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                    pastDueInterest = a.PASTDUEINTEREST,
+                                   reviewDetails = ld.REVIEWDETAILS,
+                                   operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == ld.OPERATIONID).OPERATIONNAME,
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
                                        loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -11885,7 +11894,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public LoanViewModel GetDisbursedContingentDId(int loanId)//GetDisbursedODByODId
-        {
+        { 
 
             //var loanDetails = (from a in context.TBL_LOAN_REVOLVING
             //                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -11979,6 +11988,8 @@ namespace FintrakBanking.Repositories.Credit
                                join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
                                join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
                                where a.CONTINGENTLOANID == loanId && a.ISDISBURSED == true
+                               join lh in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals lh.LOANID into final
+                               from lh in final.DefaultIfEmpty()
                                select new LoanViewModel
                                {
                                    loanSystemTypeId = a.LOANSYSTEMTYPEID,
@@ -12032,6 +12043,7 @@ namespace FintrakBanking.Repositories.Credit
                                    customerGroupId = lp.CUSTOMERGROUPID,
                                    loanTypeId = lp.LOANAPPLICATIONTYPEID,
                                    loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                   reviewDetails = lh.REVIEWDETAILS,
                                    //outstandingPrincipal = availableBalance,
                                    dischargeLetter = a.DISCHARGELETTER,
                                    //suspendInterest = a.SUSPENDINTEREST,
