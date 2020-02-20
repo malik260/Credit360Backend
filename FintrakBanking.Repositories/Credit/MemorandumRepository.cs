@@ -474,6 +474,9 @@ namespace FintrakBanking.Repositories.Credit
                 this.reviewType = context.TBL_LOAN_DETAIL_REVIEW_TYPE.Find(reviewTypeId)?.LOANDETAILREVIEWTYPENAME;
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLOS();
+                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+                this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == this.loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
+                this.approvedAmount = this.loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 this.exchangeRate = GetAllExchangeRates();
                 this.obligorRiskRating = GetCustomerRiskRating();
                 this.obligorClassification = GetObligorClassification();
@@ -607,6 +610,9 @@ namespace FintrakBanking.Repositories.Credit
                 //this.totalForeignContingentFacilities = GetTotalForeignContingentFacilitiesMarkupLMS();
                 //foreignImportFinanceFinance;
                 //foreigntotalImportFinanceFinance;
+                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+                this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == this.loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
+                this.approvedAmount = this.loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 this.groupExposure = GetGroupExposureMarkupLMS();
                 this.approvals = GetApprovalsMarkupLOS();
                 this.currentDate = DateTime.Now.ToShortDateString();
@@ -4829,10 +4835,11 @@ namespace FintrakBanking.Repositories.Credit
 
             //for TOD document
             content = content.Replace(todHeaderHolder, todHeaderData);
-            content = content.Replace(todCustomerFacilityHolder, todCustomerInformationData);
-            content = content.Replace(todCustomerAccountActivityHolder, todCustomerFacilityData);
-            content = content.Replace(todCurrentRequestHolder, todCustomerAccountActivityData);
-            content = content.Replace(todBackgroungInformationHolder, todCurrentRequestData);
+            content = content.Replace(todCustomerInformationHolder, todCustomerInformationData);
+            content = content.Replace(todCustomerAccountActivityHolder, todCustomerAccountActivityData);
+            content = content.Replace(todCustomerFacilityHolder, todCustomerFacilityData); 
+             content = content.Replace(todCurrentRequestHolder, todCurrentRequestData);
+            content = content.Replace(todBackgroungInformationHolder, todBackgroungInformationData);
             content = content.Replace(currentLMSFlowHolder, currentLMSFlowData);
 
             content = content.Replace(originalDocumentNonCreditProgramHolder, originalDocumentNonCreditProgramData);
@@ -6632,6 +6639,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
             var repaymentTerm = context.TBL_REPAYMENT_TERM.Find(details.REPAYMENTSCHEDULEID);
+           
             var result = String.Empty;
             result = result + $@"
                 <br />
@@ -7467,7 +7475,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -7544,7 +7552,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>ORIGINAL DOCUMENT (NON CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -7621,7 +7629,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>ORIGINAL DOCUMENT (CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -8411,19 +8419,19 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string CurrentLMSFlowHtml()
         {
-            var currentOperation = context.TBL_OPERATIONS.Where(l => l.OPERATIONID == this.loanApplication.OPERATIONID).Select(l => l.OPERATIONNAME).FirstOrDefault();
-            var reviewDetails = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).Select(l => l.REVIEWDETAILS).FirstOrDefault();
+            var currentOperation = context.TBL_OPERATIONS.Where(l => l.OPERATIONID == this.lmsrApplication.OPERATIONID).Select(l => l.OPERATIONNAME).FirstOrDefault();
+            var lmsReviewDetails = context.TBL_LMSR_APPLICATION_DETAIL.Where(r => r.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID).Select(r => r.REVIEWDETAILS).FirstOrDefault();
 
             var result = String.Empty;
             result = result + $@"
                 <br />
-                <h4><strong>CURRENT OPERATION DETAILS</strong></h4>
+                <h4><strong>CURRENT PROCESS DETAILS</strong></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                    <tr>
-                        <td>Operation Type:</td>
+                        <td>Process Type:</td>
                          <td>{currentOperation}</td>
                         <td>Review Detail:</td>
-                         <td>{reviewDetails}</td>
+                         <td>{lmsReviewDetails}</td>
                     </tr> 
                  ";
             result = result + $"</table>";
