@@ -6647,7 +6647,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Repayment Plan</strong></td>
-                        <td>{repaymentTerm.REPAYMENTTERMDETAIL}</td>
+                        <td>{repaymentTerm?.REPAYMENTTERMDETAIL}</td>
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
