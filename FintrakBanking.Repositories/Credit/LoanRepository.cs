@@ -8508,7 +8508,7 @@ namespace FintrakBanking.Repositories.Credit
                                        casaAccountId = s.CASAACCOUNTID,
                                        casaAccountId2 = s.CASAACCOUNTID2,
                                        productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-
+                                       divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                        interestRate = d.APPROVEDINTERESTRATE,
                                        approvedInterestRate = d.APPROVEDINTERESTRATE,
                                        approvedAmount = d.APPROVEDAMOUNT,
@@ -11536,6 +11536,8 @@ namespace FintrakBanking.Repositories.Credit
                                join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
                                join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
                                join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
+                               join lr in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals lr.LOANID into final
+                               from lr in final.DefaultIfEmpty()
                                where a.REVOLVINGLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
@@ -11556,6 +11558,8 @@ namespace FintrakBanking.Repositories.Credit
                                    productTypeId = pr.PRODUCTTYPEID,
                                    productName = pr.PRODUCTNAME,
                                    loanPurpose = ld.LOANPURPOSE,
+                                   reviewDetails = lr.REVIEWDETAILS,
+                                   operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == lr.OPERATIONID).OPERATIONNAME,
 
                                    productTypeName = pr.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
@@ -11645,6 +11649,8 @@ namespace FintrakBanking.Repositories.Credit
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                join ro in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals ro.STAFFID
                                join rm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals rm.STAFFID
+                               join ld in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals ld.LOANID into final
+                               from ld in final.DefaultIfEmpty()
                                where a.TERMLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
@@ -11669,6 +11675,7 @@ namespace FintrakBanking.Repositories.Credit
                                    branchName = br.BRANCHNAME,
                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
                                    applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER ?? "N/A",
+
                                    principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
                                    principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                    interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
@@ -11738,6 +11745,8 @@ namespace FintrakBanking.Repositories.Credit
                                    interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                    pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                    pastDueInterest = a.PASTDUEINTEREST,
+                                   reviewDetails = ld.REVIEWDETAILS,
+                                   operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == ld.OPERATIONID).OPERATIONNAME,
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
                                        loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -11885,7 +11894,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public LoanViewModel GetDisbursedContingentDId(int loanId)//GetDisbursedODByODId
-        {
+        { 
 
             //var loanDetails = (from a in context.TBL_LOAN_REVOLVING
             //                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -11979,6 +11988,8 @@ namespace FintrakBanking.Repositories.Credit
                                join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
                                join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
                                where a.CONTINGENTLOANID == loanId && a.ISDISBURSED == true
+                               join lh in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals lh.LOANID into final
+                               from lh in final.DefaultIfEmpty()
                                select new LoanViewModel
                                {
                                    loanSystemTypeId = a.LOANSYSTEMTYPEID,
@@ -12032,6 +12043,7 @@ namespace FintrakBanking.Repositories.Credit
                                    customerGroupId = lp.CUSTOMERGROUPID,
                                    loanTypeId = lp.LOANAPPLICATIONTYPEID,
                                    loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                   reviewDetails = lh.REVIEWDETAILS,
                                    //outstandingPrincipal = availableBalance,
                                    dischargeLetter = a.DISCHARGELETTER,
                                    //suspendInterest = a.SUSPENDINTEREST,
@@ -12475,6 +12487,8 @@ namespace FintrakBanking.Repositories.Credit
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        loanId = a.CONTINGENTLOANID,
                                        customerId = a.CUSTOMERID,
+                                       reviewLoanDetaile = b.REVIEWDETAILS,
+                                       operationTypeName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID == e.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        currencyId = a.CURRENCYID,
@@ -12491,7 +12505,6 @@ namespace FintrakBanking.Repositories.Credit
                                        systemCurrentDate = currentDate,
                                        lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                        loanSystemTypeId = b.LOANSYSTEMTYPEID,
-                                       operationTypeName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == e.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                                        legalContingentCode = a.LEGALCONTINGENTCODE,
                                        operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                        {
@@ -13093,14 +13106,10 @@ namespace FintrakBanking.Repositories.Credit
             loanStatus.Add((short)LoanStatusEnum.Terminated);
             loanStatus.Add((short)LoanStatusEnum.Inactive);
             loanStatus.Add((short)LoanStatusEnum.Completed);
-            
-            List<LoanViewModel> searchRevolvingLoan = null;
-            List<LoanViewModel> searchAllOverdraft = null;
-            List<LoanViewModel> searchContigentLoan = null;
-            List<LoanViewModel> searchLoanLine = null;
-            IEnumerable<LoanViewModel> searchResult = null;
 
-             var searchResult2 = (from a in context.TBL_LOAN
+            List<LoanViewModel> allFilteredLoan = new List<LoanViewModel>();
+
+            var searchResult2 = (from a in context.TBL_LOAN
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true &&  // a.MATURITYDATE >=      &&  //a.LOANSTATUSID != 7 &&
@@ -13125,7 +13134,7 @@ namespace FintrakBanking.Repositories.Credit
                                        principalAmount = a.PRINCIPALAMOUNT,
                                        effectiveDate = a.EFFECTIVEDATE,
                                        maturityDate = a.MATURITYDATE,
-                                       //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
@@ -13139,32 +13148,54 @@ namespace FintrakBanking.Repositories.Credit
                                        loanApplicationTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
                                        approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPROVEDAMOUNT,
 
-                                   });
+                                   }).ToList();
 
-            searchResult = searchResult2.ToList();
-            if (searchResult == null || searchResult.Count() < 1)
+            //allFilteredLoan = searchResult2.ToList();
+
+            if (searchResult2.Count > 0)
             {
-                searchRevolvingLoan = SearchRevolvingLoan(searchQuery).ToList();
-                searchResult = searchRevolvingLoan;
-
-                if (searchRevolvingLoan == null || searchRevolvingLoan.Count() < 1)
-                {
-                    searchAllOverdraft = SearchAllOverdraft(searchQuery).ToList();
-                    searchResult = searchAllOverdraft;
-
-                    if (searchAllOverdraft == null || searchAllOverdraft.Count() < 1)
-                    {
-                        searchContigentLoan = SearchContigentLoan(searchQuery).ToList();
-                        searchResult = searchContigentLoan;
-                    }
-                    else
-                    {
-                        searchLoanLine = SearchLoanLine(searchQuery).ToList();
-                        searchResult = searchLoanLine;
-                    }
-                }
+                allFilteredLoan.AddRange(searchResult2);
             }
-            return searchResult.ToList();
+            var revolving = SearchRevolvingLoan(searchQuery).ToList();
+            if (revolving.Count > 0)
+            {
+                allFilteredLoan.AddRange(revolving);
+            }
+            var contingent = SearchContigentLoan(searchQuery).ToList();
+            if (contingent.Count > 0)
+            {
+                allFilteredLoan.AddRange(contingent);
+            }
+            var line = SearchLoanLine(searchQuery).ToList();
+            if (line.Count > 0)
+            {
+                allFilteredLoan.AddRange(line);
+            }
+
+            //if (searchResult == null || searchResult.Count() < 1)
+            //{
+            //    searchRevolvingLoan = SearchRevolvingLoan(searchQuery).ToList();
+            //    searchResult = searchRevolvingLoan;
+
+            //    if (searchRevolvingLoan == null || searchRevolvingLoan.Count() < 1)
+            //    {
+            //        searchAllOverdraft = SearchAllOverdraft(searchQuery).ToList();
+            //        searchResult = searchAllOverdraft;
+
+            //        if (searchAllOverdraft == null || searchAllOverdraft.Count() < 1)
+            //        {
+            //            searchContigentLoan = SearchContigentLoan(searchQuery).ToList();
+            //            searchResult = searchContigentLoan;
+            //        }
+            //        else
+            //        {
+            //            searchLoanLine = SearchLoanLine(searchQuery).ToList();
+            //            searchResult = searchLoanLine;
+            //        }
+            //    }
+            //}
+
+            return allFilteredLoan.ToList();
         }
 
         //private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery)
@@ -13898,8 +13929,6 @@ namespace FintrakBanking.Repositories.Credit
         //public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery)
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(string searchQuery)
         {
-            //bool all = (performanceTypeId != 1) && (performanceTypeId != 2);
-            //bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();
 
             List<LoanViewModel> allFilteredLoan = new List<LoanViewModel>();
@@ -13910,42 +13939,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
-                var termLoan = SearchTermLoan(searchQuery).ToList();
-                if (termLoan.Count > 0)
-                {
-                    allFilteredLoan.AddRange(termLoan);
-                }
-                var revolving = SearchRevolvingLoan(searchQuery).ToList();
-                if (revolving.Count > 0)
-                {
-                    allFilteredLoan.AddRange(revolving);
-                }
-                var contingent = SearchContigentLoan(searchQuery).ToList();
-                if (contingent.Count > 0)
-                {
-                    allFilteredLoan.AddRange(contingent);
-                }
-                var line = SearchLoanLine(searchQuery).ToList();
-                if (line.Count > 0)
-                {
-                    allFilteredLoan.AddRange(line);
-                }
-                //if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
-                //{
-                //allFilteredLoan = SearchTermLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
-                //}
-                //else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
-                //{
-                //allFilteredLoan = SearchRevolvingLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
-                //}
-                //else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
-                //{
-                //allFilteredLoan = SearchContigentLoan(searchQuery);
-                //}
-                //else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
-                //{
-                //allFilteredLoan = SearchLoanLine(searchQuery);
-            }
+                allFilteredLoan = SearchTermLoan(searchQuery).ToList();
+              }
             else
             {
                 throw new SecureException("Not Implemented!");
@@ -14433,11 +14428,16 @@ namespace FintrakBanking.Repositories.Credit
                 WorkflowStageName = "13";
             }
 
-            var appl = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).FirstOrDefault();
+            var loanApplicationId = (from O in context.TBL_LOAN_BOOKING_REQUEST
+                                    join C in context.TBL_LOAN_APPLICATION_DETAIL on O.LOANAPPLICATIONDETAILID equals C.LOANAPPLICATIONDETAILID
+                                    where O.LOAN_BOOKING_REQUESTID == model.targetId
+                                    select C).FirstOrDefault()?.LOANAPPLICATIONID;
+
+            var appl = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId).FirstOrDefault();
             if (appl != null && appl.APIREQUESTID != null)
             {
                 var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
-                if (product.PRODUCTCODE == "EBFC")
+                if (product.PRODUCTCODE == "EBFC" && model.forbidExternalNotification == false)
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
@@ -15016,6 +15016,8 @@ namespace FintrakBanking.Repositories.Credit
                                    && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  //&& a.LOANREFERENCENUMBER == "406-0056-0000036"                                                                                                                                   //orderby b.DATECREATED descending
                                    select new LoanViewModel
                                    {
+                                       creditAppraisalOperationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.OPERATIONID).FirstOrDefault(),
+                                       creditAppraisalLoanApplicationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.LOANAPPLICATIONID).FirstOrDefault(),
                                        appraisalOperationId = e.OPERATIONID,
                                        appraisalLoanApplicationId = e.LOANAPPLICATIONID,
                                        synOperationId = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == b.OPERATIONID).Select(o => o.SYNCHOPERATIONID).FirstOrDefault(),
@@ -15028,6 +15030,7 @@ namespace FintrakBanking.Repositories.Credit
                                        companyId = a.COMPANYID,
                                        casaAccountId = a.CASAACCOUNTID,
                                        branchId = a.BRANCHID,
+                                       reviewLoanDetaile = b.REVIEWDETAILS,
                                        branchName = a.TBL_BRANCH.BRANCHNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,

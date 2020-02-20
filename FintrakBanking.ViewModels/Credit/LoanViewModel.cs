@@ -65,7 +65,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string payingAccountNumber { get; set; }
 
-        public string legalContingentCode { get; set; }
+        public string legalContingentCode { get; set; } 
         public int zeroToThirtyDays { get; set; }
         public int ThirtyOneToNinety { get; set; }
         public int ninetyOneToOneEightyDays { get; set; }
@@ -413,6 +413,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string appraisalApplicationReferenceNumber { get; set; }
         public int appraisalLoanApplicationId { get; set; }
         public int? synOperationId { get; set; }
+        public int creditAppraisalOperationId { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
 
 
 

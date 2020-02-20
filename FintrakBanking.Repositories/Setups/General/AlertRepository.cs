@@ -891,13 +891,21 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool validateAlertCheck()
         {
             bool state = false;
-            if (CompareDate() == false)
+            if (CompareDate() == true)
             {
-                GroupImminentMaturitiesByGroupHeads();
-                GetImminentMaturities();
-                GetPastDueObligationsReminder();
-                GetPastDueObligationsReminderByGroupHeads();
-                state = true;
+                TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
+                TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
+                TimeSpan now = DateTime.Now.TimeOfDay;
+
+                if ((now >= start) && (now <= end))
+                {
+                    GroupImminentMaturitiesByGroupHeads();
+                    GetImminentMaturities();
+                    GetPastDueObligationsReminder();
+                    GetPastDueObligationsReminderByGroupHeads();
+                    state = true;
+                }
+
             }
             return state;
             /*GetLoanExpirationReminder(); 
@@ -935,7 +943,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (DBdate == null)
             {
                 return true;
-            }
+            }else
             return false;
         }
         private string GetBusinessUsersEmails(string accountOfficerMIsCode)
@@ -1001,8 +1009,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
 
 
-                    var result = string.Empty;
-                    var tempResult = string.Empty;
+                        var result = string.Empty;
+                        var tempResult = string.Empty;
                    foreach (var accountOfficer in accountOfficers)
                    {
                         var accountOfficerFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == accountOfficer.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
@@ -1065,8 +1073,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
                     
                     emailList = groupHeadDetail.EMAIL +";"+ GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE)+";"+ defaultEmail+ ";jobomeg@accessbankplc.com";
-                    var em = "benjamin.gbaaikye@fintraksoftware.com";
-                    alert.receiverEmailList.Add(em);
+                    //var em = "benjamin.gbaaikye@fintraksoftware.com";
+                    alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
@@ -1123,7 +1131,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             var n = 0;
                            
 
-                        var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == accountOfficer.misCode && d.AMOUNTDUE > 0).ToList();
+                        var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == accountOfficer.misCode && d.TOTALUNPAIDOBLIGATION > 0).ToList();
                         if (loanInformation != null && loanInformation.Count() > 0)
                         {
                             tempResult = $@"
@@ -1142,8 +1150,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             {
                                     n++;
 
-                                    var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
-                                tempResult = tempResult + $@"
+                                    var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.TOTALUNPAIDOBLIGATION));
+                                    tempResult = tempResult + $@"
                                     <tr>
                                         <td>{n}</td>
                                         <td>{t.CUSTOMERNAME}</td>
@@ -1164,8 +1172,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
                     emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
-                    var em = "benjamin.gbaaikye@fintraksoftware.com";
-                    alert.receiverEmailList.Add(em);
+                    //var em = "OLUKAYODE.AJAYI@ACCESSBANKPLC.com"; //"benjamin.gbaaikye@fintraksoftware.com";
+                    alert.receiverEmailList.Add(emailList);
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
@@ -1249,8 +1257,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
                         emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                        var em = "benjamin.gbaaikye@fintraksoftware.com";
-                        alert.receiverEmailList.Add(em);
+                        //var em = "benjamin.gbaaikye@fintraksoftware.com";
+                        alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;
                         alert.canFire = true;
@@ -1754,7 +1762,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
-                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode && d.AMOUNTDUE > 0).ToList();
+                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode && d.TOTALUNPAIDOBLIGATION > 0).ToList();
                     if (loanInformation != null && loanInformation.Count() > 0)
                     {
                         var n = 0;
@@ -1773,7 +1781,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             n++;
 
-                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.TOTALUNPAIDOBLIGATION));
                             //var amount = Convert.ToDecimal(t.AMOUNTDUE).ToString(); 
                             result = result + $@"
                             <tr>
@@ -1792,8 +1800,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
                         emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                        var em = "benjamin.gbaaikye@fintraksoftware.com";
-                        alert.receiverEmailList.Add(em);
+                        //var em = "benjamin.gbaaikye@fintraksoftware.com";
+                        alert.receiverEmailList.Add(emailList);
                         alert.template = alertTemplate;
                         alert.alertTitle = alertTitle;
                         alert.canFire = true;

@@ -292,6 +292,9 @@ public int? newInterestFrequencyTypeId { get; set; }
                 return pastDueInterest + pastDuePrincipal
 + interestOnPastDueInterest + interestOnPastDuePrincipal + outstandingPrincipal + accruedInterest; } }
         public List<feeDetails> fees { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
+        public int creditAppraisalOperationId { get; set; }
+        
     }
 
 
@@ -420,6 +423,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string divisionShortCode { get; set; }
         public int globalsla { get; set; }
         public string operationTypeName { get; set; }
+        public string createdByName { get; set; }
     }
 
     public class applicationDetails
@@ -486,7 +490,8 @@ public int? newInterestFrequencyTypeId { get; set; }
 
         public string accountName { get; set; }
         public string accountNumber { get; set; }
-
+        public int creditAppraisalLoanApplicationId { get; set; }
+        public int creditAppraisalOperationId { get; set; }
     }
 
     public class LMSOperationListViewModel

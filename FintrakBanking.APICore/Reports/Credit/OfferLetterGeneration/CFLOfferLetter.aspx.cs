@@ -80,10 +80,10 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
             dsConditionSubsequent.Value = conditionSubsequent;
             dsConditionSubsequent.Name = "OfferLetterConditionSubsequent";
 
-            //var fee = offerLetter.GetLoanApplicationFee(applicationRefNumber);
-            //ReportDataSource dsFee = new ReportDataSource();
-            //dsFee.Value = fee;
-            //dsFee.Name = "OfferLetterFee";
+            var fee = offerLetter.GetLoanApplicationFee(applicationRefNumber);
+            ReportDataSource dsFee = new ReportDataSource();
+            dsFee.Value = fee;
+            dsFee.Name = "OfferLetterFee";
 
             var signatory = offerLetter.GetLoanApplicationSignatory(applicationRefNumber);
             ReportDataSource dsSignatory = new ReportDataSource();
@@ -115,7 +115,7 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
             offerLetterReport.LocalReport.DataSources.Add(dsConditionPrecident);
             offerLetterReport.LocalReport.DataSources.Add(dsConditionSubsequent);
             offerLetterReport.LocalReport.DataSources.Add(dsCollateral);
-            //offerLetterReport.LocalReport.DataSources.Add(dsFee);
+            offerLetterReport.LocalReport.DataSources.Add(dsFee);
             offerLetterReport.LocalReport.DataSources.Add(dsSignatory);
             offerLetterReport.LocalReport.DataSources.Add(dsCollateral);
             offerLetterReport.LocalReport.DataSources.Add(dsGenerateOfferLetter);

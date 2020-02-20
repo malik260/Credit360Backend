@@ -625,7 +625,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("load-customer-turnover-lms/{loanApplicationId}")]
-        public HttpResponseMessage LoadCustomerTurnoverLms(int loanApplicationId)
+        public HttpResponseMessage LoadCustomerTurnoverLms(int loanApplicationId)  
         {
             try
             {
@@ -644,7 +644,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-facility-rating/{loanApplicationDetailId}")]
+        [Route("get-facility-rating/{loanApplicationDetailId}")] 
         public HttpResponseMessage GetFacilityRating(int loanApplicationDetailId)
         {
             try
@@ -1307,6 +1307,27 @@ namespace FintrakBanking.APICore.Controllers
             IQueryable<LoanApplicationViewModel> items;
 
             items = repo.GetRejectedLoanApplications(user);
+
+            var data = items.ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+
+        }
+
+        [HttpGet, Route("loan-review-application-and-offer/rejected")]
+        public HttpResponseMessage GetRejectedReviewLoanApplications()
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            IQueryable<LoanReviewApplicationViewModel> items;
+
+            items = repo.GetRejectedReviewLoanApplications(user);
 
             var data = items.ToList();
 
