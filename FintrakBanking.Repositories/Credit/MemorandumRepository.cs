@@ -4835,6 +4835,9 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(todBackgroungInformationHolder, todCurrentRequestData);
             content = content.Replace(currentLMSFlowHolder, currentLMSFlowData);
 
+            content = content.Replace(originalDocumentNonCreditProgramHolder, originalDocumentNonCreditProgramData);
+            content = content.Replace(originalDocumentCreditProgramHolder, originalDocumentCreditProgramData);
+
             return content;
         }
 
