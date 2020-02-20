@@ -65,7 +65,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string payingAccountNumber { get; set; }
 
-        public string legalContingentCode { get; set; }
+        public string legalContingentCode { get; set; } 
         public int zeroToThirtyDays { get; set; }
         public int ThirtyOneToNinety { get; set; }
         public int ninetyOneToOneEightyDays { get; set; }

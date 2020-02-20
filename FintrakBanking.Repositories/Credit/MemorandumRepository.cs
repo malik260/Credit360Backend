@@ -192,7 +192,10 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string todCustomerFacilityHolder = "@{{todCustomerFacilityData}}";
         private readonly string todBackgroungInformationHolder = "@{{todBackgroungInformationData}}";
         private readonly string currentLMSFlowHolder = "@{{currentLMSFlowData}}";
-        
+
+        private readonly string originalDocumentNonCreditProgramHolder = "@{{originalDocumentNonCreditProgramData}}";
+        private readonly string originalDocumentCreditProgramHolder = "@{{originalDocumentCreditProgramData}}";
+
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -408,6 +411,9 @@ namespace FintrakBanking.Repositories.Credit
         private string todBackgroungInformationData;
         private string currentLMSFlowData;
 
+        private string originalDocumentNonCreditProgramData;
+        private string originalDocumentCreditProgramData;
+
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
         {
@@ -554,6 +560,9 @@ namespace FintrakBanking.Repositories.Credit
                 this.todCustomerAccountActivityData = TodCustomerAccountActivityHtml();
                 this.todCurrentRequestData = TodCurrentRequestHtml();
                 this.todBackgroungInformationData = TodBackgroungInformationHtml();
+
+                this.originalDocumentNonCreditProgramData = NoncreditProgramCustomerInformationHtml();
+                this.originalDocumentCreditProgramData = CreditProgramCustomerInformationHtml();
             }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
@@ -657,7 +666,10 @@ namespace FintrakBanking.Repositories.Credit
                 this.todCurrentRequestData = TodCurrentRequestHtml();
                 this.todBackgroungInformationData = TodBackgroungInformationHtml();
                 this.currentLMSFlowData = CurrentLMSFlowHtml();
-                
+
+                this.originalDocumentNonCreditProgramData = NoncreditProgramCustomerInformationHtml();
+                this.originalDocumentCreditProgramData = CreditProgramCustomerInformationHtml();
+
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
@@ -779,7 +791,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
                 this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
                 //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
-                approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+                this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
                 newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
 
@@ -806,7 +818,7 @@ namespace FintrakBanking.Repositories.Credit
             this.applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
             this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
             this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
-            this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID)?.Select(O => O.PRODUCTNAME)?.FirstOrDefault();
+            this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
             this.principalRepayment = "";
             //this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[0]).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
             //this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[1]).Select(p => p.VALUE).FirstOrDefault();
@@ -816,7 +828,7 @@ namespace FintrakBanking.Repositories.Credit
             this.currentDate = DateTime.Now.ToShortDateString();
             this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
             this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
-            approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+            this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
             amountUtilised = "0.00";
            return true;
         }
@@ -4823,6 +4835,9 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(todBackgroungInformationHolder, todCurrentRequestData);
             content = content.Replace(currentLMSFlowHolder, currentLMSFlowData);
 
+            content = content.Replace(originalDocumentNonCreditProgramHolder, originalDocumentNonCreditProgramData);
+            content = content.Replace(originalDocumentCreditProgramHolder, originalDocumentCreditProgramData);
+
             return content;
         }
 
@@ -6639,15 +6654,15 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Purpose:</strong></td>
-                        <td>{details.LOANPURPOSE}</td>
+                        <td>{details?.LOANPURPOSE}</td>
                         </tr>
                         <tr>
                         <td><strong>Tenor:</strong></td>
-                        <td>{tenor}</td>
+                        <td>{approvedTenorString}</td>
                         </tr>
                         <tr>
                         <td><strong>Repayment Plan</strong></td>
-                        <td>{repaymentTerm.REPAYMENTTERMDETAIL}</td>
+                        <td>{repaymentTerm?.REPAYMENTTERMDETAIL}</td>
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
@@ -6674,7 +6689,6 @@ namespace FintrakBanking.Repositories.Credit
                         </table>
                         </td>
                     </tr> 
-
                  ";
             result = result + $"</table>";
             result = result + $@"
@@ -7514,6 +7528,161 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
         }
+
+        public string NoncreditProgramCustomerInformationHtml()
+        {
+            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
+            var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+            var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <h3><b>ORIGINAL DOCUMENT (NON CREDIT PROGRAM)</b></h3>
+                <br />
+                <h4><b>Customer Information</b></h4>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Borrower</td>
+                        <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
+                    </tr>
+                   <tr>
+                        <td>Location</td>
+                        <td>{address}-</td>
+                        <td>Customer Risk Rating</td>
+                        <td>{customer?.CUSTOMERRATING}</td>
+                    </tr> 
+                     <tr>
+                        <td>Business</td>
+                        <td>{customer?.OCCUPATION}</td>
+                        <td>Classification</td>
+                        <td>{riskRating?.CLASSIFICATION}</td>
+                    </tr>
+                   <tr>
+                        <td>Account Number</td>
+                        <td>{currentAccountNo}</td>
+                        <td>Account Opening Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr> 
+                     <tr>
+                        <td>Incorporation Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                        <td>Biz Commencement Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr>
+                   <tr>
+                        <td>Principal Promoters</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+
+                    <tr>
+                        <td>Contract Employer</td>
+                        <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Alternate Contract Employer</td>
+                       <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Discount Value (50%)</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string CreditProgramCustomerInformationHtml()
+        {
+            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
+            var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+            var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <h3><b>ORIGINAL DOCUMENT (CREDIT PROGRAM)</b></h3>
+                <br />
+                <h4><b>Customer Information</b></h4>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Borrower</td>
+                        <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
+                    </tr>
+                   <tr>
+                        <td>Location</td>
+                        <td>{address}-</td>
+                        <td>Customer Risk Rating</td>
+                        <td>{customer?.CUSTOMERRATING}</td>
+                    </tr> 
+                     <tr>
+                        <td>Business</td>
+                        <td>{customer?.OCCUPATION}</td>
+                        <td>Classification</td>
+                        <td>{riskRating?.CLASSIFICATION}</td>
+                    </tr>
+                   <tr>
+                        <td>Account Number</td>
+                        <td>{currentAccountNo}</td>
+                        <td>Account Opening Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr> 
+                     <tr>
+                        <td>Incorporation Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                        <td>Biz Commencement Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr>
+                   <tr>
+                        <td>Principal Promoters</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+
+                    <tr>
+                        <td>Contract Employer</td>
+                        <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Alternate Contract Employer</td>
+                       <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Discount Value (50%)</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
         public string IdfCustomerFacilityHtml()
         {
             var result = String.Empty;

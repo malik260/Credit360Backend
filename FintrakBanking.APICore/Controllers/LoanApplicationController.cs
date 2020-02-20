@@ -625,7 +625,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("load-customer-turnover-lms/{loanApplicationId}")]
-        public HttpResponseMessage LoadCustomerTurnoverLms(int loanApplicationId)
+        public HttpResponseMessage LoadCustomerTurnoverLms(int loanApplicationId)  
         {
             try
             {
@@ -644,7 +644,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-facility-rating/{loanApplicationDetailId}")]
+        [Route("get-facility-rating/{loanApplicationDetailId}")] 
         public HttpResponseMessage GetFacilityRating(int loanApplicationDetailId)
         {
             try

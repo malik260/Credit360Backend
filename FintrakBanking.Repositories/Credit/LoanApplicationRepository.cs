@@ -1482,7 +1482,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId)
+        public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId) 
         {
             var facilityRating = context.TBL_FACILITY_RATING.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetailId)
                                         .OrderByDescending(O => O.FACILITYRATINGID).Select(O => new FacilityRatingViewModel
@@ -5589,11 +5589,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 var operationId = (int)OperationsEnum.CreditAppraisal;
                 workflow.StaffId = model.createdBy;
-                workflow.OperationId = operationId;
+                workflow.OperationId = appl.OPERATIONID;
                 workflow.TargetId = appl.LOANAPPLICATIONID;
                 workflow.CompanyId = appl.COMPANYID;
                 workflow.ProductClassId = appl.PRODUCTCLASSID;
-                workflow.ProductId = null; // appl.PRODUCTID;
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 workflow.ToStaffId = model.createdBy;
@@ -5603,6 +5602,8 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.PoliticallyExposed = appl.ISPOLITICALLYEXPOSED;
                 workflow.DeferredExecution = true;
                 workflow.ExternalInitialization = true;
+                workflow.ProductId = appl.PRODUCTID;
+                workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
                 workflow.LogActivity();
 
                 // Audit Section ---------------------------
