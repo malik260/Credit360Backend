@@ -348,7 +348,7 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
 
             // VALIDATION TODO if (model.recommendedChanges.Count() > 0)
-            items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
+            items = context.TBL_LOAN_APPLICATION_DETAIL.Where (x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
             var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
 
             decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
@@ -358,6 +358,10 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Please Kindly refresh your browser and try again, Thanks");
             }
             decimal totalApplicationAmount = model.legalLendingLimit;
+            if (appl.TOTALEXPOSUREAMOUNT <= 0)
+            {
+                appl.TOTALEXPOSUREAMOUNT = totalApplicationAmount;
+            }
             //decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT * (decimal)x.EXCHANGERATE);
             using (var trans = context.Database.BeginTransaction())
             {
@@ -402,7 +406,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.ExternalInitialization = true;
                         workflow.ToStaffId = currentTrail.REQUESTSTAFFID;
                         workflow.StatusId = (short)ApprovalStatusEnum.Pending;
-                        workflow.Amount = model.legalLendingLimit;
+                        workflow.Amount = appl.TOTALEXPOSUREAMOUNT;   //model.legalLendingLimit;
                         workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                         workflow.LogActivity();
                         
@@ -426,7 +430,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.ToStaffId = model.receiverStaffId;
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
-                workflow.Amount = appl.TOTALEXPOSUREAMOUNT = totalApplicationAmount;
+                workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
                 workflow.InvestmentGrade = model.investmentGrade;
                 workflow.PoliticallyExposed = model.politicallyExposed;
                 workflow.Untenored = model.untenored;
@@ -438,8 +442,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
-                    Amount = totalApplicationAmount, // appl.TOTALEXPOSUREAMOUNT,
-                    PepAmount = totalApplicationAmount, // appl.TOTALEXPOSUREAMOUNT,
+                    Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
+                    PepAmount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
                     Pep = model.politicallyExposed,
                     InsiderRelated = appl.ISRELATEDPARTY,
                     ProjectRelated = appl.ISPROJECTRELATED,
