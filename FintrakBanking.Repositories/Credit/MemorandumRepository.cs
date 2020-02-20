@@ -21,11 +21,9 @@ namespace FintrakBanking.Repositories.Credit
     {
         // dependencies
         private FinTrakBankingContext context;
-        //private IAppraisalMemorandumRepository memo;
         private ICreditLimitValidationsRepository limitValidation;
         private ILoanRepository loanRepo;
         private IFinanceTransactionRepository financeTransaction;
-        //private ICustomerGroupRepository groupRepo;
         private ITransactionDynamicsRepository transactionsRepo;
         private IConditionPrecedentRepository conditionsRepo;
         private ICustomerCollateralRepository collateralRepo;
@@ -34,11 +32,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public MemorandumRepository(
             FinTrakBankingContext context, 
-            //IAppraisalMemorandumRepository memo, 
             ICreditLimitValidationsRepository limitValidation,
             ILoanRepository loanRepo,
             IFinanceTransactionRepository financeTransaction,
-            //ICustomerGroupRepository groupRepo, 
             ITransactionDynamicsRepository transactionsRepo,
             IConditionPrecedentRepository conditionsRepo,
             ICustomerCollateralRepository collateralRepo,
@@ -102,6 +98,9 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string businessSectorsHolder = "@{{BusinessSectors}}";
         private readonly string exchangeRateHolder = "@{{ExchangeRate}}";
         private readonly string groupFacilitySummaryHolder = "@{{GroupFacilitySummary}}";
+
+      
+
         //private readonly string groupFacilitySummaryFcyHolder = "@{{GroupFacilitySummaryFcy}}";
         //private readonly string directFacilitiesHolder = "@{{DirectFacilities}}";
         //private readonly string totalDirectsHolder = "@{{TotalDirects}}";
@@ -116,6 +115,7 @@ namespace FintrakBanking.Repositories.Credit
         //private readonly string foreignImportFinanceFacilitiesHolder = "@{{ForeignImportFinanceFacilities}}";
         //private readonly string totalForeignImportFinanceFacilitiesHolder = "@{{TotalForeignImportFinanceFacilities}}";
         //private readonly string totalFacilitiesHolder = "@{{TotalFacilities}}";
+
         private readonly string groupExposureHolder = "@{{GroupExposure}}";
         private readonly string approvalsHolder = "@{{Approvals}}";
         private readonly string currentDateHolder = "@{{CurrentDate}}";
@@ -154,7 +154,45 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string staffPersonalLoansAGMDataHolder = "@{{staffPersonalLoansAGMData}}";
         private readonly string staffPersonalLoanDataHolder = "@{{staffPersonalLoanData}}";
         private readonly string documentatonDeferralWaiverDataHolder = "@{{documentatonDeferralWaiverData}}";
-        //private readonly string OfferLetterForBondsAndGuaranteesDataHolder = "@{{offerLetterForBondsAndGuaranteesDataHolder}}";
+
+        //FUSS
+        private readonly string fussCustomerInformationHolder = "@{{fussCustomerInformationData}}";
+        private readonly string fussSchoolFeesInformationHolder = "@{{fussSchoolFeesInformationData}}";
+        private readonly string fussCustomerFacilityHolder = "@{{fussCustomerFacilityData}}";
+        private readonly string fussCustomerAccountActivityHolder = "@{{fussCustomerAccountActivityData}}";
+        private readonly string fussCashFlowAnalysisHolder = "@{{fussCashFlowAnalysisData}}";
+        private readonly string fussSummaryNetCashFlowHolder = "@{{fussSummaryNetCashFlowData}}";
+        private readonly string fussCurrentRequestHolder = "@{{fussCurrentRequestData}}";
+        private readonly string fussBackgroungInformationHolder = "@{{fussBackgroungInformationData}}";
+        private readonly string fussChecklistEligibilitytHolder = "@{{fussChecklistEligibilityData}}";
+
+        //IDF
+        private readonly string idfCustomerInformationHolder = "@{{idfCustomerInformationData}}";
+        private readonly string idfCustomerFacilityHolder = "@{{idfCustomerFacilityData}}";
+        private readonly string idfCustomerAccountActivityHolder = "@{{idfCustomerAccountActivityData}}";
+        private readonly string idfCurrentRequestHolder = "@{{idfCurrentRequestData}}";
+        private readonly string idfBackgroungInformationHolder = "@{{idfBackgroungInformationData}}";
+        private readonly string idfChecklistEligibilitytHolder = "@{{idfChecklistEligibilityData}}";
+        private readonly string idfDocumentationChecklistHolder = "@{{idfDocumentationChecklistData}}";
+
+        //CASH COLLATERIZED
+        private readonly string cashCollaterizedCustomerInformationHolder = "@{{cashCollaterizedCustomerInformationData}}";
+        private readonly string cashCollaterizedCustomerFacilityHolder = "@{{cashCollaterizedCustomerFacilityData}}";
+        private readonly string cashCollaterizedCustomerAccountActivityHolder = "@{{cashCollaterizedCustomerAccountActivityData}}";
+        private readonly string cashCollaterizedCurrentRequestHolder = "@{{cashCollaterizedCurrentRequestData}}";
+        private readonly string cashCollaterizedBackgroungInformationHolder = "@{{cashCollaterizedBackgroungInformationData}}";
+        private readonly string cashCollaterizedChecklistEligibilitytHolder = "@{{cashCollaterizedChecklistEligibilityData}}";
+        private readonly string cashCollaterizedDocumentationChecklistHolder = "@{{cashCollaterizedDocumentationChecklistData}}";
+
+        //TOD
+        private readonly string todHeaderHolder = "@{{todHeaderData}}";
+        private readonly string todCustomerInformationHolder = "@{{todCustomerInformationData}}";
+        private readonly string todCurrentRequestHolder = "@{{todCurrentRequestData}}";
+        private readonly string todCustomerAccountActivityHolder = "@{{todCustomerAccountActivityData}}";
+        private readonly string todCustomerFacilityHolder = "@{{todCustomerFacilityData}}";
+        private readonly string todBackgroungInformationHolder = "@{{todBackgroungInformationData}}";
+        private readonly string currentLMSFlowHolder = "@{{currentLMSFlowData}}";
+        
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -332,6 +370,44 @@ namespace FintrakBanking.Repositories.Credit
         private string cardType;
         //private string OfferLetterForBondsAndGuaranteesData;
 
+        //FUSS
+        private string fussCustomerInformationData;
+        private string fussSchoolFeesInformationData;
+        private string fussCustomerFacilityData;
+        private string fussCustomerAccountActivityData;
+        private string fussCashFlowAnalysisData;
+        private string fussSummaryNetCashFlowData;
+        private string fussCurrentRequestData;
+        private string fussBackgroungInformationData;
+        private string fussChecklistEligibilityData;
+
+        //IDF
+        private string idfCustomerInformationData;
+        private string idfCustomerFacilityData;
+        private string idfCustomerAccountActivityData;
+        private string idfCurrentRequestData;
+        private string idfBackgroungInformationData;
+        private string idfChecklistEligibilityData;
+        private string idfDocumentationChecklistData;
+
+        //CASH COLLATERIZED
+        private string cashCollaterizedCustomerInformationData;
+        private string cashCollaterizedCustomerFacilityData;
+        private string cashCollaterizedCustomerAccountActivityData;
+        private string cashCollaterizedCurrentRequestData;
+        private string cashCollaterizedBackgroungInformationData;
+        private string cashCollaterizedChecklistEligibilityData;
+        private string cashCollaterizedDocumentationChecklistData;
+
+        //TOD
+        private string todHeaderData;
+        private string todCustomerInformationData;
+        private string todCurrentRequestData;
+        private string todCustomerAccountActivityData;
+        private string todCustomerFacilityData;
+        private string todBackgroungInformationData;
+        private string currentLMSFlowData;
+
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
         {
@@ -441,8 +517,43 @@ namespace FintrakBanking.Repositories.Credit
                 this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
                 this.staffPersonalLoanData = StaffPersonalLoanHtml();
                 this.temporaryOverdraftData = TemporaryOverdraftHtml();
-                
 
+                //FUSS
+                this.fussCustomerInformationData = FussCustomerInformationHtml();
+                this.fussSchoolFeesInformationData = FussSchoolFeesInformationHtml();
+                this.fussCustomerFacilityData = FussCustomerFacilityHtml();
+                this.fussCustomerAccountActivityData = FussCustomerAccountActivityHtml();
+                this.fussCashFlowAnalysisData = FussCashFlowAnalysisHtml();
+                this.fussSummaryNetCashFlowData = FussSummaryNetCashFlowHtml();
+                this.fussCurrentRequestData = FussCurrentRequestHtml();
+                this.fussBackgroungInformationData = FussBackgroungInformationHtml();
+                this.fussChecklistEligibilityData = FussChecklistEligibilityHtml();
+
+                //IDF
+                this.idfCustomerInformationData = IdfCustomerInformationHtml();
+                this.idfCustomerAccountActivityData = IdfCustomerFacilityHtml();
+                this.fussCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
+                this.idfCurrentRequestData = IdfCurrentRequestHtml();
+                this.idfBackgroungInformationData = IdfBackgroungInformationHtml();
+                this.idfChecklistEligibilityData = IdfChecklistEligibilityHtml();
+                this.idfDocumentationChecklistData = IdfDocumentationChecklistHtml();
+
+                //CASH COLLATERIZED
+                this.cashCollaterizedCustomerInformationData = IdfCustomerInformationHtml();
+                this.cashCollaterizedCustomerFacilityData = IdfCustomerFacilityHtml();
+                this.cashCollaterizedCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
+                this.cashCollaterizedCurrentRequestData = IdfCurrentRequestHtml();
+                this.cashCollaterizedBackgroungInformationData = IdfBackgroungInformationHtml();
+                this.cashCollaterizedChecklistEligibilityData = IdfChecklistEligibilityHtml();
+                this.cashCollaterizedDocumentationChecklistData = IdfDocumentationChecklistHtml();
+
+                //TOD 
+                this.todHeaderData = TodHeaderHtml();
+                this.todCustomerInformationData = TodCustomerInformationHtml();
+                this.todCustomerFacilityData = TodCustomerFacilityHtml();
+                this.todCustomerAccountActivityData = TodCustomerAccountActivityHtml();
+                this.todCurrentRequestData = TodCurrentRequestHtml();
+                this.todBackgroungInformationData = TodBackgroungInformationHtml();
             }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
@@ -508,6 +619,45 @@ namespace FintrakBanking.Repositories.Credit
                 this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
                 this.staffPersonalLoanData = StaffPersonalLoanHtml();
                 this.temporaryOverdraftData = TemporaryOverdraftHtml();
+
+                //FUSS
+                this.fussCustomerInformationData = FussCustomerInformationHtml();
+                this.fussSchoolFeesInformationData = FussSchoolFeesInformationHtml();
+                this.fussCustomerFacilityData = FussCustomerFacilityHtml();
+                this.fussCustomerAccountActivityData = FussCustomerAccountActivityHtml();
+                this.fussCashFlowAnalysisData = FussCashFlowAnalysisHtml();
+                this.fussSummaryNetCashFlowData = FussSummaryNetCashFlowHtml();
+                this.fussCurrentRequestData = FussCurrentRequestHtml();
+                this.fussBackgroungInformationData = FussBackgroungInformationHtml();
+                this.fussChecklistEligibilityData = FussChecklistEligibilityHtml();
+
+                //IDF
+                this.idfCustomerInformationData = IdfCustomerInformationHtml();
+                this.idfCustomerAccountActivityData = IdfCustomerFacilityHtml();
+                this.fussCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
+                this.idfCurrentRequestData = IdfCurrentRequestHtml();
+                this.idfBackgroungInformationData = IdfBackgroungInformationHtml();
+                this.idfChecklistEligibilityData = IdfChecklistEligibilityHtml();
+                this.idfDocumentationChecklistData = IdfDocumentationChecklistHtml();
+
+                //CASH COLLATERIZED
+                this.cashCollaterizedCustomerInformationData = IdfCustomerInformationHtml();
+                this.cashCollaterizedCustomerFacilityData = IdfCustomerFacilityHtml();
+                this.cashCollaterizedCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
+                this.cashCollaterizedCurrentRequestData = IdfCurrentRequestHtml();
+                this.cashCollaterizedBackgroungInformationData = IdfBackgroungInformationHtml();
+                this.cashCollaterizedChecklistEligibilityData = IdfChecklistEligibilityHtml();
+                this.cashCollaterizedDocumentationChecklistData = IdfDocumentationChecklistHtml();
+
+                //TOD 
+                this.todHeaderData = TodHeaderHtml();
+                this.todCustomerInformationData = TodCustomerInformationHtml();
+                this.todCustomerFacilityData = TodCustomerFacilityHtml();
+                this.todCustomerAccountActivityData = TodCustomerAccountActivityHtml();
+                this.todCurrentRequestData = TodCurrentRequestHtml();
+                this.todBackgroungInformationData = TodBackgroungInformationHtml();
+                this.currentLMSFlowData = CurrentLMSFlowHtml();
+                
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
@@ -882,15 +1032,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public decimal getTotalLLLImpact()
         {
-            var totalSummary = GetTotalFacilitiesNGNLOS();
-            var totalSummary2 = GetTotalForeignFacilitiesLOS();
-            totalSummary.AddRange(totalSummary2);
-            var exposureLLL = (GetTotalGroupLendingLimit().totalLLLImpact - GetTotalGroupLendingLimit(true).totalLLLImpact);
-            var test = (totalSummary.Sum(f => f.totalLLLImpact));
-            var test2 = (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
+            var approvalAmount = GetApprovalAmount();
+            return approvalAmount;
+            //var totalSummary = GetTotalFacilitiesNGNLOS();
+            //var totalSummary2 = GetTotalForeignFacilitiesLOS();
+            //totalSummary.AddRange(totalSummary2);
+            //var exposureLLL = (GetTotalGroupLendingLimit().totalLLLImpact - GetTotalGroupLendingLimit(true).totalLLLImpact);
+            //var test = (totalSummary.Sum(f => f.totalLLLImpact));
+            //var test2 = (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
 
-            //LLL = totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL;
-            return (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
+            ////LLL = totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL;
+            //return (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
         }
 
         private decimal getTotalLLLImpactFCY()
@@ -2414,6 +2566,79 @@ namespace FintrakBanking.Repositories.Credit
                 ";
             }
             return result;
+        }
+
+        public decimal GetApprovalAmount()
+        {
+            var totalSummary = GetTotalFacilitiesNGNLOS();
+            var totalSumaryFCY = GetTotalForeignFacilitiesLOS();
+            totalSummary.AddRange(totalSumaryFCY);
+            var obligorGFSProposedAmount = totalSummary.Sum(f => f.totalProposedAmount);
+
+            var custCode = context.TBL_CUSTOMER.Find(loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID).CUSTOMERCODE;
+            var exposures = this.globalExposure.Where(e => e.customerCode != custCode).ToList();
+            var currentAmount = new decimal();
+            var approvedAmount = new decimal();
+            var amountForLLL = new decimal();
+            var LLLImpact = new decimal();
+            var directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            var overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
+            var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            foreach (var product in loanExposures)
+            {
+                currentAmount = product.outstandingsLcy;
+                amountForLLL = currentAmount;
+                LLLImpact += amountForLLL;
+            }
+
+            foreach (var product in overdraftExposures)
+            {
+                currentAmount = product.outstandingsLcy;
+                approvedAmount = product.approvedAmountLcy;
+                amountForLLL = approvedAmount;
+                //LLLImpact += amountForLLL;
+                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+            }
+
+            foreach (var product in contingents)
+            {
+                currentAmount = product.outstandingsLcy;
+                approvedAmount = product.approvedAmountLcy;
+                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                LLLImpact += amountForLLL;
+                //approvedAmount = product.approvedAmountLcy;
+                //amountForLLL = approvedAmount;
+                //LLLImpact += amountForLLL;
+            }
+
+            foreach (var product in lcs)
+            {
+                currentAmount = product.outstandingsLcy;
+                approvedAmount = product.approvedAmountLcy;
+                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                LLLImpact += amountForLLL;
+                //approvedAmount = product.approvedAmountLcy;
+                //amountForLLL = approvedAmount;
+                //LLLImpact += amountForLLL;
+                //LLLImpact += (amountForLLL / 3);
+            }
+
+            foreach (var product in tradeLoans)
+            {
+                currentAmount = product.outstandingsLcy;
+                approvedAmount = product.approvedAmountLcy;
+                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                LLLImpact += amountForLLL;
+                //approvedAmount = product.approvedAmountLcy;
+                //amountForLLL = approvedAmount;
+                //LLLImpact += amountForLLL;
+            }
+
+            var approvalAmount = obligorGFSProposedAmount + LLLImpact;
+            return approvalAmount;
         }
 
         private string GetTotalFacilitiesMarkupLOS()
@@ -4138,7 +4363,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result += $@"
-                <table style='font face: arial; size:12px' border=1 width=600 cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Security / Support</b></th>
@@ -4561,6 +4786,42 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(documentatonDeferralWaiverDataHolder, documentatonDeferralWaiverData);
             //content = content.Replace(OfferLetterForBondsAndGuaranteesDataHolder, OfferLetterForBondsAndGuaranteesData);
 
+            // for FUSS document          
+            content = content.Replace(fussCustomerInformationHolder, fussCustomerInformationData);
+            content = content.Replace(fussSchoolFeesInformationHolder, fussSchoolFeesInformationData);
+            content = content.Replace(fussCustomerFacilityHolder, fussCustomerFacilityData);
+            content = content.Replace(fussCustomerAccountActivityHolder, fussCustomerAccountActivityData);
+            content = content.Replace(fussCashFlowAnalysisHolder, fussCashFlowAnalysisData);
+            content = content.Replace(fussSummaryNetCashFlowHolder, fussSummaryNetCashFlowData);
+            content = content.Replace(fussCurrentRequestHolder, fussCurrentRequestData);
+            content = content.Replace(fussBackgroungInformationHolder, fussBackgroungInformationData);
+            content = content.Replace(fussChecklistEligibilitytHolder, fussChecklistEligibilityData);
+
+            // for IDF document          
+            content = content.Replace(idfCustomerInformationHolder, idfCustomerInformationData);
+            content = content.Replace(idfCustomerFacilityHolder, idfCustomerFacilityData);
+            content = content.Replace(idfCustomerAccountActivityHolder, idfCustomerAccountActivityData);
+            content = content.Replace(idfCurrentRequestHolder, idfCurrentRequestData);
+            content = content.Replace(idfBackgroungInformationHolder, idfBackgroungInformationData);
+            content = content.Replace(idfChecklistEligibilitytHolder, idfChecklistEligibilityData);
+            content = content.Replace(idfDocumentationChecklistHolder, idfDocumentationChecklistData);
+
+            // for CASH COLLATERIZED document          
+            content = content.Replace(cashCollaterizedCustomerInformationHolder, cashCollaterizedCustomerInformationData);
+            content = content.Replace(cashCollaterizedCustomerFacilityHolder, cashCollaterizedCustomerFacilityData);
+            content = content.Replace(cashCollaterizedCustomerAccountActivityHolder, cashCollaterizedCustomerAccountActivityData);
+            content = content.Replace(cashCollaterizedCurrentRequestHolder, cashCollaterizedCurrentRequestData);
+            content = content.Replace(cashCollaterizedBackgroungInformationHolder, cashCollaterizedBackgroungInformationData);
+            content = content.Replace(cashCollaterizedChecklistEligibilitytHolder, cashCollaterizedChecklistEligibilityData);
+            content = content.Replace(cashCollaterizedDocumentationChecklistHolder, cashCollaterizedDocumentationChecklistData);
+
+            //for TOD document
+            content = content.Replace(todHeaderHolder, todHeaderData);
+            content = content.Replace(todCustomerFacilityHolder, todCustomerInformationData);
+            content = content.Replace(todCustomerAccountActivityHolder, todCustomerFacilityData);
+            content = content.Replace(todCurrentRequestHolder, todCustomerAccountActivityData);
+            content = content.Replace(todBackgroungInformationHolder, todCurrentRequestData);
+            content = content.Replace(currentLMSFlowHolder, currentLMSFlowData);
 
             return content;
         }
@@ -5124,7 +5385,7 @@ namespace FintrakBanking.Repositories.Credit
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <td><b>Date</b></td>
-                        <td></td>
+                        <td>{DateTime.UtcNow}</td>
                     </tr>
                     <tr>
                         <td><b>To:</b></td>
@@ -5165,7 +5426,6 @@ namespace FintrakBanking.Repositories.Credit
                     <p><b>7. JUSTIFICATION</b></p>";
             return result;
         }
-
         public string FacilityUpgradeSupportSchemeHtml()
         {
             var result = String.Empty;
@@ -5888,6 +6148,772 @@ namespace FintrakBanking.Repositories.Credit
                  <br />";
             return result;
         }
+        public string FussCustomerInformationHtml()
+        {
+            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
+            var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+            var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
+
+            var result = String.Empty;
+            
+            result = result + $@"
+                <br />
+                <h3><b>CREDIT PROGRAM SHEET (FACILITY UPGRADE SUPPORT SCHEME)</b></h3>
+                <br />
+                <h4><b>Customer Information</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Borrower</td>
+                        <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
+                    </tr>
+                   <tr>
+                        <td>Location</td>
+                        <td>{address}</td>
+                        <td>Customer Risk Rating</td>
+                        <td>{customer?.CUSTOMERRATING}</td>
+                    </tr> 
+                     <tr>
+                        <td>Business</td>
+                        <td>{customer.OCCUPATION}</td>
+                        <td>Classification</td>
+                        <td>{riskRating?.CLASSIFICATION}</td>
+                    </tr>
+                   <tr>
+                        <td>Account Number</td>
+                        <td>{currentAccountNo}</td>
+                        <td>Account Opening Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr> 
+                     <tr>
+                        <td>Incorporation Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                        <td>Biz Commencement Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr>
+                   <tr>
+                        <td>Principal Promoters</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table><br />";
+            return result;
+        }
+        public string FussSchoolFeesInformationHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h4><b>School Fees Information</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <td>Total No of Pupils</td>
+                        <td>----------------------</td>
+                        <td>No of Staff</td>
+                        <td>-------------------</td>
+                    </tr> 
+                   <tr>
+                        <td>Next School Reopening Date </td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr> 
+                      <tr>
+                        <td>Proposed Facility Repayment Date </td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Expected Amount Collectible before next Maturing Loan Obligation  </td>
+                        <td colspan='3'>-------------</td>
+                    </tr>
+                     <tr>
+                        <td>Maturity Amount at Due Date </td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Monthly Salary Payments and Other Expenses </td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr>
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"<br />";
+            return result;
+        }
+        public string FussCustomerFacilityHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <h4><b>Customer Facilities as @ {DateTime.UtcNow.ToString("dd-MM-yyyy")}</b></h4>";
+            result = result + GetSecurityAnalysisMarkUP();
+            result = result + $@"<br />";
+            return result;
+        }
+        public string FussCustomerAccountActivityHtml()
+        {
+            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            var accountActivity = GetCustomerTransactions(customerId.CUSTOMERID, this.loanApplication.LOANAPPLICATIONID, false);
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h4><b>Account Activity with Current (Major) Banker per period of 6 months</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Account Number</b></th>
+                        <th><b>Product Account Name</b></th>
+                        <th><b>Period</b></th>
+                        <th><b>Max Debit Balance</b></th>
+                        <th><b>Min Debit Balance</b></th>
+                        <th><b>Max Credit Balance</b></th>
+                        <th><b>Min Credit Balance</b></th>
+                        <th><b>Debit Turnover</b></th>
+                        <th><b>Credit Turnover</b></th>
+                        <th><b>Month</b></th>
+                        <th><b>Year</b></th>
+                    </tr>";
+            foreach (var f in accountActivity)
+            {
+                result = result + $@"
+                        <tr>
+                        <td> {f.accountNumber}</td>
+                        <td> {f.productAccountName}</td>
+                        <td> {f.period}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.max_Debit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.min_Debit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.max_Credit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.min_Credit_Balance))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.debit_Turnover))}</td>
+                        <td> {string.Format("{0:#,##.00}", Convert.ToDecimal(f.credit_Turnover))}</td>
+                        <td> {f.month}</td>
+                        <td> {f.year}</td>
+                    </tr>";
+
+            }
+
+            result = result + $@" 
+                    <tr>
+                       <td colspan='2'>Current Book Balance</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Average Monthly Credit Turnover</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'><b>Other Bankers/Age</b></td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Existing Facility Type/Maturity</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Security/Support</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        public string FussCashFlowAnalysisHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <h4><b>Cash flow Analysis/Projections</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     
+                   <tr>
+                        <td></td>
+                        <td colspan='5'>Year 1(indicate year)-Most Recent</td>
+                        <td colspan='5'>Year 2 (indicate year)-Projections</td>
+                       
+                    </tr> 
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>1st Term </td>
+                        <td>2nd Term </td>
+                        <td>3rd Term</td>
+                        <td></td>
+                        <td></td>
+                        <td>1st Term </td>
+                        <td>2nd Term </td>
+                        <td>3rd Term</td>
+                    </tr> 
+                     <tr>
+                        <td>INFLOWS(A)</td>
+                        <td>Amount per student</td>
+                        <td>Total amount paid per term</td>
+                        <td>(‘000) </td>
+                        <td>(‘000)</td>
+                        <td>(‘000)</td>
+                        <td>Amount per student</td>
+                        <td>Total amount paid per term</td>
+                        <td>(‘000) </td>
+                        <td>(‘000)</td>
+                        <td>(‘000)</td>
+                    </tr> 
+                     <tr>
+                        <td>Crèche (no of students)</td>
+                        <td>xx</td>
+                        <td>No of students * Amt per student(xx)</td>
+                        <td>xxx</td>
+                        <td>xxx</td>
+                        <td>xx</td>
+                        <td>xx</td>
+                        <td>No of students * Amt per student(xx)</td>
+                        <td>xxx</td>
+                        <td>xxx</td>
+                        <td>xx</td>
+                    </tr> 
+                    <tr>
+                        <td>Nursery (no of students)</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                    <tr>
+                        <td>Primary (no of students)</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                     <tr>
+                        <td>JSS (no of students)</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                     <tr>
+                        <td>SSS (no of students)</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                     <tr>
+                        <td>Sub total </td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                      <tr>
+                        <td>OUTFLOWS(B)</td>
+                        <td>No of months</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>No of months</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Salaries(Nxx/month)</td>
+                        <td>4</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                    </tr> 
+                     <tr>
+                        <td>stationeries (Nxx/month)</td>
+                        <td>3</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>3</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr>  
+                      <tr>
+                        <td>Loan repayment (principal & interest)</td>
+                        <td></td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td></td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                    <tr>
+                        <td>Miscellaneous expense (Nxx/month)</td>
+                        <td>3</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>3</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                    <tr>
+                        <td>Sub total </td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                    </tr> 
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Net Cashflow(A-B)</td>
+                        <td></td>
+                        <td></td>
+                        <td>xxxxxx</td>
+                        <td>xxxxxx</td>
+                        <td>xxxxxx</td>
+                        <td></td>
+                        <td></td>
+                        <td>xxxxxx</td>
+                        <td>xxxxxx</td>
+                        <td>xxxxxx</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + "<br/>";
+            return result;
+        }
+        public string FussSummaryNetCashFlowHtml()
+        {
+            var result = String.Empty;
+            result = result + "<br/>";
+            result = result + "<em>(Net cash flow is the amount available for repayment of loan obligation)</em>";
+            result = result + $@"
+                <br />
+                <h4><b>Summary Net Cash Flow </b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Year</b></th>
+                        <th><b></b></th>
+                        <th><b>Net Cash Flow</b></th>        
+                    </tr> 
+                   <tr>
+                        <td rolspan='3'>Year 1 (indicate year)</td>
+                        <td>1st Term</td>
+                        <td></td>
+                   </tr> 
+                   <tr>
+                        <td></td>
+                        <td>2nd Term</td>
+                        <td></td>
+                   </tr>  
+                  <tr>
+                        <td></td>
+                        <td>3rd Term </td>
+                        <td></td>
+                   </tr>
+                   <tr>
+                        <td rolspan='3'>Year 1 (indicate year)</td>
+                        <td>1st Term</td>
+                        <td></td>
+                   </tr>
+                   <tr>
+                        <td></td>
+                        <td>2nd Term</td>
+                        <td></td>
+                   </tr>  
+                  <tr>
+                        <td></td>
+                        <td>3rd Term </td>
+                        <td></td>
+                   </tr>
+                   <tr>
+                        <td colspan='2'>Total</td>
+                        <td></td>                     
+                   </tr> 
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+        public string FussCurrentRequestHtml()
+        {
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            var repaymentTerm = context.TBL_REPAYMENT_TERM.Find(details.REPAYMENTSCHEDULEID);
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <h4><b>CURRENT REQUEST:</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
+                    </tr> 
+                     <tr>
+                        <td>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Facility Type:</strong></td>
+                        <td>{facilityType}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Facility Amount:</strong></td>
+                        <td>{approvedAmount}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Purpose:</strong></td>
+                        <td>{details.LOANPURPOSE}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Tenor:</strong></td>
+                        <td>{tenor}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Repayment Plan</strong></td>
+                        <td>{repaymentTerm.REPAYMENTTERMDETAIL}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Price:</strong></td>
+                        <td><table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Interest Rate:</strong></td>
+                        <td>{interestRate}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Management Fees:</strong></td>
+                        <td>{otherFee}</td>
+                        </tr>
+                         <tr>
+                        <td><strong>COT</strong></td>
+                        <td>N/A</td>
+                        </tr>
+                        </table></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Security/Support:</strong> </td>
+                        <td>{allCustomerCollateralRemarks}
+                        </td>
+                        </tr>
+                        </table>
+                        </td>
+                    </tr> 
+
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        public string FussBackgroungInformationHtml()
+        {
+            var result = String.Empty;
+            
+            result = result + $@"
+                <br />
+                <h4><b>BACKGROUND INFORMATION:</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><strong>BACKGROUND INFORMATION ON THE OBLIGOR</strong> (including the mitigation of all risks analyzed in the credit program as well as any identified risk peculiar to the obligor).</td>
+                    </tr>
+                     <tr>
+                        <td><strong>ATTESTATION:</strong><br/> 
+                            I, ……………………………...attest to the integrity of the Promoter................................having known him/her for at least ........years. 
+	
+                            <br/><strong>Signature & Date</strong>	
+                        </td>
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        public string FussChecklistEligibilityHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+              result = result + $@"
+                <br />
+                <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     
+                   <tr>
+                        <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
+                    </tr> 
+                    <tr>
+                        <td></td>
+                        <td><strong>Required</strong></td>
+                        <td><strong>Actual</strong></td>
+                        <td><strong>Exception (Y/N)</strong></td>
+                    </tr> 
+                   <tr>
+                        <td>Minimum years in business</td>
+                        <td>5</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Obligor Risk Rating</td>
+                        <td>3</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Minimum number of years of relationship with Access Bank </td>
+                        <td>1 year;</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>School is approved by ministry of education</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td>No deviation allowed</td>
+                    </tr>  
+                    <tr>
+                        <td>Minimum annual profitability from relationship</td>
+                        <td>N250,000</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                      <tr>
+                        <td>School is located in approved cities</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>School is not a startup</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td colspan='4'><strong>RISK ACCEPTANCE CRITERIA</strong></td>
+                    </tr> 
+                <tr>
+                        <td>Tenor of short-term booking</td>
+                        <td><=120 days</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Facility Maximum Amount</td>
+                        <td>N50m</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Personal Guarantee of key promoter</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Written domiciliation of school fees</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>No of Staff</td>
+                        <td>>30</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>No of Student Enrollment</td>
+                        <td>>250</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Good CBN checking</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                      <tr>
+                        <td>*Monthly collections must be thrice the monthly loan obligation</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td colspan='4'>*Quarterly profit must cover full year loan obligation *Yearly profit must cover the entire facility amount and interest
+                       </td>
+                     </tr> 
+                     <tr>
+                        <td colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></td>
+                        
+                    </tr> 
+                    <tr>
+                        <td>Loan Application Form</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Approved Credit Program Memo</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Offer Letter</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Letter of Domiciliation</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Operating License</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Credit Checks Reports</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Statements of accounts </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                      <tr>
+                        <td>Financial Statements / Annual Reports</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Other Documents:</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   ";
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+
+
+        public List<CustomerTransactionsViewModels> GetCustomerTransactions(int customerId, int applicationId, bool isLms = false)
+        {
+            var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
+                         where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.ISLMS == isLms
+                         select new CustomerTransactionsViewModels
+                         {
+                             cust_Id = a.CUSTOMERTRANSACTIONID.ToString(),
+                             period = a.PERIOD,
+                             productName = a.PRODUCTNAME,
+                             accountNumber = a.ACCOUNTNUMBER,
+                             max_Credit_Balance = a.MAXIMUMCREDITBALANCE,
+                             max_Debit_Balance = a.MAXIMUMDEBITBALANCE,
+                             min_Credit_Balance = a.MINIMUMCREDITBALANCE,
+                             min_Debit_Balance = a.MINIMUMDEBITBALANCE,
+                             credit_Turnover = a.CREDITTURNOVER,
+                             debit_Turnover = a.DEBITTURNOVER,
+                             month = a.MONTH,
+                             year = a.YEAR,
+                             productAccountName = context.TBL_CASA.Where(o => o.CUSTOMERID == customerId).Select(o => o.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                         }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
+
+
+            return first;
+        }
 
         public string InvoiceDiscountingHtml()
         {
@@ -6412,6 +7438,170 @@ namespace FintrakBanking.Repositories.Credit
                <br />";
             return result;
         }
+        public string IdfCustomerInformationHtml()
+        {
+            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
+            var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+            var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
+                <br />
+                <h4><b>Customer Information</b></h4>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Borrower</td>
+                        <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
+                    </tr>
+                   <tr>
+                        <td>Location</td>
+                        <td>{address}-</td>
+                        <td>Customer Risk Rating</td>
+                        <td>{customer?.CUSTOMERRATING}</td>
+                    </tr> 
+                     <tr>
+                        <td>Business</td>
+                        <td>{customer.OCCUPATION}</td>
+                        <td>Classification</td>
+                        <td>{riskRating?.CLASSIFICATION}</td>
+                    </tr>
+                   <tr>
+                        <td>Account Number</td>
+                        <td>{currentAccountNo}</td>
+                        <td>Account Opening Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr> 
+                     <tr>
+                        <td>Incorporation Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                        <td>Biz Commencement Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr>
+                   <tr>
+                        <td>Principal Promoters</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+
+                    <tr>
+                        <td>Contract Employer</td>
+                        <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Alternate Contract Employer</td>
+                       <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Discount Value (50%)</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+        public string IdfCustomerFacilityHtml()
+        {
+            var result = String.Empty;
+            result = result + FussCustomerFacilityHtml();
+            return result;
+        }
+        public string IdfCustomerAccountActivityHtml()
+        {
+            var result = String.Empty;
+            result = result + FussCustomerAccountActivityHtml();
+            return result;
+        }
+        public string IdfCurrentRequestHtml()
+        {
+            var result = String.Empty;
+            result = result + FussCurrentRequestHtml();
+            return result;
+        }
+        public string IdfBackgroungInformationHtml()
+        {
+            var result = String.Empty;
+            result = result + FussBackgroungInformationHtml();
+            return result;
+        }
+        public string IdfChecklistEligibilityHtml()
+        {
+            var result = String.Empty;
+            result = result + FussChecklistEligibilityHtml();
+            return result;
+        }
+        public string IdfDocumentationChecklistHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th colspan='4'><strong>Documentation Checklist</strong></th>                     
+                    </tr> 
+                   <tr>
+                        <td>Deed of assignment for 100% contracts proceeds to Access Bank (where obtainable)</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Approved contract OR purchase order, stating bank A/C details.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   <tr>
+                        <td>Vendor’s letter to Principal requesting domiciliation of contract proceeds to Access Bank, stating that the instruction cannot be varied without the express consent of Access Bank.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Domiciliation letter OR Proof that domiciliation has worked in the past (in cases where the principal is unwilling to accept domiciliation)</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   
+                    <tr>
+                        <td>A copy of the final invoice(s) and/or an original waybill, stamped ‘received’ by the Principal indicating the bank details. </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>A formal client’s request for draw-down, stating relevant account details.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Evidence of other receivables domiciled to us other the one being discounted</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+               <br />";
+            return result;
+        }
 
         public string CashCollaterizedHtml()
         {
@@ -6422,7 +7612,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (CASH COLLATERIZED)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -6801,7 +7991,7 @@ namespace FintrakBanking.Repositories.Credit
                <br />";
             return result;
         }
-
+       
         public string TemporaryOverdraftHtml()
         {
             var result = String.Empty;
@@ -6814,7 +8004,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td colspan=2><strong>TEMPORARY OVERDRAFT (TOD)</strong></td>
                         <td></td>
                         <td><strong>Date:</strong></td>
-                        <td>Request Date</td>                
+                        <td>{DateTime.UtcNow}</td>                
                     </tr>
                      <tr>
                         <td><strong>Unit:</strong></td>
@@ -6935,8 +8125,143 @@ namespace FintrakBanking.Repositories.Credit
                  ";
             result = result + $"</table>";    
             return result;
-            //result = result + GetApprovalsMarkupLOS();
+            
         }
+        public string TodHeaderHtml()
+        {
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == this.loanApplication.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+            var branch = context.TBL_BRANCH.Where(s => s.BRANCHID == this.loanApplication.BRANCHID).Select(s => s.BRANCHNAME).FirstOrDefault();
+            var result = String.Empty;
+            result = result + $@"
+                <h3><b>MEMO</b></h3>
+                <br />
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td colspan=2><strong>TEMPORARY OVERDRAFT (TOD)</strong></td>
+                        <td></td>
+                        <td><strong>Date:</strong></td>
+                        <td>{DateTime.UtcNow.ToString("dd-mm-yyyy")}</td>                
+                    </tr>
+                     <tr>
+                        <td><strong>Unit:</strong></td>
+                        <td>{branch}</td>
+                        <td><strong>Prepared By:</strong></td>
+                        <td>{staff}</td>                
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            return result;
+
+        }
+        public string TodCustomerInformationHtml()
+        {
+            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
+            var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+           
+            var result = String.Empty;
+                result = result + $@"
+                <br />
+               
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>        
+                   <tr>
+                        <td>Name of Customer:</td>
+                        <td>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
+                    </tr> 
+                    <tr>
+                        <td>Nature of Business:</td>
+                        <td>{customer.OCCUPATION}</td>
+                    </tr>  
+                   <tr>
+                        <td>Promoter/M.D. of Company:</td>
+                        <td>N/A</td>
+                    </tr> 
+                    <tr>
+                        <td>Account No:</td>
+                        <td>{accountNumber}</td>
+                    </tr> 
+                     <tr>
+                        <td>Book Balance:</td>
+                        <td>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>Available Balance:</td>
+                        <td>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>Unavailable Balance: </td>
+                        <td>N/A</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            return result;
+
+        }
+        public string TodCurrentRequestHtml()
+        {
+            var result = String.Empty;
+            
+            result = result + FussCurrentRequestHtml();
+            return result;
+
+        }
+        public string TodCustomerAccountActivityHtml()
+        {
+            var result = String.Empty;
+            result = result + FussCustomerAccountActivityHtml();
+            return result;
+
+        }
+        public string TodCustomerFacilityHtml()
+        {
+            var result = String.Empty;
+            
+            result = result + FussCustomerFacilityHtml();
+            return result;
+
+        }
+        public string TodBackgroungInformationHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                   <tr>
+                        <td COLSPAN=2>ATTESTATION: I hereby undertake to sponsor the TOD based on my expert knowledge of the customer and his business, and state that I would be personally responsible in ensuring repayment in line with approved terms.</td>
+                        
+                    </tr> 
+                    <tr>
+                        <td><strong>Signature & Date<strong></td>
+                        <td>__________________</td>
+                    </tr>                  
+                 ";
+            result = result + $"</table>";
+            return result;
+
+        }
+        public string CurrentLMSFlowHtml()
+        {
+            var currentOperation = context.TBL_OPERATIONS.Where(l => l.OPERATIONID == this.loanApplication.OPERATIONID).Select(l => l.OPERATIONNAME).FirstOrDefault();
+            var reviewDetails = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).Select(l => l.REVIEWDETAILS).FirstOrDefault();
+
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <h4><strong>CURRENT OPERATION DETAILS</strong></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                   <tr>
+                        <td>Operation Type:</td>
+                         <td>{currentOperation}</td>
+                        <td>Review Detail:</td>
+                         <td>{reviewDetails}</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            return result;
+
+        }
+
 
         public string StaffCarLoansHtml()
         {
@@ -7434,7 +8759,6 @@ namespace FintrakBanking.Repositories.Credit
                 ";
             return result;
         }
-
         public string StaffMortgageLoansHtml()
         {
             var result = String.Empty;
@@ -7951,7 +9275,6 @@ namespace FintrakBanking.Repositories.Credit
                  ";       
             return result;
         }
-
         public string StaffPersonalLoanAGMHtml()
         {
             var result = String.Empty;
@@ -8480,7 +9803,6 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
         }
-
         public string StaffPersonalLoanHtml()
         {
             var result = String.Empty;
@@ -8991,8 +10313,7 @@ namespace FintrakBanking.Repositories.Credit
                  ";   
             return result;
         }
-    
-         public string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId)
+        public string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId)
         {
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
 
@@ -9069,8 +10390,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return result;
         }
-
-       private IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int operationId)
+        private IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int operationId)
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
@@ -9159,7 +10479,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return dataLOS.Union(dataLMS);
         }
-
         public IEnumerable<ApprovalTrailViewModel> GetDeferralnAprrovalTrail(int operationId, int targetId)
         {
 
@@ -9191,7 +10510,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
-
         public ApprovalTrailViewModel GetDeferralnAprroval(int operationId, int targetId)
         {
 
@@ -9224,8 +10542,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
-
-
         public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByApplicationDetailId(int applicationDetailId)
         {
 
@@ -9239,8 +10555,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
-
-
         public string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId)
         {
             
@@ -9294,7 +10608,6 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-
         private string GetCashBackApprovalsMarkupLOS(int targetId, int operationId)
         {
             var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,true).OrderBy(a => a.approvalTrailId);
@@ -9326,8 +10639,6 @@ namespace FintrakBanking.Repositories.Credit
             return result;
 
         }
-
-
 
         public string GetCallMemoMarkup(int id)
         {

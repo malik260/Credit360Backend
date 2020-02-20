@@ -964,12 +964,16 @@ namespace FintrakBanking.Repositories.Credit
             //{
             //    fireResponse("Please select a repayment pattern for the product " + update.productName, "99","");
             //}
+            detail.APPROVEDAMOUNT = update.proposedAmount;
+            detail.APPROVEDINTERESTRATE = update.interestRate;
+            detail.APPROVEDPRODUCTID = update.productId;
+            detail.APPROVEDTENOR = update.proposedTenor;
 
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
-            detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
-            detail.PROPOSEDPRODUCTID = (short) update.proposedProductId;
+            detail.PROPOSEDINTERESTRATE = update.interestRate;
+            //detail.PROPOSEDPRODUCTID = (short) update.proposedProductId;
             detail.PROPOSEDTENOR = update.proposedTenor;
             detail.REPAYMENTSCHEDULEID = update.repaymentScheduleId;
             detail.REPAYMENTTERMS = update.repaymentTerm;
@@ -1152,7 +1156,7 @@ namespace FintrakBanking.Repositories.Credit
             loanData.DATETIMECREATED = genSetup.GetApplicationDate();
             loanData.SYSTEMDATETIME = DateTime.Now;
             loanData.CASAACCOUNTID = loan.casaAccountId;
-           // loanData.APPLICATIONAMOUNT = totalApplicationAmount;
+            loanData.APPLICATIONAMOUNT = loan.proposedAmount;
             loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             loanData.COLLATERALDETAIL = loan.collateralDetail;
             loanData.CAPREGIONID = loan.regionId;

@@ -8508,7 +8508,7 @@ namespace FintrakBanking.Repositories.Credit
                                        casaAccountId = s.CASAACCOUNTID,
                                        casaAccountId2 = s.CASAACCOUNTID2,
                                        productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-
+                                       divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                        interestRate = d.APPROVEDINTERESTRATE,
                                        approvedInterestRate = d.APPROVEDINTERESTRATE,
                                        approvedAmount = d.APPROVEDAMOUNT,
@@ -14428,11 +14428,16 @@ namespace FintrakBanking.Repositories.Credit
                 WorkflowStageName = "13";
             }
 
-            var appl = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).FirstOrDefault();
+            var loanApplicationId = (from O in context.TBL_LOAN_BOOKING_REQUEST
+                                    join C in context.TBL_LOAN_APPLICATION_DETAIL on O.LOANAPPLICATIONDETAILID equals C.LOANAPPLICATIONDETAILID
+                                    where O.LOAN_BOOKING_REQUESTID == model.targetId
+                                    select C).FirstOrDefault()?.LOANAPPLICATIONID;
+
+            var appl = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId).FirstOrDefault();
             if (appl != null && appl.APIREQUESTID != null)
             {
                 var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
-                if (product.PRODUCTCODE == "EBFC")
+                if (product.PRODUCTCODE == "EBFC" && model.forbidExternalNotification == false)
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
@@ -15011,6 +15016,8 @@ namespace FintrakBanking.Repositories.Credit
                                    && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  //&& a.LOANREFERENCENUMBER == "406-0056-0000036"                                                                                                                                   //orderby b.DATECREATED descending
                                    select new LoanViewModel
                                    {
+                                       creditAppraisalOperationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.OPERATIONID).FirstOrDefault(),
+                                       creditAppraisalLoanApplicationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.LOANAPPLICATIONID).FirstOrDefault(),
                                        appraisalOperationId = e.OPERATIONID,
                                        appraisalLoanApplicationId = e.LOANAPPLICATIONID,
                                        synOperationId = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == b.OPERATIONID).Select(o => o.SYNCHOPERATIONID).FirstOrDefault(),
