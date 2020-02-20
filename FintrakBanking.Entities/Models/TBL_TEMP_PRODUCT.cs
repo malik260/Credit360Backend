@@ -25,6 +25,7 @@ namespace FintrakBanking.Entities.Models
         public int COMPANYID { get; set; }
 
         public short PRODUCTTYPEID { get; set; }
+        public bool ISFACILITYLINE { get; set; }
 
         public short PRODUCTCATEGORYID { get; set; }
 

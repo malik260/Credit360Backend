@@ -191,6 +191,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (targetActivities.Any()) foreach (var item in targetActivities) context.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Remove(item);
 
                 staffRole.STAFFROLECODE = entity.staffRoleCode;
+                staffRole.USEROUNDROBIN = entity.useRoundRublin;
                 staffRole.STAFFROLENAME = entity.staffRoleName;
                 staffRole.STAFFROLESHORTCODE = entity.staffRoleShortCode;
                 staffRole.WORKSTARTDURATION = entity.workStartDuration;
@@ -208,6 +209,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     WORKSTARTDURATION = entity.workStartDuration,
                     WORKENDDURATION = entity.workEndDuration,
                     COMPANYID = entity.companyId,
+                    USEROUNDROBIN = entity.useRoundRublin,
                     TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups,
                     TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities
                 };
@@ -240,7 +242,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 throw new SecureException("There is an operation that is yet to be approved on this item!");
             }
 
-                using (var trans = context.Database.BeginTransaction())
+            using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
