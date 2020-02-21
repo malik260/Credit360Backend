@@ -4377,6 +4377,27 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        private string GetAllCustomerCollateralsMarkupLMS()
+        {
+            var result = String.Empty;
+            var remark = string.Empty;
+            var customerCollaterals = collateralRepo.GetCustomerCollateral(this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID, this.lmsrApplication.LOANAPPLICATIONID, this.lmsrApplication.COMPANYID);
+
+            result += $@"
+                        <ul>
+                        ";
+            foreach (var cc in customerCollaterals)
+            {
+                result += $@"
+                            <li>{cc.collateralSummary}</li>
+                        ";
+            }
+            result += $@"
+                        </ul>
+                        ";
+            return result;
+        }
+
         private string GetSecurityAnalysisMarkUP()
         {
             var result = String.Empty;
@@ -6691,7 +6712,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Security/Support:</strong> </td>
-                        <td>{allCustomerCollateralRemarks}
+                        <td>{GetAllCustomerCollateralsMarkup()} {GetAllCustomerCollateralsMarkupLMS()}
                         </td>
                         </tr>
                         </table>
