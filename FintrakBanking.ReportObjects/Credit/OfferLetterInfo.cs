@@ -293,7 +293,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                               loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                               isExternal = b.ISEXTERNAL,
                                               productName = c.TBL_PRODUCT.PRODUCTNAME
-                                          }).ToList();//GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+                                          }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
             var forDebugging = conditionPrecedentData.ToList();
             return conditionPrecedentData;
