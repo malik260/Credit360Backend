@@ -120,6 +120,7 @@
     LmsOperations = 116,
     EarnUnEarnedFee = 117,
     CRMSApproval = 118,
+    RevolvingTranchDisbursement = 154,
 
     //
     AdhocApproval = 133,

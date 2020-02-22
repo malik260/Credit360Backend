@@ -1215,6 +1215,9 @@ namespace FintrakBanking.Repositories.Credit
             entity.effectiveDate = entity.loanScheduleInput.effectiveDate;
             entity.maturityDate = entity.loanScheduleInput.maturityDate;
 
+            var maximumMaturityDate = entity.effectiveDate.AddDays(applicationDetail.APPROVEDTENOR);
+            if(entity.maturityDate.Date > maximumMaturityDate.Date) {throw new ConditionNotMetException("You can not exceed the maximum maturity date"); }
+
             loanBookingValidation(entity);
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
@@ -2847,6 +2850,7 @@ namespace FintrakBanking.Repositories.Credit
                             bookingRequestStatusId = s.APPROVALSTATUSID,
                             requestDate = s.DATETIMECREATED,
                             requestedBy = "",
+                            systemArrivalDateTime = s.DATETIMECREATED,
                             divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                             appraisalOperationId = m.OPERATIONID,
                             requestedAmount = s.AMOUNT_REQUESTED,
@@ -8143,6 +8147,7 @@ namespace FintrakBanking.Repositories.Credit
                                        bookingRequestStatusId = s.APPROVALSTATUSID,
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
+                                       systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                        requestedAmount = s.AMOUNT_REQUESTED,
                                        requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
                                        approvalStatusId = atrail.APPROVALSTATUSID,
@@ -8478,6 +8483,7 @@ namespace FintrakBanking.Repositories.Credit
                                        bookingRequestStatusId = s.APPROVALSTATUSID,
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
+                                       systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                        operationId = s.OPERATIONID,
                                        crmsCode = s.CRMSCODE,
                                        requestedAmount = s.AMOUNT_REQUESTED,
