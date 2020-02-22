@@ -426,6 +426,39 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Customer FS Caption Detail
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("calculate-fs-ratio-value-derived")]
+        public HttpResponseMessage CalculateFSRatioValueForDerived([FromBody] CustomerFSCaptionDetailViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = _fsRepo.CalculateFSRatioValueForDerived(entity);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The ratio value was calculated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "The ratio value was calculated successfully" });
+            }
+            catch (SecureException ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error calculating the ratio value { ex.Message}" });
+            }
+        }
+
         [HttpPost] [ClaimsAuthorization]
         [Route("customer-fs-caption-detail")]
         public HttpResponseMessage AddCustomerFsCaptionDetail([FromBody] CustomerFSCaptionDetailViewModel entity)

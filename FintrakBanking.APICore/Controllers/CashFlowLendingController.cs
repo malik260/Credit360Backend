@@ -79,7 +79,7 @@ namespace FintrakBanking.APICore.Controllers
                 //entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = 1; // token.GetCompanyId;
                 //entity.createdBy = token.GetStaffId;
-                //entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.applicationUrl = Request.RequestUri.AbsoluteUri;
                 var data = repo.submitRequest(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, data );
             }
