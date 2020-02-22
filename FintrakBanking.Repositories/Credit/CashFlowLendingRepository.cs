@@ -16,12 +16,15 @@ using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -536,7 +539,32 @@ namespace FintrakBanking.Repositories.Credit
                 response.StatusCode = "99";
                 response.Message = "Failed!";
             }
+
+            SaveCashflowRequestToApiLog(model, response);
             return response;
+        }
+
+        private void SaveCashflowRequestToApiLog(CflLoanApplication request, APIResponse response)
+        {
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            request.creditBureauReport = null;
+            request.loanApplicationFiles = null;
+
+            var jsonRequest = js.Serialize(request);
+            var jsonResponse = js.Serialize(response);
+
+            context.TBL_CUSTOM_API_LOGS.Add(new TBL_CUSTOM_API_LOGS()
+            {
+                APIURL = request.applicationUrl,
+                LOGTYPEID = 1,
+                REFERENCENUMBER = request.requestId,
+                REQUESTDATETIME = DateTime.Now,
+                RESPONSEDATETIME = DateTime.Now,
+                REQUESTMESSAGE = jsonRequest,
+                RESPONSEMESSAGE = jsonResponse,
+            });
+
+            context.SaveChanges();
         }
 
 
