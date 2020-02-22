@@ -2379,7 +2379,7 @@ namespace FintrakBanking.Repositories.Credit
                     RACDEFINITIONID = definition.RACDEFINITIONID,
                     OPERATIONID = operationId,
                     TARGETID = targetId,
-                    ACTUALVALUE = submission.value,
+                    ACTUALVALUE = submission.value ?? "0",
                     CREATEDBY = staffId,
                     DATETIMECREATED = DateTime.Now,
 
@@ -2408,7 +2408,7 @@ namespace FintrakBanking.Repositories.Credit
             //    ).Any())
             //        return false;
             //}
-
+            
             int integerConversion;
             int? integerValue = null;
             decimal? decimalValue = null;
@@ -2426,15 +2426,22 @@ namespace FintrakBanking.Repositories.Credit
                     if (!String.IsNullOrEmpty(value)) { return true; }
                     break;
                 case 2:
-                    decimalValue = decimal.Parse(value);
+                    if(value != null) decimalValue = decimal.Parse(value);
+                    else decimalValue = 0;
                     break;
                 case 3:
-                    int.TryParse(value, out integerConversion);
-                    integerValue = integerConversion;
+                    if (value != null)
+                    {
+                        int.TryParse(value, out integerConversion);
+                        integerValue = integerConversion;
+                    }
                     break;
                 case 4:
-                    int.TryParse(value, out integerConversion);
-                    integerValue = integerConversion;
+                    if (value != null)
+                    {
+                        int.TryParse(value, out integerConversion);
+                        integerValue = integerConversion;
+                    }
                     break;
                 case 5:
                     if (!String.IsNullOrEmpty(value)) return true;
@@ -3203,6 +3210,7 @@ namespace FintrakBanking.Repositories.Credit
                 operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
                 loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
                 tenorModeId = d.TENORFREQUENCYTYPEID,
+                flowChangeId = d.TBL_LOAN_APPLICATION.FLOWCHANGEID
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
@@ -6941,7 +6949,8 @@ namespace FintrakBanking.Repositories.Credit
         public RevisedProcessFlowModel getCashCollaterizedProcessFlowBy()
         {
             var cashCollaterzedFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
-                                   where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
+                                   where c.FLOWCHANGEID == (short)FlowChangeEnum.CASHCOLLATERIZED
+                                   //where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
                                        select new RevisedProcessFlowModel
                                    {
                                        flowchangeId = c.FLOWCHANGEID,
