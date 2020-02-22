@@ -23,7 +23,8 @@ using System.Data.Entity;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
 using GemBox.Spreadsheet;
-using System.IO; 
+using System.IO;
+using System.Data.Entity.Validation;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -3161,6 +3162,20 @@ namespace FintrakBanking.Repositories.Credit
                 response = context.SaveChanges();
 
             }
+            //catch (DbEntityValidationException e)
+            //{
+            //    foreach (var eve in e.EntityValidationErrors)
+            //    {
+            //        Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+            //            eve.Entry.Entity.GetType().Name, eve.Entry.State);
+            //        foreach (var ve in eve.ValidationErrors)
+            //        {
+            //            Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+            //                ve.PropertyName, ve.ErrorMessage);
+            //        }
+            //    }
+            //    throw;
+            //}
             catch (Exception ex)
             {
 
