@@ -57,6 +57,7 @@ namespace FintrakBanking.Repositories.Credit
         private int targetId;
         private int operationId;
         public decimal LLL;
+
         List<CustomerExposure> customerIds; // init
 
         // field variables
@@ -64,6 +65,7 @@ namespace FintrakBanking.Repositories.Credit
         TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
         TBL_LMSR_APPLICATION lmsrApplication = null;
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
+        List<TBL_LMSR_APPLICATION_DETAIL> customerFacilitiesLms = null;
         List<CurrentCustomerExposure> globalExposure = new List<CurrentCustomerExposure>();
         int customerId;
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
@@ -160,11 +162,15 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string fussSchoolFeesInformationHolder = "@{{fussSchoolFeesInformationData}}";
         private readonly string fussCustomerFacilityHolder = "@{{fussCustomerFacilityData}}";
         private readonly string fussCustomerAccountActivityHolder = "@{{fussCustomerAccountActivityData}}";
+        private readonly string fussCustomerAccountActivitySummaryHolder = "@{{fussCustomerAccountActivitySummaryData}}";
         private readonly string fussCashFlowAnalysisHolder = "@{{fussCashFlowAnalysisData}}";
         private readonly string fussSummaryNetCashFlowHolder = "@{{fussSummaryNetCashFlowData}}";
         private readonly string fussCurrentRequestHolder = "@{{fussCurrentRequestData}}";
         private readonly string fussBackgroungInformationHolder = "@{{fussBackgroungInformationData}}";
         private readonly string fussChecklistEligibilitytHolder = "@{{fussChecklistEligibilityData}}";
+
+        private readonly string fussCustomerConditionSubsequentHolder = "@{{fussCustomerConditionSubsequentData}}";
+        private readonly string fussCustomerConditionDynamicsHolder = "@{{fussCustomerConditionDynamicsData}}";
 
         //IDF
         private readonly string idfCustomerInformationHolder = "@{{idfCustomerInformationData}}";
@@ -378,11 +384,14 @@ namespace FintrakBanking.Repositories.Credit
         private string fussSchoolFeesInformationData;
         private string fussCustomerFacilityData;
         private string fussCustomerAccountActivityData;
+        private string fussCustomerAccountActivitySummaryData;
         private string fussCashFlowAnalysisData;
         private string fussSummaryNetCashFlowData;
         private string fussCurrentRequestData;
         private string fussBackgroungInformationData;
         private string fussChecklistEligibilityData;
+        private string fussCustomerConditionSubsequentData;
+        private string fussCustomerConditionDynamicsData;
 
         //IDF
         private string idfCustomerInformationData;
@@ -474,6 +483,9 @@ namespace FintrakBanking.Repositories.Credit
                 this.reviewType = context.TBL_LOAN_DETAIL_REVIEW_TYPE.Find(reviewTypeId)?.LOANDETAILREVIEWTYPENAME;
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLOS();
+                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+                this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == this.loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
+                this.approvedAmount = this.loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 this.exchangeRate = GetAllExchangeRates();
                 this.obligorRiskRating = GetCustomerRiskRating();
                 this.obligorClassification = GetObligorClassification();
@@ -529,11 +541,14 @@ namespace FintrakBanking.Repositories.Credit
                 this.fussSchoolFeesInformationData = FussSchoolFeesInformationHtml();
                 this.fussCustomerFacilityData = FussCustomerFacilityHtml();
                 this.fussCustomerAccountActivityData = FussCustomerAccountActivityHtml();
+                this.fussCustomerAccountActivitySummaryData = FussCustomerAccountActivitySummaryHtml();
                 this.fussCashFlowAnalysisData = FussCashFlowAnalysisHtml();
                 this.fussSummaryNetCashFlowData = FussSummaryNetCashFlowHtml();
                 this.fussCurrentRequestData = FussCurrentRequestHtml();
                 this.fussBackgroungInformationData = FussBackgroungInformationHtml();
                 this.fussChecklistEligibilityData = FussChecklistEligibilityHtml();
+                this.fussCustomerConditionSubsequentData = FussCustomerConditionSubsequentHtml();
+                this.fussCustomerConditionDynamicsData = FussCustomerConditionDynamicsHtml();
 
                 //IDF
                 this.idfCustomerInformationData = IdfCustomerInformationHtml();
@@ -578,7 +593,7 @@ namespace FintrakBanking.Repositories.Credit
                 // if (lmsrAppllication.CUSTOMERGROUPID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (lmsrApplication.CUSTOMERID != null) this.customerName = lmsrApplication.TBL_CUSTOMER.FIRSTNAME + " " + lmsrApplication.TBL_CUSTOMER.MIDDLENAME + " " + lmsrApplication.TBL_CUSTOMER.LASTNAME;
                 initLoanAppForLms();
-                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
+                this.customerFacilitiesLms = context.TBL_LMSR_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LMSR_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LMSR_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
 
                 this.branchName = lmsrApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = lmsrApplication.TBL_BRANCH.ADDRESSLINE1 + " " + lmsrApplication.TBL_BRANCH.ADDRESSLINE2;
@@ -607,6 +622,9 @@ namespace FintrakBanking.Repositories.Credit
                 //this.totalForeignContingentFacilities = GetTotalForeignContingentFacilitiesMarkupLMS();
                 //foreignImportFinanceFinance;
                 //foreigntotalImportFinanceFinance;
+                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
+                this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == this.loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
+                this.approvedAmount = this.loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 this.groupExposure = GetGroupExposureMarkupLMS();
                 this.approvals = GetApprovalsMarkupLOS();
                 this.currentDate = DateTime.Now.ToShortDateString();
@@ -634,11 +652,14 @@ namespace FintrakBanking.Repositories.Credit
                 this.fussSchoolFeesInformationData = FussSchoolFeesInformationHtml();
                 this.fussCustomerFacilityData = FussCustomerFacilityHtml();
                 this.fussCustomerAccountActivityData = FussCustomerAccountActivityHtml();
+                this.fussCustomerAccountActivitySummaryData = FussCustomerAccountActivitySummaryHtml();
                 this.fussCashFlowAnalysisData = FussCashFlowAnalysisHtml();
                 this.fussSummaryNetCashFlowData = FussSummaryNetCashFlowHtml();
                 this.fussCurrentRequestData = FussCurrentRequestHtml();
                 this.fussBackgroungInformationData = FussBackgroungInformationHtml();
                 this.fussChecklistEligibilityData = FussChecklistEligibilityHtml();
+                this.fussCustomerConditionSubsequentData = FussCustomerConditionSubsequentHtml();
+                this.fussCustomerConditionDynamicsData = FussCustomerConditionDynamicsHtml();
 
                 //IDF
                 this.idfCustomerInformationData = IdfCustomerInformationHtml();
@@ -4335,20 +4356,68 @@ namespace FintrakBanking.Repositories.Credit
         private string GetAllCustomerFacilitiesMarkup()
         {
             var result = String.Empty;
-            result += $@"
-                        <ul>
-                        ";
-            foreach (var f in this.customerFacilities)
+            if (this.customerFacilities != null)
             {
                 result += $@"
+                        <ul>
+                        ";
+                foreach (var f in this.customerFacilities)
+                {
+                    result += $@"
                             <li>{f.TBL_PRODUCT.PRODUCTNAME + " " + f.TBL_CURRENCY.CURRENCYCODE + String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>
                         ";
-            }
-            result += $@"
+                }
+                result += $@"
                         </ul>
                         ";
+            }
             return result;
         }
+
+        private string GetAllCustomerFacilitiesLMSMarkup()
+        {
+            var result = String.Empty;
+            if (this.customerFacilitiesLms != null)
+            {
+                result += $@"
+                        <ul>
+                        ";
+                foreach (var f in this.customerFacilitiesLms)
+                {
+                    result += $@"
+                            <li>{f.TBL_PRODUCT.PRODUCTNAME + " " + String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>
+                        ";
+                }
+                result += $@"
+                        </ul>
+                        ";
+            }
+            return result;
+        }
+        private string GetAllCustomerCollateralsMarkupLMS()
+        {
+            var result = String.Empty;
+            var remark = string.Empty;
+            if (this.lmsrApplication != null)
+            {
+                var customerCollaterals = collateralRepo.GetCustomerCollateral(this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID, this.lmsrApplication.LOANAPPLICATIONID, this.lmsrApplication.COMPANYID);
+
+                result += $@"
+                        <ul>
+                        ";
+                foreach (var cc in customerCollaterals)
+                {
+                    result += $@"
+                            <li>{cc.collateralSummary}</li>
+                        ";
+                }
+                result += $@"
+                        </ul>
+                        ";
+            }
+            return result;
+        }
+
 
         private string GetAllCustomerCollateralsMarkup()
         {
@@ -4374,7 +4443,9 @@ namespace FintrakBanking.Repositories.Credit
         private string GetSecurityAnalysisMarkUP()
         {
             var result = String.Empty;
-            result += $@"
+            if (this.loanApplication != null)
+            {
+                result += $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility Type</b></th>
@@ -4386,6 +4457,22 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 </table>
             ";
+            }
+            else
+            {
+                result += $@"
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Security / Support</b></th>
+                    </tr>
+                    <tr>
+                    <td>{GetAllCustomerFacilitiesLMSMarkup()}</td>
+                    <td>{GetAllCustomerCollateralsMarkupLMS()}</td>
+                    </tr>
+                </table>
+            ";
+            }
             return result;
         }
 
@@ -4803,11 +4890,14 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(fussSchoolFeesInformationHolder, fussSchoolFeesInformationData);
             content = content.Replace(fussCustomerFacilityHolder, fussCustomerFacilityData);
             content = content.Replace(fussCustomerAccountActivityHolder, fussCustomerAccountActivityData);
+            content = content.Replace(fussCustomerAccountActivitySummaryHolder, fussCustomerAccountActivitySummaryData);
             content = content.Replace(fussCashFlowAnalysisHolder, fussCashFlowAnalysisData);
             content = content.Replace(fussSummaryNetCashFlowHolder, fussSummaryNetCashFlowData);
             content = content.Replace(fussCurrentRequestHolder, fussCurrentRequestData);
             content = content.Replace(fussBackgroungInformationHolder, fussBackgroungInformationData);
             content = content.Replace(fussChecklistEligibilitytHolder, fussChecklistEligibilityData);
+            content = content.Replace(fussCustomerConditionSubsequentHolder, fussCustomerConditionSubsequentData);
+            content = content.Replace(fussCustomerConditionDynamicsHolder, fussCustomerConditionDynamicsData);
 
             // for IDF document          
             content = content.Replace(idfCustomerInformationHolder, idfCustomerInformationData);
@@ -4829,10 +4919,11 @@ namespace FintrakBanking.Repositories.Credit
 
             //for TOD document
             content = content.Replace(todHeaderHolder, todHeaderData);
-            content = content.Replace(todCustomerFacilityHolder, todCustomerInformationData);
-            content = content.Replace(todCustomerAccountActivityHolder, todCustomerFacilityData);
-            content = content.Replace(todCurrentRequestHolder, todCustomerAccountActivityData);
-            content = content.Replace(todBackgroungInformationHolder, todCurrentRequestData);
+            content = content.Replace(todCustomerInformationHolder, todCustomerInformationData);
+            content = content.Replace(todCustomerAccountActivityHolder, todCustomerAccountActivityData);
+            content = content.Replace(todCustomerFacilityHolder, todCustomerFacilityData); 
+             content = content.Replace(todCurrentRequestHolder, todCurrentRequestData);
+            content = content.Replace(todBackgroungInformationHolder, todBackgroungInformationData);
             content = content.Replace(currentLMSFlowHolder, currentLMSFlowData);
 
             content = content.Replace(originalDocumentNonCreditProgramHolder, originalDocumentNonCreditProgramData);
@@ -6309,7 +6400,16 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        public string FussCustomerAccountActivitySummaryHtml()
+        {
+            var result = String.Empty;
             result = result + $@" 
+                   <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                        <td colspan='2'>Current Book Balance</td>
                         <td colspan='3'>------------------------------------------------------</td>
@@ -6632,6 +6732,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
             var repaymentTerm = context.TBL_REPAYMENT_TERM.Find(details.REPAYMENTSCHEDULEID);
+           
             var result = String.Empty;
             result = result + $@"
                 <br />
@@ -6683,7 +6784,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Security/Support:</strong> </td>
-                        <td>{allCustomerCollateralRemarks}
+                        <td>{GetAllCustomerCollateralsMarkup()} {GetAllCustomerCollateralsMarkupLMS()}
                         </td>
                         </tr>
                         </table>
@@ -6897,6 +6998,79 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                    ";
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        public string FussCustomerConditionSubsequentHtml()
+        {
+            //Los_ConditionDynamics(int loanApplicationId)
+            var currentApplicationId = this.loanApplication?.LOANAPPLICATIONID;
+            if (this.loanApplication == null)
+            {
+                currentApplicationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
+            }
+            var ConditionSubsequent = GetLoanApplicationConditionSubsequent(currentApplicationId); 
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h4><b>CONDITIONS SUBSEQUENT TO DRAWDOWN</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>Product Name</b></th>
+                        <th><b>Condition Precident</b></th>
+                    </tr>";
+            foreach (var f in ConditionSubsequent)
+            {
+                n++;
+                result = result + $@"
+                        <tr>
+                        <td> {n}</td>
+                        <td> {f.productName}</td>
+                        <td> {f.conditionPrecident}</td>
+                    </tr>";
+
+            }
+
+            result = result + $"</table>";
+            result = result + $@"
+                 <br />";
+            return result;
+        }
+        public string FussCustomerConditionDynamicsHtml()
+        {
+            var currentApplicationId = this.loanApplication?.LOANAPPLICATIONID;
+            if (this.loanApplication == null)
+            {
+                currentApplicationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
+            }
+            var ConditionSubsequent = Los_ConditionDynamics(currentApplicationId);
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h4><b>CONDITION DYNAMICS</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>Product Name</b></th>
+                        <th><b>Condition Dynamics</b></th>
+                    </tr>";
+            foreach (var f in ConditionSubsequent)
+            {
+                n++;
+                result = result + $@"
+                        <tr>
+                        <td> {n}</td>
+                        <td> {f.productName}</td>
+                        <td> {f.dynamics}</td>
+                    </tr>";
+
+            }
+
             result = result + $"</table>";
             result = result + $@"
                  <br />";
@@ -7467,7 +7641,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -7544,7 +7718,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>ORIGINAL DOCUMENT (NON CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -7605,7 +7779,6 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
         }
-
         public string CreditProgramCustomerInformationHtml()
         {
             var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).FirstOrDefault();
@@ -7621,7 +7794,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>ORIGINAL DOCUMENT (CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -8411,19 +8584,19 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string CurrentLMSFlowHtml()
         {
-            var currentOperation = context.TBL_OPERATIONS.Where(l => l.OPERATIONID == this.loanApplication.OPERATIONID).Select(l => l.OPERATIONNAME).FirstOrDefault();
-            var reviewDetails = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == this.loanApplication.LOANAPPLICATIONID).Select(l => l.REVIEWDETAILS).FirstOrDefault();
+            var currentOperation = context.TBL_OPERATIONS.Where(l => l.OPERATIONID == this.lmsrApplication.OPERATIONID).Select(l => l.OPERATIONNAME).FirstOrDefault();
+            var lmsReviewDetails = context.TBL_LMSR_APPLICATION_DETAIL.Where(r => r.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID).Select(r => r.REVIEWDETAILS).FirstOrDefault();
 
             var result = String.Empty;
             result = result + $@"
                 <br />
-                <h4><strong>CURRENT OPERATION DETAILS</strong></h4>
+                <h4><strong>CURRENT PROCESS DETAILS</strong></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                    <tr>
-                        <td>Operation Type:</td>
+                        <td>Process Type:</td>
                          <td>{currentOperation}</td>
                         <td>Review Detail:</td>
-                         <td>{reviewDetails}</td>
+                         <td>{lmsReviewDetails}</td>
                     </tr> 
                  ";
             result = result + $"</table>";
@@ -10866,6 +11039,70 @@ namespace FintrakBanking.Repositories.Credit
             return result;
 
         }
+
+        public IEnumerable<OfferLetterConditionPrecidentViewModel> GetLoanApplicationConditionSubsequent(int? loanApplicationId)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var conditionSubsequentData = (from a in context.TBL_LOAN_APPLICATION
+                                           join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                           where a.LOANAPPLICATIONID == (int)loanApplicationId && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
+                                               && c.STATUSID == (int)ApprovalStatusEnum.Approved
+                                               && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+                                               && c.STATUSID == (int)ApprovalStatusEnum.Approved
+                                           select new OfferLetterConditionPrecidentViewModel()
+                                           {
+                                               conditionPrecident = b.CONDITION,
+                                               loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                               isExternal = b.ISEXTERNAL,
+                                               productName = c.TBL_PRODUCT.PRODUCTNAME
+                                           }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+
+            var conditionPrecedentDeferralData = (from a in context.TBL_LOAN_APPLICATION
+                                                  join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                                  join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                                  join d in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals d.LOANCONDITIONID
+                                                  where a.LOANAPPLICATIONID == (int)loanApplicationId && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
+                                                       && c.STATUSID == (int)ApprovalStatusEnum.Approved && b.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred
+                                                       && d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                                                       && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+                                                       && c.STATUSID == (int)ApprovalStatusEnum.Approved
+                                                  select new OfferLetterConditionPrecidentViewModel()
+                                                  {
+                                                      conditionPrecident = b.CONDITION,
+                                                      loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                                      isExternal = b.ISEXTERNAL,
+                                                      productName = c.TBL_PRODUCT.PRODUCTNAME
+                                                  }).ToList();//GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+
+
+            var forDebugging = conditionSubsequentData.ToList().Union(conditionPrecedentDeferralData.ToList());
+            return conditionSubsequentData;
+        }
+
+        public int count = 0;
+        public List<TransactionDynamicsViewModel> Los_ConditionDynamics(int? loanApplicationId)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+            count = 1;
+            var transactionDynamicsDetails = (from a in context.TBL_LOAN_TRANSACTION_DYNAMICS
+                                              join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                              join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                              where c.LOANAPPLICATIONID == (int)loanApplicationId && a.ISEXTERNAL == true
+                                              && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                              && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                              && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                                              select new TransactionDynamicsViewModel()
+                                              {
+                                                  SN = +count,
+                                                  dynamics = a.DYNAMICS,
+                                                  productName = b.TBL_PRODUCT.PRODUCTNAME
+                                              }).Distinct().ToList();
+
+            return transactionDynamicsDetails;
+        }
+
     }
 }
 

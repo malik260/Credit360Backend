@@ -13304,6 +13304,8 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
             
             private global::System.Data.DataColumn columndynamics;
             
+            private global::System.Data.DataColumn columnproductName;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public OfferLetterTransactionDynamicsDataTable() {
@@ -13355,6 +13357,14 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn productNameColumn {
+                get {
+                    return this.columnproductName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -13390,11 +13400,12 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public OfferLetterTransactionDynamicsRow AddOfferLetterTransactionDynamicsRow(string sn, string dynamics) {
+            public OfferLetterTransactionDynamicsRow AddOfferLetterTransactionDynamicsRow(string sn, string dynamics, string productName) {
                 OfferLetterTransactionDynamicsRow rowOfferLetterTransactionDynamicsRow = ((OfferLetterTransactionDynamicsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         sn,
-                        dynamics};
+                        dynamics,
+                        productName};
                 rowOfferLetterTransactionDynamicsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowOfferLetterTransactionDynamicsRow);
                 return rowOfferLetterTransactionDynamicsRow;
@@ -13419,6 +13430,7 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
             internal void InitVars() {
                 this.columnsn = base.Columns["sn"];
                 this.columndynamics = base.Columns["dynamics"];
+                this.columnproductName = base.Columns["productName"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -13428,6 +13440,8 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
                 base.Columns.Add(this.columnsn);
                 this.columndynamics = new global::System.Data.DataColumn("dynamics", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columndynamics);
+                this.columnproductName = new global::System.Data.DataColumn("productName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnproductName);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -26244,6 +26258,23 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string productName {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterTransactionDynamics.productNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'OfferLetterTransactionDynamics\' is D" +
+                                "BNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterTransactionDynamics.productNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IssnNull() {
                 return this.IsNull(this.tableOfferLetterTransactionDynamics.snColumn);
             }
@@ -26264,6 +26295,18 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetdynamicsNull() {
                 this[this.tableOfferLetterTransactionDynamics.dynamicsColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsproductNameNull() {
+                return this.IsNull(this.tableOfferLetterTransactionDynamics.productNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetproductNameNull() {
+                this[this.tableOfferLetterTransactionDynamics.productNameColumn] = global::System.Convert.DBNull;
             }
         }
         

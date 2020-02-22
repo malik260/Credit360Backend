@@ -82,7 +82,7 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
             var getDynamics = offerLetter.Los_ConditionDynamics(applicationRefNumber);
             ReportDataSource dsGetDynamics = new ReportDataSource();
             dsGetDynamics.Value = getDynamics;
-            dsGetDynamics.Name = "TrasactionDynamics";
+            dsGetDynamics.Name = "OfferLetterTransactionDynamics";
 
             offerLetterReport.LocalReport.DataSources.Add(dsOfferLetterDetails);
             offerLetterReport.LocalReport.DataSources.Add(dsLoanApplicationDetail);
