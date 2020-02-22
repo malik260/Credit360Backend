@@ -739,11 +739,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             var company = context.TBL_COMPANY.Find(companyId);
+            var staffIds = generalSetup.GetStaffRlieved(staffId);
 
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                          where a.COMPANYID == companyId && d.DELETED == false
-                         && a.CREATEDBY == staffId
+                         && staffIds.Contains(a.CREATEDBY)
                          && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress

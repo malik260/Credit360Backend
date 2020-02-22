@@ -6948,7 +6948,8 @@ namespace FintrakBanking.Repositories.Credit
         public RevisedProcessFlowModel getCashCollaterizedProcessFlowBy()
         {
             var cashCollaterzedFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
-                                   where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
+                                   where c.FLOWCHANGEID == (short)FlowChangeEnum.CASHCOLLATERIZED
+                                   //where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
                                        select new RevisedProcessFlowModel
                                    {
                                        flowchangeId = c.FLOWCHANGEID,
