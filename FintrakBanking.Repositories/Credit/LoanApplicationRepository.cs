@@ -2185,7 +2185,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
             var msg = new RacReturnInfoViewModel();
-            if (rac.form == null) return null;
+            if (rac.form == null || rac.form.Count == 0) return null;
             var ids = rac.form.Select(x => x.criteriaId);
 
             definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
@@ -2903,6 +2903,10 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
             this.loanData.LOANSWITHOTHERS = loan.loansWithOthers;
             this.loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
+            if (loan.LoanApplicationDetail.Count > 0)
+            {
+                this.loanData.FLOWCHANGEID = loan.flowchangeId;
+            }
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
