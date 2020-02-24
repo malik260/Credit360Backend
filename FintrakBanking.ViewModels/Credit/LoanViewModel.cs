@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public string divisionShortCode { get; set; }
+
         public string divisionCode { get; set; }
 
         public string facilityType { get; set; }
@@ -425,6 +427,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string divisionShortCode { get; set; }
+
         public string divisionCode { get; set; }
 
         public decimal bookedAmount { get; set; }
@@ -563,6 +567,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ContingentLoanViewModel : GeneralEntity
     {
+        public string divisionShortCode { get; set; }
+
+        public string divisionShortCodem { get; set; }
+
         public string divisionCode { get; set; }
 
         public string currencyCode { get; set; }
