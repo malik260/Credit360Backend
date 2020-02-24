@@ -58,7 +58,7 @@ namespace FintrakBanking.Interfaces.Credit
         //IEnumerable<LoanApplicationViewModel> Search(string searchString);
 
         List<LoanApplicationViewModel> Search(string searchString, int staffId = 0);
-
+        List<LoanApplicationViewModel> SearchDrawDown(string searchString, int staffId = 0);
         List<WorkflowTrackerViewModel> SearchBookedLoans(string searchString);
 
 
