@@ -23,7 +23,8 @@ using System.Data.Entity;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
 using GemBox.Spreadsheet;
-using System.IO; 
+using System.IO;
+using System.Data.Entity.Validation;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -2184,7 +2185,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
             var msg = new RacReturnInfoViewModel();
-            if (rac.form == null) return null;
+            if (rac.form == null || rac.form.Count == 0) return null;
             var ids = rac.form.Select(x => x.criteriaId);
 
             definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
@@ -2379,7 +2380,7 @@ namespace FintrakBanking.Repositories.Credit
                     RACDEFINITIONID = definition.RACDEFINITIONID,
                     OPERATIONID = operationId,
                     TARGETID = targetId,
-                    ACTUALVALUE = submission.value,
+                    ACTUALVALUE = submission.value ?? "0",
                     CREATEDBY = staffId,
                     DATETIMECREATED = DateTime.Now,
 
@@ -2408,7 +2409,7 @@ namespace FintrakBanking.Repositories.Credit
             //    ).Any())
             //        return false;
             //}
-
+            
             int integerConversion;
             int? integerValue = null;
             decimal? decimalValue = null;
@@ -2426,15 +2427,22 @@ namespace FintrakBanking.Repositories.Credit
                     if (!String.IsNullOrEmpty(value)) { return true; }
                     break;
                 case 2:
-                    decimalValue = decimal.Parse(value);
+                    if(value != null) decimalValue = decimal.Parse(value);
+                    else decimalValue = 0;
                     break;
                 case 3:
-                    int.TryParse(value, out integerConversion);
-                    integerValue = integerConversion;
+                    if (value != null)
+                    {
+                        int.TryParse(value, out integerConversion);
+                        integerValue = integerConversion;
+                    }
                     break;
                 case 4:
-                    int.TryParse(value, out integerConversion);
-                    integerValue = integerConversion;
+                    if (value != null)
+                    {
+                        int.TryParse(value, out integerConversion);
+                        integerValue = integerConversion;
+                    }
                     break;
                 case 5:
                     if (!String.IsNullOrEmpty(value)) return true;
@@ -2895,6 +2903,10 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
             this.loanData.LOANSWITHOTHERS = loan.loansWithOthers;
             this.loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
+            if (loan.LoanApplicationDetail.Count > 0)
+            {
+                this.loanData.FLOWCHANGEID = loan.flowchangeId;
+            }
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -3154,6 +3166,20 @@ namespace FintrakBanking.Repositories.Credit
                 response = context.SaveChanges();
 
             }
+            //catch (DbEntityValidationException e)
+            //{
+            //    foreach (var eve in e.EntityValidationErrors)
+            //    {
+            //        Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+            //            eve.Entry.Entity.GetType().Name, eve.Entry.State);
+            //        foreach (var ve in eve.ValidationErrors)
+            //        {
+            //            Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+            //                ve.PropertyName, ve.ErrorMessage);
+            //        }
+            //    }
+            //    throw;
+            //}
             catch (Exception ex)
             {
 
@@ -3203,6 +3229,7 @@ namespace FintrakBanking.Repositories.Credit
                 operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
                 loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
                 tenorModeId = d.TENORFREQUENCYTYPEID,
+                flowChangeId = d.TBL_LOAN_APPLICATION.FLOWCHANGEID
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
@@ -6941,7 +6968,8 @@ namespace FintrakBanking.Repositories.Credit
         public RevisedProcessFlowModel getCashCollaterizedProcessFlowBy()
         {
             var cashCollaterzedFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
-                                   where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
+                                   where c.FLOWCHANGEID == (short)FlowChangeEnum.CASHCOLLATERIZED
+                                   //where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
                                        select new RevisedProcessFlowModel
                                    {
                                        flowchangeId = c.FLOWCHANGEID,

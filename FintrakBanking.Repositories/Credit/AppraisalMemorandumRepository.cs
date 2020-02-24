@@ -1759,6 +1759,22 @@ namespace FintrakBanking.Repositories.Credit
             
 
             data.OrderByDescending(d => d.approvalTrailId);
+
+            //for Filtering multiple occuring levels
+            var data2 = data.ToList();
+            var testData = data.ToList();
+            foreach (var t in testData)
+            {
+                var firstTrailForLevel = testData.OrderBy(x => x.approvalTrailId).FirstOrDefault(x => x.fromApprovalLevelId == t.fromApprovalLevelId);
+                var multipleTrails = testData.Where(d => d.fromApprovalLevelId == firstTrailForLevel.fromApprovalLevelId && d.approvalTrailId != firstTrailForLevel.approvalTrailId).ToList();
+                foreach (var tr in multipleTrails)
+                {
+                    data2.RemoveAll(d => d.approvalTrailId == tr.approvalTrailId);
+                }
+            }
+            data = data2;
+            data.OrderByDescending(d => d.approvalTrailId);
+
             return data;
         }
 

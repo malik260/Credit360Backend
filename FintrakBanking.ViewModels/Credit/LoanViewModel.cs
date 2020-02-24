@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public string divisionCode { get; set; }
+
         public string facilityType { get; set; }
         public Decimal sanctionLimit { get; set; }
         public bool isSuspenseCredit { get; set; }
@@ -423,6 +425,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string divisionCode { get; set; }
+
         public decimal bookedAmount { get; set; }
 
         public short scheduleDayCountConventionId { get; set; }
@@ -559,6 +563,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ContingentLoanViewModel : GeneralEntity
     {
+        public string divisionCode { get; set; }
+
         public string currencyCode { get; set; }
         public string casaAccountDetails { get; set; }
 

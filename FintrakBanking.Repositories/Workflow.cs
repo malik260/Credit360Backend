@@ -191,10 +191,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
             }
 
-            if(request !=null) CustomJump(request.TOAPPROVALLEVELID, request.FROMAPPROVALLEVELID);
+            if (request !=null) CustomJump(request.TOAPPROVALLEVELID, request.FROMAPPROVALLEVELID);
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
-
             // if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
 
             if (this.useOrganogram == true) toStaffId = GetReportingLineStaffId();
@@ -440,7 +439,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         public void ResolveExternalFlowLoop(TBL_APPROVAL_TRAIL request, TBL_APPROVAL_TRAIL initiatorRequest)
         {
             if(this.StatusId != (int)ApprovalStatusEnum.Referred && this.request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.referredLog.Count <= 0){ return; }
-
             if (this.StatusId == (int)ApprovalStatusEnum.Referred )
             {
                 this.referBackStateId = (short)ApprovalState.Initiation;

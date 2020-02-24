@@ -301,6 +301,7 @@ namespace FintrakBanking.Repositories.Credit
             operationIds.Add((int)OperationsEnum.CorporateDrawdownRequest);
             operationIds.Add((int)OperationsEnum.IndividualDrawdownRequest);
             operationIds.Add((int)OperationsEnum.CreditCardDrawdownRequest);
+            operationIds.Add((int)OperationsEnum.RevolvingTranchDisbursement);
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
             List<int> levelIds = new List<int>();
@@ -405,6 +406,7 @@ namespace FintrakBanking.Repositories.Credit
                         requestDate = req.DATETIMECREATED,
                         apiRequestId = m.APIREQUESTID,
                         //staffId = (atrail.LOOPEDSTAFFID != null ? atrail.LOOPEDSTAFFID : atrail.TOSTAFFID),
+                        divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                         divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                     }).ToList();
 
@@ -469,10 +471,42 @@ namespace FintrakBanking.Repositories.Credit
             }
             else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
             {
-                operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+                if (GetRevolvingTrancheDisbursementOperationId(applicationDetailId))
+                {
+                    operationId = (short)OperationsEnum.RevolvingTranchDisbursement;
+                }
+                else
+                {
+                    operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+                }
+                
             }
 
             return operationId;
+        }
+
+        private bool GetRevolvingTrancheDisbursementOperationId(int applicationDetailId)
+        {
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(applicationDetailId);
+
+            var product = context.TBL_PRODUCT.Find(loanApplicationDetails.APPROVEDPRODUCTID);
+
+            bool isContingent = false;
+            bool isRevolving = false;
+            if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability) { isContingent = true; }
+            if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan) { isRevolving = true; }
+
+            if (product != null && product.ISFACILITYLINE == true && isContingent == true && context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetails.LOANAPPLICATIONDETAILID).Count() >= 1)
+            {
+                return true;
+            }
+
+            if (product != null && product.ISFACILITYLINE == true && isRevolving == true && context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetails.LOANAPPLICATIONDETAILID).Count() >= 1)
+            {
+                return true;
+                
+            }
+             return false;
         }
 
         private IEnumerable<CamProcessedLoanViewModel> AvailedLoanApplicationsDetails(int companyId, int staffId, int branchId)
@@ -740,11 +774,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             var company = context.TBL_COMPANY.Find(companyId);
+            var staffIds = generalSetup.GetStaffRlieved(staffId);
 
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                          where a.COMPANYID == companyId && d.DELETED == false
-                         && a.CREATEDBY == staffId
+                         && staffIds.Contains(a.CREATEDBY)
                          && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -1367,8 +1402,16 @@ namespace FintrakBanking.Repositories.Credit
             }
             else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
             {
-                LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
-                request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
+                if (GetRevolvingTrancheDisbursementOperationId(loanApplicationDetails.LOANAPPLICATIONDETAILID))
+                {
+                    LogApproval(approvalModel, (short)OperationsEnum.RevolvingTranchDisbursement, true, (int)ApprovalStatusEnum.Pending);
+                    request.OPERATIONID = (short)OperationsEnum.RevolvingTranchDisbursement;
+                }
+                else
+                {
+                    LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    request.OPERATIONID = (short)OperationsEnum.CorporateDrawdownRequest;
+                }
             }
 
 
