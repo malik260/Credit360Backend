@@ -949,50 +949,57 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (workflow.NewState == (int)ApprovalState.Ended && model.isFlowTest == false)
                 {
-                    short nextOperatioId = 0;
-                    var flowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == model.operationId).FirstOrDefault();
-                    var defaultFlowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == 0).FirstOrDefault();
-                    if (model.operationId == (short)OperationsEnum.LoanReviewApprovalAvailment) appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-
-                    if (flowOrder == null) 
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                     {
-                        if (defaultFlowOrder.REQUIREOFFERLETTER && currentOperationType != (short)OperationsEnum.LoanReviewApprovalAvailment)
+                        short nextOperatioId = 0;
+                        var flowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == model.operationId).FirstOrDefault();
+                        var defaultFlowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == 0).FirstOrDefault();
+                        if (model.operationId == (short)OperationsEnum.LoanReviewApprovalAvailment) appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+
+                        if (flowOrder == null)
                         {
-                            nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
-                            LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
+                            if (defaultFlowOrder.REQUIREOFFERLETTER && currentOperationType != (short)OperationsEnum.LoanReviewApprovalAvailment)
+                            {
+                                nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
+                                LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
+                            }
+                            else if (defaultFlowOrder.REQUIREAVAILMENT)
+                            {
+                                nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
+                                LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
+                                //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            }
+                            else
+                            {
+                                LogLMSOperationForRouting(model, items, nextOperatioId, (short)OperationsEnum.LoanReviewApprovalAvailment);
+                            }
                         }
-                        else if (defaultFlowOrder.REQUIREAVAILMENT)
+
+                        if (flowOrder != null)
                         {
-                            nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
-                            LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
-                            //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                        }
-                        else
-                        {
-                            LogLMSOperationForRouting(model, items, nextOperatioId, (short)OperationsEnum.LoanReviewApprovalAvailment);
+                            if (flowOrder.REQUIREOFFERLETTER)
+                            {
+                                nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
+                                LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
+                            }
+                            else if (flowOrder.REQUIREAVAILMENT)
+                            {
+                                nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
+                                LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
+                                //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            }
+                            else
+                            {
+                                LogLMSOperationForRouting(model, items, nextOperatioId, (short)OperationsEnum.LoanReviewApprovalAvailment);
+                            }
                         }
                     }
 
-                    if(flowOrder != null)
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
                     {
-                        if (flowOrder.REQUIREOFFERLETTER)
-                        {
-                            nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
-                            LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
-                        }
-                        else if (flowOrder.REQUIREAVAILMENT)
-                        {
-                            nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
-                            LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
-                            //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                        }
-                        else
-                        {
-                            LogLMSOperationForRouting(model, items, nextOperatioId, (short)OperationsEnum.LoanReviewApprovalAvailment);
-                        }
+                        appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected;
                     }
-                    
-                    context.SaveChanges();
+                        context.SaveChanges();
                 }
 
                 if (model.isFlowTest == false) { trans.Commit(); } else { trans.Rollback(); }
