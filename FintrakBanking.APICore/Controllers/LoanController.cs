@@ -300,29 +300,29 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            //try
-            //{
-            //    //TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("maintain-facility-line")]
+        public HttpResponseMessage UpdateFacilityLineStatus([FromBody] LoanViewModel entity)
+        {
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
 
 
-            //}
-            //catch (ConditionNotMetException ce)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $" {ce.Message}" });
-            //}
-            //catch (APIErrorException ae)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
-            //}
-            //catch (TwoFactorAuthenticationException fa)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
-            //}
-            //catch (SecureException ex)
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            //}
+            var data = repo.UpdateFacilityLineStatus(entity);
+            if (data)
+            {
+              return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Customer's line facility successfully maintained." });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Line could not be maintained. An error occured." });
+            
         }
 
         [HttpGet]
