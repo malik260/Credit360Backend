@@ -2227,10 +2227,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     tempProductToUpdate.TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals;
 
                     //Product Behaviour Update
-                    if (existingTempProductBehaviour != null)
-                    {
+                    //if (existingTempProductBehaviour != null)
+                    //{
                         tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
                         {
+                            //TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID,
                             PRODUCTCODE = productModel.productCode,
                             COLLATERAL_FCY_LIMIT = productModel.productBehaviour.collateralFcyLimit,
                             COLLATERAL_LCY_LIMIT = productModel.productBehaviour.collateralLcyLimit,
@@ -2245,16 +2246,20 @@ namespace FintrakBanking.Repositories.Setups.General
                             CREATEDBY = productModel.createdBy,
                             CRMSREGULATORYID = productModel.productBehaviour.crmsRegulatoryId,
                         };
-                    }
-                    context.TBL_TEMP_PRODUCT.Add(tempProductToUpdate);
-                    context.SaveChanges();
-                    if (existingTempProductBehaviour != null)
-                    {
-                        tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
-                        context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
-                    }
+                    //}
 
-                }
+                    context.TBL_TEMP_PRODUCT.Add(tempProductToUpdate);
+
+                    //if (existingTempProductBehaviour != null)
+                    //{
+                        //tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
+                        context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
+                    //}
+
+                    context.SaveChanges();
+                    tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
+
+            }
                 else
                 {
                     var targetProduct = context.TBL_PRODUCT.Find(productId);
@@ -2411,6 +2416,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         //end of Audit section -------------------------------
 
                         output = await context.SaveChangesAsync() > 0;
+
+                        if (existingTempProduct == null) { tempProductBehaviour.TEMP_PRODUCTID = tempProduct.TEMP_PRODUCTID; }
 
                         targetProductId = existingTempProduct?.TEMP_PRODUCTID ?? tempProduct.TEMP_PRODUCTID;
 

@@ -2905,6 +2905,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
             if (loan.LoanApplicationDetail.Count > 0)
             {
+                var exclusiveOperationId = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == loan.flowchangeId)?.OPERATIONID;
+                this.loanData.OPERATIONID = ((exclusiveOperationId == null) || (exclusiveOperationId == 0)) ? (int)OperationsEnum.CreditAppraisal : (int)exclusiveOperationId;
                 this.loanData.FLOWCHANGEID = loan.flowchangeId;
             }
         }
