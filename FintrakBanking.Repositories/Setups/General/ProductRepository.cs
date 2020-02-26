@@ -2227,10 +2227,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     tempProductToUpdate.TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals;
 
                     //Product Behaviour Update
-                    if (existingTempProductBehaviour != null)
-                    {
+                    //if (existingTempProductBehaviour != null)
+                    //{
                         tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
                         {
+                            TEMP_PRODUCTID = (short)productModel.productId,
                             PRODUCTCODE = productModel.productCode,
                             COLLATERAL_FCY_LIMIT = productModel.productBehaviour.collateralFcyLimit,
                             COLLATERAL_LCY_LIMIT = productModel.productBehaviour.collateralLcyLimit,
@@ -2245,17 +2246,20 @@ namespace FintrakBanking.Repositories.Setups.General
                             CREATEDBY = productModel.createdBy,
                             CRMSREGULATORYID = productModel.productBehaviour.crmsRegulatoryId,
                         };
-                    }
+                    //}
                     context.TBL_TEMP_PRODUCT.Add(tempProductToUpdate);
-                    context.SaveChanges();
+
                     if (existingTempProductBehaviour != null)
                     {
                         tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
                         context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
                     }
 
-                }
-                else
+                    context.SaveChanges();
+
+
+            }
+            else
                 {
                     var targetProduct = context.TBL_PRODUCT.Find(productId);
                     var targetProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == targetProduct.PRODUCTID).FirstOrDefault();
@@ -2368,6 +2372,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
                     {
+                        TEMP_PRODUCTID = (short) productModel.productId,
                         PRODUCTCODE = productModel.productCode,
                         COLLATERAL_FCY_LIMIT = productModel.productBehaviour.collateralFcyLimit,
                         COLLATERAL_LCY_LIMIT = productModel.productBehaviour.collateralLcyLimit,
