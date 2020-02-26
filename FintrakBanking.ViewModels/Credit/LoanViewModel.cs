@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public short? approvedLineStatusId { get; set; }
+
         public string divisionShortCode { get; set; }
 
         public string divisionCode { get; set; }
@@ -707,6 +709,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public bool isLineFacility { get; set; }
+
         public DateTime systemArrivalDateTime { get; set; }
 
         public int appraisalOperationId { get; set; }
