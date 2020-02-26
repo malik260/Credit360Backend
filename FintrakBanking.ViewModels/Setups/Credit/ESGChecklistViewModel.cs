@@ -35,9 +35,12 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string esgSubCategoryName { get; set; }
         public bool isCompulsory { get; set; }
         public string itemDescription { get; set; }
-        public int gradeScore { get; set; }
-        public int checklistScoresId { get; set; }
-        public string grade { get; set; }
+        public int yesGradeScore { get; set; }
+        public int noGradeScore { get; set; }
+        public int yesChecklistScoresId { get; set; }
+        public int noChecklistScoresId { get; set; }
+        public string yesGrade { get; set; }
+        public string noGrade { get; set; }
         public string sectorName { get; set; }
         public string scoreWeight { get; set; }
         public string scoreColourCode { get; set; }
@@ -102,8 +105,12 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string checklistStatusName { get; set; }
         public string grade { get; set; }
         public int? sectorId { get; set; }
+        public int yesChecklistScoresId { get; set; }
+        public int noChecklistScoresId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }
+        public CheckListStatusViewModel yesResponseTypes { get; set; }
+        public CheckListStatusViewModel noResponseTypes { get; set; }
     }
 
     public class GreenRatingDefinitionAndDetailViewModel
@@ -123,6 +130,8 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string sectorName { get; set; }
         public int loanApplicationDetailId { get; set; }
         public short sectorId { get; set; }
+        public int yesChecklistScoresId { get; set; }
+        public int noChecklistScoresId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }
     }

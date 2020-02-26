@@ -17,7 +17,8 @@
         public int? ESGSUBCATEGORYID { get; set; }
         public bool ISCOMPULSORY { get; set; }
         public string ITEMDESCRIPTION { get; set; }
-        public int CHECKLISTSCORESID { get; set; }
+        public int YESCHECKLISTSCORESID { get; set; }
+        public int? NOCHECKLISTSCORESID { get; set; }
         public int CHECKLIST_TYPEID { get; set; }
         public int? SECTORID { get; set; }
         //public int SCORE { get; set; }
