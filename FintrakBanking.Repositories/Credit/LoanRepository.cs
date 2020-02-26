@@ -4691,7 +4691,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (WorkflowStage == "RM") { WorkflowStageName = "11"; }
 
-            if (WorkflowStage.Substring(0, 2) == "CR") { WorkflowStageName = "12"; }
+            if (WorkflowStage == "CA") { WorkflowStageName = "12"; }
+            //if (WorkflowStage.Substring(0, 2) == "CR") { WorkflowStageName = "12"; }
 
             if (WorkflowStage == "GH") { WorkflowStageName = "13"; }
 
