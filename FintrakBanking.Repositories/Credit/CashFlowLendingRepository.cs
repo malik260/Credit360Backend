@@ -463,8 +463,8 @@ namespace FintrakBanking.Repositories.Credit
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == model.customerCode).FirstOrDefault();
             if(customer == null) return fireResponse("This customer is not profiled on Fintrak Credit360 application", "99", "");
 
-            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == model.settlementAccount).FirstOrDefault();
-            //var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == model.settlementAccount && x.CUSTOMERID == customer.CUSTOMERID).FirstOrDefault();
+            //var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == model.settlementAccount).FirstOrDefault();
+            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == model.settlementAccount && x.CUSTOMERID == customer.CUSTOMERID).FirstOrDefault();
 
             LoanApplicationViewModel loanApp = new LoanApplicationViewModel();
             loanApp.customerId = customer.CUSTOMERID;

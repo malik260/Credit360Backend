@@ -338,6 +338,53 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
+        public bool UpdateFacilityLineStatus(LoanViewModel entity)
+        {
+            var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationDetailId);
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
+            if (application == null) { return false; }
+
+            var approvalModel = new ForwardViewModel
+            {
+                createdBy = entity.createdBy,
+                companyId = entity.companyId,
+                applicationId = entity.loanBookingRequestId,
+                comment = "Line Maintained",
+                amount = entity.principalAmount,
+                operationId = (int) entity.operationId,
+            };
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Approved;
+            workflow.TargetId = (int)entity.loanBookingRequestId;
+            workflow.Comment = entity.comment;
+            workflow.OperationId = (short)entity.operationId;
+            workflow.DeferredExecution = true;
+            workflow.ExternalInitialization = false;
+
+            if (application != null) workflow.BusinessUnitId = application.TBL_CUSTOMER?.BUSINESSUNTID;
+
+            workflow.LogActivity();
+
+            context.SaveChanges();
+
+
+            if (workflow.NewState == (int)ApprovalState.Ended)
+            {
+                application.APPROVEDLINESTATUSID = entity.approvedLineStatusId;
+                request.APPROVEDLINESTATUSID = entity.approvedLineStatusId;
+                request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                request.ISUSED = true;
+                context.SaveChanges();
+
+                return true;
+            }
+            else
+            { return false; }
+
+        }
+
         public string AddLoanBooking(LoanViewModel entity)
         {
             if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating || entity.productTypeId == (int)LoanProductTypeEnum.SyndicatedTermLoan)
@@ -422,7 +469,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (attendedRequests.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
                     throw new ConditionNotMetException("Bond and gaurantee job sent to legal was disapproved. You cannot continue with the application.");
             }
-
+            
             return true;
         }
 
@@ -7357,6 +7404,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                        join p in context.TBL_PRODUCT on  d.APPROVEDPRODUCTID equals p.PRODUCTID
                         where a.COMPANYID == companyId && d.DELETED == false
                         && staffIds.Contains(a.CREATEDBY)
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -7371,6 +7419,7 @@ namespace FintrakBanking.Repositories.Credit
                             //approvalStatusId = (short)atrail.APPROVALSTATUSID,
                             loanBookingRequestId = 0,
                             approvalTrailId = 0,
+                            isLineFacility = p.ISFACILITYLINE,
                             appraisalOperationId = a.OPERATIONID,
                             //bookingAmountRequested = r.AMOUNT_REQUESTED,
                             requestedAmount = 0,
@@ -8486,6 +8535,7 @@ namespace FintrakBanking.Repositories.Credit
                                        bookingAmountRequested = s.AMOUNT_REQUESTED,
                                        loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                                        bookingRequestStatusId = s.APPROVALSTATUSID,
+                                       isLineFacility = p.ISFACILITYLINE,
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
                                        systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
@@ -8813,6 +8863,7 @@ namespace FintrakBanking.Repositories.Credit
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
+                            isLineFacility = p.ISFACILITYLINE,
                             bookingAmountRequested = s.AMOUNT_REQUESTED,
                             loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                             bookingRequestStatusId = s.APPROVALSTATUSID,
