@@ -552,6 +552,30 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-collateral-loan/{loanId}")]
+        public HttpResponseMessage GetCollateralDetailLMS(int loanId)
+        {
+            try
+            {
+                var data = repo.CollateralByLoanId(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-search")]

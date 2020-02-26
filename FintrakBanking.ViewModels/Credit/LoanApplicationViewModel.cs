@@ -61,7 +61,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short loanStatusId { get; set; }
         public string loanStatus { get; set; }
         public int relationshipOfficerId { get; set; }
-        public int relationshipManagerId { get; set; }
+        public int? relationshipManagerId { get; set; }
         public DateTime applicationDate { get; set; }
         public DateTime? applicationDateArch { get; set; }
         public decimal applicationAmount { get; set; }
@@ -226,6 +226,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerType { get; set; }
         public string isProjectRelated { get; set; }
         public decimal facilityAmount { get; set; }
+        public object operationTypeName { get; set; }
+        public string reviewLoanDetaile { get; set; }
+        public string referenceNumber { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {
@@ -375,6 +378,8 @@ namespace FintrakBanking.ViewModels.Credit
         public double? proposedInterestRate { get; set; }
 
         public decimal proposedAmount { get; set; }
+
+        public int? flowChangeId { get; set; }
 
         public short approvedProductId { get; set; }
 

@@ -10,7 +10,10 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
-        
+        IEnumerable<StaffInfoViewModel> GetPasDueObligationsAccountOfficersByGroupHeads(string groupHeadCode);
+        IEnumerable<StaffInfoViewModel> GetDivisionalOfficersByGroupHeads(string groupHeadCode);
+        IEnumerable<StaffInfoViewModel> GetAccountOfficersByGroupHeads(string groupHeadCode);
+        IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads();
         IEnumerable<StaffInfoViewModel> GetAccountOfficersWithImminentMaturities();
         IEnumerable<StaffInfoViewModel> GetCreditCardDelinquencyMonitoringReport();
         IEnumerable<StaffInfoViewModel> GetOverlineMonitoringReport();
@@ -20,6 +23,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<StaffInfoViewModel> GetExpiringFacilityReport();
         IEnumerable<StaffInfoViewModel> GetCreditCardMaturingObligations();
         IEnumerable<StaffInfoViewModel> GetPastDueObligationsReminder();
+        IEnumerable<StaffInfoViewModel> GetPastDueObligationsReminderByGroupHeads();
         IEnumerable<GlobalExposureViewModel> GetScheduleOfDirectorsAccounts();
         IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportOne();
         IEnumerable<GlobalExposureViewModel> GetLcUtilizationReportTwo();

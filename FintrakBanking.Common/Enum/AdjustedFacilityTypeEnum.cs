@@ -22,7 +22,7 @@ namespace FintrakBanking.Common.Enum
         GUARANTEE = 12,
         STAFFLOAN = 13,
         //ONLENDING = 15
-        //N/A = 16,
+        NA = 0,
         OTHERSN = 17,
         ADVANCESUNDERLEASEN = 18,
         TIMELOAN = 19,

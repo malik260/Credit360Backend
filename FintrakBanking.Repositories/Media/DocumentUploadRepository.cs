@@ -73,7 +73,7 @@ namespace FintrakBanking.Repositories.Media
                    fileExtension = up.FILEEXTENSION,
                    fileSize = up.FILESIZE,
                    fileSizeUnit = up.FILESIZEUNIT,
-                   fileData = up.FILEDATA,
+                   //fileData = up.FILEDATA,
                    companyId = up.COMPANYID,
                    issueDate = up.ISSUEDATE,
                    expiryDate = up.EXPIRYDATE,
@@ -97,7 +97,7 @@ namespace FintrakBanking.Repositories.Media
                     fileExtension = up.fileExtension,
                     fileSize = up.fileSize,
                     fileSizeUnit = up.fileSizeUnit,
-                    fileData = up.fileData,
+                    //fileData = up.fileData,
                     companyId = up.companyId,
                     issueDate = up.issueDate,
                     expiryDate = up.expiryDate,
@@ -141,7 +141,7 @@ namespace FintrakBanking.Repositories.Media
                                    documentTitle = d.DOCUMENT_TITLE,
                                    fileName = d.FILENAME,
                                    fileExtension = d.FILEEXTENSION,
-                                   fileData = d.FILEDATA,
+                                   //fileData = d.FILEDATA,
                                    //fileSize = d.fileSize,
                                })?.ToList();
 
@@ -185,7 +185,7 @@ namespace FintrakBanking.Repositories.Media
                    fileExtension = up.FILEEXTENSION,
                    fileSize = up.FILESIZE,
                    fileSizeUnit = up.FILESIZEUNIT,
-                   fileData = up.FILEDATA,
+                   //fileData = up.FILEDATA,
                    companyId = up.COMPANYID,
                    issueDate = up.ISSUEDATE,
                    expiryDate = up.EXPIRYDATE,
@@ -209,7 +209,7 @@ namespace FintrakBanking.Repositories.Media
                     fileExtension = up.fileExtension,
                     fileSize = up.fileSize,
                     fileSizeUnit = up.fileSizeUnit,
-                    fileData = up.fileData,
+                    //fileData = up.fileData,
                     companyId = up.companyId,
                     issueDate = up.issueDate,
                     expiryDate = up.expiryDate,
@@ -255,7 +255,7 @@ namespace FintrakBanking.Repositories.Media
                                    documentTitle = d.DOCUMENT_TITLE,
                                    fileName = d.FILENAME,
                                    fileExtension = d.FILEEXTENSION,
-                                   fileData = d.FILEDATA,
+                                   //fileData = d.FILEDATA,
                                    //fileSize = d.fileSize,
                                })?.ToList();
 
@@ -287,6 +287,67 @@ namespace FintrakBanking.Repositories.Media
             return output;
         }
 
+
+        public IEnumerable<DocumentUploadViewModel> GetDocumentUploadsLmss(int staffId, int operationId, int targetId)
+        {
+
+            var firstQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
+                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
+               new {
+                   documentUploadId = up.DOCUMENTUPLOADID,
+                   fileName = up.FILENAME,
+                   fileExtension = up.FILEEXTENSION,
+                   fileSize = up.FILESIZE,
+                   fileSizeUnit = up.FILESIZEUNIT,
+                   //fileData = up.FILEDATA,
+                   companyId = up.COMPANYID,
+                   issueDate = up.ISSUEDATE,
+                   expiryDate = up.EXPIRYDATE,
+                   physicalFilenumber = up.PHYSICALFILENUMBER,
+                   physicalLocation = up.PHYSICALLOCATION,
+                   documentTypeId = up.DOCUMENTTYPEID,
+                   documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                   documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                   documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                   //uploadedBy = context.TBL_STAFF.Where(s=>s.STAFFID == us.CREATEDBY).Select(s=>s.FIRSTNAME +" "+s.MIDDLENAME +" "+s.LASTNAME).FirstOrDefault(),
+                   owner = up.CREATEDBY == staffId,
+                   dateTimeCreated = us.DATETIMECREATED,
+                   dateTimeUpdated = us.DATETIMEUPDATED,
+                   createdBy = us.CREATEDBY.Value,
+               }).AsEnumerable()
+                .Select(up => new DocumentUploadViewModel
+                {
+                    documentUploadId = up.documentUploadId,
+                    fileName = up.fileName,
+                    fileExtension = up.fileExtension,
+                    fileSize = up.fileSize,
+                    fileSizeUnit = up.fileSizeUnit,
+                    //fileData = up.fileData,
+                    companyId = up.companyId,
+                    issueDate = up.issueDate,
+                    expiryDate = up.expiryDate,
+                    physicalFilenumber = up.physicalFilenumber,
+                    physicalLocation = up.physicalLocation,
+                    documentTypeId = up.documentTypeId,
+                    documentTypeName = up.documentTypeName,
+                    documentCategoryId = up.documentCategoryId,
+                    documentCategoryName = up.documentCategoryName,
+                    owner = up.owner,
+                    dateTimeCreated = up.dateTimeCreated,
+                    dateTimeUpdated = up.dateTimeUpdated,
+                    createdBy = up.createdBy,
+                    uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
+
+                })
+                .OrderBy(x => x.dateTimeCreated)
+                .ThenBy(x => x.documentCategoryId)
+                .ThenBy(x => x.documentTypeId)?
+                .ToList();
+
+            return firstQuery;
+        }
+
         private IEnumerable<DocumentUploadViewModel> GetDocumentUploadsByOperation(int staffId, int operationId, int targetId)
         {
             var firstQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
@@ -298,7 +359,7 @@ namespace FintrakBanking.Repositories.Media
                    fileExtension = up.FILEEXTENSION,
                    fileSize = up.FILESIZE,
                    fileSizeUnit = up.FILESIZEUNIT,
-                   fileData = up.FILEDATA,
+                   //fileData = up.FILEDATA,
                    companyId = up.COMPANYID,
                    issueDate = up.ISSUEDATE,
                    expiryDate = up.EXPIRYDATE,
@@ -322,7 +383,7 @@ namespace FintrakBanking.Repositories.Media
                 fileExtension = up.fileExtension,
                 fileSize = up.fileSize,
                 fileSizeUnit = up.fileSizeUnit,
-                fileData = up.fileData,
+                //fileData = up.fileData,
                 companyId = up.companyId,
                 issueDate = up.issueDate,
                 expiryDate = up.expiryDate,
@@ -360,7 +421,7 @@ namespace FintrakBanking.Repositories.Media
                         fileExtension = up.FILEEXTENSION,
                         fileSize = up.FILESIZE,
                         fileSizeUnit = up.FILESIZEUNIT,
-                        fileData = up.FILEDATA,
+                        //fileData = up.FILEDATA,
                         companyId = up.COMPANYID,
                         issueDate = up.ISSUEDATE,
                         expiryDate = up.EXPIRYDATE,
@@ -386,7 +447,7 @@ namespace FintrakBanking.Repositories.Media
                 fileExtension = up.fileExtension,
                 fileSize = up.fileSize,
                 fileSizeUnit = up.fileSizeUnit,
-                fileData = up.fileData,
+                //fileData = up.fileData,
                 companyId = up.companyId,
                 issueDate = up.issueDate,
                 expiryDate = up.expiryDate,
@@ -424,7 +485,7 @@ namespace FintrakBanking.Repositories.Media
                     fileExtension = x.up.FILEEXTENSION,
                     fileSize = x.up.FILESIZE,
                     fileSizeUnit = x.up.FILESIZEUNIT,
-                    fileData = x.up.FILEDATA,
+                    //fileData = x.up.FILEDATA,
                     companyId = x.up.COMPANYID,
                     issueDate = x.up.ISSUEDATE,
                     expiryDate = x.up.EXPIRYDATE,
@@ -484,7 +545,7 @@ namespace FintrakBanking.Repositories.Media
                                   fileExtension = x.FILEEXTENSION,
                                   fileSize = x.FILESIZE,
                                   fileSizeUnit = x.FILESIZEUNIT,
-                                  fileData = x.FILEDATA,
+                                  //fileData = x.FILEDATA,
                                   companyId = x.COMPANYID,
                                   issueDate = x.ISSUEDATE,
                                   expiryDate = x.EXPIRYDATE,
@@ -828,7 +889,7 @@ namespace FintrakBanking.Repositories.Media
                         fileExtension = up.FILEEXTENSION,
                         fileSize = up.FILESIZE,
                         fileSizeUnit = up.FILESIZEUNIT,
-                        fileData = up.FILEDATA,
+                        //fileData = up.FILEDATA,
                         companyId = up.COMPANYID,
                         issueDate = up.ISSUEDATE,
                         expiryDate = up.EXPIRYDATE,
@@ -851,7 +912,7 @@ namespace FintrakBanking.Repositories.Media
                 fileExtension = up.fileExtension,
                 fileSize = up.fileSize,
                 fileSizeUnit = up.fileSizeUnit,
-                fileData = up.fileData,
+                //fileData = up.fileData,
                 companyId = up.companyId,
                 issueDate = up.issueDate,
                 expiryDate = up.expiryDate,

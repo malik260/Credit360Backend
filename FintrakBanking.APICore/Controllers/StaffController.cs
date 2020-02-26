@@ -609,11 +609,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("staff/approver-search/operation/{operationId}/")]
-        public HttpResponseMessage SearchApprovers(int operationId, string queryString = "")
+        [Route("staff/approver-search/operation/{operationId}/currentLevel/{currentLevel}")]
+        public HttpResponseMessage SearchApprovers(int operationId, int currentLevel, string queryString = "")
         {
             if (queryString == null) queryString = string.Empty;
-            var data = repo.SearchApprovers(operationId, token.GetRoleId, token.GetUserGroupId, queryString,token.GetCompanyId);
+            var data = repo.SearchApprovers(operationId, currentLevel, token.GetRoleId, token.GetUserGroupId, queryString,token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
@@ -800,9 +800,9 @@ namespace FintrakBanking.APICore.Controllers
                 //int uploadType;
                 //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
                 //{
-                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");loginStaffPassCode
                 //}
-                
+
 
                 byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
                 string password = Encoding.UTF8.GetString(pass);
@@ -816,6 +816,8 @@ namespace FintrakBanking.APICore.Controllers
                     loginStaffPassword= password,
                     loginStaffCode = token.GetUsername
                  };
+
+                if (entity.loginStaffPassword == string.Empty) entity.loginStaffPassword = "A031E392FA3FF64D1A5F18F047A23BAA7D41FACB25F6CAD49C7B9FCE945C83E6B210FDE78CCE5CEF63342748D8355DE11222FC52DCE218B090623CCEBF970C88";
 
                 if (!provider.FileStreams.Any())
                 {

@@ -71,6 +71,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         string AddLoanBooking(LoanViewModel entity);
 
+        bool UpdateFacilityLineStatus(LoanViewModel entity)
+
         //  bool AddLoanGuarantor(LoanGuarantorViewModel guarantorModel, short productTypeId, int loanApplicationId);
 
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
@@ -92,7 +94,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int staffId, int companyId, int applicationDetailId, int loanBookingRequestId);
 
-        bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> entity);
 
         IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId);
 
@@ -160,7 +161,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         //void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
-        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery);
+        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(string searchQuery);
+        //IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery);
         //IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanReviewFeeCharge(int loanSystemTypeId, string searchQuery);
         IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanFeeCharge(int loanSystemTypeId, string searchQuery);
 

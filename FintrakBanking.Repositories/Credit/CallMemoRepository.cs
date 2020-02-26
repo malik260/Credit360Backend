@@ -293,7 +293,6 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CallMemoViewModel> GetCustomerApprovedCallMemo(int staffId, int customerId)
         {
             var data = (from a in _context.TBL_CALL_MEMO
-                            //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where a.STAFFID == staffId && a.CUSTOMERID == customerId && a.APPROVALSTATUSID == (int) ApprovalStatusEnum.Approved
                         orderby a.CALLMEMOID
@@ -301,7 +300,6 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             callMemoId = a.CALLMEMOID,
                             loanApplicationId = a.LOANAPPLICATIONID,
-                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
@@ -325,18 +323,19 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CallMemoViewModel> SearchCallMemo(int staffId, CallMemoViewModel model)
         {
-            var data = (from a in _context.TBL_CALL_MEMO
-                            //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+            var staffs = from s in _context.TBL_STAFF select s;
+            var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.CallMemo).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+            //&& a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+            var customer = model.customerName;
+            var firstQuery = (from a in _context.TBL_CALL_MEMO
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                        where (c.FIRSTNAME + " " + c.LASTNAME).ToLower().Contains(model.customerName.ToLower())
-                        && a.NEXTCALLDATE >= model.startDate && a.NEXTCALLDATE <= model.endDate
-                        && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        where (c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).ToLower().Contains(customer.ToLower())
+                        && a.MEMODATE >= model.startDate && a.MEMODATE <= model.endDate
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
                             callMemoId = a.CALLMEMOID,
                             loanApplicationId = a.LOANAPPLICATIONID,
-                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
@@ -355,17 +354,54 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(O => O.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(O => O.APPROVALSTATUSNAME).FirstOrDefault(),
                             operationId = (int)OperationsEnum.CallMemo
                         }).ToList();
+            var secondQuery = (from x in _context.TBL_CALL_MEMO
+                               join trail in _context.TBL_APPROVAL_TRAIL on x.CALLMEMOID equals trail.TARGETID
+                               join c in _context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                               where trail.OPERATIONID == (short)OperationsEnum.CallMemo
+                                    && trail.TARGETID == x.CALLMEMOID
+                               orderby trail.APPROVALTRAILID descending
+                               select new CallMemoViewModel
+                               {
+                                   callMemoId = x.CALLMEMOID,
+                                   loanApplicationId = x.LOANAPPLICATIONID,
+                                   participants = x.PARTICIPANTS,
+                                   location = x.LOCATION,
+                                   customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                   customerId = c.CUSTOMERID,
+                                   memoDate = x.MEMODATE,
+                                   nextCallDate = x.NEXTCALLDATE,
+                                   purpose = x.PURPOSE,
+                                   discusion = x.DISCUSION,
+                                   action = x.ACTION,
+                                   cc = x.CC,
+                                   background = x.BACKGROUND,
+                                   recentUpdate = x.RECENTUPDATE,
+                                   createdBy = x.CREATEDBY,
+                                   dateTimeCreated = x.DATECREATED,
+                                   operationId = (int)OperationsEnum.CallMemo,
+                                   loopedStaffId = trail.LOOPEDSTAFFID,
+                                   approvalStatusId = trail.APPROVALSTATUSID,
+                                   approvalTrailId = trail.APPROVALTRAILID,
+                                   toApprovalLevelName = trail.TOAPPROVALLEVELID == null ? "N/A" : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                   fromApprovalLevelName = trail.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == trail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                   approvalStatusName = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                               }).GroupBy(l => l.callMemoId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                        .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                        || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                        && l.loopedStaffId == staffId)).ToList();
+
+            var data = firstQuery.Union(secondQuery).ToList();
             return data;
         }
 
         public IEnumerable<CallMemoViewModel> GetAllCallMemo(int staffId)
         {
-           
-                var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.CallMemo).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+            var staffs = from s in _context.TBL_STAFF select s;
+            var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.CallMemo).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
 
                 var firstQuery = (from a in _context.TBL_CALL_MEMO
                                   join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                  where a.STAFFID == staffId && (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                                  where a.STAFFID == staffId && (a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                                   orderby a.CALLMEMOID
                                   select new CallMemoViewModel
                                   {
@@ -418,11 +454,16 @@ namespace FintrakBanking.Repositories.Credit
                                        loopedStaffId = trail.LOOPEDSTAFFID,
                                        approvalStatusId = trail.APPROVALSTATUSID,
                                        approvalTrailId = trail.APPROVALTRAILID,
+                                       toApprovalLevelName = trail.TOAPPROVALLEVELID == null ? "N/A" : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                       fromApprovalLevelName = trail.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == trail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                        approvalStatusName = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
-                                   }).GroupBy(x => x.callMemoId).Select(x => x.OrderByDescending(p => p.approvalTrailId).FirstOrDefault()).Where((trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
-                                              && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)).ToList();
-                var data = firstQuery.Union(secondQuery).ToList();
-                return data;
+                                   }).GroupBy(l => l.callMemoId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                        .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                        || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                        && l.loopedStaffId == staffId)).ToList();
+
+            var data = firstQuery.Union(secondQuery).ToList();
+            return data;
         }
 
         public int AddCallMemo(CallMemoViewModel model)
@@ -579,9 +620,10 @@ namespace FintrakBanking.Repositories.Credit
                         if (_workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                         {
                             var memo = _context.TBL_CALL_MEMO.Find(entity.callMemoId);
-                            var emailList = memo.CC;
+                            var accountOfficer = _context.TBL_STAFF.Where(s => s.STAFFID == memo.CREATEDBY).FirstOrDefault();
+                            var emailList = GetBusinessUsersEmails(accountOfficer.MISCODE) +";"+memo.CC;
                             var subject = $"Call Memo Approved Notification";
-                            var messageBody = $"Dear All,<br/> Call Memo with purpose " + memo.PURPOSE + " has been approve.<br/> Kindly see details below.";
+                            var messageBody = $"Dear All,<br/> Call Memo with purpose " + memo.PURPOSE + " has been approved.<br/> Kindly see details below.";
                                 messageBody = messageBody + " " + _memorandum.GetCallMemoMarkup(entity.callMemoId);
 
                             message = new TBL_MESSAGE_LOG 
@@ -611,6 +653,42 @@ namespace FintrakBanking.Repositories.Credit
             return _context.SaveChanges() != 0;
         }
 
+        private string GetBusinessUsersEmails(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = _context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = _context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = _context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = _context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
         public bool SubmitApproval(CallMemoViewModel model)
         {
             bool response = false;
@@ -655,9 +733,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int) OperationsEnum.CallMemo).ToList();
             var staffs = _genSetup.GetStaffRlieved(staffId);
-
+            var staffss = from s in _context.TBL_STAFF select s;
             var data = (from a in _context.TBL_CALL_MEMO
-                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         join atrail in _context.TBL_APPROVAL_TRAIL on a.CALLMEMOID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing 
@@ -670,7 +747,6 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             callMemoId = a.CALLMEMOID,
                             loanApplicationId = a.LOANAPPLICATIONID,
-                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             staffId = a.STAFFID,
                             participants = a.PARTICIPANTS,
                             location = a.LOCATION,
@@ -685,7 +761,10 @@ namespace FintrakBanking.Repositories.Credit
                             recentUpdate = a.RECENTUPDATE,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
-                            operationId = (int)OperationsEnum.CallMemo
+                            operationId = (int)OperationsEnum.CallMemo,
+                            toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staffss.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : _context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            approvalStatusName = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         }).ToList();
             return data;
         }

@@ -36,13 +36,13 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
                 if (apiConfig != null)
                 {
-                    API_URL = apiConfig.URL;
+                    API_URL = apiConfig.URL.Trim();
                     API_KEY = apiConfig.APIKEY;
                 }
                 if (apiConfig == null)
                 {
                     apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
-                    API_URL = apiConfig.URL;
+                    API_URL = apiConfig.URL.Trim();
                     API_KEY = apiConfig.APIKEY;
                 }
             }
@@ -177,7 +177,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
-                getAPIURLSettings("OverDraft");
+                getAPIURLSettings("OverdraftWithoutLien");
                 string apiUrl = "FCUBSCreateOverdraftWithoutLien";
 
                 try
@@ -304,7 +304,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
-                getAPIURLSettings("OverDraft");
+                getAPIURLSettings("Lien");
                 string apiUrl = "FCUBSCreateLien";
 
                 try

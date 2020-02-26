@@ -2296,7 +2296,21 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been deleted successfully" });
             }
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
+        }
+
+        [HttpPost, Route("delete-duplicate-collateral")]
+        public HttpResponseMessage DeleteDuplicatedCollateral(CollateralViewModel model)
+        {
+            model.createdBy = token.GetStaffId;
+            model.deletedBy = token.GetStaffId;
+            
+            var response = repo.DeleteDuplicatedCollateral(model);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been deleted successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "You can not delete a collateral that is not created by you" });
         }
 
         [HttpPost, Route("calculate-collateral-coverage")]

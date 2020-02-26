@@ -300,7 +300,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (existingTempUser != null)
                 {
 
-                    existingTempUser.USERNAME = staffModel.user.username;
+                    existingTempUser.USERNAME = staffModel.user.username.ToLower().Trim();
                     existingTempUser.ISFIRSTLOGINATTEMPT = false;
                     existingTempUser.ISACTIVE = false;
                     existingTempUser.ISLOCKED = true;
@@ -343,7 +343,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 user = new TBL_TEMP_PROFILE_USER()
                     {
                         TEMPSTAFFID = staffModel.staffId,
-                        USERNAME = staffModel.user.username,
+                        USERNAME = staffModel.user.username.ToLower().Trim(),
                         PASSWORD = tempStaffForPassword != null ? tempStaffForPassword.PASSWORD : StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
                         ISFIRSTLOGINATTEMPT = false,
                         ISACTIVE = false,
@@ -380,7 +380,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.FIRSTNAME = staffModel.FirstName;
                 tempStaffToUpdate.MIDDLENAME = staffModel.MiddleName;
                 tempStaffToUpdate.LASTNAME = staffModel.LastName;
-                tempStaffToUpdate.STAFFCODE = staffModel.StaffCode;
+                tempStaffToUpdate.STAFFCODE = staffModel.StaffCode.ToLower().Trim();
                 //tempStaffToUpdate.JOBTITLEID = staffModel.JobTitleId;
                 tempStaffToUpdate.COMPANYID = staffModel.companyId;
                 tempStaffToUpdate.STAFFROLEID = staffModel.staffRoleId;
@@ -426,7 +426,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         FIRSTNAME = staffModel.FirstName,
                         MIDDLENAME = staffModel.MiddleName,
                         LASTNAME = staffModel.LastName,
-                        STAFFCODE = staffModel.StaffCode,
+                        STAFFCODE = staffModel.StaffCode.ToLower().Trim(),
                         //JOBTITLEID = staffModel.JobTitleId,
                         COMPANYID = staffModel.companyId,
                         STAFFROLEID = staffModel.staffRoleId,
@@ -1608,7 +1608,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 user = new TBL_TEMP_PROFILE_USER()
                 {
                     TEMPSTAFFID = staffModel.staffId,
-                    USERNAME = staffModel.user.username.ToLower(),
+                    USERNAME = staffModel.user.username.ToLower().Trim(),
                     PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
                     ISFIRSTLOGINATTEMPT = false,
                     ISACTIVE = false,
@@ -1636,7 +1636,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 MIDDLENAME = staffModel.MiddleName,
                 COMPANYID = staffModel.companyId,
                 LASTNAME = staffModel.LastName,
-                STAFFCODE = staffModel.StaffCode.ToLower(),
+                STAFFCODE = staffModel.StaffCode.ToLower().Trim(),
                 //JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
                 SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
@@ -2036,9 +2036,11 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
 
-        public IQueryable<simpleStaffModel> SearchApprovers(int operationId, int roleId, int groupId, string searchQuery ="", int companyId=0)
+        public IQueryable<simpleStaffModel> SearchApprovers(int operationId,int currentLevel, int roleId, int groupId, string searchQuery ="", int companyId=0)
         {
-            var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId, groupId);
+            var level = context.TBL_APPROVAL_LEVEL.Find(currentLevel);
+
+            var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId, level.GROUPID);
             IQueryable<simpleStaffModel> staff = null;
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
@@ -2073,13 +2075,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public int GetNextApprovalLvlRoleId(int roleId, int groupId)
         {
-            if (groupId == 0) groupId = 261; //ApprovalGroupEnum.Business
+            //if (groupId == 0) groupId = 261; //ApprovalGroupEnum.Business
             var levels = context.TBL_APPROVAL_LEVEL.Where(l => l.GROUPID == groupId).ToList();
 
-            if (levels.Count == 0) {
-                groupId = 844;
-                levels = context.TBL_APPROVAL_LEVEL.Where(l => l.GROUPID == groupId).ToList();
-            }
+            //if (levels.Count == 0) {
+            //    groupId = 844;
+            //    levels = context.TBL_APPROVAL_LEVEL.Where(l => l.GROUPID == groupId).ToList();
+            //}
 
             var currentPosition = levels.Find(l => l.STAFFROLEID == roleId)?.POSITION ?? 0;
             var nextRoleId = levels.Find(l => l.POSITION == currentPosition + 1)?.STAFFROLEID ?? 0;
@@ -2177,23 +2179,24 @@ namespace FintrakBanking.Repositories.Setups.General
                                 rowSuccess = false;
                                 staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
                             }
-                            if (setupGlobal.USE_ACTIVE_DIRECTORY)
-                            {
-                                getADDetails = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
-                                if (getADDetails == null)
-                                {
-                                    rowSuccess = false;
-                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
-                                }
-                                else
-                                {
-                                    if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
-                                    {
-                                        rowSuccess = false;
-                                        staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
-                                    }
-                                }
-                            }
+                            //if (setupGlobal.USE_ACTIVE_DIRECTORY)
+                            //{
+                            //    getADDetails = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                            //    if (getADDetails == null)
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                            //    }
+                            //    else
+                            //    {
+                            //        if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
+                            //        {
+                            //            rowSuccess = false;
+                            //            staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
+                            //        }
+                            //    }
+                            //}
+
                             // staffRowData.user.username = cell.Value.ToString();
                             // staffRowData.user.password = cell.Value.ToString();
                            
@@ -2233,71 +2236,71 @@ namespace FintrakBanking.Repositories.Setups.General
                             }
                             break;
                         case "E":
-                            if(setupGlobal.USE_ACTIVE_DIRECTORY)
-                            {
-                                var firstName = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
-                                if (firstName == null)
+                            //if(setupGlobal.USE_ACTIVE_DIRECTORY)
+                            //{
+                            //    var firstName = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                            //    if (firstName == null)
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                            //    }
+                            //    else
+                            //    {
+                            //        staffRowData.FirstName = firstName.firstName;
+                            //    }
+                            //}
+                            //else
+                            //{
+                                staffRowData.FirstName = cell.Value.ToString();
+                                if (staffRowData.FirstName == null)
                                 {
                                     rowSuccess = false;
-                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                                    staffRowData.message = staffRowData.message + $"Firstname cannot be null. ";
                                 }
-                                else
-                                {
-                                    staffRowData.FirstName = firstName.firstName;
-                                }
-                            }
-                            else
-                            {
-                            staffRowData.FirstName = cell.Value.ToString();
-                            if (staffRowData.FirstName == null)
-                            {
-                                rowSuccess = false;
-                                staffRowData.message = staffRowData.message + $"Firstname cannot be null. ";
-                            }
-                            }                           
+                            //}                           
                             break;
                         case "F":
-                            if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
-                            {
-                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
-                                if (record == null)
-                                {
-                                    rowSuccess = false;
-                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
-                                }
-                                else
-                                {
-                                    staffRowData.LastName = record.lastName;
-                                }
-                            }
-                            else
-                            {
+                            //if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
+                            //{
+                            //    var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                            //    if (record == null)
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                            //    }
+                            //    else
+                            //    {
+                            //        staffRowData.LastName = record.lastName;
+                            //    }
+                            //}
+                            //else
+                            //{
                                 staffRowData.LastName = cell.Value.ToString();
                                 if (staffRowData.LastName == null)
                                 {
                                     rowSuccess = false;
                                     staffRowData.message = staffRowData.message + $"LastName cannot be null. ";
                                 }
-                            }                           
+                            //}                           
                             break;
                         case "G":
-                            if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
-                            {
-                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
-                                if (record != null)
-                                {
-                                    staffRowData.MiddleName = record.middleName;
-                                }
-                                else
-                                {
-                                    rowSuccess = false;
-                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
-                                }
-                            }
-                            else
-                            {
+                            //if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
+                            //{
+                            //    var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                            //    if (record != null)
+                            //    {
+                            //        staffRowData.MiddleName = record.middleName;
+                            //    }
+                            //    else
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                            //    }
+                            //}
+                            //else
+                            //{
                                 staffRowData.MiddleName = cell.Value.ToString();
-                            }
+                            //}
                             break;
                         case "H":
                             staffRowData.Email = cell.Value.ToString();
@@ -2406,7 +2409,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 TEMPSTAFFID = staffModel.staffId,
                 //USERNAME = staffCode,
-                USERNAME = staffModel.StaffCode.ToLower(),
+                USERNAME = staffModel.StaffCode.ToLower().Trim(),
                 PASSWORD = StaticHelpers.EncryptSha512("password", StaticHelpers.EncryptionKey),
                 ISFIRSTLOGINATTEMPT = false,
                 ISACTIVE = false,
@@ -2431,7 +2434,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 COMPANYID = staffModel.companyId,
                 LASTNAME = staffModel.LastName,
                 //STAFFCODE = staffCode,
-                STAFFCODE = staffModel.StaffCode.ToLower(),
+                STAFFCODE = staffModel.StaffCode.ToLower().Trim(),
                 JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
                 SUPERVISOR_STAFFID = staffModel.supervisorStaffId,

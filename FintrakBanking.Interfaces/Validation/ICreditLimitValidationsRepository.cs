@@ -35,7 +35,6 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         CreditLimitValidationsModel ValidateAmountBySegment(short segmentId);
         CreditLimitValidationsModel ValidateNPLBySegment(short segmentId);
         CreditLimitValidationsModel ValidateSingleObligorLimit(LoanApplicationViewModel application);
-
         IEnumerable<ObligorLimitViewModel> GetAllObligorLimit();
         bool ValidateRiskRating(string riskRating);
         bool AddUpdateRiskRating(ObligorLimitViewModel entity);

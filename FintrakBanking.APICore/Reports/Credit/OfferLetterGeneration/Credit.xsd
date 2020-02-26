@@ -181,6 +181,7 @@
               <xs:element name="offerLetterIntroduction" msprop:Generator_ColumnVarNameInTable="columnofferLetterIntroduction" msprop:Generator_ColumnPropNameInRow="offerLetterIntroduction" msprop:Generator_ColumnPropNameInTable="offerLetterIntroductionColumn" msprop:Generator_UserColumnName="offerLetterIntroduction" type="xs:string" minOccurs="0" />
               <xs:element name="isRenewal" msprop:Generator_ColumnVarNameInTable="columnisRenewal" msprop:Generator_ColumnPropNameInRow="isRenewal" msprop:Generator_ColumnPropNameInTable="isRenewalColumn" msprop:Generator_UserColumnName="isRenewal" type="xs:string" minOccurs="0" />
               <xs:element name="approvedTenorString" msprop:Generator_ColumnVarNameInTable="columnapprovedTenorString" msprop:Generator_ColumnPropNameInRow="approvedTenorString" msprop:Generator_ColumnPropNameInTable="approvedTenorStringColumn" msprop:Generator_UserColumnName="approvedTenorString" type="xs:string" minOccurs="0" />
+              <xs:element name="fees" msprop:Generator_ColumnVarNameInTable="columnfees" msprop:Generator_ColumnPropNameInRow="fees" msprop:Generator_ColumnPropNameInTable="feesColumn" msprop:Generator_UserColumnName="fees" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -540,6 +541,7 @@
             <xs:sequence>
               <xs:element name="sn" msprop:Generator_ColumnVarNameInTable="columnsn" msprop:Generator_ColumnPropNameInRow="sn" msprop:Generator_ColumnPropNameInTable="snColumn" msprop:Generator_UserColumnName="sn" type="xs:string" minOccurs="0" />
               <xs:element name="dynamics" msprop:Generator_ColumnVarNameInTable="columndynamics" msprop:Generator_ColumnPropNameInRow="dynamics" msprop:Generator_ColumnPropNameInTable="dynamicsColumn" msprop:Generator_UserColumnName="dynamics" type="xs:string" minOccurs="0" />
+              <xs:element name="productName" msprop:Generator_ColumnVarNameInTable="columnproductName" msprop:Generator_ColumnPropNameInRow="productName" msprop:Generator_ColumnPropNameInTable="productNameColumn" msprop:Generator_UserColumnName="productName" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

@@ -48,6 +48,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public short? approvedLineStatusId { get; set; }
+
+        public string divisionShortCode { get; set; }
+
+        public string divisionCode { get; set; }
+
         public string facilityType { get; set; }
         public Decimal sanctionLimit { get; set; }
         public bool isSuspenseCredit { get; set; }
@@ -58,14 +64,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string nameOfRM { get; set; }
         public decimal facilityRate { get; set; }
         public string operationTypeName { get; set; }
-        public int? currentApprovalLevelId { get; set; }
+        public int? currentApprovalLevelId { get; set; } 
         public int approvedTenor { get; set; }
         public string staffCode { get; set; }
         public int tenorToDate { get; set; }
 
         public string payingAccountNumber { get; set; }
 
-        public string legalContingentCode { get; set; }
+        public string legalContingentCode { get; set; } 
         public int zeroToThirtyDays { get; set; }
         public int ThirtyOneToNinety { get; set; }
         public int ninetyOneToOneEightyDays { get; set; }
@@ -163,6 +169,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public int? operationTypeId { get; set; }
         public string operationName { get; set; }
+        public string reviewLoanDetaile { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public decimal overDraft { get; set; }
@@ -402,6 +409,18 @@ namespace FintrakBanking.ViewModels.Credit
         public List<string> errorMessage { get; set; }
         public string pricipalFrequencyTypeName { get; set; }
         public string responsiblePerson { get; set; }
+        public short productClassProcessId { get; set; }
+        public short loanApplicationTypeId { get; set; }
+        public int appraisalOperationId { get; set; }
+        public int appraisalApplicationId { get; set; }
+        public int? appraisalCustomerId { get; set; }
+        public int? appraisalGroupCustomerId { get; set; }
+        public int appraisalLoanReviewApplicationId { get; set; }
+        public string appraisalApplicationReferenceNumber { get; set; }
+        public int appraisalLoanApplicationId { get; set; }
+        public int? synOperationId { get; set; }
+        public int creditAppraisalOperationId { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
 
 
 
@@ -410,6 +429,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string divisionShortCode { get; set; }
+
+        public string divisionCode { get; set; }
+
         public decimal bookedAmount { get; set; }
 
         public short scheduleDayCountConventionId { get; set; }
@@ -469,6 +492,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string disburserComment { get; set; }
         public DateTime? disburseDate { get; set; }
         public int? operationId { get; set; }
+        public int? currentApprovalLevelId { get; set; }
         public int? operationTypeId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
@@ -545,6 +569,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ContingentLoanViewModel : GeneralEntity
     {
+        public string divisionShortCode { get; set; }
+
+        public string divisionShortCodem { get; set; }
+
+        public string divisionCode { get; set; }
+
         public string currencyCode { get; set; }
         public string casaAccountDetails { get; set; }
 
@@ -584,6 +614,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? disburseDate { get; set; }
         public int? operationId { get; set; }
         public int? operationTypeId { get; set; }
+        public int? appraisalOperationId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public string trancheBatchCode { get; set; }
@@ -678,6 +709,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public bool isLineFacility { get; set; }
+
+        public DateTime systemArrivalDateTime { get; set; }
+
         public int appraisalOperationId { get; set; }
 
         public int appraiselOperationId { get; set; }
@@ -840,6 +875,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? capRegionId { get; set; }
+        public string apiRequestId { get; set; }
+
 
         //......End f Loan Relational Table View Mapping Models......//
     }

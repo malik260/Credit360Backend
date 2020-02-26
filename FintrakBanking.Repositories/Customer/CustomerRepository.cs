@@ -244,11 +244,15 @@ namespace FintrakBanking.Repositories.Customer
 
             return result;    
         }
+
         private bool fetchCustomerAccountBalance(TBL_CUSTOMER data)
         {
-            bool result;
-            result = integration.AddCustomerAccounts(data.CUSTOMERCODE);
-
+            bool result = false;
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            {
+                result = integration.AddCustomerAccounts(data.CUSTOMERCODE);
+            }
             return result;
         }
 
@@ -2677,8 +2681,8 @@ namespace FintrakBanking.Repositories.Customer
                 creationMailSent = a.CREATIONMAILSENT,
                 customerCode = a.CUSTOMERCODE,
                 customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
-                customerTypeId = (short)a.CUSTOMERTYPEID,
-                dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                customerTypeId = a.CUSTOMERTYPEID,
+                dateOfBirth = a.DATEOFBIRTH,
                 customerId = a.CUSTOMERID,
                 emailAddress = a.EMAILADDRESS,
                 firstName = a.FIRSTNAME,
@@ -2688,10 +2692,8 @@ namespace FintrakBanking.Repositories.Customer
                 maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,
                 title = a.TITLE,
                 middleName = a.MIDDLENAME,
-                customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                customerTypeName =
-                a.TBL_CUSTOMER_TYPE
-                        .NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID) != null ? context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER : null,
+                customerTypeName = a.TBL_CUSTOMER_TYPE.NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                 misCode = a.MISCODE,
                 misStaff = a.MISSTAFF,
                 nationalityId = a.NATIONALITYID,
@@ -2704,13 +2706,13 @@ namespace FintrakBanking.Repositories.Customer
                 spouse = a.SPOUSE,
                 sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                 sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                subSectorId = (short)a.SUBSECTORID,
+                subSectorId = a.SUBSECTORID,
                 subSectorName = a.TBL_SUB_SECTOR.NAME,
                 taxNumber = a.TAXNUMBER,
                 riskRatingId = a.RISKRATINGID,
-                crmsRelationshipTypeId = (int)a.CRMSRELATIONSHIPTYPEID,
-                crmsLegalStatusId = (int)a.CRMSLEGALSTATUSID,
-                crmsCompanySizeId = (int)a.CRMSCOMPANYSIZEID,
+                crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                crmsLegalStatusId = a.CRMSLEGALSTATUSID,
+                crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
                 // riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                 customerBVN = a.CUSTOMERBVN,
                 isProspect = a.ISPROSPECT,
@@ -3323,8 +3325,8 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.customerCode.StartsWith(searchQuery)
-                                   || x.branchName.StartsWith(searchQuery)
-                                   || x.customerId.ToString().StartsWith(searchQuery))
+                                   || x.branchName.StartsWith(searchQuery))
+                                   || x.customerId.ToString().StartsWith(searchQuery)
                                    && (x.customerTypeId == 2)
                              select x);
             //var customerInfo = new List<CustomerViewModels>();
@@ -3340,8 +3342,7 @@ namespace FintrakBanking.Repositories.Customer
             //{
             //    return customerInfo;
             //}
-            return customers.ToList();
-            //return null;
+           return customers.ToList();
         }
 
         public IEnumerable<CustomerViewModels> SearchRandomGroupCustomersBySearchQuery(string searchQuery)
@@ -3373,7 +3374,7 @@ namespace FintrakBanking.Repositories.Customer
             var loanCust = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                             where a.LOANAPPLICATIONID == loanApplicationId
                             select a.CUSTOMERID).ToList();
-            var customers = GetCustomers().Where(x => loanCust.Contains(x.customerId)).ToList();
+            var customers = GetCustomers().Where(x => loanCust.Contains(x.customerId))?.ToList();
             if (loanCust.Any())
             {
                 customers = customers.Where(x => loanCust.Contains(x.customerId)).ToList();

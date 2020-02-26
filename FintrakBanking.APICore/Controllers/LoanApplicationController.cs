@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
           //  this.loanRepository = _loanRepository;
            // this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
-            //errorLogger = _errorLogger;
+      
            // repaymentRepo = _repaymentRepo;
         }
 
@@ -548,15 +548,103 @@ namespace FintrakBanking.APICore.Controllers
                 repo.LoadCustomerTurnover(loanApplicationId, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
             }
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, errorCode = "99" });
+            }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed!" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Turnover!" });
             }
         }
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-facility-rating/{loanApplicationDetailId}")]
+        [Route("get-customer-ratios-basel/{loanApplicationId}")]
+        public HttpResponseMessage GetCustomerRatiosFromBasel(int loanApplicationId)
+        {
+            try
+            {
+                repo.GetCustomerRatiosFromBasel(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Ratios!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-customer-group-ratios-basel/{loanApplicationId}")]
+        public HttpResponseMessage GetCustomerGroupRatiosFromBasel(int loanApplicationId)
+        {
+            try
+            {
+                repo.GetCustomerGroupRatiosFromBasel(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Group Ratios!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-corporate-customer-rating-basel/{loanApplicationId}")]
+        public HttpResponseMessage GetCorporateCustomerRatingFromBasel(int loanApplicationId)
+        {
+            try
+            {
+                repo.GetCorporateCustomerRatingFromBasel(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Corporate Customer Rating!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-facility-rating-basel/{loanApplicationId}")]
+        public HttpResponseMessage GetFacilityRatingFromBasel(int loanApplicationId)
+        {
+            try
+            {
+                repo.GetFacilityRatingFromBasel(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Facility Rating!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("load-customer-turnover-lms/{loanApplicationId}")]
+        public HttpResponseMessage LoadCustomerTurnoverLms(int loanApplicationId)  
+        {
+            try
+            {
+                repo.LoadCustomerTurnoverLms(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, errorCode = "99" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Core Banking API error, Failed to Load Customer Turnover!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-facility-rating/{loanApplicationDetailId}")] 
         public HttpResponseMessage GetFacilityRating(int loanApplicationDetailId)
         {
             try
@@ -1226,6 +1314,27 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet, Route("loan-review-application-and-offer/rejected")]
+        public HttpResponseMessage GetRejectedReviewLoanApplications()
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            IQueryable<LoanReviewApplicationViewModel> items;
+
+            items = repo.GetRejectedReviewLoanApplications(user);
+
+            var data = items.ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+
+        }
+
         [HttpGet, Route("loan-application-and-offer/rejected/arch")]
         public HttpResponseMessage GetRejectedLoanApplicationsArch()
         {
@@ -1874,9 +1983,9 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage AddLoanApplicationFlowChange([FromBody] LoanApplicationFlowChangeViewModel model)
         {
             model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress; 
             model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
+            model.createdBy = token.GetStaffId; 
             model.companyId = token.GetCompanyId;
             var response = repo.AddLoanApplicationFlowChange(model);
             if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });

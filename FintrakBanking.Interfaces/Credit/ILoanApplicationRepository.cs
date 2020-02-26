@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
+        IQueryable<LoanReviewApplicationViewModel> GetRejectedReviewLoanApplications(UserInfo user);
         IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user);
         List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId);
         List<LoanApplicationDetailViewModel> GetLmsLoanApplicationDetailsById(int loanApplicationId, int companyId);
@@ -87,6 +88,16 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
 
         void LoadCustomerTurnover(int applicationId, int staffId);
+
+        void GetCustomerRatiosFromBasel(int applicationId, int staffId);
+
+        void GetCustomerGroupRatiosFromBasel(int applicationId, int staffId);
+
+        void GetCorporateCustomerRatingFromBasel(int applicationId, int staffId);
+
+        void GetFacilityRatingFromBasel(int applicationId, int staffId);
+
+        void LoadCustomerTurnoverLms(int applicationId, int staffId);
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
 

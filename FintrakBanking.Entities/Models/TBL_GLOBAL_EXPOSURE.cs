@@ -82,6 +82,13 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public int? UNPODAYSOVERDUE { get; set; }
         public DateTime? SCHEDULEDUEDATE { get; set; }
 
-        //public string DIVISIONID { get; set; }
+        public string REGIONCODE { get; set; }
+        public string REGIONNAME { get; set; }
+        public string GROUPHEADNAME { get; set; }
+        public string GROUPNAME { get; set; }
+        public string GROUPCODE { get; set; }
+        public string DIVISIONCODE { get; set; }
+        public string DIVISIONNAME { get; set; }
+
     }
 }

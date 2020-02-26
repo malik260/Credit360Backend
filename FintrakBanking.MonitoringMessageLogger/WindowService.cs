@@ -1,9 +1,11 @@
-﻿using FintrakBanking.Interfaces.AlertMonitoring;
+﻿using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Repositories.AlertMonitoring;
 using FintrakBanking.Repositories.Setups.General;
+using Ninject;
 using System;
 using System.Configuration;
 using System.Data.Entity.Validation;
+using System.Reflection;
 using System.Threading;
 using System.Timers;
 using Topshelf;
@@ -18,7 +20,7 @@ namespace FintrakBanking.MonitoringMessageLogger
         private Timer _syncTimer;
         private static object s_lock = new object();
         EmailSender emailSender = new EmailSender();
-        private AlertRepository alert = new AlertRepository();
+        //private AlertRepository alert = new AlertRepository();
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string slaEscalationIntervalInHours = ConfigurationManager.AppSettings["SLAEscalationIntervalInHours"];
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
@@ -61,71 +63,25 @@ namespace FintrakBanking.MonitoringMessageLogger
             {
                 try
                 {
-                    //alert.validateAlertCheck();
-                    // SEND EMAILS
-                    bool response = true; //emailSender.SendEmails();
+                    var kernel = new StandardKernel();
+                    kernel.Load(Assembly.GetExecutingAssembly());
+                    var alert = kernel.Get<IAlertRepository>();
+                    bool response = alert.validateAlertCheck();
+                    
                     if (response == true)
-                    {
-                        _log.Info("");
-                        _log.Info("==================================================================");
-                        _log.Info("Message Logged successfully as at : " + DateTime.Now);
+                        {
+                            _log.Info("");
+                            _log.Info("==================================================================");
+                            _log.Info("Emails has been logged successfully and ends at : " + DateTime.Now);
+                        }
+                        else
+                        {
+                            _log.Info("");
+                            _log.Info("==================================================================");
+                            _log.Info("No email has been logged as at : " + DateTime.Now);
+                        }
+
                     }
-                    else
-                    {
-                        _log.Info("");
-                        _log.Info("==================================================================");
-                        _log.Info("No Message was logged as at : " + DateTime.Now);
-                    }
-
-
-                    //LOG SLA APPROVAL NOTIFICATIONS
-                    //if (slaEscalationIntervalInHours != null)
-                    //{
-                    //    DateTime currentDate = DateTime.Now;
-                    //    TimeSpan escalationTime = currentDate.AddHours(Convert.ToInt32(slaEscalationIntervalInHours)).TimeOfDay;
-                    //    TimeSpan endOfescalationTime = DateTime.Now.AddMinutes(5).TimeOfDay;
-                    //    TimeSpan timeAtTheMoment = DateTime.Now.TimeOfDay;
-
-                    //    if (escalationTime >= timeAtTheMoment && escalationTime <= endOfescalationTime)
-                    //    {
-                    //        _log.Info("");
-                    //        _log.Info("==================================================================");
-                    //        _log.Info("SLA notification has started successfully at : " + DateTime.Now);
-
-                    //        logger.LogSLAApprovalNotification();
-
-                    //        _log.Info("");
-                    //        _log.Info("==================================================================");
-                    //        _log.Info("SLA notification has ends at : " + DateTime.Now);
-                    //    }
-
-                    //}
-
-                    //// LOG MONITORING ALERTS
-                    //TimeSpan currentTime = DateTime.Now.TimeOfDay;
-                    //TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
-
-                    //TimeSpan alertLoggerMaxRuntime = TimeSpan.FromMinutes(30);
-                    //TimeSpan LoggeingTimeFromConfigExtended = LoggeingTimeFromConfig.Add(alertLoggerMaxRuntime);
-
-
-                    //if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
-                    //{
-                    //    //  _log.Info("##############   started at " + currentTime + "     ##################### ");
-                    //    _log.Info("==================================================================");
-                    //    _log.Info("Monitoring alert has started successfully");
-
-                    //   emailSender.LogMonitorringAlert();
-                    //    currencyAndRateUpdate.MigrateExchangeRate();
-
-                    //    _log.Info("");
-                    //    _log.Info("==================================================================");
-                    //    _log.Info("Monitoring alert has finished logging successfully ");
-                    //}
-
-
-
-                }
                 catch (DbEntityValidationException ee)
                 {
                     foreach (var error in ee.EntityValidationErrors)
@@ -187,5 +143,7 @@ namespace FintrakBanking.MonitoringMessageLogger
                 }
             }
         }
+
+       
     }
 }

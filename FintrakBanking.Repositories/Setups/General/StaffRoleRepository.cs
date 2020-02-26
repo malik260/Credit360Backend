@@ -55,6 +55,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public IEnumerable<StaffRoleViewModel> GetStaffRoleByCompanyId(int companyId)
         {
+           
             return from a in context.TBL_STAFF_ROLE
                    where a.COMPANYID == companyId
                    select new StaffRoleViewModel
@@ -66,6 +67,9 @@ namespace FintrakBanking.Repositories.Setups.General
                        staffRoleShortCode = a.STAFFROLESHORTCODE,
                        workEndDuration = a.WORKENDDURATION,
                        workStartDuration = a.WORKSTARTDURATION,
+                       useRoundRublin = a.USEROUNDROBIN,
+                       
+
                        userGroup = a.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == a.STAFFROLEID).Select(x => new UserGroup
                        {
                            groupId = x.GROUPID,
@@ -87,10 +91,10 @@ namespace FintrakBanking.Repositories.Setups.General
                         where a.STAFFID == staffId
                         select new StaffRoleViewModel
                         {
-                            staffRoleName = b.STAFFROLENAME,
+                            staffRoleName = b.STAFFROLENAME.Trim(),
                             companyId = (short)a.COMPANYID,
                             staffRoleId = a.STAFFROLEID,
-                            staffRoleCode = b.STAFFROLECODE,
+                            staffRoleCode = b.STAFFROLECODE.Trim(),
                             workEndDuration = a.WORKENDDURATION,
                             workStartDuration = a.WORKSTARTDURATION,
                         }).FirstOrDefault();
@@ -108,7 +112,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleCode = a.STAFFROLECODE,
                             staffRoleShortCode = a.STAFFROLESHORTCODE,
                             workEndDuration = a.WORKENDDURATION,
-                            workStartDuration = a.WORKSTARTDURATION,
+                            workStartDuration = a.WORKSTARTDURATION
                         });
             return role;
         }
@@ -187,6 +191,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (targetActivities.Any()) foreach (var item in targetActivities) context.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Remove(item);
 
                 staffRole.STAFFROLECODE = entity.staffRoleCode;
+                staffRole.USEROUNDROBIN = entity.useRoundRublin;
                 staffRole.STAFFROLENAME = entity.staffRoleName;
                 staffRole.STAFFROLESHORTCODE = entity.staffRoleShortCode;
                 staffRole.WORKSTARTDURATION = entity.workStartDuration;
@@ -204,6 +209,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     WORKSTARTDURATION = entity.workStartDuration,
                     WORKENDDURATION = entity.workEndDuration,
                     COMPANYID = entity.companyId,
+                    USEROUNDROBIN = entity.useRoundRublin,
                     TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups,
                     TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities
                 };
@@ -236,7 +242,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 throw new SecureException("There is an operation that is yet to be approved on this item!");
             }
 
-                using (var trans = context.Database.BeginTransaction())
+            using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
@@ -423,6 +429,106 @@ namespace FintrakBanking.Repositories.Setups.General
                 OSNAME = CommonHelpers.FriendlyName(),
             });
             // Audit Section ---------------------------
+        }
+
+        public bool AddApprovalSetUp(ApprovalSetUpViewModel entity)
+        {
+            var data = new TBL_APPROVAL_SETUP()
+            {
+                USEROUNDROBIN = entity.useRoundRublin,
+                ISRETAILONLYROUNDROBIN = entity.isRetailOnlyRoundRobin
+            };
+            context.TBL_APPROVAL_SETUP.Add(data);
+
+            return context.SaveChanges() > 0;
+        }
+
+        public IEnumerable<ApprovalSetUpViewModel> GetApprovalSetup()
+        {
+            return from a in context.TBL_APPROVAL_SETUP
+                   select new ApprovalSetUpViewModel
+                   {
+                       approvalsetupId = a.APPROVALSETUPID,
+                       useRoundRublin = a.USEROUNDROBIN,
+                       isRetailOnlyRoundRobin = a.ISRETAILONLYROUNDROBIN
+                   };
+        }
+
+
+        public bool UpdateApprovalSetUp(ApprovalSetUpViewModel entity)
+        {
+            var data = this.context.TBL_APPROVAL_SETUP.Find(entity.approvalsetupId);
+            {
+                data.ISRETAILONLYROUNDROBIN = entity.isRetailOnlyRoundRobin;
+                data.USEROUNDROBIN = entity.useRoundRublin;
+            }
+
+            return context.SaveChanges() > 0;
+        }
+        public IEnumerable<OperationPageOrderViewModel> GetAllOperationOrder()
+        {
+            var data = (from cs in context.TBL_LMSR_FLOW_ORDER
+                        join b in context.TBL_OPERATIONS on cs.OPERATIONID equals b.OPERATIONID
+                        select new OperationPageOrderViewModel()
+                        {
+                            tag = cs.TAG,
+                           operationId = cs.OPERATIONID,
+                           operationName = b.OPERATIONNAME,
+                           floworderId = cs.FLOWORDERID,
+                           requiredAppraisal = cs.REQUIREAPPRAISAL,
+                           requiredAvailment = cs.REQUIREAVAILMENT,
+                           requiredOfferLetter = cs.REQUIREOFFERLETTER,
+                        }).ToList();
+
+            return data;
+        }
+
+        public IEnumerable<OperationPageOrderViewModel> GetAllOperations()
+        {
+            var data = (from b in context.TBL_OPERATIONS 
+                        select new OperationPageOrderViewModel()
+                        {
+                            operationId = b.OPERATIONID,
+                            operationName = b.OPERATIONNAME,
+                        }).ToList();
+
+            return data;
+        }
+
+        public bool AddFlowOrder(OperationPageOrderViewModel entity)
+        {
+            var data = new TBL_LMSR_FLOW_ORDER()
+            {
+                TAG = entity.tag,
+                REQUIREAPPRAISAL = entity.requiredAppraisal,
+                REQUIREAVAILMENT = entity.requiredAvailment,
+                REQUIREOFFERLETTER = entity.requiredOfferLetter,
+                OPERATIONID = (short)entity.operationId,
+                CREATEDBY = entity.createdBy,
+                COMPANYID = entity.companyId,
+                DATETIMECREATED = DateTime.Now,
+            };
+
+            context.TBL_LMSR_FLOW_ORDER.Add(data);
+
+            return context.SaveChanges() > 0;
+        }
+
+        public bool UpdateFlowOrder(OperationPageOrderViewModel entity)
+        {
+            var data = this.context.TBL_LMSR_FLOW_ORDER.Find(entity.floworderId);
+            {
+              
+                data.REQUIREOFFERLETTER = entity.requiredOfferLetter;
+                data.REQUIREAVAILMENT = entity.requiredAvailment;
+                data.REQUIREAPPRAISAL = entity.requiredAppraisal;
+                data.TAG = entity.tag;
+                data.DATETIMEUPDATED = DateTime.Now;
+                data.UPDATEDBY = entity.staffId;
+                data.OPERATIONID =(short)entity.operationId;
+            }
+
+            return context.SaveChanges() > 0;
         }
     }
 }
