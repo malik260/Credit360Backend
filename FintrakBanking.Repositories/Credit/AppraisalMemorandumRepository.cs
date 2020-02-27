@@ -2695,7 +2695,7 @@ namespace FintrakBanking.Repositories.Credit
             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
             relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
             applicationDate = x.a.APPLICATIONDATE,
-            //newApplicationDate = x.a.APPLICATIONDATE,
+            systemDateTime = x.a.SYSTEMDATETIME,
             applicationAmount = x.a.APPLICATIONAMOUNT,
             facility = x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LOAN_APPLICATION_DETAIL
                                         .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
@@ -2850,6 +2850,7 @@ namespace FintrakBanking.Repositories.Credit
             collateralDetail = x.a.COLLATERALDETAIL,
             isadhocapplication = x.a.ISADHOCAPPLICATION,
             requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
+            systemDateTime = x.a.SYSTEMDATETIME,
             operationId = x.a.OPERATIONID,
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
             tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,

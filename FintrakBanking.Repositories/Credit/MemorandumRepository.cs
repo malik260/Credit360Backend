@@ -1286,7 +1286,7 @@ namespace FintrakBanking.Repositories.Credit
                     n++;
                     var name = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().DESCRIPTION;
                     result = result + $@"
-                    <tr><td>{n}</td><td>{name.ToUpper()}:</td><td>{e.DEFAULT_FEERATEVALUE}</td></tr>";
+                    <tr><td>{n}</td><td>{name.ToUpper()}:</td><td>{e.RECOMMENDED_FEERATEVALUE}</td></tr>";
                 }
             }
             result = result + $"</table> <br />";
@@ -11074,7 +11074,7 @@ namespace FintrakBanking.Repositories.Credit
                                                       loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                                       isExternal = b.ISEXTERNAL,
                                                       productName = c.TBL_PRODUCT.PRODUCTNAME
-                                                  }).ToList();//GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+                                                  }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
 
             var forDebugging = conditionSubsequentData.ToList().Union(conditionPrecedentDeferralData.ToList());
