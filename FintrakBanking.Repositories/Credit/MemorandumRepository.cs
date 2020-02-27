@@ -4489,8 +4489,8 @@ namespace FintrakBanking.Repositories.Credit
             var currencies = context.TBL_CURRENCY.ToList();
             var baseCurrency = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanApplication.COMPANYID).CURRENCYID;
             var baseCurrencyCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == baseCurrency).CURRENCYCODE;
-            var collateralGroup = collaterals.GroupBy(c => c.loanApplicationDetailId);
-            var collateralGroup2 = collaterals.GroupBy(c => c.collateralId);
+            var collateralGroup = collaterals.GroupBy(c => c.loanApplicationDetailId).ToList();
+            var collateralGroup2 = collaterals.GroupBy(c => c.collateralId).ToList();
             foreach (var g in collateralGroup)
             {
                 var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(g.Key);
