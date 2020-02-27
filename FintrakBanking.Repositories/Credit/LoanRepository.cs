@@ -340,9 +340,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateFacilityLineStatus(LoanViewModel entity)
         {
-            var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationDetailId);
+            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationDetail.LOANAPPLICATIONID);
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
-            if (application == null) { return false; }
+            if (applicationDetail == null) { return false; }
 
             var approvalModel = new ForwardViewModel
             {
