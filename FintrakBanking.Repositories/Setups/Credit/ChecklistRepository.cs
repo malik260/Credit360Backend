@@ -3166,6 +3166,8 @@ namespace FintrakBanking.Repositories.Credit
                             checkListItemName = i.CHECKLISTITEMNAME,
                             comment = "",
                             checklistStatusId = 0,
+                            yesChecklistScoresId = k.YESCHECKLISTSCORESID,
+                            noChecklistScoresId = k.NOCHECKLISTSCORESID,
                             //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.SCORE == k.SCORE || x.SCORE == 6).OrderBy(a => a.SCORE).
                             //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist)).OrderBy(a => a.SCORE).
                             yesResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist).
