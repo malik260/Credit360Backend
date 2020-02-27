@@ -889,7 +889,7 @@ namespace FintrakBanking.Repositories.Credit
                     if(product.ISFACILITYLINE == true)
                     {
                         var releasedLine = disbursedLoan.Where(x => x.OUTSTANDINGPRINCIPAL == 0 && x.OUTSTANDINGINTEREST == 0).Select(x=>x.LOAN_BOOKING_REQUESTID).ToList();
-                        item.allRequestAmount = (decimal)requests.Where(n => releasedLine.Contains(n.LOAN_BOOKING_REQUESTID) && n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED);
+                        if(releasedLine.Count() > 0)item.allRequestAmount = (decimal)requests.Where(n => releasedLine.Contains(n.LOAN_BOOKING_REQUESTID) && n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED);
                     }
                 }
 
