@@ -415,6 +415,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? synOperationId { get; set; }
         public int creditAppraisalOperationId { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
+        public int applicationDetailId { get; set; }
 
 
 
