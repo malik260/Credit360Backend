@@ -709,7 +709,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public bool isLineFacility { get; set; }
+        public bool? isLineFacility { get; set; }
 
         public DateTime systemArrivalDateTime { get; set; }
 
