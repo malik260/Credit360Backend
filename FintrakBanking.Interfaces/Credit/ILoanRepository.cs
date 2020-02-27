@@ -71,7 +71,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         string AddLoanBooking(LoanViewModel entity);
 
-        bool UpdateFacilityLineStatus(LoanViewModel entity)
+        bool UpdateFacilityLineStatus(LoanViewModel entity);
 
         //  bool AddLoanGuarantor(LoanGuarantorViewModel guarantorModel, short productTypeId, int loanApplicationId);
 
