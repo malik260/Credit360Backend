@@ -1286,7 +1286,7 @@ namespace FintrakBanking.Repositories.Credit
                     n++;
                     var name = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().DESCRIPTION;
                     result = result + $@"
-                    <tr><td>{n}</td><td>{name.ToUpper()}:</td><td>{e.DEFAULT_FEERATEVALUE}</td></tr>";
+                    <tr><td>{n}</td><td>{name.ToUpper()}:</td><td>{e.RECOMMENDED_FEERATEVALUE}</td></tr>";
                 }
             }
             result = result + $"</table> <br />";
@@ -4196,7 +4196,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private int GetCurrentOperationId()
         {
-            if (this.loanApplication?.OPERATIONID > 0 && this.loanApplication != null)
+            //if (this.loanApplication?.OPERATIONID > 0 && this.loanApplication != null)
+            if (this.lmsrApplication == null)
             {
                 return this.loanApplication.OPERATIONID;
             }else
@@ -4371,6 +4372,10 @@ namespace FintrakBanking.Repositories.Credit
                         </ul>
                         ";
             }
+            else
+            {
+                result = result + GetAllCustomerFacilitiesLMSMarkup();
+            }
             return result;
         }
 
@@ -4423,27 +4428,35 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var remark = string.Empty;
-            var customerCollaterals = collateralRepo.GetCustomerCollateral(this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID, this.loanApplication.LOANAPPLICATIONID, this.loanApplication.COMPANYID);
-            
-                    result += $@"
+            if (this.lmsrApplication == null)
+            {
+                var customerCollaterals = collateralRepo.GetCustomerCollateral(this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID, this.loanApplication.LOANAPPLICATIONID, this.loanApplication.COMPANYID);
+
+                result += $@"
                         <ul>
                         ";
-            foreach (var cc in customerCollaterals)
-            {
-                        result += $@"
+                foreach (var cc in customerCollaterals)
+                {
+                    result += $@"
                             <li>{cc.collateralSummary}</li>
                         ";
-            }
-            result += $@"
+                }
+                result += $@"
                         </ul>
                         ";
+            }
+            else
+            {
+                result = result + GetAllCustomerCollateralsMarkupLMS();
+            }
             return result;
         }
 
         private string GetSecurityAnalysisMarkUP()
         {
             var result = String.Empty;
-            if (this.loanApplication != null)
+            //if (this.loanApplication != null)
+            if (this.lmsrApplication == null)
             {
                 result += $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
@@ -4489,8 +4502,8 @@ namespace FintrakBanking.Repositories.Credit
             var currencies = context.TBL_CURRENCY.ToList();
             var baseCurrency = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanApplication.COMPANYID).CURRENCYID;
             var baseCurrencyCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == baseCurrency).CURRENCYCODE;
-            var collateralGroup = collaterals.GroupBy(c => c.loanApplicationDetailId);
-            var collateralGroup2 = collaterals.GroupBy(c => c.collateralId);
+            var collateralGroup = collaterals.GroupBy(c => c.loanApplicationDetailId).ToList();
+            var collateralGroup2 = collaterals.GroupBy(c => c.collateralId).ToList();
             foreach (var g in collateralGroup)
             {
                 var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(g.Key);
@@ -11074,7 +11087,7 @@ namespace FintrakBanking.Repositories.Credit
                                                       loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                                       isExternal = b.ISEXTERNAL,
                                                       productName = c.TBL_PRODUCT.PRODUCTNAME
-                                                  }).ToList();//GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+                                                  }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
 
             var forDebugging = conditionSubsequentData.ToList().Union(conditionPrecedentDeferralData.ToList());
