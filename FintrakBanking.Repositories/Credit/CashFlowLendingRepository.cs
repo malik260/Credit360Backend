@@ -621,8 +621,7 @@ namespace FintrakBanking.Repositories.Credit
                     FILENAME = loanFile.caption+"."+loanFile.fileExtension,
                     FILEEXTENSION = loanFile.fileExtension,
                     FILESIZE = loanFile.fileData.Length,
-                    //FILEDATA = loanFile.fileData.Base64ToByte(),
-                    FILEDATA = loanFile.fileData.ToByteArray(),
+                    FILEDATA = Convert.FromBase64String(loanFile.fileData),
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = DateTime.Now,
@@ -654,7 +653,6 @@ namespace FintrakBanking.Repositories.Credit
                 if (Convert.ToInt16(loanFile.creditBureauType) == (short)CreditBureauEnum.CRMS) caption = "CRMSCreditBureau";
 
                 if (loanFile.reportFileDateinPDF == null || loanFile.reportFileDateinPDF == string.Empty) continue;
-                //var loanApplicationId = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID;
 
                 var existing = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
                     && x.OPERATIONID == (int)OperationsEnum.CreditAppraisal
@@ -690,17 +688,13 @@ namespace FintrakBanking.Repositories.Credit
                     oldUsage.DATETIMEDELETED = DateTime.Now;
                 }
 
-                //var b = loanFile.reportFileDateinPDF.Base64ToByte();
-                //var a = (int)loanFile.reportFileDateinPDF.Length;
-
                 var document = new TBL_DOCUMENT_UPLOAD()
                 {
                     DOCUMENTTYPEID = Convert.ToInt32(loanFile.documentTypeId), 
                     FILENAME = caption + "." + "pdf",
                     FILEEXTENSION = "pdf",
                     FILESIZE = (int)loanFile.reportFileDateinPDF.Length,
-                    FILEDATA = loanFile.reportFileDateinPDF.ToByteArray(),
-                    //FILEDATA = loanFile.reportFileDateinPDF.Base64ToByte(),
+                    FILEDATA = Convert.FromBase64String(loanFile.reportFileDateinPDF),
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = DateTime.Now,
