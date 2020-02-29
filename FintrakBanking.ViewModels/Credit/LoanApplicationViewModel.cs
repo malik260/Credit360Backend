@@ -12,6 +12,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int? customerBusinessUnitId { get; set; }
         public string divisionShortCode { get; set; }
+        public int bookingRequestId { get; set; }
 
         public string divisionCode { get; set; }
 
