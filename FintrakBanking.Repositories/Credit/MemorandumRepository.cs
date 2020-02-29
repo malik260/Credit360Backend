@@ -552,7 +552,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 //IDF
                 this.idfCustomerInformationData = IdfCustomerInformationHtml();
-                this.idfCustomerAccountActivityData = IdfCustomerFacilityHtml();
+                this.idfCustomerFacilityData = IdfCustomerFacilityHtml();
                 this.fussCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
                 this.idfCurrentRequestData = IdfCurrentRequestHtml();
                 this.idfBackgroungInformationData = IdfBackgroungInformationHtml();
@@ -663,7 +663,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 //IDF
                 this.idfCustomerInformationData = IdfCustomerInformationHtml();
-                this.idfCustomerAccountActivityData = IdfCustomerFacilityHtml();
+                this.idfCustomerFacilityData = IdfCustomerFacilityHtml();
                 this.fussCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
                 this.idfCurrentRequestData = IdfCurrentRequestHtml();
                 this.idfBackgroungInformationData = IdfBackgroungInformationHtml();
@@ -6435,14 +6435,6 @@ namespace FintrakBanking.Repositories.Credit
                        <td colspan='2'><b>Other Bankers/Age</b></td>
                         <td colspan='3'>------------------------------------------------------</td>
                     </tr> 
-                     <tr>
-                       <td colspan='2'>Existing Facility Type/Maturity</td>
-                        <td colspan='3'>------------------------------------------------------</td>
-                    </tr> 
-                     <tr>
-                       <td colspan='2'>Security/Support</td>
-                        <td colspan='3'>------------------------------------------------------</td>
-                    </tr> 
                  ";
             result = result + $"</table>";
             result = result + $@"
@@ -6760,7 +6752,7 @@ namespace FintrakBanking.Repositories.Credit
                         <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
-                        <td>{facilityType}</td>
+                        <td>{GetAllCustomerFacilitiesMarkup()} {GetAllCustomerFacilitiesLMSMarkup()}</td>
                         </tr>
                         <tr>
                         <td><strong>Facility Amount:</strong></td>
@@ -7029,12 +7021,12 @@ namespace FintrakBanking.Repositories.Credit
             var n = 0;
             result = result + $@"
                 <br />
-                <h4><b>CONDITIONS SUBSEQUENT TO DRAWDOWN</b></h4>
+                <h4><b>CONDITIONS</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>S/N</b></th>
                         <th><b>Product Name</b></th>
-                        <th><b>Condition Precident</b></th>
+                        <th><b>Condition Precedent</b></th>
                     </tr>";
             foreach (var f in ConditionSubsequent)
             {
@@ -7065,7 +7057,7 @@ namespace FintrakBanking.Repositories.Credit
             var n = 0;
             result = result + $@"
                 <br />
-                <h4><b>CONDITION DYNAMICS</b></h4>
+                <h4><b>TRANSACTION DYNAMICS</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>S/N</b></th>
@@ -11060,7 +11052,7 @@ namespace FintrakBanking.Repositories.Credit
             var conditionSubsequentData = (from a in context.TBL_LOAN_APPLICATION
                                            join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                            join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                                           where a.LOANAPPLICATIONID == (int)loanApplicationId && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
+                                           where a.LOANAPPLICATIONID == (int)loanApplicationId
                                                && c.STATUSID == (int)ApprovalStatusEnum.Approved
                                                && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
                                                && c.STATUSID == (int)ApprovalStatusEnum.Approved
@@ -11076,7 +11068,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                                   join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                                   join d in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals d.LOANCONDITIONID
-                                                  where a.LOANAPPLICATIONID == (int)loanApplicationId && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
+                                                  where a.LOANAPPLICATIONID == (int)loanApplicationId
                                                        && c.STATUSID == (int)ApprovalStatusEnum.Approved && b.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred
                                                        && d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                                        && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
@@ -11102,7 +11094,7 @@ namespace FintrakBanking.Repositories.Credit
             var transactionDynamicsDetails = (from a in context.TBL_LOAN_TRANSACTION_DYNAMICS
                                               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                               join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                              where c.LOANAPPLICATIONID == (int)loanApplicationId && a.ISEXTERNAL == true
+                                              where c.LOANAPPLICATIONID == (int)loanApplicationId
                                               && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                               && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                               && b.STATUSID == (int)ApprovalStatusEnum.Approved
