@@ -16083,6 +16083,30 @@ namespace FintrakBanking.Repositories.Credit
             return loanModel;
         }
 
+
+        public List<LoanViewModel> GetRunningPrepaymentLoans(int companyId, int loanId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+
+
+            var runningLoan = (from l in context.TBL_LOAN
+                               join m in context.TBL_LOAN_REVIEW_OPERATION on l.TERMLOANID equals m.LOANID
+                               where l.COMPANYID == companyId && l.TERMLOANID == loanId && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                               && m.OPERATIONDATE == DbFunctions.TruncateTime(applicationDate) && m.OPERATIONTYPEID == (int)OperationsEnum.Prepayment
+                               select new LoanViewModel()
+                               {
+                                   loanReviewOperationId = m.LOANREVIEWOPERATIONID,
+                                   loanId = l.TERMLOANID,
+                                   operationDate = (DateTime)m.OPERATIONDATE,
+                                   prepaymentAmount = (decimal)m.PREPAYMENT,
+                               }).OrderBy(x => x.loanReviewOperationId).ToList();
+
+            return runningLoan;
+        }
+
+
+
+
         public LoanViewModel GetRunningLoanOpeningBalance(int companyId, string refNo, DateTime effectiveDate)
         {
 

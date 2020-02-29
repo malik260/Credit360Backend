@@ -140,6 +140,53 @@ namespace FintrakBanking.Repositories.Credit
                     });
         }
 
+
+
+        public IQueryable<LoanViewModel> SearchForLoanPrepaymentReversal(string searchQuery)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            IQueryable<LoanViewModel> allFilteredLoan = null;
+
+            searchQuery = searchQuery.Trim();
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                var loans = (from a in context.TBL_LOAN
+                             join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                             join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                             join d in context.TBL_LOAN_REVIEW_OPERATION on a.TERMLOANID equals d.LOANID
+                             where a.ISDISBURSED == true && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (int)LoanStatusEnum.Active && d.OPERATIONDATE == DbFunctions.TruncateTime(applicationDate)
+                             select new LoanViewModel
+                             {
+                                 loanId = a.TERMLOANID,
+                                 customerId = a.CUSTOMERID,
+                                 customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                 firstName = b.FIRSTNAME,
+                                 lastName = b.LASTNAME,
+                                 customerCode = b.CUSTOMERCODE,
+                                 productAccountName = c.PRODUCTACCOUNTNAME,
+                                 loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                 principalAmount = a.PRINCIPALAMOUNT,
+                                 loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                 productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                 currencyId = a.CURRENCYID,
+                                 currencyCode = a.TBL_CURRENCY.CURRENCYCODE
+                             }).Distinct().ToList();
+
+                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.customerCode.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.firstName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.lastName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.productAccountName.ToLower().Contains(searchQuery.ToLower()))
+                                   .Take(10).AsQueryable();
+
+            }
+
+            return allFilteredLoan;
+
+        }
+
+
         public IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId)
         {
             return (from data in context.TBL_LOAN_APPLICATION_COVENANT

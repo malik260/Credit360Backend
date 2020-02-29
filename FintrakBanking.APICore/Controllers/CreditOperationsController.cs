@@ -510,6 +510,31 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-search-prepayment-reversal")]
+        public HttpResponseMessage SearchForLoanPrepaymentReversal(string searchQuery)
+        {
+            try
+            {
+
+                var data = loanRepo.SearchForLoanPrepaymentReversal(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("approved-loan-review-route")]
         public HttpResponseMessage GetApprovedLoanReviewAwaitingRoute()
         {

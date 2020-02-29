@@ -58,7 +58,8 @@ namespace FintrakBanking.ViewModels.Credit
         public Decimal sanctionLimit { get; set; }
         public bool isSuspenseCredit { get; set; }
         public decimal bookedAmount { get; set; }
-
+        public DateTime operationDate { get; set; }
+        public decimal prepaymentAmount { get; set; }
         public string productAccountName2 { get; set; }
         public string businessUnit { get; set; }
         public string nameOfRM { get; set; }

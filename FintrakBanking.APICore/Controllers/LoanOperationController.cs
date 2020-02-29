@@ -63,6 +63,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("getrunningloanreversal/{loanId}")]
+        public HttpResponseMessage GetRunningLoanCurrentReversal(int loanId)
+        {
+            try
+            {
+                var data = repo.GetRunningPrepaymentLoans(token.GetCompanyId, loanId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("getWiteOffloan/{refNo}")]
