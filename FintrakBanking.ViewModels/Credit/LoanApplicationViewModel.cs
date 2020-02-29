@@ -12,6 +12,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int? customerBusinessUnitId { get; set; }
         public string divisionShortCode { get; set; }
+        public int bookingRequestId { get; set; }
 
         public string divisionCode { get; set; }
 
@@ -229,6 +230,7 @@ namespace FintrakBanking.ViewModels.Credit
         public object operationTypeName { get; set; }
         public string reviewLoanDetaile { get; set; }
         public string referenceNumber { get; set; }
+        public DateTime systemDateTime { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {

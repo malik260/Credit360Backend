@@ -1444,6 +1444,16 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("drawdown-application-detail-search")]
+        public HttpResponseMessage DrawDownApplicationSearch([FromBody] SearchViewModel model)
+        {
+            var response = repo.SearchDrawDown(model.searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("search-booked-loans")]
         public HttpResponseMessage SearchBookedLoans([FromBody] SearchViewModel model)
         {
