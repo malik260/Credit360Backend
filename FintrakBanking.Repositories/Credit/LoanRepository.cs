@@ -338,6 +338,54 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
+        public bool UpdateFacilityLineStatus(LoanViewModel entity)
+        {
+            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationDetail.LOANAPPLICATIONID);
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
+            if (applicationDetail == null) { return false; }
+
+            var approvalModel = new ForwardViewModel
+            {
+                createdBy = entity.createdBy,
+                companyId = entity.companyId,
+                applicationId = entity.loanBookingRequestId,
+                comment = "Line Maintained",
+                amount = entity.principalAmount,
+                operationId = (int) entity.operationId,
+            };
+
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Approved;
+            workflow.TargetId = (int)entity.loanBookingRequestId;
+            workflow.Comment = entity.comment;
+            workflow.OperationId = (short)entity.operationId;
+            workflow.DeferredExecution = true;
+            workflow.ExternalInitialization = false;
+
+            if (application != null) workflow.BusinessUnitId = application.TBL_CUSTOMER?.BUSINESSUNTID;
+
+            workflow.LogActivity();
+
+            context.SaveChanges();
+
+
+            if (workflow.NewState == (int)ApprovalState.Ended)
+            {
+                application.APPROVEDLINESTATUSID = entity.approvedLineStatusId;
+                request.APPROVEDLINESTATUSID = entity.approvedLineStatusId;
+                request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                request.ISUSED = true;
+                context.SaveChanges();
+
+                return true;
+            }
+            else
+            { return false; }
+
+        }
+
         public string AddLoanBooking(LoanViewModel entity)
         {
             if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating || entity.productTypeId == (int)LoanProductTypeEnum.SyndicatedTermLoan)
@@ -422,7 +470,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (attendedRequests.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
                     throw new ConditionNotMetException("Bond and gaurantee job sent to legal was disapproved. You cannot continue with the application.");
             }
-
+            
             return true;
         }
 
@@ -1214,6 +1262,9 @@ namespace FintrakBanking.Repositories.Credit
 
             entity.effectiveDate = entity.loanScheduleInput.effectiveDate;
             entity.maturityDate = entity.loanScheduleInput.maturityDate;
+
+            var maximumMaturityDate = entity.effectiveDate.AddDays(applicationDetail.APPROVEDTENOR);
+            if(entity.maturityDate.Date > maximumMaturityDate.Date) {throw new ConditionNotMetException("You can not exceed the maximum maturity date"); }
 
             loanBookingValidation(entity);
             var principalAmount = from a in context.TBL_LOAN
@@ -2710,6 +2761,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         select new CamProcessedLoanViewModel
                         {
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                             loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
                             approvalStatusId = (short)atrail.APPROVALSTATUSID,
                             approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
@@ -2846,6 +2898,9 @@ namespace FintrakBanking.Repositories.Credit
                             bookingRequestStatusId = s.APPROVALSTATUSID,
                             requestDate = s.DATETIMECREATED,
                             requestedBy = "",
+                            systemArrivalDateTime = s.DATETIMECREATED,
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                             appraisalOperationId = m.OPERATIONID,
                             requestedAmount = s.AMOUNT_REQUESTED,
                             requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
@@ -3131,6 +3186,8 @@ namespace FintrakBanking.Repositories.Credit
 
                         select new LoanViewModel()
                         {
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                             loanId = ln.TERMLOANID,
                             operationId = ln.OPERATIONID,
                             operationTypeId = atrail.OPERATIONID,
@@ -3338,6 +3395,8 @@ namespace FintrakBanking.Repositories.Credit
                         orderby ln.REVOLVINGLOANID descending
                         select new RevolvingLoanViewModel()
                         {
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                             loanId = ln.REVOLVINGLOANID,
                             operationId = ln.OPERATIONID,
                             operationTypeId = (int)OperationsEnum.RevolvingLoanBooking,
@@ -3500,6 +3559,8 @@ namespace FintrakBanking.Repositories.Credit
 
                         select new ContingentLoanViewModel()
                         {
+                            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                             loanId = ln.CONTINGENTLOANID,
                             operationId = (int)OperationsEnum.ContigentLoanBooking,
                             appraisalOperationId = (short)a.OPERATIONID ,
@@ -4678,7 +4739,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (WorkflowStage == "RM") { WorkflowStageName = "11"; }
 
-            if (WorkflowStage.Substring(0, 2) == "CR") { WorkflowStageName = "12"; }
+            if (WorkflowStage == "CA") { WorkflowStageName = "12"; }
+            //if (WorkflowStage.Substring(0, 2) == "CR") { WorkflowStageName = "12"; }
 
             if (WorkflowStage == "GH") { WorkflowStageName = "13"; }
 
@@ -4695,7 +4757,10 @@ namespace FintrakBanking.Repositories.Credit
             //offerLetters.Attachment.FileType = "pdf";
             //offerLetters.ReasonForRejection = ReasonForRejection;
             offerLetters.ActionByName = staffFullName;
-            transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+
+            if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
+                transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+            }
         }
 
         private void ProcessRevolvingLoanFacilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_REVOLVING revolvingLoanRecord, ApprovalViewModel user, int createdBy)
@@ -7343,6 +7408,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                        join p in context.TBL_PRODUCT on  d.APPROVEDPRODUCTID equals p.PRODUCTID
                         where a.COMPANYID == companyId && d.DELETED == false
                         && staffIds.Contains(a.CREATEDBY)
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -7357,6 +7423,7 @@ namespace FintrakBanking.Repositories.Credit
                             //approvalStatusId = (short)atrail.APPROVALSTATUSID,
                             loanBookingRequestId = 0,
                             approvalTrailId = 0,
+                            isLineFacility = p.ISFACILITYLINE,
                             appraisalOperationId = a.OPERATIONID,
                             //bookingAmountRequested = r.AMOUNT_REQUESTED,
                             requestedAmount = 0,
@@ -8138,6 +8205,7 @@ namespace FintrakBanking.Repositories.Credit
                                        bookingRequestStatusId = s.APPROVALSTATUSID,
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
+                                       systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                        requestedAmount = s.AMOUNT_REQUESTED,
                                        requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
                                        approvalStatusId = atrail.APPROVALSTATUSID,
@@ -8471,8 +8539,10 @@ namespace FintrakBanking.Repositories.Credit
                                        bookingAmountRequested = s.AMOUNT_REQUESTED,
                                        loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                                        bookingRequestStatusId = s.APPROVALSTATUSID,
+                                       isLineFacility = p.ISFACILITYLINE,
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
+                                       systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                        operationId = s.OPERATIONID,
                                        crmsCode = s.CRMSCODE,
                                        requestedAmount = s.AMOUNT_REQUESTED,
@@ -8484,6 +8554,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                        applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                        applicationStatusId = m.APPLICATIONSTATUSID,
+                                       divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                                        customerId = d.CUSTOMERID,
                                        customerCode = cust.CUSTOMERCODE,
                                        customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
@@ -8796,6 +8867,7 @@ namespace FintrakBanking.Repositories.Credit
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
+                            isLineFacility = p.ISFACILITYLINE,
                             bookingAmountRequested = s.AMOUNT_REQUESTED,
                             loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                             bookingRequestStatusId = s.APPROVALSTATUSID,
@@ -11114,7 +11186,7 @@ namespace FintrakBanking.Repositories.Credit
                                        //join f in context.TBL_LOAN_CAMSOL on a.TERMLOANID equals f.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                        //&& b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanSales
-                                       && b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanRecovery
+                                       && (b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanRecovery || b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanRecoveryApproval)
                                        && b.OPERATIONPERFORMED == false
                                        //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending

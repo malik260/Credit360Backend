@@ -23,7 +23,8 @@ using System.Data.Entity;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
 using GemBox.Spreadsheet;
-using System.IO; 
+using System.IO;
+using System.Data.Entity.Validation;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -2184,7 +2185,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
             var msg = new RacReturnInfoViewModel();
-            if (rac.form == null) return null;
+            if (rac.form == null || rac.form.Count == 0) return null;
             var ids = rac.form.Select(x => x.criteriaId);
 
             definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
@@ -2379,7 +2380,7 @@ namespace FintrakBanking.Repositories.Credit
                     RACDEFINITIONID = definition.RACDEFINITIONID,
                     OPERATIONID = operationId,
                     TARGETID = targetId,
-                    ACTUALVALUE = submission.value,
+                    ACTUALVALUE = submission.value ?? "0",
                     CREATEDBY = staffId,
                     DATETIMECREATED = DateTime.Now,
 
@@ -2408,7 +2409,7 @@ namespace FintrakBanking.Repositories.Credit
             //    ).Any())
             //        return false;
             //}
-
+            
             int integerConversion;
             int? integerValue = null;
             decimal? decimalValue = null;
@@ -2426,15 +2427,22 @@ namespace FintrakBanking.Repositories.Credit
                     if (!String.IsNullOrEmpty(value)) { return true; }
                     break;
                 case 2:
-                    decimalValue = decimal.Parse(value);
+                    if(value != null) decimalValue = decimal.Parse(value);
+                    else decimalValue = 0;
                     break;
                 case 3:
-                    int.TryParse(value, out integerConversion);
-                    integerValue = integerConversion;
+                    if (value != null)
+                    {
+                        int.TryParse(value, out integerConversion);
+                        integerValue = integerConversion;
+                    }
                     break;
                 case 4:
-                    int.TryParse(value, out integerConversion);
-                    integerValue = integerConversion;
+                    if (value != null)
+                    {
+                        int.TryParse(value, out integerConversion);
+                        integerValue = integerConversion;
+                    }
                     break;
                 case 5:
                     if (!String.IsNullOrEmpty(value)) return true;
@@ -2895,6 +2903,12 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
             this.loanData.LOANSWITHOTHERS = loan.loansWithOthers;
             this.loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
+            if (loan.LoanApplicationDetail.Count > 0)
+            {
+                var exclusiveOperationId = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == loan.flowchangeId)?.OPERATIONID;
+                this.loanData.OPERATIONID = ((exclusiveOperationId == null) || (exclusiveOperationId == 0)) ? (int)OperationsEnum.CreditAppraisal : (int)exclusiveOperationId;
+                this.loanData.FLOWCHANGEID = loan.flowchangeId;
+            }
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -3154,6 +3168,20 @@ namespace FintrakBanking.Repositories.Credit
                 response = context.SaveChanges();
 
             }
+            //catch (DbEntityValidationException e)
+            //{
+            //    foreach (var eve in e.EntityValidationErrors)
+            //    {
+            //        Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+            //            eve.Entry.Entity.GetType().Name, eve.Entry.State);
+            //        foreach (var ve in eve.ValidationErrors)
+            //        {
+            //            Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+            //                ve.PropertyName, ve.ErrorMessage);
+            //        }
+            //    }
+            //    throw;
+            //}
             catch (Exception ex)
             {
 
@@ -3203,6 +3231,7 @@ namespace FintrakBanking.Repositories.Credit
                 operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
                 loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
                 tenorModeId = d.TENORFREQUENCYTYPEID,
+                flowChangeId = d.TBL_LOAN_APPLICATION.FLOWCHANGEID
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
@@ -4592,6 +4621,147 @@ namespace FintrakBanking.Repositories.Credit
                 return applications; */
 
             }
+        }
+
+        public List<LoanApplicationViewModel> SearchDrawDown(string searchString, int staffId = 0)
+        {
+            int[] operations = { (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,(int)OperationsEnum.CorporateDrawdownRequest
+ 
+            };
+            searchString = searchString.Trim().ToLower();
+            var applications = (from x in context.TBL_LOAN_APPLICATION
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join r in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
+                                join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                where
+                           (x.APPLICATIONREFERENCENUMBER == searchString
+                        || c.FIRSTNAME.ToLower().Contains(searchString)
+                        || c.LASTNAME.ToLower().Contains(searchString)
+                        || c.MIDDLENAME.ToLower().Contains(searchString)
+                        || x.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                                select new LoanApplicationViewModel
+                                {
+                                    firstName = c.FIRSTNAME,
+                                    middleName = c.MIDDLENAME,
+                                    lastName = c.LASTNAME,
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    customerId = c.CUSTOMERID,
+                                    bookingRequestId = r.LOAN_BOOKING_REQUESTID,
+                                    
+                                    branchId = c.BRANCHID,
+                                    customerGroupId = x.CUSTOMERGROUPID,
+                                    loanTypeId = x.LOANAPPLICATIONTYPEID,
+                                    relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                    relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                    applicationDate = x.APPLICATIONDATE,
+                                    applicationAmount = x.APPLICATIONAMOUNT,
+                                    approvedAmount = x.APPROVEDAMOUNT,
+                                    interestRate = x.INTERESTRATE,
+                                    applicationTenor = x.APPLICATIONTENOR,
+                                    productClassId = x.PRODUCTCLASSID,
+                                    loanInformation = x.LOANINFORMATION,
+                                    productClassProcessId = x.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESSID,
+                                    submittedForAppraisal = x.SUBMITTEDFORAPPRAISAL,
+                                    customerInfoValidated = x.CUSTOMERINFOVALIDATED,
+                                    isRelatedParty = x.ISRELATEDPARTY,
+                                    isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
+                                    approvalStatusId = (short)x.APPROVALSTATUSID,
+                                    approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
+
+                                  
+                                    applicationStatusId = x.APPLICATIONSTATUSID,
+                                    applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == x.APPLICATIONSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
+                                    branchName = x.TBL_BRANCH.BRANCHNAME,
+                                    relationshipOfficerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
+                                    relationshipManagerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
+                                    misCode = x.MISCODE,
+                                    customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                                    loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(o => o.LOANAPPLICATIONTYPEID == x.LOANAPPLICATIONTYPEID).Select(o => o.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
+                                    createdBy = x.CREATEDBY,
+                                    loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
+                                    operationId = x.OPERATIONID,
+                                    //owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
+                                    isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
+                                    isFacilityCreated = a.ISFACILITYCREATED
+                                }).ToList();
+
+            var groupApplications = (from x in context.TBL_LOAN_APPLICATION
+                                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                     join c in context.TBL_CUSTOMER_GROUP on x.CUSTOMERGROUPID equals c.CUSTOMERGROUPID
+                                     join r in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
+                                     where
+                                (x.APPLICATIONREFERENCENUMBER == searchString
+                             || c.GROUPNAME.ToLower().Contains(searchString)
+                             || c.GROUPCODE.ToLower().Contains(searchString)
+                             || c.GROUPDESCRIPTION.ToLower().Contains(searchString)
+                             || x.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                                     select new LoanApplicationViewModel
+                                     {
+                                         customerName = c.GROUPNAME,
+                                         customerCode = c.GROUPCODE,
+                                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                         loanApplicationId = x.LOANAPPLICATIONID,
+                                         customerId = null,
+                                         branchId = x.BRANCHID,
+                                         customerGroupId = x.CUSTOMERGROUPID,
+                                         loanTypeId = x.LOANAPPLICATIONTYPEID,
+                                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                         applicationDate = x.APPLICATIONDATE,
+                                         applicationAmount = x.APPLICATIONAMOUNT,
+                                         approvedAmount = x.APPROVEDAMOUNT,
+                                         interestRate = x.INTERESTRATE,
+                                         applicationTenor = x.APPLICATIONTENOR,
+                                         productClassId = x.PRODUCTCLASSID,
+                                         productClassProcessId = x.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESSID,
+                                         submittedForAppraisal = x.SUBMITTEDFORAPPRAISAL,
+                                         customerInfoValidated = x.CUSTOMERINFOVALIDATED,
+                                         isRelatedParty = x.ISRELATEDPARTY,
+                                         isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
+                                         approvalStatusId = (short)x.APPROVALSTATUSID,
+                                         approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                         applicationStatusId = x.APPLICATIONSTATUSID,
+                                         applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == x.APPLICATIONSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
+                                         branchName = x.TBL_BRANCH.BRANCHNAME,
+                                         relationshipOfficerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
+                                         relationshipManagerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
+                                         misCode = x.MISCODE,
+                                         customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                                         loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(o => o.LOANAPPLICATIONTYPEID == x.LOANAPPLICATIONTYPEID).Select(o => o.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
+                                         createdBy = x.CREATEDBY,
+                                         loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
+                                         operationId = x.OPERATIONID,
+                                         bookingRequestId = r.LOAN_BOOKING_REQUESTID,
+                                         //owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
+                                         isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
+                                         isFacilityCreated = a.ISFACILITYCREATED
+                                     }).ToList();
+            var allRecord = applications.Union(groupApplications).ToList();
+
+            foreach (var x in allRecord)
+            {
+                var appRecord = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.bookingRequestId && operations.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).FirstOrDefault();
+                if (appRecord != null)
+                {
+                    var singleRec = appRecord;
+                    x.currentApprovalLevel = singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "DISBURSED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "DRAWDOWN" : "N/A"; 
+                    x.approvalTrailId = singleRec.APPROVALTRAILID;
+                                                                 
+                    x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "DISBURSED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "DRAWDOWN" : "N/A" : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                    x.currentOperationId = singleRec.OPERATIONID;
+                }
+                else
+                {
+                    x.currentApprovalLevel = x.isFacilityCreated == true ? "DISBURSED" : "N/A";
+                    x.responsiblePerson = x.isFacilityCreated == true ? "DISBURSED" : "N/A";
+                }
+
+            }
+            return allRecord;
+
         }
 
         public List<WorkflowTrackerViewModel> SearchBookedLoans(string searchString)
@@ -6941,7 +7111,8 @@ namespace FintrakBanking.Repositories.Credit
         public RevisedProcessFlowModel getCashCollaterizedProcessFlowBy()
         {
             var cashCollaterzedFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
-                                   where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
+                                   where c.FLOWCHANGEID == (short)FlowChangeEnum.CASHCOLLATERIZED
+                                   //where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
                                        select new RevisedProcessFlowModel
                                    {
                                        flowchangeId = c.FLOWCHANGEID,
