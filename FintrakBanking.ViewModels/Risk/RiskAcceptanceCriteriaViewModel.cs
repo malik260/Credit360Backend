@@ -132,6 +132,7 @@ namespace FintrakBanking.ViewModels.Risk
         public string searchBasePlaceholder { get; set; }
         public string employmentType { get; set; }
         public short? customerTypeId { get; set; }
+        public string criteria { get; set; }
     }
 
     public class RacDetailViewModel : GeneralEntity

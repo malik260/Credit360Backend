@@ -855,6 +855,7 @@ namespace FintrakBanking.Repositories.Credit
                              loanPreliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID ?? 0,
 
                              approvalStatusId = (short)a.APPROVALSTATUSID,
+                             apiRequestId = a.APIREQUESTID,
                              approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
                          }).ToList();
 

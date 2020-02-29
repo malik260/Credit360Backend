@@ -88,7 +88,7 @@ namespace FintrakBanking.Repositories.Credit
                  lastComment = x.trail == null ? "" : x.trail.COMMENT,
                  toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
                  requestStaffId = x.trail == null ? 0 : x.trail.REQUESTSTAFFID,
-
+                 systemArrivalDate = x.application.DATETIMECREATED,
                  applicationDate = x.application.APPLICATIONDATE,
                  approvalStatus = x.application.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                  approvalStatusId = (int)x.application.APPROVALSTATUSID,
@@ -254,6 +254,7 @@ namespace FintrakBanking.Repositories.Credit
                  //creditAppraisalLoanApplicationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == d.LOANID select aa.LOANAPPLICATIONID).FirstOrDefault(),
                  applicationDate = x.application.APPLICATIONDATE,
                  approvalStatus = x.application.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                 systemArrivalDate = x.application.DATETIMECREATED,
                  approvalStatusId = (int)x.application.APPROVALSTATUSID,
                  createdBy = x.application.CREATEDBY,
                  loanReviewApplicationId = x.application.LOANAPPLICATIONID,
