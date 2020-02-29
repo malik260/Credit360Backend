@@ -6917,7 +6917,6 @@ namespace FintrakBanking.Repositories.Credit
                  <br />";
             return result;
         }
-
         private string GetRacValue(string rac)
         {
             if (int.Parse(rac) == 1)
