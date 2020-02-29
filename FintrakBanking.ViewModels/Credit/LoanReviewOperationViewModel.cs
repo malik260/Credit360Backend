@@ -424,6 +424,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int globalsla { get; set; }
         public string operationTypeName { get; set; }
         public string createdByName { get; set; }
+        public DateTime systemArrivalDate { get; set; }
     }
 
     public class applicationDetails
