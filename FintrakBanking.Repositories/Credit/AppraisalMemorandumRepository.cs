@@ -702,7 +702,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 WorkflowStageName = "11";
             }
-            if (WorkflowStage.Substring(0, 2) == "CR")
+            //if (WorkflowStage.Substring(0, 2) == "CR")
+            if (WorkflowStage == "CA")
             {
                 WorkflowStageName = "12";
             }
@@ -722,7 +723,11 @@ namespace FintrakBanking.Repositories.Credit
             //offerLetters.Attachment.FileType = "pdf";
             //offerLetters.ReasonForRejection = ReasonForRejection;
             offerLetters.ActionByName = staffFullName;
-            transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+
+            if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
+                transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+            }
+
         }
 
         private void ReferBackThroughAPI(TBL_LOAN_APPLICATION loanApplication, ForwardViewModel model, int staffRoleId)
@@ -736,7 +741,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     WorkflowStageName = "11";
                 }
-                if (WorkflowStage.Substring(0, 2) == "CR")
+                //if (WorkflowStage.Substring(0, 2) == "CR")
+                if (WorkflowStage == "CA")
                 {
                     WorkflowStageName = "12";
                 }
@@ -756,7 +762,10 @@ namespace FintrakBanking.Repositories.Credit
                     offerLetters.RequestId = loanApplication.APIREQUESTID;
                     offerLetters.WorkflowStage = WorkflowStageName;
                     offerLetters.ActionByName = staffFullName;
-                    transaction.ReferBackThroughAPI(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+
+                    if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
+                        transaction.ReferBackThroughAPI(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+                    }
                 }
             }
         }
@@ -1759,6 +1768,22 @@ namespace FintrakBanking.Repositories.Credit
             
 
             data.OrderByDescending(d => d.approvalTrailId);
+
+            //for Filtering multiple occuring levels
+            var data2 = data.ToList();
+            var testData = data.ToList();
+            foreach (var t in testData)
+            {
+                var firstTrailForLevel = testData.OrderBy(x => x.approvalTrailId).FirstOrDefault(x => x.fromApprovalLevelId == t.fromApprovalLevelId);
+                var multipleTrails = testData.Where(d => d.fromApprovalLevelId == firstTrailForLevel.fromApprovalLevelId && d.approvalTrailId != firstTrailForLevel.approvalTrailId).ToList();
+                foreach (var tr in multipleTrails)
+                {
+                    data2.RemoveAll(d => d.approvalTrailId == tr.approvalTrailId);
+                }
+            }
+            data = data2;
+            data.OrderByDescending(d => d.approvalTrailId);
+
             return data;
         }
 
@@ -2670,7 +2695,7 @@ namespace FintrakBanking.Repositories.Credit
             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
             relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
             applicationDate = x.a.APPLICATIONDATE,
-            //newApplicationDate = x.a.APPLICATIONDATE,
+            systemDateTime = x.a.SYSTEMDATETIME,
             applicationAmount = x.a.APPLICATIONAMOUNT,
             facility = x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LOAN_APPLICATION_DETAIL
                                         .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
@@ -2825,6 +2850,7 @@ namespace FintrakBanking.Repositories.Credit
             collateralDetail = x.a.COLLATERALDETAIL,
             isadhocapplication = x.a.ISADHOCAPPLICATION,
             requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
+            systemDateTime = x.a.SYSTEMDATETIME,
             operationId = x.a.OPERATIONID,
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
             tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,

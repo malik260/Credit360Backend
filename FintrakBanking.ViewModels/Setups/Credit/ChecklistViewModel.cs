@@ -60,6 +60,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
 
     public class CheckListScores : GeneralEntity
     {
+        public int checkListStatusId { get; set; }
         public int checklistScoresId { get; set; }
         public int? esgChecklistDefinitionId { get; set; }
         public string grade { get; set; }

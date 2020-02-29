@@ -29,5 +29,7 @@ namespace FintrakBanking.Interfaces.Customer
         #endregion
 
         List<CustomerFSRatioCaptionReportViewModel> GetCustomerFSRatioValues(int customerId);
+
+        decimal CalculateFSRatioValueForDerived(CustomerFSCaptionDetailViewModel entity);
     }
 }

@@ -1766,12 +1766,12 @@ namespace FintrakBanking.APICore.Controllers
         #region GreenRating
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("checklist-scores")]
-        public HttpResponseMessage GetCheckListScores()
+        [Route("checklist-scores/{checkListTypeId}")]
+        public HttpResponseMessage GetCheckListScores(int checkListTypeId)
         {
             try
             {
-                var data = repo.GetCheckListScores();
+                var data = repo.GetCheckListScores(checkListTypeId);
                 if (data.Count() > 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

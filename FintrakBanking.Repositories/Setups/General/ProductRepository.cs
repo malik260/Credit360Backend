@@ -1589,6 +1589,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             existingProduct.DORMANTGL = productModel.DORMANTGL;
                             existingProduct.PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL;
                             existingProduct.OVERDRAWNGL = productModel.OVERDRAWNGL;
+                            existingProduct.ISFACILITYLINE = productModel.ISFACILITYLINE;
 
                             existingProduct.PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID;
                             existingProduct.PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD;
@@ -1685,7 +1686,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 PRODUCTCODE = productModel.PRODUCTCODE,
                                 PRODUCTNAME = productModel.PRODUCTNAME,
                                 PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION,
-
+                                ISFACILITYLINE = productModel.ISFACILITYLINE,
                                 PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL,
                                 PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2,
                                 PENALCHARGEGL = productModel.PENALCHARGEGL,
@@ -1913,6 +1914,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 var product = new TBL_TEMP_PRODUCT()
                 {
+                    ISFACILITYLINE = productModel.isFacilityLine,
                     PENALCHARGERATE = productModel.penalChargeRate,
                     USEDBYLOS = productModel.usedByLos,
                     COMPANYID = productModel.companyId,
@@ -2017,7 +2019,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         output = await context.SaveChangesAsync() > 0;
 
                         //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
-
 
                         var entity = new ApprovalViewModel
                         {
@@ -2178,7 +2179,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     tempProductToUpdate.PRODUCTNAME = productModel.productName;
                     tempProductToUpdate.PRODUCTDESCRIPTION = productModel.productDescription;
                     tempProductToUpdate.RISKRATINGID = productModel.riskRatingId;
-
+                    tempProductToUpdate.ISFACILITYLINE = productModel.isFacilityLine;
                     tempProductToUpdate.PRINCIPALBALANCEGL = productModel.principalBalanceGl;
                     tempProductToUpdate.PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2;
                     tempProductToUpdate.PENALCHARGEGL = productModel.penalChargeGl;
@@ -2226,10 +2227,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     tempProductToUpdate.TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals;
 
                     //Product Behaviour Update
-                    if (existingTempProductBehaviour != null)
-                    {
+                    //if (existingTempProductBehaviour != null)
+                    //{
                         tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
                         {
+                            //TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID,
                             PRODUCTCODE = productModel.productCode,
                             COLLATERAL_FCY_LIMIT = productModel.productBehaviour.collateralFcyLimit,
                             COLLATERAL_LCY_LIMIT = productModel.productBehaviour.collateralLcyLimit,
@@ -2244,16 +2246,20 @@ namespace FintrakBanking.Repositories.Setups.General
                             CREATEDBY = productModel.createdBy,
                             CRMSREGULATORYID = productModel.productBehaviour.crmsRegulatoryId,
                         };
-                    }
-                    context.TBL_TEMP_PRODUCT.Add(tempProductToUpdate);
-                    context.SaveChanges();
-                    if (existingTempProductBehaviour != null)
-                    {
-                        tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
-                        context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
-                    }
+                    //}
 
-                }
+                    context.TBL_TEMP_PRODUCT.Add(tempProductToUpdate);
+
+                    //if (existingTempProductBehaviour != null)
+                    //{
+                        //tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
+                        context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
+                    //}
+
+                    context.SaveChanges();
+                    tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
+
+            }
                 else
                 {
                     var targetProduct = context.TBL_PRODUCT.Find(productId);
@@ -2305,6 +2311,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     //End of storing the updated product currencies
                     tempProduct = new TBL_TEMP_PRODUCT()
                     {
+                        ISFACILITYLINE = productModel.isFacilityLine,
                         PENALCHARGERATE = productModel.penalChargeRate,
                         USEDBYLOS = productModel.usedByLos,
                         COMPANYID = productModel.companyId,
@@ -2409,6 +2416,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         //end of Audit section -------------------------------
 
                         output = await context.SaveChangesAsync() > 0;
+
+                        if (existingTempProduct == null) { tempProductBehaviour.TEMP_PRODUCTID = tempProduct.TEMP_PRODUCTID; }
 
                         targetProductId = existingTempProduct?.TEMP_PRODUCTID ?? tempProduct.TEMP_PRODUCTID;
 

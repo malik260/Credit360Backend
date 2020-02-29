@@ -48,6 +48,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public short? approvedLineStatusId { get; set; }
+
+        public string divisionShortCode { get; set; }
+
+        public string divisionCode { get; set; }
+
         public string facilityType { get; set; }
         public Decimal sanctionLimit { get; set; }
         public bool isSuspenseCredit { get; set; }
@@ -65,7 +71,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string payingAccountNumber { get; set; }
 
-        public string legalContingentCode { get; set; }
+        public string legalContingentCode { get; set; } 
         public int zeroToThirtyDays { get; set; }
         public int ThirtyOneToNinety { get; set; }
         public int ninetyOneToOneEightyDays { get; set; }
@@ -415,6 +421,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? synOperationId { get; set; }
         public int creditAppraisalOperationId { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
+        public int applicationDetailId { get; set; }
 
 
 
@@ -423,6 +430,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string divisionShortCode { get; set; }
+
+        public string divisionCode { get; set; }
+
         public decimal bookedAmount { get; set; }
 
         public short scheduleDayCountConventionId { get; set; }
@@ -559,6 +570,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ContingentLoanViewModel : GeneralEntity
     {
+        public string divisionShortCode { get; set; }
+
+        public string divisionShortCodem { get; set; }
+
+        public string divisionCode { get; set; }
+
         public string currencyCode { get; set; }
         public string casaAccountDetails { get; set; }
 
@@ -693,6 +710,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public bool? isLineFacility { get; set; }
+
         public DateTime systemArrivalDateTime { get; set; }
 
         public int appraisalOperationId { get; set; }

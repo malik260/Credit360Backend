@@ -36,7 +36,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string principalBalanceGl2Code { get; set; }
         public bool? requireCasaAccount { get; set; }
         public bool usedByLos { get; set; }
-
+        public bool isFacilityLine { get; set; }
         public string operation { get; set; }
 
         public int productId { get; set; }

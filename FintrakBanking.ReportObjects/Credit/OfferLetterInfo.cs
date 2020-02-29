@@ -283,7 +283,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                                          && (b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived 
+                                          && (b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
                                           || b.CHECKLISTSTATUSID == null)
                                           && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
                                           && c.STATUSID == (int)ApprovalStatusEnum.Approved
@@ -322,21 +322,21 @@ namespace FintrakBanking.ReportObjects.Credit
                                           }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
             var conditionPrecedentDeferralData = (from a in context.TBL_LOAN_APPLICATION
-                                          join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                                  join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                                   join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                                   join d in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals d.LOANCONDITIONID
-                                          where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
-                                               && c.STATUSID == (int)ApprovalStatusEnum.Approved && b.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred 
-                                               && d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                                               && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
-                                               && c.STATUSID == (int)ApprovalStatusEnum.Approved
+                                                  where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
+                                                       && c.STATUSID == (int)ApprovalStatusEnum.Approved && b.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred
+                                                       && d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                                                       && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+                                                       && c.STATUSID == (int)ApprovalStatusEnum.Approved
                                                   select new OfferLetterConditionPrecidentViewModel()
-                                          {
-                                              conditionPrecident = b.CONDITION,
-                                              loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                                              isExternal = b.ISEXTERNAL,
-                                              productName = c.TBL_PRODUCT.PRODUCTNAME
-                                          }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+                                                  {
+                                                      conditionPrecident = b.CONDITION,
+                                                      loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                                      isExternal = b.ISEXTERNAL,
+                                                      productName = c.TBL_PRODUCT.PRODUCTNAME
+                                                  }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
 
             var forDebugging = conditionSubsequentData.ToList().Union(conditionPrecedentDeferralData.ToList());
@@ -663,7 +663,7 @@ namespace FintrakBanking.ReportObjects.Credit
                 loanApplicationId = x.b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                 isExternal = x.b.ISEXTERNAL,
                 productName = x.c.TBL_PRODUCT.PRODUCTNAME
-            }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+            }).ToList();// GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
             return externalCondition.Union(internalCondition).ToList();
         }

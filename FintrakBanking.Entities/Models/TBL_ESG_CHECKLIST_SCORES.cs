@@ -12,9 +12,9 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CHECKLISTSCORESID { get; set; }
 
-        public int CHECKLISTITEMID { get; set; }
+        //public int CHECKLISTITEMID { get; set; }
 
-        public int? ESGCHECKLISTDEFINITIONID { get; set; }
+        public int CHECKLISTSTATUSID { get; set; }
 
         //[StringLength(100)]
         public string GRADE { get; set; }
