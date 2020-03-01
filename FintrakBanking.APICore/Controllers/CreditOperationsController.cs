@@ -55,6 +55,42 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-bulk-prepayment-reversal")]
+        public HttpResponseMessage AddBulkPrepaymentReversal([FromBody] LoanReviewOperationViewModel model)
+        {
+            //try
+            //{
+            model.userBranchId = (short)token.GetBranchId;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            model.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+
+            try
+            {
+                var response = repo.AddBulkPrepaymentReversal(model, model.companyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+
+            //if (response)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record created successfully, now waiting for approval" });
+            //}
+            //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+        }
+
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-operationtype/isFinalOperation/{isFinalOperation}")]
@@ -505,6 +541,96 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
             }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-prepayment-reversal")]
+        public HttpResponseMessage AddPrepaymentReversal([FromBody] LoanReviewOperationViewModel model)
+        {
+            //try
+            //{
+            model.userBranchId = (short)token.GetBranchId;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            model.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+
+            //if ((int)OperationsEnum.Prepayment == model.operationTypeId)
+
+            //{
+            //    model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+
+            //    if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+            //    }
+
+            //    var response = repo.AddOperationReview(model);
+            //    if (response)
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record created successfully, now waiting for approval" });
+            //    }
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            //}
+            //else if (model.operationTypeId == (int)OperationsEnum.Fee_chargeChange)
+            //{
+            //    if (repo.DoesChargeFeeExist(model.loanId, model.operationTypeId, (int)model.interestFrequencyTypeId))
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested charge fee type already exist and going through approval" });
+            //    }
+            //    var response = repo.AddOperationReview(model);
+            //    if (response)
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record created successfully, now waiting for approval" });
+            //    }
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            //}
+            //else
+            //{
+            //    if (model.principalFirstPaymentDate < model.proposedEffectiveDate)
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Principal First Payment Date cannot be less than Effective date" });
+            //    }
+            //    if (model.interestFirstPaymentDate < model.proposedEffectiveDate)
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Interest First Payment Date cannot be less than Effective date" });
+            //    }
+            //    if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+            //    }
+
+
+            //    var response = repo.AddOperationReview(model);
+
+            //    if (response)
+            //    {
+            //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record created successfully, now waiting for approval" });
+            //    }
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            //}
+
+
+            var response = repo.AddOperationReview(model);
+
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record created successfully, now waiting for approval" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+            //}
+            //catch (ConditionNotMetException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            //}
+
         }
 
 

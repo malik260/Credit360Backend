@@ -27,6 +27,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ALERT_GENERAL_TEMPLATE> TBL_ALERT_GENERAL_TEMPLATE { get; set; }
         public virtual DbSet<TBL_INTERNAL_EXPOSURE> TBL_INTERNAL_EXPOSURE { get; set; }
         public virtual DbSet<TBL_PSR_IMAGES> TBL_PSR_IMAGES { get; set; }
+
+        public virtual DbSet<TBL_BULK_PREPAYMENTREVERSAL> TBL_BULK_PREPAYMENTREVERSAL { get; set; }
+        public virtual DbSet<TBL_BULK_PREPAYMENT> TBL_BULK_PREPAYMENT { get; set; }
+         
         public virtual DbSet<TBL_CREDIT_OFFICER_STAFFROLE> TBL_CREDIT_OFFICER_STAFFROLE { get; set; }
         public virtual DbSet<TBL_GLOBAL_EXPOSURE> TBL_GLOBAL_EXPOSURE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_DEPOSIT_ARCHV> TBL_COLLATERAL_DEPOSIT_ARCHV { get; set; }

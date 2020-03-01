@@ -15,6 +15,9 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
+        List<LoanViewModel> GetCurrentPrepayment(int companyId);
+        List<LoanViewModel> AddBulkPrepaymentReversal(LoanReviewOperationViewModel model, int companyId);
+        bool AddBulkPrepaymentReversalData(LoanViewModel data, int batchCode, DateTime applicationDate);
         string GetTransactionReferenceNo();
         List<LoanViewModel> GetRunningPrepaymentLoans(int companyId, int loanId);
         bool UpdateLoanClassification(DateTime applicationDate, int companyId);

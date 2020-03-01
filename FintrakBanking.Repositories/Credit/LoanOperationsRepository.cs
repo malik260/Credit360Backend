@@ -1,40 +1,37 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.AlertMonitoring;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.Validation;
 using FintrakBanking.Interfaces.WorkFlow;
-using System.Runtime.InteropServices;
+using FintrakBanking.Repositories.WorkFlow;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
+using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.ServiceModel;
-using FintrakBanking.Common.CustomException;
-using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
-using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
-using FintrakBanking.Entities.DocumentModels;
-using System.Net;
-using System.Configuration;
-using FintrakBanking.ViewModels.Setups.General;
-using FintrakBanking.Common.AlertMonitoring;
-using FintrakBanking.Interfaces.Customer;
-using FintrakBanking.Repositories.WorkFlow;
-using System.Diagnostics;
 using System.Transactions;
+using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FintrakBanking.Repositories.Credit
 
@@ -163,7 +160,7 @@ namespace FintrakBanking.Repositories.Credit
                 //.Select(x => new { x.currencyId, x.sellingRate}).Distinct().ToList();
 
 
-               
+
                 var scheduledLoan = (//from a in context.TBL_LOAN_SCHEDULE_DAILY
                                      from b in context.TBL_LOAN // on a.LOANID equals b.TERMLOANID
                                                                 //join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
@@ -781,7 +778,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     }
 
-                    financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee,  loanSystemTypeId);
+                    financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee, loanSystemTypeId);
 
                 }
 
@@ -3464,6 +3461,27 @@ namespace FintrakBanking.Repositories.Credit
 
         //    return true;
         //}
+
+
+        public List<LoanViewModel> GetCurrentPrepayment(int companyId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+
+            var runningLoan = (from l in context.TBL_LOAN
+                               join m in context.TBL_LOAN_REVIEW_OPERATION on l.TERMLOANID equals m.LOANID
+                               where l.COMPANYID == companyId && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                               && m.OPERATIONDATE == DbFunctions.TruncateTime(applicationDate) && m.OPERATIONTYPEID == (int)OperationsEnum.Prepayment && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                               select new LoanViewModel()
+                               {
+                                   loanReviewOperationId = m.LOANREVIEWOPERATIONID,
+                                   loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                   loanId = l.TERMLOANID,
+                                   operationDate = (DateTime)m.OPERATIONDATE,
+                                   prepaymentAmount = (decimal)m.PREPAYMENT,
+                               }).OrderBy(x => x.loanReviewOperationId).ToList();
+
+            return runningLoan;
+        }
 
         public bool GetRepaymentFromStagingBL()
         {
@@ -16107,6 +16125,152 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
+        public List<LoanViewModel> AddBulkPrepaymentReversal(LoanReviewOperationViewModel model, int companyId)
+        {
+
+            var applicationDate = generalSetup.GetApplicationDate();
+
+            List<LoanViewModel> result = new List<LoanViewModel>();
+
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+
+                try
+                {
+                    var batchCode = CommonHelpers.GenerateRandomDigitCodeNew(10);
+
+                    long batchCodeInt = Convert.ToInt64(batchCode);
+
+                    batchCodeInt = Math.Abs(batchCodeInt);
+
+
+
+                    foreach (var data in model.dataCollection)
+                    {
+                        data.createdBy = model.createdBy;
+                        data.companyId = model.companyId;
+                        data.userBranchId = model.userBranchId;
+                        data.applicationUrl = model.applicationUrl;
+                        data.userIPAddress = model.userIPAddress;
+                        data.applicationUrl = model.applicationUrl;
+
+                        var response = AddBulkPrepaymentReversalData(data, (int)batchCodeInt, applicationDate);
+
+
+                    };
+
+
+                    var rec = context.TBL_BULK_PREPAYMENTREVERSAL.Where(x => x.BATCHID == (int)batchCodeInt).FirstOrDefault();
+
+
+                    if (rec != null)
+                    {
+
+                        // Audit Section ---------------------------
+                        var audit = new TBL_AUDIT
+                        {
+                            AUDITTYPEID = (short)AuditTypeEnum.CreateBulkPrepaymentReversal,
+                            STAFFID = model.createdBy,
+                            BRANCHID = model.userBranchId,
+                            DETAIL = $"Initiated Bulk Prepayment with code '{batchCode}'",
+                            IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                            URL = model.applicationUrl,
+                            APPLICATIONDATE = applicationDate,
+                            SYSTEMDATETIME = DateTime.Now,
+                            DEVICENAME = CommonHelpers.GetDeviceName(),
+                            OSNAME = CommonHelpers.FriendlyName(),
+                        };
+
+                        auditTrail.AddAuditTrail(audit);
+
+                        var recSave = context.SaveChanges() > 0;
+
+                        workFlow.StaffId = model.createdBy;
+                        workFlow.CompanyId = model.companyId;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                        //workflow.TargetId = batchCode;
+                        workFlow.TargetId = (int)batchCodeInt;
+                        workFlow.Comment = "Bulk Prepayment Reversal Initiated";
+                        workFlow.OperationId = (int)OperationsEnum.ReversalOfPrepayment;
+                        workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                        workFlow.ExternalInitialization = true;
+                        workFlow.LogActivity();
+
+                        var runningLoan = (from l in context.TBL_LOAN
+                                           join m in context.TBL_LOAN_REVIEW_OPERATION on l.TERMLOANID equals m.LOANID
+                                           join n in context.TBL_BULK_PREPAYMENTREVERSAL on l.LOANREFERENCENUMBER equals n.LOANREFERENCENUMBER
+                                           where l.COMPANYID == companyId && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                           && m.OPERATIONDATE == DbFunctions.TruncateTime(applicationDate) && m.OPERATIONTYPEID == (int)OperationsEnum.Prepayment && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                           && n.PROCESSDATE == DbFunctions.TruncateTime(applicationDate) && n.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                           select new LoanViewModel()
+                                           {
+                                               loanReviewOperationId = m.LOANREVIEWOPERATIONID,
+                                               loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                               loanId = l.TERMLOANID,
+                                               operationDate = (DateTime)m.OPERATIONDATE,
+                                               prepaymentAmount = (decimal)m.PREPAYMENT,
+                                           }).OrderBy(x => x.loanReviewOperationId).ToList();
+
+
+
+                        if (runningLoan.Count().Equals(0))
+                        {
+                            result = runningLoan.ToList();
+                        }
+
+                    }
+
+                    transactionScope.Complete();
+
+
+                    transactionScope.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    transactionScope.Dispose();
+
+                    var innerException = "";
+                    if (ex.InnerException != null)
+                    {
+                        innerException = ex.InnerException.InnerException.Message;
+                    }
+
+                    throw ex;
+                }
+
+            }
+
+
+
+            return result;
+
+
+        }
+
+        public bool AddBulkPrepaymentReversalData(LoanViewModel data, int batchCode, DateTime applicationDate)
+        {
+
+            var bulkPrepaymentReversalInfo = new TBL_BULK_PREPAYMENTREVERSAL()
+            {
+                BATCHID = batchCode,
+                LOANREFERENCENUMBER = data.loanReferenceNumber,
+                AMOUNT = data.prepaymentAmount,
+                CREATEDBY = data.createdBy,
+                LASTUPDATEDBY = data.createdBy,
+                PROCESSDATE = applicationDate,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+            };
+
+            context.TBL_BULK_PREPAYMENTREVERSAL.Add(bulkPrepaymentReversalInfo);
+
+            var output = context.SaveChanges() > 0;
+
+            return output;
+        }
+
+
         public LoanViewModel GetRunningLoanOpeningBalance(int companyId, string refNo, DateTime effectiveDate)
         {
 
@@ -17364,7 +17528,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId)
         {
-         var applicationDate = generalSetup.GetApplicationDate();
+            var applicationDate = generalSetup.GetApplicationDate();
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
 
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
@@ -17404,7 +17568,7 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            where 
+                            where
                             (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
@@ -17421,7 +17585,7 @@ namespace FintrakBanking.Repositories.Credit
                             select new LoanReviewOperationApprovalViewModel
                             {
                                 creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
-                                creditAppraisalOperationId =  lp.OPERATIONID,
+                                creditAppraisalOperationId = lp.OPERATIONID,
                                 loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
                                 appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
@@ -17562,7 +17726,7 @@ namespace FintrakBanking.Repositories.Credit
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                      //join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
 
-                                     where 
+                                     where
                                      (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                      || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                      || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
@@ -17690,7 +17854,7 @@ namespace FintrakBanking.Repositories.Credit
                                       join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                       join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
 
-                                      where 
+                                      where
                                       (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                       || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                       || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
@@ -17871,7 +18035,7 @@ namespace FintrakBanking.Repositories.Credit
                                 effectiveDate = ln.EFFECTIVEDATE,
                                 maturityDate = ln.MATURITYDATE,
                                 bookingDate = ln.BOOKINGDATE,
-                                principalAmount = ln.OUTSTANDINGPRINCIPAL, 
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL,
                                 principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
                                 interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
                                 approvalStatusId = op.APPROVALSTATUSID,
@@ -22195,7 +22359,7 @@ namespace FintrakBanking.Repositories.Credit
                     BRANCHID = (short)userModel.userBranchId,
                     DETAIL = $"Line Operation with LoanReviewApplicationId '{lmsApprovalRecord.LOANREVIEWAPPLICATIONID}'",
                     IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                    URL =userModel.applicationUrl,
+                    URL = userModel.applicationUrl,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
                     DEVICENAME = CommonHelpers.GetDeviceName(),

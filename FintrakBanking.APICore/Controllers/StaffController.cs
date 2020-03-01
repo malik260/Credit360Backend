@@ -120,6 +120,147 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("bulkrepayment/{staffId}")]
+        public HttpResponseMessage DeleteBulkRepayment(int staffId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    createdBy = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host
+                };
+                var staff = repo.DeleteBulkPrepayment(staffId, user);
+                if (staff)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                          new { success = true, result = staff, message = "Record deleted successfully. " });
+                    //new { success = true, result = staff, message = "Staff delete has been successfully submited for approval " });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Deleting record failed." });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("staff/bulk-prepament-reversal")]
+        public async Task<HttpResponseMessage> UploadBulkPrepaymentData()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                //int uploadType;
+                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
+                //}
+
+
+                byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
+                string password = Encoding.UTF8.GetString(pass);
+
+                var entity = new StaffDocumentViewModel
+                {
+                    staffCode = provider.FormData["staffCode"],
+                    documentTitle = provider.FormData["documentTitle"],
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                    loginStaffPassword = password,
+                    loginStaffCode = token.GetUsername
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.branchId = (short)token.GetBranchId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = repo.UploadBulkPrepaymentData(entity, buffer);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Prepayment data was successfully uploaded" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading prepayment data" });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " + ex.Message });
+            }
+        }
+
+
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("bulkrepaymentinfo/{staffid}")]
+        public HttpResponseMessage UpdatePrepaymentInfo(int staffid, [FromBody] StaffInfoViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = (short)token.GetCompanyId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+
+                var staff = repo.UpdatePrepayment(staffid, model);
+
+                if (staff)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = staff, message = "Prepayment Amount has been updated successfully, now waiting for approval" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Prepayment Amount not updated" });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
         //[HttpGet]
         //[ClaimsAuthorization]
         //[Route("staff/sample-document")]
@@ -606,6 +747,32 @@ namespace FintrakBanking.APICore.Controllers
             var data = repo.SearchStaff(queryString, token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("UnprocessedBulkPrepaymentReversal")]
+        public HttpResponseMessage GetAllUnprocessedBulkPrepayment()
+        {
+            try
+            {
+                var staffInfo = repo.GetAllUnprocessedBulkPrepayment();
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = staffInfo, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+
 
         [HttpGet]
         [ClaimsAuthorization]

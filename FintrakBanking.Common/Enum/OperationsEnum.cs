@@ -185,7 +185,10 @@
     FacilityLineLimitChangeApproval = 246,
     FacilityLineTenorChangeApproval = 247,
     LoanRecoveryApproval = 248,
- 
+
+
+    ReversalOfPrepayment = 249,
+    BulkLiquidation = 250,
 
 }
 
