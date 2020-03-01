@@ -437,7 +437,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut, Route("customer-collateral/{collateralId}")]
-        public async Task<HttpResponseMessage> UpdateCollateral([FromBody] CollateralViewModel entity, int collateralId)
+        public HttpResponseMessage UpdateCollateral([FromBody] CollateralViewModel entity, int collateralId)
         {
             //try
             //{
@@ -447,7 +447,7 @@ namespace FintrakBanking.APICore.Controllers
             entity.applicationUrl = HttpContext.Current.Request.Path;
             entity.companyId = token.GetCompanyId;
 
-            var response = await repo.UpdateCollateral(entity, collateralId);
+            var response = repo.UpdateCollateral(entity, collateralId);
             if (response)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Updated successfully" });
@@ -2296,7 +2296,20 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been deleted successfully" });
             }
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
+        }
+
+        [HttpPost, Route("delete-duplicate-collateral")]
+        public HttpResponseMessage DeleteDuplicatedCollateral(CollateralViewModel model)
+        {
+            model.createdBy = token.GetStaffId;
+            model.deletedBy = token.GetStaffId;
+            var response = repo.DeleteDuplicatedCollateral(model);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been deleted successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "You can not delete a collateral that is not created by you" });
         }
 
         [HttpPost, Route("calculate-collateral-coverage")]

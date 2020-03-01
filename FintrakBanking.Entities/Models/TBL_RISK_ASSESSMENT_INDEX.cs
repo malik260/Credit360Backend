@@ -13,11 +13,11 @@ namespace FintrakBanking.Entities.Models
         public int RISKID { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string NAME { get; set; }
 
         [Required]
-        [StringLength(250)]
+        //[StringLength(250)]
         public string DESCRIPTION { get; set; }
 
         public decimal WEIGHT { get; set; }

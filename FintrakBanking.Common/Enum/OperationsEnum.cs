@@ -119,6 +119,7 @@
     FullAndFinalCompleteWriteOff = 115,
     LmsOperations = 116,
     EarnUnEarnedFee = 117,
+    CRMSApproval = 118,
 
     //
     AdhocApproval = 133,
@@ -136,9 +137,10 @@
     CreditCardsCleanCards = 146,
     SecurityRelease = 147,
     WaivedChecklistApproval = 148,
+    TemporaryOverdraftRequest = 149,
     //InitiationLevelAppraisal = 148,   //this has to be changed, using an existing enum
     CallMemo = 150,
-
+    CashCollaterizedRequest = 153,
     //New Id's for existing Enumn that were edited
 
     AnnualReview = 200, //formerly id= 114
@@ -146,7 +148,47 @@
     CreditCardsCashBacked = 202,    //formerly 116
     CollateralSwap = 206,
 
+
+    OverdraftInterestRateChangeApproval = 211,
+    ChangeRepaymentAccountApproval = 212,
+    BulkLiquidationApproval = 216,
+    RenewalApproval = 217,
+    //PaymentDateChangeApproval = 218,
+    //InterestAndPrincipalFrequencyChangeApproval = 219,
+    //TenorExtensionApproval = 220,
+    WriteoffApproval = 221,
+    OverdraftRenewalApproval = 222,
+    OverdraftTenorExtensionApproval = 223,
+    OverdraftTopUpApproval = 224,
+    OverdraftSubAllocationApproval = 225,
+    APSReleaseApproval = 226,
+    CancelContingentLiabilityApproval = 227,
+    CancelInactiveContigentLiabilityApproval = 228,
+    ContingentLiabilityAmountAdditionApproval = 229,
+    ContingentLiabilityAmountReductionApproval = 230,
+    ContingentTerminateApproval = 231,
+    ContingentRebookApproval = 232,
+    ContingentLiabilityTenorExtensionApproval = 233,
+    ContingentLiabilityTerminationApproval = 234,
+    ContingentLiabilityRenewalApproval = 235,
+    ContingentLiabilityUsageApproval = 236,
+    ExpiredContigentLiabilityApproval = 237,
+    LCAmountModificationApproval = 238,
+    LCTerminationApproval = 239,
+    GlobalInterestRateChangeApproval = 240,
+    LoanReversalRepaymentApproval = 241,
+    LoanReversalFeeApproval = 242,
+    ManualFeeChargeCollectionApproval = 243,
+    PrepaymentManualLiquidationApproval = 244,
+    ReversalOfPrepaymentManualLiquidationApproval = 245,
+    FacilityLineLimitChangeApproval = 246,
+    FacilityLineTenorChangeApproval = 247,
+    LoanRecoveryApproval = 248,
+ 
+
 }
+
+
 
 public enum LCFundSource
 {

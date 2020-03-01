@@ -62,6 +62,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public decimal? loanLimit { get; set; }
         public string StaffFullName { get { return this.FirstName + " " + this.MiddleName + " " + this.LastName; } }
 
+        //public string staffFullName { get; set; }
         public string JobTitleName { get; set; }
         public string documentTitle { get; set; }
         public byte[] fileData { get; set; }
@@ -117,6 +118,11 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string email { get; set; }
         public int staffRoleId { get; set; }
         public string staffRoleName { get; set; }
+
+        public int groupEmailId { get; set; }
+        public string groupCode { get; set; }
+        public string groupName { get; set; }
+        public string groupEmail { get; set; }
     }
 
     public class StaffDetailsModel : StaffInfoViewModel
@@ -214,4 +220,5 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int supervisorStaffId { get; set; }
         public string staffCode { get; set; }
     }
+
 }

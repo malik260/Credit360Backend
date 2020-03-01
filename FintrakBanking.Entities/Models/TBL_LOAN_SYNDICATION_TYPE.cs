@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int PARTY_TYPEID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PARTY_TYPENAME { get; set; }
     }
 }

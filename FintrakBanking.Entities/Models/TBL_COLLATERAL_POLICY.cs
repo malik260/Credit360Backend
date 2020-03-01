@@ -22,16 +22,16 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "money")]
         public decimal POLICYAMOUNT { get; set; }
 
-        [Required]
-        [StringLength(10)]
+        //[Required]
+        ////[StringLength(10)]
         public string INSURANCECOMPANYNAME { get; set; }
 
-        [StringLength(100)]
+        ////[StringLength(100)]
         public string INSURANCETYPE { get; set; }
         public int INSURANCETYPEID { get; set; }
 
-        [Required]
-        [StringLength(300)]
+        //[Required]
+        /////[StringLength(300)]
         public string INSURERADDRESS { get; set; }
 
         public DateTime POLICYSTARTDATE { get; set; }
@@ -40,15 +40,15 @@ namespace FintrakBanking.Entities.Models
 
         public short? RENEWALFREQUENCYTYPEID { get; set; }
 
-        [StringLength(500)]
+       // //[StringLength(500)]
         public string INSURERDETAILS { get; set; }
 
-        [StringLength(50)]
+        ////[StringLength(50)]
         public string INSURANCEPOLICYNUMBER { get; set; }
         
         public DateTime POLICYRENEWALDATE { get; set; }
 
-        [StringLength(500)]
+        ////[StringLength(500)]
         public string REMARK { get; set; }
 
         public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }

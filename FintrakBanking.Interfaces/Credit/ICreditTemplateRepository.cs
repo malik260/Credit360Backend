@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Setups.Credit;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.Credit;
 using System.Collections.Generic;
 
 namespace FintrakBanking.Interfaces.Credit
@@ -35,12 +36,13 @@ namespace FintrakBanking.Interfaces.Credit
 
         // form CAM impl
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentSections(int staffId, int operationId, int targetId);
-        List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId);
+        List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user);
         bool LoadDocumentTemplate(DocumentTemplateViewModel entity);
         bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity);
         LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId);
         List<DocumentTemplateViewModel> GetDocumentTemplates(int staffId, int operationId, int companyId);
         bool GetIsLLLVilated(int operationId, int targetId);
-
+        bool SaveApprovedDocumentation(int staffId, int operationId, int targetId);
+        List<LoadedDocumentSectionViewModel> GetSavedDocumentation(int operationId, int targetId);
     }
 }

@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         public int CONDITIONID { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string CONDITION { get; set; }
 
         public bool ISEXTERNAL { get; set; }
@@ -47,6 +47,9 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
 
         public int? OPERATIONID { get; set; }
+
+        public int? SECTORID { get; set; }
+        public int? SUBSECTORID { get; set; }
 
         public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
 

@@ -153,4 +153,79 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class CRMSCodeGeneration : GeneralEntity
+    {
+        public short loanSystemTypeId { get; set; }
+
+        public string governmentCode { get; set; }
+        public string sourceReferenceNumber { get; set; }
+
+        public int customerId { get; set; }
+
+        public int loanApplicationDetailId { get; set; }
+
+        public string callreport_id { get; set; }
+        public string callreport_desc { get; set; }
+        public string inst_code { get; set; }
+        public string inst_name { get; set; }
+        public string sl_no { get; set; }
+        public string unique_identification_type { get; set; }
+        public string unique_identification_no { get; set; }
+        public string credit_type { get; set; }
+        public string credit_purpose_by_businesslines { get; set; }
+        public string credit_purpose_by_businesslines_sub { get; set; }
+        public string credit_limit { get; set; }
+        public string outstanding_amount { get; set; }
+        public string fee_type { get; set; }
+        public string fee_amount { get; set; }
+        public string tenor { get; set; }
+        public string repayment_mode { get; set; }
+        public string interest_rate { get; set; }
+        public string beneficiary_account_no { get; set; }
+        public string beneficiary_location { get; set; }
+        public string prepared_date { get; set; }
+        public string relationship_types { get; set; }
+        public string company_size { get; set; }
+        public string funding_source_category { get; set; }
+        public string funding_sources { get; set; }
+        public string ecci_number { get; set; }
+        public string legal_status { get; set; }
+        public string classification_by_business_lines { get; set; }
+        public string classification_by_business_lines_sub { get; set; }
+        public string specialized_loan { get; set; }
+        public string specialized_loan_moratorium { get; set; }
+        public string syndication { get; set; }
+        public string syndication_status { get; set; }
+        public string syndication_ref_number { get; set; }
+        public string collateral_present { get; set; }
+        public string collateral_secure { get; set; }
+        public string security_type { get; set; }
+        public string security_address { get; set; }
+        public string security_owner { get; set; }
+        public string securityowner_uniqueid_type { get; set; }
+        public string securityowner_uniqueid { get; set; }
+        public string guarantee { get; set; }
+        public string signatory_name { get; set; }
+        public string signatory_designation { get; set; }
+        public string signatory_position { get; set; }
+        public string signatory_phone { get; set; }
+        public string sig_extn { get; set; }
+        public string contact_name { get; set; }
+        public string contact_designation { get; set; }
+        public string contact_phone { get; set; }
+        public string contact_extn { get; set; }
+        public string description { get; set; }
+        public string prepared_by { get; set; }
+        public string auth_by { get; set; }
+        public string mlr_officer_code { get; set; }
+        public string headoffice_address { get; set; }
+        public string headoffice_tel { get; set; }
+        public string credit_officer { get; set; }
+        public string branch_manager { get; set; }
+        public string checked_by { get; set; }
+        public string as_at { get; set; }
+        public string channel_code { get; set; }
+        public string token { get; set; }
+    }
+
 }

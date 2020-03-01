@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int JOBREQUESTID { get; set; }
 
         [Required]
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string MESSAGE { get; set; }
 
         public int STAFFID { get; set; }

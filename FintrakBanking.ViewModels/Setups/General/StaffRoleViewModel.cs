@@ -24,6 +24,19 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public List<int> userGroupIds { get; set; }
         public List<int> activitieIds { get; set; }
+        public string staffRoleShortCode { get; set; }
+
+       
     }
-    
+
+    public class StaffGroupEmailViewModel : GeneralEntity
+    {
+
+        public int groupEmailId { get; set; }
+        public string groupCode { get; set; }
+        public string groupName { get; set; }
+        public string groupEmail { get; set; }
+
+    }
+
 }

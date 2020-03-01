@@ -89,7 +89,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpGet, Route("loan-review-application/chargefeeid/{id}")]
+
+        [HttpGet, Route("loan-review-application-approval/select-list")]
+        public HttpResponseMessage GetAllLMSApprovalOperationList()
+        {
+            try
+            {
+                var data = repo.GetAllLMSApprovalOperationList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet, Route("loan-review-application/chargefeeid/{id}")]
         public HttpResponseMessage GetChargeFeeById(int id)
         {
             try

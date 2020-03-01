@@ -14,13 +14,13 @@
         public int LOANAPPLICATIONID { get; set; }
         public int CUSTOMERID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CUSTOMERCODE { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PERIOD { get; set; }
-        [StringLength(500)]
+        //[StringLength(500)]
         public string PRODUCTNAME { get; set; }
         public decimal? MINIMUMDEBITBALANCE { get; set; }
         public decimal? MAXIMUMDEBITBALANCE { get; set; }

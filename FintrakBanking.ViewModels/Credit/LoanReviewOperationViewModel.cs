@@ -296,6 +296,8 @@ public int? newInterestFrequencyTypeId { get; set; }
 
     public class LoanReviewApplicationViewModel : GeneralEntity
     {
+        public string currentApprovalStatus;
+
         public int loanReviewApplicationId { get; set; }
         public int loanId { get; set; }
         public short productTypeId { get; set; }
@@ -325,6 +327,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public short branchId { get; set; }
         public DateTime applicationDate { get; set; }
         public string referenceNumber { get; set; }
+        public string relatedReferenceNumber { get; set; }
+
         //public double amount { get; set; }
         public DateTime effectiveDate { get; set; }
         //public double interest { get; set; }
@@ -355,6 +359,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int? toApprovalLevelId { get; set; }
         public bool atInitiator { get; set; }
         public int? regionId { get; set; }
+        public int proposedTenor { get; set; }
+        public int proposedInterest { get; set; }
         public string timeLapse
         {
             get
@@ -370,27 +376,33 @@ public int? newInterestFrequencyTypeId { get; set; }
 
     public class applicationDetails
     {
+        public short reviewStageId;
+
         public int operationTypeId { get; set; } // remove after refactor
         public string reviewDetails { get; set; }
-        //public string operationType { get; set; } // not relevant
+        public int duration { get; set; }
+        //public string operationType { get; set; } // not relevant 
         public int loanId { get; set; }
         public int customerId { get; set; }
         public int detailId { get; set; }
+        public int loanApplicationId { get; set; }
+
         public short loanSystemTypeId { get; set; }
         public int operationId { get; set; }
         //public string loanSystemType { get; set; }
         public string loanSystemTypeName { get; set; }
         public string operationName { get; set; }
-        public short productId { get; set; }
+        public short productId { get; set; } 
 
         public string obligorName { get; set; }
-        public int proposedTenor { get; set; }
+        public decimal? proposedTenor { get; set; }
         public double proposedRate { get; set; }
         public decimal proposedAmount { get; set; }
         public int approvedTenor { get; set; }
         public double approvedRate { get; set; }
         public decimal approvedAmount { get; set; }
         public decimal? customerProposedAmount { get; set; }
+        public decimal? proposedInterest { get; set; }
 
         public string proposedTenorString
         {
@@ -398,7 +410,7 @@ public int? newInterestFrequencyTypeId { get; set; }
             {
                 var units = proposedTenor == 1 ? " day" : " days";
                 if (proposedTenor < 15) return proposedTenor.ToString() + units;
-                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                var months = Math.Ceiling((Math.Floor((int)proposedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
                 return months.ToString() + " " + units;
             }
@@ -506,7 +518,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string title { get; set; }
         public int typeId { get; set; }
         public int currencyId { get; set; }
-
+        public int? productTypeId { get; set; }
     }
 
     public class MaturityIntructionViewModel : GeneralEntity

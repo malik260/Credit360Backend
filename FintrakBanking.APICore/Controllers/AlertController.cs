@@ -46,13 +46,30 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("load-alert-title")]
-        public HttpResponseMessage GetAlerts()
+        [Route("load-staff-role")]
+        public HttpResponseMessage GetAlertStaffRoles()
         {
             try
             {
-                var alertViewModels = _repo.GetAlerts();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
+                var staffRoleInfo = _repo.GetAllStaffRoles();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffRoleInfo, count = staffRoleInfo.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        //formerly load-staff-role
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("load-staff-group-email")]
+        public HttpResponseMessage GetAllStaffGroupEmail()
+        {
+            try
+            {
+                var staffRoleInfo = _repo.GetAllStaffGroupEmail();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffRoleInfo, count = staffRoleInfo.Count() });
             }
             catch (SecureException ex)
             {
@@ -62,13 +79,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("load-alert-external")]
-        public HttpResponseMessage GetExternalAlerts()
+        [Route("load-alert-title")]
+        public HttpResponseMessage GetAlerts()
         {
             try
             {
-                var alertViewModels = _repo.GetAllExternalAlerts();
-                var totalRecords = alertViewModels.Count();
+                var alertViewModels = _repo.GetAlerts();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
             }
             catch (SecureException ex)
@@ -527,13 +543,13 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("alert-level/{id}")]
-        public HttpResponseMessage GetAlertLevelById([FromUri] int id)
+        [Route("alert-group-email-list")]
+        public HttpResponseMessage GetAllAlertGroupEmail()
         {
             try
             {
-                var alertViewModels = _repo.GetAlertLevelById(id);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels });
+                var alertViewModels = _repo.GetAllAlertGroupEmail();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
             }
             catch (SecureException ex)
             {
@@ -554,7 +570,35 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = _token.GetStaffId;
 
-                var data = _repo.AddAlertLevel(entity);
+                var data = _repo.AddAlertStaffRole(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("alert-group-email")]
+        public HttpResponseMessage AddAlertGroupEmail([FromBody] AlertLevelViewModel entity)
+        {
+            try
+            {
+                entity.companyId = _token.GetCompanyId;
+                entity.userBranchId = (short)_token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = _token.GetStaffId;
+
+                var data = _repo.AddAlertGroupEmail(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

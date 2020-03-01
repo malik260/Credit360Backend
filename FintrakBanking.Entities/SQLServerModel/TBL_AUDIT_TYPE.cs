@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short AUDITTYPEID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string AUDITTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

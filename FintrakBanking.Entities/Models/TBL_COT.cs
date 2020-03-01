@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime? COTDATE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string COTCREATEDBY { get; set; }
 
         public bool? ISCURRENT { get; set; }

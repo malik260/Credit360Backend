@@ -146,6 +146,9 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+  
+         
+
         [HttpPost]
         [Route("daily-accrual-detail")]
         [ClaimsAuthorization]

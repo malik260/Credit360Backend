@@ -1292,7 +1292,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending 
                     && c.ISCURRENT == true
                     && c.DELETED == false
-                    && atrail.OPERATIONID == (int) OperationsEnum.CustomerGroupMapping 
+                    && atrail.OPERATIONID == (int) OperationsEnum.CustomerGroupMapping
+                    && atrail.RESPONSESTAFFID == null 
                     && ids.Contains((int) atrail.TOAPPROVALLEVELID)
                     orderby c.CUSTOMERGROUPMAPPINGID descending
                     select new CustomerGroupMappingViewModel()
@@ -1478,26 +1479,50 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             {
                 var customerCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
-                exposure = from a in context.TBL_GLOBAL_EXPOSURE
-                           where a.CUSTOMERID.Contains(customerCode)
-                           select new CurrentCustomerExposure
-                           {
-                               customerName = a.CUSTOMERNAME,
-                               facilityType = a.PRODUCTNAME,
-                               approvedAmount = a.LOANAMOUNYLCY ?? 0,
-                               currency = a.CURRENCYNAME,
-                               //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                               //proposedLimit = a.LOANAMOUNYLCY ?? 0,
-                               outstandings = a.TOTALEXPOSURE ?? 0,
-                               PastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
-                               reviewDate = DateTime.Now,
-                               bookingDate = DateTime.Parse(a.BOOKINGDATE),
-                               maturityDate = DateTime.Parse(a.MATURITYDATE),
-                               loanStatus = a.CBNCLASSIFICATION,
-                               referenceNumber = a.REFERENCENUMBER,
-                           };
+                exposure = (from a in context.TBL_GLOBAL_EXPOSURE
+                            where a.CUSTOMERID.Contains(customerCode)
+                            select new CurrentCustomerExposure
+                            {
+                                customerName = a.CUSTOMERNAME,
+                                customerCode = a.CUSTOMERID.Trim(),
+                                facilityType = a.ADJFACILITYTYPE,
+                                approvedAmount = a.LOANAMOUNYTCY ?? 0,
+                                approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
+                                currency = a.CURRENCYNAME,
+                                exposureTypeCodeString = a.EXPOSURETYPECODE,
+                                adjFacilityTypeString = a.ADJFACILITYTYPE,
+                                adjFacilityTypeCode = a.ADJFACILITYTYPEid,
+                                productIdString = a.PRODUCTID,
+                                productCode = a.PRODUCTCODE,
+                                productName = a.PRODUCTNAME,
+                                //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                //proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                                outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
+                                outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                                reviewDate = DateTime.Now,
+                                bookingDate = a.BOOKINGDATE,
+                                tenorString = a.TENOR,
+                                //maturityDateString = a.MATURITYDATE,
+                                maturityDate = Convert.ToDateTime(a.MATURITYDATE),
+                                loanStatus = a.CBNCLASSIFICATION,
+                                referenceNumber = a.REFERENCENUMBER,
+                            }).ToList();
 
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
+                if (exposure.Count() > 0)
+                {
+                    foreach (var e in exposure)
+                    {
+                        e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
+                        e.tenor = int.Parse(e.tenorString);
+                        e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
+                        e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
+                        //e.bookingDate = e.bookingDateString;
+                        //e.maturityDate = DateTime.Parse(e.maturityDateString);
+                        //e.productId = int.Parse(e.productIdString);
+                    }
+                    exposures.AddRange(exposure);
+                }
 
 
                 //exposure = from a in context.TBL_LOAN
@@ -1588,21 +1613,26 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
                 //exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
                 //           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                //           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                 //           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                 //           select new CurrentCustomerExposure
                 //           {
+
+                //               applicationStatusId = b.APPLICATIONSTATUSID,
+                //               customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                //               customerCode = c.CUSTOMERCODE.Trim(),
                 //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                //               existingLimit = 0,
-                //               proposedLimit = a.PROPOSEDAMOUNT,
-                //               recommendedLimit = a.APPROVEDAMOUNT,
+                //               approvedAmount = a.APPROVEDAMOUNT,
+                //               currency = a.TBL_CURRENCY.CURRENCYNAME,
+                //               //exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
+                //               //adjFacilityType = a.ADJFACILITYTYPE,
+                //               productId = a.TBL_PRODUCT.PRODUCTID,
+                //               productName = a.TBL_PRODUCT.PRODUCTNAME,
                 //               outstandings = 0,
-                //               PastDueObligationsInterest = 0,
-                //               PastDueObligationsPrincipal = 0,
+                //               pastDueObligationsPrincipal = 0,
                 //               reviewDate = DateTime.Now,
-                //               prudentialGuideline = "Processing",
                 //               loanStatus = "Processing",
-                //               referenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                //               applicationStatusId = b.APPLICATIONSTATUSID
+                //               referenceNumber = b.APPLICATIONREFERENCENUMBER
                 //           };
 
                 //if (exposure.Count() > 0) exposures.AddRange(exposure);
@@ -1656,7 +1686,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                outstandings = a.OUTSTANDINGPRINCIPAL + a.OUTSTANDINGINTEREST,
                                recommendedLimit = 0,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               pastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                loanStatus = "Running",
@@ -1684,7 +1714,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 recommendedLimit = 0,
                                 casaAccountId = a.CASAACCOUNTID,
                                 PastDueObligationsInterest = a.PASTDUEINTEREST,
-                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                                pastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
                                 reviewDate = DateTime.Now,
                                 prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                 loanStatus = "Running",
@@ -1747,7 +1777,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 recommendedLimit = exposures.Sum(t => t.recommendedLimit),
                 outstandings = exposures.Sum(t => t.outstandings),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
-                PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
+                pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,
             });
 
@@ -1757,7 +1787,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         public List<CurrentCustomerExposure> GetGroupExposureByCustomerId(int customerId, int companyId)
         {
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
-            var customerGroups = GetCustomerGroupMapping().Where(m => m.customerId == customerId).ToList();
+            var customerGroups = GetCustomerGroupMapping().Where(m => m.customerGroupId == customerId).ToList();
             //var customers = GetGroupMembersByGroupId(customerGroup.customerGroupId, companyId).Select(c => new { c.customerName, c.customerId });
             foreach (var group in customerGroups)
             {

@@ -36,7 +36,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
-        IEnumerable<LoanOperationTypeViewModel> GetOperationType();
+        IEnumerable<LoanOperationTypeViewModel> GetOperationType(bool isFinalOperation);
 
         bool UpdateLoanClassification(DateTime applicationDate, int companyId, int staffId);
 
@@ -69,6 +69,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanPastDueViewModel> ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(DateTime applicationDate);
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId);
+        IEnumerable<LoanOperationTypeViewModel> GetReviewApprovalOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetApprovedLoanOperationReview();
         IEnumerable<ApprovalTrailDetailsViewModel> GetApprovalDetails(int loanId, int OperationId);

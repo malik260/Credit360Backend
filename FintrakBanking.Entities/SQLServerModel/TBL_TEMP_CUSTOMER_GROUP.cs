@@ -13,14 +13,14 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int CUSTOMERGROUPID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string GROUPNAME { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string GROUPCODE { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string GROUPDESCRIPTION { get; set; }
 
         public int CREATEDBY { get; set; }

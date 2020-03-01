@@ -14,14 +14,14 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        [StringLength(100)]
+        ////[StringLength(100)]
         public string BANK { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string DEALREFERENCENUMBER { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        //[Required]
+       // //[StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
         public string ACCOUNTNAME { get; set; }
@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime EFFECTIVEDATE { get; set; }
         public DateTime MATURITYDATE { get; set; }
         public decimal MATURITYAMOUNT { get; set; }
-        [StringLength(500)]
+        ////[StringLength(500)]
         public string REMARK { get; set; }
     }
 }

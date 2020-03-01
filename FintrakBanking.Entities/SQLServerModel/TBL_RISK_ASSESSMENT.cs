@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int? PARENTID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REFCODE { get; set; }
 
         public int LOANAPPLICATIONID { get; set; }

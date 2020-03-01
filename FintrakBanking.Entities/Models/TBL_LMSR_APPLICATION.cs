@@ -18,10 +18,10 @@
         public int LOANAPPLICATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string APPLICATIONREFERENCENUMBER { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string RELATEDREFERENCENUMBER { get; set; }
 
         public int COMPANYID { get; set; }
@@ -70,6 +70,10 @@
         public bool REQUIRECOLLATERAL { get; set; }
 
         public int? CAPREGIONID { get; set; }
+
+        //public int? PROPOSEDTENOR { get; set; }
+
+        //public int? PROPOSEDINTEREST { get; set; }
 
         // public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

@@ -16,7 +16,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
    public  class CRCService
     {
         const string DATA_PACKET = "DATAPACKET";
-        const string ERROR = "ERROR_LIST";
+        const string ERROR = "ERROR-LIST";
 
         public CRCSearchResult CRCSearchRequest(CRCRequestViewModel request)
         {
@@ -117,34 +117,46 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
             ESBCRCService.LiveRequestInvokerSoapClient crc = new ESBCRCService.LiveRequestInvokerSoapClient();
             string dataPacket = crc.PostRequest(xml.ToString(),  userName,  password);
 
-            if (dataPacket.Contains(DATA_PACKET))
-            {
-                if (!dataPacket.Contains(ERROR)) {
-                    
-                    xdoc.LoadXml(dataPacket);
-                    result = new CRCSearchResult
-                     {
-                        SearchCompleted = (int)SearchCompletedStatusEnum.SearchIncomplete,
-                        SearchResult = new CreditBureauHelp().ConvertXmlToJson(xdoc)
-                };
+            if (dataPacket != null) {
+                if (dataPacket.Contains(DATA_PACKET))
+                {
+                    if (!dataPacket.Contains(ERROR))
+                    {
+
+                        xdoc.LoadXml(dataPacket);
+                        result = new CRCSearchResult
+                        {
+                            SearchCompleted = (int)SearchCompletedStatusEnum.SearchIncomplete,
+                            SearchResult = new CreditBureauHelp().ConvertXmlToJson(xdoc)
+                        };
+                    }
+                    else
+                    {
+                        result = new CRCSearchResult
+                        {
+                            SearchCompleted = (int)SearchCompletedStatusEnum.SearchError,
+                            SearchResult = dataPacket
+                        };
+                    }
                 }
                 else
                 {
                     result = new CRCSearchResult
                     {
-                        SearchCompleted = (int)SearchCompletedStatusEnum.SearchError,
+                        SearchCompleted = (int)SearchCompletedStatusEnum.SearchCompleted,
                         SearchResult = dataPacket
                     };
-                }
+                };
             }
-            else
-            {
+            else {
                 result = new CRCSearchResult
                 {
-                    SearchCompleted = (int)SearchCompletedStatusEnum.SearchCompleted,
+                    SearchCompleted = (int)SearchCompletedStatusEnum.SearchIncomplete,
                     SearchResult = dataPacket
                 };
-            };
+            }
+
+            
             return result;
         }
 
@@ -170,8 +182,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
                 new XElement("INQUIRY_REASON", new XAttribute("CODE", request.enquiryReason)),
                 new XElement("APPLICATION", new XAttribute("CURRENCY", request.currencyCode),
                 new XAttribute("AMOUNT", request.amount), new XAttribute("NUMBER", request.number),
-                new XAttribute("PRODUCT", "017")), //request.productCode
-                                              //new XElement("REQUEST_REFERENCE", new XAttribute("REFERENCE-NO", request.productCode),
+                new XAttribute("PRODUCT", "017")), 
                 new XElement("REQUEST_REFERENCE", new XAttribute("REFERENCE-NO", request.referenceNo)),
                 new XElement("MERGE_REPORT", new XAttribute("PRIMARY-BUREAU-ID", request.bureauID.FirstOrDefault()),
                 from i in request.bureauID select new XElement("BUREAU_ID", i))));

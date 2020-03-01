@@ -571,6 +571,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 var productData = (from data in context.TBL_PRODUCT
                                    join g in context.TBL_PRODUCT_TYPE on data.PRODUCTTYPEID equals g.PRODUCTTYPEID
+                                   //where data.PRODUCTCODE !="EBFC"
                                    select new ProductViewModel()
                                    {
                                        productId = data.PRODUCTID,

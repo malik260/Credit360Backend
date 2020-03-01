@@ -582,6 +582,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return model;
         }
 
+        public bool ValidateIsInsiderCustomer(int customerId)
+        {
+            var isRelatedcustomer = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == customerId && c.ISREALATEDPARTY == true).Select(c => c.CUSTOMERCODE).FirstOrDefault();
+            if (isRelatedcustomer != null)
+                return true;
+            return false;
+        }
+
         public List<CurrentCustomerExposure> GetGlobalCustomerExposure(List<string> customerCodes)
         {
             IEnumerable<CurrentCustomerExposure> exposure = null;
@@ -601,7 +609,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                outstandings = a.TOTALEXPOSURE ?? 0,
                                recommendedLimit = 0,
                                //PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
+                               pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
                                reviewDate = DateTime.Now,
                                loanStatus = a.CBNCLASSIFICATION,
                                referenceNumber = a.REFERENCENUMBER,
@@ -660,6 +668,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return models;
         }
 
+
         public CreditLimitValidationsModel ValidateNPLByDirectors(LoanApplicationViewModel application)
         {
             List<CurrentCustomerExposure> exposures;
@@ -689,8 +698,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             if (customerIds.Count() <= 0) return false;
             foreach (var id in customerIds)
             {
-                var bvn = context.TBL_CUSTOMER.Find(id).CUSTOMERBVN;
+                var bvn = context.TBL_CUSTOMER.Find(id) ?.CUSTOMERBVN;
+
                 var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
+
                 if (isDirector) return isDirector;
             }
             return false;
@@ -698,8 +709,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public bool CustomerIsDirector(int? customerId)
         {
-            var bvn = context.TBL_CUSTOMER.Find(customerId)?.CUSTOMERBVN;
-            if (bvn == null) return false;
+            if (customerId == null || customerId == 0)
+            {
+                return false;
+            }
+            var bvn = context.TBL_CUSTOMER.Find(customerId).CUSTOMERBVN;
+            if (String.IsNullOrEmpty(bvn) || String.IsNullOrEmpty(bvn)) return false;
             var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
             if (isDirector) return isDirector;
             return false;
@@ -1287,25 +1302,38 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public bool ProductLimitExceeded(int productId, decimal applicationAmount)
         {
-            var outstandingLoan = (from a in context.TBL_LOAN
-                                   join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
-                                   where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTID == productId
-                                   select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
+            //var outstandingLoan = (from a in context.TBL_LOAN
+            //                       join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+            //                       where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTID == productId
+            //                       select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
-            var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
-                                        join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
-                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTID == productId
-                                        select (decimal?)a.OVERDRAFTLIMIT).Sum() ?? 0;
+            //var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
+            //                            join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+            //                            where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTID == productId
+            //                            select (decimal?)a.OVERDRAFTLIMIT).Sum() ?? 0;
 
-            var productExposure = outstandingLoan + outstandingRevolving;
+            //var productExposure = outstandingLoan + outstandingRevolving;
 
-            decimal? productMaximumExposure = 0;
-            var product =context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(a => a.PRODUCTID == productId);
+            //decimal? productMaximumExposure = 0;
+            //var product =context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(a => a.PRODUCTID == productId);
+            //if (product != null) productMaximumExposure = (decimal?)product.PRODUCT_LIMIT ?? 0;
+
+            //var productLimit = productMaximumExposure - productExposure;
+
+            //return productMaximumExposure > 0 && productLimit <= applicationAmount;
+            if (productId == 0)
+            {
+                return false;
+            }
+            decimal productMaximumExposure = 0;
+            var product = context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(a => a.PRODUCTID == productId);
             if (product != null) productMaximumExposure = (decimal?)product.PRODUCT_LIMIT ?? 0;
+            if (productMaximumExposure <= 0)
+            {
+                return false;
+            }
 
-            var productLimit = productMaximumExposure - productExposure;
-
-            return productMaximumExposure > 0 && productLimit <= applicationAmount;
+            return applicationAmount > productMaximumExposure;
         }
 
         public TotalExposureLimit GetTotalExposureLimitReference(string reference, int companyId)

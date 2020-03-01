@@ -22,14 +22,14 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISOWNEDBYCUSTOMER { get; set; }
 
-        [StringLength(50)]
+        ////[StringLength(50)]
         public string NAMEOFSECURITY { get; set; }
 
         //[Column(TypeName = "money")]
         public decimal SECURITYVALUE { get; set; }
 
         [Required]
-        [StringLength(100)]
+        ////[StringLength(100)]
         public string NOTE { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }

@@ -19,11 +19,11 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int STOCKID { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string STOCKCODE { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string STOCKNAME { get; set; }
 
         public int COUNTRYID { get; set; }

@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int? CUSTOMERID { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string CREATEDBY { get; set; }
 
         public DateTime? DATETIMECREATED { get; set; }

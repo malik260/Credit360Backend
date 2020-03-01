@@ -131,6 +131,7 @@
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
     <Compile Include="Credit\DocumentDeferralViewModel.cs" />
+    <Compile Include="Credit\LoanDetailReviewTypeViewModel.cs" />
     <Compile Include="Credit\LoanDocumentViewModel.cs" />
     <Compile Include="Credit\LoanFeeOperationViewModel.cs" />
     <Compile Include="Credit\LoanMarketViewModel.cs" />

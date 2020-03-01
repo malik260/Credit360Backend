@@ -23,10 +23,10 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int COUNTRYID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string NAME { get; set; }
 
-        [StringLength(10)]
+        //[StringLength(10)]
         public string COUNTRYCODE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

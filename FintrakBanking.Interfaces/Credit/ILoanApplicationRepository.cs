@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
+        IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user);
         List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId);
         List<LoanApplicationDetailViewModel> GetLmsLoanApplicationDetailsById(int loanApplicationId, int companyId);
 
@@ -43,6 +44,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId);
 
         IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId);
+        bool SendApplicationToEdit(int loanApplicationId, int operationId, int accountOfficerId);
 
         IEnumerable<LoanApplicationViewModel> FindLoanApplication(string referenceNumberOrName, int companyId);
 
@@ -52,9 +54,16 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId);
 
-        IEnumerable<LoanApplicationViewModel> Search(string searchString);
+        //IEnumerable<LoanApplicationViewModel> Search(string searchString);
+
+        List<LoanApplicationViewModel> Search(string searchString, int staffId = 0);
+
+        List<WorkflowTrackerViewModel> SearchBookedLoans(string searchString);
+
+
 
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
+        bool ValidateDuplicateLoanApplication( LoanApplicationViewModel loan);
         string GetRefrenceNumber();
 
         bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity);
@@ -77,12 +86,20 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanApplicationDetails(LoanApplicationDatailViewModel entity, UserInfo user);
 
+        void LoadCustomerTurnover(int applicationId, int staffId);
+
+        void LoadCustomerTurnoverLms(int applicationId, int staffId);
+
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
 
         List<FacilityRatingViewModel> GetFacilityRating(int applicationDetailId);
 
         short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
-
+        int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false);
+        bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus);
+        void ArchiveLoanApplicationDetails(int loanApplicationDetailId);
+        int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, int? exclusiveFlowChangeId, bool next = false);
+        int? GetFirstLevelStaffId(int levelId, int userBranch);
         List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
 
         bool ProductFeesConcession(ProductFeesViewModel fees, UserInfo user);
@@ -109,7 +126,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanApplicationViewModel> GetAllRequestsForLoanCancellation(int staffId);
 
-        bool SaveCancelledApplcation(LoanApplicationViewModel data);
+        int SaveCancelledApplcation(LoanApplicationViewModel data);
 
         LoanApplicationViewModel ViewLaonApplicationCancellationDetails(LoanApplicationViewModel data);
 
@@ -185,6 +202,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteLoanApplicationDetailLien(int id, UserInfo user);
         RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId);
         CurrentCustomerExposure GetTotalBankExposure();
+        IEnumerable<LoanDetailReviewTypeViewModel> GetAllLoanDetailReviewTypes();
+        List<CurrentCustomerExposure> GetExposures(TBL_LOAN_APPLICATION loanApplication);
         //IEnumerable<LoanApplicationLienViewModel> GetRacDetails();
     }
 }

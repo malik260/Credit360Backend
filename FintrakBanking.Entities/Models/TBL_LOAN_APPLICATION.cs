@@ -27,14 +27,14 @@ namespace FintrakBanking.Entities.Models
         public int LOANAPPLICATIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string APPLICATIONREFERENCENUMBER { get; set; }
 
         public int? LOANPRELIMINARYEVALUATIONID { get; set; }
 
         public int? LOANTERMSHEETID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string RELATEDREFERENCENUMBER { get; set; }
 
         public int COMPANYID { get; set; }
@@ -82,11 +82,11 @@ namespace FintrakBanking.Entities.Models
         public string LOANINFORMATION { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MISCODE { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TEAMMISCODE { get; set; }
 
         public bool ISINVESTMENTGRADE { get; set; }
@@ -148,7 +148,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool REQUIRECOLLATERAL { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string COLLATERALDETAIL { get; set; }
 
         public int? CAPREGIONID { get; set; }
@@ -157,7 +157,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISCHECKLISTLOADED { get; set; }
 
-        public bool? ISADHOCAPPLICATION { get; set; }
+        public bool ISADHOCAPPLICATION { get; set; }
 
         public decimal? LOANSWITHOTHERS { get; set; }
 

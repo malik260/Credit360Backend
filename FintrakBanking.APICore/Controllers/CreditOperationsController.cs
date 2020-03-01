@@ -57,12 +57,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operationtype")]
-        public HttpResponseMessage GetOperationType()
+        [Route("loan-operationtype/isFinalOperation/{isFinalOperation}")]
+        public HttpResponseMessage GetOperationType(bool isFinalOperation)
         {
             try
             {
-                var data = repo.GetOperationType();
+                var data = repo.GetOperationType(isFinalOperation);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -133,6 +133,29 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetOperationTypeByLoanId((LoanProductTypeEnum)productTypeId, (LoanScheduleTypeEnum)scheduleTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-review-approval-operationtype/")]
+        public HttpResponseMessage GetReviewApprovalOperationTypeByLoanId(int productTypeId, int scheduleTypeId)
+        {
+            try
+            {
+                var data = repo.GetReviewApprovalOperationTypeByLoanId((LoanProductTypeEnum)productTypeId, (LoanScheduleTypeEnum)scheduleTypeId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

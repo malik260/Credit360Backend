@@ -29,15 +29,18 @@
         // public short STATUSID { get; set; }
         public bool DELETED { get; set; }
 
-        [StringLength(2000)]
-        public string REVIEWDETAILS { get; set; }
+        //[StringLength(2000)]
+        public string REVIEWDETAILS { get; set; } 
+        public short REVIEWSTAGEID { get; set; }
 
-        [StringLength(2000)]
+       
+
+        //[StringLength(2000)]
         public string REPAYMENTTERMS { get; set; }
 
         public int REPAYMENTSCHEDULEID { get; set; }
 
-        //[StringLength(2000)]
+        ////[StringLength(2000)]
         //public string REPAYMENTSCHEDULE { get; set; }
 
         public int CREATEDBY { get; set; }
@@ -46,7 +49,7 @@
 
         public int PROPOSEDTENOR { get; set; }
 
-        public double PROPOSEDINTERESTRATE { get; set; }
+        public double PROPOSEDINTERESTRATE { get; set; } 
         
         public decimal PROPOSEDAMOUNT { get; set; }
 
@@ -58,13 +61,13 @@
 
         public bool OPERATIONPERFORMED { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string MANAGEMENTPOSITION { get; set; }
 
         public decimal? CUSTOMERPROPOSEDAMOUNT { get; set; }
 
         //[Required]
-        //[StringLength(200)]
+        ////[StringLength(200)]
         //public string LOANREFERENCENUMBER { get; set; }
 
         // public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }

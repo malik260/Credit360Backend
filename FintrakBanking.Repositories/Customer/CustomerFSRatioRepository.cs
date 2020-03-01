@@ -306,8 +306,11 @@ namespace FintrakBanking.Repositories.Customer
                 value.ratioValue3 = count >= 2 ? GetCustomerFSRatio(item.ISRATIO, customerId, (short)item.FSCAPTIONID, lastFourDates[count - 2]) : "0.00";
                 value.ratioValue4 = count >= 1 ? GetCustomerFSRatio(item.ISRATIO, customerId, (short)item.FSCAPTIONID, lastFourDates[count - 1]) : "0.00";
 
-                if( Convert.ToDecimal(value.ratioValue1) > 0 || Convert.ToDecimal(value.ratioValue2) > 0 ||
-                    Convert.ToDecimal(value.ratioValue3) > 0 || Convert.ToDecimal(value.ratioValue4) > 0)
+                ////if (Convert.ToDecimal(value.ratioValue1) > 0 || Convert.ToDecimal(value.ratioValue2) > 0 ||
+                ////    Convert.ToDecimal(value.ratioValue3) > 0 || Convert.ToDecimal(value.ratioValue4) > 0)
+                ////{
+                if (!string.IsNullOrEmpty(value.ratioValue1) && (value.ratioValue1 != "0.00") || !string.IsNullOrEmpty(value.ratioValue2) && (value.ratioValue2 != "0.00") ||
+                    !string.IsNullOrEmpty(value.ratioValue3) && (value.ratioValue3 != "0.00") || !string.IsNullOrEmpty(value.ratioValue4) && (value.ratioValue4 != "0.00"))
                 {
                     output.Add(value);
                 }
@@ -326,13 +329,33 @@ namespace FintrakBanking.Repositories.Customer
                                 where a.CUSTOMERID == customerId && a.FSDATE == fsDate && a.FSCAPTIONID == fsCaptionId
                                 select a).FirstOrDefault();
 
-                if (fsAmount != null)
-
-                    return string.Format("{0:n}", fsAmount.AMOUNT);
-                else
-                    return "0.00";
+                if (fsAmount != null) {
+                    if (fsAmount.AMOUNT != 0)
+                        return string.Format("{0:n}", fsAmount.AMOUNT);
+                    else if (!string.IsNullOrEmpty(fsAmount.TEXTVALUE) && !string.IsNullOrWhiteSpace(fsAmount.TEXTVALUE))
+                        return fsAmount.TEXTVALUE;
+                }
+                //else
+                //    return "0.00";
             }
 
+            // FS CaptionID Indicative Decisions
+            if (fsCaptionId == 29) {
+                var computedValue = CalculateFSRatioValue(customerId, 28, fsDate);
+
+                if ((double) computedValue <= 1.5) {
+                    return "OK"; 
+                }
+                else {
+                    return "DECLINED";
+                }
+            }
+
+            return string.Format("{0:n}", CalculateFSRatioValue(customerId, fsCaptionId, fsDate));
+        }
+
+        private decimal CalculateFSRatioValue(int customerId, short fsCaptionId, DateTime fsDate)
+        {
             var customerFS = from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
                              where a.CUSTOMERID == customerId && a.FSDATE == fsDate
                              select a;
@@ -359,10 +382,30 @@ namespace FintrakBanking.Repositories.Customer
             if (demoninatorInfo.Count() > 0)
                 demoninator = (from a in demoninatorInfo select a.MULTIPLIER * (double)a.AMOUNT).Sum();
 
+            // extending the financial 
+            var additionInfo = from a in ratios
+                               join b in customerFS on a.FSCAPTIONID equals b.FSCAPTIONID
+                               where a.DIVISORTYPEID == 3
+                               select new { a.MULTIPLIER, b.AMOUNT };
+
+            double addition = 0;
+            if (additionInfo.Count() > 0)
+                addition = (from a in additionInfo select a.MULTIPLIER * (double)a.AMOUNT).Sum();
+
+            var subtractionInfo = from a in ratios
+                                  join b in customerFS on a.FSCAPTIONID equals b.FSCAPTIONID
+                                  where a.DIVISORTYPEID == 4
+                                  select new { a.MULTIPLIER, b.AMOUNT };
+
+            double subtraction = 0;
+            if (subtractionInfo.Count() > 0)
+                subtraction = (from a in subtractionInfo select a.MULTIPLIER * (double)a.AMOUNT).Sum();
+
+
             if (demoninator == 0)
-                return string.Format("{0:n}", numerator);
+                return (decimal) (numerator + addition - subtraction);
             else
-                return string.Format("{0:0.00}", (decimal)numerator / (decimal)demoninator);
+                return (((decimal)numerator / (decimal)demoninator) + (decimal)addition - (decimal)subtraction);
         }
 
 

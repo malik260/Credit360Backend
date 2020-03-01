@@ -14,8 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        [Required]
-        [StringLength(250)]
+        //[Required]
+        ////[StringLength(250)]
         public string COMPANYNAME { get; set; }
 
         public int SHAREQUANTITY { get; set; }

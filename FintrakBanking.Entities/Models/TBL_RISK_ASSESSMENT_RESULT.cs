@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int RISKASSESSMENTTITLEID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CREDITRATING { get; set; }
 
         public decimal TOTALSCORE { get; set; }

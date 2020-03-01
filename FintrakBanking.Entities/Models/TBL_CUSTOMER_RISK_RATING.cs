@@ -21,18 +21,19 @@ namespace FintrakBanking.Entities.Models
         public short RISKRATINGID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string RISKRATING { get; set; }
 
         public int COMPANYID { get; set; }
 
         [Required]
-        [StringLength(500)]
+        //[StringLength(500)]
         public string DESCRIPTION { get; set; }
 
         public bool ISINVESTMENTGRADE { get; set; }
 
         public double MAX_SHAREHOLDER_FUND_PERCENTAG { get; set; }
+        public string CLASSIFICATION { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 

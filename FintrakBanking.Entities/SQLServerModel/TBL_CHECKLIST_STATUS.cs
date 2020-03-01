@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short CHECKLISTSTATUSID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CHECKLISTSTATUSNAME { get; set; }
 
         public short RESPONSE_TYPEID { get; set; }

@@ -29,7 +29,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralCode { get; set; }
         public string camRefNumber { get; set; }
         public bool allowSharing { get; set; }
-        public bool isLocationBased { get; set; }
+        public bool? isLocationBased { get; set; }
         public int? valuationCycle { get; set; }
         public double haircut { get; set; }
         public bool hasInsurance { get; set; }
@@ -1089,6 +1089,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralTypeName { get; set; }
         public int collateralTypeId { get; set; }
         public decimal collateralValue { get; set; }
+        public decimal omv { get; set; }
+        public decimal fsv { get; set; }
         public int customerId { get; set; }
         public string customerName { get; set; }
         public string collateralOwnerName { get; set; }

@@ -163,7 +163,7 @@ namespace FintrakBanking.Repositories.Credit
                 //.Select(x => new { x.currencyId, x.sellingRate}).Distinct().ToList();
 
 
-
+               
                 var scheduledLoan = (//from a in context.TBL_LOAN_SCHEDULE_DAILY
                                      from b in context.TBL_LOAN // on a.LOANID equals b.TERMLOANID
                                                                 //join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
@@ -5631,7 +5631,8 @@ namespace FintrakBanking.Repositories.Credit
 
 
                         pastDue.LOANID = item.loanId;
-                        pastDue.PARENT_PASTDUECODE = PastDueCode;
+                        //pastDue.PARENT_PASTDUECODE = PastDueCode;
+                        pastDue.PASTDUECODE = PastDueCode;
                         pastDue.CREDITAMOUNT = 0;
                         pastDue.DESCRIPTION = "Past Due Entries on Principal as a result of Account not funded";
                         pastDue.DEBITAMOUNT = Math.Abs(principalAmountNotCollected);
@@ -16273,16 +16274,28 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public IEnumerable<LoanOperationTypeViewModel> GetOperationType()
+        public IEnumerable<LoanOperationTypeViewModel> GetOperationType(bool isFinalOperation = false)
         {
+            if (isFinalOperation)
+            {
+                return (from data in context.TBL_OPERATIONS
+                        where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                        && data.ISDISABLED == false
+                        select new LoanOperationTypeViewModel()
+                        {
+                            operationTypeId = data.OPERATIONID,
+                            operationTypeName = data.OPERATIONNAME,
+                        });
+            }
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
                     && data.ISDISABLED == false
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME,
                     });
+
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD()
@@ -16306,6 +16319,73 @@ namespace FintrakBanking.Repositories.Credit
                         operationTypeId = data.OPERATIONID,
                         operationTypeName = data.OPERATIONNAME
                     });
+        }
+
+        public IEnumerable<LoanOperationTypeViewModel> GetReviewApprovalOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)
+        {
+            var loanOperations = (from data in context.TBL_OPERATIONS
+                                  where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanReviewApplication
+                                  select new LoanOperationTypeViewModel()
+                                  {
+                                      operationTypeId = data.OPERATIONID,
+                                      operationTypeName = data.OPERATIONNAME
+                                  });
+
+            List<OperationsEnum> operationList = new List<OperationsEnum>();
+
+            if (productTypeId == LoanProductTypeEnum.TermLoan || productTypeId == LoanProductTypeEnum.SelfLiquidating)
+            {
+                if ((scheduleTypeId == LoanScheduleTypeEnum.Annuity) || (scheduleTypeId == LoanScheduleTypeEnum.ConstantPrincipalAndInterest))
+                {
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+                else if (scheduleTypeId == LoanScheduleTypeEnum.IrregularSchedule)
+                {
+                    operationList.Add(OperationsEnum.InterestandPrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.PrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.InterestFrequencyChange);
+                    operationList.Add(OperationsEnum.InterestSuspension);
+                    operationList.Add(OperationsEnum.TenorChange);
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+                else if (scheduleTypeId == LoanScheduleTypeEnum.BulletPayment)
+                {
+                    operationList.Add(OperationsEnum.InterestSuspension);
+                    operationList.Add(OperationsEnum.InterestandPrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.PrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.InterestFrequencyChange);
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+                else if (scheduleTypeId == LoanScheduleTypeEnum.BallonPayment)
+                {
+                    operationList.Add(OperationsEnum.InterestandPrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.PrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+            }
+            else if (productTypeId == LoanProductTypeEnum.RevolvingLoan)
+            {
+                operationList.Add(OperationsEnum.TenorChange);
+                operationList.Add(OperationsEnum.OverdraftTopup);
+                operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                operationList.Add(OperationsEnum.TerminateAndRebook);
+
+                loanOperations = loanOperations.Where(x => operationList.Contains((OperationsEnum)x.operationTypeId));
+            }
+            else if (productTypeId == LoanProductTypeEnum.ContingentLiability)
+            {
+
+            }
+
+            return loanOperations;
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)
@@ -21929,6 +22009,40 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanApplDetailsArchive.DELETED = detailRow.DELETED;
                 addLoanApplDetailsArchive.DELETEDBY = detailRow.DELETEDBY;
                 addLoanApplDetailsArchive.DATETIMEDELETED = detailRow.DATETIMEDELETED;
+                addLoanApplDetailsArchive.EQUITYAMOUNT = detailRow.EQUITYAMOUNT;
+                addLoanApplDetailsArchive.HASDONECHECKLIST = detailRow.HASDONECHECKLIST;
+                addLoanApplDetailsArchive.EQUITYCASAACCOUNTID = detailRow.EQUITYCASAACCOUNTID;
+                addLoanApplDetailsArchive.CONSESSIONAPPROVALSTATUSID = detailRow.CONSESSIONAPPROVALSTATUSID;
+                addLoanApplDetailsArchive.CONSESSIONREASON = detailRow.CONSESSIONREASON;
+                addLoanApplDetailsArchive.ISPOLITICALLYEXPOSED = detailRow.ISPOLITICALLYEXPOSED;
+                addLoanApplDetailsArchive.REPAYMENTTERMS = detailRow.REPAYMENTTERMS;
+                addLoanApplDetailsArchive.REPAYMENTSCHEDULEID = detailRow.REPAYMENTSCHEDULEID;
+                addLoanApplDetailsArchive.EFFECTIVEDATE = detailRow.EFFECTIVEDATE;
+                addLoanApplDetailsArchive.ISTAKEOVERAPPLICATION = detailRow.ISTAKEOVERAPPLICATION;
+                addLoanApplDetailsArchive.EXPIRYDATE = detailRow.EXPIRYDATE;
+                addLoanApplDetailsArchive.CASAACCOUNTID = detailRow.CASAACCOUNTID;
+                addLoanApplDetailsArchive.OPERATINGCASAACCOUNTID = detailRow.OPERATINGCASAACCOUNTID;
+                addLoanApplDetailsArchive.SECUREDBYCOLLATERAL = detailRow.SECUREDBYCOLLATERAL;
+                addLoanApplDetailsArchive.CRMSCOLLATERALTYPEID = detailRow.CRMSCOLLATERALTYPEID;
+                addLoanApplDetailsArchive.MORATORIUMDURATION = detailRow.MORATORIUMDURATION;
+                addLoanApplDetailsArchive.CRMSFUNDINGSOURCEID = detailRow.CRMSFUNDINGSOURCEID;
+                addLoanApplDetailsArchive.CRMSREPAYMENTSOURCEID = detailRow.CRMSREPAYMENTSOURCEID;
+                addLoanApplDetailsArchive.CRMSFUNDINGSOURCECATEGORY = detailRow.CRMSFUNDINGSOURCECATEGORY;
+                addLoanApplDetailsArchive.CRMS_ECCI_NUMBER = detailRow.CRMS_ECCI_NUMBER;
+                addLoanApplDetailsArchive.CRMSCODE = detailRow.CRMSCODE;
+                addLoanApplDetailsArchive.CRMSREPAYMENTAGREEMENTID = detailRow.CRMSREPAYMENTAGREEMENTID;
+                addLoanApplDetailsArchive.CRMSVALIDATED = detailRow.CRMSVALIDATED;
+                addLoanApplDetailsArchive.CRMSDATE = detailRow.CRMSDATE;
+                addLoanApplDetailsArchive.TRANSACTIONDYNAMICS = detailRow.TRANSACTIONDYNAMICS;
+                addLoanApplDetailsArchive.CONDITIONPRECIDENT = detailRow.CONDITIONPRECIDENT;
+                addLoanApplDetailsArchive.CONDITIONSUBSEQUENT = detailRow.CONDITIONSUBSEQUENT;
+                addLoanApplDetailsArchive.FIELD1 = detailRow.FIELD1;
+                addLoanApplDetailsArchive.PRODUCTPRICEINDEXRATE = detailRow.PRODUCTPRICEINDEXRATE;
+                addLoanApplDetailsArchive.PRODUCTPRICEINDEXID = detailRow.PRODUCTPRICEINDEXID;
+                addLoanApplDetailsArchive.FIELD2 = detailRow.FIELD2;
+                addLoanApplDetailsArchive.FIELD3 = detailRow.FIELD3;
+                addLoanApplDetailsArchive.ISSPECIALISED = detailRow.ISSPECIALISED;
+                addLoanApplDetailsArchive.TENORFREQUENCYTYPEID = detailRow.TENORFREQUENCYTYPEID;
 
                 this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
 

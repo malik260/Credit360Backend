@@ -32,9 +32,10 @@ namespace FintrakBanking.Entities.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int OPERATIONID { get; set; }
+        public int? SYNCHOPERATIONID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string OPERATIONNAME { get; set; }
 
         public short OPERATIONTYPEID { get; set; }
@@ -42,7 +43,7 @@ namespace FintrakBanking.Entities.Models
         public short? PRODUCTTYPEID { get; set; }
         public bool TERMINATEIFDISAPPROVED { get; set; }
 
-        [StringLength(300)]
+        //[StringLength(300)]
         public string OPERATIONURL { get; set; }
 
         public bool ISDISABLED { get; set; }

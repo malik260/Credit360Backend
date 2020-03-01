@@ -28,7 +28,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int targetId;
         private int companyId;
         private int operationId;
+        private int? destinationOperationId;
+        private bool isFlowTest;
         private int? exclusiveFlowChangeId = null;
+        private int? businessUnitId = null;
 
         private int? productClassId = null;
         public int? productId = null;
@@ -68,7 +71,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? loopedRoleId = null;
         private int? loopedStaffId = null;
         private short? referBackStateId = null;
-        private bool initiatorOrLooped = false;
         public int actualRequestStaffId = 0;
         public bool isLoopResponse = false;
         private bool endProcess = false;
@@ -84,6 +86,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int TargetId { set { targetId = value; } }
         public int CompanyId { set { companyId = value; } }
         public int OperationId { set { operationId = value; } }
+
         public decimal Amount { set { amount = value; } }
         public string Comment { set { comment = value; } }
         public int Tenor { set { tenor = value; } }
@@ -102,9 +105,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
-        public int? ExclusiveFlowChangeId { get { return exclusiveFlowChangeId; } set { exclusiveFlowChangeId = value; } }
+        public int? ExclusiveFlowChangeId { get { return exclusiveFlowChangeId; } set { exclusiveFlowChangeId = value; } } 
+        public int? BusinessUnitId { get { return businessUnitId; } set { businessUnitId = value; } }
+        public int? DestinationOperationId { get { return destinationOperationId; } set { destinationOperationId = value; } }
+        public bool IsFlowTest { get { return isFlowTest; } set { isFlowTest = value; } }
         public int? LoopedRoleId { get { return loopedRoleId; } set { loopedRoleId = value; } }
         public int? LoopedStaffId { get { return loopedStaffId; } set { loopedStaffId = value; } }
+
         public int? ProductClassId { set { productClassId = value; } }
         public bool EmailNotification { set { emailNotification = value; } }
         public bool SmsNotification { set { smsNotification = value; } }
@@ -161,10 +168,12 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
 
+
             if (request == null)
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
+
             }
             else
             {
@@ -174,6 +183,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestLevelId = request.FROMAPPROVALLEVELID;
                 this.isCrossOperationProcess = request.OPERATIONID != this.operationId;
                 this.ResolveExternalFlowLoop(request, initiatingRequest);
+
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(request.TOSTAFFID); }
                 if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(request.REQUESTSTAFFID, request.FROMAPPROVALLEVELID, request.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
@@ -210,11 +220,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.SYSTEMRESPONSEDATETIME = this.systemDate;
                 request.RESPONSESTAFFID = this.staffId;
 
-                if(request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                { request.RESPONSESTAFFID = this.loopedStaffId; }
+                if (request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                { request.RESPONSESTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId; }
             }
 
+
             MakerCheckerControl();
+
+            //RandomizeAllocation();
 
             SendNotifications();
 
@@ -224,6 +237,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
+            if (this.isFlowTest) return true;
 
             context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -244,6 +258,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 LOOPEDROLEID = this.loopedRoleId,
                 LOOPEDSTAFFID = this.loopedStaffId,
                 REFEREBACKSTATEID = this.referBackStateId,
+                DESTINATIONOPERATIONID = this.destinationOperationId
 
             });
 
@@ -252,6 +267,68 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.saved) return true;
 
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
+        }
+
+        private void RandomizeAllocation()
+        {
+            var approvalSetup = context.TBL_APPROVAL_SETUP.FirstOrDefault();
+            if(approvalSetup.USEROUNDROBIN == true)
+            {
+                List<StaffAllocatedjob> staffAllocations = new List<StaffAllocatedjob>();
+
+                if(this.toStaffId != null) { return; }
+
+                if(this.request!= null && this.request?.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && (this.StatusId == (int)ApprovalStatusEnum.Processing || this.StatusId == (int)ApprovalStatusEnum.Pending || this.StatusId == (int)ApprovalStatusEnum.Authorised))
+                {
+                    var pendingTrail = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                   x.COMPANYID == this.companyId
+                                   && x.OPERATIONID == this.operationId
+                                   && x.RESPONSESTAFFID == null 
+                                   && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                                   ).ToList();
+
+                    if(this.businessUnitId != null)
+                    {
+                        var staffBusinessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Find(this.businessUnitId);
+                        if (staffBusinessUnit == null && approvalSetup.ISRETAILONLYROUNDROBIN == true)
+                        {
+                            if (staffBusinessUnit.BUSINESSCOMMONNAME?.ToLower() != "retail") return;
+                        }
+                    }
+
+
+                    var approvalLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == nextLevelId).ToList();
+                    var roles = approvalLevel.Select(c => c.STAFFROLEID).ToList();
+                    var staffInrole = context.TBL_STAFF.Where(x => roles.Contains(x.STAFFROLEID)).ToList();
+
+                    var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId).Select(d => d.STAFFID).ToList();
+                    approvalStaff.AddRange(staffInrole.Select(d => d.STAFFID).ToList());
+
+                    if (!context.TBL_STAFF_ROLE.Where(x => roles.Contains(x.STAFFROLEID) && x.USEROUNDROBIN == true).Any())
+                    {
+                        return;
+                    }
+
+                    foreach (var item in approvalStaff)
+                    {
+                        if(staffAllocations.Where(x=>x.staffId == item).Count() == 0)
+                        {
+                            StaffAllocatedjob staffAllocation = new StaffAllocatedjob();
+                            staffAllocation.pendingJobCount = pendingTrail.Where(x => x.TOSTAFFID == item).Count();
+                            staffAllocation.staffId = item;
+                            staffAllocation.counted = true;
+
+                            var isOnRelief = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == item && x.ENDDATE < DateTime.Now).Any();
+                            staffAllocation.isOnRelief = isOnRelief;
+                            staffAllocations.Add(staffAllocation);
+                        }
+                    }
+
+                    var orderedAllocation = staffAllocations.Where(x => x.isOnRelief == false && staffInrole.Select(c=>c.STAFFID).Contains(x.staffId)).OrderBy(x=>x.pendingJobCount).FirstOrDefault();
+                    if(this.toStaffId == null) { this.toStaffId = orderedAllocation.staffId; }
+                }
+            }
+          
         }
 
         private List<TBL_APPROVAL_TRAIL> GetAllTrail()
@@ -275,6 +352,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void ResolveExternalFlowLoop(TBL_APPROVAL_TRAIL request, TBL_APPROVAL_TRAIL initiatorRequest)
         {
+            if(this.StatusId != (int)ApprovalStatusEnum.Referred && this.request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.referredLog.Count <= 0){ return; }
+
             if (this.StatusId == (int)ApprovalStatusEnum.Referred )
             {
                 this.referBackStateId = (short)ApprovalState.Initiation;
@@ -285,7 +364,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.nextLevelId = request.TOAPPROVALLEVELID; 
                     this.loopedStaffId = (this.loopedStaffId != null && this.loopedStaffId > 0) ? this.loopedStaffId : initiatorRequest.REQUESTSTAFFID;
                     this.toStaffId = staffId;
-                    this.initiatorOrLooped = true;
+                    //this.initiatorOrLooped = true;
                 }
             }
 
@@ -319,7 +398,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var referrer = initialReferrer == null ? this.referredLog.FirstOrDefault() : initialReferrer;
 
                 this.nextLevelId = referrer.FROMAPPROVALLEVELID;
-                //this.toStaffId = referrer.REQUESTSTAFFID;
+                this.toStaffId = referrer.REQUESTSTAFFID;
                 referrer.REFEREBACKSTATEID = (short)ApprovalState.Ended;
             }
         }
@@ -437,28 +516,36 @@ namespace FintrakBanking.Repositories.WorkFlow
             int companyId,
             int staffId,
             int operationId,
+           // int destinationOperationId,
             int? exclusiveFlowChangeId,
             int targetId,
             int? productClassId,
             string comment,
             bool external,
             bool deferred,
-            bool sameDesk
+            bool sameDesk,
+            bool isFlowTest,
+            int? businessUnitId
             )
         {
             InitializeOperation();
-            this.staffId = staffId;
             this.companyId = companyId;
+            this.staffId = staffId;
             this.operationId = operationId;
+            //this.destinationOperationId = destinationOperationId;
             this.exclusiveFlowChangeId = exclusiveFlowChangeId;
             this.targetId = targetId;
            
             this.productClassId = productClassId;
             this.comment = comment;
-            this.statusId = (int)ApprovalStatusEnum.Pending;
             this.externalInitialization = external;
             this.deferredExecution = deferred;
             this.sameDesk = sameDesk;
+            this.isFlowTest = isFlowTest;
+            this.statusId = (int)ApprovalStatusEnum.Pending;
+            this.businessUnitId = businessUnitId;
+
+
             LogActivity();
         }
 
@@ -520,9 +607,15 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
+        //private void ResolveFlowChangeInitiatorLevel()
+        //{
+        //    if(this.ExclusiveFlowChangeId > 0 and this.ExclusiveFlowChangeId == (oper))
+        //}
+
         private bool ResolveLevelConfigurations() // REFACTOR!!!
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
+            
             approvalGrid = approvalLevels;
             next = approvalLevels.FirstOrDefault();
 
@@ -810,19 +903,31 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private int? GetReportingLineStaffId() // if workflow is forced to use organogram
         {
+            var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
             if (next == null) { return null; }
-            if (this.toStaffId != null) { return null; }
+            if (this.toStaffId != null) { return toStaffId; }
+            //if (this.toStaffId != null) { return null; }
             if (this.externalInitialization == true) { return null; }
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
+            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || this.fromLevelId == null)
+            {
+                return null;
+            }
             ReportingLine super = line.FirstOrDefault(x => x.levelRoleId == next.DefaultRoleId && x.levelIds.Contains(next.ApprovalLevelId));
-            if (super == null) return null;
+            if (super == null)
+            {
+                throw new SecureException("No Staff Was Setup as Your Supervisor!");
+                //return null;
+            }
+
             return super.staffId;
         }
 
         private void CheckApprovalLimits()
         {
+            if (this.statusId == (short)ApprovalStatusEnum.Referred) { return; }
             // allow business to drop process unconditionally 
             if (this.statusId == (int)ApprovalStatusEnum.Disapproved && GroupRole() == (int)ApprovalGroupEnum.Business) // for optimization the more expensive conditions are placed last. GroupRole() may not be called
             {
@@ -833,6 +938,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
             if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision())
             {
+                
                 if (WithinAllLimits() == true)
                 {
                     this.EndProcess(this.statusId);
@@ -901,7 +1007,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool WithinAllLimits()
         {
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
-            if (level == null) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
+            if (level == null ) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
             if (this.disputed == true && level.CANRESOLVEDISPUTE != true) { return false; }
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true
@@ -1118,11 +1224,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             
 
             List<WorkflowSetup> grid = new List<WorkflowSetup>();
-
+            //bool canSkipRule = levelBusinessRule.InsiderRelated == true;
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
+                //this.levelBusinessRule = level?.LevelBusinessRule;
+
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) continue;
+                //if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule) && !canSkipRule) continue;
                 n++;
                 grid.Add(new WorkflowSetup
                 {
@@ -1154,7 +1263,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             this.workflowSetup = grid;
-
+            //throw new SecureException("");
             return grid;
         }
 
@@ -1249,12 +1358,24 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                         var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
                             .Select(x => x.TBL_STAFF.EMAIL)
-                            .Distinct();
-                        emails = actorIds.Union(levelStaffEmails).ToList();
+                            .Distinct().ToList();
+
+                        var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(r => r.STAFFROLEID).ToList();
+                        var nextLvlRoleIsABusinessRole = businessRoleIds.Contains(nextLevel.STAFFROLEID ?? 0);
+                        if (nextLvlRoleIsABusinessRole)
+                        {
+                            emails = actorIds.Union(levelStaffEmails).ToList();
+                        }
+                        else
+                        {
+                            var nextLevelStaffEmails = context.TBL_STAFF.Where(s => s.STAFFROLEID == nextLevel.STAFFROLEID).Select(x => x.EMAIL);
+                            emails = actorIds.Union(levelStaffEmails).Union(nextLevelStaffEmails).ToList();
+                        }
                     }
                 }
 
                 var time = String.Format("{0:F}", DateTime.Now);
+                //throw new Exception("");
 
                 if (placeholders == null) placeholders = new AlertPlaceholders();
 
@@ -1366,7 +1487,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             LoopedRoleId = model.loopedRoleId;
             keepPending = model.keepPending;
             deferredExecution = model.deferredExecution;
-
+            IsFlowTest = model.isFlowTest;
+            destinationOperationId = model.destinationOperationId;
+            businessUnitId = model.businessUnitId;
             var response = LogActivity();
 
             return response;
@@ -1460,6 +1583,15 @@ namespace FintrakBanking.Repositories.WorkFlow
         public List<int> levelIds { get; set; }
         public int levelRoleId { get; set; }
 
+    }
+
+    public class StaffAllocatedjob
+    {
+        internal bool isOnRelief { get; set; }
+
+        public int staffId { get; set; }
+        public int pendingJobCount { get; set; }
+        public bool counted { get; set; }
     }
 }
 

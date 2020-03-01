@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
         public int PRINCIPALID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string INVOICENO { get; set; }
 
         //[Column(TypeName = "date")]
@@ -29,7 +29,7 @@ namespace FintrakBanking.Entities.Models
         public short INVOICE_CURRENCYID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CONTRACTNO { get; set; }
 
         //[Column(TypeName = "date")]
@@ -38,22 +38,22 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime CONTRACT_ENDDATE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PURCHASEORDERNUMBER { get; set; }
 
         public short? APPROVALSTATUSID { get; set; }
 
-        [StringLength(800)]
+        //[StringLength(800)]
         public string APPROVAL_COMMENT { get; set; }
 
         public int? APPROVEDBY { get; set; }
 
         public DateTime? APPROVEDDATETIME { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string CERTIFICATENO { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ENTRYSHEETNUMBER { get; set; }
 
         public bool REVALIDATED { get; set; }

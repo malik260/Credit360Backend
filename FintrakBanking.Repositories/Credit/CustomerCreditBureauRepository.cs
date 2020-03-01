@@ -768,7 +768,18 @@ namespace FintrakBanking.Repositories.Credit
                 else
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException("Search Response -  error occured during search");
+                    var errorCode = searchResponse.SearchResult.Split(new string[] { "<ERROR-CODE>" }, StringSplitOptions.None)[1].Split('<')[0];
+                    var errorDescription = string.Empty;
+
+                    if (errorCode.ToLower().Contains("password")) {
+                        errorDescription = errorCode;
+                        errorCode = "0";
+                    }
+                    else {
+                        errorDescription = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(O => O.ERRORCODE == errorCode).FirstOrDefault().DESCRIPTION;
+                    }
+
+                    throw new ConditionNotMetException($"Search Response - ERRORCODE: {errorCode} ERRORMESSAGE: {errorDescription}");
                 }
                 //}
                 //else
@@ -1263,7 +1274,6 @@ namespace FintrakBanking.Repositories.Credit
         //private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
         //{
         //    var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
-
         //    FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
         //    debit.operationId = (int)OperationsEnum.CreditBureauSearch;
         //    debit.description = creditBureau.CREDITBUREAUNAME + " search charge";
@@ -1366,7 +1376,6 @@ namespace FintrakBanking.Repositories.Credit
         //    credit.creditAmount = chargeAmount;
         //    credit.sourceBranchId = creditBureauInputs.userBranchId;
         //    credit.destinationBranchId = creditBureauInputs.userBranchId;
-
 
         //    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
         //    inputTransactions.Add(debit);
@@ -1494,7 +1503,6 @@ namespace FintrakBanking.Repositories.Credit
                             debit.approvedDateTime = DateTime.Now;
                             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             debit.companyId = model.companyId;
-
 
                             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = model.referenceNumber;

@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         public int ACCREDITEDCONSULTANTID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string NAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

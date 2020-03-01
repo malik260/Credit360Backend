@@ -64,15 +64,20 @@ namespace FintrakBanking.Repositories.Customer
             else
             {
                 var data = new TBL_CUSTOMER_FS_CAPTION_DETAIL
-            {
-                CUSTOMERID = entity.customerId,
-                FSCAPTIONID = entity.fsCaptionId,
-                FSDATE = entity.fsDate,
-                AMOUNT = entity.amount,
-                DELETED = false,
-                CREATEDBY = entity.createdBy,
-                DATETIMECREATED = _genSetup.GetApplicationDate()
-            };
+                {
+                    CUSTOMERID = entity.customerId,
+                    FSCAPTIONID = entity.fsCaptionId,
+                    FSDATE = entity.fsDate,
+                    AMOUNT = entity.amount,
+                    DELETED = false,
+                    CREATEDBY = entity.createdBy,
+                    DATETIMECREATED = _genSetup.GetApplicationDate(),
+                    TEXTVALUE = entity.textValue
+                };
+
+                if (entity.textValue != "") {
+                    data.AMOUNT = 0;
+                }
 
             context.TBL_CUSTOMER_FS_CAPTION_DETAIL.Add(data);
 
@@ -170,8 +175,7 @@ namespace FintrakBanking.Repositories.Customer
                         join b in context.TBL_CUSTOMER_FS_CAPTION on a.FSCAPTIONID equals b.FSCAPTIONID
                         join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where a.CUSTOMERID == customerId && b.FSCAPTIONGROUPID == fsCaptionGroupId
-                        && b.ISRATIO == false && a.FSDATE == fsDate
-                        && a.DELETED == false
+                        && a.FSDATE == fsDate && a.DELETED == false //&& b.ISRATIO == false 
                         orderby a.FSDATE, b.POSITION, b.FSCAPTIONGROUPID
                         select new CustomerFSCaptionDetailViewModel
                         {
@@ -182,6 +186,31 @@ namespace FintrakBanking.Repositories.Customer
                             fsCaptionName = b.FSCAPTIONNAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
+                            fsCaptionPosition = b.POSITION,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<CustomerFSCaptionDetailViewModel> GetAllMappedCustomerFsCaptionDetail(int customerId, DateTime fsDate)
+        {
+            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
+                        join b in context.TBL_CUSTOMER_FS_CAPTION on a.FSCAPTIONID equals b.FSCAPTIONID
+                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                        where a.CUSTOMERID == customerId //&& b.FSCAPTIONGROUPID == fsCaptionGroupId
+                        && a.FSDATE == fsDate && a.DELETED == false //&& b.ISRATIO == false 
+                        orderby a.FSDATE, b.POSITION, b.FSCAPTIONGROUPID
+                        select new CustomerFSCaptionDetailViewModel
+                        {
+                            customerId = a.CUSTOMERID,
+                            customerCode = c.CUSTOMERCODE,
+                            fsdetailId = a.FSDETAILID,
+                            fsCaptionId = a.FSCAPTIONID,
+                            fsCaptionName = b.FSCAPTIONNAME,
+                            fsDate = a.FSDATE,
+                            amount = a.AMOUNT,
+                            textValue = a.TEXTVALUE,
                             fsCaptionPosition = b.POSITION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY

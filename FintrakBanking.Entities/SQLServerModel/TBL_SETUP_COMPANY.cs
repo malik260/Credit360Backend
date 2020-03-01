@@ -21,10 +21,10 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public int? LEGAL_CHARGE_GLACCOUNTID { get; set; }
 
-        [StringLength(200)]
+        //[StringLength(200)]
         public string APIURL { get; set; }
 
-        [StringLength(100)]
+        //[StringLength(100)]
         public string APIKEY { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }

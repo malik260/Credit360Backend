@@ -16,16 +16,16 @@ namespace FintrakBanking.Entities.DocumentModels
         public int DOCUMENTTYPEID { get; set; }
 
         [Required]
-        [StringLength(250)]
+        ////[StringLength(250)]
         public string FILENAME { get; set; }
 
         [Required]
-        [StringLength(10)]
+        ////[StringLength(10)]
         public string FILEEXTENSION { get; set; }
 
         public int FILESIZE { get; set; }
 
-        [StringLength(3)]
+        ////[StringLength(3)]
         public string FILESIZEUNIT { get; set; }
 
         [Required]
@@ -37,10 +37,10 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public DateTime? EXPIRYDATE { get; set; }
 
-        [StringLength(20)]
+        ////[StringLength(20)]
         public string PHYSICALFILENUMBER { get; set; }
 
-        [StringLength(20)]
+        ////[StringLength(20)]
         public string PHYSICALLOCATION { get; set; }
 
         public bool DELETED { get; set; }

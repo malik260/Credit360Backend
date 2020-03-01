@@ -818,7 +818,7 @@ namespace FintrakBanking.Repositories.Admin
         public IEnumerable<ActivityParent> GetActivities()
         {
             return from p in context.TBL_PROFILE_ACTIVITY_PARENT
-                   select new ActivityParent
+                   select new ActivityParent 
                    {
                        activityParentId = p.ACTIVITYPARENTID,
                        activityParentName = p.ACTIVITYPARENTNAME,
@@ -826,11 +826,11 @@ namespace FintrakBanking.Repositories.Admin
                                       .Where(x => x.ACTIVITYPARENTID == p.ACTIVITYPARENTID)
                                       .Select(x => new ActivityViewModel
                                       {
-                                          activityId = x.ACTIVITYID,
+                                          activityId = x.ACTIVITYID, 
                                           activityName = x.ACTIVITYNAME,
                                           activityParentId = x.ACTIVITYPARENTID,
                                           selected = false,
-                                      }).ToList()
+                                      }).ToList() 
                    };
         }
 
@@ -841,11 +841,10 @@ namespace FintrakBanking.Repositories.Admin
 
                    select new UserActivities
                    {
-                       activityId = x.ACTIVITYID,
-                        activityName = x.ACTIVITYNAME,
+                       activityId = x.ACTIVITYID, 
+                        activityName = x.ACTIVITYNAME, 
                         activityParentId = x.ACTIVITYPARENTID,
                        activityParentName = context.TBL_PROFILE_ACTIVITY_PARENT.Where(k => k.ACTIVITYPARENTID == x.ACTIVITYPARENTID).Select(p => p.ACTIVITYPARENTNAME).FirstOrDefault(),
-
                        selected = false,
                      
                    };

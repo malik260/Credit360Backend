@@ -44,6 +44,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         select new StaffRoleViewModel
                         {
                             staffRoleName = a.STAFFROLENAME,
+                            staffRoleShortCode = a.STAFFROLESHORTCODE,
+                            staffRoleCode = a.STAFFROLECODE,
                             workEndDuration = a.WORKENDDURATION,
                             workStartDuration = a.WORKSTARTDURATION,
                             companyId = (short)a.COMPANYID,
@@ -61,6 +63,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        companyId = (short)a.COMPANYID,
                        staffRoleCode = a.STAFFROLECODE,
                        staffRoleId = a.STAFFROLEID,
+                       staffRoleShortCode = a.STAFFROLESHORTCODE,
                        workEndDuration = a.WORKENDDURATION,
                        workStartDuration = a.WORKSTARTDURATION,
                        userGroup = a.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == a.STAFFROLEID).Select(x => new UserGroup
@@ -103,6 +106,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             companyId = (short)a.COMPANYID,
                             staffRoleId = a.STAFFROLEID,
                             staffRoleCode = a.STAFFROLECODE,
+                            staffRoleShortCode = a.STAFFROLESHORTCODE,
                             workEndDuration = a.WORKENDDURATION,
                             workStartDuration = a.WORKSTARTDURATION,
                         });
@@ -115,6 +119,8 @@ namespace FintrakBanking.Repositories.Setups.General
                    select new StaffRoleViewModel
                    {
                        staffRoleName = a.STAFFROLENAME,
+                       staffRoleCode = a.STAFFROLECODE,
+                       staffRoleShortCode = a.STAFFROLESHORTCODE,
                        staffRoleId = a.STAFFROLEID,
                        workEndDuration = a.WORKENDDURATION,
                        workStartDuration = a.WORKSTARTDURATION,
@@ -182,6 +188,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 staffRole.STAFFROLECODE = entity.staffRoleCode;
                 staffRole.STAFFROLENAME = entity.staffRoleName;
+                staffRole.STAFFROLESHORTCODE = entity.staffRoleShortCode;
                 staffRole.WORKSTARTDURATION = entity.workStartDuration;
                 staffRole.WORKENDDURATION = entity.workEndDuration;
                 staffRole.TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups;
@@ -193,6 +200,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     STAFFROLECODE = entity.staffRoleCode,
                     STAFFROLENAME = entity.staffRoleName,
+                    STAFFROLESHORTCODE = entity.staffRoleShortCode,
                     WORKSTARTDURATION = entity.workStartDuration,
                     WORKENDDURATION = entity.workEndDuration,
                     COMPANYID = entity.companyId,
@@ -273,6 +281,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             staffRoleName = c.STAFFROLENAME,
                             staffRoleCode = c.STAFFROLECODE,
+                            staffRoleShortCode = c.STAFFROLESHORTCODE,
                             staffRoleId = c.STAFFROLEID,
                             operationId = (int)OperationsEnum.StaffRoleCreation,
                         }).GroupBy(c=> c.staffRoleId).Select(g=>g.FirstOrDefault()).ToList() ;

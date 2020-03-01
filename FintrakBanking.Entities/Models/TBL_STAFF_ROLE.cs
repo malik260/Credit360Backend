@@ -25,11 +25,13 @@ namespace FintrakBanking.Entities.Models
         public int STAFFROLEID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFROLECODE { get; set; }
 
+        public string STAFFROLESHORTCODE { get; set; }
+
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string STAFFROLENAME { get; set; }
 
         public int COMPANYID { get; set; }
@@ -37,6 +39,8 @@ namespace FintrakBanking.Entities.Models
         public decimal? WORKSTARTDURATION { get; set; }
 
         public decimal? WORKENDDURATION { get; set; }
+
+        public bool USEROUNDROBIN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }

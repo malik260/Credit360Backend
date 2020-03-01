@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.Media
     public interface IDocumentUploadRepository
     {
         DocumentUploadViewModel GetDocumentUpload(int id);
-
+        DocumentUploadViewModel GetDocumentCreditBereau(int documentId);
         IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId);
 
         int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer);
@@ -21,7 +21,8 @@ namespace FintrakBanking.Interfaces.Media
 
         bool DeleteDocumentUpload(int id, UserInfo user);
         DocumentUploadViewModel GetDocument(int documentId);
-        IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int getStaffId, int operationId, int targetId);
+        IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int getStaffId, int operationId, int targetId, bool isOperationSpecific);
+        IEnumerable<DocumentUploadViewModel> GetDocumentUploadsLms(int getStaffId, int operationId, int targetId, bool isOperationSpecific, bool isLms = false);
         IEnumerable<DocumentUploadViewModel> GetDocumentDeleted(int staffId, int operationId, int targetId);
         IEnumerable<DocumentCategoryViewModel> GetDocumentCategories();
         IEnumerable<DocumentTypeViewModel> GetDocumentTypes(int id);

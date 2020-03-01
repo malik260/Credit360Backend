@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int? APPROVALLEVELID { get; set; }
 
         [Required]
-        [StringLength(150)]
+        //[StringLength(150)]
         public string LEVELNAME { get; set; }
 
         public int GROUPID { get; set; }
@@ -90,7 +90,7 @@ namespace FintrakBanking.Entities.SQLServerModel
 
         public short APPROVALSTATUSID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string OPERATION { get; set; }
 
         public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }

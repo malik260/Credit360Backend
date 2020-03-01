@@ -15,19 +15,19 @@ namespace FintrakBanking.Entities.Models
         public int LCISSUANCEID { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string PARTYNAME { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string PARTYADDRESS { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string PORTOFDISCHARGE { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string PORTOFSHIPMENT { get; set; }
 
         public DateTime LATESTSHIPMENTDATE { get; set; }

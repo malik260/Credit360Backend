@@ -219,6 +219,8 @@ public class LienProcessViewModel //: GeneralEntity
     }
 
 
+
+
     public class BVNCustomerDetailsViewModel
     {
         public string phoneNumber { get; set; }
@@ -273,7 +275,11 @@ public class LienProcessViewModel //: GeneralEntity
         public bool TransactionIsSuccessfull { get; set; }
         public string TransactionMessage { get; set; }
         public string responseMessage { get; set; }
+
+        public CRMSCreditCheckViewModel responseObject { get; set; }
+
     }
+
 
     public class PostingResult
     {
@@ -282,6 +288,8 @@ public class LienProcessViewModel //: GeneralEntity
         
         public string responseMessage { get; set; }
         public string responseCode { get; set; }
+
+        public CRMSCreditCheckViewModel responseObject { get; set; }
     }
 
     public class AccountCreationRespones
@@ -296,6 +304,47 @@ public class LienProcessViewModel //: GeneralEntity
         public string valueCode { get; set; }
         public string valueName { get; set; }
         
+    }
+
+    public class ResponseMessageOverDraftViewModel
+    {
+        public string webRequestStatus { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
+        public DateTime webRequestDate { get; set; }
+        public string response_code { get; set; }
+        public string bo_code { get; set; }
+        public string bo_message { get; set; }
+        public string lien_id { get; set; }
+        public string response_message { get; set; }
+        public string collateral_id { get; set; }
+
+        // public HttpResponseMessage APIMessage { get; set; }
+        // public bool responseStatus { get; set; }crmsCode
+    }
+
+    public class ResponseMessageFacilityViewModel
+    {
+        public string response_code { get; set; }
+        public string response_message { get; set; }
+        public string facility_id { get; set; }
+        public string bo_code { get; set; }
+        public string bo_message { get; set; } 
+    }
+
+    public class ResponseMessageLoanCreationViewModel
+    {
+        public string response_code { get; set; }
+        public string response_desc { get; set; }
+        public string reference_no { get; set; }
+        public string bo_code { get; set; }
+        public string bo_message { get; set; }
+        public string response_message { get; set; }
+    }
+
+    public class ResponseMessageCRMSCodeViewModel
+    {
+        public string submit_return { get; set; }
+     
     }
 
 

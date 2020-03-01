@@ -42,6 +42,13 @@ namespace FintrakBanking.Common
             return String.Format("{0:dd-MMM-yyyy}", date);
         }
 
+        public static string EmailValidator
+        {
+            get {
+                return "^([0-9a-zA-Z]([-\\.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$";
+            }
+        }
+
         /// <summary>
         /// For parsing DateTime string from the format "yyyyMMdd"
         /// </summary>
@@ -572,29 +579,78 @@ namespace FintrakBanking.Common
             catch { return ""; }
         }
 
+        //public static string FriendlyName()
+        //{
+        //    OperatingSystem os = Environment.OSVersion;
+        //    var platform = os.Platform.ToString();
+        //    var version = os.Version.ToString();
+        //    var servicePack = os.ServicePack.ToString();
+
+        //    String userAgent = HttpContext.Current.Request.UserAgent;
+        //    var uaParser = Parser.GetDefault();
+        //    ClientInfo c = uaParser.Parse(userAgent);
+        //    var fullOs = c.OS.Family + " " + version + " " + servicePack;
+        //    return fullOs;
+
+        //}
+
+        //public static string GetDeviceName()
+        //{
+        //    String userAgent = HttpContext.Current.Request.UserAgent;
+        //    var uaParser = Parser.GetDefault();
+        //    ClientInfo c = uaParser.Parse(userAgent);
+        //    return c.Device.Family;
+
+        //}
+
+
         public static string FriendlyName()
         {
-            OperatingSystem os = Environment.OSVersion;
-            var platform = os.Platform.ToString();
-            var version = os.Version.ToString();
-            var servicePack = os.ServicePack.ToString();
-           
-            String userAgent = HttpContext.Current.Request.UserAgent;
-            var uaParser = Parser.GetDefault();
-            ClientInfo c = uaParser.Parse(userAgent);
-            var fullOs = c.OS.Family + " " + version + " " + servicePack;
-            return fullOs;
+            try
+            {
+                OperatingSystem os = Environment.OSVersion;
+                var platform = os.Platform.ToString();
+                var version = os.Version.ToString();
+                var servicePack = os.ServicePack.ToString();
+
+                String userAgent = HttpContext.Current.Request.UserAgent;
+                if (userAgent == null || userAgent == "" || userAgent.Length < 2)
+                {
+                    return "mobile";
+                }
+                var uaParser = Parser.GetDefault();
+                ClientInfo c = uaParser.Parse(userAgent);
+                var fullOs = c.OS.Family + " " + version + " " + servicePack;
+                if (fullOs == null || fullOs == "" || fullOs.Length < 2)
+                {
+                    return "mobile";
+                }
+                return fullOs;
+            }
+            catch (Exception ex)
+            {
+                return "Unknown";
+            }
+
 
         }
 
         public static string GetDeviceName()
         {
             String userAgent = HttpContext.Current.Request.UserAgent;
+            if (userAgent == null || userAgent == "" || userAgent.Length < 2)
+            {
+                return "mobile";
+            }
             var uaParser = Parser.GetDefault();
             ClientInfo c = uaParser.Parse(userAgent);
             return c.Device.Family;
 
         }
+
+
+
+
 
     }
 }

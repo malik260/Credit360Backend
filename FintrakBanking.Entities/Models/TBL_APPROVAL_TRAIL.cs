@@ -43,8 +43,9 @@ namespace FintrakBanking.Entities.Models
         public short APPROVALSTATUSID { get; set; }
 
         public int OPERATIONID { get; set; }
+        public int? DESTINATIONOPERATIONID { get; set; }
 
-        [StringLength(700), Column(name: "COMMENT_")]
+        [Column(name: "COMMENT_")]
         public string COMMENT { get; set; }
 
         public short? VOTE { get; set; }
@@ -54,8 +55,10 @@ namespace FintrakBanking.Entities.Models
         public int? LOOPEDSTAFFID { get; set; }
 
         public int? LOOPEDROLEID { get; set; }
+       // public int? DESTINATIONOPERATIONID { get; set; }
 
         public short? REFEREBACKSTATEID { get; set; }
+      
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

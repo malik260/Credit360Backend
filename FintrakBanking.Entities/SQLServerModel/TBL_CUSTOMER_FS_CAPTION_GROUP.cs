@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short FSCAPTIONGROUPID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string FSCAPTIONGROUPNAME { get; set; }
 
         public int POSITION { get; set; }

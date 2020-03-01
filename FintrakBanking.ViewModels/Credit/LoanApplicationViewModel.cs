@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.ViewModels.Credit
 {
 
     public class LoanApplicationViewModel : GeneralEntity
     {
+        public int? customerBusinessUnitId { get; set; }
+        public string divisionShortCode { get; set; }
+
+        public string divisionCode { get; set; }
+
         public string approvedProductName { get; set; }
         public decimal? equityControl { get; set; }
         public int? moratrium { get; set; }
@@ -18,10 +24,15 @@ namespace FintrakBanking.ViewModels.Credit
         public int psrReportTypeId { get; set; }
         public string facility { get; set; }
 
+        public bool? isFacilityCreated { get; set; }
+
         public LoanApplicationViewModel()
         {
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
+
+        public bool owner { get; set; }
+        public int currentOperationId { get; set; }
 
         public bool jumpedDestination { get; set; }
         public bool failedRacStartCam { get; set; }
@@ -52,6 +63,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
         public DateTime applicationDate { get; set; }
+        public DateTime? applicationDateArch { get; set; }
         public decimal applicationAmount { get; set; }
         public decimal approvedAmount { get; set; }
         public double applicationTenor { get; set; }
@@ -76,7 +88,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int sectorId { get; set; }
         public string sectorName { get; set; }
         public bool isInvestmentGrade { set; get; }
+        public int? loantermSheetId { get; set; }
         public string customerName { get; set; }
+        public int customerTypeId { get; set; }
         public string branchName { get; set; }
         public string productName { get; set; }
         public string customerGroupName { get; set; }
@@ -101,6 +115,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public string lastComment { get; set; }
         public int approvalTrailId { get; set; }
+        public int? responseStaffId { get; set; }
         // public decimal? approvedAmount { get; set; }
         public short applicationStatusId { get; set; }
 
@@ -121,6 +136,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string customerCode { get; set; }
+        public int proposedProductId { get; set; }
+        public string repaymentTerm { get; set; }
+        public bool? isTakeOverApplication { get; set; }
+        public int? repaymentScheduleId { get; set; }
+        public double proposedInterestRate { get; set; }
+        public string proposedProductName { get; set; }
+        public int approvedProductId { get; set; }
+        public string currencyName { get; set; }
         public string lastName { get; set; }
         public int groupRoleId { get; set; }
         public string accountNumber { get; set; }
@@ -136,7 +159,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string cancellationReason { get; set; }
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
-        public bool? isadhocapplication { get; set; }
+        public bool isadhocapplication { get; set; }
         public int? exclusiveOperationId { get; set; }
         public int? flowchangeId { get; set; }
         public int? loanApprovedLimitId { get; set; }
@@ -214,6 +237,8 @@ namespace FintrakBanking.ViewModels.Credit
             if (factor <= 100) return "danger";
             return "danger";
         }
+
+  
     }
 
     public class LoanApplicationUpdateMessage
@@ -320,6 +345,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isTakeOverApplication { get; set; }
 
         public string customerType { get; set; }
+        public short? customerTypeId { get; set; }
+        public int loanDetailReviewTypeId { get; set; }
         public string customerAccountNumber { get; set; }
 
         public bool requireCollateral { get; set; }
@@ -822,6 +849,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ForwardReviewViewModel : GeneralEntity
     {
+        public bool isFlowTest { get; set; }
         public int forwardAction { get; set; } // statusId
         public int applicationId { get; set; } // targetId
         public int appraisalMemorandumId { get; set; }

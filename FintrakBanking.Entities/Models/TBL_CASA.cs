@@ -38,11 +38,11 @@ namespace FintrakBanking.Entities.Models
         public int CASAACCOUNTID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string PRODUCTACCOUNTNUMBER { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string PRODUCTACCOUNTNAME { get; set; }
 
         public int CUSTOMERID { get; set; }
@@ -85,10 +85,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? RELATIONSHIPMANAGERID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string MISCODE { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string TEAMMISCODE { get; set; }
 
         //[Column(TypeName = "money")]
@@ -109,16 +109,16 @@ namespace FintrakBanking.Entities.Models
 
         public short POSTNOSTATUSID { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string OLDPRODUCTACCOUNTNUMBER1 { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string OLDPRODUCTACCOUNTNUMBER2 { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string OLDPRODUCTACCOUNTNUMBER3 { get; set; }
 
-        [StringLength(50)]
+        //[StringLength(50)]
         public string REFRESHBATCHID { get; set; }
 
         public DateTime? LASTREFRESHDATETIME { get; set; }

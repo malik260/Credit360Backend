@@ -77,15 +77,15 @@ namespace FintrakBanking.APICore.Filters
 
             context.TBL_ERRORLOG.Add(log);
 
-            string recipients = "augustine.nwaka@fintraksoftware.com; benjamin.gbaaikye@fintraksoftware.com; ifeanyi.ikemefuna@fintraksoftware.com;" +
-                " kingsley.ozoemena@fintraksoftware.com; adesola.abiola@fintraksoftware.com; adeyemi.olaopa@fintraksoftware.com;";
+            string recipients = "augustine.nwaka@fintraksoftware.com;ifeanyi.ikemefuna@fintraksoftware.com;" +
+                "adeyemi.olaopa@fintraksoftware.com;anu.omotayo@fintraksoftware.com";
 
             var message = new TBL_MESSAGE_LOG
             {
                 FROMADDRESS = support,
                 TOADDRESS = recipients,
                 MESSAGESUBJECT = "UNHANDLED EXCEPTION",
-                MESSAGEBODY = "<p><b>USERNAME:</b> " + userName + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p>STACKTRACE:</b> " + ex.StackTrace + "</p> <p>TIME:</b> " + time + "</p>", //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                MESSAGEBODY = "<p><b>TIME:</b> " + time + "</p>< p><b>USERNAME:</b> " + userName + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p><b>STACKTRACE:</b> " + ex.StackTrace + "</p> ", // MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                 MESSAGETYPEID = (short)MessageTypeEnum.Email,
                 DATETIMERECEIVED = time,
                 SENDONDATETIME = time,
@@ -123,14 +123,15 @@ namespace FintrakBanking.APICore.Filters
             };
             context.TBL_ERRORLOG.Add(log);
 
-            string recipients = "augustine.nwaka@fintraksoftware.com; benjamin.gbaaikye@fintraksoftware.com";
+            string recipients = "augustine.nwaka@fintraksoftware.com;ifeanyi.ikemefuna@fintraksoftware.com;" +
+                "adeyemi.olaopa@fintraksoftware.com";
 
             var message = new TBL_MESSAGE_LOG
             {
                 FROMADDRESS = support,
                 TOADDRESS = recipients,
                 MESSAGESUBJECT = "UNHANDLED EXCEPTION",
-                MESSAGEBODY = "<p><b>USERNAME:</b> " + userName + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p>STACKTRACE:</b> " + ex.StackTrace + "</p> <p>TIME:</b> " + time + "</p>", //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                MESSAGEBODY = "<p><b>TIME:</b> " + time + "</p>< p><b>USERNAME:</b> " + userName + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p><b>STACKTRACE:</b> " + ex.StackTrace + "</p> ", // MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                 MESSAGETYPEID = (short)MessageTypeEnum.Email,
                 DATETIMERECEIVED = time,
                 SENDONDATETIME = time,
@@ -138,7 +139,7 @@ namespace FintrakBanking.APICore.Filters
                 OPERATIONID = null,
                 MESSAGESTATUSID = 1
             };
-            // context.TBL_MESSAGE_LOG.Add(message);
+            context.TBL_MESSAGE_LOG.Add(message);
 
             await context.SaveChangesAsync();
         }

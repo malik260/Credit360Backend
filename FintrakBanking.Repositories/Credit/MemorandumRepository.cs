@@ -7,6 +7,7 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -20,11 +21,11 @@ namespace FintrakBanking.Repositories.Credit
     {
         // dependencies
         private FinTrakBankingContext context;
-        private IAppraisalMemorandumRepository memo;
+        //private IAppraisalMemorandumRepository memo;
         private ICreditLimitValidationsRepository limitValidation;
         private ILoanRepository loanRepo;
         private IFinanceTransactionRepository financeTransaction;
-        private ICustomerGroupRepository groupRepo;
+        //private ICustomerGroupRepository groupRepo;
         private ITransactionDynamicsRepository transactionsRepo;
         private IConditionPrecedentRepository conditionsRepo;
         private ICustomerCollateralRepository collateralRepo;
@@ -33,11 +34,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public MemorandumRepository(
             FinTrakBankingContext context, 
-            IAppraisalMemorandumRepository memo, 
+            //IAppraisalMemorandumRepository memo, 
             ICreditLimitValidationsRepository limitValidation,
             ILoanRepository loanRepo,
             IFinanceTransactionRepository financeTransaction,
-            ICustomerGroupRepository groupRepo, 
+            //ICustomerGroupRepository groupRepo, 
             ITransactionDynamicsRepository transactionsRepo,
             IConditionPrecedentRepository conditionsRepo,
             ICustomerCollateralRepository collateralRepo,
@@ -45,11 +46,11 @@ namespace FintrakBanking.Repositories.Credit
             )
         {
             this.context = context;
-            this.memo = memo;
+            //this.memo = memo;
             this.limitValidation = limitValidation;
             this.loanRepo = loanRepo;
             this.financeTransaction = financeTransaction;
-            this.groupRepo = groupRepo;
+            //this.groupRepo = groupRepo;
             this.transactionsRepo = transactionsRepo;
             this.conditionsRepo = conditionsRepo;
             this.collateralRepo = collateralRepo;
@@ -66,14 +67,18 @@ namespace FintrakBanking.Repositories.Credit
         TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
         TBL_LMSR_APPLICATION lmsrApplication = null;
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
+        List<CurrentCustomerExposure> globalExposure = new List<CurrentCustomerExposure>();
         int customerId;
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
-        private long legalLendingLimit = 200000000000;
+        private long legalLendingLimit;
+        //private long legalLendingLimit = 200000000000;
 
         // place holders
         private readonly string customerNameHolder = "@{{CustomerName}}";
         private readonly string branchNameHolder = "@{{Branch}}";
         private readonly string locationNameHolder = "@{{Location}}";
+        private readonly string managementProfileHolder = "@{{ManagementProfile}}";
+        private readonly string ownershipHolder = "@{{Ownership}}";
         private readonly string customerExposureHolder = "@{{CustomerExposure}}";
         private readonly string recommendedInterestRateHolder = "@{{RecommendedInterest}}";
         private readonly string isRelatedPartyHolder = "@{{IsRelatedParty}}";
@@ -119,6 +124,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string collateralCoverageHolder = "@{{CollateralCoverage}}";
         private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
         private readonly string obligorRiskRatingHolder = "@{{ObligorRiskRating}}";
+        private readonly string obligorClassificationHolder = "@{{ObligorClassification}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -153,6 +159,8 @@ namespace FintrakBanking.Repositories.Credit
         private string customerName;
         private string branchName;
         private string locationName;
+        private string managementProfile;
+        private string ownership;
         private string customerExposure;
         private string recommendedInterestRate;
         private string isRelatedParty;
@@ -198,6 +206,7 @@ namespace FintrakBanking.Repositories.Credit
         private string collateralCoverage;
         private string allCustomerFacilities;
         private string obligorRiskRating;
+        private string obligorClassification;
         //private string totalGroupExposure;
         // lms
         private string securityType;
@@ -223,7 +232,20 @@ namespace FintrakBanking.Repositories.Credit
         //private string branchName;
         private string facilityType;
         private string drawdownAmount;
-        private int tenor;
+        public int tenor;
+
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = tenor == 1 ? " day" : " days";
+                if (tenor < 15) return tenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(tenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+
         private int? moratorium;
         private string principalRepayment;
         private string interestRepayment;
@@ -324,18 +346,18 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     this.loanApplication = context.TBL_LOAN_APPLICATION.Find(targetId);
                     this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
-                    this.customerExposure = CustomerExposureMarkup();
+                    //this.customerExposure = CustomerExposureMarkup();
                 }
 
                 //string customerName = String.Empty;
 
                 if (loanApplication != null) {
-                    if (loanApplication.CUSTOMERGROUPID != null)
+                    if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
                     {
                         this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-                        this.customerId = (int)loanApplication.CUSTOMERGROUPID;
+                        this.customerId = (int)loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
                     }
-                    if (loanApplication.CUSTOMERID != null)
+                    if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
                     {
                         this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
                         this.customerId = (int)loanApplication.CUSTOMERID;
@@ -343,23 +365,45 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
 
-                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted).ToList();
                 this.branchName = loanApplication.TBL_BRANCH?.BRANCHNAME;
-                this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
+                if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
+                {
+                    var custId = loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
+                    this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == custId).ADDRESS;
+                }
+                else
+                if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+                {
+                    this.locationName = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(a => a.CUSTOMERID == loanApplication.CUSTOMERID)?.ADDRESS;
+                }
+                //this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
                 this.isRelatedParty = loanApplication.ISRELATEDPARTY == true ? "Yes" : "No";
                 this.recommendedInterestRate = loanApplication.INTERESTRATE.ToString();
                 this.dateCreated = loanApplication.DATETIMECREATED.ToShortDateString();
                 this.environmentalSocialRisk = GetEnvironmentalSocialRiskMarkup();
                 this.conditionsPrecedentToDrawdown = GetConditionsPrecedentToDrawdownMarkup();
                 this.transactionsDynamics = GetTransactionsDynamicsMarkup();
-                this.rmCountry = this.loanApplication.TBL_BRANCH?.TBL_STATE?.TBL_COUNTRY?.NAME;
-                this.misCode = this.loanApplication.MISCODE;
-                this.reviewType = "Initial";
+                this.rmCountry = this.loanApplication.TBL_COMPANY.TBL_COUNTRY.NAME;
+                this.misCode = this.loanApplication.TBL_STAFF.MISCODE;
+                var reviewTypeId = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().LOANDETAILREVIEWTYPEID;
+                this.reviewType = context.TBL_LOAN_DETAIL_REVIEW_TYPE.Find(reviewTypeId)?.LOANDETAILREVIEWTYPENAME;
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLOS();
                 this.exchangeRate = GetAllExchangeRates();
-                this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
-                this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();
+                this.obligorRiskRating = GetCustomerRiskRating();
+                this.obligorClassification = GetObligorClassification();
+                this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
+
+                if (this.loanApplication.TBL_CUSTOMER?.CUSTOMERTYPEID == (int)CustomerTypeEnum.Individual)
+                {
+                    //continue
+                }
+                else
+                {
+                    this.globalExposure = GetGloabalExposures();
+                }
+                //this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();
                 //this.contingentFacilities = GetContingentFacilitiesMarkupLOS();
                 //this.totalContingentFacilities = GetTotalContingentFacilitiesMarkupLOS();
                 //ImportFinanceFinance;
@@ -379,8 +423,10 @@ namespace FintrakBanking.Repositories.Credit
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
-                this.obligorRiskRating = GetCustomerRiskRating();
-                //this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SHAREHOLDERSFUND;
+                this.managementProfile = GetManagementProfileMarkup();
+                this.ownership = GetOwnershipMarkup();
+                this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
+
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
                 this.memoData = MemoMarkupHtml();
@@ -402,26 +448,31 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     this.lmsrApplication = context.TBL_LMSR_APPLICATION.Find(targetId);
                     this.customerIds = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
-                    this.customerExposure = CustomerExposureMarkup();
+                    //this.customerExposure = CustomerExposureMarkup();
                 }
 
                 //string customerName = String.Empty;
                 // if (lmsrAppllication.CUSTOMERGROUPID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (lmsrApplication.CUSTOMERID != null) this.customerName = lmsrApplication.TBL_CUSTOMER.FIRSTNAME + " " + lmsrApplication.TBL_CUSTOMER.MIDDLENAME + " " + lmsrApplication.TBL_CUSTOMER.LASTNAME;
+                initLoanAppForLms();
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted).ToList();
 
                 this.branchName = lmsrApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = lmsrApplication.TBL_BRANCH.ADDRESSLINE1 + " " + lmsrApplication.TBL_BRANCH.ADDRESSLINE2;
                 //this.isRelatedParty = lmsrAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 //this.recommendedInterestRate = lmsrAppllication.INTERESTRATE.ToString();
                 this.dateCreated = lmsrApplication.DATETIMECREATED.ToShortDateString();
-                this.rmCountry = this.lmsrApplication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
+                this.rmCountry = context.TBL_COMPANY.Find(this.lmsrApplication.COMPANYID).TBL_COUNTRY.NAME;
                 //this.misCode = this.lmsrAppllication.MISCODE;
                 this.reviewType = "Annual";
                 //this.preparedBy = this.lmsrAppllication.TBL_STAFF.FIRSTNAME + " " + this.lmsrAppllication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLMS();
                 //this.exchangeRate = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().EXCHANGERATE.ToString();
-                this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
-                this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();//this.directFacilities = GetDirectFacilitiesMarkupLMS();
+                this.obligorRiskRating = GetCustomerRiskRatingLMS();
+                this.obligorClassification = GetObligorClassification();
+                this.legalLendingLimit = (long)context.TBL_COMPANY.Find(lmsrApplication.COMPANYID).SINGLEOBLIGORLIMIT;
+                this.exchangeRate = GetAllExchangeRatesLMS();
+                //this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();//this.directFacilities = GetDirectFacilitiesMarkupLMS();
                 //this.totalDirectFacilities = GetTotalDirectFacilitiesMarkupLMS();
                 //this.contingentFacilities = GetContingentFacilitiesMarkupLMS();
                 //this.totalContingentFacilities = GetTotalContingentFacilitiesMarkupLMS();
@@ -436,19 +487,24 @@ namespace FintrakBanking.Repositories.Credit
                 this.groupExposure = GetGroupExposureMarkupLMS();
                 this.approvals = GetApprovalsMarkupLOS();
                 this.currentDate = DateTime.Now.ToShortDateString();
-                this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
+                this.annualReviewDate = this.lmsrApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.securityAnalysis = this.GetSecurityAnalysisMarkUP();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
+                this.managementProfile = GetManagementProfileMarkup();
+                this.ownership = GetOwnershipMarkup();
+                //this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
+
 
                 // out ducument properties definition
-                /*this.memoData = MemoMarkupHtml();
-                this.facilityUpgradeSupportSchemeData = Fa;
-                this.invoiceDiscountingData;
-                this.cashCollaterizedData;
-                this.staffcarLoansData;
-                this.staffMortgageLoansData;
-                this.staffPersonalLoansAGMData;
-                this.staffPersonalLoanData;*/
+                this.memoData = MemoMarkupHtml();
+                this.facilityUpgradeSupportSchemeData = FacilityUpgradeSupportSchemeHtml();
+                this.invoiceDiscountingData = InvoiceDiscountingHtml();
+                this.cashCollaterizedData = CashCollaterizedHtml();
+                this.staffcarLoansData = StaffCarLoansHtml();
+                this.staffMortgageLoansData = StaffMortgageLoansHtml();
+                this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
+                this.staffPersonalLoanData = StaffPersonalLoanHtml();
+                this.temporaryOverdraftData = TemporaryOverdraftHtml();
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
@@ -473,33 +529,79 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
+            if (this.customerIds?.Count > 0)
+            {
+                this.accountNumbers = AccountNumbersMarkup(this.customerIds?.Select(x => x.customerId).ToList());
+            }
+
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
             this.conditionsPrecedenceList = GetConditionsMarkUp();
             this.dynamicsList = GetDynamicsMarkUp();
             this.monitoringTriggers = MonitoringTriggersMarkup();
+            
+
             //this.customerTurnover = CustomerTurnoverMarkup(); // lazy loaded
 
             return true;
         }
 
-        private bool InitializeDrawdownMemoProperties(int operationId, int targetId) // feeder
+        private void initLoanAppForLms()
+        {
+            var loanId = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().LOANID;
+            int lmsrSystemType = this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().LOANSYSTEMTYPEID;
+            int loanAppId;
+            int detailId;
+            if (lmsrSystemType == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+            {
+                detailId = context.TBL_LOAN.Find(loanId).LOANAPPLICATIONDETAILID;
+                loanAppId = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId).LOANAPPLICATIONID;
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
+            }
+            if (lmsrSystemType == (int)LoanSystemTypeEnum.OverdraftFacility)
+            {
+                detailId = context.TBL_LOAN_REVOLVING.Find(loanId).LOANAPPLICATIONDETAILID;
+                loanAppId = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId).LOANAPPLICATIONID;
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
+            }
+            if (lmsrSystemType == (int)LoanSystemTypeEnum.ContingentLiability)
+            {
+                detailId = context.TBL_LOAN_CONTINGENT.Find(loanId).LOANAPPLICATIONDETAILID;
+                loanAppId = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId).LOANAPPLICATIONID;
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
+            }
+            if (lmsrSystemType == (int)LoanSystemTypeEnum.LineFacility)
+            {
+                detailId = context.TBL_LOAN.Find(loanId).LOANAPPLICATIONDETAILID;
+                loanAppId = context.TBL_LOAN_APPLICATION_DETAIL.Find(detailId).LOANAPPLICATIONID;
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
+            }
+            if (loanApplication != null)
+            {
+                if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
+                {
+                    this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+                    this.customerId = (int)loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
+                }
+                if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+                {
+                    this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+                    this.customerId = (int)loanApplication.CUSTOMERID;
+                }
+            }
+        }
+
+        private bool InitializeDrawdownMemoProperties(int targetId, int operationId) // feeder
         {
             this.targetId = targetId;
             this.operationId = operationId;
 
-            //if (operationId == (int) OperationsEnum.CreditAppraisal) // LOS 
-            //{
                 if (loanApplicationDetail == null)
                 {
                     this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
                     this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
-                
-                    //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
-                    //this.customerExposure = CustomerExposureMarkup();
-            }
-                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId).CHARGEFEEID;
+                }
+                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId)?.CHARGEFEEID;
             
                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
                 string customerName = String.Empty;
@@ -508,7 +610,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
-                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
                 this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
                 this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 this.tenor = loanApplicationDetail.APPROVEDTENOR;
@@ -516,77 +618,17 @@ namespace FintrakBanking.Repositories.Credit
                 this.principalRepayment = "";
                 this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
                 this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-                this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
-                this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
-                this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); 
                 this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
                 this.effectiveDate = loanApplication.APPROVEDDATE;
                 this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
-                this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
+                this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.TBL_STAFF.MISCODE;
                 this.currentDate = DateTime.Now.ToShortDateString();
                 this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
                 this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
                 //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
                 approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
-
                 newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
-
-                requestType = "";
-
-                inPlace1 = "";
-                perfected1 = "";
-                deferred1 = "";
-                inPlace2 = "";
-                perfected2 = "";
-                deferred2 = "";
-                inPlace3 = "";
-                perfected3 = "";
-                deferred3 = "";
-                inPlace4 = "";
-                perfected4 = "";
-                deferred4 = "";
-                inPlace5 = "";
-                perfected5 = "";
-                deferred5 = "";
-                inPlace6 = "";
-                perfected6 = "";
-                deferred6 = "";
-                inPlace7 = "";
-                perfected7 = "";
-                deferred7 = "";
-
-                relationshipOfficer = "";
-                relationshipManager = "";
-                riskManagement = "";
-                legal = "";
-                treasury = "";
-                coo = "";
-                crmInternational = "";
-
-                othersInPlace1 = "";
-                othersPerfected1 = "";
-                othersDeferred1 = "";
-                othersInPlace2 = "";
-                othersPerfected2 = "";
-                othersDeferred2 = "";
-                othersInPlace3 = "";
-                othersPerfected3 = "";
-                othersDeferred3 = "";
-                othersInPlace4 = "";
-                othersPerfected4 = "";
-                othersDeferred4 = "";
-                othersInPlace5 = "";
-                othersPerfected5 = "";
-                othersDeferred5 = "";
-                othersInPlace6 = "";
-                othersPerfected6 = "";
-                othersDeferred6 = "";
-                othersInPlace7 = "";
-                othersPerfected7 = "";
-                othersDeferred7 = "";
-
-            //}
 
             return true;
         }
@@ -599,15 +641,12 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loanApplicationDetail == null)
             {
-                
                 this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
                 this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
-
-                this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
-                this.customerExposure = CustomerExposureMarkup();
             }
 
-            var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId).CHARGEFEEID;
+            //var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f=>f.LOANAPPLICATIONDETAILID == targetId).Select(f=>f.CHARGEFEEID).ToList();
+
             string customerName = String.Empty;
             if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
             if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
@@ -616,27 +655,17 @@ namespace FintrakBanking.Repositories.Credit
             this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
             this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID)?.Select(O => O.PRODUCTNAME)?.FirstOrDefault();
             this.principalRepayment = "";
-            this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
-            this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
-            this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
-            this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
+            //this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[0]).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
+            //this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[1]).Select(p => p.VALUE).FirstOrDefault();
+            //this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[2]).Select(p => p.VALUE).FirstOrDefault();
+            //this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId[3]).Select(p => p.VALUE).FirstOrDefault(); ;
             this.effectiveDate = loanApplication.APPROVEDDATE;
             this.currentDate = DateTime.Now.ToShortDateString();
             this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
             this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
             approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
             amountUtilised = "0.00";
-            requestType = "";
-
-            relationshipOfficer = "";
-            relationshipManager = "";
-            riskManagement = "";
-            legal = "";
-            treasury = "";
-            coo = "";
-            crmInternational = "";
-
-            return true;
+           return true;
         }
 
         public List<DropDownSelect> GetProposedConditions()
@@ -704,6 +733,27 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        public string GetObligorClassification()
+        {
+            if (string.IsNullOrEmpty(this.obligorRiskRating))
+            {
+                return null;
+            }
+            this.obligorRiskRating = obligorRiskRating.Trim();
+            var classification = context.TBL_CUSTOMER_RISK_RATING.FirstOrDefault(r => r.RISKRATING.Trim() == obligorRiskRating)?.CLASSIFICATION;
+            return classification;
+        }
+
+        public string GetManagementProfileMarkup()
+        {
+            return loanApplication.LOANINFORMATION;
+        }
+
+        public string GetOwnershipMarkup()
+        {
+            return loanApplication.OWNERSHIPSTRUCTURE;
+        }
+
         private List<TotalFacilitiesSummaryViewModel> GetTotalFacilitiesNGNLOS()
         {
             var totalSummary = new List<TotalFacilitiesSummaryViewModel>();
@@ -732,7 +782,21 @@ namespace FintrakBanking.Repositories.Credit
 
         private string getIsDirectorRelated()
         {
-            if (this.loanApplication.ISRELATEDPARTY)
+
+            var related = (from a in context.TBL_CUSTOMER_RELATED_PARTY
+                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                           join c in context.TBL_COMPANY_DIRECTOR on a.COMPANYDIRECTORID equals c.COMPANYDIRECTORID
+                           where a.CUSTOMERID == customerId && a.DELETED == false
+                           select new CustomerRelatedPartyViewModel
+                           {
+                               customerName = b.FIRSTNAME + " " + b.MIDDLENAME + " " + b.LASTNAME,
+                               directorName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               relationshipType = a.RELATIONSHIPTYPE,
+                               relatedPartyId = a.RELATEDPARTYID,
+                               customerId = b.CUSTOMERID,
+                               companyDirectorId = c.COMPANYDIRECTORID
+                           }).ToList();
+            if (related.Count > 0)
             {
                 return "Yes";
             }
@@ -741,7 +805,24 @@ namespace FintrakBanking.Repositories.Credit
 
         private string getIsDirectorRelatedLMS()
         {
-            return "";
+            var related = (from a in context.TBL_CUSTOMER_RELATED_PARTY
+                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                           join c in context.TBL_COMPANY_DIRECTOR on a.COMPANYDIRECTORID equals c.COMPANYDIRECTORID
+                           where a.CUSTOMERID == customerId && a.DELETED == false
+                           select new CustomerRelatedPartyViewModel
+                           {
+                               customerName = b.FIRSTNAME + " " + b.MIDDLENAME + " " + b.LASTNAME,
+                               directorName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               relationshipType = a.RELATIONSHIPTYPE,
+                               relatedPartyId = a.RELATEDPARTYID,
+                               customerId = b.CUSTOMERID,
+                               companyDirectorId = c.COMPANYDIRECTORID
+                           }).ToList();
+            if (related.Count > 0)
+            {
+                return "Yes";
+            }
+            return "No";
         }
 
         private decimal getTotalLLLImpact()
@@ -749,7 +830,8 @@ namespace FintrakBanking.Repositories.Credit
             var totalSummary = GetTotalFacilitiesNGNLOS();
             var totalSummary2 = GetTotalForeignFacilitiesLOS();
             totalSummary.AddRange(totalSummary2);
-            return totalSummary.Sum(f => f.totalLLLImpact);
+            var exposureLLL = (GetTotalGroupLendingLimit().totalLLLImpact - GetTotalGroupLendingLimit(true).totalLLLImpact);
+            return (totalSummary.Sum(f => f.totalLLLImpact) + exposureLLL);
         }
 
         private decimal getTotalLLLImpactFCY()
@@ -767,22 +849,15 @@ namespace FintrakBanking.Repositories.Credit
             });
         }
 
-        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool getAll)
         {
-               //int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
-               //        (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-               //    (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanTrancheBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
-               //        (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
-               //    ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
+            var allstaff = this.GetAllStaffNames();
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId && x.OPERATIONID == operationId).ToList();
 
-               var allstaff = this.GetAllStaffNames();
-
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId);
-
-            //if (getAll)
-            //{
-            //    trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId);
-            //}
+            if (getAll)
+            {
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId).ToList();
+            }
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
@@ -799,38 +874,98 @@ namespace FintrakBanking.Repositories.Credit
                 fromApprovalLevelId = x.FROMAPPROVALLEVELID,
                 fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
-                toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                toApprovalLevelId = x.TOAPPROVALLEVELID ?? 0,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
+                approvalState = x.APPROVALSTATEID == null ? "N/A" : context.TBL_APPROVAL_STATE.Where(a => a.APPROVALSTATEID == x.APPROVALSTATEID).Select(a => a.APPROVALSTATE).FirstOrDefault(),
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+            })?.ToList();
+
+            return data;
+        }
+
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailDrawdown(int applicationId, int operationId)
+        {
+            var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList();
+            var allstaff = this.GetAllStaffNames();
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x=>x.OPERATIONID == operationId && x.FROMAPPROVALLEVELID !=null && bookingIds.Contains(x.TARGETID)).ToList();
+
+            var data = trail.Select(x => new ApprovalTrailViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                comment = x.COMMENT,
+                vote = x.VOTE,
+                targetId = x.TARGETID,
+                arrivalDate = x.ARRIVALDATE,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelId = x.TOAPPROVALLEVELID ?? 0,
                 approvalStateId = x.APPROVALSTATEID,
                 approvalStatusId = x.APPROVALSTATUSID,
                 approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            }).ToList();
+            })?.ToList();
 
             return data;
         }
+
 
         public bool IsLLLViolated()
         {
             return ((getTotalLLLImpact() > legalLendingLimit) ? true : false);
         }
 
+        private IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggers(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                .Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId && x.DELETED == false)
+                .Select(x => new MonitoringTriggersViewModel
+                {
+                    applicationDetailId = x.LOANAPPLICATIONDETAILID,
+                    monitoringTriggerId = x.MONITORING_TRIGGERID,
+                    monitoringTrigger = x.MONITORING_TRIGGER,
+                    productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+                })
+                .ToList();
+        }
 
+        private IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersLms(int applicationId)
+        {
+            return context.TBL_LMSR_APPLICATN_DETL_MTRIG
+                .Where(x => x.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
+                .Select(x => new MonitoringTriggersViewModel
+                {
+                    applicationDetailId = x.LOANREVIEWAPPLICATIONID,
+                    monitoringTriggerId = x.MONITORING_TRIGGERID,
+                    monitoringTrigger = x.MONITORING_TRIGGER,
+                    productCustomerName = x.TBL_LMSR_APPLICATION_DETAIL.TBL_OPERATIONS.OPERATIONNAME
+                })
+                .ToList();
+        }
         //markups
-        
+
         public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
         {
-            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
-
+            var isInitialize = InitializeDrawdownMemoProperties(targetId, operationId);
+                        
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>NAME OF CUSTOMER:</b></th>
                         <th><b>{customerName}</b></th>
                         <th><b>CURRENT/APG A/C NO:</b></th>
-                        <th><b></b></th>
+                        <th>{currentAccountNo}</th>
                     </tr>
                       
                     <tr>
@@ -848,20 +983,20 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>DRAWDOWN AMOUNT:</td>
                         <td>{drawdownAmount}</td>
-                        <td>PROCESSING FEE:</td>
-                        <td>{processingFee}</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>TENOR:</td>
-                        <td>{tenor}</td>
-                        <td>MGT FEE:</td>
-                        <td>{managementFee}</td>
+                        <td>{approvedTenorString}</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>MORATORIUM:</td>
                         <td>{moratorium}</td>
-                        <td>COMMITMENT FEE:</td>
-                        <td>{commitmentFee}</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>PRINCIPAL REPAYMENT:</td>
@@ -877,7 +1012,37 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetDrawdownApprovalsMarkupLOS() + GetOtherConditionsHtml();
+            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetDrawdownApprovalsMarkupLOS2(targetId,operationId) + GetOtherConditionsHtml();
+            return result;
+        }
+
+        public string GetFees(int targetId)
+        {
+
+            var chargeFeeIds = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == targetId).ToList();
+            var result = String.Empty;
+            int n = 0;
+            result = result + $@"
+                <br />
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                   ";
+            if (chargeFeeIds.Count > 0)
+            {
+                foreach (var e in chargeFeeIds)
+                {
+                    n++;
+                    var name = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().DESCRIPTION;
+                    //var value = context.TBL_CHARGE_FEE_DETAIL.Where(O => O.CHARGEFEEID == e.CHARGEFEEID).FirstOrDefault().VALUE;
+                    result = result + $@"
+                    < tr>
+                        <td>{n}</td>
+                        <td>{name.ToUpper()}:</td>
+                        <td>{e.DEFAULT_FEERATEVALUE}</td>
+                    </tr>
+                ";
+                }
+            }
+            result = result + $"</table> <br />";
             return result;
         }
 
@@ -890,7 +1055,7 @@ namespace FintrakBanking.Repositories.Credit
              //       </ tr >
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <td><b>TRANCHE DISBURSEMENT:</b></td>
                         <td>APPROVED AMOUNT</td>
@@ -919,7 +1084,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <td><b>REQUEST TYPE</b></td>
                         <td>{requestType}</td>
@@ -941,7 +1106,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></h3>
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS</b></th>
@@ -981,7 +1146,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
                         <th><b></b></th>
@@ -1023,7 +1188,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>OTHER CONDITIONS PRECEDENT TO DRAWDOWN AS APPROVED IN THE FAM</b></th>
@@ -1045,48 +1210,6 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{othersPerfected1}</td>
                         <td>{othersDeferred1}</td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td></td>
-                        <td>{othersInPlace2}</td>
-                        <td>{othersPerfected2}</td>
-                        <td>{othersDeferred2}</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td></td>
-                        <td>{othersInPlace3}</td>
-                        <td>{othersPerfected3}</td>
-                        <td>{othersDeferred3}</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td></td>
-                        <td>{othersInPlace4}</td>
-                        <td>{othersPerfected4}</td>
-                        <td>{othersDeferred4}</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td></td>
-                        <td>{othersInPlace5}</td>
-                        <td>{othersPerfected5}</td>
-                        <td>{othersDeferred5}</td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td></td>
-                        <td>{othersInPlace6}</td>
-                        <td>{othersPerfected6}</td>
-                        <td>{othersDeferred6}</td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td></td>
-                        <td>{othersInPlace7}</td>
-                        <td>{othersPerfected7}</td>
-                        <td>{othersDeferred7}</td>
-                    </tr>
                  ";
             result = result + $"</table>";
             return result;
@@ -1099,7 +1222,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table border=1 width=1000px cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000pxpx cellpadding=0 cellspacing=0>
                     < tr>
                         <th><b>S/N</b></th>
                         <th><b>Facility Type</b></th>
@@ -1123,15 +1246,41 @@ namespace FintrakBanking.Repositories.Credit
         private string GetAllExchangeRates()
         {
             var result = String.Empty;
-            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.ToList();
+            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).Take(3).ToList();
             foreach (var x in exchangeRates)
             {
+                var rate = financeTransaction.GetExchangeRate(DateTime.Now, x.TBL_CURRENCY1.CURRENCYID, loanApplication.COMPANYID);
+                if (rate?.sellingRate > 0)
+                {
+                    x.EXCHANGERATE = rate.sellingRate;
+                }
                 result = result + $@"
                         {x.TBL_CURRENCY1.CURRENCYCODE}: {x.EXCHANGERATE}   
                 ";
             }
+            context.SaveChanges();
             return result;
         }
+
+        private string GetAllExchangeRatesLMS()
+        {
+            var result = String.Empty;
+            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.Where(c => c.DELETED == false).Take(3).ToList();
+            foreach (var x in exchangeRates)
+            {
+                var rate = financeTransaction.GetExchangeRate(DateTime.Now, x.TBL_CURRENCY1.CURRENCYID, lmsrApplication.COMPANYID);
+                if (rate?.sellingRate > 0)
+                {
+                    x.EXCHANGERATE = rate.sellingRate;
+                }
+                result = result + $@"
+                        {x.TBL_CURRENCY1.CURRENCYCODE}: {x.EXCHANGERATE}   
+                ";
+            }
+            context.SaveChanges();
+            return result;
+        }
+
         private string GetConditionsPrecedentToDrawdownMarkup()
         {
             var conditions = GetConditionsPrecedentToDrawdown().GroupBy(c => c.typeId); // new
@@ -1143,7 +1292,7 @@ namespace FintrakBanking.Repositories.Credit
                 var c = g.FirstOrDefault();
                 result += c.title;
                 result = result + $@"
-                <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
@@ -1224,10 +1373,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 result = result + $@"
-                <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
                     <tr>
-                        <th><b><h2>S/N</h2></b></th>
-                        <th><b><h2>TRANSACTIONS DYNAMICS</h2></b></th>
+                        <th><b>S/N</b></th>
+                        <th><b>TRANSACTIONS DYNAMICS</b></th>
                     </tr>
                  ";
                 var c = group.FirstOrDefault();
@@ -1250,7 +1399,14 @@ namespace FintrakBanking.Repositories.Credit
         private string GetBusinessSectorsMarkupLOS()
         {
             var result = String.Empty;
-            result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR.TBL_SECTOR.NAME;
+            if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+            {
+                result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR?.TBL_SECTOR.NAME;
+            }
+            else
+            {
+                result += this.loanApplication.TBL_CUSTOMER_GROUP.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault().TBL_CUSTOMER.TBL_SUB_SECTOR?.TBL_SECTOR.NAME;
+            }
             //foreach (var loanDetail in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL)
             //{
             //    result = result + loanDetail.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
@@ -1261,7 +1417,10 @@ namespace FintrakBanking.Repositories.Credit
         private string GetBusinessSectorsMarkupLMS()
         {
             var result = String.Empty;
-            result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR.TBL_SECTOR.NAME;
+            string sectorName;
+            var cust = context.TBL_CUSTOMER.Find(lmsrApplication.CUSTOMERID);
+            sectorName = context.TBL_SUB_SECTOR.Find(cust.SUBSECTORID)?.TBL_SECTOR.NAME;
+            result += sectorName;
             //foreach (var loanDetail in this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL)
             //{
             //    result = result + loanDetail.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
@@ -1273,46 +1432,44 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
-                    < tr>
-                        <th><b><h2>Facility</h2></b></th>
-                        <th><b><h2>LLL Impact</h2></b></th>
-                        <th><b><h2>Currency</h2></b></th>
-                        <th><b><h2>Approved Amount</h2></b></th>
-                        <th><b><h2>Proposed Amount</h2></b></th>
-                        <th><b><h2>Change</h2></b></th>
-                        <th><b><h2>Tenor (Months)</h2></b></th>
+                <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>Facility</b></th>
+                        <th><b>LLL Impact(NGN)</b></th>
+                        <th><b>Currency</b></th>
+                        <th><b>Approved Amount</b></th>
+                        <th><b>Proposed Amount</b></th>
+                        <th><b>Change</b></th>
+                        <th><b>Tenor (Months)</b></th>
                     </tr>
-                        {GetDirectFacilitiesMarkupLOS()}
+                        {GetDirectFacilitiesMarkupLOS((int)CurrencyEnum.NGN)}
+                        {GetDirectFacilitiesMarkupLOS((int)CurrencyEnum.USD)}
                         {GetTotalDirectFacilitiesMarkupLOS()}
-                        {GetForeignDirectFacilitiesMarkupLOS()}
-                        {GetTotalForeignDirectFacilitiesMarkupLOS()}
-                        {GetContingentFacilitiesMarkupLOS()}
+                        {GetContingentFacilitiesMarkupLOS((int)CurrencyEnum.NGN)}
+                        {GetContingentFacilitiesMarkupLOS((int)CurrencyEnum.USD)}
                         {GetTotalContingentFacilitiesMarkupLOS()}
-                        {GetForeignContingentFacilitiesMarkupLOS()}
-                        {GetTotalForeignContingentFacilitiesMarkupLOS()}
                         {GetIFFMarkupLOS((int)CurrencyEnum.NGN)}
                         {GetIFFMarkupLOS((int)CurrencyEnum.USD)}
                         {GetTotalIFFMarkupLOS()}
                         {GetTotalFacilitiesMarkupLOS()}
                     <tr>
-                        <td><b><h2>Legal Lending Limit:</h2></b></td>
+                        <td><b>Legal Lending Limit:</b></td>
                         <td>{String.Format("{0:0,0.00}", legalLendingLimit)}</td>
                     </tr>
                     <tr>
-                        <td><b><h2>LLL Impact of Proposed Facilities:</h2></b></td>
+                        <td><b>LLL Impact of Proposed Facilities:</b></td>
                         <td>{String.Format("{0:0,0.00}", getTotalLLLImpact())}</td>
                     </tr>
                     <tr>
-                        <td><b><h2>Any LLL violation? (Yes / No):</h2></b></td>
+                        <td><b>Any LLL violation? (Yes / No):</b></td>
                         <td>{(IsLLLViolated() ? "Yes" : "No")}</td>
                     </tr>
                     <tr>
-                        <td><b><h2>Director-related? (Yes / No):</h2></b></td>
+                        <td><b>Director-related? (Yes / No):</b></td>
                         <td>{getIsDirectorRelated()}</td>
                     </tr>
                     <tr>
-                        <td><b><h2>Environmental And Social Risk Summary:</h2></b></td>
+                        <td><b>Environmental And Social Risk Summary:</b></td>
                         <td>{GetEnvironmentalSocialRiskMarkup()}</td>
                     </tr>
                  ";
@@ -1324,12 +1481,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility</b></th>
-                        <th><b>LLL Impact</b></th>
+                        <th><b>LLL Impact(NGN)</b></th>
                         <th><b>Currency</b></th>
-                        <th><b>Current Amount</b></th>
+                        <th><b>Approved Amount</b></th>
                         <th><b>Proposed Amount</b></th>
                         <th><b>Change</b></th>
                         <th><b>Tenor</b></th>
@@ -1362,47 +1519,96 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        private string GetDirectFacilitiesMarkupLOS()
+        private string GetDirectFacilitiesMarkupLOS(int currencyId)
         {
             var result = String.Empty;
-            var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-            var loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
-                                                && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
-                                                && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-
-            //var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
-            //                                                    && l.ISDISBURSED == true).ToList();
-            //var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
-            //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-            //var loans = context.TBL_GLOBAL_EXPOSURE.Where(l => l.CUSTOMERID.Contains(loanApplication.TBL_CUSTOMER.CUSTOMERCODE.Trim()) && l.CURRENCYTYPE.Contains("LCY")
-            //                                                    && l.EXPOSURETYPECODE.Contains(ExposureTypeEnum.Direct.ToString()) && !l.ADJFACILITYTYPE.Contains("LC") && !l.ADJFACILITYTYPE.Contains("TRADELOAN")).ToList();
-
-            var details = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && 
-                                                                                 d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
-                                                                                 d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-            //if (loans.Count() > 0 || overdrafts.Count() > 0 || details.Count() > 0)
-            if (loans.Count() > 0 || details.Count() > 0)
+            var exposures = new List<CurrentCustomerExposure>();
+            var loanExposures = new List<CurrentCustomerExposure>();
+            var directExposures = new List<CurrentCustomerExposure>();
+            var overdraftExposures = new List<CurrentCustomerExposure>();
+            var details = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var initialLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var renewalLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithIncreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithDecreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            if (currencyId == (int)CurrencyEnum.NGN)
             {
-                result = result + $@"<tr><td>Direct Facilities (NGN):</td></tr>";
+                //var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                //                                                    && l.ISDISBURSED == true).ToList();
+                //var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
+                //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                //var loans = context.TBL_GLOBAL_EXPOSURE.Where(l => l.CUSTOMERID.Contains(loanApplication.TBL_CUSTOMER.CUSTOMERCODE.Trim()) && l.CURRENCYTYPE.Contains("LCY")
+                //                                                    && l.EXPOSURETYPECODE.Contains(ExposureTypeEnum.Direct.ToString()) && !l.ADJFACILITYTYPE.Contains("LC") && !l.ADJFACILITYTYPE.Contains("TRADELOAN")).ToList();
+
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("lcy")).ToList();
+                directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+                overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+
+                details = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN &&
+                                                                                     d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
+                                                                                     d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             }
-            var loanGroups = loans.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
-            foreach (var group in loanGroups)
+            else
             {
-                var facility = group.Key;
-                var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
-                var currentAmount = group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
-                //var currentAmount = group.Sum(p => p.OUTSTANDINGPRINCIPAL) + group.Sum(p => p.OUTSTANDINGINTEREST);
-                // checks each loan detail.
-                var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID == 
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
-                var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
-                var proposedAmount = (proposedAmountTest > 0)? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = (100 / 100) * proposedAmount;
-                var change = proposedAmount - currentAmount;
-                var tenor = tenorTest;
+                //var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                //                                                    && l.ISDISBURSED == true).ToList();
+                //var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
+                //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                //var loans = context.TBL_GLOBAL_EXPOSURE.Where(l => l.CUSTOMERID.Contains(loanApplication.TBL_CUSTOMER.CUSTOMERCODE.Trim()) && l.CURRENCYTYPE.Contains("LCY")
+                //                                                    && l.EXPOSURETYPECODE.Contains(ExposureTypeEnum.Direct.ToString()) && !l.ADJFACILITYTYPE.Contains("LC") && !l.ADJFACILITYTYPE.Contains("TRADELOAN")).ToList();
 
-                result = result + $@"
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("fcy")).ToList();
+                directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+                overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+
+                details = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN &&
+                                                                                     d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
+                                                                                     d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+            }
+
+            //if (loans.Count() > 0 || overdrafts.Count() > 0 || details.Count() > 0)
+            if (loanExposures.Count > 0 || overdraftExposures.Count > 0 || details.Count() > 0)
+            {
+                if (currencyId == (int)CurrencyEnum.NGN)
+                {
+                    result = result + $@"<tr><td>Direct Facilities (NGN):</td></tr>";
+                }
+                else
+                {
+                    result = result + $@"<tr><td>Direct Facilities (FCY):</td></tr>";
+                }
+            }
+            //var loanGroups = loans.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            var loanExposuresGroups = loanExposures.GroupBy(f => f.productCode.Trim());
+            foreach (var group in loanExposuresGroups)
+            {
+                var currFacility = group.GroupBy(f => f.currency.Trim());
+                foreach (var curr in currFacility)
+                {
+                    initialLoans = details.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Initial).ToList();
+                    renewalLoans = details.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Renewal).ToList();
+                    RenewalWithIncreaseLoans = details.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithIncrease).ToList();
+                    RenewalWithDecreaseLoans = details.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithDecrease).ToList();
+                    var facility = group.FirstOrDefault().facilityType;
+                    var currency = curr.First().currency;
+                    if (renewalLoans.Any())
+                    {
+                        var proposedAmountTest = renewalLoans?.Sum(p => p.PROPOSEDAMOUNT) ?? 0;
+                        var proposedAmount = proposedAmountTest;
+                        var proposedAmountTestForLLLImpact = (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var tenorTest = (renewalLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var currentAmount = curr.Sum(p => p.outstandings);
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+                        result = result + $@"
                     <tr>
                         <td>{facility}</td>
                         <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
@@ -1410,9 +1616,81 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", change)}</td>
-                        <td>{(tenor/30)}</td>
+                        <td>{(tenor / 30)}</td>
                     </tr>
                     ";
+                    }
+                    else if (RenewalWithIncreaseLoans.Any())
+                    {
+                        var proposedAmountTest = (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var proposedAmountTestForLLLImpact = (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var tenorTest = (RenewalWithIncreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var proposedAmount = proposedAmountTest;
+                        var currentAmount = curr.Sum(p => p.outstandings);
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+                        result = result + $@"
+                    <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                    ";
+                    }
+                    else if (RenewalWithDecreaseLoans.Any())
+                    {
+                        var proposedAmountTestForLLLImpact = (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var proposedAmountTest = (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var tenorTest = (RenewalWithDecreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var proposedAmount = proposedAmountTest;
+                        var currentAmount = curr.Sum(p => p.outstandings);
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+                        result = result + $@"
+                    <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                    ";
+                    }
+                    else
+                    {
+                        var currentAmount = curr.Sum(p => p.outstandings);
+                        var currentAmountForLLLImpact = curr.Sum(p => p.outstandingsLcy);
+                        var proposedAmountTestForLLLImpact = (initialLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var proposedAmountTest = (initialLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var tenorTest = (initialLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+                        result = result + $@"
+                    <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                    ";
+                    }
+                }
             }
 
             //var overdraftGroups = overdrafts.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
@@ -1444,14 +1722,129 @@ namespace FintrakBanking.Repositories.Credit
             //        ";
             //}
 
+            var overdraftExposuresGroups = overdraftExposures.GroupBy(f => f.productCode.Trim());
+            foreach (var group in overdraftExposuresGroups)
+            {
+                var currFacility = group.GroupBy(f => f.currency.Trim());
+                foreach (var curr in currFacility)
+                {
+                    initialLoans = details.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                        f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Initial).ToList();
+                    renewalLoans = details.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Renewal).ToList();
+                    RenewalWithIncreaseLoans = details.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithIncrease).ToList();
+                    RenewalWithDecreaseLoans = details.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithDecrease).ToList();
+                    var facility = group.FirstOrDefault().facilityType;
+                    var currency = curr.First().currency;
+                    if (renewalLoans.Any())
+                    {
+                        var proposedAmountTestForLLLImpact = (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var proposedAmountTest = (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var tenorTest = (renewalLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var proposedAmount = proposedAmountTest;
+                        var currentAmount = curr.Sum(p => p.approvedAmount);
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+
+                        result = result + $@"
+                     <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                     ";
+                    }else if (RenewalWithIncreaseLoans.Any())
+                    {
+                        var proposedAmountTestForLLLImpact = (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var proposedAmountTest = (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var tenorTest = (RenewalWithIncreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var proposedAmount = proposedAmountTest;
+                        var currentAmount = curr.Sum(p => p.approvedAmount);
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+
+                            result = result + $@"
+                     <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                     ";
+                    }else if (RenewalWithDecreaseLoans.Any())
+                    {
+                        var proposedAmountTestForLLLImpact = (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var proposedAmountTest = (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var tenorTest = (RenewalWithDecreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var proposedAmount = proposedAmountTest;
+                        var currentAmount = curr.Sum(p => p.approvedAmount);
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+
+                        result = result + $@"
+                     <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                     ";
+                    }
+                    else
+                    {
+                        var currentAmountForLLLImpact = curr.Sum(p => p.approvedAmountLcy);
+                        var proposedAmountTestForLLLImpact = (initialLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var proposedAmountTest = (initialLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var tenorTest = (initialLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var currentAmount = curr.Sum(p => p.approvedAmount);
+                        var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+
+                        result = result + $@"
+                     <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                     ";
+                    }
+                }
+            }
+
             foreach (var d in details)
             {
-                var loanFacilityExists = loans.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                //var loanFacilityExists = loans.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
                 //var overdraftFacilityExists = overdrafts.Exists(o => o.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
 
-                if (!loanFacilityExists)
-                //if (!loanFacilityExists && !overdraftFacilityExists)
-                    {
+                var loanFacilityExists = loanExposures.Exists(l => l.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
+                var overdraftFacilityExists = overdraftExposures.Exists(o => o.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
+                if (!loanFacilityExists && !overdraftFacilityExists)
+                {
                     var facility = d.TBL_PRODUCT.PRODUCTNAME;
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
@@ -1479,73 +1872,187 @@ namespace FintrakBanking.Repositories.Credit
         private string GetTotalDirectFacilitiesMarkupLOS()
         {
             var result = String.Empty;
-            var totalDirectsSummary = GetTotalDirectFacilitiesSummaryLOS((int)CurrencyEnum.NGN);
-            if (totalDirectsSummary.numberOfLoans > 0 || totalDirectsSummary.numberOfOverdrafts > 0 || totalDirectsSummary.numberOfNewFacilities > 0 )
+            var totalDirectsSummary = new List<TotalFacilitiesSummaryViewModel>();
+            var totalDirectsSummaryNGN = GetTotalDirectFacilitiesSummaryLOS((int)CurrencyEnum.NGN);
+            var totalDirectsSummaryFCY = GetTotalDirectFacilitiesSummaryLOS((int)CurrencyEnum.USD);
+            totalDirectsSummary.Add(totalDirectsSummaryNGN);
+            totalDirectsSummary.Add(totalDirectsSummaryFCY);
+            if (totalDirectsSummary.Sum(d => d.numberOfLoans) > 0 || totalDirectsSummary.Sum(d => d.numberOfOverdrafts) > 0 || totalDirectsSummary.Sum(d => d.numberOfNewFacilities) > 0 )
             {
                 result = result + $@"
                     <tr>
                         <td><b>Total Direct (NGN)<b></td>
-                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalLLLImpact)}</b></td>
-                        <td><b>{totalDirectsSummary.currency}</td>
-                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalCurrentAmount)}</b></td>
-                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalProposedAmount)}</b></td>
-                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalChange)}</b></td>
-                        <td><b>{(totalDirectsSummary.totalTenors / 30)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.Sum(t => t.totalLLLImpact))}</b></td>
+                        <td><b>Naira</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.Sum(t => t.totalCurrentAmount))}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.Sum(t => t.totalProposedAmount))}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.Sum(t => t.totalChange))}</b></td>
+                        <td><b>{(totalDirectsSummary.Sum(t => t.totalTenors) / 30)}</b></td>
                     </tr>
                 ";
             }
             return result;
         }
 
-        private string GetContingentFacilitiesMarkupLOS()
+        private string GetContingentFacilitiesMarkupLOS(int currencyId)
         {
             var result = String.Empty;
             //var contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
             //                                                    && l.ISDISBURSED == true).ToList();
-            var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-            var contingents = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
-                                                && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
-            var appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
-                                                                                   (int)LoanProductTypeEnum.ContingentLiability);
-            if (contingents.Count() > 0 || appDetails.Count() > 0)
+            //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
+            //var contingents = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+            //                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
+            var exposures = new List<CurrentCustomerExposure>();
+            var contingentExposures = new List<CurrentCustomerExposure>();
+            var appDetails = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var initialLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var renewalLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithIncreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithDecreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            if (currencyId == (int)CurrencyEnum.NGN)
             {
-                result = result + $@"<tr><td>Contingent Facilities (NGN):</td></tr>";
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("lcy")).ToList();
+                contingentExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+                                                                                   (int)LoanProductTypeEnum.ContingentLiability).ToList();
             }
-            var contingentsGroup = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            else
+            {
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("fcy")).ToList();
+                contingentExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN && d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+                                                                                   (int)LoanProductTypeEnum.ContingentLiability).ToList();
+            }
+            if (contingentExposures.Count > 0 || appDetails.Count() > 0)
+            {
+                if (currencyId == (int)CurrencyEnum.NGN)
+                {
+                    result = result + $@"<tr><td>Contingent Facilities (NGN):</td></tr>";
+                }
+                else
+                {
+                    result = result + $@"<tr><td>Contingent Facilities (FCY):</td></tr>";
+                }
+            }
+            var contingentsGroup = contingentExposures.GroupBy(f => f.productCode.Trim());
             if (contingentsGroup.Count() > 0)
             {
                 foreach (var group in contingentsGroup)
                 {
-                    var facility = group.Key;
-                    var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
-                    var currentAmount = group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
-                    //var currentAmount = group.Sum(p => p.CONTINGENTAMOUNT);
-                    var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
-                                             group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
-                    var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
-                                             group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
-                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                    var LLLImpact = proposedAmount / 3;
-                    var change = proposedAmount - currentAmount;
-                    var tenor = tenorTest;
-
-                    result = result + $@"
-                     <tr>
-                        <td>{facility}</td>
-                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
-                        <td>{currency}</td>
-                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", change)}</td>
-                        <td>{(tenor / 30)}</td>
-                    </tr>
-                    ";
+                    var currFacility = group.GroupBy(f => f.currency.Trim());
+                    foreach (var curr in currFacility)
+                    {
+                        initialLoans = appDetails.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Initial).ToList();
+                        renewalLoans = appDetails.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                                 f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Renewal).ToList();
+                        RenewalWithIncreaseLoans = appDetails.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                                 f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithIncrease).ToList();
+                        RenewalWithDecreaseLoans = appDetails.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                                 f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithDecrease).ToList();
+                        var facility = group.FirstOrDefault().facilityType;
+                        var currency = curr.First().currency;
+                        if (renewalLoans.Any())
+                        {
+                            var currentAmount = curr.Sum(p => p.approvedAmount);
+                            var proposedAmountTestForLLLImpact = (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                            var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                            var LLLImpact = proposedAmountForLLLImpact / 3;
+                            var proposedAmountTest = renewalLoans?.Sum(p => p.PROPOSEDAMOUNT) ?? 0;
+                            var tenorTest = (renewalLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                            var proposedAmount = proposedAmountTest;
+                            var change = proposedAmount - currentAmount;
+                            var tenor = tenorTest;
+                            result = result + $@"
+                            <tr>
+                                <td>{facility}</td>
+                                <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                                <td>{currency}</td>
+                                <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                                <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                                <td>{String.Format("{0:0,0.00}", change)}</td>
+                                <td>{(tenor / 30)}</td>
+                            </tr>
+                            ";
+                        }
+                        else if (RenewalWithIncreaseLoans.Any())
+                        {
+                            var currentAmount = curr.Sum(p => p.approvedAmount);
+                            var proposedAmountTestForLLLImpact = (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                            var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                            var LLLImpact = proposedAmountForLLLImpact / 3;
+                            var proposedAmountTest = (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                            var tenorTest = (RenewalWithIncreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                            var proposedAmount = proposedAmountTest;
+                            var change = proposedAmount - currentAmount;
+                            var tenor = tenorTest;
+                            result = result + $@"
+                            <tr>
+                                <td>{facility}</td>
+                                <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                                <td>{currency}</td>
+                                <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                                <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                                <td>{String.Format("{0:0,0.00}", change)}</td>
+                                <td>{(tenor / 30)}</td>
+                            </tr>
+                            ";
+                        }
+                        else if (RenewalWithDecreaseLoans.Any())
+                        {
+                            var currentAmount = curr.Sum(p => p.approvedAmount);
+                            var proposedAmountTestForLLLImpact = (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                            var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                            var LLLImpact = proposedAmountForLLLImpact / 3;
+                            var proposedAmountTest = (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                            var tenorTest = (RenewalWithDecreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                            var proposedAmount = proposedAmountTest;
+                            var change = proposedAmount - currentAmount;
+                            var tenor = tenorTest;
+                            result = result + $@"
+                            <tr>
+                                <td>{facility}</td>
+                                <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                                <td>{currency}</td>
+                                <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                                <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                                <td>{String.Format("{0:0,0.00}", change)}</td>
+                                <td>{(tenor / 30)}</td>
+                            </tr>
+                            ";
+                        }
+                        else
+                        {
+                            var currentAmount = curr.Sum(p => p.approvedAmount);
+                            var currentAmountForLLLImpact = curr.Sum(p => p.approvedAmountLcy);
+                            var proposedAmountTestForLLLImpact = (initialLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                            var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
+                            var LLLImpact = proposedAmountForLLLImpact / 3;
+                            var proposedAmountTest = (initialLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                            var tenorTest = (initialLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                            var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                            var change = proposedAmount - currentAmount;
+                            var tenor = tenorTest;
+                            result = result + $@"
+                            <tr>
+                                <td>{facility}</td>
+                                <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                                <td>{currency}</td>
+                                <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                                <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                                <td>{String.Format("{0:0,0.00}", change)}</td>
+                                <td>{(tenor / 30)}</td>
+                            </tr>
+                            ";
+                        }
+                    }
                 }
             }
 
             foreach (var d in appDetails)
             {
-                var contingentExists = contingents.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                //var contingentExists = contingents.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                var contingentExists = contingentExposures.Exists(l => l.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
 
                 if (!contingentExists)
                 {
@@ -1576,18 +2083,22 @@ namespace FintrakBanking.Repositories.Credit
         private string GetTotalContingentFacilitiesMarkupLOS()
         {
             var result = String.Empty;
-            var totalContingentSummary = GetTotalContingentFacilitiesSummaryLOS((int)CurrencyEnum.NGN);
-            if (totalContingentSummary.numberOfContingents > 0 || totalContingentSummary.numberOfNewFacilities > 0)
+            var totalContingentSummary = new List<TotalFacilitiesSummaryViewModel>();
+            var totalContingentSummaryNGN = GetTotalContingentFacilitiesSummaryLOS((int)CurrencyEnum.NGN);
+            var totalContingentSummaryFCY = GetTotalContingentFacilitiesSummaryLOS((int)CurrencyEnum.USD);
+            totalContingentSummary.Add(totalContingentSummaryNGN);
+            totalContingentSummary.Add(totalContingentSummaryFCY);
+            if (totalContingentSummary.Sum(c => c.numberOfContingents) > 0 || totalContingentSummary.Sum(c => c.numberOfNewFacilities) > 0)
             {
                 result = result + $@"
                     <tr>
-                        <td><b>Total Contingents (NGN)</b></td>
-                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalLLLImpact)}</b></td>
-                        <td><b>{totalContingentSummary.currency}</b></td>
-                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalCurrentAmount)}</b></td>
-                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalProposedAmount)}</b></td>
-                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalChange)}</b></td>
-                        <td><b>{(totalContingentSummary.totalTenors / 30)}</b></td>
+                        <td><b>Total Direct (NGN)<b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.Sum(t => t.totalLLLImpact))}</b></td>
+                        <td><b>Naira</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.Sum(t => t.totalCurrentAmount))}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.Sum(t => t.totalProposedAmount))}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.Sum(t => t.totalChange))}</b></td>
+                        <td><b>{(totalContingentSummary.Sum(t => t.totalTenors) / 30)}</b></td>
                     </tr>
                 ";
             }
@@ -1598,15 +2109,28 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var IFFs = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var exposures = new List<CurrentCustomerExposure>();
+            var lcs = new List<CurrentCustomerExposure>();
+            var tradeLoans = new List<CurrentCustomerExposure>();
+            var iFFExposures = new List<CurrentCustomerExposure>();
             //var IFFs = new List<TBL_LOAN>();
             var appDetails = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var initialLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var renewalLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithIncreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithDecreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
             if (currencyId == (int)CurrencyEnum.NGN)
             {
                 //IFFs = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                 //                                && l.ISDISBURSED == true && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-                var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-                IFFs = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
-                                                    && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
+                //IFFs = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                //                                    && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("lcy")).ToList();
+                lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
+                tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                iFFExposures.AddRange(lcs);
+                iFFExposures.AddRange(tradeLoans);
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                                                 && d.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             }
@@ -1614,14 +2138,19 @@ namespace FintrakBanking.Repositories.Credit
             {
                 //IFFs = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
                 //                                && l.ISDISBURSED == true && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-                var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-                IFFs = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
-                                                    && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
+                //IFFs = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+                //                                    && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("fcy")).ToList();
+                lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
+                tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                iFFExposures.AddRange(lcs);
+                iFFExposures.AddRange(tradeLoans);
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
                                                 && d.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             }
 
-            if (IFFs.Count() > 0 || appDetails.Count() > 0)
+            if (iFFExposures.Count > 0 || appDetails.Count() > 0)
             {
                 if (currencyId == (int)CurrencyEnum.NGN)
                 {
@@ -1632,33 +2161,35 @@ namespace FintrakBanking.Repositories.Credit
                     result = result + $@"<tr><td>Import Finance Facilities (FCY):</td></tr>";
                 }
             }
-            var loanGroups = IFFs.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            var loanGroups = iFFExposures.GroupBy(f => f.productCode.Trim());
             foreach (var group in loanGroups)
             {
-                var currFacility = group.GroupBy(f => f.CURRENCYID);
+                var currFacility = group.GroupBy(f => f.currency.Trim());
                 foreach (var curr in currFacility)
                 {
-                    var facility = group.Key;
-                    var currency = curr.First().TBL_CURRENCY.CURRENCYNAME;
-                    //var currentAmount = curr.Sum(p => p.OUTSTANDINGPRINCIPAL) + curr.Sum(p => p.OUTSTANDINGINTEREST);
-                    //var currentAmountForLLLImpact = curr.Sum(p => p.OUTSTANDINGPRINCIPAL * (decimal)p.EXCHANGERATE) + curr.Sum(p => p.OUTSTANDINGINTEREST * (decimal)p.EXCHANGERATE);
-                    var currentAmount = curr.Sum(p => p.APPROVEDAMOUNT);
-                    var currentAmountForLLLImpact = curr.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
-                    var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
-                                             f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
-                    var proposedAmountTestForLLLImpact = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
-                                              f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
-                    var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
-                                        f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
-                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                    var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
-                    var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
-                    var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
-                    var tenor = curr.Sum(p => p.APPROVEDTENOR);
-                    //var tenor = curr.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
-
-                    result = result + $@"
-                     <tr>
+                    initialLoans = appDetails.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Initial).ToList();
+                    renewalLoans = appDetails.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Renewal).ToList();
+                    RenewalWithIncreaseLoans = appDetails.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithIncrease).ToList();
+                    RenewalWithDecreaseLoans = appDetails.Where(f => curr.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithDecrease).ToList();
+                    var facility = group.FirstOrDefault().facilityType;
+                    var currency = curr.Key;
+                    if (renewalLoans.Any())
+                    {
+                        var proposedAmountTest = renewalLoans?.Sum(p => p.PROPOSEDAMOUNT) ?? 0;
+                        var proposedAmount = proposedAmountTest;
+                        var proposedAmountTestForLLLImpact = (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var tenorTest = (renewalLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var currentAmount = curr.Sum(p => p.approvedAmount);
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+                        result = result + $@"
+                    <tr>
                         <td>{facility}</td>
                         <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
                         <td>{currency}</td>
@@ -1668,13 +2199,114 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{(tenor / 30)}</td>
                     </tr>
                     ";
+                    }
+                    else if (RenewalWithIncreaseLoans.Any())
+                    {
+                        var proposedAmountTest = (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var proposedAmountTestForLLLImpact = (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var tenorTest = (RenewalWithIncreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var proposedAmount = proposedAmountTest;
+                        var currentAmount = curr.Sum(p => p.approvedAmount);
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+                        result = result + $@"
+                    <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                    ";
+                    }
+                    else if (RenewalWithDecreaseLoans.Any())
+                    {
+                        var proposedAmountTestForLLLImpact = (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = proposedAmountTestForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var proposedAmountTest = (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var tenorTest = (RenewalWithDecreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var proposedAmount = proposedAmountTest;
+                        var currentAmount = curr.Sum(p => p.approvedAmount);
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+                        result = result + $@"
+                    <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                    ";
+                    }
+                    else
+                    {
+                        var currentAmount = curr.Sum(p => p.approvedAmount);
+                        var currentAmountForLLLImpact = curr.Sum(p => p.approvedAmountLcy);
+                        var proposedAmountTestForLLLImpact = (initialLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
+                        var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                        var proposedAmountTest = (initialLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var tenorTest = (initialLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                        var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                        var change = proposedAmount - currentAmount;
+                        var tenor = tenorTest;
+                        result = result + $@"
+                    <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                    ";
+                    }
                 }
+
+                    //var currentAmount = curr.Sum(p => p.OUTSTANDINGPRINCIPAL) + curr.Sum(p => p.OUTSTANDINGINTEREST);
+                    //var currentAmountForLLLImpact = curr.Sum(p => p.OUTSTANDINGPRINCIPAL * (decimal)p.EXCHANGERATE) + curr.Sum(p => p.OUTSTANDINGINTEREST * (decimal)p.EXCHANGERATE);
+                    //var currentAmount = curr.Sum(p => p.approvedAmount);
+                    //var currentAmountForLLLImpact = curr.Sum(p => p.approvedAmountLcy);
+                    //var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().productCode.Trim() ==
+                    //                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim())?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                    //var proposedAmountTestForLLLImpact = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().productCode.Trim() ==
+                    //                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim())?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    //var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().productCode.Trim() ==
+                    //                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim())?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    //var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                    //var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
+                    //var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                    //var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
+                    //var tenor = tenorTest;
+                    ////var tenor = curr.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+
+                    //result = result + $@"
+                    // <tr>
+                    //    <td>{facility}</td>
+                    //    <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                    //    <td>{currency}</td>
+                    //    <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                    //    <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                    //    <td>{String.Format("{0:0,0.00}", change)}</td>
+                    //    <td>{(tenor / 30)}</td>
+                    //</tr>
+                    //";
             }
 
             // checks each loan detail.
             foreach (var d in appDetails)
             {
-                var IFFExists = IFFs.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                //var IFFExists = IFFs.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                var IFFExists = iFFExposures.Exists(l => l.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
 
                 if (!IFFExists)
                 {
@@ -1682,7 +2314,8 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var proposedAmountForLLL = d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE;
+                    var LLLImpact = (100 / 100) * proposedAmountForLLL;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
 
@@ -1757,41 +2390,51 @@ namespace FintrakBanking.Repositories.Credit
             //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             //var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
             //                                                    && l.ISDISBURSED == true).ToList();
-            var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-            var loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
-                                                && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
-                                                && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+            //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
+            //var loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+            //                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
+            //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+            var exposures = new List<CurrentCustomerExposure>();
+            var loanExposures = new List<CurrentCustomerExposure>();
+            var directExposures = new List<CurrentCustomerExposure>();
+            var overdraftExposures = new List<CurrentCustomerExposure>();
+            exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("fcy")).ToList();
+            directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
             var appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN &&
                                                                                  d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
                                                                                  d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-            if (loans.Count() > 0 || appDetails.Count() > 0)
-            //if (loans.Count() > 0 || overdrafts.Count() > 0 || appDetails.Count() > 0)
-                {
+            //if (loanExposures.Count > 0 || appDetails.Count() > 0)
+            if (loanExposures.Count > 0 || overdraftExposures.Count > 0 || appDetails.Count() > 0)
+            {
                 result = result + $@"<tr><td>Direct Facilities (FCY):</td></tr>";
             }
-            var loanGroups = loans.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            var loanGroups = loanExposures.GroupBy(f => f.productCode.Trim());
             if (loanGroups.Count() > 0)
             {
                 foreach (var group in loanGroups)
                 {
-                    var currFacility = group.GroupBy(f => f.CURRENCYID);
+                    var currFacility = group.GroupBy(f => f.currencyCode);
                     foreach (var curr in currFacility)
                     {
-                        var facility = group.Key;
-                        var currency = curr.First().TBL_CURRENCY.CURRENCYNAME;
-                        var currentAmount = curr.Sum(p => p.APPROVEDAMOUNT);
+                        var facility = group.FirstOrDefault().facilityType;
+                        var currency = curr.Key;
+                        var currentAmount = curr.Sum(p => p.outstandings);
                         //var currentAmount = curr.Sum(p => p.OUTSTANDINGPRINCIPAL) + curr.Sum(p => p.OUTSTANDINGINTEREST);
-                        var currentAmountForLLLImpact = curr.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+                        var currentAmountForLLLImpact = curr.Sum(p => p.outstandingsLcy);
                         //var currentAmountForLLLImpact = curr.Sum(p => p.OUTSTANDINGPRINCIPAL * (decimal)p.EXCHANGERATE) + curr.Sum(p => p.OUTSTANDINGINTEREST * (decimal)p.EXCHANGERATE);
-                        var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
-                                                  f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
-                        var proposedAmountTestForLLLImpact = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
-                                                  f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().productCode.Trim() ==
+                                                  f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim())?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var proposedAmountTestForLLLImpact = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().productCode.Trim() ==
+                                                  f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim())?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim())?.Sum(p => p.APPROVEDTENOR)) ?? 0;
                         var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
                         var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
                         var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
                         var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
-                        var tenor = curr.Sum(p => p.APPROVEDTENOR);
+                        var tenor = tenorTest;
                         //var tenor = curr.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
                         result = result + $@"
@@ -1806,6 +2449,45 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     ";
                     }
+                }
+            }
+
+            var overdraftExposuresGroups = overdraftExposures.GroupBy(f => f.productCode.Trim());
+            foreach (var group in overdraftExposuresGroups)
+            {
+                var currFacility = group.GroupBy(f => f.currencyCode);
+                foreach (var curr in currFacility)
+                {
+                    var facility = group.FirstOrDefault().facilityType;
+                    var currency = curr.Key;
+                    var currentAmount = curr.Sum(p => p.approvedAmount);
+                    //var currentAmount = curr.Sum(p => p.OUTSTANDINGPRINCIPAL) + curr.Sum(p => p.OUTSTANDINGINTEREST);
+                    var currentAmountForLLLImpact = curr.Sum(p => p.approvedAmountLcy);
+                    //var currentAmountForLLLImpact = curr.Sum(p => p.OUTSTANDINGPRINCIPAL * (decimal)p.EXCHANGERATE) + curr.Sum(p => p.OUTSTANDINGINTEREST * (decimal)p.EXCHANGERATE);
+                    var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().productCode.Trim() ==
+                                              f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim())?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                    var proposedAmountTestForLLLImpact = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().productCode.Trim() ==
+                                              f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim())?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYCODE.Trim() == curr.First().currencyCode.Trim())?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                    var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
+                    var LLLImpact = (100 / 100) * proposedAmountForLLLImpact;
+                    var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
+                    var tenor = tenorTest;
+                    //var tenor = curr.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+
+                    result = result + $@"
+                     <tr>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
+                    </tr>
+                    ";
                 }
             }
 
@@ -1848,12 +2530,13 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var d in appDetails)
             {
-                var loanFacilityExists = loans.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                //var loanFacilityExists = loans.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
                 //var overdraftFacilityExists = overdrafts.Exists(o => o.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
 
-                if (!loanFacilityExists)
-                //if (!loanFacilityExists || !overdraftFacilityExists)
-                    {
+                var loanFacilityExists = loanExposures.Exists(l => l.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
+                var overdraftFacilityExists = overdraftExposures.Exists(o => o.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
+                if (!loanFacilityExists && !overdraftFacilityExists)
+                {
                     var facility = d.TBL_PRODUCT.PRODUCTNAME;
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
@@ -1905,37 +2588,36 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             //var contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
             //                                                    && l.ISDISBURSED == true).ToList();
-            var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-            var contingents = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
-                                                && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
+            //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
+            //var contingents = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+            //                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
+            var exposures = new List<CurrentCustomerExposure>();
+            var contingentExposures = new List<CurrentCustomerExposure>();
+            exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("fcy")).ToList();
+            contingentExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
             var appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN && d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
                                                                                    (int)LoanProductTypeEnum.ContingentLiability);
-            if (contingents.Count() > 0 || appDetails.Count() > 0)
+            if (contingentExposures.Count() > 0 || appDetails.Count() > 0)
             {
                 result = result + $@"<tr><td>Contingent Facilities (FCY):</td></tr>";
             }
-            var contingentsGroup = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
-            foreach (var group in contingentsGroup)
+
+            var contingentsGroup = contingentExposures.GroupBy(f => f.productCode.Trim());
+            if (contingentsGroup.Count() > 0)
             {
-                var currFacility = group.GroupBy(f => f.CURRENCYID);
-                foreach (var curr in currFacility)
+                foreach (var group in contingentsGroup)
                 {
-                    var facility = group.Key;
-                    var currency = curr.First().TBL_CURRENCY.CURRENCYNAME;
-                    //var currentAmount = curr.Sum(p => p.CONTINGENTAMOUNT);
-                    //var currentAmountForLLLImpact = curr.Sum(p => p.CONTINGENTAMOUNT * (decimal)p.EXCHANGERATE);
-                    var currentAmount = curr.Sum(p => p.APPROVEDAMOUNT);
-                    var currentAmountForLLLImpact = curr.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
-                    var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
-                                              f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
-                    var proposedAmountTestForLLLImpact = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
-                                              f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var facility = group.FirstOrDefault().facilityType;
+                    var currency = group.First().currency;
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTCODE.Trim() ==
+                                             group.FirstOrDefault().productCode.Trim() && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                    var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTCODE.Trim() ==
+                                             group.FirstOrDefault().productCode.Trim() && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
                     var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                    var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
-                    var LLLImpact = proposedAmountForLLLImpact / 3;
-                    var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
-                    var tenor = curr.Sum(p => p.APPROVEDTENOR);
-                    //var tenor = curr.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+                    var LLLImpact = proposedAmount / 3;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
 
                     result = result + $@"
                      <tr>
@@ -1950,10 +2632,47 @@ namespace FintrakBanking.Repositories.Credit
                     ";
                 }
             }
+            //var contingentsGroup = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            //foreach (var group in contingentsGroup)
+            //{
+            //    var currFacility = group.GroupBy(f => f.CURRENCYID);
+            //    foreach (var curr in currFacility)
+            //    {
+            //        var facility = group.Key;
+            //        var currency = curr.First().TBL_CURRENCY.CURRENCYNAME;
+            //        //var currentAmount = curr.Sum(p => p.CONTINGENTAMOUNT);
+            //        //var currentAmountForLLLImpact = curr.Sum(p => p.CONTINGENTAMOUNT * (decimal)p.EXCHANGERATE);
+            //        var currentAmount = curr.Sum(p => p.APPROVEDAMOUNT);
+            //        var currentAmountForLLLImpact = curr.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            //        var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
+            //                                  f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+            //        var proposedAmountTestForLLLImpact = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
+            //                                  f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+            //        var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+            //        var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
+            //        var LLLImpact = proposedAmountForLLLImpact / 3;
+            //        var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
+            //        var tenor = curr.Sum(p => p.APPROVEDTENOR);
+            //        //var tenor = curr.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+
+            //        result = result + $@"
+            //         <tr>
+            //            <td>{facility}</td>
+            //            <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+            //            <td>{currency}</td>
+            //            <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+            //            <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+            //            <td>{String.Format("{0:0,0.00}", change)}</td>
+            //            <td>{(tenor / 30)}</td>
+            //        </tr>
+            //        ";
+            //    }
+            //}
 
             foreach (var d in appDetails)
             {
-                var contingentExists = contingents.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                var contingentExists = contingentExposures.Exists(l => l.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
+                //var contingentExists = contingents.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
 
                 if (!contingentExists)
                 {
@@ -2027,16 +2746,28 @@ namespace FintrakBanking.Repositories.Credit
         {
             var directSummary = new TotalFacilitiesSummaryViewModel();
             int numberOfNewFacilities = 0;
+            var exposures = new List<CurrentCustomerExposure>();
+            var loanExposures = new List<CurrentCustomerExposure>();
+            var directExposures = new List<CurrentCustomerExposure>();
+            var overdraftExposures = new List<CurrentCustomerExposure>();
+            var initialLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var renewalLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithIncreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithDecreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
             //var loans = new List<TBL_LOAN>();
-            var loans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            //var loans = new List<TBL_LOAN_APPLICATION_DETAIL>();
             //var overdrafts = new List<TBL_LOAN_REVOLVING>();
+            //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CAMInProgress).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
             var appDetails = new List<TBL_LOAN_APPLICATION_DETAIL>();
             if (currencyId == (int)CurrencyEnum.NGN)
             {
-                var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-                loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
-                                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
-                                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                //loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                //                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
+                //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("lcy")).ToList();
+                directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+                overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
                 //loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
                 //                                && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
                 //overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
@@ -2047,10 +2778,13 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-                loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
-                                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
-                                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("fcy")).ToList();
+                //loans = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+                //                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability
+                //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+                overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
                 //loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN && l.ISDISBURSED == true
                 //                                && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
                 //overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
@@ -2059,38 +2793,219 @@ namespace FintrakBanking.Repositories.Credit
                                                                                      d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
                                                                                      d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             }
-            directSummary.numberOfLoans = loans.Count();
-            //directSummary.numberOfOverdrafts = overdrafts.Count();
-            var loanGroups = loans.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
-            foreach (var group in loanGroups)
+            directSummary.numberOfLoans = loanExposures.Count;
+            directSummary.numberOfOverdrafts = overdraftExposures.Count;
+            //var loanGroups = loans.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            //foreach (var group in loanGroups)
+            //{
+            //    var currency = "Naira";
+            //    var currentAmount = group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+            //    //var currentAmount = group.Sum(p => p.OUTSTANDINGPRINCIPAL * (decimal)p.EXCHANGERATE) + group.Sum(p => p.OUTSTANDINGINTEREST * (decimal)p.EXCHANGERATE);
+            //    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+            //                             (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
+            //                              f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+            //                              :
+            //                              (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
+            //                              f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+            //    var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
+            //                             (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
+            //                              f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0
+            //                              :
+            //                              (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
+            //                              f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+            //    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+            //    var LLLImpact = (100 / 100) * proposedAmount;
+            //    var change = proposedAmount - currentAmount;
+            //    var tenor = tenorTest;
+            //    directSummary.totalLLLImpact += LLLImpact;
+            //    directSummary.currency = currency;
+            //    directSummary.totalCurrentAmount += currentAmount;
+            //    directSummary.totalProposedAmount += proposedAmount;
+            //    directSummary.totalChange += change;
+            //    directSummary.totalTenors += tenor;
+            //}
+
+            var loanExposuresGroups = loanExposures.GroupBy(f => f.productName);
+            foreach(var group in loanExposuresGroups)
             {
+                initialLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Initial).ToList();
+                renewalLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Renewal).ToList();
+                RenewalWithIncreaseLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithIncrease).ToList();
+                RenewalWithDecreaseLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithDecrease).ToList();
+                var facility = group.FirstOrDefault().facilityType;
                 var currency = "Naira";
-                var currentAmount = group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
-                //var currentAmount = group.Sum(p => p.OUTSTANDINGPRINCIPAL * (decimal)p.EXCHANGERATE) + group.Sum(p => p.OUTSTANDINGINTEREST * (decimal)p.EXCHANGERATE);
-                var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
-                                         (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
-                                          :
-                                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
-                var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
-                                         (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0
-                                          :
-                                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
-                var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = (100 / 100) * proposedAmount;
-                var change = proposedAmount - currentAmount;
-                var tenor = tenorTest;
-                directSummary.totalLLLImpact += LLLImpact;
-                directSummary.currency = currency;
-                directSummary.totalCurrentAmount += currentAmount;
-                directSummary.totalProposedAmount += proposedAmount;
-                directSummary.totalChange += change;
-                directSummary.totalTenors += tenor;
+                if (renewalLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.outstandingsLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (renewalLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    directSummary.totalLLLImpact += LLLImpact;
+                    directSummary.currency = currency;
+                    directSummary.totalCurrentAmount += currentAmount;
+                    directSummary.totalProposedAmount += proposedAmount;
+                    directSummary.totalChange += change;
+                    directSummary.totalTenors += tenor;
+                }
+                else if (RenewalWithIncreaseLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.outstandingsLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (RenewalWithIncreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    directSummary.totalLLLImpact += LLLImpact;
+                    directSummary.currency = currency;
+                    directSummary.totalCurrentAmount += currentAmount;
+                    directSummary.totalProposedAmount += proposedAmount;
+                    directSummary.totalChange += change;
+                    directSummary.totalTenors += tenor;
+                }
+                else if (RenewalWithDecreaseLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.outstandingsLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (RenewalWithDecreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    directSummary.totalLLLImpact += LLLImpact;
+                    directSummary.currency = currency;
+                    directSummary.totalCurrentAmount += currentAmount;
+                    directSummary.totalProposedAmount += proposedAmount;
+                    directSummary.totalChange += change;
+                    directSummary.totalTenors += tenor;
+                }
+                else
+                {
+                    var currentAmount = group.Sum(p => p.outstandingsLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (initialLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (initialLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (initialLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    directSummary.totalLLLImpact += LLLImpact;
+                    directSummary.currency = currency;
+                    directSummary.totalCurrentAmount += currentAmount;
+                    directSummary.totalProposedAmount += proposedAmount;
+                    directSummary.totalChange += change;
+                    directSummary.totalTenors += tenor;
+                }
             }
 
+            var overdraftExposuresGroups = overdraftExposures.GroupBy(f => f.productName);
+            foreach (var group in overdraftExposuresGroups)
+            {
+                initialLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Initial).ToList();
+                renewalLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Renewal).ToList();
+                RenewalWithIncreaseLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithIncrease).ToList();
+                RenewalWithDecreaseLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithDecrease).ToList();
+                var facility = group.FirstOrDefault().facilityType;
+                var currency = "Naira";
+                if (renewalLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (renewalLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    directSummary.totalLLLImpact += LLLImpact;
+                    directSummary.currency = currency;
+                    directSummary.totalCurrentAmount += currentAmount;
+                    directSummary.totalProposedAmount += proposedAmount;
+                    directSummary.totalChange += change;
+                    directSummary.totalTenors += tenor;
+                }
+                else if (RenewalWithIncreaseLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (RenewalWithIncreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    directSummary.totalLLLImpact += LLLImpact;
+                    directSummary.currency = currency;
+                    directSummary.totalCurrentAmount += currentAmount;
+                    directSummary.totalProposedAmount += proposedAmount;
+                    directSummary.totalChange += change;
+                    directSummary.totalTenors += tenor;
+                }
+                else if (RenewalWithDecreaseLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (RenewalWithDecreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    directSummary.totalLLLImpact += LLLImpact;
+                    directSummary.currency = currency;
+                    directSummary.totalCurrentAmount += currentAmount;
+                    directSummary.totalProposedAmount += proposedAmount;
+                    directSummary.totalChange += change;
+                    directSummary.totalTenors += tenor;
+                }
+                else
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (initialLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (initialLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (initialLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    directSummary.totalLLLImpact += LLLImpact;
+                    directSummary.currency = currency;
+                    directSummary.totalCurrentAmount += currentAmount;
+                    directSummary.totalProposedAmount += proposedAmount;
+                    directSummary.totalChange += change;
+                    directSummary.totalTenors += tenor;
+                }
+            }
             //var overdraftGroups = overdrafts.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
             //foreach (var group in overdraftGroups)
             //{
@@ -2123,11 +3038,12 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var d in appDetails)
             {
-                var loanFacilityExists = loans.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                var loanFacilityExists = loanExposures.Exists(l => l.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
+                var overdraftFacilityExists = overdraftExposures.Exists(o => o.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
+                //var loanFacilityExists = loans.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
                 //var overdraftFacilityExists = overdrafts.Exists(o => o.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
 
-                if (!loanFacilityExists)
-                //if (!loanFacilityExists && !overdraftFacilityExists)
+                if (!loanFacilityExists && !overdraftFacilityExists)
                 {
                     ++numberOfNewFacilities;
                     var facility = d.TBL_PRODUCT.PRODUCTNAME;
@@ -2153,62 +3069,150 @@ namespace FintrakBanking.Repositories.Credit
         {
             var contingentsSummary = new TotalFacilitiesSummaryViewModel();
             int numberOfNewFacilities = 0;
-            var contingents = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            //var contingents = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var exposures = new List<CurrentCustomerExposure>();
+            var contingentExposures = new List<CurrentCustomerExposure>();
             //var contingents = new List<TBL_LOAN_CONTINGENT>();
             var appDetails = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var initialLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var renewalLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithIncreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithDecreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
             if (currencyId == (int)CurrencyEnum.NGN)
             {
-                var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-                contingents = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
-                                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
+                //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
+                //contingents = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                //                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
                 //contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                 //                                                && l.ISDISBURSED == true).ToList();
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("lcy")).ToList();
+                contingentExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN &&
                               d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
             }
             else
             {
-                var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-                contingents = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
-                                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
+                //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
+                //contingents = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+                //                                    && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
                 //contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
                 //                                                && l.ISDISBURSED == true).ToList();
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("fcy")).ToList();
+                contingentExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN &&
                               d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
             }
-            contingentsSummary.numberOfContingents = contingents.Count();
-            var loanGroups = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            contingentsSummary.numberOfContingents = contingentExposures.Count;
+            var loanGroups = contingentExposures.GroupBy(f => f.productName);
             foreach (var group in loanGroups)
             {
-                var currency = "Naira";
-                var currentAmount = group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
-                var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
-                                         (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
-                                          :
-                                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
-                var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
-                                         (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0
-                                          :
-                                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
-                var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = proposedAmount / 3;
-                var change = proposedAmount - currentAmount;
-                var tenor = tenorTest;
-                contingentsSummary.totalLLLImpact += LLLImpact;
-                contingentsSummary.currency = currency;
-                contingentsSummary.totalCurrentAmount += currentAmount;
-                contingentsSummary.totalProposedAmount += proposedAmount;
-                contingentsSummary.totalChange += change;
-                contingentsSummary.totalTenors += tenor;
+                initialLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Initial).ToList();
+                renewalLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Renewal).ToList();
+                RenewalWithIncreaseLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithIncrease).ToList();
+                RenewalWithDecreaseLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithDecrease).ToList();
+                var facility = group.FirstOrDefault().facilityType;
+                if (renewalLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var currency = "Naira";
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (renewalLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0
+                                              :
+                                              (renewalLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = proposedAmount / 3;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    contingentsSummary.totalLLLImpact += LLLImpact;
+                    contingentsSummary.currency = currency;
+                    contingentsSummary.totalCurrentAmount += currentAmount;
+                    contingentsSummary.totalProposedAmount += proposedAmount;
+                    contingentsSummary.totalChange += change;
+                    contingentsSummary.totalTenors += tenor;
+                }
+                else if (RenewalWithIncreaseLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var currency = "Naira";
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithIncreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0
+                                              :
+                                              (RenewalWithIncreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = proposedAmount / 3;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    contingentsSummary.totalLLLImpact += LLLImpact;
+                    contingentsSummary.currency = currency;
+                    contingentsSummary.totalCurrentAmount += currentAmount;
+                    contingentsSummary.totalProposedAmount += proposedAmount;
+                    contingentsSummary.totalChange += change;
+                    contingentsSummary.totalTenors += tenor;
+                }
+                else if (RenewalWithDecreaseLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var currency = "Naira";
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithDecreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0
+                                              :
+                                              (RenewalWithDecreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = proposedAmount / 3;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    contingentsSummary.totalLLLImpact += LLLImpact;
+                    contingentsSummary.currency = currency;
+                    contingentsSummary.totalCurrentAmount += currentAmount;
+                    contingentsSummary.totalProposedAmount += proposedAmount;
+                    contingentsSummary.totalChange += change;
+                    contingentsSummary.totalTenors += tenor;
+                }
+                else
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var currency = "Naira";
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (initialLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (initialLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (initialLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0
+                                              :
+                                              (initialLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                    var LLLImpact = proposedAmount / 3;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    contingentsSummary.totalLLLImpact += LLLImpact;
+                    contingentsSummary.currency = currency;
+                    contingentsSummary.totalCurrentAmount += currentAmount;
+                    contingentsSummary.totalProposedAmount += proposedAmount;
+                    contingentsSummary.totalChange += change;
+                    contingentsSummary.totalTenors += tenor;
+                }
             }
 
             foreach (var d in appDetails)
             {
-                var contingentsFacilityExists = contingents.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                //var contingentsFacilityExists = contingents.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                var contingentsFacilityExists = contingentExposures.Exists(l => l.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
 
                 if (!contingentsFacilityExists)
                 {
@@ -2237,15 +3241,28 @@ namespace FintrakBanking.Repositories.Credit
             var IFFSummary = new TotalFacilitiesSummaryViewModel();
             int numberOfNewFacilities = 0;
             //var IFFs = new List<TBL_LOAN>();
-            var IFFs = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            //var IFFs = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var exposures = new List<CurrentCustomerExposure>();
+            var lcs = new List<CurrentCustomerExposure>();
+            var tradeLoans = new List<CurrentCustomerExposure>();
+            var iFFExposures = new List<CurrentCustomerExposure>();
             var appDetails = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var initialLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var renewalLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithIncreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
+            var RenewalWithDecreaseLoans = new List<TBL_LOAN_APPLICATION_DETAIL>();
             if (currencyId == (int)CurrencyEnum.NGN)
             {
                 //IFFs = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                 //                                && l.ISDISBURSED == true && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-                var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-                IFFs = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
-                                                    && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
+                //IFFs = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                //                                    && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("lcy")).ToList();
+                lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
+                tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                iFFExposures.AddRange(lcs);
+                iFFExposures.AddRange(tradeLoans);
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN 
                                                 && d.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             }
@@ -2253,46 +3270,132 @@ namespace FintrakBanking.Repositories.Credit
             {
                 //IFFs = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
                 //                                && l.ISDISBURSED == true && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
-                var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
-                IFFs = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
-                                                    && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                //var appLoans = context.TBL_LOAN_APPLICATION.Where(l => l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).SelectMany(l => l.TBL_LOAN_APPLICATION_DETAIL).ToList();
+                //IFFs = appLoans.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+                //                                    && l.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+                exposures = GetExposures(true).Where(e => e.currencyType.ToLower().Contains("fcy")).ToList();
+                lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
+                tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+                iFFExposures.AddRange(lcs);
+                iFFExposures.AddRange(tradeLoans);
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
                                                 && d.TBL_PRODUCT.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             }
-            IFFSummary.numberOfImportFinanceFacilities = IFFs.Count();
-            var loanGroups = IFFs.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            IFFSummary.numberOfImportFinanceFacilities = iFFExposures.Count;
+            var loanGroups = iFFExposures.GroupBy(f => f.productName);
             foreach (var group in loanGroups)
             {
                 var currency = "Naira";
+                
+                    initialLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                         f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Initial).ToList();
+                    renewalLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.Renewal).ToList();
+                    RenewalWithIncreaseLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithIncrease).ToList();
+                    RenewalWithDecreaseLoans = appDetails.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                                             f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.LOANDETAILREVIEWTYPEID == (int)LoanDetailReviewTypeEnum.RenewalWithDecrease).ToList();
+                var facility = group.FirstOrDefault().facilityType;
+                if (renewalLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (renewalLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (renewalLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    IFFSummary.totalLLLImpact += LLLImpact;
+                    IFFSummary.currency = currency;
+                    IFFSummary.totalCurrentAmount += currentAmount;
+                    IFFSummary.totalProposedAmount += proposedAmount;
+                    IFFSummary.totalChange += change;
+                    IFFSummary.totalTenors += tenor;
+                }
+                else if (RenewalWithIncreaseLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (RenewalWithIncreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (RenewalWithIncreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    IFFSummary.totalLLLImpact += LLLImpact;
+                    IFFSummary.currency = currency;
+                    IFFSummary.totalCurrentAmount += currentAmount;
+                    IFFSummary.totalProposedAmount += proposedAmount;
+                    IFFSummary.totalChange += change;
+                    IFFSummary.totalTenors += tenor;
+                }
+                else if (RenewalWithDecreaseLoans.Any())
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (RenewalWithDecreaseLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (RenewalWithDecreaseLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = proposedAmountTest;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    IFFSummary.totalLLLImpact += LLLImpact;
+                    IFFSummary.currency = currency;
+                    IFFSummary.totalCurrentAmount += currentAmount;
+                    IFFSummary.totalProposedAmount += proposedAmount;
+                    IFFSummary.totalChange += change;
+                    IFFSummary.totalTenors += tenor;
+                }
+                else
+                {
+                    var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                    var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                                             (initialLoans?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                                              :
+                                              (initialLoans?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                    var tenorTest = (initialLoans?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
+                    IFFSummary.totalLLLImpact += LLLImpact;
+                    IFFSummary.currency = currency;
+                    IFFSummary.totalCurrentAmount += currentAmount;
+                    IFFSummary.totalProposedAmount += proposedAmount;
+                    IFFSummary.totalChange += change;
+                    IFFSummary.totalTenors += tenor;
+                }
                 //var currentAmount = group.Sum(p => p.OUTSTANDINGPRINCIPAL * (decimal)p.EXCHANGERATE) + group.Sum(p => p.OUTSTANDINGINTEREST * (decimal)p.EXCHANGERATE);
-                var currentAmount = group.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
-                var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
-                                         (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
-                                          :
-                                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
-                var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
-                                         (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0
-                                          :
-                                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
-                var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = (100 / 100) * proposedAmount;
-                var change = proposedAmount - currentAmount;
-                var tenor = tenorTest;
-                IFFSummary.totalLLLImpact += LLLImpact;
-                IFFSummary.currency = currency;
-                IFFSummary.totalCurrentAmount += currentAmount;
-                IFFSummary.totalProposedAmount += proposedAmount;
-                IFFSummary.totalChange += change;
-                IFFSummary.totalTenors += tenor;
+                //var currentAmount = group.Sum(p => p.approvedAmountLcy);
+                //var proposedAmountTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                //                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                //                           f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
+                //                           :
+                //                           (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                //                           f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                //var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
+                //                         (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                //                          f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0
+                //                          :
+                //                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().productCode.Trim() ==
+                //                          f.TBL_PRODUCT.PRODUCTCODE.Trim() && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                //var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                //var LLLImpact = (100 / 100) * proposedAmount;
+                //var change = proposedAmount - currentAmount;
+                //var tenor = tenorTest;
             }
 
             foreach (var d in appDetails)
             {
-                var IFFExists = IFFs.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                //var IFFExists = iFFExposures.Exists(l => l.TBL_PRODUCT.PRODUCTID == d.TBL_PRODUCT.PRODUCTID);
+                var IFFExists = iFFExposures.Exists(l => l.productCode.Trim() == d.TBL_PRODUCT.PRODUCTCODE.Trim());
 
                 if (!IFFExists)
                 {
@@ -2319,41 +3422,309 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGroupExposureMarkup()
         {
             var result = String.Empty;
-            var exposures = GetGroupExposurebyCustomerId(this.customerId, this.loanApplication.COMPANYID);
-            var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerName);
+            var exposures = new List<CurrentCustomerExposure>();
+            exposures = GetExposures();
+            var directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            var overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
+            var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerCode);
             var n = 0;
             result = result + $@"
-                <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
                     <tr>
-                        <th><b><h2>Customer Name</h2></b></th>
-                        <th><b><h2>Facility Type</h2></b></th>
-                        <th><b><h2>Currency</h2></b></th>
-                        <th><b><h2>Approved Amount</h2></b></th>
-                        <th><b><h2>Outstanding Exposure</h2></b></th>
-                        <th><b><h2>Start Date</h2></b></th>
-                        <th><b><h2>End Date</h2></b></th>
+                        <th><b>Related Obligors(domestic)</b></th>
+                        <th><b>Facility Name</b></th>
+                        <th><b>LLL Impact (NGN)</b></th>
+                        <th><b>Currency</b></th>
+                        <th><b>Approved Amount</b></th>
+                        <th><b>Outstanding Exposure</b></th>
+                        <th><b>[O/S] Ccy</b></th>
+                        <th><b>End Date</b></th>
                     </tr>
                 ";
-            foreach (var customerGroups in exposureGroupsByCustomer)
+            if (loanExposures.Count > 0 || overdraftExposures.Count > 0)
             {
-                var customerName = customerGroups.Key;
-                var facilities = customerGroups.GroupBy(c => c.facilityType.Trim());
-                foreach (var facility in facilities)
+                result = result + $@"<tr><td>Direct Facilities:</td></tr>";
+                if (loanExposures.Count > 0)
                 {
-                    ++n;
-                    result = result + $@"
+                    var customers = loanExposures.GroupBy(e => e.customerCode);
+                    foreach (var cust in customers)
+                    {
+                        var directsGroup = cust.GroupBy(f => f.productCode.Trim());
+
+                        foreach (var product in directsGroup)
+                        {
+                            var facility = product.FirstOrDefault().facilityType;
+                            var currency = "Naira";
+                            //var currency = product.currency;
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                            var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                            var amountForLLL = currentAmountForLLL;
+                            var LLLImpact = amountForLLL;
+
+                            result = result + $@"
                      <tr>
-                        <td>{customerName}</td>
-                        <td>{facility.Key}</td>
-                        <td>{facility.FirstOrDefault()?.currency}</td>
-                        <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.approvedAmount))}</td>
-                        <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.outstandings))}</td>
-                        <td>{facility.Max(f => f.bookingDate).ToShortDateString()}</td>
-                        <td>{facility.Max(f => f.maturityDate).ToShortDateString()}</td>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
                     </tr>
-                ";
+                    ";
+                        }
+                    }
+                }
+
+                if (overdraftExposures.Count > 0)
+                {
+                    var customers = overdraftExposures.GroupBy(e => e.customerCode);
+                    foreach (var cust in customers)
+                    {
+                        var overdraftsGroup = cust.GroupBy(f => f.productCode.Trim());
+
+                        foreach (var product in overdraftsGroup)
+                        {
+                            var facility = product.FirstOrDefault().facilityType;
+                            var currency = "Naira";
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                            var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                            var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                            var LLLImpact = amountForLLL;
+
+                            result = result + $@"
+                     <tr>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
+                    </tr>
+                    ";
+                        }
+                    }
+                }
+
+            }
+
+            if (contingents.Count() > 0)
+            {
+                result = result + $@"<tr><td>Contingent Facilities:</td></tr>";
+                var customers = contingents.GroupBy(e => e.customerCode);
+                foreach (var cust in customers)
+                {
+                    var contingentsGroup = cust.GroupBy(f => f.productCode.Trim());
+                    foreach (var product in contingentsGroup)
+                    {
+                        var facility = product.FirstOrDefault().facilityType;
+                        var currency = "Naira";
+                        var currentAmount = product.Sum(p => p.outstandings);
+                        var approvedAmount = product.Sum(p => p.approvedAmount);
+                        var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                        var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                        var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                        var LLLImpact = (amountForLLL / 3);
+                        //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                        result = result + $@"
+                     <tr>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
+                    </tr>
+                    ";
+                    }
+
+                    //foreach (var product in cust)
+                    //{
+                    //    var facility = product.facilityType;
+                    //    var currency = product.currency;
+                    //    var currentAmount = product.outstandings;
+                    //    var approvedAmount = product.approvedAmount;
+                    //    var currentAmountForLLL = product.outstandingsLcy;
+                    //    var approvedAmountForLLL = product.approvedAmountLcy;
+                    //    var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                    //    var LLLImpact = (amountForLLL / 3);
+
+                    //    result = result + $@"
+                    // <tr>
+                    //    <td>{product.customerName}</td>
+                    //    <td>{facility}</td>
+                    //    <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                    //    <td>{currency}</td>
+                    //    <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
+                    //    <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                    //    <td>{currency}</td>
+                    //    <td>{product.maturityDate}</td>
+                    //</tr>
+                    //";
+                    //}
                 }
             }
+
+            if (tradeLoans.Count() > 0 || lcs.Count() > 0)
+            {
+                result = result + $@"<tr><td>(Import Finance Facilities)</td></tr>";
+                if (lcs.Count() > 0)
+                {
+                    result = result + $@"<tr><td>(Contingent)</td></tr>";
+                    var customers = lcs.GroupBy(e => e.customerCode);
+                    foreach (var cust in customers)
+                    {
+                        var contingentsGroup = cust.GroupBy(f => f.productCode.Trim());
+                        foreach (var product in contingentsGroup)
+                        {
+                            var facility = product.FirstOrDefault().facilityType;
+                            var currency = "Naira";
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                            var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                            var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                            var LLLImpact = amountForLLL;
+                            //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                            result = result + $@"
+                             <tr>
+                                <td>{product.FirstOrDefault().customerName}</td>
+                                <td>{facility}</td>
+                                <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                                <td>{currency}</td>
+                                <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                                <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
+                                <td>{currency}</td>
+                                <td>{product.Max(p => p.maturityDate)}</td>
+                            </tr>
+                            ";
+                        }
+
+                        //foreach (var product in cust)
+                        //{
+                        //    var facility = product.facilityType;
+                        //    var currency = product.currency;
+                        //    var currentAmount = product.outstandings;
+                        //    var approvedAmount = product.approvedAmount;
+                        //    var currentAmountForLLL = product.outstandingsLcy;
+                        //    var approvedAmountForLLL = product.approvedAmountLcy;
+                        //    var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                        //    var LLLImpact = amountForLLL;
+                        //    //var LLLImpact = (amountForLLL / 3);
+                        //    //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                        //    result = result + $@"
+                        //     <tr>
+                        //        <td>{product.customerName}</td>
+                        //        <td>{facility}</td>
+                        //        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        //        <td>{currency}</td>
+                        //        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
+                        //        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        //        <td>{currency}</td>
+                        //        <td>{product.maturityDate}</td>
+                        //    </tr>
+                        //    ";
+                        //}
+                    }
+                }
+
+                if (tradeLoans.Count() > 0)
+                {
+                    result = result + $@"<tr><td>(Direct)</td></tr>";
+                    var customers = tradeLoans.GroupBy(e => e.customerCode);
+                    foreach (var cust in customers)
+                    {
+                        var directsGroup = cust.GroupBy(f => f.productCode.Trim());
+                        foreach (var product in directsGroup)
+                        {
+                            var facility = product.FirstOrDefault().facilityType;
+                            var currency = "Naira";
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var currentAmountForLLL = product.Sum(p => p.outstandingsLcy);
+                            var approvedAmountForLLL = product.Sum(p => p.approvedAmountLcy);
+                            var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                            var LLLImpact = amountForLLL;
+                            //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                            result = result + $@"
+                             <tr>
+                                <td>{product.FirstOrDefault().customerName}</td>
+                                <td>{facility}</td>
+                                <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                                <td>{currency}</td>
+                                <td>{String.Format("{0:0,0.00}", approvedAmountForLLL)}</td>
+                                <td>{String.Format("{0:0,0.00}", currentAmountForLLL)}</td>
+                                <td>{currency}</td>
+                                <td>{product.Max(p => p.maturityDate)}</td>
+                            </tr>
+                            ";
+                        }
+
+                        //foreach (var product in cust)
+                        //{
+                        //    var facility = product.facilityType;
+                        //    var currency = product.currency;
+                        //    var currentAmount = product.outstandings;
+                        //    var approvedAmount = product.approvedAmount;
+                        //    var currentAmountForLLL = product.outstandingsLcy;
+                        //    var approvedAmountForLLL = product.approvedAmountLcy;
+                        //    var amountForLLL = (currentAmountForLLL >= approvedAmountForLLL) ? currentAmountForLLL : approvedAmountForLLL;
+                        //    var LLLImpact = amountForLLL;
+                        //    //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                        //    result = result + $@"
+                        //     <tr>
+                        //        <td>{product.customerName}</td>
+                        //        <td>{facility}</td>
+                        //        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        //        <td>{currency}</td>
+                        //        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
+                        //        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        //        <td>{currency}</td>
+                        //        <td>{product.maturityDate}</td>
+                        //    </tr>
+                        //    ";
+                        //}
+                    }
+                }
+            }
+            //foreach (var customerGroups in exposureGroupsByCustomer)
+            //{
+            //    var customerName = customerGroups.Key;
+            //    var facilities = customerGroups.GroupBy(c => c.facilityType.Trim());
+            //    foreach (var facility in facilities)
+            //    {
+            //        ++n;
+            //        result = result + $@"
+            //         <tr>
+            //            <td>{customerName}</td>
+            //            <td>{facility.Key}</td>
+            //            <td>{facility.FirstOrDefault()?.currency}</td>
+            //            <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.approvedAmount))}</td>
+            //            <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.outstandings))}</td>
+            //            <td>{facility.Max(f => f.bookingDate).ToShortDateString()}</td>
+            //            <td>{facility.Max(f => f.maturityDate).ToShortDateString()}</td>
+            //        </tr>
+            //    ";
+            //    }
+            //}
             result = result + $@"
                     {GetTotalGroupExposureMarkup()}
                 ";
@@ -2361,26 +3732,147 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        public List<CurrentCustomerExposure> GetExposures(bool isForGFS = false)
+        {
+            var exposures = new List<CurrentCustomerExposure>();
+            exposures = this.globalExposure;
+            if (isForGFS)
+            {
+                //var custCode = context.TBL_CUSTOMER.Find(customerId).CUSTOMERCODE;
+                var custCode = context.TBL_CUSTOMER.Find(loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID).CUSTOMERCODE;
+                var exposure = exposures.Where(e => e.customerCode == custCode).ToList();
+                return exposure;
+            }
+            return exposures;
+        }
+
+        private List<CurrentCustomerExposure> GetGloabalExposures()
+        {
+            var exposures = new List<CurrentCustomerExposure>();
+            var customerIds = new List<CustomerExposure>();
+            int customerId;
+            if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERID });
+                exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
+                customerId = (int)loanApplication.CUSTOMERID;
+            }
+            else
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.CUSTOMERGROUPID });
+                //customerIds.Add(new CustomerExposure { customerId = (int)loanApplication.TBL_CUSTOMER_GROUP.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault().CUSTOMERID });
+                exposures = GetCustomerExposure(customerIds, loanApplication.COMPANYID);
+                customerId = (int)loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID;
+                //exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
+            }
+            return exposures;
+        }
+
+        public List<CurrentCustomerExposure> GetExposuresLMS()
+        {
+            var exposures = new List<CurrentCustomerExposure>();
+            var customerIds = new List<CustomerExposure>();
+            if (lmsrApplication.CUSTOMERGROUPID > 0)
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)lmsrApplication.CUSTOMERGROUPID });
+                exposures = GetCustomerExposureLMS(customerIds, lmsrApplication.COMPANYID);
+                //exposures = GetCurrentSingleCustomerExposures();
+            }
+            else
+            {
+                customerIds.Add(new CustomerExposure { customerId = (int)lmsrApplication.CUSTOMERID });
+                exposures = GetCustomerExposureLMS(customerIds, lmsrApplication.COMPANYID);
+                //exposures = GetGroupExposurebyCustomerId((int)this.loanApplication.CUSTOMERGROUPID, this.loanApplication.COMPANYID);
+            }
+            return exposures;
+        }
+
+        private TotalFacilitiesSummaryViewModel GetTotalGroupLendingLimit(bool isForGFS = false)
+        {
+            var exposures = new List<CurrentCustomerExposure>();
+            var exposure = new TotalFacilitiesSummaryViewModel();
+            //var customerIds = new List<CustomerExposure>();
+            exposures = GetExposures(isForGFS);
+            var currentAmount = new decimal();
+            var approvedAmount = new decimal();
+            var amountForLLL = new decimal();
+            var LLLImpact = new decimal();
+            var directExposures = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            var overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
+            var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityTypeString.Contains("LC") && !e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityTypeString.Contains("LC")).ToList();
+            var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityTypeString.Contains("TRADE LOAN")).ToList();
+            foreach (var product in loanExposures)
+            {
+                currentAmount = product.outstandingsLcy;
+                amountForLLL = currentAmount;
+                LLLImpact += amountForLLL;
+            }
+
+            foreach (var product in overdraftExposures)
+            {
+                currentAmount = product.outstandingsLcy;
+                approvedAmount = product.approvedAmountLcy;
+                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                LLLImpact += amountForLLL;
+            }
+
+            foreach (var product in contingents)
+            {
+                currentAmount = product.outstandingsLcy;
+                approvedAmount = product.approvedAmountLcy;
+                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                LLLImpact += (amountForLLL / 3);
+            }
+
+            foreach (var product in lcs)
+            {
+                currentAmount = product.outstandingsLcy;
+                approvedAmount = product.approvedAmountLcy;
+                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                LLLImpact += amountForLLL;
+                //LLLImpact += (amountForLLL / 3);
+            }
+
+            foreach (var product in tradeLoans)
+            {
+                currentAmount = product.outstandingsLcy;
+                approvedAmount = product.approvedAmountLcy;
+                amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                LLLImpact += amountForLLL;
+            }
+
+            exposure.totalLLLImpact = LLLImpact;
+            return exposure;
+
+        }
         private string GetTotalGroupExposureMarkup()
         {
             var result = String.Empty;
-            var exposures = GetGroupExposurebyCustomerId(this.customerId, this.loanApplication.COMPANYID);
+            var exposures = new List<CurrentCustomerExposure>();
+            var exposure = GetTotalGroupLendingLimit();
+            //var customerIds = new List<CustomerExposure>();
+            exposures = GetExposures();
             CurrentCustomerExposure totalExposure;
             
             totalExposure = new CurrentCustomerExposure()
             {
                 facilityType = "TOTAL",
-                outstandings = exposures.Sum(t => t.outstandings),
-                approvedAmount = exposures.Sum(t => t.approvedAmount),
+                outstandings = exposures.Sum(t => t.outstandingsLcy),
+                approvedAmount = exposures.Sum(t => t.approvedAmountLcy),
+                //outstandings = exposures.Sum(t => t.outstandings),
+                //approvedAmount = exposures.Sum(t => t.approvedAmount),
             };
-            
             result = result + $@"
                      <tr>
                         <td><b>{totalExposure.facilityType}</b></td>
                         <td>&nbsp;</td>
-                        <td><b>{exposures.FirstOrDefault()?.currency}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", exposure.totalLLLImpact)}</b></td>
+                        <td><b>Naira</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalExposure.approvedAmount)}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalExposure.outstandings)}</b></td>
+                        <td><b>Naira</b></td>
                         <td>&nbsp;</td>
                     </tr>
                 ";
@@ -2388,12 +3880,23 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        private int GetCurrentOperationId()
+        {
+            if (this.loanApplication?.OPERATIONID > 0 && this.loanApplication != null)
+            {
+                return this.loanApplication.OPERATIONID;
+            }else
+            {
+                return this.lmsrApplication.OPERATIONID;
+            }
+        }
+
         private string GetApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId, GetCurrentOperationId(), true).OrderBy(a => a.approvalTrailId).ToList();
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px align=center cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
@@ -2422,10 +3925,10 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetDrawdownApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrailDrawdown(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
                         <th><b></b></th>
@@ -2452,6 +3955,42 @@ namespace FintrakBanking.Repositories.Credit
             return result;
 
         }
+
+
+        private string GetDrawdownApprovalsMarkupLOS2(int targetId, int operationId)
+        {
+
+            var appraisals = GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>APPROVALS:</b></th>
+                        <th><b></b></th>
+                    </tr>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Comment</b></th>
+                       
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{trail.comment}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table><br/>";
+            return result;
+
+        }
+
 
         private string GetDecision(short? vote)
         {
@@ -2484,7 +4023,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var remark = string.Empty;
-            var customerCollaterals = collateralRepo.GetCustomerCollateral(this.customerId, this.loanApplication.LOANAPPLICATIONID, this.loanApplication.COMPANYID);
+            var customerCollaterals = collateralRepo.GetCustomerCollateral(this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID, this.loanApplication.LOANAPPLICATIONID, this.loanApplication.COMPANYID);
             
                     result += $@"
                         <ul>
@@ -2505,7 +4044,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result += $@"
-                <table border=1 width=600 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=600 cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Security / Support</b></th>
@@ -2522,12 +4061,12 @@ namespace FintrakBanking.Repositories.Credit
         private string GetCollateralCoverageMarkupLOS()
         {
             var custFacilitiesAmount = new decimal();
-            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId, false);
+            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(this.customerId, true);
             var result = String.Empty;
             if (collaterals.Count() < 1) return result;
-            decimal actualCollateralCoverageSum = 0;
-            actualCollateralCoverageSum = collaterals.Where(c => c.customerId != customerId).Sum(c => c.actualCollateralCoverage);
-            custFacilitiesAmount += actualCollateralCoverageSum;
+            //decimal actualCollateralCoverageSum = 0;
+            //actualCollateralCoverageSum = collaterals.Where(c => c.customerId != this.customerId).Sum(c => c.actualCollateralCoverage);
+            //custFacilitiesAmount += actualCollateralCoverageSum;
             decimal totalCollateralValue = 0;
             var currencies = context.TBL_CURRENCY.ToList();
             var baseCurrency = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanApplication.COMPANYID).CURRENCYID;
@@ -2541,12 +4080,12 @@ namespace FintrakBanking.Repositories.Credit
             }
             int n = 0;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=1000px cellpadding=0 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>DESCRIPTION/SUMMARY</b></th>
-                        <th><b>COLLATERAL VALUE</b></th>
-                        <th><b>COLLATERAL VALUE(LCY)</b></th>
+                        <th><b>COLLATERAL VALUE(OMV)</b></th>
+                        <th><b>COLLATERAL VALUE(FSV)</b></th>
                     </tr>
                     ";
 
@@ -2556,13 +4095,13 @@ namespace FintrakBanking.Repositories.Credit
                 var currCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == c.currencyId).CURRENCYCODE;
                 //var rate = financeTransaction.GetExchangeRate(DateTime.Now, (short)c.currencyId, loanApplication.COMPANYID);
                 //var baseCollateralValue = c.collateralValue * (decimal)rate.sellingRate;
-                totalCollateralValue += c.collateralValue;
+                totalCollateralValue += c.fsv;
                 result = result + $@"
                     <tr>
                         <td>{n}</td>
                         <td>{c.collateralSummary}</td>
-                        <td>{currCode + " " + String.Format("{0:0,0.00}", c.collateralValueFcy)}</td>
-                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", c.collateralValue)}</td>
+                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", c.omv)}</td>
+                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", c.fsv)}</td>
                     </tr>
                 ";
             }
@@ -2594,8 +4133,17 @@ namespace FintrakBanking.Repositories.Credit
         private string GetCustomerRiskRating()
         {
             var result = String.Empty;
-            var rating = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == customerId).CUSTOMERRATING;
-            result += rating;
+            if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+            {
+                var rating = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == customerId).CUSTOMERRATING;
+                result += rating;
+            }
+            else
+            {
+                var rating = context.TBL_CUSTOMER_GROUP.FirstOrDefault(c => c.CUSTOMERGROUPID == loanApplication.CUSTOMERGROUPID).RISKRATINGID;
+                result += rating;
+            }
+            
             return result;
         }
         //lms
@@ -2617,6 +4165,23 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
+            return result;
+        }
+
+        private string GetCustomerRiskRatingLMS()
+        {
+            var result = String.Empty;
+            if (lmsrApplication.CUSTOMERID > 0)
+            {
+                var rating = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrApplication.CUSTOMERID).CUSTOMERRATING;
+                result += rating;
+            }
+            else
+            {
+                var rating = context.TBL_CUSTOMER_GROUP.FirstOrDefault(c => c.CUSTOMERGROUPID == lmsrApplication.CUSTOMERGROUPID).RISKRATINGID;
+                result += rating;
+            }
+
             return result;
         }
 
@@ -2777,10 +4342,11 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGroupExposureMarkupLMS()
         {
             var result = String.Empty;
-            var exposures = GetGroupExposurebyCustomerId((int)lmsrApplication.CUSTOMERID, this.lmsrApplication.COMPANYID);
+            var exposures = GetExposuresLMS();
+            //var exposures = GetGroupExposurebyCustomerId((int)lmsrApplication.CUSTOMERID, this.lmsrApplication.COMPANYID);
             var n = 0;
             result = result + $@"
-                <table border=1>
+                <table style='font face: arial; size:12px' border=1>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>Customer Name</b></th>
@@ -2820,6 +4386,8 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(isRelatedPartyHolder, isRelatedParty);
             content = content.Replace(dateCreatedHolder, dateCreated);
             content = content.Replace(locationNameHolder, locationName);
+            content = content.Replace(managementProfileHolder, managementProfile);
+            content = content.Replace(ownershipHolder, ownership);
             content = content.Replace(approvalLevelHolder, approvalLevel);
             content = content.Replace(accountNumbersHolder, accountNumbers);
             content = content.Replace(proposedConditionsHolder, proposedConditions);
@@ -2860,6 +4428,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(collateralCoverageHolder, collateralCoverage);
             content = content.Replace(allCustomerFacilitiesHolder, allCustomerFacilities);
             content = content.Replace(obligorRiskRatingHolder, obligorRiskRating);
+            content = content.Replace(obligorClassificationHolder, obligorClassification);
             //content = content.Replace(totalGroupExposureHolder, totalGroupExposure);
 
             if (content.Contains(customerTurnoverHolder))
@@ -2906,20 +4475,38 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CurrentCustomerExposure> GetCustomerExposure(List<CustomerExposure> customerIds, int companyId) // not used!
         {
-            return loanRepo.GetCurrentCustomerExposure(customerIds, loanApplication.LOANAPPLICATIONTYPEID, companyId); // old maurer impl
+            return loanRepo.GetCurrentCustomerExposure(customerIds, loanApplication.LOANAPPLICATIONTYPEID, companyId); // old ify impl
+        }
+
+        public List<CurrentCustomerExposure> GetCustomerExposureLMS(List<CustomerExposure> customerIds, int companyId) // not used!
+        {
+            int loanType;
+            if (lmsrApplication.CUSTOMERID > 0)
+            {
+                loanType = (int)LoanTypeEnum.Single;
+            }
+            else
+            {
+                loanType = (int)LoanTypeEnum.CustomerGroup;
+            }
+            return loanRepo.GetCurrentCustomerExposure(customerIds, loanType, companyId); // old ify impl
         }
 
         // html markup
 
         private string CustomerExposureMarkup()
         {
+            if (this.loanApplication.LOANAPPLICATIONTYPEID != (int)LoanTypeEnum.Single)
+            {
+                return null;
+            }
             // var exposures = GetCustomerExposure(customerIds, companyId); // old maurer impl
-            var exposures = GetCurrentCustomerExposure(); // new
+            var exposures = GetCurrentSingleCustomerExposures(); // new
 
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table border=1>
+                <table style='font face: arial; size:12px' border=1>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>Facility Type</b></th>
@@ -2943,7 +4530,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:n}", e.proposedLimit)}</td>
                         <td>{String.Format("{0:n}", e.change)}</td>
                         <td>{String.Format("{0:n}", e.outstandings)}</td>
-                        <td>{String.Format("{0:n}", e.PastDueObligationsPrincipal)}</td>
+                        <td>{String.Format("{0:n}", e.pastDueObligationsPrincipal)}</td>
                         <td>{String.Format("{0:n}", e.PastDueObligationsInterest)}</td>
                         <td>{e.reviewDate.ToShortDateString()}</td>
                     </tr>
@@ -2987,8 +4574,8 @@ namespace FintrakBanking.Repositories.Credit
         // monitoring triggers
         public IEnumerable<MonitoringTriggersViewModel> GetMonitoringTriggers()
         {
-            if (operationId == (int)OperationsEnum.CreditAppraisal) return memo.GetApplicationMonitoringTriggers(targetId);
-            return memo.GetApplicationMonitoringTriggersLms(targetId);
+            if (operationId == (int)OperationsEnum.CreditAppraisal) return GetApplicationMonitoringTriggers(targetId);
+            return GetApplicationMonitoringTriggersLms(targetId);
         }
 
         private string MonitoringTriggersMarkup()
@@ -2998,7 +4585,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var n = 0;
             result = result + $@"
-                <table border=1>
+                <table style='font face: arial; size:12px' border=1>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>Facility</b></th>
@@ -3039,36 +4626,38 @@ namespace FintrakBanking.Repositories.Credit
         private string GetEnvironmentalSocialRiskMarkup() // TODO RATINGIS
         {
             var result = String.Empty;
-            var summary = GetEnvironmentalSocialRisk();
+            var summary = GetEnvironmentalSocialRisk().FirstOrDefault();
 
             var n = 0;
-            result = result + $@"
-                <table border=1>
-                    <tr>
-                        <th><b>S/N</b></th>
-                        <th><b>Facility</b></th>
-                        <th><b>Summary</b></th>
-                        <th><b>Rating</b></th>
-                    </tr>
-                 ";
-            foreach (var s in summary)
-            {
-                n++;
-                result = result + $@"
-                    <tr>
-                        <td>{n}</td>
-                        <td>{s.productCustomerName}</td>
-                        <td>{s.comment}</td>
-                        <td>{GetESGRating(s.ratingId)}</td>
-                    </tr>
-                ";
-            }
-            result = result + $"</table>";
+            //result = result + $@"
+            //    <table style='font face: arial; size:12px' border=1>
+            //        <tr>
+            //            <th><b>S/N</b></th>
+            //            <th><b>Facility</b></th>
+            //            <th><b>Summary</b></th>
+            //            <th><b>Rating</b></th>
+            //        </tr>
+            //     ";
+            //foreach (var s in summary)
+            //{
+            //    n++;
+            //    result = result + $@"
+            //        <tr>
+            //            <td>{n}</td>
+            //            <td>{s.productCustomerName}</td>
+            //            <td>{s.comment}</td>
+            //            <td>{GetESGRating(s.ratingId)}</td>
+            //        </tr>
+            //    ";
+            //}
+            //result = result + $"</table>";
+            result = result + $@"{ GetESGRating(summary?.ratingId)}";
             return result;
         }
        
-        private string GetESGRating(int ratingId)
+        private string GetESGRating(int? ratingId)
         {
+            if (ratingId == null) return "N/A";
             if (ratingId == 1) return "A";
             if (ratingId == 5) return "B";
             if (ratingId == 6) return "C";
@@ -3086,10 +4675,11 @@ namespace FintrakBanking.Repositories.Credit
 
         // Customer exposure
 
-        public List<CurrentCustomerExposure> GetCurrentCustomerExposure()
+        public List<CurrentCustomerExposure> GetCurrentSingleCustomerExposures()
         {
             List<CustomerProduct> details = new List<CustomerProduct>();
-            IQueryable<CurrentCustomerExposure> exposure = null;
+            IEnumerable<CurrentCustomerExposure> exposure = null;
+            //IQueryable<CurrentCustomerExposure> exposure = null;
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
 
             if (operationId == (int)OperationsEnum.CreditAppraisal)
@@ -3097,86 +4687,132 @@ namespace FintrakBanking.Repositories.Credit
             else
                 details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.PRODUCTID }).ToList();
 
-            foreach (var detail in details)
+            
+            var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == loanApplication.CUSTOMERID).CUSTOMERCODE.Trim();
+            //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+
+            exposure = (from a in context.TBL_GLOBAL_EXPOSURE
+                        where a.CUSTOMERID.Contains(customerCode)
+                        select new CurrentCustomerExposure
+                        {
+                            customerName = a.CUSTOMERNAME,
+                            customerCode = a.CUSTOMERID.Trim(),
+                            facilityType = a.ADJFACILITYTYPE,
+                            approvedAmount = a.LOANAMOUNYTCY ?? 0,
+                            approvedAmountLcy = a.LOANAMOUNYLCY ?? 0,
+                            currency = a.CURRENCYNAME,
+                            exposureTypeCodeString = a.EXPOSURETYPECODE,
+                            adjFacilityTypeString = a.ADJFACILITYTYPE,
+                            adjFacilityTypeCode = a.ADJFACILITYTYPEid,
+                            productCode = a.PRODUCTCODE,
+                            productIdString = a.PRODUCTID,
+                            productName = a.PRODUCTNAME,
+                            tenorString = a.TENOR,
+                            //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                            //proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                            outstandings = a.PRINCIPALOUTSTANDINGBALTCY ?? 0,
+                            outstandingsLcy = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                            pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                            reviewDate = DateTime.Now,
+                            bookingDate = a.BOOKINGDATE ,
+                            //maturityDateString = a.MATURITYDATE,
+                            maturityDate = a.MATURITYDATE,
+                            loanStatus = a.CBNCLASSIFICATION,
+                            referenceNumber = a.REFERENCENUMBER,
+                        }).ToList();
+
+            if (exposure.Count() > 0)
             {
-                exposure = context.TBL_LOAN
-                    .Where(x => x.CUSTOMERID == detail.CUSTOMERID && x.PRODUCTID == detail.PRODUCTID && x.LOANSTATUSID == (int)LoanStatusEnum.Active)
-                    .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
-                    .Select(g => new CurrentCustomerExposure
-                    {
-                        facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
-                        existingLimit = g.Sum(x => x.PRINCIPALAMOUNT),
-                        proposedLimit = g.Sum(x => x.OUTSTANDINGPRINCIPAL),
-                        recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                        PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
-                        PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
-                        reviewDate = DateTime.Now,
-                        prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
-                        loanStatus = "Running"
-                    });
-
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
-
-                // Same for revolving and contegent facility ...
-
-                exposure = context.TBL_LOAN_REVOLVING
-                    .Where(x => x.CUSTOMERID == detail.CUSTOMERID && x.PRODUCTID == detail.PRODUCTID && x.LOANSTATUSID == (int)LoanStatusEnum.Active)
-                    .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
-                    .Select(g => new CurrentCustomerExposure
-                    {
-                        facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
-                        existingLimit = g.Sum(x => x.OVERDRAFTLIMIT),
-                        proposedLimit = g.Sum(x => x.OVERDRAFTLIMIT),
-                        recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                        PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
-                        PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
-                        reviewDate = DateTime.Now,
-                        prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
-                        loanStatus = "Running"
-                    });
-
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
-
-                //exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
-                //           where a.CUSTOMERID == detail.CUSTOMERID && a.APPROVEDPRODUCTID == detail.PRODUCTID && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                //           select new CurrentCustomerExposure
-                //           {
-                //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                //               existingLimit = 0,
-                //               proposedLimit = a.PROPOSEDAMOUNT,
-                //               recommendedLimit = a.APPROVEDAMOUNT,
-                //               PastDueObligationsInterest = 0,
-                //               PastDueObligationsPrincipal = 0,
-                //               reviewDate = DateTime.Now,
-                //               prudentialGuideline = "Processing",
-                //               loanStatus = "Processing"
-                //           };
-
-                //if (exposure.Count() > 0) exposures.AddRange(exposure);
-
+                foreach(var e in exposure)
+                {
+                    e.exposureTypeId = int.Parse(e.exposureTypeCodeString);
+                    e.tenor = int.Parse(e.tenorString);
+                    //e.productId = int.Parse(e.productIdString);
+                    e.exposureTypeCode = int.Parse(e.exposureTypeCodeString);
+                    e.adjFacilityTypeId = int.Parse(e.adjFacilityTypeCode);
+                }
+                exposures.AddRange(exposure);
             }
+            //foreach (var detail in details)
+            //{
+            //    exposure = context.TBL_LOAN
+            //        .Where(x => x.CUSTOMERID == detail.CUSTOMERID && x.PRODUCTID == detail.PRODUCTID && x.LOANSTATUSID == (int)LoanStatusEnum.Active)
+            //        .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
+            //        .Select(g => new CurrentCustomerExposure
+            //        {
+            //            facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
+            //            existingLimit = g.Sum(x => x.PRINCIPALAMOUNT),
+            //            proposedLimit = g.Sum(x => x.OUTSTANDINGPRINCIPAL),
+            //            recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+            //            PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
+            //            pastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+            //            reviewDate = DateTime.Now,
+            //            prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
+            //            loanStatus = "Running"
+            //        });
 
-            exposures.Add(new CurrentCustomerExposure
-            {
-                facilityType = "TOTAL",
-                existingLimit = exposures.Sum(t => t.existingLimit),
-                proposedLimit = exposures.Sum(t => t.proposedLimit),
-                recommendedLimit = exposures.Sum(t => t.recommendedLimit),
-                PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
-                PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
-                reviewDate = DateTime.Now,
-                prudentialGuideline = String.Empty,
-                loanStatus = String.Empty,
-            });
+            //    if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+            //    // Same for revolving and contegent facility ...
+
+            //    exposure = context.TBL_LOAN_REVOLVING
+            //        .Where(x => x.CUSTOMERID == detail.CUSTOMERID && x.PRODUCTID == detail.PRODUCTID && x.LOANSTATUSID == (int)LoanStatusEnum.Active)
+            //        .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
+            //        .Select(g => new CurrentCustomerExposure
+            //        {
+            //            facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
+            //            existingLimit = g.Sum(x => x.OVERDRAFTLIMIT),
+            //            proposedLimit = g.Sum(x => x.OVERDRAFTLIMIT),
+            //            recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+            //            PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
+            //            pastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+            //            reviewDate = DateTime.Now,
+            //            prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
+            //            loanStatus = "Running"
+            //        });
+
+            //    if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+            //    //exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
+            //    //           where a.CUSTOMERID == detail.CUSTOMERID && a.APPROVEDPRODUCTID == detail.PRODUCTID && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+            //    //           select new CurrentCustomerExposure
+            //    //           {
+            //    //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+            //    //               existingLimit = 0,
+            //    //               proposedLimit = a.PROPOSEDAMOUNT,
+            //    //               recommendedLimit = a.APPROVEDAMOUNT,
+            //    //               PastDueObligationsInterest = 0,
+            //    //               PastDueObligationsPrincipal = 0,
+            //    //               reviewDate = DateTime.Now,
+            //    //               prudentialGuideline = "Processing",
+            //    //               loanStatus = "Processing"
+            //    //           };
+
+            //    //if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+            //}
+
+            //exposures.Add(new CurrentCustomerExposure
+            //{
+            //    facilityType = "TOTAL",
+            //    existingLimit = exposures.Sum(t => t.existingLimit),
+            //    proposedLimit = exposures.Sum(t => t.proposedLimit),
+            //    recommendedLimit = exposures.Sum(t => t.recommendedLimit),
+            //    PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
+            //    pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
+            //    reviewDate = DateTime.Now,
+            //    prudentialGuideline = String.Empty,
+            //    loanStatus = String.Empty,
+            //});
 
             return exposures;
         }
 
-        public List<CurrentCustomerExposure> GetGroupExposurebyCustomerId(int customerId, int companyId)
-        {
-            var exposures = groupRepo.GetGroupExposureByCustomerId(customerId, companyId);
-            return exposures;
-        }
+        //public List<CurrentCustomerExposure> GetGroupExposurebyCustomerId(int customerId, int companyId)
+        //{
+        //    var exposures = groupRepo.GetGroupExposureByCustomerId(customerId, companyId);
+        //    return exposures;
+        //}
 
         public decimal GetCustomerTotalOutstandingBalanceForLoans(int customerId)
         {
@@ -3326,7 +4962,7 @@ namespace FintrakBanking.Repositories.Credit
             //var turnover = GetCustomerTurnover();
             //var n = 0;
             //result = result + $@"
-            //    <table border=1>
+            //    <table style='font face: arial; size:12px' border=1>
             //        <tr>
             //            <th><b>S/N</b></th>
             //            <th><b>Account ID</b></th>
@@ -3367,7 +5003,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>MEMO</b></h3>
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <td><b>Date</b></td>
                         <td></td>
@@ -3421,7 +5057,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (FACILITY UPGRADE SUPPORT SCHEME)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -3461,7 +5097,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>School Fees Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <td>Total No of Pupils</td>
                         <td>----------------------</td>
@@ -3494,7 +5130,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -3528,7 +5164,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Account Activity with Current (Major) Banker per period of 6 months</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Period (e.g. Jan 08 to Mar 09)</b></th>
                         <th><b>Debits</b></th>
@@ -3602,7 +5238,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Cash flow Analysis/Projections</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td></td>
@@ -3838,7 +5474,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Summary Net Cash Flow </b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=700 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Year</b></th>
                         <th><b></b></th>
@@ -3883,14 +5519,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -3913,7 +5549,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <td><table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -3956,8 +5592,12 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -4004,11 +5644,11 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
@@ -4178,8 +5818,13 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -4212,7 +5857,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             return result;
         }
 
@@ -4225,7 +5870,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -4287,7 +5932,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -4321,7 +5966,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>6 Months Activity with Current (Major) Banker</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Month</b></th>
                         <th><b>Debits</b></th>
@@ -4395,14 +6040,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -4425,7 +6070,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <td><table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -4470,8 +6115,13 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+           /* result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -4518,11 +6168,11 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
@@ -4734,7 +6384,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='4'><strong>Documentation Checklist</strong></th>                     
                     </tr> 
@@ -4785,8 +6435,13 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>Concurrences:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -4819,7 +6474,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             return result;
         }
 
@@ -4832,7 +6487,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (CASH COLLATERIZED)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -4871,7 +6526,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -4912,7 +6567,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>12 Months Activity with Current (Major) Banker</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Month</b></th>
                         <th><b>Debits</b></th>
@@ -5028,14 +6683,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -5058,7 +6713,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <td><table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -5099,8 +6754,13 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>CONCURRENCES:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>CONCURRENCES:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -5147,11 +6807,11 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
@@ -5212,7 +6872,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></th>                     
                     </tr> 
@@ -5257,8 +6917,13 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
+                <h4><b>APPROVALS:</b></h4> <br />";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"
+                <br />
                 <h4><b>APPROVALS:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -5291,7 +6956,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             return result;
         }
 
@@ -5302,7 +6967,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <h3><b>MEMO</b></h3>
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td colspan=2><strong>TEMPORARY OVERDRAFT (TOD)</strong></td>
                         <td></td>
@@ -5320,7 +6985,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                
-                <table border=0 width=900 cellpadding=10 cellspacing=0>        
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>        
                    <tr>
                         <td>Name of Customer:</td>
                         <td>XXXXXXXX</td>
@@ -5353,7 +7018,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td><strong>New Request:</strong></td>
@@ -5384,7 +7049,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>3 MONTHS ACTIVITY:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                    <tr>
                         <td>Month</td>
                         <td>Debits</td>
@@ -5411,8 +7076,9 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h4>Collateral/Support/Justification:</h4>
                 <p><ul><li>List the supporting documents and their perfection status.</li></ul></p>
-                <br />
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <br />";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"<table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      
                    <tr>
                         <td colspan='2'><strong>APPROVAL INFORMATION</strong></td>                     
@@ -5454,10 +7120,11 @@ namespace FintrakBanking.Repositories.Credit
                         <td>_______________</td>
                     </tr>  
                    ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
+
             result = result + $@"
                 <br />
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                    <tr>
                         <td COLSPAN=2>ATTESTATION: I hereby undertake to sponsor the TOD based on my expert knowledge of the customer and his business, and state that I would be personally responsible in ensuring repayment in line with approved terms.</td>
                         
@@ -5480,7 +7147,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>Staff Car Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h3><b>Staff Information</b></h3>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
                         <td>------------------</td>
@@ -5576,7 +7243,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -5620,7 +7287,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -5665,7 +7332,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -5705,7 +7372,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Month</b></th>
                         <th><b>Debit</b></th>
@@ -5774,7 +7441,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -5804,14 +7471,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Car Loan</td>
@@ -5880,7 +7547,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Risk Acceptance Criteria (RAC) – Staff Car Loans</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Description</b></th>
                         <th><b>Required</b></th>
@@ -5961,48 +7628,49 @@ namespace FintrakBanking.Repositories.Credit
                     </tr> 
                  ";
             result = result + $"</table>";
-           
+
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+            /* result = result + $@" <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                      <tr>
+                         <th></th>
+                         <th><b>NAME</b></th>
+                         <th><b>SIGNATURE & DATE</b></th>
+                     </tr> 
+                    <tr>
+                         <td>Staff / Applicant </td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                    <tr>
+                         <td>Staff’s Group Head </td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                    <tr>
+                         <td>HR Officer</td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
                      <tr>
-                        <th></th>
-                        <th><b>NAME</b></th>
-                        <th><b>SIGNATURE & DATE</b></th>
-                    </tr> 
-                   <tr>
-                        <td>Staff / Applicant </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>Staff’s Group Head </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                   <tr>
-                        <td>HR Officer</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Group Head, CRM – PBD </td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
-                    <tr>
-                        <td>Group Head, Credit Admin & Portfolio Management</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Approval: Group Head, Human Resources </td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                 ";
-            result = result + $"</table>";
+                         <td>Group Head, CRM – PBD </td>
+                         <td></td>
+                         <td></td>
+                     </tr>  
+                     <tr>
+                         <td>Group Head, Credit Admin & Portfolio Management</td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                     <tr>
+                         <td>Approval: Group Head, Human Resources </td>
+                         <td></td>
+                         <td></td>
+                     </tr> 
+                  ";
+             result = result + $"</table>";*/
             return result;
         }
 
@@ -6015,7 +7683,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>Staff Mortgage Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h3><b>Staff Information</b></h3>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
                         <td>------------------</td>
@@ -6126,7 +7794,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -6170,7 +7838,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -6215,7 +7883,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -6255,7 +7923,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Month</b></th>
                         <th><b>Debit</b></th>
@@ -6324,7 +7992,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -6353,14 +8021,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Mortgage Loan</td>
@@ -6426,7 +8094,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Risk Acceptance Criteria – Staff Mortgage Loan</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Description</b></th>
                         <th><b>Required</b></th>
@@ -6515,8 +8183,10 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+
+            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -6558,7 +8228,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>                           
@@ -6575,7 +8245,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>Staff Personal Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h4><b>Staff Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
                         <td>-----------------------------</td>
@@ -6669,7 +8339,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -6713,7 +8383,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -6758,7 +8428,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -6798,7 +8468,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Month</b></th>
                         <th><b>Debit</b></th>
@@ -6867,7 +8537,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -6896,14 +8566,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Personal Loan</td>
@@ -6976,7 +8646,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Risk Acceptance Criteria – Staff Personal Loan</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Description</b></th>
                         <th><b>Required</b></th>
@@ -7079,8 +8749,9 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -7117,11 +8788,11 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th></th>
@@ -7142,7 +8813,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>Staff Personal Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h4><b>Staff Information</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
                         <td>----------------------</td>
@@ -7237,7 +8908,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -7281,7 +8952,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -7326,7 +8997,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -7366,7 +9037,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Month</b></th>
                         <th><b>Debit</b></th>
@@ -7435,7 +9106,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -7464,14 +9135,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Personal Loan</td>
@@ -7537,7 +9208,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Risk Acceptance Criteria – Staff Personal Loan</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Description</b></th>
                         <th><b>Required</b></th>
@@ -7635,8 +9306,9 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>Approval Information:</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <h4><b>Approval Information:</b></h4>";
+            result = result + GetApprovalsMarkupLOS();
+            /*result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th><b>NAME</b></th>
@@ -7673,7 +9345,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td></td>
                     </tr> 
                  ";
-            result = result + $"</table>";
+            result = result + $"</table>";*/
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
@@ -7693,7 +9365,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>DOCUMENTATION DEFERRAL/WAIVER FORM</b></h3>
                 <br />
                
-                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td><strong>BORROWER:</strong></td> 
                         <td>{customerName}</td>
@@ -7725,7 +9397,7 @@ namespace FintrakBanking.Repositories.Credit
             var precedent = GetConditionPrecedentByApplicationDetailId(appId.LOANAPPLICATIONDETAILID);
             result = result + $@"
                 <br />              
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><em><strong>Documents/Conditions precedent to draw down as approved in the FAM</strong></em>:</td>
@@ -7935,6 +9607,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             
             var isInitialize = InitializeCashBackMemoProperties(operationId, targetId);
+            var staffBranch = context.TBL_STAFF.Where(s => s.STAFFID == staffId).Select(s => s.BRANCHID).FirstOrDefault();
+            var branchName = context.TBL_BRANCH.Where(b => b.BRANCHID == staffBranch).Select(b => b.BRANCHNAME).FirstOrDefault();
             var flowChange = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.OPERATIONID == operationId).FirstOrDefault();
             var cashbackSection = context.TBL_CASHBACK.Where(x => x.LOANAPPLICATIONDETAILID == targetId).FirstOrDefault();
 
@@ -7943,7 +9617,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>MEMO</b></h3> <br />
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td><b>Date:</b></td>
                         <td>{DateTime.Now}</td>
@@ -7958,15 +9632,15 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                         <td><b>Location:</b></td>
-                        <td>{locationName?.ToUpper()}</td>
+                        <td>{branchName?.ToUpper()}</td>
                     </tr>
                     <tr>
                         <td><b>Subject:</b></td>
                         <td>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</td>
                     </tr>
                  ";
-                result = result + $"</table>";
-                result = result + $@" 
+            result = result + $"</table>";
+            result = result + $@" 
                     <p></p>
                     <p><b>BACKGROUND</b></p>
                     <p>{cashbackSection?.BACKGROUND}</p>
@@ -7974,22 +9648,21 @@ namespace FintrakBanking.Repositories.Credit
                     <p>{cashbackSection?.ISSUES}</p>
                     <p><b>REQUEST</b></p>
                     <p>{cashbackSection?.REQUEST}</p>
-                    
-                <p align='center'><h2><b>APPROVAL LOG</b></h2></p>
+                <p align='center'><b>APPROVAL LOG</b></p>
                 <p><b>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</b></p>
                 <p><b>{flowChange?.PLACEHOLDER.ToUpper()} MEMO</b></p>
             ";
-            result = result + GetCashBackApprovalsMarkupLOS();
+            result = result + GetCashBackApprovalsMarkupLOS(this.loanApplication.LOANAPPLICATIONID, operationId);
             return result;
         }
 
 
-        private string GetCashBackApprovalsMarkupLOS()
+        private string GetCashBackApprovalsMarkupLOS(int targetId, int operationId)
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrail(targetId, operationId,true).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <th><b>APPROVAL NAME</b></th>
                         <th><b>DESIGNATION</b></th>
@@ -8016,6 +9689,61 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+
+
+        public string GetCallMemoMarkup(int id)
+        {
+            var data = context.TBL_CALL_MEMO.Find(id);
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == data.CREATEDBY).Select(s => s).FirstOrDefault();
+            var branch = context.TBL_BRANCH.Where(c => c.BRANCHID == staff.BRANCHID).Select(c => c.BRANCHNAME).FirstOrDefault();
+
+
+            var nextDateTime = data.NEXTCALLDATE;
+            var date = nextDateTime?.ToString("yyyy-MM-dd");
+            var nextCallTime = data.NEXTCALLTIME;
+            var time = nextCallTime.ToString("hh:mm:ss");
+
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                      <td><strong>Date</strong></td>
+                      <td>{data.DATECREATED}</td>  
+                    </tr>
+                    <tr>
+                      <td><strong>Participants at the meeting</strong></td>
+                      <td>{data.PARTICIPANTS}</td>  
+                    </tr>
+                    <tr>
+                      <td><strong>Location of the meeting</strong></td>
+                      <td>{data.LOCATION}</td>  
+                    </tr>
+                     <tr>
+                      <td><strong>Time</strong></td>
+                      <td>{data.CALLTIME}</td>  
+                    </tr>
+                    <br/>
+                    ";
+            result = result + $"</table>";
+            result = result + $"<br/>";
+            result = result + $"<p><strong>CUSTOMER BACKGROUND</strong><br/>{data.BACKGROUND}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>RECENT UPDATE</strong><br/>{data.RECENTUPDATE}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>PURPOSE</strong><br/>{data.PURPOSE}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>MEETING HIGHLIGHTS</strong><br/>{data.DISCUSION}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>ACTION PLAN</strong><br/>{data.ACTION}";
+            result = result + $"</p><br/>";
+            result = result + $"<p><strong>NEXT CALL DATE AND TIME</strong><br/>{date} {time}";
+            result = result + $"</p><br/>";
+            result = result + $"<strong>NAME OF INITIATOR: </strong>{staff.FIRSTNAME} {staff.MIDDLENAME} {staff.LASTNAME}";
+            result = result + $"<br/>";
+            result = result + $"<strong>BUSINESS UNIT: </strong>{branch}";
+            return result;
+
+        }
     }
 }
 

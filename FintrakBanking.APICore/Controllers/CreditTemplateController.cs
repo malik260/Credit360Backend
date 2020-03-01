@@ -503,6 +503,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-call-memo-html/{id}")]
+        public HttpResponseMessage GetCallMemoHtml([FromUri] int id)
+        {
+            try
+            {
+                var response = _memoRepo.GetCallMemoMarkup(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-cashback-memo-html/{operationId}/operationId/{targetId}/targetId")]
         public HttpResponseMessage GetCashBackMemoHtml(int operationId, int targetId)
         {
@@ -589,7 +605,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId,operationId, targetId);
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId,operationId, targetId,user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)

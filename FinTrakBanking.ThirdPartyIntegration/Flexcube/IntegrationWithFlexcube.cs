@@ -23,6 +23,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using FinTrakBanking.ThirdPartyIntegration.StaffInfo;
     using FinTrakBanking.ThirdPartyIntegration.Basel;
     using FintrakBanking.ViewModels.Credit;
+    using FintrakBanking.ViewModels.Flexcube;
 
     public class IntegrationWithFlexcube : IIntegrationWithFinacle
     {
@@ -64,7 +65,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
-                if(twoFADetails.skipAuthentication == false)
+                if (twoFADetails.skipAuthentication == false)
                 {
                     var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
@@ -74,7 +75,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
 
             ResponseMessage result = null;
-                Task.Run(async () => result = await overDraft.APIOverDraftExtend(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.APIOverDraftExtend(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -102,7 +103,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                if(twoFADetails.skipAuthentication == false)
+                if (twoFADetails.skipAuthentication == false)
                 {
                     var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
@@ -110,7 +111,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     if (authenticated.authenticated == false)
                         throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
                 }
-              
+
             }
 
             ResponseMessage result = null;
@@ -137,22 +138,106 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
+        public ResponseMessageViewModel FlexcubeOverDraft(FlexcubeCreateOverdraftViewModel model, short loanSystemTypeId, TwoFactorAutheticationViewModel twoFADetails = null)
         {
-
-            if (USE_TWO_FACTOR_AUTHENTICATION)
+            if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
             {
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                if(twoFADetails.skipAuthentication == false)
+                if (twoFADetails.skipAuthentication == false)
                 {
                     var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
                     if (authenticated.authenticated == false)
                         throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
                 }
-               
+
+            }
+
+            ResponseMessage result = null;
+            // if( LogOverDraftNormal(model))
+            Task.Run(async () => result = await overDraft.FlexcubeAPIOverDraft(model, loanSystemTypeId)).GetAwaiter().GetResult();
+
+            if (result.Message.IsSuccessStatusCode)
+            {
+                //if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                //{
+                //    throw new SecureException(result.APIResponse.message);
+                //}
+                //else
+                //{
+                LogOverDraft(model);
+                return result.APIResponse;
+                //}
+            }
+            else
+            {
+                //throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+
+            }
+
+        }
+
+
+        public ResponseMessageViewModel FlexcubeCasaLien(FlexcubeLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
+        {
+            if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+
+            }
+
+            ResponseMessage result = null;
+            // if( LogOverDraftNormal(model))
+            Task.Run(async () => result = await overDraft.FlexcubeCasaLien(model)).GetAwaiter().GetResult();
+
+            if (result.Message.IsSuccessStatusCode)
+            {
+                //if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                //{
+                //    throw new SecureException(result.APIResponse.message);
+                //}
+                //else
+                //{
+                //LogOverDraft(model);
+                return result.APIResponse;
+                //}
+            }
+            else
+            {
+                //throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+
+            }
+        }
+
+
+        public ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
+        {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
             }
 
             ResponseMessage result = null;
@@ -194,14 +279,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     if (authenticated.authenticated == false)
                         throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
                 }
-                    
+
             }
 
             ResponseMessage result = null;
 
             model.apiUrl = @"api/OverDraft/Renew ";
 
-                Task.Run(async () => result = await overDraft.APIOverDraftRenew(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.APIOverDraftRenew(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -229,7 +314,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                if(twoFADetails.skipAuthentication == false)
+                if (twoFADetails.skipAuthentication == false)
                 {
                     var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
@@ -277,12 +362,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     if (authenticated.authenticated == false)
                         throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
                 }
-                   
+
             }
             model.APIUrl = @"api/TemporaryOverDraft/Running";
             ResponseMessage result = null;
 
-                Task.Run(async () => result = await overDraft.APITemporaryOverDraftRunning(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.APITemporaryOverDraftRunning(model)).GetAwaiter().GetResult();
 
 
 
@@ -317,7 +402,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                if(twoFADetails.skipAuthentication == false)
+                if (twoFADetails.skipAuthentication == false)
                 {
                     var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
                     if (authenticated.authenticated == false)
@@ -327,7 +412,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             model.APIUrl = @"api/TemporaryOverDraft/Single";
             ResponseMessage result = null;
-                Task.Run(async () => result = await overDraft.APITemporaryOverDraftSingle(model)).GetAwaiter().GetResult();
+            Task.Run(async () => result = await overDraft.APITemporaryOverDraftSingle(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -343,8 +428,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                throw new SecureException("Core Banking API error - Response Code: " + result.Message.StatusCode + ". Response Message: " + result.Message.ReasonPhrase); 
-               // throw new APIErrorException("Cresult.Message.StatusCode + " " + result.Message.ReasonPhrase);
+                throw new SecureException("Core Banking API error - Response Code: " + result.Message.StatusCode + ". Response Message: " + result.Message.ReasonPhrase);
+                // throw new APIErrorException("Cresult.Message.StatusCode + " " + result.Message.ReasonPhrase);
             }
         }
 
@@ -354,15 +439,22 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
         {
+            if (string.IsNullOrEmpty(fromCurrencyCode))
+            {
+                return new CurrencyExchangeRateViewModel();
+            }
             var data = new CurrencyExchangeRateViewModel();
             Task.Run(async () => { data = await transaction.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode); }).GetAwaiter().GetResult();
             return new CurrencyExchangeRateViewModel
             {
                 // baseCurrencyId = baseCurrency,
+                fromCurrencyCode = data.fromCurrencyCode,
+                toCurrencyCode = data.toCurrencyCode,
                 currencyId = data.currencyId,
                 buyingRate = data.buyingRate,
                 sellingRate = data.sellingRate,
-                date = data.date,
+                exchangeRate = data.exchangeRate,
+                date = DateTime.Now,
                 isBaseCurrency = false
             };
         }
@@ -415,7 +507,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     return result;
                 }
             }
-            catch  {
+            catch {
                 throw new APIErrorException(result.errorDesc);
             }
             return result;
@@ -446,9 +538,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
         public PostingResult PostTransactions(List<FinanceTransactionViewModel> model)
-        { 
+        {
             ResponseMessage result = null;
-            
+
             List<TransactionPostingViewModel> transactionList = TransactionData(model);
 
             var curencyTypeCount = model.Select(x => x.currencyId).Distinct().Count();
@@ -473,7 +565,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     str = str.Replace("FAILURE", "");
                     str = str.Replace("SUCCESS+", "");
 
-                    return new PostingResult {posted = true, responseCode = str.Trim() };
+                    return new PostingResult { posted = true, responseCode = str.Trim() };
                 }
                 //if (result.APIResponse.webRequestStatus == "SUCCESS+      M18")
                 //{
@@ -482,14 +574,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 //}
                 else
                 {
-                    var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-
-                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
+                    //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
                 }
             }
             else
             {
-                var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{","").Replace("}", "").Replace(@"""", "");
+                var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
                 //throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
@@ -498,99 +589,172 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public PostingResult PostLoanCreationInputs(List<LoanCreationViewModel> model)
+        public PostingResult PostFacilityCreationInputs(FlexcubeCreateFacilityViewModel model, short loanSystemTypeId)
         {
             {
                 ResponseMessage result = null;
-
-                //List<TransactionPostingViewModel> transactionList = TransactionData(model);
-
-                //var curencyTypeCount = model.Select(x => x.currencyId).Distinct().Count();
-
-                Task.Run(async () => result = await transaction.ApiTransactionLoanCreationPosting(model)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await transaction.ApiTransactionFacilityCreationPosting(model, loanSystemTypeId)).GetAwaiter().GetResult();
 
                 if (result.APIResponse != null)
                 {
-                    if (result.APIResponse.responseCode == "0")
+                    if (result.APIResponse.responseCode == "00")
                     {
-                        // AddCustomTransactions(transactionList);
-
                         string str = result.APIResponse.webRequestStatus;
-                        str = str.Replace(":", "");
-                        str = str.Replace("FAILURE", "");
-                        str = str.Replace("SUCCESS+", "");
+                        //str = str.Replace(":", "");
+                        //str = str.Replace("FAILURE", "");
+                        //str = str.Replace("SUCCESS+", "");
 
-                        return new PostingResult { posted = true, responseCode = str.Trim() };
+                        //return new PostingResult { posted = true, responseCode = str.Trim() };
+                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode };
                     }
-                    //if (result.APIResponse.webRequestStatus == "SUCCESS+      M18")
-                    //{
-                    //    AddCustomTransactions(transactionList);
-                    //    return true;
-                    //}
                     else
                     {
-                        var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                        //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
+                    }
+                }
+                else
+                {
+                    //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+                }
 
-                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
+            }
+        }
+
+        public PostingResult FetchCBNCRMSCode(CRMSCodeGeneration model, short loanSystemTypeId)
+        {
+            {
+                ResponseMessage result = null;
+                Task.Run(async () => result = await transaction.ApiFetchCBMCRMSCode(model, loanSystemTypeId)).GetAwaiter().GetResult();
+
+                if (result.APIResponse != null)
+                {
+                    //if (result.APIResponse.responseCode == "00")
+                    if (result.APIStatus)
+                    {
+                        string str = result.APIResponse.webRequestStatus;
+                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode, responseMessage = result.responseMessage };
+                    }
+                    else
+                    {
+                        //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message); //message result.APIResponse.webRequestStatus
                     }
                 }
                 else
                 {
                     var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-                    //throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
                     throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
                 }
 
-                //return result.APIStatus;
+            }
+        }
+
+
+        public PostingResult PostLoanCreationInputs(FlexcubeCreateLoanAccountViewModel model, short loanSystemTypeId)
+        {
+            {
+                ResponseMessage result = null;
+                Task.Run(async () => result = await transaction.ApiTransactionLoanCreationPosting(model, loanSystemTypeId)).GetAwaiter().GetResult();
+
+                if (result.APIResponse != null)
+                {
+                    if (result.APIResponse.responseCode == "00")
+                    {
+                        string str = result.APIResponse.webRequestStatus;
+                        //str = str.Replace(":", "");
+                        //str = str.Replace("FAILURE", "");
+                        //str = str.Replace("SUCCESS+", "");
+
+                        //return new PostingResult { posted = true, responseCode = str.Trim() };
+                        return new PostingResult { posted = true, responseCode = result.APIResponse.responseCode };
+                    }
+                    else
+                    {
+                        //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+                    }
+                }
+                else
+                {
+                    //var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+                }
 
             }
         }
-            //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
-            //{
-            //    ResponseMessage result = null;
-            //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
-            //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+        public PostingResult GetCreditCheck(CreditCheckViewModel model)
+        {
+            ResponseMessage result = null;
+            Task.Run(async () => result = await transaction.FlexcubeCreditCheck(model)).GetAwaiter().GetResult();
+
+            if (result.responseMessage != null)
+            {
+                if (result.APIStatus)
+                {
+                    return new PostingResult { posted = true, responseCode = "0", responseMessage = result.responseMessage, responseObject = result.responseObject };
+                }
+                else
+                {
+                    throw new ConditionNotMetException("Core Banking API Error - Kindly Contact System Administrator!");
+                    //throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.message);
+                }
+            }
+            else
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly Contact System Administrator!");
+            }
+
+        }
+
+        //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
+        //{
+        //    ResponseMessage result = null;
+        //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+
+        //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
 
 
-            //    if (result.APIResponse.responseCode == "0")
-            //    {
-            //        AddCustomTransactions(transactionLst);
-            //    }
+        //    if (result.APIResponse.responseCode == "0")
+        //    {
+        //        AddCustomTransactions(transactionLst);
+        //    }
 
-            //    return result.APIStatus;
-            //}
+        //    return result.APIStatus;
+        //}
 
-            //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
-            //{
-            //    ResponseMessage result = null;
+        //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
+        //{
+        //    ResponseMessage result = null;
 
-            //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+        //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
-            //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+        //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
 
-            //    if (result.APIResponse != null)
-            //    {
-            //        if (result.APIResponse.responseCode == "0")
-            //        {
-            //            AddCustomTransactions(transactionLst);
-            //            return true;
-            //        }
-            //        else
-            //        {
-            //            throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
-            //    }
+        //    if (result.APIResponse != null)
+        //    {
+        //        if (result.APIResponse.responseCode == "0")
+        //        {
+        //            AddCustomTransactions(transactionLst);
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
+        //    }
 
-            //    //return result.APIStatus;
+        //    //return result.APIStatus;
 
-            //}
+        //}
 
-        public bool AddCustomerAccounts(int customerId,string customerCode)
+        public bool AddCustomerAccounts(int customerId, string customerCode)
         {
             //var customerId = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).Select(b => b.CUSTOMERID).FirstOrDefault();
             //var customerId = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERCODE == customerCode).CUSTOMERID;
@@ -609,7 +773,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency).CURRENCYID;
                 var accountRecord = context.TBL_CASA_ACCOUNTSTATUS
                     .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower());
-                    
+
                 TBL_CASA addCustomerAcct = new TBL_CASA();
                 addCustomerAcct.CUSTOMERID = customerId;
                 addCustomerAcct.AVAILABLEBALANCE = item.availableBalance;
@@ -621,7 +785,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.BRANCHID = (short)(item.branchCode != null && item.branchCode != string.Empty ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
                 addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
                 addCustomerAcct.ISCURRENTACCOUNT = true;
-                addCustomerAcct.ACCOUNTSTATUSID = accountRecord != null ? (short)accountRecord.ACCOUNTSTATUSID : (short) 1;//(short)(item.accountStatusName == "Active" ? 1 : 3);
+                addCustomerAcct.ACCOUNTSTATUSID = accountRecord != null ? (short)accountRecord.ACCOUNTSTATUSID : (short)1;//(short)(item.accountStatusName == "Active" ? 1 : 3);
                 addCustomerAcct.LIENAMOUNT = 0;
                 addCustomerAcct.HASLIEN = false;
                 addCustomerAcct.POSTNOSTATUSID = 1;
@@ -676,6 +840,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             var customerId = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).Select(b => b.CUSTOMERID).FirstOrDefault();
             //var customerId = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERCODE == customerCode).CUSTOMERID;
             bool output = false;
+            bool outcome = false;
             var data = new List<CasaViewModel>();
             List<TBL_CASA> customerAcct = new List<TBL_CASA>();
 
@@ -692,7 +857,17 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower())?
                     .ACCOUNTSTATUSID;
 
-                if(item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
+                TBL_CASA result = (from p in context.TBL_CASA
+                                   where p.CUSTOMERID == customerId && p.PRODUCTACCOUNTNUMBER == item.productAccountNumber
+                                   select p).SingleOrDefault();
+
+                if (result != null)
+                {
+                    outcome = updateAccountBalance(item, result.CASAACCOUNTID, accountStatusId);
+                    continue;
+                }
+
+                if (item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
                 TBL_CASA addCustomerAcct = new TBL_CASA();
                 addCustomerAcct.CUSTOMERID = customerId;
                 addCustomerAcct.AVAILABLEBALANCE = item.availableBalance;
@@ -710,124 +885,204 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.POSTNOSTATUSID = 1;
                 addCustomerAcct.DELETED = false;
 
-                customerAcct.Add(addCustomerAcct);
+                if (result == null) customerAcct.Add(addCustomerAcct);
+                else continue;
             }
-            var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
-            if (customerExist == null)
-            {
-                this.context.TBL_CASA.AddRange(customerAcct);
-                context.SaveChanges();
-            }
-            else
-            {
-                foreach (var a in customerAcct)
-                {
+            //var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
+            //if (customerExist == null)
+            //{
+            if (customerAcct.Count == 0) { throw new SecureException("Core Banking API Error - The API returned empty!"); }
+            this.context.TBL_CASA.AddRange(customerAcct);
+            output = context.SaveChanges() > 0;
+            //}
+            //else
+            //{
+            //    foreach (var a in customerAcct)
+            //    {
 
-                    TBL_CASA result = (from p in context.TBL_CASA
-                                       where p.CUSTOMERID == a.CUSTOMERID && p.PRODUCTACCOUNTNUMBER == a.PRODUCTACCOUNTNUMBER
-                                       select p).SingleOrDefault();
+            //        TBL_CASA result = (from p in context.TBL_CASA
+            //                           where p.CUSTOMERID == a.CUSTOMERID && p.PRODUCTACCOUNTNUMBER == a.PRODUCTACCOUNTNUMBER
+            //                           select p).SingleOrDefault();
 
-                    if (result == null)
-                    {
-                        this.context.TBL_CASA.Add(a);
-                        context.SaveChanges();
-                    }
-                    else
-                    {
-                        result.AVAILABLEBALANCE = a.AVAILABLEBALANCE;
-                        result.ACCOUNTSTATUSID = a.ACCOUNTSTATUSID;
-                        result.LEDGERBALANCE = a.LEDGERBALANCE;
-                        context.SaveChanges();
-                    }
-                }
+            //        if (result == null)
+            //        {
+            //            this.context.TBL_CASA.Add(a);
+            //            context.SaveChanges();
+            //        }
+            //        else
+            //        {
+            //            result.AVAILABLEBALANCE = a.AVAILABLEBALANCE;
+            //            result.ACCOUNTSTATUSID = a.ACCOUNTSTATUSID;
+            //            result.LEDGERBALANCE = a.LEDGERBALANCE;
+            //            context.SaveChanges();
+            //        }
+            //    }
 
-            }
+            //}
 
             //context.SaveChanges();
             //context.SaveChangesAsync();
 
-            output = true;
+            //output = true;
 
-            return output;
+            if (output == true || outcome == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool updateAccountBalance(CasaViewModel item, int CASAACCOUNTID, short? accountStatusId)
+        {
+            var Casa = context.TBL_CASA.Find(CASAACCOUNTID);
+
+
+            if (item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
+
+            if (Casa != null)
+            {
+                Casa.AVAILABLEBALANCE = item.availableBalance;
+                Casa.ACCOUNTSTATUSID = (short)accountStatusId;
+                Casa.LEDGERBALANCE = item.ledgerBalance;
+                Casa.DATETIMEUPDATED = DateTime.Now;
+            }
+
+            return context.SaveChanges() > 0;
         }
 
         public List<CustomerViewModels> GetCustomerByAccountsNumber(string customerAccount)
         {
             List<CustomerViewModels> cust = new List<CustomerViewModels>();
 
-            Task.Run(async () => cust = await customer.GetCustomerByAccountsNumber(customerAccount)).GetAwaiter()
-                .GetResult();
-            return cust;
+            try
+            {
+                Task.Run(async () => cust = await customer.GetCustomerByAccountsNumber(customerAccount)).GetAwaiter().GetResult();
+                return cust;
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
         public CasaBalanceViewModel GetCustomerAccountBalance(string customerAccount)
         {
             CasaBalanceViewModel accountOutput = null;
 
-            Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
+            try
+            {
+                Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
                 .GetResult();
+                return accountOutput;
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
 
-          
-
-
-            return accountOutput;
         }
 
         public List<CasaViewModel> GetCustomerAccountsBalanceByCustomerCode(string customerCode)
         {
             List<CasaViewModel> casa = new List<CasaViewModel>();
+
             try
             {
-                Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode))
-                    .GetAwaiter().GetResult();
+                Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode)).GetAwaiter().GetResult();
+                return casa;
             }
-            catch (Exception ex)
+            catch (APIErrorException ex)
             {
-                throw;
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
-      
-            return casa;
+
         }
 
-        public List<RatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode)
+        public List<SubGroupRatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode)
         {
-            List<RatingAndRatioViewModel> customerRatio = new List<RatingAndRatioViewModel>();
-            Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode))
-                .GetAwaiter().GetResult();
-            return customerRatio;
+            List<SubGroupRatingAndRatioViewModel> customerRatio = new List<SubGroupRatingAndRatioViewModel>();
+
+            try {
+                Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode)).GetAwaiter().GetResult();
+                return customerRatio;
+            }
+            catch (APIErrorException)
+            {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         } // GetCorporateProbabilityDefaultByCustomerId
+
+        public List<MainGroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode)
+        {
+            List<MainGroupRatingAndRatioViewModel> customerGroupRatio = new List<MainGroupRatingAndRatioViewModel>();
+            Task.Run(async () => customerGroupRatio = await basel.GetAllCustomerRatios(customerCode))
+                .GetAwaiter().GetResult();
+            return customerGroupRatio;
+        }
 
         public CutomerRatingViewModel GetCorporateCustomerRatingByCustomerCode(string customerCode)
         {
             CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
-            Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
+
+            try {
+                Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return customerRating;
+                return customerRating;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
         }
 
         public FacilityRatingViewModel GetAutoLoanRetailByCustomerCode(string customerCode)
         {
             FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
-            Task.Run(async () => autoLoan = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
+
+            try {
+                Task.Run(async () => autoLoan = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return autoLoan;
+                return autoLoan;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
 
         public FacilityRatingViewModel GetPersonalLoanRetailByCustomerCode(string customerCode)
         {
             FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
-            Task.Run(async () => personalLoan = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
-                .GetAwaiter().GetResult();
-            return personalLoan;
+
+            try {
+                Task.Run(async () => personalLoan = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
+               .GetAwaiter().GetResult();
+                return personalLoan;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
         public FacilityRatingViewModel GetCreditCardRetailByCustomerCode(string customerCode)
         {
             FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
-            Task.Run(async () => creditCard = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
+
+            try {
+                Task.Run(async () => creditCard = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return creditCard;
+                return creditCard;
+            }
+            catch (APIErrorException) {
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            }
+
         }
 
         //public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)
@@ -844,9 +1099,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
-            Task.Run(async () => accounts = await customer.GetCustomerTransactions(accountNumber, durationInMonths))?.GetAwaiter().GetResult();
-
-            return accounts;
+            try {
+                Task.Run(async () => accounts = await customer.GetCustomerTransactions(accountNumber, durationInMonths))?.GetAwaiter().GetResult();
+                return accounts;
+            }
+            catch (Exception) {
+                throw new ConditionNotMetException("Core Banking API error, Kindly contact system administartor!");
+            }
         }
 
         public List<CustomerTurnoverViewModel> GetCustomerAccountInterestTransactions(string customerCode, int durationInMonths)
@@ -868,12 +1127,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
             var accountInfo = account.ACCOUNTCODE + " - " + account.ACCOUNTNAME + " for currency " + currency.CURRENCYCODE;
 
             var nonBranchSpecificAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
-                               join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE                               
-                               where gla.GLACCOUNTID == glAccountId
-                               select new { gl.ACCOUNTID, gl.ISBRANCHSPECIFIC }).FirstOrDefault();
+                                            join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
+                                            where gla.GLACCOUNTID == glAccountId
+                                            select new { gl.ACCOUNTID, gl.ISBRANCHSPECIFIC }).FirstOrDefault();
 
             if (nonBranchSpecificAccount == null)
-                throw new ConditionNotMetException("There is no custom GL setup for GL " + accountInfo +  ". Check the custom GL setup");
+                throw new ConditionNotMetException("There is no custom GL setup for GL " + accountInfo + ". Check the custom GL setup");
 
             if (nonBranchSpecificAccount.ISBRANCHSPECIFIC == false)
             {
@@ -898,7 +1157,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
         }
 
-        public bool ChangeOverDraftInterestRate(InterestRateInquiryViewModel model, string accountType,TwoFactorAutheticationViewModel twoFADetails = null)
+        public bool ChangeOverDraftInterestRate(InterestRateInquiryViewModel model, string accountType, TwoFactorAutheticationViewModel twoFADetails = null)
         {
             if (USE_TWO_FACTOR_AUTHENTICATION)
             {
@@ -1008,6 +1267,42 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return result;
         }
 
+        private bool LogOverDraft(FlexcubeCreateOverdraftViewModel model)
+        {
+            return true;
+            //bool result = false;
+            //var modify = context.TBL_CUSTOM_OVERDRAFTNORMAL.Find(model.overdraftNormalId);
+            //if (modify != null)
+            //{
+            //    modify.CONSUMED = true;
+            //    modify.DATETIMECONSUMED = DateTime.Now;
+            //    result = context.SaveChanges() > 0;
+            //}
+            //else
+            //{
+            //    //var data = new TBL_CUSTOM_OVERDRAFTNORMAL
+            //    //{
+            //    //    ACCOUNTNUMBER = model.accountNumber,
+            //    //    APIURL = @"api/OverDraft/Normal",
+            //    //    DATETIMECREATED = DateTime.Now,
+            //    //    EXPIRYDATE = model.expiryDate,
+            //    //    SANCTIONLIMIT = model.sanctionLimit,
+            //    //    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
+            //    //    APPLICATIONDATE = model.applicationDate,
+            //    //    DOCUMENTDATE = model.documentDate,
+            //    //    REVIEWEDDATE = model.reviewedDate,
+            //    //    SANCTIONAUTHORIZER = model.sanctionAuthorizer,
+            //    //    SANCTIONDATE = model.sanctionDate,
+            //    //    SANCTIONLEVEL = model.sanctionLevel,
+
+            //    //};
+            //    //context.TBL_CUSTOM_OVERDRAFTNORMAL.Add(data);
+            //    //result = context.SaveChanges() > 0;
+            //    // model.overdraftNormalId = data.OVERDRAFTNORMALID;
+            //}
+            //return result;
+        }
+
         private bool LogOverDraftTopUpAndRenew(OverDraftTopUpAndRenewViewModel model)
         {
             bool result = false;
@@ -1070,7 +1365,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
 
-        private List<TransactionPostingViewModel> TransactionData(List<FinanceTransactionViewModel> model )
+        private List<TransactionPostingViewModel> TransactionData(List<FinanceTransactionViewModel> model)
         {
             List<TransactionPostingViewModel> transactionLst = new List<TransactionPostingViewModel>();
             foreach (var item in model)
@@ -1106,13 +1401,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     : "D" + String.Format("{0:0.00}", item.debitAmount);
                 //amounts = item.sourceReferenceNumber,
                 transPosting.narration = item.description;
-                if(item.batchCode == null)
+                if (item.batchCode == null)
                 {
-                    transPosting.referenceNumber =  "1222333444";  // to be change  transPosting.referenceNumber = item.sourceReferenceNumber                    
+                    transPosting.referenceNumber = "1222333444";  // to be change  transPosting.referenceNumber = item.sourceReferenceNumber                    
                 }
                 else
                 {
-                    transPosting.referenceNumber = item.batchCode;  
+                    transPosting.referenceNumber = item.batchCode;
                 }
 
                 transPosting.sourceReferenceNumber = item.sourceReferenceNumber.Trim();
@@ -1160,7 +1455,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType)
         {
-            InterestRateInquiryViewModel accountOutput =  new InterestRateInquiryViewModel();
+            InterestRateInquiryViewModel accountOutput = new InterestRateInquiryViewModel();
 
             //Task.Run(async () => accountOutput = await customer.GetInterestRateInquiry(accountNumber, accountType)).GetAwaiter()
             //    .GetResult();
@@ -1177,6 +1472,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             return module;
         }
+
+
 
 
 

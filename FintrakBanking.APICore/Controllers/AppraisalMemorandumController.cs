@@ -23,39 +23,25 @@ namespace FintrakBanking.APICore.Controllers
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IAppraisalMemorandumRepository repo;
 
-        public AppraisalMemorandumController(IAppraisalMemorandumRepository repo)
+        public AppraisalMemorandumController(IAppraisalMemorandumRepository repo_)
         {
-            this.repo = repo;
+            this.repo = repo_;
         }
 
         [HttpGet]
         [Route("appraisal-memorandum/loan-application/{loanApplicationId}")]
         public HttpResponseMessage GetAppraisalMemorandumByLoanApplicationId(int loanApplicationId)
         {
-            try
-            {
-                var data = repo.GetAppraisalMemorandum(loanApplicationId, token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var data = repo.GetAppraisalMemorandum(loanApplicationId, token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
         [Route("appraisal-memorandum/loan-application/{loanApplicationId}/documentation")]
         public HttpResponseMessage GetAppraisalMemorandumDocumentation(int loanApplicationId)
         {
-            try
-            {
-                var data = repo.GetAllDocumentation(loanApplicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var data = repo.GetAllDocumentation(loanApplicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpPost]
@@ -112,154 +98,106 @@ namespace FintrakBanking.APICore.Controllers
         [Route("appraisal-memorandum/forward")]
         public HttpResponseMessage ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
+            WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+          
         }
 
         [HttpPost]
         [Route("adhoc-appraisal/forward")]
         public HttpResponseMessage AdhocAppraisalMemorandum([FromBody] ForwardViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.AdhocAppraisalMemorandum(entity);
+            WorkflowResponse response = repo.AdhocAppraisalMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
         }
 
         [HttpPost]
         [Route("lc-approval/forward")]
         public HttpResponseMessage LcAppraisalMemorandum([FromBody] LcForwardViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.LcAppraisalMemorandum(entity);
+            WorkflowResponse response = repo.LcAppraisalMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved)? "The LC ISSUANCE request has been APPROVED successfully" : "The LC ISSUANCE request has been REJECTED successfully") : "The LC ISSUANCE request has been acted on successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC ISSUANCE request has been APPROVED successfully" : "The LC ISSUANCE request has been REJECTED successfully") : "The LC ISSUANCE request has been acted on successfully" });
         }
 
         [HttpPost]
         [Route("lc-release/forward")]
         public HttpResponseMessage LcReleaseMemorandum([FromBody] LcForwardViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.LcReleaseMemorandum(entity);
+            WorkflowResponse response = repo.LcReleaseMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC SHIPPING DOCUMENTS RELEASE request has been APPROVED successfully" : "The LC SHIPPING DOCUMENTS RELEASE request has been REJECTED successfully") : "The LC SHIPPING DOCUMENTS RELEASE request has been acted on successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC SHIPPING DOCUMENTS RELEASE request has been APPROVED successfully" : "The LC SHIPPING DOCUMENTS RELEASE request has been REJECTED successfully") : "The LC SHIPPING DOCUMENTS RELEASE request has been acted on successfully" });
         }
 
         [HttpPost]
         [Route("lc/ussance-forward")]
         public HttpResponseMessage LcUssanceMemorandum([FromBody] LcForwardViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.LcUssanceMemorandum(entity);
+            WorkflowResponse response = repo.LcUssanceMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC USANCE request has been APPROVED successfully" : "The LC USANCE request has been REJECTED successfully") : "The LC USANCE request has been acted on successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC USANCE request has been APPROVED successfully" : "The LC USANCE request has been REJECTED successfully") : "The LC USANCE request has been acted on successfully" });
         }
 
         [HttpPost]
         [Route("letter-gen-request/forward")]
         public HttpResponseMessage LetterGenerationRequestMemorandum([FromBody] LetterGenerationRequestViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.LetterGenerationRequestMemorandum(entity);
+            WorkflowResponse response = repo.LetterGenerationRequestMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LETTER GENERATION request has been APPROVED successfully" : "The LETTER GENERATION request has been REJECTED successfully") : "The LETTER GENERATION request has been acted on successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LETTER GENERATION request has been APPROVED successfully" : "The LETTER GENERATION request has been REJECTED successfully") : "The LETTER GENERATION request has been acted on successfully" });
         }
 
         [HttpPost]
         [Route("collateral-swap/forward")]
         public HttpResponseMessage CollateralSwapMemorandum([FromBody] CollateralSwapViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
+            WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The Collateral swap request has been acted on successfully" : "The Collateral swap request has been APPROVED successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The Collateral swap request has been acted on successfully" : "The Collateral swap request has been APPROVED successfully" });
         }
 
 
@@ -267,19 +205,37 @@ namespace FintrakBanking.APICore.Controllers
         [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/all/{all}")]
         public HttpResponseMessage GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all)
         {
-            try
+            var data = repo.GetAppraisalMemorandumTrail(applicationId, operationId, all);
+            if (data.Any())
             {
-                var data = repo.GetAppraisalMemorandumTrail(applicationId, operationId,all);
-                if(data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found"});
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (SecureException ex)
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
+        }
+
+        [HttpGet]
+        [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/currentLevel/{currentLevelId}/all/{all}")]
+        public HttpResponseMessage GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all)
+        {
+            var data = repo.GetTrailForReferBack(applicationId, operationId, currentLevelId, all);
+            if (data.Any())
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
+        }
+
+
+        [HttpGet]
+        [Route("appraisal-memorandum/trail/{operationId}")]
+        public HttpResponseMessage GetAppraisalMemorandumTrailCallMemo(int operationId)
+        {
+            //var data = repo.GetAppraisalMemorandumTrailCallMemo(operationId);
+            //if (data.Any())
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            //}
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
 
         [HttpPost]
@@ -300,45 +256,32 @@ namespace FintrakBanking.APICore.Controllers
         [Route("appraisal-memorandum/loan-detail/{loanApplicationId}")]
         public HttpResponseMessage GetApprovedLoanDetail(int loanApplicationId)
         {
-            try
-            {
-                LoanApplicationDetailsViewModel data = repo.GetLoanApplicationDetail(loanApplicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            LoanApplicationDetailsViewModel data = repo.GetLoanApplicationDetail(loanApplicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [Route("appraisal-memorandum/tranche-detail/{bookingRequestId}")]
+        public HttpResponseMessage GetApprovedTrancheDetail(int bookingRequestId)
+        {
+            LoanApplicationDetailsViewModel data = repo.GetApprovedTrancheDetail(bookingRequestId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
         [Route("appraisal-memorandum/loan-detail-refnumber/{applicationReferenceNumber}")]
         public HttpResponseMessage GetApprovedLoanDetailByReferenceNumber(string applicationReferenceNumber)
         {
-            try
-            {
-                LoanApplicationDetailsViewModel data = repo.GetLoanApplicationDetailByRefNo(applicationReferenceNumber);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            LoanApplicationDetailsViewModel data = repo.GetLoanApplicationDetailByRefNo(applicationReferenceNumber);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
         [Route("appraisal-memorandum/single-detail/{detailId}")]
         public HttpResponseMessage GetSingleApprovedLoanDetail(int detailId)
         {
-            try
-            {
-                LoanApplicationDetailsViewModel data = repo.GetSingleLoanApplicationDetail(detailId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            LoanApplicationDetailsViewModel data = repo.GetSingleLoanApplicationDetail(detailId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
 
@@ -348,190 +291,134 @@ namespace FintrakBanking.APICore.Controllers
         [Route("crms-secured-collateral-type")]
         public HttpResponseMessage GetAllCRMSSecuredCollateralType()
         {
-            try
-            {
-                var data = repo.GetAllCRMSSecuredCollateralType(token.GetCompanyId);
+            var data = repo.GetAllCRMSSecuredCollateralType(token.GetCompanyId);
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
+            if (data == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("crms-all-collateral-type")]
         public HttpResponseMessage GetAllCRMSCollateralType()
         {
-            try
-            {
-                var data = repo.GetAllCRMSAllCollateralType(token.GetCompanyId);
+            var data = repo.GetAllCRMSAllCollateralType(token.GetCompanyId);
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
+            if (data == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("crms-unsecured-collateral-type")]
         public HttpResponseMessage GetAllCRMSUnsecuredCollateralType()
         {
-            try
-            {
-                var data = repo.GetAllCRMSUnsecuredCollateralType(token.GetCompanyId);
+            var data = repo.GetAllCRMSUnsecuredCollateralType(token.GetCompanyId);
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
+            if (data == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
         [HttpGet]
         [Route("appraisal-memorandum/loan-detail-fees/{loanApplicationId}")]
         public HttpResponseMessage GetLoanDetailsFee(int loanApplicationId)
         {
-            try
-            {
-                var data = repo.GetLoanDetailsFee(loanApplicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var data = repo.GetLoanDetailsFee(loanApplicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
         [Route("appraisal-memorandum/loan-detail-change-log/{loanApplicationId}")]
         public HttpResponseMessage GetLoanDetailChangeLog(int loanApplicationId)
         {
-            try
-            {
-                var data = repo.GetLoanDetailChangeLog(loanApplicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var data = repo.GetLoanDetailChangeLog(loanApplicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet, Route("loan-application-approval-process")]
         public HttpResponseMessage GetPendingLoanApplications([FromUri] int operationId, [FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId, [FromUri] string searchString)
         {
-            try
+            IQueryable<LoanApplicationViewModel> items;
+            items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
+
+
+            if (!String.IsNullOrEmpty(searchString))
             {
-                IQueryable<LoanApplicationViewModel> items;
-                items = repo.GetPendingLoanApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
 
+                searchString = searchString.Trim().ToLower();
+                items = (from x in items
+                         where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
+                         || x.applicantName.ToLower().StartsWith(searchString)
+                         || x.applicationAmount.ToString() == searchString
+                         //|| x.customerGroupName.ToLower().StartsWith(searchString)
+                         select x);
 
-                if (!String.IsNullOrEmpty(searchString))
-                {
+                items = items.Take(itemsPerPage);
 
-                    searchString = searchString.Trim().ToLower();
-                    items = (from x in items
-                             where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
-                             || x.applicantName.ToLower().StartsWith(searchString)
-                             || x.applicationAmount.ToString() == searchString
-                             //|| x.customerGroupName.ToLower().StartsWith(searchString)
-                             select x);
-
-                    items = items.Take(itemsPerPage);
-
-                    //items = items.Where(x =>
-                    //    (searchString.StartsWith(x.applicationReferenceNumber))
-                    //    || (searchString.StartsWith(x.customerName.ToLower()))
-                    //    || (searchString.StartsWith(x.customerGroupName.ToLower()))
-                    //    ).Take(itemsPerPage);
-                }
-
-                var data = items
-                    .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
-                    .Skip(page)
-                    .Take(itemsPerPage)
-                    .ToList();
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+                //items = items.Where(x =>
+                //    (searchString.StartsWith(x.applicationReferenceNumber))
+                //    || (searchString.StartsWith(x.customerName.ToLower()))
+                //    || (searchString.StartsWith(x.customerGroupName.ToLower()))
+                //    ).Take(itemsPerPage);
             }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+
+            var data = items
+                .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
+                .Skip(page)
+                .Take(itemsPerPage)
+                .ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
         [HttpGet, Route("adhoc-approval/{operationId}/class/{classId}")]
         public HttpResponseMessage getApplicationsToBeAdhocApprovedForInitiateBooking(int operationId, int? classId)
         {
-            try
-            {
-                IQueryable<LoanApplicationViewModel> items;
-                items = repo.GetPendingAdhocApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
+            IQueryable<LoanApplicationViewModel> items;
+            items = repo.GetPendingAdhocApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
 
 
-                //if (!String.IsNullOrEmpty(searchString))
-                //{
+            //if (!String.IsNullOrEmpty(searchString))
+            //{
 
-                //    searchString = searchString.Trim().ToLower();
-                //    items = (from x in items
-                //             where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
-                //             || x.applicantName.ToLower().StartsWith(searchString)
-                //             || x.applicationAmount.ToString() == searchString
-                //             //|| x.customerGroupName.ToLower().StartsWith(searchString)
-                //             select x);
+            //    searchString = searchString.Trim().ToLower();
+            //    items = (from x in items
+            //             where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
+            //             || x.applicantName.ToLower().StartsWith(searchString)
+            //             || x.applicationAmount.ToString() == searchString
+            //             //|| x.customerGroupName.ToLower().StartsWith(searchString)
+            //             select x);
 
-                //    items = items.Take(itemsPerPage);
+            //    items = items.Take(itemsPerPage);
 
-                //    //items = items.Where(x =>
-                //    //    (searchString.StartsWith(x.applicationReferenceNumber))
-                //    //    || (searchString.StartsWith(x.customerName.ToLower()))
-                //    //    || (searchString.StartsWith(x.customerGroupName.ToLower()))
-                //    //    ).Take(itemsPerPage);
-                //}
+            //    //items = items.Where(x =>
+            //    //    (searchString.StartsWith(x.applicationReferenceNumber))
+            //    //    || (searchString.StartsWith(x.customerName.ToLower()))
+            //    //    || (searchString.StartsWith(x.customerGroupName.ToLower()))
+            //    //    ).Take(itemsPerPage);
+            //}
 
-                var data = items
-                    .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
-                    //.Skip(page)
-                    //.Take(itemsPerPage)
-                    .ToList();
+            var data = items
+                .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
+                                                                      //.Skip(page)
+                                                                      //.Take(itemsPerPage)
+                .ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
         [HttpGet]
         [Route("current-committee/application/{loanApplicationId}")]
         public HttpResponseMessage GetCurrentCommitteeByLoanApplicationId(int loanApplicationId)
         {
-            try
-            {
-                var data = repo.GetCurrentCommittee(loanApplicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var data = repo.GetCurrentCommittee(loanApplicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpPost]
@@ -539,97 +426,69 @@ namespace FintrakBanking.APICore.Controllers
         [Route("appraisal-memorandum/forward-secretariat")]
         public HttpResponseMessage SecretariatForwardAppraisalMemorandum([FromBody] ForwardCommitteeCamViewModel entity)
         {
-            try
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            var response = repo.SecretariatForwardAppraisalMemorandum(entity);
+
+            if (response == true)
             {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-
-                var response = repo.SecretariatForwardAppraisalMemorandum(entity);
-
-                if (response == true)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
             }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
         [HttpGet, Route("regional-loan-application")]
         public HttpResponseMessage GetRegionalLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] string searchString)
         {
-            try
+            var items = repo.GetRegionalLoanApplications(token.GetStaffId);
+
+            if (!String.IsNullOrEmpty(searchString))
             {
-                var items = repo.GetRegionalLoanApplications(token.GetStaffId);
-
-                if (!String.IsNullOrEmpty(searchString))
-                {
-                    searchString = searchString.Trim().ToLower();
-                    items = items.Where(x =>
-                        x.applicationReferenceNumber.Contains(searchString)
-                        || x.customerName.ToLower().Contains(searchString)
-                        || x.customerGroupName.ToLower().Contains(searchString)
-                        ).Take(itemsPerPage);
-                }
-
-                var data = items
-                    .OrderByDescending(x => x.timeIn) // OrderBy() must be called for Skip() to work!
-                    .ThenByDescending(x => x.loanApplicationId)
-                    .Skip(page)
-                    .Take(itemsPerPage)
-                    .ToList();
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+                searchString = searchString.Trim().ToLower();
+                items = items.Where(x =>
+                    x.applicationReferenceNumber.Contains(searchString)
+                    || x.customerName.ToLower().Contains(searchString)
+                    || x.customerGroupName.ToLower().Contains(searchString)
+                    ).Take(itemsPerPage);
             }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+
+            var data = items
+                .OrderByDescending(x => x.timeIn) // OrderBy() must be called for Skip() to work!
+                .ThenByDescending(x => x.loanApplicationId)
+                .Skip(page)
+                .Take(itemsPerPage)
+                .ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
         [HttpGet]
         [Route("appraisal-memorandum/pending-product-program")]
         public HttpResponseMessage GetPendingProductProgram()
         {
-            try
+            UserInfo user = new UserInfo()
             {
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                    userIPAddress = HttpContext.Current.Request.UserHostAddress
-                };
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
 
-                var data = repo.GetPendingProductProgram(user);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            var data = repo.GetPendingProductProgram(user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
         [Route("untenored-status/application/{applicationId}")]
         public HttpResponseMessage GetUntenoredStatus(int applicationId)
         {
-            try
-            {
-                bool status = repo.GetUntenoredStatus(applicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            bool status = repo.GetUntenoredStatus(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
         }
 
         #region MONITORING TRIGGERS
@@ -638,30 +497,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("application-monitoring-triggers/{applicationId}")]
         public HttpResponseMessage GetApplicationMonitoringTriggers(int applicationId)
         {
-            try
-            {
-                var response = repo.GetApplicationMonitoringTriggers(applicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var response = repo.GetApplicationMonitoringTriggers(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpGet]
         [Route("application-monitoring-triggers-aps/{operationId}/applicationDetailId/{applicationDetailId}")]
         public HttpResponseMessage GetASP_MonitoringTriggers(int operationId,int applicationDetailId)
         {
-            try
-            {
-                var response = repo.GetApplicationMonitoringTriggersByOperationId(operationId, applicationDetailId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var response = repo.GetApplicationMonitoringTriggersByOperationId(operationId, applicationDetailId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPost]
@@ -669,15 +514,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("application-monitoring-triggers/{applicationId}")]
         public HttpResponseMessage SaveApplicationMonitoringTriggers(int applicationId, [FromBody] List<MonitoringTriggersViewModel> entity)
         {
-            try
-            {
-                var response = repo.SaveApplicationMonitoringTriggers(applicationId, entity, token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            var response = repo.SaveApplicationMonitoringTriggers(applicationId, entity, token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         #endregion MONITORING TRIGGERS
@@ -719,30 +557,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-limit-validation")]
         public HttpResponseMessage SaveProductLimitValidation([FromBody] ProductLimitValidationViewModel entity)
         {
-            try
-            {
-                List<ProductLimitValidationViewModel> response = repo.SaveProductLimitValidation(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            List<ProductLimitValidationViewModel> response = repo.SaveProductLimitValidation(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpGet]
         [Route("product-limit-validation/{applicationId}/class/{classId}")]
         public HttpResponseMessage GetProductLimitValidation(int applicationId, int classId)
         {
-            try
-            {
-                List<ProductLimitValidationViewModel> response = repo.GetProductLimitValidation(applicationId, classId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            List<ProductLimitValidationViewModel> response = repo.GetProductLimitValidation(applicationId, classId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
 
@@ -750,15 +574,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("appraisal-memorandum/workflow-test")]
         public HttpResponseMessage WorkflowTest()
         {
-            try
-            {
-                bool data = repo.WorkflowTest();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            bool data = repo.WorkflowTest();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         #region recommended collateral
@@ -767,30 +584,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("recommended-collateral/{applicationId}")]
         public HttpResponseMessage GetRecommendedCollateral(int applicationId)
         {
-            try
-            {
-                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateral(applicationId,token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateral(applicationId, token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpGet]
         [Route("recommended-collateral-history/{applicationId}")]
         public HttpResponseMessage GetRecommendedCollateralHistory(int applicationId)
         {
-            try
-            {
-                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralHistory(applicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralHistory(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPost]
@@ -798,17 +601,10 @@ namespace FintrakBanking.APICore.Controllers
         [Route("recommended-collateral")]
         public HttpResponseMessage AddRecommendedCollateral([FromBody] RecommendedCollateralViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.createdBy = (short)token.GetStaffId;
-                List<RecommendedCollateralViewModel> response = repo.AddRecommendedCollateral(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.createdBy = (short)token.GetStaffId;
+            List<RecommendedCollateralViewModel> response = repo.AddRecommendedCollateral(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPut]
@@ -816,17 +612,10 @@ namespace FintrakBanking.APICore.Controllers
         [Route("recommended-collateral")]
         public HttpResponseMessage UpdateRecommendedCollateral([FromBody] RecommendedCollateralViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.createdBy = (short)token.GetStaffId;
-                List<RecommendedCollateralViewModel> response = repo.UpdateRecommendedCollateral(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.createdBy = (short)token.GetStaffId;
+            List<RecommendedCollateralViewModel> response = repo.UpdateRecommendedCollateral(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         #endregion recommended collateral
@@ -839,15 +628,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lms-application-monitoring-triggers/{applicationId}")]
         public HttpResponseMessage GetApplicationMonitoringTriggersLms(int applicationId)
         {
-            try
-            {
-                IEnumerable<MonitoringTriggersViewModel> response = repo.GetApplicationMonitoringTriggersLms(applicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            IEnumerable<MonitoringTriggersViewModel> response = repo.GetApplicationMonitoringTriggersLms(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPost]
@@ -855,15 +637,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lms-application-monitoring-triggers/{applicationId}")]
         public HttpResponseMessage SaveApplicationMonitoringTriggersLms(int applicationId, [FromBody] List<MonitoringTriggersViewModel> entity)
         {
-            try
-            {
-                IEnumerable<MonitoringTriggersViewModel> response = repo.SaveApplicationMonitoringTriggersLms(applicationId, entity, token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            IEnumerable<MonitoringTriggersViewModel> response = repo.SaveApplicationMonitoringTriggersLms(applicationId, entity, token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPost]
@@ -871,45 +646,24 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lms-repayment-schedule-terms")]
         public HttpResponseMessage SaveRepaymentScheduleAndTermsLms([FromBody] RepaymentScheduleTermsViewModel entity)
         {
-            try
-            {
-                List<RepaymentScheduleTermsViewModel> response = repo.SaveRepaymentScheduleAndTermsLms(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            List<RepaymentScheduleTermsViewModel> response = repo.SaveRepaymentScheduleAndTermsLms(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpGet]
         [Route("lms-recommended-collateral/{applicationId}")]
         public HttpResponseMessage GetRecommendedCollateralLms(int applicationId)
         {
-            try
-            {
-                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralLms(applicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralLms(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpGet]
         [Route("lms-recommended-collateral-history/{applicationId}")]
         public HttpResponseMessage GetRecommendedCollateralHistoryLms(int applicationId)
         {
-            try
-            {
-                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralHistoryLms(applicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralHistoryLms(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPost]
@@ -917,16 +671,9 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lms-recommended-collateral")]
         public HttpResponseMessage AddRecommendedCollateralLms([FromBody] RecommendedCollateralViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                List<RecommendedCollateralViewModel> response = repo.AddRecommendedCollateralLms(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            entity.userBranchId = (short)token.GetBranchId;
+            List<RecommendedCollateralViewModel> response = repo.AddRecommendedCollateralLms(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPut]
@@ -934,16 +681,9 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lms-recommended-collateral")]
         public HttpResponseMessage UpdateRecommendedCollateralLms([FromBody] RecommendedCollateralViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                List<RecommendedCollateralViewModel> response = repo.UpdateRecommendedCollateralLms(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            entity.userBranchId = (short)token.GetBranchId;
+            List<RecommendedCollateralViewModel> response = repo.UpdateRecommendedCollateralLms(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         #endregion LMS APPROVAL
@@ -953,30 +693,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("tranch-disbursment-approval-level")]
         public HttpResponseMessage saveTranchDisbursmentApprovalLevel([FromBody] TranchDisbursmentViewModel entity)
         {
-            try
-            {
-                bool response = repo.saveTranchDisbursmentApprovalLevel(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            bool response = repo.saveTranchDisbursmentApprovalLevel(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpGet]
         [Route("appraisal-memorandum/lms-loan-detail/{loanApplicationId}")]
         public HttpResponseMessage GetApprovedLMSLoanDetail(int loanApplicationId)
         {
-            try
-            {
-                LoanApplicationDetailsViewModel data = repo.GetLMSLoanApplicationDetail(loanApplicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            LoanApplicationDetailsViewModel data = repo.GetLMSLoanApplicationDetail(loanApplicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpPost]

@@ -13,10 +13,12 @@ namespace FintrakBanking.Entities.Models
         public int BUSINESSUNITID    { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string BUSINESSUNITNAME { get; set; }
         public string BUSINESSUNITINITIALS { get; set; }
+        public string BUSINESSUNITSHORTCODE { get; set; }
 
+        public string BUSINESSCOMMONNAME { get; set; }
 
     }
 }

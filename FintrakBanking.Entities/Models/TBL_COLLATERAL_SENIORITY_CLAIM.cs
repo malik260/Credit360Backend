@@ -12,11 +12,11 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public short COLLATERALSENIORITYOFCLAIMID { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        //[Required]
+        ////[StringLength(50)]
         public string SENIORITYOFCLAIMS { get; set; }
 
-        [StringLength(250)]
+       // //[StringLength(250)]
         public string DESCRIPTION { get; set; }
     }
 }

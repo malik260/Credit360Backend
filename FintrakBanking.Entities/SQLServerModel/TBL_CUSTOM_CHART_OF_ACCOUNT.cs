@@ -13,19 +13,19 @@ namespace FintrakBanking.Entities.SQLServerModel
         public int CUSTOMACCOUNTID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string ACCOUNTID { get; set; }
 
         [Required]
-        [StringLength(400)]
+        //[StringLength(400)]
         public string ACCOUNTNAME { get; set; }
 
         [Required]
-        [StringLength(10)]
+        //[StringLength(10)]
         public string CURRENCYCODE { get; set; }
 
         [Required]
-        [StringLength(200)]
+        //[StringLength(200)]
         public string PLACEHOLDERID { get; set; }
     }
 }

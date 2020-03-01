@@ -293,7 +293,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
 
-                var response = repo.GetAllCallMemo(token.GetStaffId);
+                IEnumerable<CallMemoViewModel> response = repo.GetAllCallMemo(token.GetStaffId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -315,7 +315,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.userBranchId = (short)token.GetBranchId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
-                model.StaffId = token.GetStaffId;
+                model.staffId = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
         
                 var response = repo.AddCallMemo(model);

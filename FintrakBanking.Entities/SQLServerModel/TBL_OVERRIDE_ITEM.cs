@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public short OVERRIDE_ITEMID { get; set; }
 
         [Required]
-        [StringLength(350)]
+        //[StringLength(350)]
         public string OVERIDE_ITEMNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

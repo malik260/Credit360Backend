@@ -141,6 +141,12 @@ namespace FintrakBanking.Interfaces.Customer
         #endregion
 
         IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId);
+        bool DeleteEmployment(int placeOfWorkId, UserInfo user);
+        bool DeleteNextOfKin(int nextOfKinId, UserInfo user);
+
+        bool Deletcontact(int phoneContactId, UserInfo user);
+        bool DeleteRelatedParty(int relatedPartyId, UserInfo user);
+        bool Deleteaddress(int addressId, UserInfo user);
         bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity);
         bool UpdatePropectToCustomer(int customerId, CustomerViewModels entity);
         IEnumerable<CustomerRelatedDirectorViewModel> DirectorRelatedCustomer(string bvn);
@@ -149,5 +155,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerViewModels> SearchRandomSingleCorporateCustomersBySearchQuery(string searchQuery);
         IEnumerable<CustomerViewModels> SearchRandomGroupCustomersBySearchQuery(string searchQuery);
         bool GetPoliticallyExposedPerson(string customerCode);
+        void UpdateCustomerCollateralId(string customerCode);
+        bool refreshCustomerAccount(int customerCode);
     }
 }

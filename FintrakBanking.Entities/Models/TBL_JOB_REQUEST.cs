@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public int JOBREQUESTID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        //[StringLength(50)]
         public string JOBREQUESTCODE { get; set; }
 
         public short JOBTYPEID { get; set; }
@@ -53,13 +53,13 @@ namespace FintrakBanking.Entities.Models
 
         public short? JOB_STATUS_FEEDBACKID { get; set; }
 
-        [StringLength(400)]
+        //[StringLength(400)]
         public string JOB_TITLE { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string SENDERCOMMENT { get; set; }
 
-        [StringLength(2000)]
+        //[StringLength(2000)]
         public string RESPONSECOMMENT { get; set; }
 
         public short? JOBTYPEHUBID { get; set; }

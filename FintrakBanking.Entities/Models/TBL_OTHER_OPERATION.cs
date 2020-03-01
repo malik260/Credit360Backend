@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
         public int OTHEROPERATIONID { get; set; }
 
         [Required]
-        [StringLength(100)]
+        //[StringLength(100)]
         public string OPERATIONNAME { get; set; }
 
     }

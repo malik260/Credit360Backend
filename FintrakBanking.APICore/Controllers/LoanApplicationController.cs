@@ -28,28 +28,28 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanApplicationController : ApiControllerBase
     {
         private ILoanApplicationRepository repo;
-        private ILoanRepository loanRepository;
-        private ICreditLimitValidationsRepository creditLimitValidationsRepository;
+        //private ILoanRepository loanRepository;
+        //private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
-        private IErrorLogRepository errorLogger;
-        private IRepaymentTermsRepository repaymentRepo;
+        //private IErrorLogRepository errorLogger;
+        //private IRepaymentTermsRepository repaymentRepo;
 
         public LoanApplicationController(
             ILoanApplicationRepository _repo,
-            ILoanRepository _loanRepository,
-            ICreditLimitValidationsRepository _creditLimitValidationsRepository,
-            ILoanPreliminaryEvaluationRepository _repoLoanPEN,
-            IErrorLogRepository _errorLogger,
-            IRepaymentTermsRepository _repaymentRepo
+           // ILoanRepository _loanRepository,
+           // ICreditLimitValidationsRepository _creditLimitValidationsRepository,
+            ILoanPreliminaryEvaluationRepository _repoLoanPEN
+            //IErrorLogRepository _errorLogger
+           // IRepaymentTermsRepository _repaymentRepo
             )
         {
             this.repo = _repo;
-            this.loanRepository = _loanRepository;
-            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
+          //  this.loanRepository = _loanRepository;
+           // this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
-            errorLogger = _errorLogger;
-            repaymentRepo = _repaymentRepo;
+      
+           // repaymentRepo = _repaymentRepo;
         }
 
         #region Loan Application
@@ -224,6 +224,23 @@ namespace FintrakBanking.APICore.Controllers
         {
             var data = repo.GetLoanApplicationByRelationshipOfficerId(token.GetStaffId, token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("send-to-edit/{loanApplicationId}/{operationId}")]
+        public HttpResponseMessage SendApplicationToEdit(int loanApplicationId, int operationId)
+        {
+            //try
+            //{
+                var data = repo.SendApplicationToEdit(loanApplicationId, operationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Sent To Applications List For Modifications" });
+            //}
+
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            //}
         }
 
         [HttpGet]
@@ -508,25 +525,48 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
         {
+            var responseMessage = string.Empty;
+
+            //model.applicationUrl = HttpContext.Current.Request.Path;
+            //model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            //model.userBranchId = (short)token.GetBranchId;
+            //model.createdBy = token.GetStaffId;
+            //model.companyId = token.GetCompanyId;
+            //model.branchId = (short)token.GetBranchId;
+
+            var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("load-customer-turnover/{loanApplicationId}")]
+        public HttpResponseMessage LoadCustomerTurnover(int loanApplicationId)
+        {
             try
             {
-                var responseMessage = string.Empty;
-
-                //model.applicationUrl = HttpContext.Current.Request.Path;
-                //model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                //model.userBranchId = (short)token.GetBranchId;
-                //model.createdBy = token.GetStaffId;
-                //model.companyId = token.GetCompanyId;
-                //model.branchId = (short)token.GetBranchId;
-
-                var response = repo.UpdateApprovalStatusForApplication(id, token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-
+                repo.LoadCustomerTurnover(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed!" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("load-customer-turnover-lms/{loanApplicationId}")]
+        public HttpResponseMessage LoadCustomerTurnoverLms(int loanApplicationId)
+        {
+            try
+            {
+                repo.LoadCustomerTurnoverLms(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Successful!" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed!" });
             }
         }
 
@@ -634,6 +674,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan/validate-application")]
+        public HttpResponseMessage ValidateDuplicateLoanApplication([FromBody] LoanApplicationViewModel entity)
+        {
+            var isDuplicate = repo.ValidateDuplicateLoanApplication(entity);
+            if (isDuplicate)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = isDuplicate, result = isDuplicate});
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = isDuplicate});
+        }
+
         [HttpPost]
         //[ClaimsAuthorization]
         [Route("loan/application")]
@@ -666,21 +720,14 @@ namespace FintrakBanking.APICore.Controllers
             //if( entity.LoanApplicationDetail.Count == 0)
             //     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No facility detail is provided" });
 
-            try
+            var response = repo.AddLoanApplication(entity);
+            if (response != null)
             {
-                var response = repo.AddLoanApplication(entity);
-                if (response != null)
-                {
-                    if (response.jumpedDestination) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully. proceeds to drawdown." }); }
+                if (response.jumpedDestination) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully. proceeds to drawdown." }); }
 
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
             }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
 
@@ -1072,20 +1119,13 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-details-product/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanApplicationDetailsProductProgram([FromUri] int loanApplicationDetailId)
         {
-            try
+            var response = repo.GetLoanApplicationDetailsProductProgram(loanApplicationDetailId);
+            if (response == null)
             {
-                var response = repo.GetLoanApplicationDetailsProductProgram(loanApplicationDetailId);
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
 
@@ -1094,20 +1134,13 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-dedube-check/{customerId}")]
         public HttpResponseMessage GetLoanApplicationDedubeCheck([FromUri] int customerId)
         {
-            try
-            {
-                var response = repo.GetLoanApplicationDedubeCheck(customerId, token.GetCompanyId);
+             var response = repo.GetLoanApplicationDedubeCheck(customerId, token.GetCompanyId);
                 if (response == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
         }
 
         [HttpPost]
@@ -1115,16 +1148,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-validate-document-date")]
         public HttpResponseMessage ValidateDocumentDate([FromBody] ValidateDataViewModel data)
         {
-            try
-            {
+            
+            
                 var response = repo.ValidateDocumentDate(data);
-
+            if (response != null)
+            {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            
         }
 
 
@@ -1133,16 +1166,18 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-validate-document-number")]
         public HttpResponseMessage ValidateDocumentNumber([FromBody] ValidateNumberViewModel data)
         {
-            try
+            
+            
+               var response = repo.ValidateDocumentNumber(data);
+            if (response != null)
             {
-                var response = repo.ValidateDocumentNumber(data);
-
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
             }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+
+           
         }
 
         [HttpPost]
@@ -1150,16 +1185,15 @@ namespace FintrakBanking.APICore.Controllers
         [Route("validate-invoice-details")]
         public HttpResponseMessage ValidateInvoiceDetails([FromBody] ValidateNumberViewModel data)
         {
-            try
+            
+            
+            var response = repo.ValidateInvoiceDetails(data);
+            if (response != null)
             {
-                var response = repo.ValidateInvoiceDetails(data);
-
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });  
         }
 
         //[HttpPost]
@@ -1190,28 +1224,43 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet, Route("loan-application-and-offer/rejected")]
         public HttpResponseMessage GetRejectedLoanApplications()
         {
-            try
+            UserInfo user = new UserInfo()
             {
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                };
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
 
-                IQueryable<LoanApplicationViewModel> items;
+            IQueryable<LoanApplicationViewModel> items;
 
-                items = repo.GetRejectedLoanApplications(user);
+            items = repo.GetRejectedLoanApplications(user);
 
-                var data = items.ToList();
+            var data = items.ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
-            }
-            catch (SecureException ex)
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+
+        }
+
+        [HttpGet, Route("loan-application-and-offer/rejected/arch")]
+        public HttpResponseMessage GetRejectedLoanApplicationsArch()
+        {
+            UserInfo user = new UserInfo()
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+
+            IQueryable<LoanApplicationViewModel> items;
+
+            items = repo.GetRejectedLoanApplicationsArch(user);
+
+            var data = items.ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+
         }
 
         //[HttpPut]
@@ -1238,8 +1287,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application/review-request")]
         public HttpResponseMessage ReviewRequest([FromBody] ForwardViewModel model)
         {
-            try
-            {
+            
+            
                 model.userBranchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
                 model.createdBy = token.GetStaffId;
@@ -1250,11 +1299,9 @@ namespace FintrakBanking.APICore.Controllers
                 bool ok = response == string.Empty ? false : true;
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = ok, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { e.InnerException }" });
-            }
+            
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            
         }
 
         [HttpGet]
@@ -1262,20 +1309,13 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-fees/{loanDetailId}")]
         public HttpResponseMessage GetLoanApplicationFees(int loanDetailId)
         {
-            try
+            var response = repo.GetLoanApplicationFees(loanDetailId);
+            if (response == null)
             {
-                var response = repo.GetLoanApplicationFees(loanDetailId);
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPut]
@@ -1283,29 +1323,19 @@ namespace FintrakBanking.APICore.Controllers
         [Route("fee-concession-request")]
         public HttpResponseMessage ProductFeesConcession([FromBody]ProductFeesViewModel entity)
         {
-            try
+            var user = new UserInfo
             {
-                var user = new UserInfo
-                {
-                    BranchId = (short)token.GetBranchId,
-                    createdBy = token.GetStaffId,
-                    companyId = token.GetCompanyId,
-                };
-
-
-                var response = repo.ProductFeesConcession(entity, user);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Fee concession request completed successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (SecureException e)
-
+                BranchId = (short)token.GetBranchId,
+                createdBy = token.GetStaffId,
+                companyId = token.GetCompanyId,
+            };
+            var response = repo.ProductFeesConcession(entity, user);
+            if (response)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error Occured =>  {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Fee concession request completed successfully" });
             }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
 
@@ -1314,16 +1344,19 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-detail-search")]
         public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
         {
-            try
-            {
-                var response = repo.Search(model.searchString);
+            var response = repo.Search(model.searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });            
+            
+        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("search-booked-loans")]
+        public HttpResponseMessage SearchBookedLoans([FromBody] SearchViewModel model)
+        {
+            var response = repo.SearchBookedLoans(model.searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+
         }
 
         // search loan application by either reference number or name =======by benjamin
@@ -1332,16 +1365,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-search/search/{searchString}")]
         public HttpResponseMessage GetLoanApplicationSearch([FromUri] string searchString)
         {
-            try
-            {
-                var response = repo.LoanSearch(searchString);
+            var response = repo.LoanSearch(searchString);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
+            
+            
         }
 
 
@@ -1350,16 +1378,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-details/search")]
         public HttpResponseMessage SearchLoanApplicationDetails([FromBody] SearchViewModel model)
         {
-            try
-            {
-                var response = repo.GetLoanApplicationDetailsByReference(model.searchString, token.GetCompanyId);
+            var response = repo.GetLoanApplicationDetailsByReference(model.searchString, token.GetCompanyId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+           
+            
         }
 
         [HttpPost]
@@ -1367,16 +1390,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("approved-loan-application-details/search")]
         public HttpResponseMessage SearchApprovedLoanApplicationDetails([FromBody] SearchViewModel model)
         {
-            try
-            {
-                var response = repo.SearchApprovedLoanApplicationDetails(model.searchString, token.GetCompanyId);
+            var response = repo.SearchApprovedLoanApplicationDetails(model.searchString, token.GetCompanyId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+           
+           
         }
 
         [HttpGet]
@@ -1384,16 +1402,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("get-total-bank-exposure-and-limit")]
         public HttpResponseMessage GetBankTotalExposure()
         {
-            try
-            {
-                var response = repo.GetTotalBankExposure();
+            var response = repo.GetTotalBankExposure();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+           
+            
         }
 
         [HttpGet]
@@ -1401,16 +1414,10 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application/cancellation")]
         public HttpResponseMessage LoanApplicationCancellation()
         {
-            try
-            {
-                var response = repo.GetAllRequestsForLoanCancellation(token.GetStaffId);
+            var response = repo.GetAllRequestsForLoanCancellation(token.GetStaffId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+           
         }
 
         [HttpPost]
@@ -1421,13 +1428,17 @@ namespace FintrakBanking.APICore.Controllers
             data.createdBy = token.GetStaffId;
             data.companyId = token.GetCompanyId;
             var response = repo.SaveCancelledApplcation(data);
-            if (response)
+            if (response == 1)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been Cancelled Successfully" });
+            }
+            else if (response == 2)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Application Has been Cancelled Successfully" });
             }
             else
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, result = response });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, result = response, message = "An error Occured while cancelling this loan Application" });
             }
             
             //if()
@@ -1454,15 +1465,10 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application/search")]
         public HttpResponseMessage SearchLoanApplication(string searchString)
         {
-            try
-            {
-                var response = repo.SearchForLoan(searchString);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            var response = repo.SearchForLoan(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
+            
+           
         }
 
         //[HttpGet]
@@ -1480,32 +1486,22 @@ namespace FintrakBanking.APICore.Controllers
         [Route("committee-credit-application/{applicationType}")]
         public HttpResponseMessage CommitteeCreditApplications(int applicationType)
         {
-            try
-            {
-                var response = repo.CommitteeCreditApplications(applicationType, token.GetStaffId);
+            var response = repo.CommitteeCreditApplications(applicationType, token.GetStaffId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            
+           
         }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("tranche-facility/{searchValue}")]
         public HttpResponseMessage TrancheLoanDetails(string searchValue)
         {
-            try
-            {
-                var response = repo.GetLoanApplication(searchValue);
+            var response = repo.GetLoanApplication(searchValue);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            
+           
         }
 
 
@@ -1514,27 +1510,20 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loanApplication/{id}")]
         public HttpResponseMessage DeleteLoanApplication(int id)
         {
-            try
-            {
-                var token = new TokenDecryptionHelper();
+            var token = new TokenDecryptionHelper();
 
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                    userIPAddress = HttpContext.Current.Request.UserHostAddress
-                };
-                var result = repo.DeleteLoanApplication(id);
-                // if(result)
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = result, message = "loan Application was removed successfully" });
-            }
-            catch (SecureException ex)
+            UserInfo user = new UserInfo()
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            var result = repo.DeleteLoanApplication(id);
+            // if(result)
+            return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, result = result, message = "loan Application was removed successfully" });
         }
 
 
@@ -1545,27 +1534,20 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loanApplicationDetail/{id}")]
         public HttpResponseMessage DeleteLoanApplicationDetail(int id)
         {
-            try
-            {
-                var token = new TokenDecryptionHelper();
+            var token = new TokenDecryptionHelper();
 
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                    userIPAddress = HttpContext.Current.Request.UserHostAddress
-                };
-                var result = repo.DeleteLoanApplicationDetail(id);
-                // if(result)
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = result, message = "loan Application was removed successfully" });
-            }
-            catch (SecureException ex)
+            UserInfo user = new UserInfo()
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            var result = repo.DeleteLoanApplicationDetail(id);
+            // if(result)
+            return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, result = result, message = "loan Application was removed successfully" });
         }
 
         [HttpPost]
@@ -1601,16 +1583,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-cancellation")]
         public HttpResponseMessage ViewLaonApplicationCancellationDetails([FromBody] LoanApplicationViewModel data)
         {
-            try
-            {
-                var response = repo.ViewLaonApplicationCancellationDetails(data);
+            var response = repo.ViewLaonApplicationCancellationDetails(data);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            
+            
         }
 
         [HttpPost]
@@ -1618,19 +1595,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-cancellation-approval")]
         public HttpResponseMessage GoForLoanApplicationCancellationApproval([FromBody] LoanApplicationViewModel data)
         {
-            try
-            {
-                data.userBranchId = (short)token.GetBranchId;
-                data.companyId = token.GetCompanyId;
-                data.createdBy = token.GetStaffId;
-                var response = repo.GoForLoanApplicationCancellationApproval(data);
+            data.userBranchId = (short)token.GetBranchId;
+            data.companyId = token.GetCompanyId;
+            data.createdBy = token.GetStaffId;
+            var response = repo.GoForLoanApplicationCancellationApproval(data);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            
+            
         }
 
         [HttpGet]
@@ -1638,16 +1610,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("transaction/dynamics/{loanApplicationId}")]
         public HttpResponseMessage GetTransactionDynamics(int loanApplicationId)
         {
-            try
-            {
-                var response = repo.GetTrnasactionDynamics(loanApplicationId);
+            var response = repo.GetTrnasactionDynamics(loanApplicationId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            
+           
         }
 
         [HttpGet]
@@ -1655,48 +1622,33 @@ namespace FintrakBanking.APICore.Controllers
         [Route("transaction/lms-dynamics/{loanApplicationId}")]
         public HttpResponseMessage GetLMSTransactionDynamics(int loanApplicationId)
         {
-            try
-            {
-                var response = repo.GetTrnasactionDynamics(loanApplicationId);
+            var response = repo.GetTrnasactionDynamics(loanApplicationId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+           
+           
         }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan/condition-precident/{loanApplicationId}")]
         public HttpResponseMessage GetConditionPrecidents(int loanApplicationId)
         {
-            try
-            {
-                var response = repo.GetConditionPrecidents(loanApplicationId);
+            var response = repo.GetConditionPrecidents(loanApplicationId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            
+            
         }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan/lms-condition-precident/{loanApplicationId}")]
         public HttpResponseMessage GetLMSConditionPrecidents(int loanApplicationId)
         {
-            try
-            {
-                var response = repo.GetLMSConditionPrecidents(loanApplicationId);
+            var response = repo.GetLMSConditionPrecidents(loanApplicationId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            
+           
         }
 
         [HttpPost]
@@ -1704,65 +1656,44 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-detail-suggestion")]
         public HttpResponseMessage updateSuggestionsLoanApplicationdetail([FromBody] LoanApplicationDetailViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId;  //FinTrakBankingContext
-                entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;  //FinTrakBankingContext
+            entity.userBranchId = (short)token.GetBranchId;
 
-                var response = repo.updateSuggestionsLoanApplicationdetail(entity);
-                if (response == true)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Suggestions updated successfully" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (SecureException e)
+            var response = repo.updateSuggestionsLoanApplicationdetail(entity);
+            if (response == true)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Suggestions updated successfully" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("crms-funding-source")]
         public HttpResponseMessage GetAllCRMSFundingSource()
         {
-            try
-            {
-                var data = repo.GetAllCRMSFundingSource();
+            var data = repo.GetAllCRMSFundingSource();
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
+            if (data == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("crms-repayment-source")]
         public HttpResponseMessage GetAllCRMSRepaymentSource()
         {
-            try
-            {
-                var data = repo.GetAllCRMSRepaymentSource();
+            var data = repo.GetAllCRMSRepaymentSource();
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
+            if (data == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
@@ -1770,16 +1701,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("crms-repayment-agreement/type")]
         public HttpResponseMessage GetAllCRMSRepaymentAgreementType()
         {
-            try
-            {
-                var response = repo.GetAllCRMSRepaymentAgreementType();
+            var response = repo.GetAllCRMSRepaymentAgreementType();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+           
+            
         }
 
         [HttpGet]
@@ -1787,16 +1713,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-syndication-type")]
         public HttpResponseMessage GetAllSyndicationType()
         {
-            try
-            {
-                var response = repo.GetAllSyndicationType();
+            var response = repo.GetAllSyndicationType();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            
+            
         }
 
         [HttpGet]
@@ -1944,17 +1865,10 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("loan-application-flow-change")]
         public HttpResponseMessage LoanApplicationFlowChange()
-        {
-            try
-            {
-                var response = repo.GetLoanApplicationFlowChange();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
-            }
+        {          
+                 var response = repo.GetLoanApplicationFlowChange();
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
         [HttpGet]
@@ -1976,9 +1890,9 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage AddLoanApplicationFlowChange([FromBody] LoanApplicationFlowChangeViewModel model)
         {
             model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress; 
             model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
+            model.createdBy = token.GetStaffId; 
             model.companyId = token.GetCompanyId;
             var response = repo.AddLoanApplicationFlowChange(model);
             if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
@@ -2025,60 +1939,51 @@ namespace FintrakBanking.APICore.Controllers
         [Route("multiple-invoice")]
         public async Task<HttpResponseMessage> GetBulkLoanInvoice()
         {
-            try
+            if (!Request.Content.IsMimeMultipartContent())
             {
-                if (!Request.Content.IsMimeMultipartContent())
-                {
-                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
-                }
-
-                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
-
-                //int uploadType;
-                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
-                //{
-                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
-                //}
-
-
-                byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
-                string password = Encoding.UTF8.GetString(pass);
-
-                var entity = new UserInfo
-                {
-                    companyId = token.GetCompanyId,
-                    createdBy = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                    BranchId = (short)token.GetBranchId,
-                };
-
-                if (!provider.FileStreams.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-                }
-
-                
-
-
-                var file = provider.Contents.FirstOrDefault();
-                var buffer = await file.ReadAsByteArrayAsync();
-
-                var data = repo.GetBulkLoanInvoice( buffer, entity);
-
-                if (data != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "bulk invoice data was successfully uploaded" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading bulk invoice data" });
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
             }
-            catch (SecureException ex)
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            //int uploadType;
+            //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
+            //}
+
+
+            byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
+            string password = Encoding.UTF8.GetString(pass);
+
+            var entity = new UserInfo
             {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                BranchId = (short)token.GetBranchId,
+            };
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " + ex.Message });
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
             }
+
+
+
+
+            var file = provider.Contents.FirstOrDefault();
+            var buffer = await file.ReadAsByteArrayAsync();
+
+            var data = repo.GetBulkLoanInvoice(buffer, entity);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "bulk invoice data was successfully uploaded" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading bulk invoice data" });
         }
 
         #region LIEN
@@ -2182,5 +2087,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "Lien has been unproposed successfully" });
         }
         #endregion LIEN
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-review-type")]
+        public HttpResponseMessage GetAllLoanDetailReviewTypes()
+        {
+            IEnumerable<LoanDetailReviewTypeViewModel> response = repo.GetAllLoanDetailReviewTypes();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
     }
 }
