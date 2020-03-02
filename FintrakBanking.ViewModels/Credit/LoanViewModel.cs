@@ -677,6 +677,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanBookingRequestViewModel : GeneralEntity
     {
+        public bool? chargeFeeOnce { get; set; }
+
         public int? casaAccountId { get; set; }
         public int? casaAccountId2 { get; set; }
         public bool? isUsed { get; set; }
@@ -710,6 +712,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public bool isLineMaintained { get; set; }
+
         public bool? isLineFacility { get; set; }
 
         public DateTime systemArrivalDateTime { get; set; }
