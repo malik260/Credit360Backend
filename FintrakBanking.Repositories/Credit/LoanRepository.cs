@@ -345,6 +345,16 @@ namespace FintrakBanking.Repositories.Credit
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             if (applicationDetail == null) { return false; }
 
+            if (context.TBL_PRODUCT.Where(x => x.PRODUCTID == entity.productId &&  x.ISFACILITYLINE != true ).Any())
+            {
+                application.APPROVEDLINESTATUSID = entity.approvedLineStatusId;
+                request.APPROVEDLINESTATUSID = entity.approvedLineStatusId;
+                request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                request.ISUSED = true;
+                context.SaveChanges();
+
+                return true;
+            }
             var approvalModel = new ForwardViewModel
             {
                 createdBy = entity.createdBy,
@@ -480,7 +490,13 @@ namespace FintrakBanking.Repositories.Credit
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             var systemDate = generalSetup.GetApplicationDate();
-            var product = context.TBL_PRODUCT.Find(applicationDetail.APPROVEDPRODUCTID);
+            var product = context.TBL_PRODUCT.Find(request.PRODUCTID);
+            var lineProduct = context.TBL_PRODUCT.Where(x=>x.PRODUCTID == applicationDetail.APPROVEDPRODUCTID && x.ISFACILITYLINE == true);
+
+            if(lineProduct != null && application != null && application.APPROVEDLINESTATUSID == null)
+            {
+                throw new ConditionNotMetException("Please Maintain the line before booking");
+            }
 
             //**********VALIDATING COMMERCIAL LOAN INPUTS ************//
             if (entity.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
@@ -5992,6 +6008,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short loanSystemTypeId, LoanViewModel loanModel, TBL_LOAN_APPLICATION_DETAIL facilityDetail)
         {
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == loanModel.loanBookingRequestId).FirstOrDefault();
             var chargeByApprovedAmount = false;
             foreach (var ent in feeModel)
             {
@@ -6005,10 +6022,15 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (context.TBL_LOAN_FEE.Where(x => x.LOANID == facilityDetail.LOANAPPLICATIONDETAILID && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).Any())
                     {
-                        chargeByApprovedAmount = false;
+                        chargeByApprovedAmount = true;
                         continue;
                     }
-                    else { chargeByApprovedAmount = true; }
+                    else if (request.TAKEFEEONCE == true)
+                    {
+                        chargeByApprovedAmount = true;
+                        continue;
+                    }
+                    else { chargeByApprovedAmount = false; }
                 }
 
 
@@ -8541,6 +8563,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                                        bookingRequestStatusId = s.APPROVALSTATUSID,
                                        isLineFacility = p.ISFACILITYLINE,
+                                       isLineMaintained = m.APPROVEDLINESTATUSID != null,
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
                                        systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
@@ -8870,6 +8893,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new CamProcessedLoanViewModel
                         {
                             isLineFacility = p.ISFACILITYLINE,
+                            isLineMaintained = m.APPROVEDLINESTATUSID != null,
                             bookingAmountRequested = s.AMOUNT_REQUESTED,
                             loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                             bookingRequestStatusId = s.APPROVALSTATUSID,

@@ -778,6 +778,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                          where a.COMPANYID == companyId && d.DELETED == false
                          && staffIds.Contains(a.CREATEDBY)
                          && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -790,6 +791,8 @@ namespace FintrakBanking.Repositories.Credit
                          {
                              loanBookingRequestId = 0,
                              approvalTrailId = 0,
+                             isLineFacility = p.ISFACILITYLINE,
+                             isLineMaintained = a.APPROVEDLINESTATUSID != null,
                              appraisalOperationId = a.OPERATIONID,
                              requestedAmount = 0,
                              loanApplicationId = a.LOANAPPLICATIONID,
@@ -874,7 +877,7 @@ namespace FintrakBanking.Repositories.Credit
                 var lcApprovedAmounts = lcapprovedLCIFFsRecords.Count() > 0 ? lcapprovedLCIFFsRecords?.Sum(i => i.LETTEROFCREDITAMOUNT) : 0;
                 var product = context.TBL_PRODUCT.Find(item.productId);
 
-                var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && r.DELETED == false);
+                var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && r.APPROVEDLINESTATUSID == null && r.DELETED == false);
                 var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
 
                 //item.operationId = GetDrawdownOperationId(item.loanApplicationDetailId);
@@ -1379,7 +1382,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = entity.createdBy,
                 TENOR = entity.tenor,
-
+                TAKEFEEONCE = entity.chargeFeeOnce,
             };
             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
             context.SaveChanges();
