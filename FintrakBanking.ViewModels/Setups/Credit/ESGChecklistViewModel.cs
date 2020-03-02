@@ -52,12 +52,15 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int esgChecklistSummaryId { get; set; }
 
         public int loanApplicationDetailId { get; set; }
+        public int loanApplicationId { get; set; }
 
         public string comment { get; set; }
         public string colourCode { get; set; }
 
         public int ratingId { get; set; }
         public string productCustomerName { get; set; }
+        public string grade { get; set; }
+        public int score { get; set; }
 
         public string customerId { get; set; }
     }

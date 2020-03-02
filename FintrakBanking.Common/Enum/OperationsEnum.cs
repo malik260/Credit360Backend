@@ -143,11 +143,11 @@
     CallMemo = 150,
     CashCollaterizedRequest = 153,
     //New Id's for existing Enumn that were edited
-
     AnnualReview = 200, //formerly id= 114
     IndictiveTermsheet = 201,   //formerly id = 115
     CreditCardsCashBacked = 202,    //formerly 116
     CollateralSwap = 206,
+    LcIssuanceCancelation = 207,
 
 
     OverdraftInterestRateChangeApproval = 211,

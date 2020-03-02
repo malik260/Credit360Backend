@@ -98,6 +98,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lc/cancelation-approval")]
+        public HttpResponseMessage GetLcIssuancesForCancelationApproval()
+        {
+            try
+            {
+                IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForCancelationApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lc-issuance/lines/{customerId}")]
         public HttpResponseMessage GetIFFLinesForLCByCustomerId(int customerId)
         {

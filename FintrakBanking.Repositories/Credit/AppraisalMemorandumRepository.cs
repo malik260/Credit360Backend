@@ -1309,16 +1309,7 @@ namespace FintrakBanking.Repositories.Credit
                 else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
                     rl.RELEASEAPPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                    //var lcRelease = context.TBL_LCRELEASE_AMOUNT.Find(model.lcReleaseAmountId);
-                    //context.TBL_LCRELEASE_AMOUNT.Remove(lcRelease);
-                    //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
                 }
-
-                //if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
-                //if (lc.NEXTAPPLICATIONSTATUSID != null && lc.FINALAPPROVAL_LEVELID != null) { lc.APPLICATIONSTATUSID = (short)lc.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
-                // MEMORANDUM update
-                //          var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
-                //        if (memo != null) { memo.ISCOMPLETED = true; }
                 if (contextControl != null) contextControl.SaveChanges();
             }
 
@@ -1355,6 +1346,76 @@ namespace FintrakBanking.Repositories.Credit
             //ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
+        }
+
+        public WorkflowResponse LcCancelationMemorandum(LcForwardViewModel model)
+        {
+            int operationId = (int)OperationsEnum.LcIssuanceCancelation; // CHANGE
+            var applicationDate = general.GetApplicationDate();
+            var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
+            var cancelationInProgress = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == lc.LCISSUANCEID && t.OPERATIONID == (int)OperationsEnum.LcIssuanceCancelation && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended);
+            if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress && cancelationInProgress)
+            {
+                throw new SecureException("LC Issuance Cancelation Approval Already Ongoing");
+            }
+            if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
+            // WORKFLOW
+            using (var trans = context.Database.BeginTransaction())
+            {
+                workflow.OperationId = operationId;
+                workflow.StaffId = model.createdBy;
+                workflow.TargetId = model.LcIssuanceId;
+                workflow.CompanyId = model.companyId;
+                workflow.Vote = model.vote;
+                //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
+                //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
+                //workflow.NextLevelId = 0;
+                workflow.ToStaffId = null;
+                workflow.StatusId = model.forwardAction;
+                workflow.Comment = model.comment;
+                var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
+
+                workflow.BusinessUnitId = c?.BUSINESSUNTID;
+                var placeholders = new AlertPlaceholders();
+                placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
+                placeholders.referenceNumber = "<br />LC REFERENCENUMBER: " + lc.LCREFERENCENUMBER;
+                placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER OF CREDIT: CANCELATION";
+                placeholders.operationName = "<br />OPERATION NAME: LC CANCELATION";
+                placeholders.branchName = "<br />BRANCH NAME: " + c.TBL_BRANCH.BRANCHNAME;
+                workflow.Placeholders = placeholders;
+
+                workflow.DeferredExecution = true;
+                workflow.LogActivity();
+
+                WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
+
+                lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationInProgress;
+
+                if (workflow.NewState == (int)ApprovalState.Ended) // cam status
+                {
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    {
+                        lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
+                        lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        workflow.SetResponse = false;
+                    }
+                    else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+                    {
+                        lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                        if (lc.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted)
+                        {
+                            lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
+                        }
+                        else
+                        {
+                            lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceInProgress;
+                        }
+                    }
+                }
+                context.SaveChanges();
+                trans.Commit();
+                return workflow.Response;
+            }
         }
 
         public WorkflowResponse LcUssanceMemorandum(LcForwardViewModel model)
@@ -1454,7 +1515,6 @@ namespace FintrakBanking.Repositories.Credit
               // End of Audit Section ---------------------
   */
             context.SaveChanges();
-            //ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
@@ -1472,8 +1532,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.requestId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
-            //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0;
             workflow.ToStaffId = null;
             workflow.StatusId = (int)model.forwardAction;
@@ -1512,23 +1570,15 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
-                    //lgr.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected;
                     lgr.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                    //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
                 }
 
-                //if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.LCUSSANCESTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
-                //if (lc.NEXTAPPLICATIONSTATUSID != null && lc.FINALAPPROVAL_LEVELID != null) { lc.APPLICATIONSTATUSID = (short)lc.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
-                // MEMORANDUM update
-                //          var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
-                //        if (memo != null) { memo.ISCOMPLETED = true; }
                 if (contextControl != null) contextControl.SaveChanges();
             }
 
             lgr.DATEACTEDON = DateTime.Now;
             //ValidateAllFromReceiverLevels(model.createdBy, operationId);
             context.SaveChanges();
-            //ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
