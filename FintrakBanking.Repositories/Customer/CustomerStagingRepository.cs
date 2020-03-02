@@ -33,8 +33,9 @@ namespace FintrakBanking.Repositories.Customer
               firstName = x.FIRSTNAME,
               middleName = x.MIDDLENAME,
               lastName = x.LASTNAME,
-            //  customerTypeId = (short)x.CUSTOMERTYPEID,
-            dateOfBirth = (DateTime)x.DATEOFBIRTH
+              //customerTypeId = (short)x.CUSTOMERTYPEID,
+              dateOfBirth = (DateTime)x.DATEOFBIRTH,
+              //customerBVN = x.CUSTOMERBVN,
             });
         }
 
