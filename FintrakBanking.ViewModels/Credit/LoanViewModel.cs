@@ -422,6 +422,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int creditAppraisalOperationId { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
         public int applicationDetailId { get; set; }
+        public string appraisalOperationName { get; set; }
 
 
 
@@ -877,6 +878,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
         public int? capRegionId { get; set; }
         public string apiRequestId { get; set; }
+        public int creditAppraisalOperationId { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//

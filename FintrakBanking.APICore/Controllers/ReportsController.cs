@@ -325,6 +325,39 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("form3800b-lmsr")]
+        public HttpResponseMessage GetGeneratedForm3800bLmsr(string applicationRefNumber)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                var loanAppId = repo.GetLoanApplicationIdByReferenceNumberLMS(applicationRefNumber);
+                var data = creditTemplateRepo.GetSavedDocumentation(46, loanAppId);
+                if (data.Count == 0)
+                {
+                    data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 46, loanAppId, user);
+                }
+                // var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("form3800b-lms")]
         public HttpResponseMessage GetGeneratedForm3800bLMS(string applicationRefNumber)
         {
