@@ -39,6 +39,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICreditLimitValidationsRepository limitValidation;
         private ICasaRepository casa;
         private IWorkflow workflow;
+        private ICustomerCreditBureauRepository customerBureauReport;
         public CashFlowLendingRepository(FinTrakBankingContext _context, 
                                         ICustomerRepository _customer, 
                                         IGeneralSetupRepository _genSetup,
@@ -46,7 +47,8 @@ namespace FintrakBanking.Repositories.Credit
                                          CustomerDetails _customerRequest,
                                          ICreditLimitValidationsRepository _limitValidation,
                                          ICasaRepository _casa,
-                                         IWorkflow _workflow
+                                         IWorkflow _workflow,
+                                         ICustomerCreditBureauRepository _customerBureauReport
                                          )
         {
             this.context = _context;
@@ -57,6 +59,7 @@ namespace FintrakBanking.Repositories.Credit
             limitValidation = _limitValidation;
             casa = _casa;
             workflow = _workflow;
+            customerBureauReport = _customerBureauReport;
 
 
         }
@@ -504,6 +507,7 @@ namespace FintrakBanking.Repositories.Credit
                     response.requestId = model.requestId;
                     if (UpdateLoanApplicationDetail(loanApp))
                     {
+                        SaveLoanDocument(model);
                         response.StatusCode = "00";
                         response.Message = "Success";
                     }
@@ -578,6 +582,7 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
             var staffId = context.TBL_STAFF.Where(s => s.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
             var loanApplicationId = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID;
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == model.customerCode).FirstOrDefault();
 
             foreach (var loanFile in model.loanApplicationFiles)
             {
@@ -621,8 +626,7 @@ namespace FintrakBanking.Repositories.Credit
                     FILENAME = loanFile.caption+"."+loanFile.fileExtension,
                     FILEEXTENSION = loanFile.fileExtension,
                     FILESIZE = loanFile.fileData.Length,
-                    //FILEDATA = loanFile.fileData.Base64ToByte(),
-                    FILEDATA = loanFile.fileData.ToByteArray(),
+                    FILEDATA = Convert.FromBase64String(loanFile.fileData),
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = DateTime.Now,
@@ -653,8 +657,36 @@ namespace FintrakBanking.Repositories.Credit
                 if (Convert.ToInt16(loanFile.creditBureauType) == (short)CreditBureauEnum.XDSCreditBureau) caption = "FirstCentralCreditBureau";
                 if (Convert.ToInt16(loanFile.creditBureauType) == (short)CreditBureauEnum.CRMS) caption = "CRMSCreditBureau";
 
+                //================================================
+                var previousSearch = customerBureauReport.GetCustomerCreditBureauReportLog(customer.CUSTOMERID, null);
+                bool hascrms = false;
+                foreach (var i in previousSearch)
+                {
+                    if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
+                };
+                if (previousSearch.Count() >= 2 && !hascrms && Convert.ToInt16(loanFile.creditBureauType) != (short)CreditBureauEnum.CRMS)
+                    continue;
+
+                if (previousSearch.Count() >= 3)
+                    continue;
+
+               // if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
+                var data = new Entities.Models.TBL_CUSTOMER_CREDIT_BUREAU()
+                {
+                    COMPANYDIRECTORID = null, //entity.companyDirectorId,
+                    CHARGEAMOUNT = 0, // entity.chargeAmount,
+                    CREDITBUREAUID = Convert.ToInt16(loanFile.creditBureauType),// entity.creditBureauId,
+                    CUSTOMERID = customer.CUSTOMERID,
+                    ISREPORTOKAY = true, //entity.isReportOkay,
+                    USEDINTEGRATION = false, //entity.usedIntegration,
+                    DATECOMPLETED = DateTime.Now, // entity.dateCompleted,
+                    DATETIMECREATED = DateTime.Now,
+                    BRANCHID = model.userBranchId,
+                    CREATEDBY = model.createdBy
+                };
+                // ==========================================
+
                 if (loanFile.reportFileDateinPDF == null || loanFile.reportFileDateinPDF == string.Empty) continue;
-                //var loanApplicationId = context.TBL_LOAN_APPLICATION.Where(O => O.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault().LOANAPPLICATIONID;
 
                 var existing = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
                     && x.OPERATIONID == (int)OperationsEnum.CreditAppraisal
@@ -690,17 +722,13 @@ namespace FintrakBanking.Repositories.Credit
                     oldUsage.DATETIMEDELETED = DateTime.Now;
                 }
 
-                //var b = loanFile.reportFileDateinPDF.Base64ToByte();
-                //var a = (int)loanFile.reportFileDateinPDF.Length;
-
                 var document = new TBL_DOCUMENT_UPLOAD()
                 {
                     DOCUMENTTYPEID = Convert.ToInt32(loanFile.documentTypeId), 
                     FILENAME = caption + "." + "pdf",
                     FILEEXTENSION = "pdf",
                     FILESIZE = (int)loanFile.reportFileDateinPDF.Length,
-                    FILEDATA = loanFile.reportFileDateinPDF.ToByteArray(),
-                    //FILEDATA = loanFile.reportFileDateinPDF.Base64ToByte(),
+                    FILEDATA = Convert.FromBase64String(loanFile.reportFileDateinPDF),
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = DateTime.Now,

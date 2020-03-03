@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.StagingModels
         //[StringLength(10)]
         public string GENDER { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DATEOFBIRTH { get; set; }
 
         //[StringLength(200)]
@@ -73,7 +73,7 @@ namespace FintrakBanking.Entities.StagingModels
 
         public int? APPROVALSTATUS { get; set; }
 
-        [Column(TypeName = "date")]
+        //[Column(TypeName = "date")]
         public DateTime? DATEACTEDON { get; set; }
 
         //[StringLength(150)]
