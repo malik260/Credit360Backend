@@ -1350,10 +1350,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse LcCancelationMemorandum(LcForwardViewModel model)
         {
-            int operationId = (int)OperationsEnum.LcIssuanceCancelation; // CHANGE
+            int operationId = (int)OperationsEnum.LCTerminationApproval; // CHANGE
             var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
-            var cancelationInProgress = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == lc.LCISSUANCEID && t.OPERATIONID == (int)OperationsEnum.LcIssuanceCancelation && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended);
+            var cancelationInProgress = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == lc.LCISSUANCEID && t.OPERATIONID == (int)OperationsEnum.LCTerminationApproval && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended);
             if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress && cancelationInProgress)
             {
                 throw new SecureException("LC Issuance Cancelation Approval Already Ongoing");

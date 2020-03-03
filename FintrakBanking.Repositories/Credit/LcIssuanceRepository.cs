@@ -366,7 +366,7 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForCancelationApproval(int staffId)
         {
-                var operationId = (int)OperationsEnum.LcIssuanceCancelation;
+                var operationId = (int)OperationsEnum.LCTerminationApproval;
                 var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
                 var query = (from a in context.TBL_LC_ISSUANCE
