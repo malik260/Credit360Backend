@@ -1770,6 +1770,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                         <td><b>Overall Green Category:</b></td>
+                        <td>{GetGreenRatingDetailMarkup()}</td>
                         <td>{GetGreenRatingSummaryMarkup()}</td>
                     </tr>
                  ";
@@ -5139,6 +5140,26 @@ namespace FintrakBanking.Repositories.Credit
                 }).ToList();
         }
 
+        public IEnumerable<ESGChecklistSummaryViewModel> GetGreenLoanIdentificationDetails()
+        {
+            var greenDetails = (from g in context.TBL_ESG_CHECKLIST_DETAIL
+                               join d in context.TBL_ESG_CHECKLIST_DEFINITION on g.ESGCHECKLISTDEFINITIONID equals d.ESGCHECKLISTDEFINITIONID
+                               join yes in context.TBL_ESG_CHECKLIST_SCORES on d.YESCHECKLISTSCORESID equals yes.CHECKLISTSCORESID into yesscore
+                               join no in context.TBL_ESG_CHECKLIST_SCORES on d.NOCHECKLISTSCORESID equals no.CHECKLISTSCORESID into noscore
+                               let ys = yesscore.Any(ye => ye.SCORE == g.CHECKLISTSTATUSID)
+                               from y in yesscore.DefaultIfEmpty()
+                               from n in noscore.DefaultIfEmpty()
+                               where g.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
+                               && g.DELETED == d.DELETED == false
+                               select new ESGChecklistSummaryViewModel
+                               {
+                                   loanApplicationId = g.LOANAPPLICATIONDETAILID,
+                                   grade = (ys) ? y.GRADE : n.GRADE,
+                                   score = (ys) ? y.SCORE.Value : n.SCORE.Value
+                               }).ToList();
+            return greenDetails;
+        }
+
         public IEnumerable<ESGChecklistSummaryViewModel> GetGreenRatingSummary()
         {
             return context.TBL_ESG_CHECKLIST_SUMMARY
@@ -5160,6 +5181,24 @@ namespace FintrakBanking.Repositories.Credit
 
             var n = 0;
             result = result + $@"{ summary?.comment }";
+            return result;
+        }
+
+        private string GetGreenRatingDetailMarkup()
+        {
+            var result = String.Empty;
+            var greenDetails = GetGreenLoanIdentificationDetails();
+            var greenSummary = greenDetails.GroupBy(d => d.score).Select(d => d.FirstOrDefault()).ToList();
+            result += $@"
+                        <ul>
+                        ";
+            foreach (var s in greenSummary)
+            {
+                result += $@"<li>{ s.grade }</li>";
+            }
+            result += $@"
+                        </ul>
+                        ";
             return result;
         }
 
