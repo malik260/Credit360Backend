@@ -504,6 +504,7 @@ namespace FintrakBanking.Repositories.Credit
                     response.requestId = model.requestId;
                     if (UpdateLoanApplicationDetail(loanApp))
                     {
+                        SaveLoanDocument(model);
                         response.StatusCode = "00";
                         response.Message = "Success";
                     }
