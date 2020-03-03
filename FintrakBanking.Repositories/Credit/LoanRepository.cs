@@ -491,9 +491,9 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             var systemDate = generalSetup.GetApplicationDate();
             var product = context.TBL_PRODUCT.Find(request.PRODUCTID);
-            var lineProduct = context.TBL_PRODUCT.Where(x=>x.PRODUCTID == applicationDetail.APPROVEDPRODUCTID && x.ISFACILITYLINE == true);
+            var lineProduct = context.TBL_PRODUCT.Where(x=>x.PRODUCTID == applicationDetail.APPROVEDPRODUCTID && x.ISFACILITYLINE == true).ToList();
 
-            if(lineProduct != null && application != null && application.APPROVEDLINESTATUSID == null)
+            if(lineProduct.Count() > 0 && application != null && application.APPROVEDLINESTATUSID == null)
             {
                 throw new ConditionNotMetException("Please Maintain the line before booking");
             }

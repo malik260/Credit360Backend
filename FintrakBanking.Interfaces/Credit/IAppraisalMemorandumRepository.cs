@@ -29,7 +29,7 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse LcAppraisalMemorandum(LcForwardViewModel model);
 
         WorkflowResponse LcReleaseMemorandum(LcForwardViewModel model);
-
+        WorkflowResponse LcCancelationMemorandum(LcForwardViewModel model);
         WorkflowResponse LcUssanceMemorandum(LcForwardViewModel model);
 
         WorkflowResponse LetterGenerationRequestMemorandum(LetterGenerationRequestViewModel model);

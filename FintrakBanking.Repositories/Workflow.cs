@@ -264,9 +264,15 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             });
 
-            if (this.deferredExecution) { return true; }
+            if (this.deferredExecution)
+            {
+                return true;
+            }
             this.saved = context.SaveChanges() > 0;
-            if (this.saved) return true;
+            if (this.saved)
+            {
+                return true;
+            }
 
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
         }
@@ -396,7 +402,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void MakerCheckerControl()
         {
-            if (statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
+            if (this.approvalGrid.Count() > 1 &&  statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
             {
                 var firstRequest = trailLog.OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
                 if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
@@ -1648,6 +1654,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var productClass = context.TBL_PRODUCT_CLASS.Find(productClassIds.FirstOrDefault()); // TODO: COUTION! which product to be prioritized?
             return productClass.PRODUCTCLASSID;
         }
+
     }
 
     public class WorkflowSetup
