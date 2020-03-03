@@ -684,6 +684,9 @@ namespace FintrakBanking.Repositories.Credit
                     BRANCHID = model.userBranchId,
                     CREATEDBY = model.createdBy
                 };
+
+                context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+                context.SaveChanges();
                 // ==========================================
 
                 if (loanFile.reportFileDateinPDF == null || loanFile.reportFileDateinPDF == string.Empty) continue;
