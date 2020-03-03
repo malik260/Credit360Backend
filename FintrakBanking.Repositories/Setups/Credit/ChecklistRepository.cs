@@ -2721,7 +2721,7 @@ namespace FintrakBanking.Repositories.Credit
                             subCategoryName = s.ESGSUBCATEGORYNAME,
                             comment = a.COMMENT_,
                             description = a.DESCRIPTION,
-                            overAllRiskStatusId = b.RATINGID,
+                            overAllRiskStatusId = (b == null) ? 0 : b.RATINGID,
                             overSummary = b.COMMENT_
                         }).ToList();
             return data;
