@@ -396,7 +396,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void MakerCheckerControl()
         {
-            if (statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
+            if (this.approvalGrid.Count() > 1 &&  statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
             {
                 var firstRequest = trailLog.OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
                 if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
