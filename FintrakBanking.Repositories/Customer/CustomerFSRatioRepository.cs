@@ -49,6 +49,20 @@ namespace FintrakBanking.Repositories.Customer
             return data;
         }
 
+        public IEnumerable<CustomerFSRatioCaptionViewModel> GetFSRatioCaptionByFSCaptionGroupId(int companyId, int fSCaptionGroupId)
+        {
+            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION
+                        where a.ISRATIO == true && a.DELETED == false && a.FSCAPTIONGROUPID == fSCaptionGroupId
+                        select new CustomerFSRatioCaptionViewModel
+                        {
+                            ratioCaptionId = (short)a.FSCAPTIONID,
+                            ratioCaptionName = a.FSCAPTIONNAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).ToList();
+            return data;
+        }
+
         public List<CustomerFSRatioCaptionViewModel> GetFSRatioCaptionById(short ratioCaptionId)
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION

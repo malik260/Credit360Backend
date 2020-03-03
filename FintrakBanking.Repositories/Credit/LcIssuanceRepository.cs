@@ -364,6 +364,81 @@ namespace FintrakBanking.Repositories.credit
             return applications.ToList();
         }
 
+        public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForCancelationApproval(int staffId)
+        {
+                var operationId = (int)OperationsEnum.LCTerminationApproval;
+                var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+
+                var query = (from a in context.TBL_LC_ISSUANCE
+                             where
+                                (a.DELETED == false
+                            && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress)
+                            orderby a.LCISSUANCEID
+                            join b in context.TBL_APPROVAL_TRAIL on a.LCISSUANCEID equals b.TARGETID
+                            where
+                            (
+                            (b.OPERATIONID == operationId)
+                            && b.APPROVALSTATEID != (int)ApprovalState.Ended
+                            && b.RESPONSESTAFFID == null
+                            && b.LOOPEDSTAFFID == null
+                            && levelIds.Contains((int)b.TOAPPROVALLEVELID)
+                            && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
+                            )
+                         select new LcIssuanceApprovalViewModel()
+                         {
+                             lcIssuanceId = a.LCISSUANCEID,
+                             isDraftRequired = a.ISDRAFTREQUIRED,
+                             lcReferenceNumber = a.LCREFERENCENUMBER,
+                             letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
+                             beneficiaryName = a.BENEFICIARYNAME,
+                             totalApprovedAmount = a.TOTALAPPROVEDAMOUNT,
+                             totalApprovedAmountCurrencyId = a.TOTALAPPROVEDAMOUNTCURRENCYID,
+                             availableAmountCurrencyId = a.AVAILABLEAMOUNTCURRENCYID,
+                             cashBuildUpAvailable = a.CASHBUILDUPAVAILABLE,
+                             cashBuildUpReferenceNumber = a.CASHBUILDUPREFERENCENUMBER,
+                             cashBuildUpReferenceType = a.CASHBUILDUPREFERENCETYPE,
+                             percentageToCover = a.PERCENTAGETOCOVER,
+                             lcTolerancePercentage = a.LCTOLERANCEPERCENTAGE,
+                             lcToleranceValue = a.LCTOLERANCEVALUE,
+                             releaseAmount = a.RELEASEDAMOUNT,
+                             beneficiaryAddress = a.BENEFICIARYADDRESS,
+                             beneficiaryEmail = a.BENEFICIARYEMAIL,
+                             customerName = a.TBL_CUSTOMER.FIRSTNAME + a.TBL_CUSTOMER.MIDDLENAME + a.TBL_CUSTOMER.LASTNAME,
+                             customerId = a.CUSTOMERID,
+                             fundSourceId = a.FUNDSOURCEID,
+                             fundSourceDetails = a.FUNDSOURCEDETAILS,
+                             formMNumber = a.FORMMNUMBER,
+                             beneficiaryPhoneNumber = a.BENEFICIARYPHONENUMBER,
+                             beneficiaryBank = a.BENEFICIARYBANK,
+                             currencyId = a.CURRENCYID,
+                             proformaInvoiceId = a.PROFORMAINVOICEID,
+                             availableAmount = a.AVAILABLEAMOUNT,
+                             letterOfCreditAmount = a.LETTEROFCREDITAMOUNT,
+                             letterOfcreditExpirydate = a.LETTEROFCREDITEXPIRYDATE,
+                             invoiceDate = a.INVOICEDATE,
+                             invoiceDueDate = a.INVOICEDUEDATE,
+                             lastComment = b.COMMENT,
+                             currentApprovalStateId = b.APPROVALSTATEID,
+                             currentApprovalLevelId = b.TOAPPROVALLEVELID,
+                             currentApprovalLevel = b.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                             currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
+                             lcApprovalTrailId = b == null ? 0 : b.APPROVALTRAILID, // for inner sequence ordering
+                             toStaffId = b.TOSTAFFID,
+                             approvalStatusId = b.APPROVALSTATUSID,
+                             applicationStatusId = a.APPLICATIONSTATUSID,
+                             createdBy = (int)a.CREATEDBY,
+                             operationId = operationId,
+                             dateTimeCreated = (DateTime)a.DATETIMECREATED
+                         }).ToList();
+
+            var cancelationsForApproval = query.AsQueryable()
+                .Where(x => x.currentApprovalLevelTypeId != 2)
+                .GroupBy(d => d.lcIssuanceId)
+                .Select(g => g.OrderByDescending(b => b.lcApprovalTrailId).FirstOrDefault());
+
+            return cancelationsForApproval.ToList();
+        }
+
         public IEnumerable<CamProcessedLoanViewModel> GetIFFLinesForLCByCustomerId(int customerId, int companyId, int staffId, int branchId)
         {
             var lines = loanRepository.GetAvailedLoanApplicationsDueForInitiateBooking(companyId, staffId, branchId).Where
@@ -722,21 +797,6 @@ namespace FintrakBanking.Repositories.credit
             var operationId = (int)OperationsEnum.lcReleaseOfShippingDocuments;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
-            //var querytest1 = (from a in context.TBL_LC_ISSUANCE
-            //                  where
-            //                    a.DELETED == false
-            //                    && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-            //                  select a).ToList();
-
-            //var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
-            //                  where
-            //                    (b.OPERATIONID == operationId)
-            //                    && b.APPROVALSTATEID != (int)ApprovalState.Ended
-            //                    && b.RESPONSESTAFFID == null
-            //                    && levelIds.Contains((int)b.TOAPPROVALLEVELID)
-            //                    && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
-            //                  select b).ToList();
-            // query
             var releasesForApproval = (from a in context.TBL_LC_ISSUANCE
                          where
                             (a.DELETED == false
