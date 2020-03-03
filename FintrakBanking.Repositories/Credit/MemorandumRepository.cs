@@ -5150,12 +5150,15 @@ namespace FintrakBanking.Repositories.Credit
                                from y in yesscore.DefaultIfEmpty()
                                from n in noscore.DefaultIfEmpty()
                                where g.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
-                               && g.DELETED == d.DELETED == false
+                               && g.LOANAPPLICATIONDETAILID == this.targetId
+                               && g.DELETED == false
+                               && d.DELETED == false
                                select new ESGChecklistSummaryViewModel
                                {
                                    loanApplicationId = g.LOANAPPLICATIONDETAILID,
                                    grade = (ys) ? y.GRADE : n.GRADE,
-                                   score = (ys) ? y.SCORE.Value : n.SCORE.Value
+                                   score = (ys) ? y.CHECKLISTSCORESID : n.CHECKLISTSCORESID,
+                                   
                                }).ToList();
             return greenDetails;
         }
