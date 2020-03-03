@@ -123,39 +123,12 @@ namespace FintrakBanking.Repositories.Media
                 .ThenBy(x => x.documentTypeId)?
                 .ToList();
 
-            //var customerId = (from ccb in context.TBL_CUSTOMER_CREDIT_BUREAU
-            //                            join app in context.TBL_LOAN_APPLICATION_DETAIL on ccb.CUSTOMERID equals app.CUSTOMERID
-            //                            where app.LOANAPPLICATIONID == targetId
-            //                            select ccb.CUSTOMERID).ToList();
+            var customerId = (from ccb in context.TBL_CUSTOMER_CREDIT_BUREAU
+                              join app in context.TBL_LOAN_APPLICATION_DETAIL on ccb.CUSTOMERID equals app.CUSTOMERID
+                              where app.LOANAPPLICATIONID == targetId
+                              select ccb.CUSTOMERID).ToList();
 
-            //var customerBureauLog = creditBureau.GetCustomerCreditBureauReportLog(customerId.FirstOrDefault(), null).Select(x=>x.customerCreditBureauId);
-
-            //string staff = (from x in context.TBL_STAFF
-            //                join app in context.TBL_LOAN_APPLICATION_DETAIL on x.STAFFID equals app.CREATEDBY
-            //                where app.LOANAPPLICATIONID == targetId
-            //                select x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault();
-
-            //var secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
-            //                   where customerBureauLog.Contains(d.CUSTOMERCREDITBUREAUID)
-            //                   select new DocumentUploadViewModel
-            //                   {
-            //                       documentUploadId = d.DOCUMENTID,
-            //                       documentTypeName = "CREDIT BUREAU",
-            //                       documentCategoryName = "CREDIT BUREAU",
-            //                       dateTimeCreated = d.DATETIMECREATED,
-            //                       uploadedBy = staff,
-            //                       documentTitle = d.DOCUMENT_TITLE,
-            //                       fileName = d.FILENAME,
-            //                       fileExtension = d.FILEEXTENSION,
-            //                       //fileData = d.FILEDATA,
-            //                       //fileSize = d.fileSize,
-            //                   })?.ToList();
-            //-------------------------------------------------------------------------
-
-            var customerCreditBureau = (from ccb in context.TBL_CUSTOMER_CREDIT_BUREAU
-                                        join app in context.TBL_LOAN_APPLICATION_DETAIL on ccb.CUSTOMERID equals app.CUSTOMERID
-                                        where app.LOANAPPLICATIONID == targetId
-                                        select ccb.CUSTOMERCREDITBUREAUID).ToList();
+            var customerBureauLog = creditBureau.GetCustomerCreditBureauReportLog(customerId.FirstOrDefault(), null).Select(x => x.customerCreditBureauId);
 
             string staff = (from x in context.TBL_STAFF
                             join app in context.TBL_LOAN_APPLICATION_DETAIL on x.STAFFID equals app.CREATEDBY
@@ -163,7 +136,7 @@ namespace FintrakBanking.Repositories.Media
                             select x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault();
 
             var secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
-                               where customerCreditBureau.Contains(d.CUSTOMERCREDITBUREAUID)
+                               where customerBureauLog.Contains(d.CUSTOMERCREDITBUREAUID)
                                select new DocumentUploadViewModel
                                {
                                    documentUploadId = d.DOCUMENTID,
@@ -177,6 +150,33 @@ namespace FintrakBanking.Repositories.Media
                                    //fileData = d.FILEDATA,
                                    //fileSize = d.fileSize,
                                })?.ToList();
+            //-------------------------------------------------------------------------
+
+            //var customerCreditBureau = (from ccb in context.TBL_CUSTOMER_CREDIT_BUREAU
+            //                            join app in context.TBL_LOAN_APPLICATION_DETAIL on ccb.CUSTOMERID equals app.CUSTOMERID
+            //                            where app.LOANAPPLICATIONID == targetId
+            //                            select ccb.CUSTOMERCREDITBUREAUID).ToList();
+
+            //string staff = (from x in context.TBL_STAFF
+            //                join app in context.TBL_LOAN_APPLICATION_DETAIL on x.STAFFID equals app.CREATEDBY
+            //                where app.LOANAPPLICATIONID == targetId
+            //                select x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault();
+
+            //var secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
+            //                   where customerCreditBureau.Contains(d.CUSTOMERCREDITBUREAUID)
+            //                   select new DocumentUploadViewModel
+            //                   {
+            //                       documentUploadId = d.DOCUMENTID,
+            //                       documentTypeName = "CREDIT BUREAU",
+            //                       documentCategoryName = "CREDIT BUREAU",
+            //                       dateTimeCreated = d.DATETIMECREATED,
+            //                       uploadedBy = staff,
+            //                       documentTitle = d.DOCUMENT_TITLE,
+            //                       fileName = d.FILENAME,
+            //                       fileExtension = d.FILEEXTENSION,
+            //                       //fileData = d.FILEDATA,
+            //                       //fileSize = d.fileSize,
+            //                   })?.ToList();
 
             var output = firstQuery.Union(secondQuery).ToList();
 
