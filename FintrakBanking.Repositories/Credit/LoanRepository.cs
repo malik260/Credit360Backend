@@ -345,7 +345,7 @@ namespace FintrakBanking.Repositories.Credit
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             if (applicationDetail == null) { return false; }
 
-            if (context.TBL_PRODUCT.Where(x => x.PRODUCTID == entity.productId &&  x.ISFACILITYLINE != true ).Any())
+            if (context.TBL_PRODUCT.Where(x => x.PRODUCTID == request.PRODUCTID &&  x.ISFACILITYLINE != true ).Any())
             {
                 application.APPROVEDLINESTATUSID = entity.approvedLineStatusId;
                 request.APPROVEDLINESTATUSID = entity.approvedLineStatusId;

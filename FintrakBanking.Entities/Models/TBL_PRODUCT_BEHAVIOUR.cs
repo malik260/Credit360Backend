@@ -22,6 +22,7 @@ namespace FintrakBanking.Entities.Models
         public decimal? CUSTOMER_LIMIT { get; set; }
 
         public double? PRODUCT_LIMIT { get; set; }
+        public double? INVOICE_LIMIT { get; set; }
 
         public bool? ISINVOICEBASED { get; set; }
 
