@@ -791,7 +791,7 @@ namespace FintrakBanking.Repositories.Credit
                          {
                              loanBookingRequestId = 0,
                              approvalTrailId = 0,
-                             isLineFacility = p.ISFACILITYLINE,
+                             isLineFacility = context.TBL_PRODUCT.Where(x => x.PRODUCTID == d.APPROVEDPRODUCTID && x.ISFACILITYLINE == true).Any(),
                              isLineMaintained = a.APPROVEDLINESTATUSID != null,
                              appraisalOperationId = a.OPERATIONID,
                              requestedAmount = 0,
