@@ -1354,10 +1354,10 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
             var cancelationInProgress = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == lc.LCISSUANCEID && t.OPERATIONID == (int)OperationsEnum.LCTerminationApproval && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended);
-            if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress && cancelationInProgress)
-            {
-                throw new SecureException("LC Issuance Cancelation Approval Already Ongoing");
-            }
+            //if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress && cancelationInProgress)
+            //{
+            //    throw new SecureException("LC Issuance Cancelation Approval Already Ongoing");
+            //}
             if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
             // WORKFLOW
             using (var trans = context.Database.BeginTransaction())
