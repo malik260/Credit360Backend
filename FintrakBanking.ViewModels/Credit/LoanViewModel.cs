@@ -603,6 +603,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime effectiveDate { get; set; }
         public DateTime maturityDate { get; set; }
         public DateTime bookingDate { get; set; }
+        public DateTime systemArrivalDateTime { get; set; }
         public decimal contingentAmount { get; set; }
         public decimal approvedAmount { get; set; }
         public int approvalStatusId { get; set; }
