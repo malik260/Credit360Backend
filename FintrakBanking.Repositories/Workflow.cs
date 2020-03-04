@@ -1117,9 +1117,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool IsLastApprover(TBL_APPROVAL_LEVEL level)
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId).ToList();
-            if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE)
+            if (IsLastLevel(approvalLevels, level) && (level.CANAPPROVE))
             //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
-                {
+            {
                 return true;
             }
                 return false;
