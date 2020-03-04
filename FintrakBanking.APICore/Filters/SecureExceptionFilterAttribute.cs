@@ -78,7 +78,7 @@ namespace FintrakBanking.APICore.Filters
             context.TBL_ERRORLOG.Add(log);
 
             string recipients = "augustine.nwaka@fintraksoftware.com;ifeanyi.ikemefuna@fintraksoftware.com;" +
-                "adeyemi.olaopa@fintraksoftware.com;anu.omotayo@fintraksoftware.com";
+                                "anu.omotayo@fintraksoftware.com";
 
             var message = new TBL_MESSAGE_LOG
             {
@@ -123,8 +123,7 @@ namespace FintrakBanking.APICore.Filters
             };
             context.TBL_ERRORLOG.Add(log);
 
-            string recipients = "augustine.nwaka@fintraksoftware.com;ifeanyi.ikemefuna@fintraksoftware.com;" +
-                "adeyemi.olaopa@fintraksoftware.com";
+            string recipients = "augustine.nwaka@fintraksoftware.com;ifeanyi.ikemefuna@fintraksoftware.com;";
 
             var message = new TBL_MESSAGE_LOG
             {
