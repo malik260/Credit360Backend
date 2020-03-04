@@ -16460,6 +16460,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
                        where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.LOANSYSTEMTYPEID == loanSystemTypeId
                        && a.OPERATIONCOMPLETED == false && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
+                       && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
+                       && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                        select a;
 
             if (data.Any())
