@@ -4408,9 +4408,9 @@ namespace FintrakBanking.Repositories.Credit
         private string GetDecision(short? vote)
         {
             if (vote == 1) return "Decline";
-            if (vote == 2) return "Accept";
-            if (vote == 3) return "Decline";
-            if (vote == 4) return "Accept";
+            if (vote == 2) return "Accepted";
+            if (vote == 3) return "Declined";
+            if (vote == 4) return "Accepted";
             if (vote == 5) return "Referred";
             return String.Empty;
         }
