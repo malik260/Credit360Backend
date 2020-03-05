@@ -346,9 +346,9 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var sumOverdraftOutstandingBalance = OverdraftOutstandingBalance.Select(c => c.OVERDRAFTLIMIT).Sum();
 
             model.outstandingBalance = (double)(sumLoanOutstandingBalance + sumOverdraftOutstandingBalance);
-            if(data!=null)
+            if(data != null)
                 model.limit = (double)data;
-            model.difference = model.limit - model.outstandingBalance;
+                model.difference = model.limit - model.outstandingBalance;
 
             return model;
 
