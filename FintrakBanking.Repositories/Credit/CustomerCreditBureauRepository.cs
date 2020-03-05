@@ -296,6 +296,14 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
 
+            var existing = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.CUSTOMERID == entity.customerId && O.CREDITBUREAUID == entity.creditBureauId 
+                                                                                && O.COMPANYDIRECTORID == entity.companyDirectorId && O.DELETED == false 
+                                                                                && (DbFunctions.DiffDays(O.DATETIMECREATED, DateTime.Now).Value <= 90));
+
+            if (existing != null) {
+                return existing.CUSTOMERCREDITBUREAUID;
+            }
+
             var data = new Entities.Models.TBL_CUSTOMER_CREDIT_BUREAU()
             {
                 COMPANYDIRECTORID = entity.companyDirectorId,
