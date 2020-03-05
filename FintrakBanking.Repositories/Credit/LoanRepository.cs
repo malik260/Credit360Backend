@@ -778,7 +778,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTID = request.PRODUCTID,
                 CASAACCOUNTID = model.casaAccountId,
                 BRANCHID = application.BRANCHID,
-                CURRENCYID = (short)model.exchangeRate,
+                //CURRENCYID = (short)model.exchangeRate,
+                CURRENCYID = (short) model.currencyId,
                 EXCHANGERATE = currentExchangeRate,
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
                 LOANREFERENCENUMBER = loanReferenceNumber,
@@ -13273,9 +13274,10 @@ namespace FintrakBanking.Repositories.Credit
                                        productId = a.PRODUCTID,
                                        productClassProcessId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
                                        loanApplicationTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
-                                       approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPROVEDAMOUNT,
+                                      //approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPROVEDAMOUNT,
 
-                                   }).ToList();
+
+                                  }).ToList();
 
             //allFilteredLoan = searchResult2.ToList();
 

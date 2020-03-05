@@ -13,7 +13,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
-using System;
+using System; 
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -4637,8 +4637,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<LoanApplicationViewModel> SearchDrawDown(string searchString, int staffId = 0)
         {
-            int[] operations = { (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,(int)OperationsEnum.CorporateDrawdownRequest
- 
+            int[] operations = { (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
+                (int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ContigentLoanBooking,
+                (int)OperationsEnum.RevolvingLoanBooking,(int)OperationsEnum.TermLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.RevolvingTranchDisbursement
+
             };
             searchString = searchString.Trim().ToLower();
             var applications = (from x in context.TBL_LOAN_APPLICATION
