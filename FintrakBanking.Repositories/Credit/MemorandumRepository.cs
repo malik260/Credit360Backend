@@ -905,20 +905,20 @@ namespace FintrakBanking.Repositories.Credit
                                      (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
                                      (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
 
-                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == currentApplicationId && x.DELETED == false).ToList();
+                var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == currentApplicationId && x.DELETED == false).ToList();
                 var conditions = new List<ConditionPrecedentViewModel>();
 
                 foreach (var b in details)
                 {
-                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == b.LOANAPPLICATIONDETAILID));
+                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == b.LOANREVIEWAPPLICATIONID));
                 }
 
                 foreach (var f in conditions)
                 {
                     if (f.condition != null)
                     {
-                        var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == f.loanApplicationDetailId).FirstOrDefault();
-                        result.Add(new DropDownSelect { typeId = f.loanApplicationDetailId, id = f.conditionId, name = f.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
+                        var detail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == f.loanApplicationDetailId).FirstOrDefault();
+                        result.Add(new DropDownSelect { typeId = f.loanApplicationDetailId, id = f.conditionId, name = f.condition, title = detail.TBL_PRODUCT.PRODUCTNAME });
                     }
                 }
             }
@@ -1010,20 +1010,20 @@ namespace FintrakBanking.Repositories.Credit
                                      (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
                                      (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
 
-                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == currentApplicationId && x.DELETED == false).ToList();
+                var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == currentApplicationId && x.DELETED == false).ToList();
                 var conditions = new List<ConditionPrecedentViewModel>();
 
                 foreach (var b in details)
                 {
-                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == b.LOANAPPLICATIONDETAILID));
+                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == b.LOANREVIEWAPPLICATIONID));
                 }
 
                 foreach (var f in conditions)
                 {
                     if (f.condition != null)
                     {
-                        var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == f.loanApplicationDetailId).FirstOrDefault();
-                        result.Add(new DropDownSelect { typeId = f.loanApplicationDetailId, id = f.conditionId, name = f.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
+                        var detail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == f.loanApplicationDetailId).FirstOrDefault();
+                        result.Add(new DropDownSelect { typeId = f.loanApplicationDetailId, id = f.conditionId, name = f.condition, title = detail.TBL_PRODUCT.PRODUCTNAME });
                     }
                 }
             }

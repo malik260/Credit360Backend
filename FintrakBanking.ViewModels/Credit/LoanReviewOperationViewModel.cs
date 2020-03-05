@@ -294,7 +294,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public List<feeDetails> fees { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
         public int creditAppraisalOperationId { get; set; }
-        
+        public string lmsrApplicationReferenceNumber { get; set; }
     }
 
 
