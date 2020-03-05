@@ -801,7 +801,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
-                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
+                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.OPERATINGCASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
                 this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
                 this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 this.tenor = loanApplicationDetail.APPROVEDTENOR;
@@ -819,7 +819,7 @@ namespace FintrakBanking.Repositories.Credit
                 //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
                 this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
-                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
+                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(o=>o.AMOUNT_REQUESTED.ToString("#,##.00")).FirstOrDefault() ?? "0.00";
 
             return true;
         }
