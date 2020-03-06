@@ -42,6 +42,8 @@ namespace FintrakBanking.Common.Enum
         checklistDeferralCompleted = 33,
         collateralSwapInProgress = 34,
         collateralSwapCompleted = 35,
+        LcEnhancementInProgress = 36,
+        LcEnhancementCompleted = 37,
         //AdhocApprovalInProgress =23,
     }
 }
