@@ -1067,10 +1067,11 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                     {
-                        SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
-                    }
+                        loanApp.ArchiveLoanApplication(model.applicationId, operationId, (short)LoanApplicationStatusEnum.ApplicationRejected);
+                        //SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
+                }
 
-                    if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+                if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
                     if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
                                                                                                                                                                         // MEMORANDUM update                                                                                                                                               //        if (memo != null) { memo.ISCOMPLETED = true; }
                     if (contextControl != null) contextControl.SaveChanges();
@@ -3898,7 +3899,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 string referenceNo = customer.applicationReferenceNumber;
 
-                var failedEmailBody = "Dear Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                var failedEmailBody = "Dear Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Account Officer and collect your Offer Letter.";
                 string messageSubject = "DISAPPROVAL FOR LOAN APPLICATION";
 
                 emailLogger.ComposeEmail(referenceNo, failedEmailBody, messageSubject, customer.email,false);
