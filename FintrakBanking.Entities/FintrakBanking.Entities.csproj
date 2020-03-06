@@ -76,6 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\TBL_LC_ISSUANCE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LINE_FACILITY_STATUS.cs" />
     <Compile Include="Models\TBL_LMSR_FLOW_ORDER.cs" />
     <Compile Include="Models\SqlDatabaseConfiguration.cs" />
@@ -248,6 +249,7 @@
     <Compile Include="Models\TBL_TEMP_CUSTOMER_COMP_BENEFIC.cs" />
     <Compile Include="Models\TBL_ENDOFDAY_MONITORING.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_DOC_INVOICE.cs" />
+    <Compile Include="Models\TBL_TEMP_LC_ISSUANCE.cs" />
     <Compile Include="Models\TBL_TEMP_LOAN_APPLTN_CANCELTN.cs" />
     <Compile Include="Models\TBL_TEMP_LOAN_CAMSOL.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
