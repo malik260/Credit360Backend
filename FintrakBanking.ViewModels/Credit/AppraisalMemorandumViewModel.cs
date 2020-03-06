@@ -57,6 +57,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int nextApprovalLevelId { get; set; }
         public short applicationStatusId { get; set; }
         public decimal legalLendingLimit { get; set; }
+        public bool isFromPc { get; set; }
 
     }
 
