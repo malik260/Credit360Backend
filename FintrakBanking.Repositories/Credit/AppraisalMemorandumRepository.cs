@@ -439,7 +439,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
                 workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
                 workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
-
+                workflow.IsFromPc = model.isFromPc;
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
                     Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
@@ -1529,6 +1529,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse LcEnhancementMemorandum(LcForwardViewModel model)
         {
+            var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
+            if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress || lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress)
+            {
+                throw new SecureException("This LC is already undergoing Termination Or has been Terminated");
+            }
             int operationId = (int)OperationsEnum.LCModificationApproval; // CHANGE
             var applicationDate = general.GetApplicationDate();
             var tempLc = context.TBL_TEMP_LC_ISSUANCE.Find(model.tempLcIssuanceId);
@@ -1561,6 +1566,7 @@ namespace FintrakBanking.Repositories.Credit
                 WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
 
                 tempLc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcEnhancementInProgress;
+                tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
                 if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                 {
