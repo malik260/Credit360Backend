@@ -3244,10 +3244,11 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             foreach (ESGChecklistDetailViewModel model in models)
             {
+                var loanId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).LOANAPPLICATIONID;
                 var existItem = (from a in context.TBL_ESG_CHECKLIST_DETAIL
                                  where a.ESGCHECKLISTDETAILID == model.esgChecklistDetailId && a.ESGCHECKLISTDEFINITIONID == model.esgChecklistDefinitionId
                                  && a.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
-                                 && a.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && a.DELETED == false
+                                 && a.LOANAPPLICATIONDETAILID == loanId && a.DELETED == false
                                  select a).FirstOrDefault();
                 if (existItem != null)
                 {
@@ -3262,7 +3263,7 @@ namespace FintrakBanking.Repositories.Credit
                     var data = new TBL_ESG_CHECKLIST_DETAIL
                     {
                         ESGCHECKLISTDEFINITIONID = model.esgChecklistDefinitionId,
-                        LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                        LOANAPPLICATIONDETAILID = loanId,
                         ESGCLASSID = model.esgClassId,
                         ESGTYPEID = model.esgTypeId,
                         CHECKLIST_TYPEID = (int)CheckListTypeEnum.GreenRating,

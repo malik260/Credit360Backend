@@ -1,24 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace FintrakBanking.Entities.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
-
-    [Table("TBL_LC_ISSUANCE")]
-    public partial class TBL_LC_ISSUANCE
+    [Table("TBL_LC_ISSUANCE_ARCHIVE")]
+    public partial class TBL_LC_ISSUANCE_ARCHIVE
     {
-        public TBL_LC_ISSUANCE()
-        {
-            TBL_LC_DOCUMENT = new HashSet<TBL_LC_DOCUMENT>();
-            TBL_LC_CONDITION = new HashSet<TBL_LC_CONDITION>();
-            TBL_LC_SHIPPING = new HashSet<TBL_LC_SHIPPING>();
-            TBL_LC_USSANCE = new HashSet<TBL_LC_USSANCE>();
-
-        }
-
         [Key]
+        public int LCISSUANCEARCHIVEID { get; set; }
         public int LCISSUANCEID { get; set; }
 
         public string LCREFERENCENUMBER { get; set; }
@@ -122,16 +113,5 @@ namespace FintrakBanking.Entities.Models
 
 
         public int? OPERATIONID { get; set; }
-
-        public virtual ICollection<TBL_LC_DOCUMENT> TBL_LC_DOCUMENT { get; set; }
-
-        public virtual ICollection<TBL_LC_CONDITION> TBL_LC_CONDITION { get; set; }
-
-        public virtual ICollection<TBL_LC_SHIPPING> TBL_LC_SHIPPING { get; set; }
-
-        public virtual ICollection<TBL_LC_USSANCE> TBL_LC_USSANCE { get; set; }
-
-        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
-
     }
 }
