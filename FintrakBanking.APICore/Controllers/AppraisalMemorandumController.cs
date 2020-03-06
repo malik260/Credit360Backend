@@ -182,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LcEnhancementMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC CANCELATION request has been APPROVED successfully" : "The LC CANCELATION request has been REJECTED successfully") : "The LC CANCELATION request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC ENHANCEMENT request has been APPROVED successfully" : "The LC ENHANCEMENT request has been REJECTED successfully") : "The LC ENHANCEMENT request has been acted on successfully" });
         }
 
         [HttpPost]
