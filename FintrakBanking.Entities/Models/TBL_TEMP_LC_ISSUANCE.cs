@@ -1,27 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace FintrakBanking.Entities.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
-
-    [Table("TBL_LC_ISSUANCE")]
-    public partial class TBL_LC_ISSUANCE
+    [Table("TBL_TEMP_LC_ISSUANCE")]
+    public partial class TBL_TEMP_LC_ISSUANCE
     {
-        public TBL_LC_ISSUANCE()
-        {
-            TBL_LC_DOCUMENT = new HashSet<TBL_LC_DOCUMENT>();
-            TBL_LC_CONDITION = new HashSet<TBL_LC_CONDITION>();
-            TBL_LC_SHIPPING = new HashSet<TBL_LC_SHIPPING>();
-            TBL_LC_USSANCE = new HashSet<TBL_LC_USSANCE>();
-
-        }
-
         [Key]
+        public int TEMPLCISSUANCEID { get; set; }
         public int LCISSUANCEID { get; set; }
 
         public string LCREFERENCENUMBER { get; set; }
+        public string ENHANCEMENTREFERENCENUMBER { get; set; }
 
         [Required]
         public string BENEFICIARYNAME { get; set; }
@@ -122,16 +117,5 @@ namespace FintrakBanking.Entities.Models
 
 
         public int? OPERATIONID { get; set; }
-
-        public virtual ICollection<TBL_LC_DOCUMENT> TBL_LC_DOCUMENT { get; set; }
-
-        public virtual ICollection<TBL_LC_CONDITION> TBL_LC_CONDITION { get; set; }
-
-        public virtual ICollection<TBL_LC_SHIPPING> TBL_LC_SHIPPING { get; set; }
-
-        public virtual ICollection<TBL_LC_USSANCE> TBL_LC_USSANCE { get; set; }
-
-        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
-
     }
 }

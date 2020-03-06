@@ -156,6 +156,36 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
+        [Route("lc-cancelation/forward")]
+        public HttpResponseMessage LcCancelationMemorandum([FromBody] LcForwardViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.LcCancelationMemorandum(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC CANCELATION request has been APPROVED successfully" : "The LC CANCELATION request has been REJECTED successfully") : "The LC CANCELATION request has been acted on successfully" });
+        }
+
+        [HttpPost]
+        [Route("lc/enhancement-forward")]
+        public HttpResponseMessage LcEnhancementMemorandum([FromBody] LcForwardViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.LcEnhancementMemorandum(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC CANCELATION request has been APPROVED successfully" : "The LC CANCELATION request has been REJECTED successfully") : "The LC CANCELATION request has been acted on successfully" });
+        }
+
+        [HttpPost]
         [Route("lc/ussance-forward")]
         public HttpResponseMessage LcUssanceMemorandum([FromBody] LcForwardViewModel entity)
         {

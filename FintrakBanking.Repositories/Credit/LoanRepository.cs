@@ -345,7 +345,7 @@ namespace FintrakBanking.Repositories.Credit
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             if (applicationDetail == null) { return false; }
 
-            if (context.TBL_PRODUCT.Where(x => x.PRODUCTID == entity.productId &&  x.ISFACILITYLINE != true ).Any())
+            if (context.TBL_PRODUCT.Where(x => x.PRODUCTID == request.PRODUCTID &&  x.ISFACILITYLINE != true ).Any())
             {
                 application.APPROVEDLINESTATUSID = entity.approvedLineStatusId;
                 request.APPROVEDLINESTATUSID = entity.approvedLineStatusId;
@@ -491,9 +491,9 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             var systemDate = generalSetup.GetApplicationDate();
             var product = context.TBL_PRODUCT.Find(request.PRODUCTID);
-            var lineProduct = context.TBL_PRODUCT.Where(x=>x.PRODUCTID == applicationDetail.APPROVEDPRODUCTID && x.ISFACILITYLINE == true);
+            var lineProduct = context.TBL_PRODUCT.Where(x=>x.PRODUCTID == applicationDetail.APPROVEDPRODUCTID && x.ISFACILITYLINE == true).ToList();
 
-            if(lineProduct != null && application != null && application.APPROVEDLINESTATUSID == null)
+            if(lineProduct.Count() > 0 && application != null && application.APPROVEDLINESTATUSID == null)
             {
                 throw new ConditionNotMetException("Please Maintain the line before booking");
             }
@@ -778,7 +778,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTID = request.PRODUCTID,
                 CASAACCOUNTID = model.casaAccountId,
                 BRANCHID = application.BRANCHID,
-                CURRENCYID = (short)model.exchangeRate,
+                //CURRENCYID = (short)model.exchangeRate,
+                CURRENCYID = (short) model.currencyId,
                 EXCHANGERATE = currentExchangeRate,
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
                 LOANREFERENCENUMBER = loanReferenceNumber,
@@ -2844,7 +2845,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
                             requestDate = req.DATETIMECREATED,
-                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == m.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+                            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                         }).ToList();
 
                  data = data.Where(x => x.applicationReferenceNumber != "-")
@@ -3584,6 +3585,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
                             customerId = ln.CUSTOMERID,
                             productId = ln.PRODUCTID,
+                            systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
 
                             casaAccountId = ln.CASAACCOUNTID,
                             casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
@@ -6007,6 +6009,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short loanSystemTypeId, LoanViewModel loanModel, TBL_LOAN_APPLICATION_DETAIL facilityDetail)
         {
+            if (facilityDetail.ISFEETAKEN == true) return;
+
             var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == loanModel.loanBookingRequestId).FirstOrDefault();
             var chargeByApprovedAmount = false;
             foreach (var ent in feeModel)
@@ -7445,7 +7449,7 @@ namespace FintrakBanking.Repositories.Credit
                             //approvalStatusId = (short)atrail.APPROVALSTATUSID,
                             loanBookingRequestId = 0,
                             approvalTrailId = 0,
-                            isLineFacility = p.ISFACILITYLINE,
+                            isLineFacility = context.TBL_PRODUCT.Where(x => x.PRODUCTID == d.APPROVEDPRODUCTID && x.ISFACILITYLINE == true).Any(),
                             appraisalOperationId = a.OPERATIONID,
                             //bookingAmountRequested = r.AMOUNT_REQUESTED,
                             requestedAmount = 0,
@@ -8058,7 +8062,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
             }
 
-            if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved).Any())
+            if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved && x.DELETED == false && x.ISUSED ==false).Any())
             {
                 throw new ConditionNotMetException("This facility already has a running tranche disbursement request currently undergoing approval.");
             }
@@ -8269,6 +8273,7 @@ namespace FintrakBanking.Repositories.Credit
                                        toStaffId = atrail.TOSTAFFID,
                                        requestStaffId = atrail.REQUESTSTAFFID,
                                        isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
+                                       divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                    }).ToList();
 
             referredBackLoans = (from s in context.TBL_LOAN_BOOKING_REQUEST
@@ -8292,6 +8297,7 @@ namespace FintrakBanking.Repositories.Credit
                                      bookingRequestStatusId = s.APPROVALSTATUSID,
                                      requestDate = s.DATETIMECREATED,
                                      requestedBy = "",
+                                     systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                      requestedAmount = s.AMOUNT_REQUESTED,
                                      requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
                                      approvalStatusId = atrail.APPROVALSTATUSID,
@@ -8334,6 +8340,7 @@ namespace FintrakBanking.Repositories.Credit
                                      requestStaffId = atrail.REQUESTSTAFFID,
                                      isInEditMode = true,
                                      isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
+                                     divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
                                  }).ToList();
 
             IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = bookingRequestLoans.Union(referredBackLoans);
@@ -8561,7 +8568,7 @@ namespace FintrakBanking.Repositories.Credit
                                        bookingAmountRequested = s.AMOUNT_REQUESTED,
                                        loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                                        bookingRequestStatusId = s.APPROVALSTATUSID,
-                                       isLineFacility = p.ISFACILITYLINE,
+                                       isLineFacility = context.TBL_PRODUCT.Where(x => x.PRODUCTID == d.APPROVEDPRODUCTID && x.ISFACILITYLINE == true).Any(),
                                        isLineMaintained = m.APPROVEDLINESTATUSID != null,
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
@@ -8890,7 +8897,7 @@ namespace FintrakBanking.Repositories.Credit
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
-                            isLineFacility = p.ISFACILITYLINE,
+                            isLineFacility =  context.TBL_PRODUCT.Where(x=>x.PRODUCTID == d.APPROVEDPRODUCTID && x.ISFACILITYLINE == true).Any(),
                             isLineMaintained = m.APPROVEDLINESTATUSID != null,
                             bookingAmountRequested = s.AMOUNT_REQUESTED,
                             loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
@@ -13265,9 +13272,10 @@ namespace FintrakBanking.Repositories.Credit
                                        productId = a.PRODUCTID,
                                        productClassProcessId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
                                        loanApplicationTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
-                                       approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPROVEDAMOUNT,
+                                      //approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPROVEDAMOUNT,
 
-                                   }).ToList();
+
+                                  }).ToList();
 
             //allFilteredLoan = searchResult2.ToList();
 

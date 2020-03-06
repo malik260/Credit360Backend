@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.credit
         IEnumerable<LcIssuanceViewModel> GetLcIssuance(int id);
 
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuances(int staffId);
+        IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForEnhancement(int staffId);
 
         IEnumerable<CamProcessedLoanViewModel> GetIFFLinesForLCByCustomerId(int CustomerId, int companyId, int staffId, int branchId);
 
@@ -28,16 +29,23 @@ namespace FintrakBanking.Interfaces.credit
         LcReleaseAmountViewModel UpdateLCReleaseAmount(LcReleaseAmountViewModel entity);
 
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForApproval(int staffId);
+        IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForEnhancementApproval(int staffId);
+        IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForCancelationApproval(int staffId);
 
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForReleaseApproval(int staffId);
 
         //IEnumerable<LcIssuanceViewModel> GetLcIssuanceByIssuanceId(int id);
 
         LcIssuanceViewModel AddLcIssuance(LcIssuanceViewModel model);
-
         bool UpdateLcIssuance(LcIssuanceViewModel model, int id, UserInfo user);
-
         bool DeleteLcIssuance(int id, UserInfo user);
+
+        LcIssuanceViewModel AddLcEnhanceMent(LcIssuanceViewModel model);
+        bool UpdateLcEnhancement(LcIssuanceViewModel model, int id, UserInfo user);
+        bool DeleteLcEnhancement(int id, UserInfo user);
+
+        bool AddLcArchive(int LcIssuanceId);
+        bool UpdateOldLcWithEnhancement(int tempLcIssuanceId);
 
         #endregion LCISSUANCE
 

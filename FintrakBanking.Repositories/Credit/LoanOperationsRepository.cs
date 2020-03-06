@@ -16458,11 +16458,16 @@ namespace FintrakBanking.Repositories.Credit
             //List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
 
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
+<<<<<<< HEAD
                        where a.LOANID == loanId
                        && a.OPERATIONTYPEID == operationTypeId 
                        && a.LOANSYSTEMTYPEID == loanSystemTypeId
                        && a.OPERATIONCOMPLETED == false 
                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
+=======
+                       where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.LOANSYSTEMTYPEID == loanSystemTypeId
+                       && a.OPERATIONCOMPLETED == false && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
+>>>>>>> master
                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                        select a;
@@ -17416,6 +17421,9 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                 branchId = ln.BRANCHID,
+                                lmsrApplicationReferenceNumber =  (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                   join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                   where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                 principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
@@ -17570,6 +17578,11 @@ namespace FintrakBanking.Repositories.Credit
                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                          branchId = ln.BRANCHID,
+                                         lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                           join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                           where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                           select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
                                          loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                          applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                          relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
@@ -17699,6 +17712,11 @@ namespace FintrakBanking.Repositories.Credit
                                           casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                           casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                           branchId = ln.BRANCHID,
+                                          lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                            join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                            where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                            select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
                                           loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                           applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                           relationshipOfficerId = ln.RELATIONSHIPOFFICERID,

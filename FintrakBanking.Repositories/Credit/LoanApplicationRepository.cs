@@ -13,7 +13,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
-using System;
+using System; 
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -4434,6 +4434,11 @@ namespace FintrakBanking.Repositories.Credit
                                         customerInfoValidated = x.CUSTOMERINFOVALIDATED,
                                         isRelatedParty = x.ISRELATEDPARTY,
                                         isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
+                                        isInvestmentGrade = x.ISINVESTMENTGRADE,
+                                        isProjectRelatedLoan = x.ISPROJECTRELATED,
+                                        isOnLending= x.ISONLENDING,
+                                        isInterventionFunds = x.ISINTERVENTIONFUNDS,
+                                        isORRBasedApproval = x.ISORRBASEDAPPROVAL,
                                         approvalStatusId = (short)x.APPROVALSTATUSID,
                                         approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
 
@@ -4454,6 +4459,7 @@ namespace FintrakBanking.Repositories.Credit
                                         createdBy = x.CREATEDBY,
                                         loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
                                         operationId = x.OPERATIONID,
+                                        operationName = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == x.OPERATIONID).OPERATIONNAME,
                                         owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
                                         // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                         isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
@@ -4502,6 +4508,11 @@ namespace FintrakBanking.Repositories.Credit
                                              customerInfoValidated = x.CUSTOMERINFOVALIDATED,
                                              isRelatedParty = x.ISRELATEDPARTY,
                                              isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
+                                             isInvestmentGrade = x.ISINVESTMENTGRADE,
+                                             isProjectRelatedLoan = x.ISPROJECTRELATED,
+                                             isOnLending = x.ISONLENDING,
+                                             isInterventionFunds = x.ISINTERVENTIONFUNDS,
+                                             isORRBasedApproval = x.ISORRBASEDAPPROVAL,
                                              approvalStatusId = (short)x.APPROVALSTATUSID,
                                              approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
 
@@ -4522,6 +4533,7 @@ namespace FintrakBanking.Repositories.Credit
                                              createdBy = x.CREATEDBY,
                                              loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
                                              operationId = x.OPERATIONID,
+                                             operationName = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == x.OPERATIONID).OPERATIONNAME,
                                              owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
                                              // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                              isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
@@ -4627,8 +4639,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             int[] operations = { (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
                 (int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ContigentLoanBooking,
+<<<<<<< HEAD
                 (int)OperationsEnum.RevolvingLoanBooking,(int)OperationsEnum.TermLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,
                 (int)OperationsEnum.RevolvingTranchDisbursement
+=======
+                (int)OperationsEnum.RevolvingLoanBooking,(int)OperationsEnum.TermLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.RevolvingTranchDisbursement
+
+>>>>>>> master
             };
             searchString = searchString.Trim().ToLower();
             var applications = (from x in context.TBL_LOAN_APPLICATION

@@ -789,7 +789,7 @@ namespace FintrakBanking.Repositories.Credit
                          {
                              loanBookingRequestId = 0,
                              approvalTrailId = 0,
-                             isLineFacility = p.ISFACILITYLINE,
+                             isLineFacility = context.TBL_PRODUCT.Where(x => x.PRODUCTID == d.APPROVEDPRODUCTID && x.ISFACILITYLINE == true).Any(),
                              isLineMaintained = a.APPROVEDLINESTATUSID != null,
                              appraisalOperationId = a.OPERATIONID,
                              requestedAmount = 0,
@@ -875,9 +875,10 @@ namespace FintrakBanking.Repositories.Credit
                 var lcApprovedAmounts = lcapprovedLCIFFsRecords.Count() > 0 ? lcapprovedLCIFFsRecords?.Sum(i => i.LETTEROFCREDITAMOUNT) : 0;
                 var product = context.TBL_PRODUCT.Find(item.productId);
 
-                var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && r.APPROVEDLINESTATUSID == null && r.DELETED == false);
+                var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && r.DELETED == false);
                 var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
-
+                //requests = requests.Where(x => x.APPROVEDLINESTATUSID != null && !disbursedLoan.Select(c => c.LOAN_BOOKING_REQUESTID).Contains(x.LOAN_BOOKING_REQUESTID));
+                
                 //item.operationId = GetDrawdownOperationId(item.loanApplicationDetailId);
                 if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
                 { item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED); }

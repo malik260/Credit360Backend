@@ -77,8 +77,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string misCode { get; set; }
         public string teamMisCode { get; set; }
         public bool submittedForAppraisal { get; set; }
+        public string operationName { get; set; }
         public bool isRelatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
+        public bool isInvestmentGrade { set; get; }
+        public bool isProjectRelatedLoan { set; get; }
+        public bool isOnLending { set; get; }
+        public bool isInterventionFunds { set; get; }
+        public bool isORRBasedApproval { set; get; }
         public short approvalStatusId { get; set; }
 
         public decimal proposedAmount { get; set; }
@@ -88,7 +94,6 @@ namespace FintrakBanking.ViewModels.Credit
         public short subSectorId { get; set; }
         public int sectorId { get; set; }
         public string sectorName { get; set; }
-        public bool isInvestmentGrade { set; get; }
         public int? loantermSheetId { get; set; }
         public string customerName { get; set; }
         public int customerTypeId { get; set; }

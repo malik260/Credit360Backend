@@ -10,8 +10,10 @@ namespace FintrakBanking.ViewModels.credit
     {
         #region LCISSUANCE
         public int lcIssuanceId { get; set; }
+        public int tempLcIssuanceId { get; set; }
 
         public string lcReferenceNumber { get; set; }
+        public string EnhancementReferenceNumber { get; set; }
 
         public string beneficiaryName { get; set; }
 
@@ -149,6 +151,8 @@ namespace FintrakBanking.ViewModels.credit
     public class LcIssuanceApprovalViewModel : GeneralEntity
     {
         public int lcIssuanceId { get; set; }
+        public string EnhancementReferenceNumber { get; set; }
+        public int tempLcIssuanceId { get; set; }
 
         public int? lcReleaseAmountId { get; set; }
 
