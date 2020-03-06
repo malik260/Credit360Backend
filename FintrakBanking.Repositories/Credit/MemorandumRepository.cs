@@ -4445,6 +4445,7 @@ namespace FintrakBanking.Repositories.Credit
             if (vote == 2) return "Accept";
             if (vote == 3) return "Decline";
             if (vote == 4) return "Accept";
+            if (vote == 5) return "Refered";
             return String.Empty;
         }
 
