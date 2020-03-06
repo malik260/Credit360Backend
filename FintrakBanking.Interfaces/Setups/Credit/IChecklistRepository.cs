@@ -48,6 +48,7 @@ namespace FintrakBanking.Interfaces.Setups
 
         #region CheckList Items
         IEnumerable<ChecklistItemViewModel> GetAllChecklistItem();
+        IEnumerable<ChecklistItemViewModel> GetAllChecklistItemBycheckListTypeId(int checkListTypeId);
         List<ChecklistItemViewModel> GetAllChecklistItemById(int CheckListItemId);
         bool AddChecklistItem(ChecklistItemViewModel model);
         bool AddMultipleChecklistItem(List<ChecklistItemViewModel> model);
@@ -96,8 +97,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ESGChecklistDetailViewModel> GetESGChecklistDetail(int loanApplicationDetailId);
         IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetESGChecklistStatus(int loanApplicationDetailId);
 
-        IEnumerable<CheckListScores> GetCheckListScores();
-        IEnumerable<ChecklistItemViewModel> GetAllChecklistItemBycheckListTypeId(int checkListTypeId);
+        IEnumerable<CheckListScores> GetCheckListScores(int checkListTypeId);
         IEnumerable<ESGChecklistDefinitionViewModel> GetGreenRatingDefinition();
         IEnumerable<ESGChecklistDetailViewModel> GetGreenRatingDetail(int loanApplicationDetailId);
         IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetGreenRatingStatus(int loanApplicationDetailId);

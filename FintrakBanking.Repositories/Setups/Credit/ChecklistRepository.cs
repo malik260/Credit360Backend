@@ -2650,8 +2650,14 @@ namespace FintrakBanking.Repositories.Credit
                         into cg
                         from d in cg.DefaultIfEmpty()
                         join c in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals c.CHECKLISTITEMID
-                        join e in context.TBL_ESG_CHECKLIST_SCORES on a.CHECKLISTSCORESID equals e.CHECKLISTSCORESID
+                        join ys in context.TBL_ESG_CHECKLIST_SCORES on a.YESCHECKLISTSCORESID equals ys.CHECKLISTSCORESID into yes
+                        join ns in context.TBL_ESG_CHECKLIST_SCORES on a.NOCHECKLISTSCORESID equals ns.CHECKLISTSCORESID into no
+                        from y in yes.DefaultIfEmpty()
+                        from n in no.DefaultIfEmpty()
+                        //where y.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Yes
+                        //where n.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No
                         where a.DELETED == false
+                        where a.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
                         select new ESGChecklistDefinitionViewModel()
                         {
                             esgChecklistDefinitionId = a.ESGCHECKLISTDEFINITIONID,
@@ -2663,9 +2669,12 @@ namespace FintrakBanking.Repositories.Credit
                             esgCategoryName = b.ESGCATEGORYNAME,
                             isCompulsory = a.ISCOMPULSORY,
                             itemDescription = a.ITEMDESCRIPTION,
-                            gradeScore = (int)e.SCORE,
-                            checklistScoresId = e.CHECKLISTSCORESID,
-                            grade = (e.SCORE.ToString() == null) ? "N/A": e.GRADE
+                            yesGradeScore = (int)y.SCORE,
+                            yesChecklistScoresId = y.CHECKLISTSCORESID,
+                            noChecklistScoresId = n == null ? 0 : n.CHECKLISTSCORESID,
+                            yesGrade = (y.SCORE.ToString() == null) ? "N/A": y.GRADE,
+                            noGradeScore = n == null ? 0 : (int)n.SCORE,
+                            noGrade = n == null ? "N/A" : (n.SCORE.ToString() == null) ? "N/A" : n.GRADE
                         }).ToList();
             return data;
         }
@@ -2712,7 +2721,7 @@ namespace FintrakBanking.Repositories.Credit
                             subCategoryName = s.ESGSUBCATEGORYNAME,
                             comment = a.COMMENT_,
                             description = a.DESCRIPTION,
-                            overAllRiskStatusId = b.RATINGID,
+                            overAllRiskStatusId = (b == null) ? 0 : b.RATINGID,
                             overSummary = b.COMMENT_
                         }).ToList();
             return data;
@@ -2926,7 +2935,9 @@ namespace FintrakBanking.Repositories.Credit
                     ESGSUBCATEGORYID = model.esgSubCategoryId,
                     ISCOMPULSORY = model.isCompulsory,
                     ITEMDESCRIPTION = model.itemDescription,
-                    CHECKLISTSCORESID = scoreIds.FirstOrDefault(s => s.SCORE == model.gradeScore).CHECKLISTSCORESID,
+                    //YESCHECKLISTSCORESID = scoreIds.FirstOrDefault(s => s.SCORE == model.yesGradeScore).CHECKLISTSCORESID,
+                    YESCHECKLISTSCORESID = model.yesChecklistScoresId,
+                    NOCHECKLISTSCORESID = model.noChecklistScoresId,
                     CHECKLIST_TYPEID = (int)CheckListTypeEnum.ESGMChecklist,
                     COMPANYID = model.companyId,
                     DELETED = false,
@@ -3111,15 +3122,26 @@ namespace FintrakBanking.Repositories.Credit
                                   checkListItemName = i.CHECKLISTITEMNAME,
                                   comment = s.COMMENT_,
                                   checklistStatusId = s.CHECKLISTSTATUSID,
+                                  yesChecklistScoresId = k.YESCHECKLISTSCORESID,
+                                  noChecklistScoresId = k.NOCHECKLISTSCORESID,
                                   //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.SCORE == k.SCORE || x.SCORE == 6).OrderBy(a => a.SCORE).
-                                  responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.CHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist)).OrderBy(a => a.SCORE).
-                            Select(x => new CheckListStatusViewModel()
-                            {
-                                checklistStatusId = (short)x.SCORE,
-                                checkListScoresId = x.CHECKLISTSCORESID,
-                                checklistStatusName = x.STATUSNAME,
-                                grade = x.GRADE
-                            }).ToList()
+                                  //yesResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist)).OrderBy(a => a.SCORE).
+                                  yesResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist).
+                                    Select(x => new CheckListStatusViewModel()
+                                    {
+                                        checklistStatusId = (short)x.SCORE,
+                                        checkListScoresId = x.CHECKLISTSCORESID,
+                                        checklistStatusName = x.STATUSNAME,
+                                        grade = x.GRADE
+                                    }).FirstOrDefault(),
+                                  noResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.NOCHECKLISTSCORESID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist).
+                                    Select(x => new CheckListStatusViewModel()
+                                    {
+                                        checklistStatusId = (short)x.SCORE,
+                                        checkListScoresId = x.CHECKLISTSCORESID,
+                                        checklistStatusName = x.STATUSNAME,
+                                        grade = x.GRADE
+                                    }).FirstOrDefault()
                               });
 
             var data = (from k in context.TBL_ESG_CHECKLIST_DEFINITION
@@ -3144,15 +3166,26 @@ namespace FintrakBanking.Repositories.Credit
                             checkListItemName = i.CHECKLISTITEMNAME,
                             comment = "",
                             checklistStatusId = 0,
+                            yesChecklistScoresId = k.YESCHECKLISTSCORESID,
+                            noChecklistScoresId = k.NOCHECKLISTSCORESID,
                             //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.SCORE == k.SCORE || x.SCORE == 6).OrderBy(a => a.SCORE).
-                            responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.CHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist)).OrderBy(a => a.SCORE).
-                            Select(x => new CheckListStatusViewModel()
-                            {
-                                checklistStatusId = (short)x.SCORE,
-                                checkListScoresId = x.CHECKLISTSCORESID,
-                                checklistStatusName = x.STATUSNAME,
-                                grade = x.GRADE
-                            }).ToList()
+                            //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist)).OrderBy(a => a.SCORE).
+                            yesResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist).
+                                    Select(x => new CheckListStatusViewModel()
+                                    {
+                                        checklistStatusId = (short)x.SCORE,
+                                        checkListScoresId = x.CHECKLISTSCORESID,
+                                        checklistStatusName = x.STATUSNAME,
+                                        grade = x.GRADE
+                                    }).FirstOrDefault(),
+                            noResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.NOCHECKLISTSCORESID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist).
+                                    Select(x => new CheckListStatusViewModel()
+                                    {
+                                        checklistStatusId = (short)x.SCORE,
+                                        checkListScoresId = x.CHECKLISTSCORESID,
+                                        checklistStatusName = x.STATUSNAME,
+                                        grade = x.GRADE
+                                    }).FirstOrDefault()
                         });
             var definitionList = data.ToList();
             var detailList = detailItem.ToList();
@@ -3185,13 +3218,14 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<CheckListScores> GetCheckListScores()
+        public IEnumerable<CheckListScores> GetCheckListScores(int checkListTypeId)
         {
             var data = (from a in context.TBL_ESG_CHECKLIST_SCORES
-                        where a.DELETED == false && a.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
+                        where a.DELETED == false && a.CHECKLIST_TYPEID == checkListTypeId
+                        orderby a.SCORE
                         select new CheckListScores()
                         {
-                            esgChecklistDefinitionId = a.ESGCHECKLISTDEFINITIONID,
+                            checkListStatusId = a.CHECKLISTSTATUSID,
                             checklistScoresId = a.CHECKLISTSCORESID,
                             scoreWeight = a.SCOREWEIGHT,
                             checkListTypeId = a.CHECKLIST_TYPEID,
@@ -3210,10 +3244,11 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             foreach (ESGChecklistDetailViewModel model in models)
             {
+                var loanId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).LOANAPPLICATIONID;
                 var existItem = (from a in context.TBL_ESG_CHECKLIST_DETAIL
                                  where a.ESGCHECKLISTDETAILID == model.esgChecklistDetailId && a.ESGCHECKLISTDEFINITIONID == model.esgChecklistDefinitionId
                                  && a.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
-                                 && a.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && a.DELETED == false
+                                 && a.LOANAPPLICATIONDETAILID == loanId && a.DELETED == false
                                  select a).FirstOrDefault();
                 if (existItem != null)
                 {
@@ -3228,7 +3263,7 @@ namespace FintrakBanking.Repositories.Credit
                     var data = new TBL_ESG_CHECKLIST_DETAIL
                     {
                         ESGCHECKLISTDEFINITIONID = model.esgChecklistDefinitionId,
-                        LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                        LOANAPPLICATIONDETAILID = loanId,
                         ESGCLASSID = model.esgClassId,
                         ESGTYPEID = model.esgTypeId,
                         CHECKLIST_TYPEID = (int)CheckListTypeEnum.GreenRating,
@@ -3323,7 +3358,8 @@ namespace FintrakBanking.Repositories.Credit
                     SECTORID = model.sectorId,
                     ISCOMPULSORY = model.isCompulsory,
                     ITEMDESCRIPTION = model.itemDescription,
-                    CHECKLISTSCORESID = model.checklistScoresId,
+                    YESCHECKLISTSCORESID = model.yesChecklistScoresId,
+                    NOCHECKLISTSCORESID = model.noChecklistScoresId,
                     CHECKLIST_TYPEID = (int)CheckListTypeEnum.GreenRating,
                     //SCORE = model.gradeScore,
                     COMPANYID = model.companyId,
@@ -3397,15 +3433,23 @@ namespace FintrakBanking.Repositories.Credit
                                   checklistStatusId = s.CHECKLISTSTATUSID,
                                   checklistStatusName = context.TBL_ESG_CHECKLIST_SCORES.FirstOrDefault(x => x.SCORE == s.CHECKLISTSTATUSID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating).STATUSNAME,
                                   grade = context.TBL_ESG_CHECKLIST_SCORES.FirstOrDefault(x => x.SCORE == s.CHECKLISTSTATUSID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating).GRADE,
-                                  //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.SCORE == k.SCORE || x.SCORE == 6).OrderBy(a => a.SCORE)
-                                  responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.CHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating)).OrderBy(a => a.SCORE).
-                            Select(x => new CheckListStatusViewModel()
-                            {
-                                checklistStatusId = (short)x.SCORE,
-                                checkListScoresId = x.CHECKLISTSCORESID,
-                                checklistStatusName = x.STATUSNAME,
-                                grade = x.GRADE
-                            }).ToList()
+                                  //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating)).OrderBy(a => a.SCORE).
+                                  yesResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating).
+                                    Select(x => new CheckListStatusViewModel()
+                                    {
+                                        checklistStatusId = (short)x.SCORE,
+                                        checkListScoresId = x.CHECKLISTSCORESID,
+                                        checklistStatusName = x.STATUSNAME,
+                                        grade = x.GRADE
+                                    }).FirstOrDefault(),
+                                  noResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.NOCHECKLISTSCORESID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating).
+                                    Select(x => new CheckListStatusViewModel()
+                                    {
+                                        checklistStatusId = (short)x.SCORE,
+                                        checkListScoresId = x.CHECKLISTSCORESID,
+                                        checklistStatusName = x.STATUSNAME,
+                                        grade = x.GRADE
+                                    }).FirstOrDefault()
                               });
 
             var data = (from c in context.TBL_SECTOR
@@ -3420,8 +3464,6 @@ namespace FintrakBanking.Repositories.Credit
                             checkListDetailId = 0,
                             checkListDefinitionId = k.ESGCHECKLISTDEFINITIONID,
                             //loanApplicationDetailId = s.LOANAPPLICATIONDETAILID,
-                            //esgClassId = s.ESGCLASSID,
-                            //esgTypeId = s.ESGTYPEID,
                             sectorId = k.SECTORID,
                             sectorName = c.NAME,
                             responseTypeId = i.RESPONSE_TYPEID,
@@ -3430,15 +3472,23 @@ namespace FintrakBanking.Repositories.Credit
                             checkListItemName = i.CHECKLISTITEMNAME,
                             comment = "",
                             checklistStatusId = 0,
-                            //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.SCORE == k.SCORE || x.SCORE == 6).OrderBy(a => a.SCORE).
-                            responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.CHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating)).OrderBy(a => a.SCORE).
-                            Select(x => new CheckListStatusViewModel()
-                            {
-                                checklistStatusId = (short)x.SCORE,
-                                checkListScoresId = x.CHECKLISTSCORESID,
-                                checklistStatusName = x.STATUSNAME,
-                                grade = x.GRADE
-                            }).ToList()
+                            //responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID || (x.SCORE == 6 && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating)).OrderBy(a => a.SCORE).
+                            yesResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.YESCHECKLISTSCORESID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating).
+                                    Select(x => new CheckListStatusViewModel()
+                                    {
+                                        checklistStatusId = (short)x.SCORE,
+                                        checkListScoresId = x.CHECKLISTSCORESID,
+                                        checklistStatusName = x.STATUSNAME,
+                                        grade = x.GRADE
+                                    }).FirstOrDefault(),
+                            noResponseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.CHECKLISTSCORESID == k.NOCHECKLISTSCORESID && x.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating).
+                                    Select(x => new CheckListStatusViewModel()
+                                    {
+                                        checklistStatusId = (short)x.SCORE,
+                                        checkListScoresId = x.CHECKLISTSCORESID,
+                                        checklistStatusName = x.STATUSNAME,
+                                        grade = x.GRADE
+                                    }).FirstOrDefault()
                         });
             var definitionList = data.ToList();
             var detailList = detailItem.ToList();
@@ -3456,7 +3506,10 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from s in context.TBL_SECTOR
                         join a in context.TBL_ESG_CHECKLIST_DEFINITION on s.SECTORID equals a.SECTORID
                         join c in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals c.CHECKLISTITEMID
-                        join e in context.TBL_ESG_CHECKLIST_SCORES on a.CHECKLISTSCORESID equals e.CHECKLISTSCORESID
+                        join y in context.TBL_ESG_CHECKLIST_SCORES on a.YESCHECKLISTSCORESID equals y.CHECKLISTSCORESID into yes
+                        join n in context.TBL_ESG_CHECKLIST_SCORES on a.NOCHECKLISTSCORESID equals n.CHECKLISTSCORESID into no
+                        from y in yes.DefaultIfEmpty()
+                        from n in no.DefaultIfEmpty()
                         where a.DELETED == false && a.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
                         select new ESGChecklistDefinitionViewModel()
                         {
@@ -3467,11 +3520,14 @@ namespace FintrakBanking.Repositories.Credit
                             sectorName = s.NAME,
                             isCompulsory = a.ISCOMPULSORY,
                             itemDescription = a.ITEMDESCRIPTION,
-                            gradeScore = (int)e.SCORE,
-                            checklistScoresId = e.CHECKLISTSCORESID,
-                            scoreWeight = e.SCOREWEIGHT,
-                            scoreColourCode = e.SCORECOLORCODE,
-                            grade = (e.SCORE.ToString() == null) ? "N/A" : e.GRADE
+                            yesGradeScore = (int)y.SCORE,
+                            noGradeScore = n == null ? 0 : (int)n.SCORE,
+                            yesChecklistScoresId = y.CHECKLISTSCORESID,
+                            noChecklistScoresId = n == null ? 0 : n.CHECKLISTSCORESID,
+                            scoreWeight = y.SCOREWEIGHT,
+                            scoreColourCode = y.SCORECOLORCODE,
+                            yesGrade = (y.SCORE.ToString() == null) ? "N/A" : y.GRADE,
+                            noGrade = n == null ? "N/A" : (n.SCORE.ToString() == null) ? "N/A" : n.GRADE
                         }).ToList();
             return data;
         }

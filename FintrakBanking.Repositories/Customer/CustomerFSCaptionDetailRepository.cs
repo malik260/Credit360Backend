@@ -41,6 +41,7 @@ namespace FintrakBanking.Repositories.Customer
                 exisitingDeletedRecord.DATETIMEUPDATED = DateTime.Now;
                 exisitingDeletedRecord.LASTUPDATEDBY = entity.createdBy;
                 exisitingDeletedRecord.FSDATE = entity.fsDate;
+                exisitingDeletedRecord.TEXTVALUE = entity.textValue;
 
                 var captionInfo = context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == exisitingDeletedRecord.FSCAPTIONID);
                 var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONNAME})";

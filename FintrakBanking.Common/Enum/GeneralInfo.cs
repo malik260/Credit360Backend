@@ -401,7 +401,7 @@ namespace FintrakBanking.Common.Enum
         RepaymentTermDeleted = 506,
         // Benjamin
         BulkDisbursementPackageAdded = 507,
-
+        //end
         ValuationPrerequisiteUpdated = 508,
         BulkDisbursementPackageDeleted = 509,
         BulkDisbursementSchemeAdded = 510,
@@ -457,6 +457,10 @@ namespace FintrakBanking.Common.Enum
         // Ade
         CustomerFSCaptionGroupDeleted = 557,
         AlertGroupEmailAdded = 558,
+
+        LcEnhancementAdded = 559,
+        LcEnhancementUpdated = 560,
+        LcEnhancementDeleted = 561,
 
     };
     public enum RegulatoryTypeEnum

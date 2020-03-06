@@ -298,6 +298,17 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return loanAppId;
         }
 
+        public int GetLoanApplicationIdByReferenceNumberLMS(string applicationRefNumber)
+        {
+            int loanAppId;
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var appl = context.TBL_LMSR_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).FirstOrDefault();
+                loanAppId = appl.LOANAPPLICATIONID;
+            }
+            return loanAppId;
+        }
+
         public int GetLmsrApplicationIdByReferenceNumber(string applicationRefNumber)
         {
             int loanAppId;

@@ -421,6 +421,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? synOperationId { get; set; }
         public int creditAppraisalOperationId { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
+        public int applicationDetailId { get; set; }
+        public string appraisalOperationName { get; set; }
 
 
 
@@ -601,6 +603,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime effectiveDate { get; set; }
         public DateTime maturityDate { get; set; }
         public DateTime bookingDate { get; set; }
+        public DateTime systemArrivalDateTime { get; set; }
         public decimal contingentAmount { get; set; }
         public decimal approvedAmount { get; set; }
         public int approvalStatusId { get; set; }
@@ -676,6 +679,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanBookingRequestViewModel : GeneralEntity
     {
+        public bool? chargeFeeOnce { get; set; }
+
         public int? casaAccountId { get; set; }
         public int? casaAccountId2 { get; set; }
         public bool? isUsed { get; set; }
@@ -709,7 +714,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
-        public bool isLineFacility { get; set; }
+        public bool isLineMaintained { get; set; }
+
+        public bool? isLineFacility { get; set; }
 
         public DateTime systemArrivalDateTime { get; set; }
 
@@ -876,6 +883,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
         public int? capRegionId { get; set; }
         public string apiRequestId { get; set; }
+        public int creditAppraisalOperationId { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
