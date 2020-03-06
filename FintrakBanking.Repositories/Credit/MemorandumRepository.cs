@@ -637,8 +637,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.managementProfile = GetManagementProfileMarkup();
                 this.ownership = GetOwnershipMarkup();
                 this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
-                this.conditionsPrecedentToDrawdown = GetConditionsPrecedentToDrawdownMarkup();
-                this.transactionsDynamics = GetTransactionsDynamicsMarkup();
+                this.conditionsPrecedentToDrawdown = FussCustomerConditionSubsequentHtml();
+                this.transactionsDynamics = FussCustomerConditionDynamicsHtml(); //GetTransactionsDynamicsMarkup();
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
                 // out ducument properties definition
@@ -792,7 +792,7 @@ namespace FintrakBanking.Repositories.Credit
                     this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
                     this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
                 }
-                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId)?.CHARGEFEEID;
+                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;
             
                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
                 string customerName = String.Empty;
@@ -809,7 +809,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.principalRepayment = "";
                 this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
                 this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-                this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
+                this.otherFee = (context.TBL_CHARGE_FEE_DETAIL.FirstOrDefault(p => p.CHARGEFEEID == chargeFeeId)?.VALUE) ?? 0; 
                 this.effectiveDate = loanApplication.APPROVEDDATE;
                 this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
                 this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.TBL_STAFF.MISCODE;
@@ -819,7 +819,7 @@ namespace FintrakBanking.Repositories.Credit
                 //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
                 this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
-                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(o=>o.AMOUNT_REQUESTED.ToString("#,##.00")).FirstOrDefault() ?? "0.00";
+                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
 
             return true;
         }
@@ -879,8 +879,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = new List<DropDownSelect>();
 
-            if (this.lmsrApplication == null)
-            {
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
                 var conditions = new List<ConditionPrecedentViewModel>();
 
@@ -897,31 +895,6 @@ namespace FintrakBanking.Repositories.Credit
                         result.Add(new DropDownSelect { typeId = b.loanApplicationDetailId, id = b.conditionId, name = b.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
                     }
                 }
-            }
-            else
-            {
-                var d = context.TBL_LMSR_APPLICATION_DETAIL.Where(a =>a.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && a.DELETED == false).FirstOrDefault();
-                var currentApplicationId = (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
-                                     (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
-                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
-
-                var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == currentApplicationId && x.DELETED == false).ToList();
-                var conditions = new List<ConditionPrecedentViewModel>();
-
-                foreach (var b in details)
-                {
-                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == b.LOANREVIEWAPPLICATIONID));
-                }
-
-                foreach (var f in conditions)
-                {
-                    if (f.condition != null)
-                    {
-                        var detail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == f.loanApplicationDetailId).FirstOrDefault();
-                        result.Add(new DropDownSelect { typeId = f.loanApplicationDetailId, id = f.conditionId, name = f.condition, title = detail.TBL_PRODUCT.PRODUCTNAME });
-                    }
-                }
-            }
            
             return result;
         }
@@ -982,8 +955,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = new List<DropDownSelect>();
 
-            if (this.lmsrApplication == null)
-            {
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
                 var allTransactions = this.transactionsRepo.GetAllTransactionDynamics().OrderBy(a => a.position);
                 var transactions = new List<TransactionDynamicsViewModel>();
@@ -1002,32 +973,7 @@ namespace FintrakBanking.Repositories.Credit
                         result.Add(new DropDownSelect { typeId = (int)t.loanApplicationDetailId, name = t.dynamics, title = detail.TBL_PRODUCT1.PRODUCTNAME });
                     }
                 }
-            }
-            else
-            {
-                var d = context.TBL_LMSR_APPLICATION_DETAIL.Where(a=>a.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && a.DELETED == false).FirstOrDefault();
-                var currentApplicationId = (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
-                                     (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
-                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
-
-                var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == currentApplicationId && x.DELETED == false).ToList();
-                var conditions = new List<ConditionPrecedentViewModel>();
-
-                foreach (var b in details)
-                {
-                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == b.LOANREVIEWAPPLICATIONID));
-                }
-
-                foreach (var f in conditions)
-                {
-                    if (f.condition != null)
-                    {
-                        var detail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == f.loanApplicationDetailId).FirstOrDefault();
-                        result.Add(new DropDownSelect { typeId = f.loanApplicationDetailId, id = f.conditionId, name = f.condition, title = detail.TBL_PRODUCT.PRODUCTNAME });
-                    }
-                }
-            }
-
+            
             return result;
         }
 
