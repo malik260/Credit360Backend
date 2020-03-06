@@ -294,7 +294,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public List<feeDetails> fees { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
         public int creditAppraisalOperationId { get; set; }
-        
+        public string lmsrApplicationReferenceNumber { get; set; }
     }
 
 
@@ -425,6 +425,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string operationTypeName { get; set; }
         public string createdByName { get; set; }
         public DateTime systemArrivalDate { get; set; }
+
+        public string staffRoleCode { get; set; }
     }
 
     public class applicationDetails

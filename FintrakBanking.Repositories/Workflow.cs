@@ -77,6 +77,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool endProcess = false;
         private AlertPlaceholders placeholders = null;
         private LevelBusinessRule levelBusinessRule = null;
+        private bool? isFromPc = false;
+        private string flow_log = String.Empty;
         //private WorkflowResponse response = null;
 
         private float? interestRateConcession = null;
@@ -128,8 +130,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         public AlertPlaceholders Placeholders { set { placeholders = value; } }
         public WorkflowResponse Response { get { return response; } set { response = value; } }
         public bool isCrossOperationProcess { get; private set; }
-        
-        
+        public bool? IsFromPc { set { isFromPc = value; } }
+        public string Flow_log { set { flow_log = value; } }
+
+
+
 
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
@@ -260,8 +265,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 LOOPEDROLEID = this.loopedRoleId,
                 LOOPEDSTAFFID = this.loopedStaffId,
                 REFEREBACKSTATEID = this.referBackStateId,
-                DESTINATIONOPERATIONID = this.destinationOperationId
-
+                DESTINATIONOPERATIONID = this.destinationOperationId,
+                ISFROMPC = this.isFromPc
             });
 
             if (this.deferredExecution)
@@ -1117,9 +1122,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool IsLastApprover(TBL_APPROVAL_LEVEL level)
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId).ToList();
-            if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE)
+            if (IsLastLevel(approvalLevels, level) && (level.CANAPPROVE))
             //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
-                {
+            {
                 return true;
             }
                 return false;

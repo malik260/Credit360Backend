@@ -192,6 +192,7 @@ namespace FintrakBanking.Repositories.Credit
             int staffId = user.staffId;
             int branchId = user.BranchId;
             int companyId = user.companyId;
+            var staff = context.TBL_STAFF.FirstOrDefault(O => O.STAFFID == staffId);
 
             var approvalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication)
                 .Select(x=>x.OPERATIONID).ToList();
@@ -240,6 +241,8 @@ namespace FintrakBanking.Repositories.Credit
                  (alaba, trail) => new { application = alaba.ab.a, trail, branch = alaba.b, customer = alaba.c })
              .Select(x => new LoanReviewApplicationViewModel
              {
+                 staffId = staffId,
+                 staffRoleCode = context.TBL_STAFF_ROLE.FirstOrDefault(O => O.STAFFROLEID == staff.STAFFROLEID).STAFFROLECODE,
                  //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                  approvalState = x.trail == null ? "Pending" : x.trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                  approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
