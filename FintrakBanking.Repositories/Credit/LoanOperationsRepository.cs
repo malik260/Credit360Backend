@@ -17413,6 +17413,9 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                 branchId = ln.BRANCHID,
+                                lmsrApplicationReferenceNumber =  (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                   join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                   where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                 principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
@@ -17567,6 +17570,11 @@ namespace FintrakBanking.Repositories.Credit
                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                          branchId = ln.BRANCHID,
+                                         lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                           join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                           where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                           select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
                                          loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                          applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                          relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
@@ -17696,6 +17704,11 @@ namespace FintrakBanking.Repositories.Credit
                                           casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                           casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                           branchId = ln.BRANCHID,
+                                          lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                            join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                            where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                            select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
                                           loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                           applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                           relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
@@ -22072,7 +22085,7 @@ namespace FintrakBanking.Repositories.Credit
                 op.OPERATIONTYPEID = userModel.operationId;
                 op.REVIEWDETAILS = "InterestRateChange";
                 op.INTERATERATE = userModel.newRate;
-                op.EFFECTIVEDATE = userModel.valueDate;
+                op.EFFECTIVEDATE = generalSetup.GetApplicationDate(); // userModel.valueDate;
                 op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;
                 op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 op.ISMANAGEMENTINTERESTRATE = false;
@@ -22138,7 +22151,7 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             else
                             {
-                                output = context.SaveChanges() > 0;
+                               // output = context.SaveChanges() > 0;
                             }
                             trans.Commit();
                             return output;
@@ -22160,7 +22173,7 @@ namespace FintrakBanking.Repositories.Credit
                 //op.OPERATIONTYPEID = userModel.operationId;
                 op.REVIEWDETAILS = "InterestRateChange";
                 op.INTERATERATE = userModel.newRate;
-                op.EFFECTIVEDATE = userModel.valueDate;
+                op.EFFECTIVEDATE = generalSetup.GetApplicationDate(); // userModel.valueDate;
                 op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;
                 op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 op.ISMANAGEMENTINTERESTRATE = false;
@@ -22201,7 +22214,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    output = context.SaveChanges() > 0;
+                   // output = context.SaveChanges() > 0;
                 }
 
 
@@ -22771,7 +22784,7 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
 
             var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == userModel.loanApplicationDetailId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).FirstOrDefault();
-            //lmsApprovalRecord.OPERATIONPERFORMED = true;
+            lmsApprovalRecord.OPERATIONPERFORMED = true;
 
             if (userModel.loanReviewOperationsId == 0)
             {
@@ -22781,7 +22794,7 @@ namespace FintrakBanking.Repositories.Credit
                 op.REVIEWDETAILS = "AmountChange";
                 op.INTERATERATE = userModel.newRate;
                 op.PREPAYMENT = userModel.newAmount;
-                op.EFFECTIVEDATE = userModel.valueDate;
+                op.EFFECTIVEDATE = generalSetup.GetApplicationDate(); // userModel.valueDate;
                 op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;
                 op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 op.ISMANAGEMENTINTERESTRATE = false;
@@ -22808,56 +22821,48 @@ namespace FintrakBanking.Repositories.Credit
 
                 using (var trans = context.Database.BeginTransaction())
                 {
-                    try
+                    context.TBL_AUDIT.Add(audit);
+
+                    output = context.SaveChanges() > 0;
+
+                    //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
+
+
+                    var entity = new ApprovalViewModel
                     {
-                        context.TBL_AUDIT.Add(audit);
+                        staffId = userModel.createdBy,
+                        companyId = userModel.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        comment = "Please approve this Line Operation",
+                        targetId = op.LOANREVIEWOPERATIONID,
+                        operationId = userModel.operationId,
+                        BranchId = userModel.userBranchId,
+                        externalInitialization = true
+                    };
 
-                        output = context.SaveChanges() > 0;
+                    var response = workFlow.LogForApproval(entity);
 
-                        //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
-
-
-                        var entity = new ApprovalViewModel
+                    if (response)
+                    {
+                        if (userModel.fees.Count() > 0)
                         {
-                            staffId = userModel.createdBy,
-                            companyId = userModel.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            comment = "Please approve this Line Operation",
-                            targetId = op.LOANREVIEWOPERATIONID,
-                            operationId = userModel.operationId,
-                            BranchId = userModel.userBranchId,
-                            externalInitialization = true
-                        };
+                            LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
-                        var response = workFlow.LogForApproval(entity);
-
-                        if (response)
-                        {
-                            if (userModel.fees != null)
-                            {
-                                LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
-
-                                feeDetails.feeDetails = userModel.fees;
-                                feeDetails.createdBy = userModel.createdBy;
-                                feeDetails.userIPAddress = userModel.userIPAddress;
-                                feeDetails.userBranchId = userModel.userBranchId;
-                                feeDetails.applicationUrl = userModel.applicationUrl;
-                                feeDetails.companyId = userModel.companyId;
-                                feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
-                                output = SubmitTakeFee(feeDetails);
-                            }
-                            else
-                            {
-                                output = context.SaveChanges() > 0;
-                            }
-                            trans.Commit();
-                            return output;
+                            feeDetails.feeDetails = userModel.fees;
+                            feeDetails.createdBy = userModel.createdBy;
+                            feeDetails.userIPAddress = userModel.userIPAddress;
+                            feeDetails.userBranchId = userModel.userBranchId;
+                            feeDetails.applicationUrl = userModel.applicationUrl;
+                            feeDetails.companyId = userModel.companyId;
+                            feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                            output = SubmitTakeFee(feeDetails);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw ex;
+                        else
+                        {
+                            //output = context.SaveChanges() > 0;
+                        }
+                        trans.Commit();
+                        return output;
                     }
                 }
                 return output;
@@ -22871,7 +22876,7 @@ namespace FintrakBanking.Repositories.Credit
                 op.REVIEWDETAILS = "AmountChange";
                 op.INTERATERATE = userModel.newRate;
                 op.PREPAYMENT = userModel.newAmount;
-                op.EFFECTIVEDATE = userModel.valueDate;
+                op.EFFECTIVEDATE = generalSetup.GetApplicationDate(); // userModel.valueDate;
                 op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;
                 op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 op.ISMANAGEMENTINTERESTRATE = false;
@@ -22909,7 +22914,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    output = context.SaveChanges() > 0;
+                    //output = context.SaveChanges() > 0;
                 }
                 return output;
             }
