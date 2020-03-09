@@ -149,7 +149,9 @@ namespace FintrakBanking.Entities.Models
         //[StringLength(1000)]
         public string FIELD2 { get; set; }
         public decimal? FIELD3 { get; set; }
+        
         public bool ISSPECIALISED { get; set; }
+        
         //public int? TENORFREQUENCYTYPEID { get; set; }
         public int? TENORFREQUENCYTYPEID { get; set; }
         // public int? OPERATINGCASAACCOUNTID { get; set; }
