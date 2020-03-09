@@ -1402,7 +1402,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.ONLENDING && levelBusinessRule.OnLending == true) flagChecked = true;
             if (rule.INTERVENTIONFUNDS && levelBusinessRule.InterventionFunds == true) flagChecked = true;
             if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == true) flagChecked = true;
-            if (rule.WITHOUTINSTRUCTION && levelBusinessRule.WithoutInstruction == true) flagChecked = true;
+            if (rule.WITHINSTRUCTION && levelBusinessRule.WithInstruction == true) flagChecked = true;
             if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
 
             if (limitChecked && flagChecked) return limitChecked && limitChecked;

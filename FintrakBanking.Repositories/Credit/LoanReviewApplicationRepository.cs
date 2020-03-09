@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Repositories.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -810,6 +811,20 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
             workflow.IsFlowTest = model.isFlowTest;
+            workflow.IsFromPc = model.isFromPc;
+            workflow.LevelBusinessRule = new LevelBusinessRule
+            {
+                Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                PepAmount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                Pep = model.politicallyExposed,
+                //InsiderRelated = appl.ISRELATEDPARTY ?? false,
+                ProjectRelated = appl.ISPROJECTRELATED ?? false,
+                OnLending = appl.ISONLENDING ?? false,
+                InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
+                WithInstruction = appl.WITHINSTRUCTION ?? false,
+                //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
+                DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+            };
 
 
             if (model.forwardAction == 8 || model.forwardAction == 9)
