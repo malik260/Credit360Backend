@@ -6618,7 +6618,7 @@ namespace FintrakBanking.Repositories.Credit
                         where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
                         &&
                         (
-                            a.APPLICATIONREFERENCENUMBER.Trim().ToLower().Contains(reference.Trim())
+                            a.APPLICATIONREFERENCENUMBER.Trim().ToLower() == reference
                         ||  a.TBL_CUSTOMER_GROUP.GROUPNAME.Trim().ToLower().Contains(reference.Trim())
                         ||  a.TBL_CUSTOMER.FIRSTNAME.Trim().ToLower().Contains(reference.Trim())
                         ||  a.TBL_CUSTOMER.MIDDLENAME.Trim().ToLower().Contains(reference.Trim())
