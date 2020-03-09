@@ -780,8 +780,28 @@ namespace FintrakBanking.Repositories.credit
             return model;
         }
 
+        public void ValidateLcEnhancement(LcIssuanceViewModel model)
+        {
+            var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
+            if(lc == null)
+            {
+                throw new SecureException("You Cannot Enhance an Lc that does not exist!");
+            }
+
+            if (model.letterOfCreditAmount < lc.LETTEROFCREDITAMOUNT)
+            {
+                throw new SecureException("New Lc Amount cannot be less than Initial Lc Amount!");
+            }
+
+            if (model.letterOfcreditExpirydate < lc.LETTEROFCREDITEXPIRYDATE)
+            {
+                throw new SecureException("New Lc Expiry Date cannot be less than Initial Lc Expiry Date!");
+            }
+        }
+
         public LcIssuanceViewModel AddLcEnhanceMent(LcIssuanceViewModel model)
         {
+            ValidateLcEnhancement(model);
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
             //var lc = context.TBL_LC_ISSUANCE.FirstOrDefault(l => l.LCREFERENCENUMBER == model.lcReferenceNumber);
