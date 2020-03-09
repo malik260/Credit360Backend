@@ -606,7 +606,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
-                    DELETED = false
+                    DELETED = false,
+                    CURRENCYID = (short)loan.currencyId,
                     //LOANREFERENCENUMBER = loan.loanReferenceNumber
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
@@ -1212,6 +1213,7 @@ namespace FintrakBanking.Repositories.Credit
                 result = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Select(loan => new LoanViewModel
                 {
                     customerId = loan.CUSTOMERID,
+                    currencyId = loan.CURRENCYID,
                     effectiveDate = startDate,
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
@@ -1226,6 +1228,7 @@ namespace FintrakBanking.Repositories.Credit
                 result = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId).Select(loan => new LoanViewModel
                 {
                     customerId = loan.CUSTOMERID,
+                    currencyId = loan.CURRENCYID,
                     effectiveDate = startDate,
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
@@ -1240,6 +1243,7 @@ namespace FintrakBanking.Repositories.Credit
                 result = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).Select(loan => new LoanViewModel
                 {
                     customerId = loan.CUSTOMERID,
+                    currencyId = loan.CURRENCYID,
                     effectiveDate = startDate,
                     maturityDate = loan.MATURITYDATE,
                     interestRate = 0,
@@ -1254,6 +1258,7 @@ namespace FintrakBanking.Repositories.Credit
                 result = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == loanId).Select(loan => new LoanViewModel
                 {
                     customerId = loan.CUSTOMERID,
+                    currencyId = loan.CURRENCYID,
                     effectiveDate = startDate,
                     tenorUsed = loan.APPROVEDTENOR,
                     interestRate = loan.APPROVEDINTERESTRATE,

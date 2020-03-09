@@ -17417,6 +17417,7 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                 branchId = ln.BRANCHID,
+                                amount = ld.APPROVEDAMOUNT,
                                 lmsrApplicationReferenceNumber =  (from c in context.TBL_LMSR_APPLICATION_DETAIL
                                                                    join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                                                                    where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
