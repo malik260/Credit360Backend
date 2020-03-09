@@ -439,7 +439,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
                 workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
                 workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
-
+                workflow.IsFromPc = model.isFromPc;
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
                     Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
@@ -992,8 +992,8 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             // WORKFLOW
-            workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
-            //workflow.OperationId = operationId;
+            //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
+            workflow.OperationId = operationId;
             //workflow.ProductClassId = appl.PRODUCTCLASSID;
             //workflow.ProductId = model.productId;
             workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
@@ -1001,7 +1001,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
             //workflow.Vote = model.vote;
-            var test4 = model.receiverLevelId;
+            //var test4 = model.receiverLevelId;
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, null, true);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = nextLevel;
@@ -1041,36 +1041,37 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                 {
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
                     if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                     {
-                    appl.APPROVEDDATE = applicationDate;
-                    appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
-                    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                        appl.APPROVEDDATE = applicationDate;
+                        appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
+                        appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
-                    foreach (var item in items)
-                    {
-                        item.STATUSID = (short)ApprovalStatusEnum.Approved;
-                    }
+                        foreach (var item in items)
+                        {
+                            item.STATUSID = (short)ApprovalStatusEnum.Approved;
+                        }
 
-                    approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
-                    totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
-                    totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
-                    appl.APPROVEDAMOUNT = totalApprovedAmount;
-                    //Send Email to Customer
-                    //SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
+                        approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
+                        totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
+                        totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
+                        appl.APPROVEDAMOUNT = totalApprovedAmount;
+                        //Send Email to Customer
+                        //SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
 
-                    //generate offer letter doc
-                    //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
+                        //generate offer letter doc
+                        //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
 
-                    generateOutPutDocument = true;
+                        generateOutPutDocument = true;
                     }
                     else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                     {
-                        SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
-                    }
+                        loanApp.ArchiveLoanApplication(model.applicationId, operationId, (short)LoanApplicationStatusEnum.ApplicationRejected);
+                        //SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
+                }
 
-                    if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+                if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
                     if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
                                                                                                                                                                         // MEMORANDUM update                                                                                                                                               //        if (memo != null) { memo.ISCOMPLETED = true; }
                     if (contextControl != null) contextControl.SaveChanges();
@@ -1528,6 +1529,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse LcEnhancementMemorandum(LcForwardViewModel model)
         {
+            var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
+            if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress || lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress)
+            {
+                throw new SecureException("This LC is already undergoing Termination Or has been Terminated");
+            }
             int operationId = (int)OperationsEnum.LCModificationApproval; // CHANGE
             var applicationDate = general.GetApplicationDate();
             var tempLc = context.TBL_TEMP_LC_ISSUANCE.Find(model.tempLcIssuanceId);
@@ -1560,6 +1566,7 @@ namespace FintrakBanking.Repositories.Credit
                 WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
 
                 tempLc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcEnhancementInProgress;
+                tempLc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
                 if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                 {
@@ -3898,7 +3905,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 string referenceNo = customer.applicationReferenceNumber;
 
-                var failedEmailBody = "Dear Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                var failedEmailBody = "Dear Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Account Officer and collect your Offer Letter.";
                 string messageSubject = "DISAPPROVAL FOR LOAN APPLICATION";
 
                 emailLogger.ComposeEmail(referenceNo, failedEmailBody, messageSubject, customer.email,false);
