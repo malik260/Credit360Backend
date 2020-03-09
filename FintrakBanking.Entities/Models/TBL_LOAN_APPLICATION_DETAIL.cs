@@ -81,7 +81,7 @@ namespace FintrakBanking.Entities.Models
 
         //[StringLength(3000)]
         public string CONSESSIONREASON { get; set; }
-
+        public bool? ISLINEFACILITY { get; set; }
         public bool HASDONECHECKLIST { get; set; }
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
@@ -95,7 +95,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? EFFECTIVEDATE { get; set; }
 
         public bool? ISTAKEOVERAPPLICATION { get; set; }
-        public bool? ISLINEFACILITY { get; set; }
+        
         //[Column(TypeName = "date")]
         public DateTime? EXPIRYDATE { get; set; }
 

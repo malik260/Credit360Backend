@@ -22,7 +22,7 @@
         public short CURRENCYID { get; set; }
         public short PRODUCTID { get; set; }
         public int OPERATIONID { get; set; }
-
+        public short APPROVEDLINESTATUSID { get; set; }
         public int APPROVALSTATUSID { get; set; }
         public short LOANSYSTEMTYPEID { get; set; }
         public int CUSTOMERID { get; set; }
