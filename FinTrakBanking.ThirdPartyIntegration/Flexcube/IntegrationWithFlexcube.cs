@@ -840,7 +840,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             if (customerCode == null)
                 return false;
 
-            if (customerCode.Contains("PROS")) return false;//{ throw new APIErrorException("Core Banking API Info - The Customer is a Prospective Customer!"); }
+            if (customerCode.Contains("PROS")) { throw new APIErrorException("You cannot refresh a Prospective Customer, Kindly convert the customer!"); }
 
             var customerId = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).Select(b => b.CUSTOMERID).FirstOrDefault();
             //var customerId = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERCODE == customerCode).CUSTOMERID;
