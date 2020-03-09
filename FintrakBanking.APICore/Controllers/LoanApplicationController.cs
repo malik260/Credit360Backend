@@ -1960,6 +1960,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("facility-by-loanApplicationId/{loanApplicationId}")]
