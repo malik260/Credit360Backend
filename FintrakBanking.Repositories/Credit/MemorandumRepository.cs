@@ -492,10 +492,10 @@ namespace FintrakBanking.Repositories.Credit
                 this.obligorClassification = GetObligorClassification();
                 this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
                 this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-                if (this.loanApplication.TBL_CUSTOMER?.CUSTOMERTYPEID == (int)CustomerTypeEnum.Individual)
+                if (this.loanApplication.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased)
                 {
                     //continue
-                    this.globalExposure = GetGloabalExposures();
+                    //this.globalExposure = GetGloabalExposures();
                 }
                 else
                 {

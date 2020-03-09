@@ -5611,9 +5611,19 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = genSetup.GetApplicationDate();
             var entity = context.TBL_LOAN_APPLICATION.Find(appl.LOANAPPLICATIONID);
             entity.DATETIMECREATED = applicationDate;
+            entity.FINALAPPROVAL_LEVELID = null;
+            entity.NEXTAPPLICATIONSTATUSID = null;
             entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             entity.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
             entity.DELETED = false;
+            if (appl.ISADHOCAPPLICATION == true)
+            {
+                appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                var receiverLevelId = GetFirstAdhocReceiverLevel(entity.CREATEDBY, appl.OPERATIONID, appl.PRODUCTCLASSID, false);
+                workflow.NextLevelId = receiverLevelId;
+                appl.DATEACTEDON = DateTime.Now;
+                context.SaveChanges();
+            }
 
             //bool wasApproved = appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved ? true : false;
 
@@ -5772,7 +5782,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }*/
 
-                var operationId = (int)OperationsEnum.CreditAppraisal;
+                //var operationId = (int)OperationsEnum.CreditAppraisal;
                 workflow.StaffId = model.createdBy;
                 workflow.OperationId = appl.OPERATIONID;
                 workflow.TargetId = appl.LOANAPPLICATIONID;
