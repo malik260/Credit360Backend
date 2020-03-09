@@ -7056,6 +7056,35 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
+        public LoanApplicationTagsViewModel GetLoanApplicationTagsLMS(int id)
+        {
+            var entity = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == id && x.DELETED == false);
+
+            return new LoanApplicationTagsViewModel
+            {
+                isProjectRelated = entity.ISPROJECTRELATED,
+                isOnLending = entity.ISONLENDING,
+                isInterventionFunds = entity.ISINTERVENTIONFUNDS,
+                withInstruction = entity.WITHINSTRUCTION,
+                domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
+            };
+        }
+
+        public bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_LMSR_APPLICATION.Find(id);
+            entity.ISPROJECTRELATED = model.isProjectRelated;
+            entity.ISONLENDING = model.isOnLending;
+            entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
+            entity.WITHINSTRUCTION = model.withInstruction;
+            entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            return context.SaveChanges() != 0;
+        }
+
         public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlow()
         {
             var revisedProcessFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
