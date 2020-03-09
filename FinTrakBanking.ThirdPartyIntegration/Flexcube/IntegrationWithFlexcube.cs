@@ -971,6 +971,10 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             catch (APIErrorException ex)
             {
+                throw new APIErrorException(ex.Message);
+            }
+            catch (Exception ex)
+            {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
 
