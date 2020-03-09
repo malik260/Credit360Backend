@@ -38,6 +38,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool usedByLos { get; set; }
         public bool isFacilityLine { get; set; }
         public string operation { get; set; }
+        
 
         public int productId { get; set; }
         public short productTypeId { get; set; }

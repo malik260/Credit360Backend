@@ -15,6 +15,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int bookingRequestId { get; set; }
 
         public string divisionCode { get; set; }
+        
 
         public string approvedProductName { get; set; }
         public decimal? equityControl { get; set; }
@@ -145,6 +146,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int proposedProductId { get; set; }
         public string repaymentTerm { get; set; }
         public bool? isTakeOverApplication { get; set; }
+       
         public int? repaymentScheduleId { get; set; }
         public double proposedInterestRate { get; set; }
         public string proposedProductName { get; set; }
@@ -338,6 +340,7 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string approvedProductName { get; set; }
+        public bool? isLineFacility { get; set; }
 
         public int applicationStatusPosition { get; set; }
 

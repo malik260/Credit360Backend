@@ -3083,7 +3083,7 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVEDINTERESTRATE = (double)a.proposedInterestRate,
                 APPROVEDPRODUCTID = a.proposedProductId,
                 APPROVEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
-
+                
                 EXCHANGERATE = a.exchangeRate,
                 CURRENCYID = a.currencyId,
                 CUSTOMERID = a.customerId,
@@ -3118,6 +3118,7 @@ namespace FintrakBanking.Repositories.Credit
                 TENORFREQUENCYTYPEID = a.tenorModeId,
                 CRMSVALIDATED = false,
                 ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
+                ISLINEFACILITY = a.isLineFacility,
                 LOANDETAILREVIEWTYPEID = a.loanDetailReviewTypeId
                 //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
             };
@@ -4639,13 +4640,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             int[] operations = { (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
                 (int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ContigentLoanBooking,
-<<<<<<< HEAD
                 (int)OperationsEnum.RevolvingLoanBooking,(int)OperationsEnum.TermLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,
                 (int)OperationsEnum.RevolvingTranchDisbursement
-=======
-                (int)OperationsEnum.RevolvingLoanBooking,(int)OperationsEnum.TermLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.RevolvingTranchDisbursement
-
->>>>>>> master
             };
             searchString = searchString.Trim().ToLower();
             var applications = (from x in context.TBL_LOAN_APPLICATION
@@ -5899,6 +5895,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanDetails.PROPOSEDAMOUNT = entity.proposedAmount;
                 loanDetails.APPROVEDAMOUNT = entity.proposedAmount;
                 loanDetails.LOANPURPOSE = loanDetails.LOANPURPOSE;
+                loanDetails.ISLINEFACILITY = loanDetails.ISLINEFACILITY;
             }
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT

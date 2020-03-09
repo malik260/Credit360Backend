@@ -16458,16 +16458,12 @@ namespace FintrakBanking.Repositories.Credit
             //List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
 
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
-<<<<<<< HEAD
+
                        where a.LOANID == loanId
                        && a.OPERATIONTYPEID == operationTypeId 
                        && a.LOANSYSTEMTYPEID == loanSystemTypeId
                        && a.OPERATIONCOMPLETED == false 
                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
-=======
-                       where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.LOANSYSTEMTYPEID == loanSystemTypeId
-                       && a.OPERATIONCOMPLETED == false && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
->>>>>>> master
                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                        select a;
