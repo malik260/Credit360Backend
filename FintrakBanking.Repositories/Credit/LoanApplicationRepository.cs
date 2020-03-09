@@ -3481,7 +3481,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApplArchive.ISONLENDING = app.ISONLENDING;
             loanApplArchive.ISINTERVENTIONFUNDS = app.ISINTERVENTIONFUNDS;
             loanApplArchive.ISORRBASEDAPPROVAL = app.ISORRBASEDAPPROVAL;
-            loanApplArchive.WITHOUTINSTRUCTION = app.WITHOUTINSTRUCTION;
+            loanApplArchive.WITHINSTRUCTION = app.WITHINSTRUCTION;
             loanApplArchive.DOMICILIATIONNOTINPLACE = app.DOMICILIATIONNOTINPLACE;
             loanApplArchive.CREATEDBY = app.CREATEDBY;
             loanApplArchive.DATETIMECREATED = app.DATETIMECREATED;
@@ -7023,7 +7023,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.ISPROJECTRELATED = model.isProjectRelated;
             entity.ISONLENDING = model.isOnLending;
             entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
-            entity.WITHOUTINSTRUCTION = model.withoutInstruction;
+            entity.WITHINSTRUCTION = model.withInstruction;
             entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
 
             entity.LASTUPDATEDBY = user.createdBy;
@@ -7041,7 +7041,7 @@ namespace FintrakBanking.Repositories.Credit
                 isProjectRelated = entity.ISPROJECTRELATED,
                 isOnLending = entity.ISONLENDING,
                 isInterventionFunds = entity.ISINTERVENTIONFUNDS,
-                withoutInstruction = entity.WITHOUTINSTRUCTION,
+                withInstruction = entity.WITHINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
             };
         }

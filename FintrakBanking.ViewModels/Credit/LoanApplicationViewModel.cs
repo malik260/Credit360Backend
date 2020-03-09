@@ -962,7 +962,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationTagsViewModel : GeneralEntity
     {
-        public bool withoutInstruction;
+        public bool withInstruction;
         public bool domiciliationNotInPlace;
 
         public bool isProjectRelated { get; set; }
