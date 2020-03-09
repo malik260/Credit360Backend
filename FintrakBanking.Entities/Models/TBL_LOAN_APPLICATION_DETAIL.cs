@@ -95,7 +95,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? EFFECTIVEDATE { get; set; }
 
         public bool? ISTAKEOVERAPPLICATION { get; set; }
-
+        public bool? ISLINEFACILITY { get; set; }
         //[Column(TypeName = "date")]
         public DateTime? EXPIRYDATE { get; set; }
 
@@ -157,6 +157,8 @@ namespace FintrakBanking.Entities.Models
         [ForeignKey("TBL_LOAN_DETAIL_REVIEW_TYPE")]
         public int LOANDETAILREVIEWTYPEID { get; set; }
         public bool? ISFEETAKEN { get; set; }
+       
+        public short? APPROVEDLINESTATUSID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
         public virtual TBL_LOAN_DETAIL_REVIEW_TYPE TBL_LOAN_DETAIL_REVIEW_TYPE { get; set; }

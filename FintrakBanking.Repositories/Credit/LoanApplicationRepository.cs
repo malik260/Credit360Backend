@@ -3083,7 +3083,7 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVEDINTERESTRATE = (double)a.proposedInterestRate,
                 APPROVEDPRODUCTID = a.proposedProductId,
                 APPROVEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
-
+                
                 EXCHANGERATE = a.exchangeRate,
                 CURRENCYID = a.currencyId,
                 CUSTOMERID = a.customerId,
@@ -3118,6 +3118,7 @@ namespace FintrakBanking.Repositories.Credit
                 TENORFREQUENCYTYPEID = a.tenorModeId,
                 CRMSVALIDATED = false,
                 ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
+                ISLINEFACILITY = a.isLineFacility,
                 LOANDETAILREVIEWTYPEID = a.loanDetailReviewTypeId
                 //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
             };
@@ -3480,7 +3481,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApplArchive.ISONLENDING = app.ISONLENDING;
             loanApplArchive.ISINTERVENTIONFUNDS = app.ISINTERVENTIONFUNDS;
             loanApplArchive.ISORRBASEDAPPROVAL = app.ISORRBASEDAPPROVAL;
-            loanApplArchive.WITHOUTINSTRUCTION = app.WITHOUTINSTRUCTION;
+            loanApplArchive.WITHINSTRUCTION = app.WITHINSTRUCTION;
             loanApplArchive.DOMICILIATIONNOTINPLACE = app.DOMICILIATIONNOTINPLACE;
             loanApplArchive.CREATEDBY = app.CREATEDBY;
             loanApplArchive.DATETIMECREATED = app.DATETIMECREATED;
@@ -4639,8 +4640,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             int[] operations = { (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
                 (int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ContigentLoanBooking,
-                (int)OperationsEnum.RevolvingLoanBooking,(int)OperationsEnum.TermLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.RevolvingTranchDisbursement
-
+                (int)OperationsEnum.RevolvingLoanBooking,(int)OperationsEnum.TermLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,
+                (int)OperationsEnum.RevolvingTranchDisbursement
             };
             searchString = searchString.Trim().ToLower();
             var applications = (from x in context.TBL_LOAN_APPLICATION
@@ -4761,9 +4762,9 @@ namespace FintrakBanking.Repositories.Credit
                 if (appRecord != null)
                 {
                     var singleRec = appRecord;
-                    x.currentApprovalLevel = singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "DISBURSED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "DRAWDOWN" : "N/A"; 
+                    x.currentApprovalLevel = singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "DISBURSED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "DRAWDOWN" : "N/A";
                     x.approvalTrailId = singleRec.APPROVALTRAILID;
-                                                                 
+
                     x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "DISBURSED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "DRAWDOWN" : "N/A" : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                     x.currentOperationId = singleRec.OPERATIONID;
                 }
@@ -5894,6 +5895,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanDetails.PROPOSEDAMOUNT = entity.proposedAmount;
                 loanDetails.APPROVEDAMOUNT = entity.proposedAmount;
                 loanDetails.LOANPURPOSE = loanDetails.LOANPURPOSE;
+                loanDetails.ISLINEFACILITY = loanDetails.ISLINEFACILITY;
             }
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -6618,7 +6620,7 @@ namespace FintrakBanking.Repositories.Credit
                         where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
                         &&
                         (
-                            a.APPLICATIONREFERENCENUMBER.Trim().ToLower().Contains(reference.Trim())
+                            a.APPLICATIONREFERENCENUMBER.Trim().ToLower() == reference
                         ||  a.TBL_CUSTOMER_GROUP.GROUPNAME.Trim().ToLower().Contains(reference.Trim())
                         ||  a.TBL_CUSTOMER.FIRSTNAME.Trim().ToLower().Contains(reference.Trim())
                         ||  a.TBL_CUSTOMER.MIDDLENAME.Trim().ToLower().Contains(reference.Trim())
@@ -7021,7 +7023,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.ISPROJECTRELATED = model.isProjectRelated;
             entity.ISONLENDING = model.isOnLending;
             entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
-            entity.WITHOUTINSTRUCTION = model.withoutInstruction;
+            entity.WITHINSTRUCTION = model.withInstruction;
             entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
 
             entity.LASTUPDATEDBY = user.createdBy;
@@ -7039,7 +7041,7 @@ namespace FintrakBanking.Repositories.Credit
                 isProjectRelated = entity.ISPROJECTRELATED,
                 isOnLending = entity.ISONLENDING,
                 isInterventionFunds = entity.ISINTERVENTIONFUNDS,
-                withoutInstruction = entity.WITHOUTINSTRUCTION,
+                withInstruction = entity.WITHINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
             };
         }

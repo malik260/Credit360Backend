@@ -16,7 +16,7 @@
     LoanPreliminaryEvaluation = 9,
     CollateralSearchInitiation = 12,
     RevolvingLoanBooking = 13,
-    ContigentLoanBooking = 14,
+    ContigentLoanBooking = 14, 
     DailyInterestAccural = 15,
     InterestLoanRepayment = 16,
     LoanReversal = 17,

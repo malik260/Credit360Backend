@@ -824,7 +824,6 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-
         private bool InitializeCashBackMemoProperties(int operationId, int targetId) // feeder
         {
             this.targetId = targetId;

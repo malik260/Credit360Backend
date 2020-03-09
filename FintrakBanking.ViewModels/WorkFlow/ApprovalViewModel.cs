@@ -13,6 +13,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int? toStaffId { get; set; }
         public object[] applicationId { get; set; }
         public bool isFlowTest { get; set; }
+        public bool isFromPc { get; set; }
         public int? approvalLevelId { get; set; }
         public int operationId { get; set; }
         public int? productId { get; set; }

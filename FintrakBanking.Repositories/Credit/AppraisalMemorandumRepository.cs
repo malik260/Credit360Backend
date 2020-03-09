@@ -992,8 +992,8 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             // WORKFLOW
-            workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
-            //workflow.OperationId = operationId;
+            //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
+            workflow.OperationId = operationId;
             //workflow.ProductClassId = appl.PRODUCTCLASSID;
             //workflow.ProductId = model.productId;
             workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
@@ -1001,7 +1001,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
             //workflow.Vote = model.vote;
-            var test4 = model.receiverLevelId;
+            //var test4 = model.receiverLevelId;
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, null, true);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = nextLevel;
@@ -1041,29 +1041,29 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                 {
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
                     if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                     {
-                    appl.APPROVEDDATE = applicationDate;
-                    appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
-                    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                        appl.APPROVEDDATE = applicationDate;
+                        appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
+                        appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
-                    foreach (var item in items)
-                    {
-                        item.STATUSID = (short)ApprovalStatusEnum.Approved;
-                    }
+                        foreach (var item in items)
+                        {
+                            item.STATUSID = (short)ApprovalStatusEnum.Approved;
+                        }
 
-                    approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
-                    totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
-                    totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
-                    appl.APPROVEDAMOUNT = totalApprovedAmount;
-                    //Send Email to Customer
-                    //SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
+                        approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
+                        totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
+                        totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
+                        appl.APPROVEDAMOUNT = totalApprovedAmount;
+                        //Send Email to Customer
+                        //SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
 
-                    //generate offer letter doc
-                    //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
+                        //generate offer letter doc
+                        //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
 
-                    generateOutPutDocument = true;
+                        generateOutPutDocument = true;
                     }
                     else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                     {
