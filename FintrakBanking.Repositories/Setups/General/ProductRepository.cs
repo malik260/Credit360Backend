@@ -589,6 +589,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        //customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
                                        penalChargeGl = data.PENALCHARGEGL,
                                        penalChargeGlCode = (data.PENALCHARGEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                                       isFacilityLine = (data.ISFACILITYLINE.HasValue ? data.ISFACILITYLINE.Value: false),
 
                                        //customerTypeId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
 
