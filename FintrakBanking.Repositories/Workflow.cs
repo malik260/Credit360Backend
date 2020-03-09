@@ -1693,8 +1693,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             flowLog += "requestLevelId " + this.requestLevelId + "," + Environment.NewLine;
             flowLog += "requestStaffId " + this.requestStaffId + "," + Environment.NewLine;
             flowLog += "currentStateId " + this.currentStateId + "," + Environment.NewLine;
-            flowLog += "approvalLevels " + ((this.approvalGrid == null) ? null : AppendApprovalDetail(this.approvalGrid.ToList()) + Environment.NewLine);
-            flowLog += "next " + ((this.next == null ) ? null : (this.next.Level.LEVELNAME + " " + this.next.ApprovalLevelId.ToString()) + "," + Environment.NewLine);
+            flowLog += "approvalLevels " + ((this.approvalGrid == null) ? String.Empty : AppendApprovalDetail(this.approvalGrid.ToList()) + Environment.NewLine);
+            flowLog += "next " + ((this.next == null ) ? String.Empty : (this.next.Level?.LEVELNAME + " " + this.next.ApprovalLevelId.ToString()) + "," + Environment.NewLine);
             flowLog += "isLoopResponse " + this.isLoopResponse + "," + Environment.NewLine;
             flowLog += "newStateId " + this.newStateId + "," + Environment.NewLine;
             flowLog += "isFlowTest " + this.isFlowTest + "," + Environment.NewLine;
@@ -1709,7 +1709,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             foreach (var level in approvalGrid)
             {
                 flowLog += "{LevelId " + level.ApprovalLevelId + ", ";
-                flowLog += "LevelName " + level.Level.LEVELNAME + "},";
+                flowLog += "LevelName " + level.Level?.LEVELNAME + "},";
             }
                 return flowLog;
         }
