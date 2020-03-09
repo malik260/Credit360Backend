@@ -7056,11 +7056,11 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        public LoanApplicationTagsViewModel GetLoanApplicationTagsLMS(int id)
+        public LoanApplicationTagsLMSViewModel GetLoanApplicationTagsLMS(int id)
         {
             var entity = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == id && x.DELETED == false);
 
-            return new LoanApplicationTagsViewModel
+            return new LoanApplicationTagsLMSViewModel
             {
                 isProjectRelated = entity.ISPROJECTRELATED,
                 isOnLending = entity.ISONLENDING,
@@ -7070,7 +7070,7 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        public bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsViewModel model, int id, UserInfo user)
+        public bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsLMSViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_LMSR_APPLICATION.Find(id);
             entity.ISPROJECTRELATED = model.isProjectRelated;

@@ -1890,7 +1890,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-tags-lms/{id}")]
         public HttpResponseMessage GetLoanApplicationTagsLMS(int id)
         {
-            LoanApplicationTagsViewModel response = repo.GetLoanApplicationTagsLMS(id);
+            LoanApplicationTagsLMSViewModel response = repo.GetLoanApplicationTagsLMS(id);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
@@ -1946,7 +1946,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("loan-application-tags-lms/{id}")]
-        public HttpResponseMessage UpdateLoanApplicationTagsLMS([FromBody] LoanApplicationTagsViewModel model, int id)
+        public HttpResponseMessage UpdateLoanApplicationTagsLMS([FromBody] LoanApplicationTagsLMSViewModel model, int id)
         {
             UserInfo user = new UserInfo()
             {
@@ -1959,6 +1959,7 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.UpdateLoanApplicationTagsLMS(model, id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
+
 
         [HttpGet]
         [ClaimsAuthorization]

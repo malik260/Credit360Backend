@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     ONLENDING = model.onLending,
                     INTERVENTIONFUNDS = model.interventionFunds,
                     ORRBASEDAPPROVAL = model.orrBasedApproval,
-                    WITHOUTINSTRUCTION = model.withoutInstruction,
+                    WITHINSTRUCTION = model.withoutInstruction,
                     DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace,
                     TENOR = model.tenor,
 
@@ -146,7 +146,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     interventionFunds = x.INTERVENTIONFUNDS,
                     orrBasedApproval = x.ORRBASEDAPPROVAL,
                     tenor = x.TENOR,
-                    withoutInstruction = x.WITHOUTINSTRUCTION,
+                    withoutInstruction = x.WITHINSTRUCTION,
                     domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
                 })
                 .ToList();
@@ -169,7 +169,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 onLending = rule.ONLENDING,
                 interventionFunds = rule.INTERVENTIONFUNDS,
                 orrBasedApproval = rule.ORRBASEDAPPROVAL,
-                withoutInstruction = rule.WITHOUTINSTRUCTION,
+                withoutInstruction = rule.WITHINSTRUCTION,
                 domiciliationNotInPlace = rule.DOMICILIATIONNOTINPLACE,
                 tenor = rule.TENOR,
             };
@@ -191,7 +191,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 entity.INTERVENTIONFUNDS = model.interventionFunds;
                 entity.ORRBASEDAPPROVAL = model.orrBasedApproval;
                 entity.TENOR = model.tenor;
-                entity.WITHOUTINSTRUCTION = model.withoutInstruction;
+                entity.WITHINSTRUCTION = model.withoutInstruction;
                 entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
 
                 entity.LASTUPDATEDBY = user.createdBy;
