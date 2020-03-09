@@ -326,9 +326,8 @@ namespace FintrakBanking.Repositories.Credit
                             && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                             && req.ISUSED == false && atrail.RESPONSESTAFFID == null
-                            && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
-                                            || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                                            || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
+                            && ((atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved)
+                                            && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved))
                             && (req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                             && ( (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) 
                               || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && staffs.Contains((int)atrail.LOOPEDSTAFFID)))
