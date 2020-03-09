@@ -18,6 +18,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
+        bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsViewModel model, int id, UserInfo user);
+        LoanApplicationTagsViewModel GetLoanApplicationTagsLMS(int id);
         IQueryable<LoanReviewApplicationViewModel> GetRejectedReviewLoanApplications(UserInfo user);
         IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user);
         List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId);
