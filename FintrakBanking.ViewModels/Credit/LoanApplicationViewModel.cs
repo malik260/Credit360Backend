@@ -962,13 +962,22 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationTagsViewModel : GeneralEntity
     {
-        public bool withInstruction;
+        public bool withInstruction { get; set; }
         public bool domiciliationNotInPlace;
-
         public bool isProjectRelated { get; set; }
         public bool isOnLending { get; set; }
         public bool isInterventionFunds { get; set; }
     }
+
+    public class LoanApplicationTagsLMSViewModel : GeneralEntity
+    {
+        public bool? withInstruction { get; set; }
+        public bool? domiciliationNotInPlace;
+        public bool? isProjectRelated { get; set; }
+        public bool? isOnLending { get; set; }
+        public bool? isInterventionFunds { get; set; }
+    }
+
 
     public class ApprovalLevelDetailsModel : GeneralEntity
     {
