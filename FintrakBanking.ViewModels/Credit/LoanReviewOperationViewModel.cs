@@ -295,6 +295,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
         public int creditAppraisalOperationId { get; set; }
         public string lmsrApplicationReferenceNumber { get; set; }
+        public decimal amount { get; set; }
     }
 
 
