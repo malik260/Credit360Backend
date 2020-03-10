@@ -55,5 +55,6 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int loanApplicationDetailId { get; set; }
         public byte[] reportData { get; set; }
         public string templateTypeName { get; set; }
+        public string apiRequestId { get; set; }
     }
 }

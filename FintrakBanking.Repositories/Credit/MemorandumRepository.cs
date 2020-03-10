@@ -1743,11 +1743,11 @@ namespace FintrakBanking.Repositories.Credit
                         <td><b>Director-related? (Yes / No):</b></td>
                         <td>{getIsDirectorRelated()}</td>
                     </tr>
-                    <tr>
+                    <tr class=esg>
                         <td><b>Environmental And Social Risk Summary:</b></td>
                         <td>{GetEnvironmentalSocialRiskMarkup()}</td>
                     </tr>
-                    <tr>
+                    <tr class=green>
                         <td><b>Overall Green Category:</b></td>
                         <td>{GetGreenRatingDetailMarkup()}</td>
                         <td>{GetGreenRatingSummaryMarkup()}</td>
@@ -1755,6 +1755,41 @@ namespace FintrakBanking.Repositories.Credit
                  ";
             result = result + $"</table>";
             return result;
+        }
+
+        private string GetSubstringBetween(string startString, string endString, string body)
+        {
+            int startIndex = body.IndexOf(startString) + startString.Length;
+            int endIndex = body.IndexOf(endString, startIndex);
+            string content = body.Substring(startIndex, endIndex - startIndex);
+            return content;
+        }
+
+        public string UpdateEsg(string body)
+        {
+            var oldString = GetSubstringBetween("<tr class=green>", "</tr>", body);
+            var newString = String.Empty;
+            newString = newString + $@"
+                        <td><b>Environmental And Social Risk Summary:</b></td>
+                        <td>{GetEnvironmentalSocialRiskMarkup()}</td>
+                    ";
+
+            body.Replace(oldString, newString);
+            return body;
+        }
+
+        public string UpdateGreenRating(string body)
+        {
+            var oldString = GetSubstringBetween("<tr class=esg>", "</tr>", body);
+            var newString = String.Empty;
+            newString = newString + $@"
+                        <td><b>Overall Green Category:</b></td>
+                        <td>{GetGreenRatingDetailMarkup()}</td>
+                        <td>{GetGreenRatingSummaryMarkup()}</td>
+                    ";
+
+            body.Replace(oldString, newString);
+            return body;
         }
 
         private string GetGroupFacilitySummaryFCYMarkupLOS()

@@ -2332,6 +2332,24 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpPost, Route("calculate-collateral-coverage-lms")]
+        public HttpResponseMessage CalculateCoverateOfCollateralLms([FromBody] CollateralCoverageViewModel entity)
+        {
+            try
+            {
+                var response = repo.CalculateCoverateOfCollateralLMS(entity);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+        }
 
 
         [HttpGet]

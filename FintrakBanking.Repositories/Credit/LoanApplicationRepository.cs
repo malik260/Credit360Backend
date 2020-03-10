@@ -4464,7 +4464,8 @@ namespace FintrakBanking.Repositories.Credit
                                         owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
                                         // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                         isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
-                                        isFacilityCreated = a.ISFACILITYCREATED
+                                        isFacilityCreated = a.ISFACILITYCREATED,
+                                        apiRequestId = x.APIREQUESTID
                                     }).ToList();
 
                 var groupApplications = (from x in context.TBL_LOAN_APPLICATION
@@ -4538,7 +4539,8 @@ namespace FintrakBanking.Repositories.Credit
                                              owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
                                              // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                              isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
-                                             isFacilityCreated = a.ISFACILITYCREATED
+                                             isFacilityCreated = a.ISFACILITYCREATED,
+                                             apiRequestId = x.APIREQUESTID
                                          }).ToList();
 
                 var allRecord = applications.Union(groupApplications).ToList();
@@ -4837,6 +4839,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                             approvalTrailId = a.APPROVALTRAILID,
                                             productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                            apiRequestId = e.APIREQUESTID
                                         })
                            ).OrderByDescending(o => o.approvalTrailId);
 
@@ -4877,6 +4880,7 @@ namespace FintrakBanking.Repositories.Credit
                                   loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                   approvalTrailId = a.APPROVALTRAILID,
                                   productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                  apiRequestId = e.APIREQUESTID
                               })
                            ).OrderByDescending(o => o.approvalTrailId);
 

@@ -1689,6 +1689,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             flowLog += "operationId " + this.operationId + "," + Environment.NewLine;
             flowLog += "productClassId " + this.productClassId + "," + Environment.NewLine;
             flowLog += "productId " + this.productId + "," + Environment.NewLine;
+            flowLog += "exclusiveFlowChangeId " + this.exclusiveFlowChangeId + "," + Environment.NewLine;
+            flowLog += "amount " + this.amount + "," + Environment.NewLine;
             flowLog += "requestLevelId " + this.requestLevelId + "," + Environment.NewLine;
             flowLog += "requestStaffId " + this.requestStaffId + "," + Environment.NewLine;
             flowLog += "currentStateId " + this.currentStateId + "," + Environment.NewLine;

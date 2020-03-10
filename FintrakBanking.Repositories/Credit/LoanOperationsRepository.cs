@@ -25461,7 +25461,7 @@ namespace FintrakBanking.Repositories.Credit
                     //LOANSYSTEMTYPEID = model.productTypeId,
                     LOANSYSTEMTYPEID = model.loanSystemTypeId,
                     OPERATIONTYPEID = model.operationTypeId,
-                    EFFECTIVEDATE = generalSetup.GetApplicationDate(), //model.proposedEffectiveDate,
+                    EFFECTIVEDATE = model.proposedEffectiveDate, //generalSetup.GetApplicationDate(),
                     REVIEWDETAILS = model.reviewDetails,
                     INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate,
                     PREPAYMENT = model.prepayment ?? 0,
