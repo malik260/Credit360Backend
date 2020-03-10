@@ -735,6 +735,8 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanInput = model.revolvingLoanInput;
             var systemDate = generalSetup.GetApplicationDate();
 
+            var approvedAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).FirstOrDefault().APPROVEDAMOUNT;
+
             var overdraftLimit = from a in context.TBL_LOAN_REVOLVING
                                  where a.LOANAPPLICATIONDETAILID == revolvingLoanInput.loanApplicationDetailId
                                  let sumLimit = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == revolvingLoanInput.loanApplicationDetailId).Sum(x => x.OVERDRAFTLIMIT)
@@ -746,7 +748,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var totaloverdraftLimit = totalPreviouslyBookedAmount + revolvingLoanInput.overdraftLimit;
 
-            if (totaloverdraftLimit > model.customerAvailableAmount)
+            decimal lineReleasePrincipalAmount = 0;
+            if (applicationdetail.ISLINEFACILITY == true)
+            {
+                lineReleasePrincipalAmount = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT);
+            }
+            if ((totaloverdraftLimit - (decimal)lineReleasePrincipalAmount) > (decimal)approvedAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
             if (model.effectiveDate > model.maturityDate)
@@ -1311,11 +1318,16 @@ namespace FintrakBanking.Repositories.Credit
 
             var approvedAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).FirstOrDefault().APPROVEDAMOUNT;
 
-            var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
+            var totalPreviouslyBookedAmount = principalAmount;
 
-            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.loanScheduleInput.principalAmount);
+            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.Sum() + (decimal)entity.loanScheduleInput.principalAmount);
 
-            if (totalPrincipalAmount > (decimal)approvedAmount)
+            decimal lineReleasePrincipalAmount =0;
+            if (applicationDetail.ISLINEFACILITY == true)
+            {
+                lineReleasePrincipalAmount = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT);
+            }
+            if ((totalPrincipalAmount - (decimal)lineReleasePrincipalAmount) > (decimal)approvedAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
             if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.BulletPayment)
@@ -1462,7 +1474,6 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = (short)OperationsEnum.TermLoanBooking,
                     };
 
-                    //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
                     if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                     {
                         if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule)
@@ -1499,7 +1510,6 @@ namespace FintrakBanking.Repositories.Credit
 
                         trans.Commit();
                     }
-                    //.......................END OF APPROVAL LOG......................................................
 
                     return loanReferenceNumber;
                 }
@@ -1632,7 +1642,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.principalAmount);
 
-            if (totalPrincipalAmount > (decimal)approvedAmount)
+            decimal lineReleasePrincipalAmount = 0;
+            if (applicationDetail.ISLINEFACILITY == true)
+            {
+                lineReleasePrincipalAmount = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT);
+            }
+            if ((totalPrincipalAmount - (decimal)lineReleasePrincipalAmount) > (decimal)approvedAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the available amount");
 
             var data = new TBL_LOAN
@@ -6010,6 +6025,7 @@ namespace FintrakBanking.Repositories.Credit
         private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short loanSystemTypeId, LoanViewModel loanModel, TBL_LOAN_APPLICATION_DETAIL facilityDetail)
         {
             if (facilityDetail.ISFEETAKEN == true) return;
+            
 
             var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == loanModel.loanBookingRequestId).FirstOrDefault();
             var chargeByApprovedAmount = false;
@@ -6028,7 +6044,7 @@ namespace FintrakBanking.Repositories.Credit
                         chargeByApprovedAmount = true;
                         continue;
                     }
-                    else if (request.TAKEFEEONCE == true)
+                    else if (request.TAKEFEEONCE == true || facilityDetail.TAKEFEETYPEID == (short)TakeFeeTypeEnum.ApprovedAmount)
                     {
                         chargeByApprovedAmount = true;
                         continue;

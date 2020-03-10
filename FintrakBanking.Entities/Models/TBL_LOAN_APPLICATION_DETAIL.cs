@@ -159,7 +159,9 @@ namespace FintrakBanking.Entities.Models
         [ForeignKey("TBL_LOAN_DETAIL_REVIEW_TYPE")]
         public int LOANDETAILREVIEWTYPEID { get; set; }
         public bool? ISFEETAKEN { get; set; }
-       
+        public short? TAKEFEETYPEID { get; set; }
+
+
         public short? APPROVEDLINESTATUSID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
