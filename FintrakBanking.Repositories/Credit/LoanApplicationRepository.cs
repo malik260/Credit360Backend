@@ -7067,6 +7067,7 @@ namespace FintrakBanking.Repositories.Credit
                 isInterventionFunds = entity.ISINTERVENTIONFUNDS,
                 withInstruction = entity.WITHINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
+
             };
         }
 
