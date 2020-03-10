@@ -3481,7 +3481,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApplArchive.ISONLENDING = app.ISONLENDING;
             loanApplArchive.ISINTERVENTIONFUNDS = app.ISINTERVENTIONFUNDS;
             loanApplArchive.ISORRBASEDAPPROVAL = app.ISORRBASEDAPPROVAL;
-            loanApplArchive.WITHOUTINSTRUCTION = app.WITHOUTINSTRUCTION;
+            loanApplArchive.WITHINSTRUCTION = app.WITHINSTRUCTION;
             loanApplArchive.DOMICILIATIONNOTINPLACE = app.DOMICILIATIONNOTINPLACE;
             loanApplArchive.CREATEDBY = app.CREATEDBY;
             loanApplArchive.DATETIMECREATED = app.DATETIMECREATED;
@@ -5611,9 +5611,19 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = genSetup.GetApplicationDate();
             var entity = context.TBL_LOAN_APPLICATION.Find(appl.LOANAPPLICATIONID);
             entity.DATETIMECREATED = applicationDate;
+            entity.FINALAPPROVAL_LEVELID = null;
+            entity.NEXTAPPLICATIONSTATUSID = null;
             entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             entity.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
             entity.DELETED = false;
+            if (appl.ISADHOCAPPLICATION == true)
+            {
+                appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                var receiverLevelId = GetFirstAdhocReceiverLevel(entity.CREATEDBY, appl.OPERATIONID, appl.PRODUCTCLASSID, false);
+                workflow.NextLevelId = receiverLevelId;
+                appl.DATEACTEDON = DateTime.Now;
+                context.SaveChanges();
+            }
 
             //bool wasApproved = appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved ? true : false;
 
@@ -5772,7 +5782,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }*/
 
-                var operationId = (int)OperationsEnum.CreditAppraisal;
+                //var operationId = (int)OperationsEnum.CreditAppraisal;
                 workflow.StaffId = model.createdBy;
                 workflow.OperationId = appl.OPERATIONID;
                 workflow.TargetId = appl.LOANAPPLICATIONID;
@@ -7023,7 +7033,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.ISPROJECTRELATED = model.isProjectRelated;
             entity.ISONLENDING = model.isOnLending;
             entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
-            entity.WITHOUTINSTRUCTION = model.withoutInstruction;
+            entity.WITHINSTRUCTION = model.withInstruction;
             entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
 
             entity.LASTUPDATEDBY = user.createdBy;
@@ -7041,9 +7051,38 @@ namespace FintrakBanking.Repositories.Credit
                 isProjectRelated = entity.ISPROJECTRELATED,
                 isOnLending = entity.ISONLENDING,
                 isInterventionFunds = entity.ISINTERVENTIONFUNDS,
-                withoutInstruction = entity.WITHOUTINSTRUCTION,
+                withInstruction = entity.WITHINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
             };
+        }
+
+        public LoanApplicationTagsLMSViewModel GetLoanApplicationTagsLMS(int id)
+        {
+            var entity = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == id && x.DELETED == false);
+
+            return new LoanApplicationTagsLMSViewModel
+            {
+                isProjectRelated = entity.ISPROJECTRELATED,
+                isOnLending = entity.ISONLENDING,
+                isInterventionFunds = entity.ISINTERVENTIONFUNDS,
+                withInstruction = entity.WITHINSTRUCTION,
+                domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
+            };
+        }
+
+        public bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsLMSViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_LMSR_APPLICATION.Find(id);
+            entity.ISPROJECTRELATED = model.isProjectRelated;
+            entity.ISONLENDING = model.isOnLending;
+            entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
+            entity.WITHINSTRUCTION = model.withInstruction;
+            entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            return context.SaveChanges() != 0;
         }
 
         public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlow()

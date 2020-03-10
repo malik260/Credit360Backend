@@ -840,7 +840,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             if (customerCode == null)
                 return false;
 
-            if (customerCode.Contains("PROS")) return false;//{ throw new APIErrorException("Core Banking API Info - The Customer is a Prospective Customer!"); }
+            if (customerCode.Contains("PROS")) { throw new APIErrorException("This customer does not have an account linked!"); }
 
             var customerId = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).Select(b => b.CUSTOMERID).FirstOrDefault();
             //var customerId = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERCODE == customerCode).CUSTOMERID;
@@ -970,6 +970,10 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 return cust;
             }
             catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.Message);
+            }
+            catch (Exception ex)
             {
                 throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }

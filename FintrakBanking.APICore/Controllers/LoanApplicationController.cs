@@ -1887,6 +1887,16 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-application-tags-lms/{id}")]
+        public HttpResponseMessage GetLoanApplicationTagsLMS(int id)
+        {
+            LoanApplicationTagsLMSViewModel response = repo.GetLoanApplicationTagsLMS(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("revised-process-flow-by-product-class/{productClassId}/{productId}/{productTypeId}")]
         public HttpResponseMessage getFacilityApplicationRevisedProcessFlowByProductClassId(short productClassId, short productId, short productTypeId)
         {
@@ -1932,6 +1942,24 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.UpdateLoanApplicationTags(model, id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("loan-application-tags-lms/{id}")]
+        public HttpResponseMessage UpdateLoanApplicationTagsLMS([FromBody] LoanApplicationTagsLMSViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdateLoanApplicationTagsLMS(model, id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
