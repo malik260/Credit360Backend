@@ -120,6 +120,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public decimal? prepaymentAmount;
+
         public int loanChargeFeeId { get; set; }
         public string chargeFeeName { get; set; }
         public decimal feeAmount { get; set; }
