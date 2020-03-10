@@ -3297,7 +3297,7 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.customerCode.StartsWith(searchQuery)
                                    || x.branchName.StartsWith(searchQuery)
                                    || x.customerId.ToString().StartsWith(searchQuery))
-                                   && (x.customerTypeId == 1)
+                                   && (x.customerTypeId == 1) 
                              select x).ToList();
             //var customerInfo = new List<CustomerViewModels>();
             //foreach (var customer in customers)
@@ -3355,6 +3355,29 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.branchName.StartsWith(searchQuery)
                                    || x.customerId.ToString().StartsWith(searchQuery)
                                    && context.TBL_CUSTOMER_GROUP_MAPPING.Find(x.customerId) != null
+                             select x);
+
+            var customerInfo = customers.ToList();
+
+            if (customerInfo.Count > 0)
+            {
+                return customerInfo;
+            }
+
+            return null;
+        }
+
+        public IEnumerable<CustomerViewModels> SearchGroupCustomersBySearchQuery(string searchQuery, int groupId)
+        {
+            var customers = (from x in GetCustomersLite()
+                             join g in context.TBL_CUSTOMER_GROUP_MAPPING on x.customerId equals g.CUSTOMERID
+                             where x.firstName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.customerCode.StartsWith(searchQuery)
+                                   || x.branchName.StartsWith(searchQuery)
+                                   || x.customerId.ToString().StartsWith(searchQuery)
+                                  // && g.CUSTOMERGROUPID == groupId
                              select x);
 
             var customerInfo = customers.ToList();
