@@ -27,6 +27,8 @@ namespace FintrakBanking.Interfaces.Credit
         string StaffPersonalLoanAGMHtml();
         string StaffPersonalLoanHtml();
         string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId);
-                
+        string UpdateEsg(string body);
+        string UpdateGreenRating(string body);
+
     }
 }
