@@ -950,11 +950,11 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public List<DropDownSelect> GetTransactionsDynamics()
+        public List<DropDownSelect> GetdrawdownTransactionsDynamics(int targetIds)
         {
             var result = new List<DropDownSelect>();
 
-                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
+                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetIds && x.DELETED == false).ToList();
                 var allTransactions = this.transactionsRepo.GetAllTransactionDynamics().OrderBy(a => a.position);
                 var transactions = new List<TransactionDynamicsViewModel>();
 
@@ -975,6 +975,33 @@ namespace FintrakBanking.Repositories.Credit
             
             return result;
         }
+
+        public List<DropDownSelect> GetTransactionsDynamics()
+        {
+            var result = new List<DropDownSelect>();
+
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
+            var allTransactions = this.transactionsRepo.GetAllTransactionDynamics().OrderBy(a => a.position);
+            var transactions = new List<TransactionDynamicsViewModel>();
+
+            foreach (var b in details)
+            {
+                var transactionSelect = allTransactions.Where(x => x.loanApplicationDetailId == b.LOANAPPLICATIONDETAILID).ToList();
+                transactions.AddRange(transactionSelect);
+            }
+
+            foreach (var t in transactions)
+            {
+                if (t.dynamics != null)
+                {
+                    var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == t.loanApplicationDetailId).FirstOrDefault();
+                    result.Add(new DropDownSelect { typeId = (int)t.loanApplicationDetailId, name = t.dynamics, title = detail.TBL_PRODUCT1.PRODUCTNAME });
+                }
+            }
+
+            return result;
+        }
+
 
         public string GetObligorClassification()
         {
@@ -1270,7 +1297,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(this.loanApplicationDetail.LOANAPPLICATIONDETAILID) + GetDrawdownApprovalsMarkupLOS2(this.targetId, this.operationId);
+            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(this.loanApplicationDetail.LOANAPPLICATIONDETAILID) + GetTransactionsDynamicsDrawdownMarkup(this.loanApplicationDetail.LOANAPPLICATIONID) + GetDrawdownApprovalsMarkupLOS2(this.targetId, this.operationId);
             return result;
         }
 
@@ -1670,7 +1697,40 @@ namespace FintrakBanking.Repositories.Credit
             }
             return result;
         }
-        
+
+        private string GetTransactionsDynamicsDrawdownMarkup(int loanApplicationId)
+        {
+            var transactions = GetdrawdownTransactionsDynamics(loanApplicationId).GroupBy(t => t.typeId); // new
+
+            var result = String.Empty;
+            foreach (var group in transactions)
+            {
+                var n = 0;
+                var c = group.FirstOrDefault();
+                result += c.title;
+                result = result + $@"
+                <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
+                    <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>TRANSACTIONS DYNAMICS</b></th>
+                    </tr>
+                 ";
+                
+                foreach (var t in group)
+                {
+                    n++;
+                    result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{t.name}</td>
+                        </tr>
+                ";
+                }
+                result = result + $"</table>";
+            }
+            return result;
+        }
+
         private string GetBusinessSectorsMarkupLOS()
         {
             var result = String.Empty;

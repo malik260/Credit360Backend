@@ -238,6 +238,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string reviewLoanDetaile { get; set; }
         public string referenceNumber { get; set; }
         public DateTime systemDateTime { get; set; }
+        public int? bookingOperationId { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {
