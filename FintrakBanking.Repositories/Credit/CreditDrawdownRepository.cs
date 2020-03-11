@@ -76,6 +76,7 @@ namespace FintrakBanking.Repositories.Credit
             if (externalInitialization)
             {
                 workflow.StaffId = model.createdBy;
+                workflow.ToStaffId = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == model.createdBy)?.SUPERVISOR_STAFFID;
                 workflow.OperationId = operationId;
                 workflow.TargetId = model.applicationId;
                 workflow.CompanyId = model.companyId;
@@ -886,11 +887,11 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
                         {
-                            item.allRequestAmount = item.allRequestAmount - disbursedOverdraft.Sum(x => x.OVERDRAFTLIMIT);
+                            if (disbursedOverdraft.Count() > 0) item.allRequestAmount = item.allRequestAmount - disbursedOverdraft.Sum(x => x.OVERDRAFTLIMIT);
                         }
                         if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
                         {
-                            item.allRequestAmount = item.allRequestAmount - disbursedContingent.Sum(x => x.CONTINGENTAMOUNT);
+                            if (disbursedContingent.Count() > 0) item.allRequestAmount = item.allRequestAmount - disbursedContingent.Sum(x => x.CONTINGENTAMOUNT);
                         }
                         else
                         {
