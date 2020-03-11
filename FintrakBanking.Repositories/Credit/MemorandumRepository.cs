@@ -1759,7 +1759,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetSubstringBetween(string startString, string endString, string body)
         {
-            int startIndex = body.IndexOf(startString) + startString.Length;
+            int index = body.IndexOf(startString);
+            if (index == -1)
+            {
+                return body;
+            }
+            int startIndex = index + startString.Length;
             int endIndex = body.IndexOf(endString, startIndex);
             string content = body.Substring(startIndex, endIndex - startIndex);
             return content;
