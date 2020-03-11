@@ -819,7 +819,7 @@ namespace FintrakBanking.Repositories.Credit
                 //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
                 this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
-                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
+                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault()?.AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
 
             return true;
         }
