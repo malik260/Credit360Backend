@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Credit
                     join d in context.TBL_LOAN_APPLICATION_DETAIL on req.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                     join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                     join coy in context.TBL_COMPANY on m.COMPANYID equals coy.COMPANYID
-                    join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+                    join p in context.TBL_PRODUCT on req.PRODUCTID equals p.PRODUCTID
                     join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                     join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                     join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
@@ -381,7 +381,7 @@ namespace FintrakBanking.Repositories.Credit
                         loanTypeId = m.LOANAPPLICATIONTYPEID,
                         loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                         camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
-                        productId = d.APPROVEDPRODUCTID,
+                        productId = req.PRODUCTID,
                         productTypeId = p.PRODUCTTYPEID,
                         productTypeName = p.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                         productName = p.PRODUCTNAME,
