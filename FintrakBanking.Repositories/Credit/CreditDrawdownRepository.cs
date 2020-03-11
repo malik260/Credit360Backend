@@ -892,7 +892,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
-                            item.allRequestAmount = item.allRequestAmount - disbursedLoan.Sum(x => x.PRINCIPALAMOUNT);
+                            if(disbursedLoan.Count() > 0)item.allRequestAmount = item.allRequestAmount - disbursedLoan.Sum(x => x.PRINCIPALAMOUNT);
                         }
                     }
                 }
