@@ -2813,7 +2813,6 @@ namespace FintrakBanking.Repositories.Credit
                 bond.REFERENCENO = bondUpdate.referenceNo;
             }
 
-           
             //else
             //{
             //    throw new SecureException("No fee is defined for this product(s)");
@@ -2837,8 +2836,19 @@ namespace FintrakBanking.Repositories.Credit
             //    trader.SOLDITEMS = traderUpdate.soldItems;
             //}
 
-            if (context.SaveChanges() == 0) throw new SecureException("Nothing was updated!");
-
+            if (context.SaveChanges() > 0)
+            {
+                var racDetail = context.TBL_RAC_DETAIL.Where(r => r.TARGETID == detail.LOANAPPLICATIONDETAILID).ToList();
+                if (loan.rac != null && racDetail.Count()<1)
+                {
+                    var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId, detail.LOANAPPLICATIONDETAILID, loan.createdBy, detail.LOANAPPLICATIONID);
+                    if (recResponse != null) return true;
+                }
+            }
+            else
+            {
+                throw new SecureException("Nothing was updated!");
+            }
             return true;
         }
 
@@ -3167,34 +3177,18 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 response = context.SaveChanges();
+                if (response > 0)
+                {
 
+                    var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                    if (recResponse != null) return recResponse;
+                }
             }
-            //catch (DbEntityValidationException e)
-            //{
-            //    foreach (var eve in e.EntityValidationErrors)
-            //    {
-            //        Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-            //            eve.Entry.Entity.GetType().Name, eve.Entry.State);
-            //        foreach (var ve in eve.ValidationErrors)
-            //        {
-            //            Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-            //                ve.PropertyName, ve.ErrorMessage);
-            //        }
-            //    }
-            //    throw;
-            //}
             catch (Exception ex)
             {
 
                 throw new Exception(ex.Message);
             }
-
-            if (response > 0)
-            {
-
-                var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId , data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
-                if (recResponse != null) return recResponse;
-            } // todo 99999
 
             return null;
         }
