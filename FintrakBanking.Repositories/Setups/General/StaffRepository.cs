@@ -2036,11 +2036,12 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
 
-        public IQueryable<simpleStaffModel> SearchApprovers(int operationId,int currentLevel, int roleId, int groupId, string searchQuery ="", int companyId=0)
+        public IQueryable<simpleStaffModel> SearchApprovers(int operationId,int nextLevel, int roleId, int groupId, string searchQuery ="", int companyId=0)
         {
-            var level = context.TBL_APPROVAL_LEVEL.Find(currentLevel);
+            var level = context.TBL_APPROVAL_LEVEL.Find(nextLevel);
 
-            var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId, level.GROUPID);
+            //var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId, level.GROUPID);
+            var nextApprovalLvlRoleId = context.TBL_APPROVAL_LEVEL.Find(nextLevel).STAFFROLEID;
             IQueryable<simpleStaffModel> staff = null;
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
