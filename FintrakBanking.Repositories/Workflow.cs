@@ -164,6 +164,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             lastRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && lastRequest != null) //if it is not initiation
+            {
+                throw new SecureException("An error occured, Next Level can't be preset unless on refer back. Kindly refresh your browser and try again.");
+            }
 
             this.referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
@@ -181,7 +185,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
-
             }
             else
             {
@@ -992,7 +995,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.companyId <= 0) throw new SecureException("Invalid Call! companyId cannot be " + this.companyId);
             if (this.statusId < 0) throw new SecureException("Invalid Call! statusId cannot be " + this.statusId);
             if (this.nextLevelId < 1) { this.nextLevelId = null; }
-            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred) throw new SecureException("An error occured, Next Level can't be preset unless on refer back. Kindly refresh your browser and try again.");
         }
 
         public void GetReportingLine(int staffId)
