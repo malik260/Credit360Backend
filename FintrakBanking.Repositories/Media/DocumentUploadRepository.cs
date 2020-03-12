@@ -130,10 +130,10 @@ namespace FintrakBanking.Repositories.Media
 
             var customerBureauLog = creditBureau.GetCustomerCreditBureauReportLog(customerId.FirstOrDefault(), null).Select(x => x.customerCreditBureauId);
 
-            string staff = (from x in context.TBL_STAFF
+            var staff = (from x in context.TBL_STAFF
                             join app in context.TBL_LOAN_APPLICATION_DETAIL on x.STAFFID equals app.CREATEDBY
                             where app.LOANAPPLICATIONID == targetId
-                            select x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault();
+                            select x).FirstOrDefault();
 
             var secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
                                where customerBureauLog.Contains(d.CUSTOMERCREDITBUREAUID)
@@ -143,10 +143,13 @@ namespace FintrakBanking.Repositories.Media
                                    documentTypeName = "CREDIT BUREAU",
                                    documentCategoryName = "CREDIT BUREAU",
                                    dateTimeCreated = d.DATETIMECREATED,
-                                   uploadedBy = staff,
+                                   //uploadedBy = staff,
+                                   uploadedBy = staff.FIRSTNAME + " " + staff.LASTNAME,
                                    documentTitle = d.DOCUMENT_TITLE,
                                    fileName = d.FILENAME,
                                    fileExtension = d.FILEEXTENSION,
+                                   owner = staff.STAFFID == staffId,
+                                   createdBy = staff.STAFFID,
                                    //fileData = d.FILEDATA,
                                    //fileSize = d.fileSize,
                                })?.ToList();
@@ -774,9 +777,25 @@ namespace FintrakBanking.Repositories.Media
             return context.SaveChanges() != 0;
         }
 
-        public bool DeleteDocumentUpload(int id, UserInfo user)
+        public bool DeleteDocumentUpload(int id, string documentTypeName, UserInfo user)
         {
             var usageCount = 0;
+
+            if (documentTypeName.ToUpper() == "CREDIT BUREAU") {
+                var docCreditBureau = docContext.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.DOCUMENTID == id);
+
+                if (docCreditBureau != null) {
+                    var creditBureau = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.CUSTOMERCREDITBUREAUID == docCreditBureau.CUSTOMERCREDITBUREAUID);
+
+                    if (creditBureau != null) {
+                        creditBureau.DELETED = true;
+                        creditBureau.DELETEDBY = user.createdBy;
+                        creditBureau.DATETIMEDELETED = DateTime.Now;
+                    }
+                }
+
+                return context.SaveChanges() != 0;
+            }
 
             var usage = docContext.TBL_DOCUMENT_USAGE.FirstOrDefault(u => u.DOCUMENTUSAGEID == id);
             if (usage != null)
