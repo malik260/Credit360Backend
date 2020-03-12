@@ -95,6 +95,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
 
+        public bool? ISLINEFACILITY { get; set; }
         public bool ISPROJECTRELATED { get; set; }
         public bool ISONLENDING { get; set; }
         public bool ISINTERVENTIONFUNDS { get; set; }

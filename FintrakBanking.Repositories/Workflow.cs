@@ -164,6 +164,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             lastRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && lastRequest != null) //if it is not initiation
+            {
+                throw new SecureException("An error occured, Next Level can't be preset unless on refer back. Kindly refresh your browser and try again.");
+            }
 
             this.referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
@@ -181,7 +185,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
-
             }
             else
             {
@@ -204,7 +207,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.useOrganogram == true) toStaffId = GetReportingLineStaffId();
 
-            if (this.neededNumberOfApproval > 1 && ActionIsApprovalDecision())
+            //if (this.neededNumberOfApproval > 1 && ActionIsApprovalDecision())
+            if (this.neededNumberOfApproval > 1)
             {
                 ResolveLevelMultipleApproval();
             }
@@ -1402,7 +1406,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.ONLENDING && levelBusinessRule.OnLending == true) flagChecked = true;
             if (rule.INTERVENTIONFUNDS && levelBusinessRule.InterventionFunds == true) flagChecked = true;
             if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == true) flagChecked = true;
-            if (rule.WITHOUTINSTRUCTION && levelBusinessRule.WithoutInstruction == true) flagChecked = true;
+            if (rule.WITHINSTRUCTION && levelBusinessRule.WithInstruction == true) flagChecked = true;
             if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
 
             if (limitChecked && flagChecked) return limitChecked && limitChecked;
@@ -1679,30 +1683,45 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return;
             }
             String flowLog = String.Empty;
-            flowLog += "{";
-            flowLog += "Stage " + stage;
-            flowLog += "statusId " + this.statusId;
-            flowLog += "fromLevelId " + this.fromLevelId;
-            flowLog += "nextLevelId " + this.nextLevelId;
-            flowLog += "staffId " + this.staffId;
-            flowLog += "toStaffId " + this.toStaffId;
-            flowLog += "operationId " + this.operationId;
-            flowLog += "productClassId " + this.productClassId;
-            flowLog += "productId " + this.productId;
-            flowLog += "requestLevelId " + this.requestLevelId;
-            flowLog += "requestStaffId " + this.requestStaffId;
-            flowLog += "currentStateId " + this.currentStateId;
-            flowLog += "approvalLevels " + this.approvalGrid.ToString();
-            flowLog += "next " + this.next.ToString();
-            flowLog += "isLoopResponse " + this.isLoopResponse;
-            flowLog += "newStateId " + this.newStateId;
-            flowLog += "isFlowTest " + this.isFlowTest;
-            flowLog += "isFromPc " + this.isFromPc;
-            flowLog += "}";
+            flowLog += "{" + Environment.NewLine;
+            flowLog += "Stage " + stage + "," + Environment.NewLine;
+            flowLog += "statusId " + this.statusId + "," + Environment.NewLine;
+            flowLog += "fromLevelId " + this.fromLevelId + "," + Environment.NewLine;
+            flowLog += "nextLevelId " + this.nextLevelId + "," + Environment.NewLine;
+            flowLog += "staffId " + this.staffId + "," + Environment.NewLine;
+            flowLog += "toStaffId " + this.toStaffId + "," + Environment.NewLine;
+            flowLog += "operationId " + this.operationId + "," + Environment.NewLine;
+            flowLog += "productClassId " + this.productClassId + "," + Environment.NewLine;
+            flowLog += "productId " + this.productId + "," + Environment.NewLine;
+            flowLog += "exclusiveFlowChangeId " + this.exclusiveFlowChangeId + "," + Environment.NewLine;
+            flowLog += "amount " + this.amount + "," + Environment.NewLine;
+            flowLog += "requestLevelId " + this.requestLevelId + "," + Environment.NewLine;
+            flowLog += "requestStaffId " + this.requestStaffId + "," + Environment.NewLine;
+            flowLog += "currentStateId " + this.currentStateId + "," + Environment.NewLine;
+            flowLog += "approvalLevels " + ((this.approvalGrid == null) ? String.Empty : AppendApprovalDetail(this.approvalGrid.ToList()) + Environment.NewLine);
+            flowLog += "next " + ((this.next == null ) ? String.Empty : (this.next.Level?.LEVELNAME + " " + this.next.ApprovalLevelId.ToString()) + "," + Environment.NewLine);
+            flowLog += "isLoopResponse " + this.isLoopResponse + "," + Environment.NewLine;
+            flowLog += "newStateId " + this.newStateId + "," + Environment.NewLine;
+            flowLog += "isFlowTest " + this.isFlowTest + "," + Environment.NewLine;
+            flowLog += "isFromPc " + this.isFromPc + "," + Environment.NewLine;
+            flowLog += "}," + Environment.NewLine;
             this.flow_log += flowLog;
         }
 
+        private string AppendApprovalDetail(List<WorkflowSetup> approvalGrid)
+        {
+            var flowLog = String.Empty;
+            foreach (var level in approvalGrid)
+            {
+                flowLog += "{LevelId " + level.ApprovalLevelId + ", ";
+                flowLog += "LevelName " + level.Level?.LEVELNAME + "},";
+            }
+                return flowLog;
+        }
+
+
     }
+
 
     public class WorkflowSetup
     {

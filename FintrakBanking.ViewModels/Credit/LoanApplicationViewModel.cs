@@ -238,6 +238,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string reviewLoanDetaile { get; set; }
         public string referenceNumber { get; set; }
         public DateTime systemDateTime { get; set; }
+        public int? bookingOperationId { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {
@@ -865,6 +866,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class ForwardReviewViewModel : GeneralEntity
     {
         public bool isFlowTest { get; set; }
+        public bool isFromPc { get; set; }
         public int forwardAction { get; set; } // statusId
         public int applicationId { get; set; } // targetId
         public int appraisalMemorandumId { get; set; }
@@ -962,13 +964,22 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationTagsViewModel : GeneralEntity
     {
-        public bool withInstruction;
+        public bool withInstruction { get; set; }
         public bool domiciliationNotInPlace;
-
         public bool isProjectRelated { get; set; }
         public bool isOnLending { get; set; }
         public bool isInterventionFunds { get; set; }
     }
+
+    public class LoanApplicationTagsLMSViewModel : GeneralEntity
+    {
+        public bool? withInstruction { get; set; }
+        public bool? domiciliationNotInPlace;
+        public bool? isProjectRelated { get; set; }
+        public bool? isOnLending { get; set; }
+        public bool? isInterventionFunds { get; set; }
+    }
+
 
     public class ApprovalLevelDetailsModel : GeneralEntity
     {

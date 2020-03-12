@@ -2813,7 +2813,6 @@ namespace FintrakBanking.Repositories.Credit
                 bond.REFERENCENO = bondUpdate.referenceNo;
             }
 
-           
             //else
             //{
             //    throw new SecureException("No fee is defined for this product(s)");
@@ -2837,8 +2836,19 @@ namespace FintrakBanking.Repositories.Credit
             //    trader.SOLDITEMS = traderUpdate.soldItems;
             //}
 
-            if (context.SaveChanges() == 0) throw new SecureException("Nothing was updated!");
-
+            if (context.SaveChanges() > 0)
+            {
+                var racDetail = context.TBL_RAC_DETAIL.Where(r => r.TARGETID == detail.LOANAPPLICATIONDETAILID).ToList();
+                if (loan.rac != null && racDetail.Count()<1)
+                {
+                    var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId, detail.LOANAPPLICATIONDETAILID, loan.createdBy, detail.LOANAPPLICATIONID);
+                    if (recResponse != null) return true;
+                }
+            }
+            else
+            {
+                throw new SecureException("Nothing was updated!");
+            }
             return true;
         }
 
@@ -2871,7 +2881,7 @@ namespace FintrakBanking.Repositories.Credit
             var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
 
             //decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE);
-
+            var facility = application.FirstOrDefault();
             decimal totalApplicationAmount = 0; //loan.applicationAmount;
             foreach (var item in application)
             {
@@ -2903,6 +2913,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
             this.loanData.LOANSWITHOTHERS = loan.loansWithOthers;
             this.loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
+            this.loanData.PRODUCTID = GetWorkflowProductId(facility.APPROVEDPRODUCTID);
+            this.loanData.PRODUCTCLASSID = context.TBL_PRODUCT.FirstOrDefault(p => facility.APPROVEDPRODUCTID == p.PRODUCTID).PRODUCTCLASSID;
             if (loan.LoanApplicationDetail.Count > 0)
             {
                 var exclusiveOperationId = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == loan.flowchangeId)?.OPERATIONID;
@@ -3167,34 +3179,18 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 response = context.SaveChanges();
+                if (response > 0)
+                {
 
+                    var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                    if (recResponse != null) return recResponse;
+                }
             }
-            //catch (DbEntityValidationException e)
-            //{
-            //    foreach (var eve in e.EntityValidationErrors)
-            //    {
-            //        Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-            //            eve.Entry.Entity.GetType().Name, eve.Entry.State);
-            //        foreach (var ve in eve.ValidationErrors)
-            //        {
-            //            Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-            //                ve.PropertyName, ve.ErrorMessage);
-            //        }
-            //    }
-            //    throw;
-            //}
             catch (Exception ex)
             {
 
                 throw new Exception(ex.Message);
             }
-
-            if (response > 0)
-            {
-
-                var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId , data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
-                if (recResponse != null) return recResponse;
-            } // todo 99999
 
             return null;
         }
@@ -4424,6 +4420,8 @@ namespace FintrakBanking.Repositories.Credit
                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                         applicationDate = x.APPLICATIONDATE,
                                         applicationAmount = x.APPLICATIONAMOUNT,
+                                        loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                        bookingOperationId = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(r => r.OPERATIONID).FirstOrDefault(),
                                         //applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = x.APPROVEDAMOUNT,
                                         interestRate = x.INTERESTRATE,
@@ -4493,6 +4491,8 @@ namespace FintrakBanking.Repositories.Credit
                                              loanApplicationId = x.LOANAPPLICATIONID,
                                              customerId = null,
                                              branchId = x.BRANCHID,
+                                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                             bookingOperationId = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(r => r.OPERATIONID).FirstOrDefault(),
                                              customerGroupId = x.CUSTOMERGROUPID,
                                              loanTypeId = x.LOANAPPLICATIONTYPEID,
                                              relationshipOfficerId = x.RELATIONSHIPOFFICERID,
@@ -4667,7 +4667,8 @@ namespace FintrakBanking.Repositories.Credit
                                     loanApplicationId = x.LOANAPPLICATIONID,
                                     customerId = c.CUSTOMERID,
                                     bookingRequestId = r.LOAN_BOOKING_REQUESTID,
-                                    
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    bookingOperationId = r.OPERATIONID,
                                     branchId = c.BRANCHID,
                                     customerGroupId = x.CUSTOMERGROUPID,
                                     loanTypeId = x.LOANAPPLICATIONTYPEID,
@@ -4732,6 +4733,8 @@ namespace FintrakBanking.Repositories.Credit
                                          approvedAmount = x.APPROVEDAMOUNT,
                                          interestRate = x.INTERESTRATE,
                                          applicationTenor = x.APPLICATIONTENOR,
+                                         loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                         bookingOperationId = r.OPERATIONID,
                                          productClassId = x.PRODUCTCLASSID,
                                          productClassProcessId = x.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESSID,
                                          submittedForAppraisal = x.SUBMITTEDFORAPPRAISAL,
@@ -5615,9 +5618,19 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = genSetup.GetApplicationDate();
             var entity = context.TBL_LOAN_APPLICATION.Find(appl.LOANAPPLICATIONID);
             entity.DATETIMECREATED = applicationDate;
+            entity.FINALAPPROVAL_LEVELID = null;
+            entity.NEXTAPPLICATIONSTATUSID = null;
             entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             entity.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
             entity.DELETED = false;
+            if (appl.ISADHOCAPPLICATION == true)
+            {
+                appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                var receiverLevelId = GetFirstAdhocReceiverLevel(entity.CREATEDBY, appl.OPERATIONID, appl.PRODUCTCLASSID, false);
+                workflow.NextLevelId = receiverLevelId;
+                appl.DATEACTEDON = DateTime.Now;
+                context.SaveChanges();
+            }
 
             //bool wasApproved = appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved ? true : false;
 
@@ -5776,7 +5789,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }*/
 
-                var operationId = (int)OperationsEnum.CreditAppraisal;
+                //var operationId = (int)OperationsEnum.CreditAppraisal;
                 workflow.StaffId = model.createdBy;
                 workflow.OperationId = appl.OPERATIONID;
                 workflow.TargetId = appl.LOANAPPLICATIONID;
@@ -7048,6 +7061,36 @@ namespace FintrakBanking.Repositories.Credit
                 withInstruction = entity.WITHINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
             };
+        }
+
+        public LoanApplicationTagsLMSViewModel GetLoanApplicationTagsLMS(int id)
+        {
+            var entity = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == id && x.DELETED == false);
+
+            return new LoanApplicationTagsLMSViewModel
+            {
+                isProjectRelated = entity.ISPROJECTRELATED,
+                isOnLending = entity.ISONLENDING,
+                isInterventionFunds = entity.ISINTERVENTIONFUNDS,
+                withInstruction = entity.WITHINSTRUCTION,
+                domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
+
+            };
+        }
+
+        public bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsLMSViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_LMSR_APPLICATION.Find(id);
+            entity.ISPROJECTRELATED = model.isProjectRelated;
+            entity.ISONLENDING = model.isOnLending;
+            entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
+            entity.WITHINSTRUCTION = model.withInstruction;
+            entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            return context.SaveChanges() != 0;
         }
 
         public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlow()
