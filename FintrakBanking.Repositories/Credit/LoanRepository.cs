@@ -1320,7 +1320,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var totalPreviouslyBookedAmount = principalAmount;
 
-            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.Sum() + (decimal)entity.loanScheduleInput.principalAmount);
+            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.ToList().Sum() + (decimal)entity.loanScheduleInput.principalAmount);
 
             decimal lineReleasePrincipalAmount =0;
             if (applicationDetail.ISLINEFACILITY == true)
