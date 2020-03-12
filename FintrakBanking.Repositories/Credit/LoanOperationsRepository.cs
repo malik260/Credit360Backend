@@ -18161,16 +18161,14 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                     var ended = true;
-                    //if (workFlow.NewState != (int)ApprovalState.Ended)
-                    if (ended)
+                    if (workFlow.NewState != (int)ApprovalState.Ended)
                     {
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                         output = context.SaveChanges() > 0;
                         trans.Commit();
                         data = 3;
                     }
-                    //else if (workFlow.NewState == (int)ApprovalState.Ended)
-                    else if (ended)
+                    else if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
                         //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
                         if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
