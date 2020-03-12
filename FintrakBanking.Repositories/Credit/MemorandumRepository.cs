@@ -945,7 +945,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
             }
-            result = result + $"</table>";
+            result = result + $"</table><br/>";
             return result;
 
         }
@@ -1164,7 +1164,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailDrawdown(int applicationId, int operationId)
         {
-            var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList();
+            var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList().Distinct();
             var allstaff = this.GetAllStaffNames();
             var trail = context.TBL_APPROVAL_TRAIL.Where(x=>x.OPERATIONID == operationId && x.FROMAPPROVALLEVELID !=null && bookingIds.Contains(x.TARGETID)).ToList();
 
@@ -1592,9 +1592,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 var c = g.FirstOrDefault();
-                result += c.title;
+                //result += c.title;
                 result = result + $@"
                 <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
+                <tr>
+                        <th colspan=2><b>{c.title}</b></th>
+                        <th></th>
+                    </tr>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS</b></th>
@@ -1674,15 +1678,20 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var group in transactions)
             {
                 var n = 0;
+                var c = group.FirstOrDefault();
+                //result += c.title;
                 result = result + $@"
                 <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
+                     <tr>
+                       <th colspan=2><b>{c.title}</b></th>
+                       <th></th>
+                       </tr>                    
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
                     </tr>
                  ";
-                var c = group.FirstOrDefault();
-                result += c.title;
+                
                 foreach (var t in group)
                 {
                     n++;
@@ -1703,13 +1712,18 @@ namespace FintrakBanking.Repositories.Credit
             var transactions = GetdrawdownTransactionsDynamics(loanApplicationId).GroupBy(t => t.typeId); // new
 
             var result = String.Empty;
+            result = result + $@"<br/><h3><b>TRANSACTIONS DYNAMICS</b></h3>";
             foreach (var group in transactions)
             {
                 var n = 0;
                 var c = group.FirstOrDefault();
-                result += c.title;
+                //result += c.title;
                 result = result + $@"
-                <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2><b>{c.title}</b></td>
+                        <td></td>
+                    </tr>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
@@ -4477,7 +4491,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-            data.OrderByDescending(d => d.approvalTrailId);
+            data.Distinct().OrderByDescending(d => d.approvalTrailId);
 
             return data;
         }
