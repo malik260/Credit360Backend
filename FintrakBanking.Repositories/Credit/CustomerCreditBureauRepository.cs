@@ -468,6 +468,32 @@ namespace FintrakBanking.Repositories.Credit
             return customerLoanCreditBureauData;
         }
 
+        public List<LoanCreditBureauViewModel> GetCustomerCreditBureauReportLogDeleted(int customerId, int? companyDirectorId)
+        {
+            var directorId = companyDirectorId > 0 ? companyDirectorId : null;
+            var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
+                                                where a.CUSTOMERID == customerId && a.DELETED == true && a.COMPANYDIRECTORID == directorId
+                                                select new LoanCreditBureauViewModel
+                                                {
+                                                    customerCreditBureauId = a.CUSTOMERCREDITBUREAUID,
+                                                    companyDirectorId = a.COMPANYDIRECTORID,
+                                                    companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
+                                                    chargeAmount = a.CHARGEAMOUNT,
+                                                    customerId = a.CUSTOMERID,
+                                                    creditBureauId = a.CREDITBUREAUID,
+                                                    isReportOkay = a.ISREPORTOKAY,
+                                                    usedIntegration = a.USEDINTEGRATION,
+                                                    dateCompleted = (DateTime)a.DATECOMPLETED,
+                                                    dateTimeCreated = a.DATETIMECREATED,
+                                                    searchCount = 0,
+                                                    uploadCount = 0,
+                                                    createdBy = a.CREATEDBY,
+                                                    debitBusiness = a.DEBITBUSINESS,
+                                                    dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
+                                                }).ToList();
+            return customerLoanCreditBureauData;
+        }
+
         public List<CreditBureauDocument> GetCreditBureauDocument(int customerCreditBureauId)
         {
             return (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
