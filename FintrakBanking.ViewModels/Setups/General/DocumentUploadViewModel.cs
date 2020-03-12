@@ -74,6 +74,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int customerId { get; set; }
         public int customerGroupId { get; set; }
         public bool overwrite { get; set; }
+        public int customerCreditBureauId { get; set; }
 
     }
 
