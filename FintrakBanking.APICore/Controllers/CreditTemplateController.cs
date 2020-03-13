@@ -487,12 +487,12 @@ namespace FintrakBanking.APICore.Controllers
         // added by Ade for drawdown memo
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-drawdown-memo-html/{operationId}/operationId/{targetId}/targetId")]
-        public HttpResponseMessage GetDrawdownMemoHtml(int operationId, int targetId)
+        [Route("get-drawdown-memo-html/{targetId}/targetId")]
+        public HttpResponseMessage GetDrawdownMemoHtml(int targetId)
         {
             try
             {
-                var response = _memoRepo.GetDrawdownMemoHtml(token.GetStaffId, operationId, targetId);
+                var response = _memoRepo.GetDrawdownMemoHtml(token.GetStaffId, targetId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)

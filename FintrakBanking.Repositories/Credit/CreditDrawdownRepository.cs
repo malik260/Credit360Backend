@@ -338,6 +338,7 @@ namespace FintrakBanking.Repositories.Credit
                     select new CamProcessedLoanViewModel
                     {
                         loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
+                        bookingOperationId = req.OPERATIONID,
                         approvalTrailId = atrail.APPROVALTRAILID,
                         approvalStatusId = (short)atrail.APPROVALSTATUSID,
                         approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
