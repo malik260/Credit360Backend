@@ -4423,6 +4423,8 @@ namespace FintrakBanking.Repositories.Credit
                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                         applicationDate = x.APPLICATIONDATE,
                                         applicationAmount = x.APPLICATIONAMOUNT,
+                                        loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                        bookingOperationId = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(r => r.OPERATIONID).FirstOrDefault(),
                                         //applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = x.APPROVEDAMOUNT,
                                         interestRate = x.INTERESTRATE,
@@ -4496,6 +4498,8 @@ namespace FintrakBanking.Repositories.Credit
                                              productName = p.PRODUCTNAME,
                                              customerId = null,
                                              branchId = x.BRANCHID,
+                                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                             bookingOperationId = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(r => r.OPERATIONID).FirstOrDefault(),
                                              customerGroupId = x.CUSTOMERGROUPID,
                                              loanTypeId = x.LOANAPPLICATIONTYPEID,
                                              relationshipOfficerId = x.RELATIONSHIPOFFICERID,
@@ -4671,7 +4675,8 @@ namespace FintrakBanking.Repositories.Credit
                                     loanApplicationId = x.LOANAPPLICATIONID,
                                     customerId = c.CUSTOMERID,
                                     bookingRequestId = r.LOAN_BOOKING_REQUESTID,
-                                    
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    bookingOperationId = r.OPERATIONID,
                                     branchId = c.BRANCHID,
                                     customerGroupId = x.CUSTOMERGROUPID,
                                     loanTypeId = x.LOANAPPLICATIONTYPEID,
@@ -4691,8 +4696,6 @@ namespace FintrakBanking.Repositories.Credit
                                     isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
                                     approvalStatusId = (short)x.APPROVALSTATUSID,
                                     approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
-
-                                  
                                     applicationStatusId = x.APPLICATIONSTATUSID,
                                     applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == x.APPLICATIONSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
                                     branchName = x.TBL_BRANCH.BRANCHNAME,
@@ -4736,6 +4739,8 @@ namespace FintrakBanking.Repositories.Credit
                                          approvedAmount = x.APPROVEDAMOUNT,
                                          interestRate = x.INTERESTRATE,
                                          applicationTenor = x.APPLICATIONTENOR,
+                                         loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                         bookingOperationId = r.OPERATIONID,
                                          productClassId = x.PRODUCTCLASSID,
                                          productClassProcessId = x.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESSID,
                                          submittedForAppraisal = x.SUBMITTEDFORAPPRAISAL,

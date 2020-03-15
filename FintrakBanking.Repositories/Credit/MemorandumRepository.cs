@@ -945,16 +945,16 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
             }
-            result = result + $"</table>";
+            result = result + $"</table><br/>";
             return result;
 
         }
 
-        public List<DropDownSelect> GetTransactionsDynamics()
+        public List<DropDownSelect> GetdrawdownTransactionsDynamics(int targetIds)
         {
             var result = new List<DropDownSelect>();
 
-                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
+                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetIds && x.DELETED == false).ToList();
                 var allTransactions = this.transactionsRepo.GetAllTransactionDynamics().OrderBy(a => a.position);
                 var transactions = new List<TransactionDynamicsViewModel>();
 
@@ -975,6 +975,33 @@ namespace FintrakBanking.Repositories.Credit
             
             return result;
         }
+
+        public List<DropDownSelect> GetTransactionsDynamics()
+        {
+            var result = new List<DropDownSelect>();
+
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
+            var allTransactions = this.transactionsRepo.GetAllTransactionDynamics().OrderBy(a => a.position);
+            var transactions = new List<TransactionDynamicsViewModel>();
+
+            foreach (var b in details)
+            {
+                var transactionSelect = allTransactions.Where(x => x.loanApplicationDetailId == b.LOANAPPLICATIONDETAILID).ToList();
+                transactions.AddRange(transactionSelect);
+            }
+
+            foreach (var t in transactions)
+            {
+                if (t.dynamics != null)
+                {
+                    var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == t.loanApplicationDetailId).FirstOrDefault();
+                    result.Add(new DropDownSelect { typeId = (int)t.loanApplicationDetailId, name = t.dynamics, title = detail.TBL_PRODUCT1.PRODUCTNAME });
+                }
+            }
+
+            return result;
+        }
+
 
         public string GetObligorClassification()
         {
@@ -1137,7 +1164,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailDrawdown(int applicationId, int operationId)
         {
-            var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList();
+            var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList().Distinct();
             var allstaff = this.GetAllStaffNames();
             var trail = context.TBL_APPROVAL_TRAIL.Where(x=>x.OPERATIONID == operationId && x.FROMAPPROVALLEVELID !=null && bookingIds.Contains(x.TARGETID)).ToList();
 
@@ -1204,9 +1231,17 @@ namespace FintrakBanking.Repositories.Credit
         }
         //markups
 
-        public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
+        public string GetDrawdownMemoHtml(int staffId, int targetId)
         {
-            var isInitialize = InitializeDrawdownMemoProperties(targetId, operationId);
+            var bookingId = context.TBL_LOAN_BOOKING_REQUEST.Find(targetId);
+            if(bookingId == null)
+            {
+                bookingId = (from b in context.TBL_LOAN_BOOKING_REQUEST join c in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONDETAILID == targetId select b).FirstOrDefault();
+            }
+            var loanApplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Find(bookingId.LOANAPPLICATIONDETAILID);
+            var appraisalOperation = context.TBL_LOAN_APPLICATION.Find(loanApplicationId.LOANAPPLICATIONID).OPERATIONID;
+
+            var isInitialize = InitializeDrawdownMemoProperties(loanApplicationId.LOANAPPLICATIONDETAILID, appraisalOperation);
                         
             var result = String.Empty;
             result = result + $@"
@@ -1270,9 +1305,10 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(this.loanApplicationDetail.LOANAPPLICATIONDETAILID) + GetDrawdownApprovalsMarkupLOS2(this.targetId, this.operationId);
+            result = result + GetFees(loanApplicationId.LOANAPPLICATIONDETAILID) + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(loanApplicationId.LOANAPPLICATIONDETAILID) + GetTransactionsDynamicsDrawdownMarkup(loanApplicationId.LOANAPPLICATIONID) + GetDrawdownApprovalsMarkupLOS2(targetId);
             return result;
         }
+
 
         public string GetFees(int targetId)
         {
@@ -1565,9 +1601,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 var c = g.FirstOrDefault();
-                result += c.title;
+                //result += c.title;
                 result = result + $@"
                 <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
+                <tr>
+                        <th colspan=2><b>{c.title}</b></th>
+                        <th></th>
+                    </tr>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS</b></th>
@@ -1647,15 +1687,20 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var group in transactions)
             {
                 var n = 0;
+                var c = group.FirstOrDefault();
+                //result += c.title;
                 result = result + $@"
                 <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
+                     <tr>
+                       <th colspan=2><b>{c.title}</b></th>
+                       <th></th>
+                       </tr>                    
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
                     </tr>
                  ";
-                var c = group.FirstOrDefault();
-                result += c.title;
+                
                 foreach (var t in group)
                 {
                     n++;
@@ -1670,7 +1715,45 @@ namespace FintrakBanking.Repositories.Credit
             }
             return result;
         }
-        
+
+        private string GetTransactionsDynamicsDrawdownMarkup(int loanApplicationId)
+        {
+            var transactions = GetdrawdownTransactionsDynamics(loanApplicationId).GroupBy(t => t.typeId); // new
+
+            var result = String.Empty;
+            result = result + $@"<br/><h3><b>TRANSACTIONS DYNAMICS</b></h3>";
+            foreach (var group in transactions)
+            {
+                var n = 0;
+                var c = group.FirstOrDefault();
+                //result += c.title;
+                result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2><b>{c.title}</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>TRANSACTIONS DYNAMICS</b></th>
+                    </tr>
+                 ";
+                
+                foreach (var t in group)
+                {
+                    n++;
+                    result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{t.name}</td>
+                        </tr>
+                ";
+                }
+                result = result + $"</table>";
+            }
+            return result;
+        }
+
         private string GetBusinessSectorsMarkupLOS()
         {
             var result = String.Empty;
@@ -4358,6 +4441,70 @@ namespace FintrakBanking.Repositories.Credit
         //}
 
 
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailDrawdownMemoReversal(int applicationId, bool getAll = true)
+        {
+            int[] operations = { (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
+                (int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ContigentLoanBooking,
+                (int)OperationsEnum.RevolvingLoanBooking,(int)OperationsEnum.TermLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,
+                (int)OperationsEnum.RevolvingTranchDisbursement
+            };
+            var staffRoles = context.TBL_STAFF_ROLE.ToList();
+            var staffs = from s in context.TBL_STAFF select s;
+            var allstaff = this.GetAllStaffNames();
+
+           
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId).ToList();
+
+            if (getAll)
+            {
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId).Distinct().ToList();
+            }
+
+            var data = trail.Select(x => new ApprovalTrailViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                comment = x.COMMENT,
+                targetId = x.TARGETID,
+                operationId = x.OPERATIONID,
+                arrivalDate = x.ARRIVALDATE,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelId = x.TOAPPROVALLEVELID,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
+                approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                vote = x.VOTE,
+                //applicationId = application.LOANAPPLICATIONID,
+                commentStage = "Drawdown",
+                toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+            })?.OrderByDescending(x => x.approvalTrailId).Distinct().ToList();
+
+            //data.AddRange(GetOfferLetterTrail(applicationId));
+            var bookingId = context.TBL_LOAN_BOOKING_REQUEST.Find(applicationId);
+            var loanApplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Find(bookingId.LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
+            var appraisalOperation = context.TBL_LOAN_APPLICATION.Find(loanApplicationId).OPERATIONID;
+
+            if (getAll)
+            {
+                data.AddRange(GetNonAppraisalTrail(loanApplicationId, (short)OperationsEnum.OfferLetterApproval, "Offer Letter"));
+                data.AddRange(GetNonAppraisalTrail(loanApplicationId, (short)OperationsEnum.LoanAvailment, "Availment"));
+                data.AddRange(GetNonAppraisalTrail(loanApplicationId, appraisalOperation, "Credit Appraisal"));
+            }
+
+            data.OrderByDescending(d => d.systemArrivalDateTime);
+
+            return data;
+        }
+
+
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailMemo(int applicationId, int operationId, bool getAll = true)
         {
 
@@ -4372,7 +4519,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.TBL_LOAN_APPLICATION.OPERATIONID && x.TARGETID == application.LOANAPPLICATIONID).ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.TBL_LOAN_APPLICATION.OPERATIONID && x.TARGETID == application.LOANAPPLICATIONID).Distinct().ToList();
             }
 
             var data = trail.Select(x => new ApprovalTrailViewModel
@@ -4399,7 +4546,7 @@ namespace FintrakBanking.Repositories.Credit
                 commentStage = "Credit Appaisal",
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.OrderByDescending(x => x.approvalTrailId).ToList();
+            })?.OrderByDescending(x => x.approvalTrailId).Distinct().ToList();
 
             //data.AddRange(GetOfferLetterTrail(applicationId));
             if (getAll)
@@ -4427,8 +4574,21 @@ namespace FintrakBanking.Repositories.Credit
                 };
             }
 
+            //for Filtering multiple occuring levels
+            var data2 = data.ToList();
+            var testData = data.ToList();
+            foreach (var t in testData)
+            {
+                var firstTrailForLevel = testData.OrderBy(x => x.approvalTrailId).FirstOrDefault(x => x.fromApprovalLevelId == t.fromApprovalLevelId);
+                var multipleTrails = testData.Where(d => d.fromApprovalLevelId == firstTrailForLevel.fromApprovalLevelId && d.approvalTrailId != firstTrailForLevel.approvalTrailId).ToList();
+                foreach (var tr in multipleTrails)
+                {
+                    data2.GroupBy(d => d.systemArrivalDateTime == tr.systemArrivalDateTime);
+                }
+            }
+            data = data2;
 
-            data.OrderByDescending(d => d.approvalTrailId);
+            data.OrderByDescending(d => d.systemArrivalDateTime);
 
             return data;
         }
@@ -4465,7 +4625,7 @@ namespace FintrakBanking.Repositories.Credit
                 vote = x.VOTE,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.OrderByDescending(x => x.approvalTrailId).ToList();
+            })?.OrderByDescending(x => x.approvalTrailId).Distinct().ToList();
 
 
             data.OrderByDescending(d => d.approvalTrailId);
@@ -4507,10 +4667,10 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private string GetDrawdownApprovalsMarkupLOS2(int targetId, int operationId)
+        private string GetDrawdownApprovalsMarkupLOS2(int targetId)
         {
 
-            var appraisals = GetAppraisalMemorandumTrailMemo(this.targetId, GetCurrentOperationId()); //GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrailDrawdownMemoReversal(targetId).OrderByDescending(a => a.systemArrivalDateTime); //GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
                 <br/>

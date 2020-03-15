@@ -1320,9 +1320,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var totalPreviouslyBookedAmount = principalAmount;
 
-            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.Sum() + (decimal)entity.loanScheduleInput.principalAmount);
+            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.ToList().Sum() + (decimal)entity.loanScheduleInput.principalAmount);
 
-            decimal lineReleasePrincipalAmount =0;
+            decimal lineReleasePrincipalAmount = 0;
             if (applicationDetail.ISLINEFACILITY == true)
             {
                 lineReleasePrincipalAmount = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT);
@@ -8252,6 +8252,7 @@ namespace FintrakBanking.Repositories.Credit
                                        approvalStatusId = atrail.APPROVALSTATUSID,
                                        approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                        loanApplicationId = m.LOANAPPLICATIONID,
+                                       operationId = m.OPERATIONID,
                                        loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                        applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                        applicationStatusId = m.APPLICATIONSTATUSID,
@@ -8318,6 +8319,7 @@ namespace FintrakBanking.Repositories.Credit
                                      approvalStatusId = atrail.APPROVALSTATUSID,
                                      approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                      loanApplicationId = m.LOANAPPLICATIONID,
+                                     operationId = m.OPERATIONID,
                                      loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                      applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                      applicationStatusId = m.APPLICATIONSTATUSID,
@@ -12603,8 +12605,9 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals b.LOANID
                                    join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                   where a.ISDISBURSED == true 
+                                   where a.ISDISBURSED == true
                                    //&& (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook) 
+                                   && b.OPERATIONID != (int) OperationsEnum.APSReleaseApproval
                                    && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability 
                                    && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
                                    && b.OPERATIONPERFORMED == false 
