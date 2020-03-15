@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.Entities.Models;
+using System;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -34,6 +35,8 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse LcUssanceMemorandum(LcForwardViewModel model);
 
         WorkflowResponse LetterGenerationRequestMemorandum(LetterGenerationRequestViewModel model);
+
+        String ResponseMessage(WorkflowResponse response, string itemHeading);
         WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);

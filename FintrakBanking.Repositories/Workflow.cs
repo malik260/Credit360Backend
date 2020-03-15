@@ -249,8 +249,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
-            if (this.isFlowTest) return true;
             SaveFlowLog("Before Final Trail Logging");
+            if (this.isFlowTest) return true;
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -616,6 +616,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.toStaffId != null)
             {
                 var p = context.TBL_STAFF.Find(this.toStaffId);
+                response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
+            }
+
+            if (this.loopedStaffId != null && this.loopedStaffId > 0)
+            {
+                var p = context.TBL_STAFF.Find(this.loopedStaffId);
+                response.nextPersonId = this.loopedStaffId;
+                response.nextLevelName = p.TBL_STAFF_ROLE.STAFFROLENAME;
                 response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
             }
         }
@@ -1027,7 +1035,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             ReportingLine super = line.FirstOrDefault(x => x.levelRoleId == next.DefaultRoleId && x.levelIds.Contains(next.ApprovalLevelId));
             if (super == null)
             {
-                throw new SecureException("No Staff Was Setup as Your Supervisor!");
+                if (this.isFlowTest)
+                {
+                    return null;
+                }
+                throw new SecureException("No Staff Was Setup as Your Supervisor! Please select the approver to route your request to.");
                 //return null;
             }
 

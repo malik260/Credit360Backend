@@ -1762,7 +1762,7 @@ namespace FintrakBanking.Repositories.Credit
             int index = body.IndexOf(startString);
             if (index == -1)
             {
-                return body;
+                return String.Empty;
             }
             int startIndex = index + startString.Length;
             int endIndex = body.IndexOf(endString, startIndex);
@@ -1778,8 +1778,11 @@ namespace FintrakBanking.Repositories.Credit
                         <td><b>Environmental And Social Risk Summary:</b></td>
                         <td>{GetEnvironmentalSocialRiskMarkup()}</td>
                     ";
-
-            body.Replace(oldString, newString);
+            if (string.IsNullOrEmpty(oldString))
+            {
+                return body;
+            }
+            body = body.Replace(oldString, newString);
             return body;
         }
 
@@ -1792,8 +1795,11 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{GetGreenRatingDetailMarkup()}</td>
                         <td>{GetGreenRatingSummaryMarkup()}</td>
                     ";
-
-            body.Replace(oldString, newString);
+            if (string.IsNullOrEmpty(oldString))
+            {
+                return body;
+            }
+            body = body.Replace(oldString, newString);
             return body;
         }
 

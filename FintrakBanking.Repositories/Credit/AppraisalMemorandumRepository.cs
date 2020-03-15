@@ -405,6 +405,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.Comment = model.comment;
                         workflow.ExternalInitialization = true;
                         workflow.ToStaffId = currentTrail.REQUESTSTAFFID;
+                        workflow.IsFlowTest = model.isFlowTest;
                         workflow.StatusId = (short)ApprovalStatusEnum.Pending;
                         workflow.Amount = appl.TOTALEXPOSUREAMOUNT;   //model.legalLendingLimit;
                         workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
@@ -440,6 +441,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
                 workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = model.isFromPc;
+                workflow.IsFlowTest = model.isFlowTest;
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
                     Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
@@ -1534,7 +1536,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("This LC is already undergoing Termination Or has been Terminated");
             }
-            int operationId = (int)OperationsEnum.LCModificationApproval; // CHANGE
+            int operationId = (int)OperationsEnum.LCEnhancementApproval; // CHANGE
             var applicationDate = general.GetApplicationDate();
             var tempLc = context.TBL_TEMP_LC_ISSUANCE.Find(model.tempLcIssuanceId);
             if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
@@ -1695,6 +1697,47 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
             //workflow.Response.success = true;
             return workflow.Response;
+        }
+
+        public String ResponseMessage(WorkflowResponse response, string itemHeading)
+        {
+            if (response.stateId != (int)ApprovalState.Ended)
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Referred)
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextLevelName;
+                    }
+                }
+                else
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextLevelName;
+                    }
+                }
+            }
+            else
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    return "The " + itemHeading + " request has been APPROVED successfully";
+                }
+                else
+                {
+                    return "The " + itemHeading + " request has been DISAPPROVED successfully";
+                }
+            }
+
         }
 
         public WorkflowResponse LetterGenerationRequestMemorandum(LetterGenerationRequestViewModel model)
@@ -2087,11 +2130,11 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool getAll = false)
+        public IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId = 0, bool getAll = false)
         {
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
             var staffs = from s in context.TBL_STAFF select s;
-
+            var creditOperationIds = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(f => f.OPERATIONID).ToList();
             var allstaff = this.GetAllStaffNames();
 
             var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
@@ -2101,7 +2144,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.OPERATIONID && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
             }
 
             var data = trail.Select(x => new ApprovalTrailViewModel
@@ -2127,10 +2170,16 @@ namespace FintrakBanking.Repositories.Credit
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
             })?.OrderBy(x => x.approvalTrailId).ToList();
 
+            if(currentLevelId == 0)
+            {
+                currentLevelId = data.LastOrDefault().toApprovalLevelId ?? 0;
+            }
+
             if (data.Count > 0 && currentLevelId > 0)
             {
                 var firstTrail = data.FirstOrDefault(t => t.toApprovalLevelId == currentLevelId);
-                data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId && t.fromApprovalLevelId > 0).ToList();
+                    data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId).ToList();
+                    //data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId && t.fromApprovalLevelId > 0).ToList();
             }
 
             if (data.Count == 0)
@@ -2162,7 +2211,6 @@ namespace FintrakBanking.Repositories.Credit
 
             var data2 = data.ToList();
             var testData = data.ToList();
-            //IList selectedApprovalTrailIds = new List<int>();
             foreach (var t in testData)
             {
                 var firstTrailForLevel = testData.OrderBy(x => x.approvalTrailId).FirstOrDefault(x => x.fromApprovalLevelId == t.fromApprovalLevelId);
@@ -2174,7 +2222,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             data = data2;
-            data.OrderByDescending(d => d.approvalTrailId);
+            data.OrderByDescending(d => d.approvalTrailId).ToList();
             return data;
         }
 
@@ -2808,7 +2856,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                     feeName = x.TBL_CHARGE_FEE.CHARGEFEENAME,
                     productName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME
-                });
+                }).ToList();
 
             return fees;
         }
