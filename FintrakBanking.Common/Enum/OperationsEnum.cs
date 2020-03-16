@@ -173,7 +173,7 @@
     ContingentLiabilityRenewalApproval = 235,
     ContingentLiabilityUsageApproval = 236,
     ExpiredContigentLiabilityApproval = 237,
-    LCModificationApproval = 238,
+    LCEnhancementApproval = 238,
     LCTerminationApproval = 239,
     GlobalInterestRateChangeApproval = 240,
     LoanReversalRepaymentApproval = 241,

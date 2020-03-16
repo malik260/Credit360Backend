@@ -14517,7 +14517,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool ReferBackBooking(ApprovalViewModel model)
+        public WorkflowResponse ReferBackBooking(ApprovalViewModel model)
         {
             int staffId = model.staffId;
 
@@ -14623,7 +14623,8 @@ namespace FintrakBanking.Repositories.Credit
             //context.TBL_AUDIT.Add(audit);
             ////end of Audit section -------------------------------
 
-            return context.SaveChanges() > 0;
+            context.SaveChanges();
+            return workflow.Response;
         }
         #endregion
 
