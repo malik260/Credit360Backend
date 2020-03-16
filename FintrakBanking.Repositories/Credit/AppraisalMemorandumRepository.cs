@@ -3093,35 +3093,35 @@ namespace FintrakBanking.Repositories.Credit
 
             var test = applications.Count();
 
-            if (staffProfile.Select(d => d.STAFFROLESHORTCODE).Contains("ED"))
-            {
-                if (staffProfile.Count() == 1)
-                {
-                    // var applList = applications.ToList();
-                    return applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d => d.MISCODE).Contains(x.divisionCode));
-                }
-                else if (staffProfile.Count() > 1)
-                {
-                    var applications2 = query2.AsQueryable()
-                    .Where(x => x.currentApprovalLevelTypeId != 2)
-                    .GroupBy(d => d.loanApplicationId)
-                    .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
-                    var app2ForFilter = applications2.ToList();
+            //if (staffProfile.Select(d => d.STAFFROLESHORTCODE).Contains("ED"))
+            //{
+            //    if (staffProfile.Count() == 1)
+            //    {
+            //        // var applList = applications.ToList();
+            //        return applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d => d.MISCODE).Contains(x.divisionCode));
+            //    }
+            //    else if (staffProfile.Count() > 1)
+            //    {
+            //        var applications2 = query2.AsQueryable()
+            //        .Where(x => x.currentApprovalLevelTypeId != 2)
+            //        .GroupBy(d => d.loanApplicationId)
+            //        .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+            //        var app2ForFilter = applications2.ToList();
 
-                    var relisfApplications = applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d => d.MISCODE).Contains(x.divisionCode));
-                    var app1ForFilter = relisfApplications.ToList();
-                    foreach (var app in applications2)
-                    {
-                        if (app1ForFilter.Any(a => a.approvalTrailId == app.approvalTrailId))
-                        {
-                            app2ForFilter.Remove(app);
-                        }
-                    }
-                    var app2 = app2ForFilter.AsQueryable();
-                    var final = relisfApplications.Union(app2);
-                    return final;
-                }
-            }
+            //        var relisfApplications = applications.Where(x => x.divisionCode == loggedOnStaff.MISCODE || loggedOnStaffForReleive.Select(d => d.MISCODE).Contains(x.divisionCode));
+            //        var app1ForFilter = relisfApplications.ToList();
+            //        foreach (var app in applications2)
+            //        {
+            //            if (app1ForFilter.Any(a => a.approvalTrailId == app.approvalTrailId))
+            //            {
+            //                app2ForFilter.Remove(app);
+            //            }
+            //        }
+            //        var app2 = app2ForFilter.AsQueryable();
+            //        var final = relisfApplications.Union(app2);
+            //        return final;
+            //    }
+            //}
             return applications;
             
             
