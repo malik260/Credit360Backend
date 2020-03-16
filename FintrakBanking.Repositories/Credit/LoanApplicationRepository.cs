@@ -4423,7 +4423,6 @@ namespace FintrakBanking.Repositories.Credit
                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                         applicationDate = x.APPLICATIONDATE,
                                         applicationAmount = x.APPLICATIONAMOUNT,
-                                        loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                         bookingOperationId = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(r => r.OPERATIONID).FirstOrDefault(),
                                         //applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = x.APPROVEDAMOUNT,
@@ -4498,7 +4497,6 @@ namespace FintrakBanking.Repositories.Credit
                                              productName = p.PRODUCTNAME,
                                              customerId = null,
                                              branchId = x.BRANCHID,
-                                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                              bookingOperationId = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(r => r.OPERATIONID).FirstOrDefault(),
                                              customerGroupId = x.CUSTOMERGROUPID,
                                              loanTypeId = x.LOANAPPLICATIONTYPEID,
@@ -4901,7 +4899,7 @@ namespace FintrakBanking.Repositories.Credit
                                   toStaffId = a.TOSTAFFID,
                                   fromApprovalLevelId = a.FROMAPPROVALLEVELID,
                                   toApprovalLevelId = a.TOAPPROVALLEVELID,
-                                  requestStaffId = a.REQUESTSTAFFID
+                                  requestStaffId = a.REQUESTSTAFFID,
                               })
                            ).OrderByDescending(o => o.approvalTrailId).ToList();
 
@@ -4929,7 +4927,8 @@ namespace FintrakBanking.Repositories.Credit
                                   applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                                   requestStaffName = current.TBL_STAFF.LASTNAME + " " + current.TBL_STAFF.MIDDLENAME + " " + current.TBL_STAFF.FIRSTNAME,
                                   responseStaffName = (current.RESPONSESTAFFID == null) ? "N/A" : current.TBL_STAFF1.LASTNAME + " " + current.TBL_STAFF1.MIDDLENAME + " " + current.TBL_STAFF1.FIRSTNAME,
-                                  responsibleStaffName = (current.TOSTAFFID == null) ? "N/A" : current.TBL_STAFF2.LASTNAME + " " + current.TBL_STAFF2.MIDDLENAME + " " + current.TBL_STAFF2.FIRSTNAME,
+                                  //responsibleStaffName = (current.TOSTAFFID == null) ? "N/A" : current.TBL_STAFF2.LASTNAME + " " + current.TBL_STAFF2.MIDDLENAME + " " + current.TBL_STAFF2.FIRSTNAME,
+                                  //reliefStaffName = (current.TOSTAFFID == null) ? "N/A" : current.TBL_STAFF3.LASTNAME + " " + current.TBL_STAFF3.MIDDLENAME + " " + current.TBL_STAFF3.FIRSTNAME,
                                   comment = current.COMMENT,
                                   systemArrivalDate = current.SYSTEMARRIVALDATETIME,
                                   systemResponseDate = current.SYSTEMRESPONSEDATETIME,
@@ -4956,8 +4955,9 @@ namespace FintrakBanking.Repositories.Credit
                                   toApprovalLevelId = current.TOAPPROVALLEVELID,
                                   requestStaffId = current.REQUESTSTAFFID,
                                   comments = (from a in context.TBL_APPROVAL_TRAIL
-                                             join r in context.TBL_LOAN_BOOKING_REQUEST on a.TARGETID equals bo.LOAN_BOOKING_REQUESTID
-                                             select new ApprovalTrailViewModel
+                                             join r in context.TBL_LOAN_BOOKING_REQUEST on a.TARGETID equals r.LOAN_BOOKING_REQUESTID
+                                             where operations.Contains(a.OPERATIONID) && r.LOAN_BOOKING_REQUESTID == bo.LOAN_BOOKING_REQUESTID
+                                              select new ApprovalTrailViewModel
                                              {
                                                 approvalTrailId = a.APPROVALTRAILID,
                                                 comment = a.COMMENT,
@@ -4979,8 +4979,8 @@ namespace FintrakBanking.Repositories.Credit
                                                 approvalStatusId = a.APPROVALSTATUSID,
                                                 approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
                                                 approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                                                fromStaffName = current.TBL_STAFF.LASTNAME + " " + current.TBL_STAFF.MIDDLENAME + " " + current.TBL_STAFF.FIRSTNAME,
-                                                toStaffName = (current.TOSTAFFID == null) ? "N/A" : current.TBL_STAFF2.LASTNAME + " " + current.TBL_STAFF2.MIDDLENAME + " " + current.TBL_STAFF2.FIRSTNAME,
+                                                fromStaffName = current.TBL_STAFF.LASTNAME + " " + current.TBL_STAFF.MIDDLENAME + " " + current.TBL_STAFF.FIRSTNAME
+                                                //toStaffName = (current.TOSTAFFID == null) ? "N/A" : current.TBL_STAFF2.LASTNAME + " " + current.TBL_STAFF2.MIDDLENAME + " " + current.TBL_STAFF2.FIRSTNAME,
                                              }).OrderByDescending(x => x.approvalTrailId).ToList()
                                 })).OrderByDescending(o => o.approvalTrailId).ToList();
 
@@ -5009,10 +5009,20 @@ namespace FintrakBanking.Repositories.Credit
             var staffs = context.TBL_STAFF.ToList();
             foreach (var record in records)
             {
+                if (record.toStaffId > 0)
+                {
+                    var toStaff = staffs.FirstOrDefault(s => s.STAFFID == record.toStaffId);
+                    record.responsibleStaffName = toStaff.LASTNAME + " " + toStaff.MIDDLENAME + " " + toStaff.FIRSTNAME;
+                }
+                if (record.fromApprovalLevelId == null)
+                {
+                    var staff = staffs.FirstOrDefault(s => s.STAFFID == record.requestStaffId);
+                    record.requestApprovalLevel = staff.TBL_STAFF_ROLE.STAFFROLENAME;
+                }
                 if (record.fromApprovalLevelId == record.toApprovalLevelId && record.toStaffId > 0)
                 {
                     var staff = staffs.FirstOrDefault(s => s.STAFFID == record.requestStaffId);
-                    record.responseApprovalLevel = staff.TBL_STAFF_ROLE.STAFFROLENAME;
+                    record.requestApprovalLevel = staff.TBL_STAFF_ROLE.STAFFROLENAME;
                 }
 
                 if (record.fromApprovalLevelId == record.toApprovalLevelId && record.loopedStaffId > 0)
@@ -5021,21 +5031,35 @@ namespace FintrakBanking.Repositories.Credit
                     record.currentLevel = staff.TBL_STAFF_ROLE.STAFFROLENAME;
                     record.responsibleStaffName = staff.LASTNAME + " " + staff.MIDDLENAME + " " + staff.FIRSTNAME;
                 }
-                foreach (var c in record.comments)
+                if (record?.comments != null)
                 {
-                    if (c.fromApprovalLevelId == c.toApprovalLevelId && c.toStaffId > 0)
+                    foreach (var c in record.comments)
                     {
-                        var staff = staffs.FirstOrDefault(s => s.STAFFID == c.requestStaffId);
-                        c.fromApprovalLevelName = staff.TBL_STAFF_ROLE.STAFFROLENAME;
-                    }
+                        if (c.toStaffId > 0)
+                        {
+                            var toStaff = staffs.FirstOrDefault(s => s.STAFFID == c.toStaffId);
+                            c.toStaffName = toStaff.LASTNAME + " " + toStaff.MIDDLENAME + " " + toStaff.FIRSTNAME;
+                        }
+                        if (c.fromApprovalLevelId == null)
+                        {
+                            var staff = staffs.FirstOrDefault(s => s.STAFFID == c.requestStaffId);
+                            c.fromApprovalLevelName = staff.TBL_STAFF_ROLE.STAFFROLENAME;
+                        }
+                        if (c.fromApprovalLevelId == c.toApprovalLevelId && c.toStaffId > 0)
+                        {
+                            var staff = staffs.FirstOrDefault(s => s.STAFFID == c.requestStaffId);
+                            c.fromApprovalLevelName = staff.TBL_STAFF_ROLE.STAFFROLENAME;
+                        }
 
-                    if (record.fromApprovalLevelId == record.toApprovalLevelId && record.loopedStaffId > 0)
-                    {
-                        var staff = staffs.FirstOrDefault(s => s.STAFFID == record.loopedStaffId);
-                        c.toApprovalLevelName = staff.TBL_STAFF_ROLE.STAFFROLENAME;
-                        c.toStaffName = staff.LASTNAME + " " + staff.MIDDLENAME + " " + staff.FIRSTNAME;
+                        if (record.fromApprovalLevelId == record.toApprovalLevelId && record.loopedStaffId > 0)
+                        {
+                            var staff = staffs.FirstOrDefault(s => s.STAFFID == record.loopedStaffId);
+                            c.toApprovalLevelName = staff.TBL_STAFF_ROLE.STAFFROLENAME;
+                            c.toStaffName = staff.LASTNAME + " " + staff.MIDDLENAME + " " + staff.FIRSTNAME;
+                        }
                     }
                 }
+                
             }
             return records;
         }

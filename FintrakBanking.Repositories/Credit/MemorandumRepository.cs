@@ -1233,12 +1233,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public string GetDrawdownMemoHtml(int staffId, int targetId)
         {
+            if (targetId == 0)
+            {
+                return null;
+            }
             var bookingId = context.TBL_LOAN_BOOKING_REQUEST.Find(targetId);
-            if(bookingId == null)
+            var loanApplicationId = new TBL_LOAN_APPLICATION_DETAIL();
+            if (bookingId == null)
             {
                 bookingId = (from b in context.TBL_LOAN_BOOKING_REQUEST join c in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONDETAILID == targetId select b).FirstOrDefault();
             }
-            var loanApplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Find(bookingId.LOANAPPLICATIONDETAILID);
+            if (bookingId != null)
+            {
+                loanApplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Find(bookingId.LOANAPPLICATIONDETAILID);
+            }
             var appraisalOperation = context.TBL_LOAN_APPLICATION.Find(loanApplicationId.LOANAPPLICATIONID).OPERATIONID;
 
             var isInitialize = InitializeDrawdownMemoProperties(loanApplicationId.LOANAPPLICATIONDETAILID, appraisalOperation);

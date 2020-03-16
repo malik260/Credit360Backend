@@ -27,6 +27,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int? requestStaffId { get; set; }
         public string responseStaffName { get; set; }
         public string responsibleStaffName { get; set; }
+        public string reliefStaffName { get; set; }
         public string responseStaffCode { get; set; }
         public string responseApprovalLevel { get; set; }
         public int TargetId { get; set; }

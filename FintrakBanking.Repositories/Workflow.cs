@@ -1021,14 +1021,15 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? GetReportingLineStaffId() // if workflow is forced to use organogram
         {
             var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
+            var fromStaff = context.TBL_STAFF.Find(this.staffId);
             if (next == null) { return null; }
             if (this.toStaffId != null) { return toStaffId; }
             //if (this.toStaffId != null) { return null; }
-            if (this.externalInitialization == true) { return null; }
+            if (this.externalInitialization == true && !businessRoleIds.Contains(fromStaff.STAFFROLEID)) { return null; }
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
-            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || this.fromLevelId == null)
+            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (this.fromLevelId == null && !businessRoleIds.Contains(fromStaff.STAFFROLEID)))
             {
                 return null;
             }
