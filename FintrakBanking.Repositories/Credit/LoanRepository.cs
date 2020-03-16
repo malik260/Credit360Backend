@@ -10246,6 +10246,10 @@ namespace FintrakBanking.Repositories.Credit
                                  customerName = b.FIRSTNAME + " " + b.LASTNAME,
                                  firstName = b.FIRSTNAME,
                                  lastName = b.LASTNAME,
+                                 loanReviewApplicationId = (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.LOANREVIEWAPPLICATIONID).FirstOrDefault() :
+                                                     (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.LOANREVIEWAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.LOANREVIEWAPPLICATIONID).FirstOrDefault(),
+
                                  customerCode = b.CUSTOMERCODE,
                                  productAccountName = c.PRODUCTACCOUNTNAME,
                                  loanReferenceNumber = a.LOANREFERENCENUMBER,

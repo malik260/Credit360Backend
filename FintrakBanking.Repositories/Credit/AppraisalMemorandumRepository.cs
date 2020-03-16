@@ -384,7 +384,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (currentTrail != null)
                     {
 
-                        currentTrail.APPROVALSTATEID = (int)ApprovalState.Processing;
+                        currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
                         currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
                         currentTrail.COMMENT = model.comment;
                         currentTrail.RESPONSESTAFFID = model.createdBy;

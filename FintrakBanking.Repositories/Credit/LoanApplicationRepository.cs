@@ -923,7 +923,7 @@ namespace FintrakBanking.Repositories.Credit
                              year = a.YEAR,
                              productAccountName = context.TBL_CASA.Where(o=>o.CUSTOMERID==customerId).Select(o=>o.PRODUCTACCOUNTNAME).FirstOrDefault(),
 
-                         }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
+                         }).GroupBy(O => new { O.accountNumber, O.credit_Turnover, O.debit_Turnover, O.min_Credit_Balance, O.min_Debit_Balance }).Select(O => O.FirstOrDefault()).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
 
             
             var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
@@ -7117,13 +7117,14 @@ namespace FintrakBanking.Repositories.Credit
                     //List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
                     //foreach (var sectorId in sectorIds)
                     //{
-                        var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
-                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                        //var sector = context.TBL_SECTOR.Find(sectorId);
-                        if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
+                    var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
+                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                    decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                    decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
+                    if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
                     //}
                 }
-                
+
             }
             if (limitValidation.ProductLimitExceeded(productId, details.SingleOrDefault()?.proposedAmount ?? 0))
             {
