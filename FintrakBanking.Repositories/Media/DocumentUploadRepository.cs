@@ -511,38 +511,42 @@ namespace FintrakBanking.Repositories.Media
                               where app.LOANAPPLICATIONID == targetId
                               select ccb.CUSTOMERID).ToList();
 
-            var customerBureauLog = creditBureau.GetCustomerCreditBureauReportLogDeleted(customerId.FirstOrDefault(), null).Select(x => x.customerCreditBureauId);
+            var customerBureauLog = creditBureau.GetCustomerCreditBureauReportLogDeleted(customerId.FirstOrDefault(), null).Select(x => x.customerCreditBureauId).ToList();
 
             var staff = (from x in context.TBL_STAFF
                          join app in context.TBL_LOAN_APPLICATION_DETAIL on x.STAFFID equals app.CREATEDBY
                          where app.LOANAPPLICATIONID == targetId
                          select x).FirstOrDefault();
 
-            var secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
-                               where customerBureauLog.Contains(d.CUSTOMERCREDITBUREAUID)
-                               select new DocumentUploadViewModel
-                               {
-                                   documentUploadId = d.DOCUMENTID,
-                                   documentTypeName = "CREDIT BUREAU",
-                                   documentCategoryName = "CREDIT BUREAU",
-                                   dateTimeCreated = d.DATETIMECREATED,
-                                   customerCreditBureauId = d.CUSTOMERCREDITBUREAUID,
-                                   //uploadedBy = staff,
-                                   uploadedBy = staff.FIRSTNAME + " " + staff.LASTNAME,
-                                   documentTitle = d.DOCUMENT_TITLE,
-                                   fileName = d.FILENAME,
-                                   fileExtension = d.FILEEXTENSION,
-                                   owner = staff.STAFFID == staffId,
-                                   createdBy = staff.STAFFID,
-                                   //fileData = d.FILEDATA,
-                                   //fileSize = d.fileSize,
-                               }).ToList();
+            var secondQuery = new List<DocumentUploadViewModel>();
 
-            foreach (var item in secondQuery)
-            {
-                item.dateTimeDeleted = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.CUSTOMERCREDITBUREAUID == item.customerCreditBureauId)?.DATETIMEDELETED;
+            if (customerBureauLog.Count > 0) {
+                secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
+                                   where customerBureauLog.Contains(d.CUSTOMERCREDITBUREAUID)
+                                   select new DocumentUploadViewModel
+                                   {
+                                       documentUploadId = d.DOCUMENTID,
+                                       documentTypeName = "CREDIT BUREAU",
+                                       documentCategoryName = "CREDIT BUREAU",
+                                       dateTimeCreated = d.DATETIMECREATED,
+                                       customerCreditBureauId = d.CUSTOMERCREDITBUREAUID,
+                                       //uploadedBy = staff,
+                                       uploadedBy = staff.FIRSTNAME + " " + staff.LASTNAME,
+                                       documentTitle = d.DOCUMENT_TITLE,
+                                       fileName = d.FILENAME,
+                                       fileExtension = d.FILEEXTENSION,
+                                       owner = staff.STAFFID == staffId,
+                                       createdBy = staff.STAFFID,
+                                       //fileData = d.FILEDATA,
+                                       //fileSize = d.fileSize,
+                                   }).ToList();
+
+                foreach (var item in secondQuery)
+                {
+                    item.dateTimeDeleted = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.CUSTOMERCREDITBUREAUID == item.customerCreditBureauId)?.DATETIMEDELETED;
+                }
             }
-
+            
             return firstQuery.Union(secondQuery);
         }
 
