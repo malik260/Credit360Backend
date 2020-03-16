@@ -1095,9 +1095,9 @@ namespace FintrakBanking.APICore.Controllers
             entity.userIPAddress = Request.RequestUri.Host;
             entity.createdBy = token.GetStaffId;
 
-            bool data = repo.ReferBackBooking(entity);
+            var response = repo.ReferBackBooking(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request was sent to " + response.nextPersonName + " successful" });
         }
 
 

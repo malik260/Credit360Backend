@@ -96,7 +96,8 @@
                         responseMessage = await response.Content.ReadAsStringAsync();
                         JObject jsonString = JObject.Parse(responseMessage);
 
-                        if (responseMessage.Contains("data")) {
+                        if (responseMessage.Contains("data"))
+                        {
                             var data = jsonString["data"].ToString();
                             var objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(data);
 
@@ -118,10 +119,11 @@
                                 customers.Add(customerModel);
                             }
                         }
-                        else if (responseMessage.Contains("33")) {
+                        else if (responseMessage.Contains("33"))
+                        {
                             throw new APIErrorException($"Core Banking API Error - {responseMessage}");
                         }
-                        
+
                     }
 
                     //responseMessage = await response.Content.ReadAsStringAsync();
@@ -140,13 +142,17 @@
                     //};
                     //FinTrakBankingContext logContext = new FinTrakBankingContext();
 
-                   // logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    // logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                     //logContext.SaveChanges();
 
                     return customers;
                 }
-                catch(Exception ex)
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message}");
+                }
+                catch (Exception ex)
                 {
                     var innerExceptionMessage = "";
                     if (ex.InnerException != null)

@@ -16,7 +16,9 @@ using FintrakBanking.ViewModels.Setups.General;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Validation;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -113,8 +115,7 @@ namespace FintrakBanking.Repositories.Credit
             //List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
             //if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99",""); }
 
-            DateTime dateTime12;
-            if (!DateTime.TryParse(model.individualCustomerInformation.dateOfBirth, out dateTime12)) { return fireResponse("Date of birth not in the right format", "99", ""); }
+            if (!DateTime.TryParseExact(model.individualCustomerInformation.dateOfBirth, "dd-MM-yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dateOfBirth)) { return fireResponse("Date of birth not in the right format", "99", ""); }
 
             List<string> mStatus = new List<string> { "single", "married", "divorced", "widowed" };
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "single") { model.individualCustomerInformation.maritalStatus = "1"; }
@@ -174,6 +175,8 @@ namespace FintrakBanking.Repositories.Credit
             model.sectorId = sector.SECTORID;
             model.subsectorId = subsector.SUBSECTORID;
 
+            if (!DateTime.TryParseExact(model.corporateCustomerInformation.dateOfIncorporation, "dd-MM-yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dateOfIncorporation)) { return fireResponse("Date of Incorporation not in the right format", "99", ""); }
+
             // List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
 
             //List<int> crcCreditBureauType = new List<int> { 3 };
@@ -192,7 +195,9 @@ namespace FintrakBanking.Repositories.Credit
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
         {
             ApiIndividualCustomerDetails model = entity.individualCustomerInformation;
-            
+            DateTime.TryParseExact(model.dateOfBirth, "dd-MM-yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dateOfBirth);
+
+
             var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
@@ -203,24 +208,24 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERCODE = model.customerCode,
                 CUSTOMERSENSITIVITYLEVELID = 1, //entity.customerSensitivityLevelId,
                 CUSTOMERTYPEID = (short)CustomerTypeEnum.Individual,
-                DATEOFBIRTH = Convert.ToDateTime(model.dateOfBirth),
+                DATEOFBIRTH = dateOfBirth,
                 DATETIMECREATED = DateTime.Now,
                 EMAILADDRESS = model.emailAddress,
                 FIRSTNAME = model.firstName,
                 GENDER = model.gender,
                 LASTNAME = model.lastName,
                 //MAIDENNAME = model.maidenName,
-                MARITALSTATUS = Convert.ToInt16(model.maritalStatus),
+                MARITALSTATUS = model.maritalStatus != "" ? int.Parse(model.maritalStatus) : 0,
                 TITLE = model.title,
                 MIDDLENAME = model.middleName,
                 //MISCODE = model.misCode,
                 //MISSTAFF = model.misStaff,
-                NATIONALITYID = context.TBL_COUNTRY.Where(X => X.NAME == model.countryOfOrigin).FirstOrDefault()?.COUNTRYID,
+                NATIONALITYID = context.TBL_COUNTRY.Where(X => X.NAME.ToUpper() == model.countryOfOrigin.ToUpper()).FirstOrDefault()?.COUNTRYID,
                 OCCUPATION = model.occupation,
                 PLACEOFBIRTH = model.PlaceOfBirth,
                 ISPOLITICALLYEXPOSED = model.politicallyExposed == "1" ? true : false,
                 //ISINVESTMENTGRADE = model,
-                ISREALATEDPARTY = entity.insiderRelatedParties.Count > 0 ?  true : false,
+                ISREALATEDPARTY = entity.insiderRelatedParties != null ? entity.insiderRelatedParties.Count > 0 ?  true : false : false,
                 RELATIONSHIPOFFICERID = entity.createdBy,
                 SPOUSE = model.spouse,
                 SUBSECTORID = entity.subsectorId,
@@ -229,10 +234,10 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERBVN = model.customerBvn,
                 //PROSPECTCUSTOMERCODE = model.prospectCustomerCode,
                 ISPROSPECT = false,
-                CRMSCOMPANYSIZEID = Convert.ToInt32(model.crmsCompanySize),
+                CRMSCOMPANYSIZEID = int.TryParse(model.crmsCompanySize, out int result) ? result : 0,
                 //CRMSLEGALSTATUSID = model.crmsLegalStatus,
-                CRMSRELATIONSHIPTYPEID = context.TBL_CRMS_REGULATORY.Where(x=>x.CODE == (model.crmsRelationship)).FirstOrDefault()?.CRMSREGULATORYID,
-                COUNTRYOFRESIDENTID = context.TBL_COUNTRY.Where(X => X.NAME == model.countryOfResidence).FirstOrDefault()?.COUNTRYID ,
+                CRMSRELATIONSHIPTYPEID = context.TBL_CRMS_REGULATORY.Where(x => x.CODE.ToUpper() == (model.crmsRelationship.ToUpper())).FirstOrDefault()?.CRMSREGULATORYID,
+                COUNTRYOFRESIDENTID = context.TBL_COUNTRY.Where(X => X.NAME.ToUpper() == model.countryOfResidence.ToUpper()).FirstOrDefault()?.COUNTRYID ,
                 NUMBEROFDEPENDENTS = model.children.Count(),
                 //NUMBEROFLOANSTAKEN = model.numberOfLoansTaken,
                 //MONTHLYLOANREPAYMENT = model.loanMonthlyRepaymentFromOtherBanks,
@@ -241,7 +246,7 @@ namespace FintrakBanking.Repositories.Credit
                 TEAMLDR = model.teamLdr,
                 TEAMNPL = model.teamNpl,
                 //CORR = model.corr,
-                PASTDUEOBLIGATIONS = Convert.ToDecimal(model.pastDueObligation),
+                PASTDUEOBLIGATIONS = model.pastDueObligation != "" ? int.Parse(model.pastDueObligation) : 0,
                 APIREQUESTID = entity.request_Id,
                 BUSINESSUNTID = model.businessUnitId
             };
@@ -304,6 +309,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             ApiCustomerBusinessDetailsViewModel corporateDetails = model.corporateCustomerInformation;
             var crmsType = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == corporateDetails.crmsCompanySize).FirstOrDefault();
+            DateTime.TryParseExact(corporateDetails.dateOfIncorporation, "dd-MM-yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dateOfIncorporation);
 
             var customer = new TBL_CUSTOMER
             {
@@ -316,6 +322,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERSENSITIVITYLEVELID = 1, //entity.customerSensitivityLevelId,
                 CUSTOMERTYPEID = (short)CustomerTypeEnum.Corporate,
                 //DATEOFBIRTH = Convert.ToDateTime(corporateDetails.dateOfIncorporation),
+                DATEOFBIRTH = dateOfIncorporation,
                 DATETIMECREATED = DateTime.Now,
                 EMAILADDRESS = corporateDetails.emailAddress,
                 FIRSTNAME = corporateDetails.corporateName,
@@ -660,17 +667,28 @@ namespace FintrakBanking.Repositories.Credit
                 //================================================
                 var previousSearch = customerBureauReport.GetCustomerCreditBureauReportLog(customer.CUSTOMERID, null);
                 bool hascrms = false;
+
                 foreach (var i in previousSearch)
                 {
                     if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
                 };
+
                 if (previousSearch.Count() >= 2 && !hascrms && Convert.ToInt16(loanFile.creditBureauType) != (short)CreditBureauEnum.CRMS)
                     continue;
 
                 if (previousSearch.Count() >= 3)
                     continue;
 
-               // if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
+                //var existing = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.CUSTOMERID == customer.CUSTOMERID && O.CREDITBUREAUID == entity.creditBureauId
+                //                                                                && O.COMPANYDIRECTORID == entity.companyDirectorId && O.DELETED == false
+                //                                                                && (DbFunctions.DiffDays(O.DATETIMECREATED, DateTime.Now).Value <= 90));
+
+                var existingCreditBureau = previousSearch.FirstOrDefault(O => O.creditBureauId == int.Parse(loanFile.creditBureauType));
+
+                if (existingCreditBureau != null)
+                    continue;
+
+                // if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
                 var data = new Entities.Models.TBL_CUSTOMER_CREDIT_BUREAU()
                 {
                     COMPANYDIRECTORID = null, //entity.companyDirectorId,
@@ -1395,8 +1413,10 @@ namespace FintrakBanking.Repositories.Credit
                     //{
                     var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
                     decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                    //var sector = context.TBL_SECTOR.Find(sectorId);
-                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
+                    decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                    decimal percentageTotalExposure = decimal.Round((sectorAmount/ sectorsAmount), 4, MidpointRounding.AwayFromZero);
+                    if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
+                    //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
                     //}
                 }
 

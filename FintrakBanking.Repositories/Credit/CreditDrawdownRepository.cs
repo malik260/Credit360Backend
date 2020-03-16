@@ -76,7 +76,6 @@ namespace FintrakBanking.Repositories.Credit
             if (externalInitialization)
             {
                 workflow.StaffId = model.createdBy;
-                workflow.ToStaffId = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == model.createdBy)?.SUPERVISOR_STAFFID;
                 workflow.OperationId = operationId;
                 workflow.TargetId = model.applicationId;
                 workflow.CompanyId = model.companyId;
@@ -339,6 +338,7 @@ namespace FintrakBanking.Repositories.Credit
                     select new CamProcessedLoanViewModel
                     {
                         loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
+                        bookingOperationId = req.OPERATIONID,
                         approvalTrailId = atrail.APPROVALTRAILID,
                         approvalStatusId = (short)atrail.APPROVALSTATUSID,
                         approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
@@ -1394,7 +1394,8 @@ namespace FintrakBanking.Repositories.Credit
                 createdBy = entity.createdBy,
                 companyId = entity.companyId,
                 applicationId = request.LOAN_BOOKING_REQUESTID,
-                comment = "Please approve this request for loan booking",
+                comment = entity.comment,
+                //comment = "Please approve this request for loan booking",
                 amount = entity.amount_Requested,
             };
 
