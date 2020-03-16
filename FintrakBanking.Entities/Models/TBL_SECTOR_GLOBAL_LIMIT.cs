@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
         public string CBNSECTOR { get; set; }
         public string CBNSECTORID { get; set; }
         public DateTime? DATE { get; set; }
-        public double? TOTALEXPOSURELCY { get; set; }
+        public decimal? TOTALEXPOSURELCY { get; set; }
         public decimal? EXPOSURES { get; set; }
         public decimal? SECTORLIMIT { get; set; }
     }
