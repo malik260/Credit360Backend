@@ -519,7 +519,7 @@ namespace FintrakBanking.Repositories.Media
                          select x).FirstOrDefault();
 
             var secondQuery = (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
-                               where customerBureauLog?.Contains(d.CUSTOMERCREDITBUREAUID)
+                               where customerBureauLog.Contains(d.CUSTOMERCREDITBUREAUID)
                                select new DocumentUploadViewModel
                                {
                                    documentUploadId = d.DOCUMENTID,
