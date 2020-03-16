@@ -1414,7 +1414,7 @@ namespace FintrakBanking.Repositories.Credit
                     var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
                     decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
                     decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                    decimal percentageTotalExposure = decimal.Round((sectorAmount/ sectorsAmount), 2, MidpointRounding.AwayFromZero);
+                    decimal percentageTotalExposure = decimal.Round((sectorAmount/ sectorsAmount), 4, MidpointRounding.AwayFromZero);
                     if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
                     //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
                     //}
