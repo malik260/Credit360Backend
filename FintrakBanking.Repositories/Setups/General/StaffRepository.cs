@@ -2036,10 +2036,11 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
 
-        public IQueryable<simpleStaffModel> SearchApprovers(int operationId,int nextLevel, int roleId, int groupId, string searchQuery ="", int companyId=0)
+        public IEnumerable<simpleStaffModel> SearchApprovers(int operationId,int nextLevel, int roleId, int groupId, string searchQuery ="", int companyId=0)
         {
             var level = context.TBL_APPROVAL_LEVEL.Find(nextLevel);
-            var allLevelStaffs = level.TBL_APPROVAL_LEVEL_STAFF.ToList();
+            //var allLevelStaffs = level.TBL_APPROVAL_LEVEL_STAFF.Select(l => l.TBL_STAFF).ToList();
+            
 
             //var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId, level.GROUPID);
             var nextApprovalLvlRoleId = level.STAFFROLEID;
@@ -2049,20 +2050,25 @@ namespace FintrakBanking.Repositories.Setups.General
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 searchQuery = searchQuery.Trim().ToLower();
-                levelStaffs = allLevelStaffs.AsQueryable().Where(x => x.DELETED == false
-                && x.TBL_STAFF.FIRSTNAME.ToLower().Contains(searchQuery)
-                || x.TBL_STAFF.MIDDLENAME.ToLower().Contains(searchQuery)
-                || x.TBL_STAFF.LASTNAME.ToLower().Contains(searchQuery)
-                || x.TBL_STAFF.STAFFCODE.ToLower().Contains(searchQuery)).Select(o => new simpleStaffModel
-                {
-                    staffId = o.TBL_STAFF.STAFFID,
-                    firstName = o.TBL_STAFF.FIRSTNAME,
-                    middleName = o.TBL_STAFF.MIDDLENAME,
-                    lastName = o.TBL_STAFF.LASTNAME,
-                    staffCode = o.TBL_STAFF.STAFFCODE,
-                    staffRoleName = o.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-                    staffRoleId = o.TBL_STAFF.STAFFROLEID,
-                }).Distinct();
+                var allLevelStaffs = (from l in context.TBL_APPROVAL_LEVEL
+                                      join ls in context.TBL_APPROVAL_LEVEL_STAFF on l.APPROVALLEVELID equals ls.APPROVALLEVELID
+                                      join s in context.TBL_STAFF on ls.STAFFID equals s.STAFFID
+                                      where l.DELETED == false && ls.DELETED == false && s.DELETED == false
+                                      && l.APPROVALLEVELID == level.APPROVALLEVELID
+                                      && (s.FIRSTNAME.ToLower().Contains(searchQuery)
+                                        || s.MIDDLENAME.ToLower().Contains(searchQuery)
+                                        || s.LASTNAME.ToLower().Contains(searchQuery)
+                                        || s.STAFFCODE.ToLower().Contains(searchQuery))
+                                      select new simpleStaffModel
+                                      {
+                                          staffId = s.STAFFID,
+                                          firstName = s.FIRSTNAME,
+                                          middleName = s.MIDDLENAME,
+                                          lastName = s.LASTNAME,
+                                          staffCode = s.STAFFCODE,
+                                          staffRoleName = s.TBL_STAFF_ROLE.STAFFROLENAME,
+                                          staffRoleId = s.STAFFROLEID,
+                                      }).Distinct();
 
                 staff =
                     context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId)
@@ -2086,8 +2092,17 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffRoleId = o.s.STAFFROLEID,
                     }).Distinct();
             }
+            if (levelStaffs == null)
+            {
+                return staff;
+            }
+            if (staff == null)
+            {
+                return levelStaffs;
+            }
             staff = staff.Union(levelStaffs);
-            return staff;
+            var staffs = staff.AsEnumerable().ToList();
+            return staffs;
         }
 
         public int GetNextApprovalLvlRoleId(int roleId, int groupId)
