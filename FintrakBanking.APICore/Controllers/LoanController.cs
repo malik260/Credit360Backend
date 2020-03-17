@@ -638,8 +638,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("loan-booking/approval/{loanBookingRequestId}")]
-        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
+        [Route("loan-booking/approval/{loanBookingRequestId}/{isManual}")]
+        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId, bool isManual)
         {
             model.applicationUrl = HttpContext.Current.Request.Path;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -648,7 +648,7 @@ namespace FintrakBanking.APICore.Controllers
             model.BranchId = (short)token.GetBranchId;
             model.staffId = token.GetStaffId;
 
-            var responseId = repo.GoForApproval(model, loanBookingRequestId);
+            var responseId = repo.GoForApproval(model, loanBookingRequestId, isManual);
             var dynamicMessage = string.Empty;
             if (responseId == 1)
             {
