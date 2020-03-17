@@ -193,6 +193,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-search-prepayment")]
@@ -201,6 +202,29 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = loanRepo.SearchForLoanPrepayment(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-approval-prepayment")]
+        public HttpResponseMessage LoanPrepaymentApprovalList()
+        {
+            try
+            {
+                var data = loanRepo.LoanPrepaymentApprovalList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
