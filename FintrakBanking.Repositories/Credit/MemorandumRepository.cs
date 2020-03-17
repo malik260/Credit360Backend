@@ -1159,7 +1159,7 @@ namespace FintrakBanking.Repositories.Credit
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
             })?.ToList();
 
-            return data;
+            return data.OrderByDescending(d=>d.systemArrivalDateTime);
         }
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailDrawdown(int applicationId, int operationId)
@@ -1192,7 +1192,7 @@ namespace FintrakBanking.Repositories.Credit
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
             })?.ToList();
 
-            return data;
+            return data.OrderByDescending(d=>d.systemArrivalDateTime);
         }
 
 
@@ -4465,7 +4465,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId).Distinct().ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId).ToList();
             }
 
             var data = trail.Select(x => new ApprovalTrailViewModel
@@ -4493,7 +4493,7 @@ namespace FintrakBanking.Repositories.Credit
                 commentStage = "Drawdown",
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.OrderByDescending(x => x.approvalTrailId).Distinct().ToList();
+            })?.OrderByDescending(x => x.systemArrivalDateTime).ToList();
 
             //data.AddRange(GetOfferLetterTrail(applicationId));
             var bookingId = context.TBL_LOAN_BOOKING_REQUEST.Find(applicationId);
@@ -4527,7 +4527,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.TBL_LOAN_APPLICATION.OPERATIONID && x.TARGETID == application.LOANAPPLICATIONID).Distinct().ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.TBL_LOAN_APPLICATION.OPERATIONID && x.TARGETID == application.LOANAPPLICATIONID).ToList();
             }
 
             var data = trail.Select(x => new ApprovalTrailViewModel
@@ -4554,7 +4554,7 @@ namespace FintrakBanking.Repositories.Credit
                 commentStage = "Credit Appaisal",
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.OrderByDescending(x => x.approvalTrailId).Distinct().ToList();
+            })?.OrderByDescending(x => x.systemArrivalDateTime).ToList();
 
             //data.AddRange(GetOfferLetterTrail(applicationId));
             if (getAll)
@@ -4633,10 +4633,10 @@ namespace FintrakBanking.Repositories.Credit
                 vote = x.VOTE,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.OrderByDescending(x => x.approvalTrailId).Distinct().ToList();
+            })?.ToList();
 
 
-            data.OrderByDescending(d => d.approvalTrailId);
+            data.OrderByDescending(d => d.systemArrivalDateTime);
             return data;
         }
 
@@ -4678,7 +4678,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetDrawdownApprovalsMarkupLOS2(int targetId)
         {
 
-            var appraisals = GetAppraisalMemorandumTrailDrawdownMemoReversal(targetId).OrderByDescending(a => a.systemArrivalDateTime); //GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrailDrawdownMemoReversal(targetId).OrderByDescending(a => a.systemArrivalDateTime);
             var result = String.Empty;
             result = result + $@"
                 <br/>
@@ -11194,7 +11194,7 @@ namespace FintrakBanking.Repositories.Credit
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
             }).ToList();
 
-            return data;
+            return data.OrderByDescending(d=>d.systemArrivalDateTime);
         }
         public ApprovalTrailViewModel GetDeferralnAprroval(int operationId, int targetId)
         {
