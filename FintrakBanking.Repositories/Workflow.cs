@@ -179,6 +179,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             ).ToList();
 
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
+            SaveFlowLog("Initiation");
 
 
             if (lastRequest == null)
