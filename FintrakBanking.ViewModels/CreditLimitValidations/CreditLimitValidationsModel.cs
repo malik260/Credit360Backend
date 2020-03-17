@@ -4,6 +4,8 @@
     {
         public double totalExposure { get; set; }
         public double outstandingBalance { get; set; }
+        public double sectorLimit { get; set; }
+        public double exposureLimit { get; set; }
         public double outstandingSectorsBalance { get; set; }
         public double limit { get; set; }
         public double difference { get; set; }
