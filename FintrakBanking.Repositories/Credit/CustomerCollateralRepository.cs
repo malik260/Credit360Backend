@@ -6989,8 +6989,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool status = false;
             var data = context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == model.collateralCustomerId).Select(o => o).FirstOrDefault();
+            var data2 = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == model.collateralCustomerId && o.DELETED == false).Select(o => o).FirstOrDefault();
+
             var staff = context.TBL_STAFF.Find(model.createdBy);
-            if (data != null && data.CREATEDBY == model.createdBy || staff.STAFFROLEID == 181)
+            if (data != null && data.CREATEDBY == model.createdBy || staff.STAFFROLEID == 181 && data2 == null)
             {
                 data.DELETED = true;
                 data.DELETEDBY = model.deletedBy;
