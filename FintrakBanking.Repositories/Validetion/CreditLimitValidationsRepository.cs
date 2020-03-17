@@ -314,16 +314,34 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public CreditLimitValidationsModel ValidateAmountBySector(int sectorId )
         {
-            //int sectorId = 1;
-           // int sectorId = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == subSectorId).FirstOrDefault().SECTORID.Value;
-            //var sectorDetail = context.TBL_SUB_SECTOR.FirstOrDefault(a => a.SUBSECTORID == subSectorId);
-            //int sectorId = sectorDetail.SECTORID.Value;
+            CreditLimitValidationsModel model = new CreditLimitValidationsModel();
             var data = (from a in context.TBL_SECTOR
                        where a.SECTORID == sectorId
                        let maximumLimit = a.LOAN_LIMIT
                        select maximumLimit).FirstOrDefault();
 
-           // var sector = context.TBL_SECTOR.Where(a => a.SECTORID == sectorId).FirstOrDefault();
+            var sector = context.TBL_SECTOR.Find(sectorId);
+            var totalExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.TOTALEXPOSURELCY).FirstOrDefault();
+
+            model.outstandingBalance = (double)totalExposure;
+            if(data != null)
+                model.limit = (double)data;
+                model.difference = model.limit - model.outstandingBalance;
+
+            return model;
+
+        }
+
+
+        public CreditLimitValidationsModel ValidateAmountBySector_Old(int sectorId)
+        {
+
+            var data = (from a in context.TBL_SECTOR
+                        where a.SECTORID == sectorId
+                        let maximumLimit = a.LOAN_LIMIT
+                        select maximumLimit).FirstOrDefault();
+
+            // var sector = context.TBL_SECTOR.Where(a => a.SECTORID == sectorId).FirstOrDefault();
 
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
 
@@ -346,9 +364,9 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var sumOverdraftOutstandingBalance = OverdraftOutstandingBalance.Select(c => c.OVERDRAFTLIMIT).Sum();
 
             model.outstandingBalance = (double)(sumLoanOutstandingBalance + sumOverdraftOutstandingBalance);
-            if(data != null)
+            if (data != null)
                 model.limit = (double)data;
-                model.difference = model.limit - model.outstandingBalance;
+            model.difference = model.limit - model.outstandingBalance;
 
             return model;
 
