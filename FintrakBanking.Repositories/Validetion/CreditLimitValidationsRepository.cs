@@ -312,28 +312,34 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         //    return diff;
         //}
 
-        public CreditLimitValidationsModel ValidateAmountBySector(int sectorId )
-        {
-            CreditLimitValidationsModel model = new CreditLimitValidationsModel();
-            var data = (from a in context.TBL_SECTOR
-                       where a.SECTORID == sectorId
-                       let maximumLimit = a.LOAN_LIMIT
-                       select maximumLimit).FirstOrDefault();
+        //public CreditLimitValidationsModel ValidateAmountBySector(int sectorId )
+        //{
+        //    CreditLimitValidationsModel model = new CreditLimitValidationsModel();
+        //    var data = (from a in context.TBL_SECTOR
+        //               where a.SECTORID == sectorId
+        //               let maximumLimit = a.LOAN_LIMIT
+        //               select maximumLimit).FirstOrDefault();
 
-            var sector = context.TBL_SECTOR.Find(sectorId);
-            var totalExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.TOTALEXPOSURELCY).FirstOrDefault();
+        //    var sector = context.TBL_SECTOR.Find(sectorId);
+            
+        //    var totalExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.TOTALEXPOSURELCY).FirstOrDefault();
+        //    var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.SECTORLIMIT).FirstOrDefault();
+        //    var exposureLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.EXPOSURES).FirstOrDefault();
 
-            model.outstandingBalance = (double)totalExposure;
-            if(data != null)
-                model.limit = (double)data;
-                model.difference = model.limit - model.outstandingBalance;
+        //    model.outstandingBalance = (double)totalExposure;
+        //    model.sectorLimit = (double)sectorLimit;
+        //    model.exposureLimit = (double)exposureLimit;
 
-            return model;
+        //    if (data != null)
+        //        model.limit = (double)data;
+        //        model.difference = model.limit - model.outstandingBalance;
 
-        }
+        //    return model;
+
+        //}
 
 
-        public CreditLimitValidationsModel ValidateAmountBySector_Old(int sectorId)
+        public CreditLimitValidationsModel ValidateAmountBySector(int sectorId)
         {
 
             var data = (from a in context.TBL_SECTOR
@@ -417,7 +423,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         //    return model;
         //}
 
-        public CreditLimitValidationsModel ValidateNPLBySector_old(int subSectorId)
+        public CreditLimitValidationsModel ValidateNPLBySector(int subSectorId)
         {
             var subSector = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == subSectorId).FirstOrDefault();//.SECTORID.Value;
 
@@ -458,32 +464,32 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return model;
         }
 
-        public CreditLimitValidationsModel ValidateNPLBySector(int subSectorId)
-        {
-            var subSector = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == subSectorId).FirstOrDefault();//.SECTORID.Value;
+        //public CreditLimitValidationsModel ValidateNPLBySector(int subSectorId)
+        //{
+        //    var subSector = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == subSectorId).FirstOrDefault();//.SECTORID.Value;
 
-            CreditLimitValidationsModel model = new CreditLimitValidationsModel();
+        //    CreditLimitValidationsModel model = new CreditLimitValidationsModel();
 
-            var sectorCode = context.TBL_SECTOR.Find(subSector.SECTORID);
-            var sectorsExposures = (from a in context.TBL_SECTOR_GLOBAL_LIMIT
-                                    select a.TOTALEXPOSURELCY).Sum() ?? 0;
+        //    var sectorCode = context.TBL_SECTOR.Find(subSector.SECTORID);
+        //    var sectorsExposures = (from a in context.TBL_SECTOR_GLOBAL_LIMIT
+        //                            select a.TOTALEXPOSURELCY).Sum() ?? 0;
 
-            var sectorExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(a => a.CBNSECTORID == sectorCode.CODE).Select(a => a.TOTALEXPOSURELCY).FirstOrDefault() ?? 0;
+        //    var sectorExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(a => a.CBNSECTORID == sectorCode.CODE).Select(a => a.TOTALEXPOSURELCY).FirstOrDefault() ?? 0;
 
-            var CurrentSectorsExposures = sectorsExposures;
-            var currentsectorExposure = sectorExposure;
+        //    var CurrentSectorsExposures = sectorsExposures;
+        //    var currentsectorExposure = sectorExposure;
 
-            var totalExposure = currentsectorExposure / CurrentSectorsExposures;
-            decimal percentageTotalExposure = decimal.Round((decimal)totalExposure, 4, MidpointRounding.AwayFromZero);
-            var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(s => s.CBNSECTORID == sectorCode.CODE).Select(s => s.SECTORLIMIT).FirstOrDefault();
+        //    var totalExposure = currentsectorExposure / CurrentSectorsExposures;
+        //    decimal percentageTotalExposure = decimal.Round((decimal)totalExposure, 4, MidpointRounding.AwayFromZero);
+        //    var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(s => s.CBNSECTORID == sectorCode.CODE).Select(s => s.SECTORLIMIT).FirstOrDefault();
 
-            model.outstandingBalance = (double)currentsectorExposure;
-            model.outstandingSectorsBalance = (double)CurrentSectorsExposures;
-            model.limit = (double)percentageTotalExposure;
-            model.maximumAllowedLimit = (decimal?)sectorLimit ?? 0;
+        //    model.outstandingBalance = (double)currentsectorExposure;
+        //    model.outstandingSectorsBalance = (double)CurrentSectorsExposures;
+        //    model.limit = (double)percentageTotalExposure;
+        //    model.maximumAllowedLimit = (decimal?)sectorLimit ?? 0;
 
-            return model;
-        }
+        //    return model;
+        //}
 
         public IEnumerable<SectorLimitViewModel> GetSectorLoanAmountLimit()
         {
@@ -1322,25 +1328,25 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return branchMaximumNPLExposure > 0 && branchNPLLimit < applicationAmount;
         }
 
+        //public bool SectorLimitExceeded(int sectorId, decimal applicationAmount)
+        //{
+        //    var sectorCode = context.TBL_SECTOR.Find(sectorId);
+        //    var sectorsExposures = (from a in context.TBL_SECTOR_GLOBAL_LIMIT
+        //                                   select (decimal?)a.TOTALEXPOSURELCY).Sum() ?? 0;
+        //    var sectorExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(a=>a.CBNSECTORID == sectorCode.CODE).Select(a=>a.TOTALEXPOSURELCY).FirstOrDefault() ?? 0;
+
+        //    var CurrentSectorsExposures = sectorsExposures + applicationAmount;
+        //    var currentsectorExposure = (decimal)sectorExposure + applicationAmount;
+
+        //    var totalExposure = currentsectorExposure / CurrentSectorsExposures;
+        //    decimal percentageTotalExposure =  decimal.Round(totalExposure, 2, MidpointRounding.AwayFromZero);
+
+        //    var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(s=>s.CBNSECTORID == sectorCode.CODE).Select(s=>s.SECTORLIMIT).FirstOrDefault();
+
+        //    return sectorLimit < percentageTotalExposure;
+        //}
+
         public bool SectorLimitExceeded(int sectorId, decimal applicationAmount)
-        {
-            var sectorCode = context.TBL_SECTOR.Find(sectorId);
-            var sectorsExposures = (from a in context.TBL_SECTOR_GLOBAL_LIMIT
-                                           select (decimal?)a.TOTALEXPOSURELCY).Sum() ?? 0;
-            var sectorExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(a=>a.CBNSECTORID == sectorCode.CODE).Select(a=>a.TOTALEXPOSURELCY).FirstOrDefault() ?? 0;
-
-            var CurrentSectorsExposures = sectorsExposures + applicationAmount;
-            var currentsectorExposure = (decimal)sectorExposure + applicationAmount;
-
-            var totalExposure = currentsectorExposure / CurrentSectorsExposures;
-            decimal percentageTotalExposure =  decimal.Round(totalExposure, 2, MidpointRounding.AwayFromZero);
-
-            var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(s=>s.CBNSECTORID == sectorCode.CODE).Select(s=>s.SECTORLIMIT).FirstOrDefault();
-
-            return sectorLimit < percentageTotalExposure;
-        }
-
-        public bool SectorLimitExceeded_old(int sectorId, decimal applicationAmount)
         {
             var outstandingLoan = (from a in context.TBL_LOAN
                                join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
