@@ -1542,7 +1542,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanApplicationId = app.LOANAPPLICATIONID
                 };
 
-                integration.FlexcubeCasaLien(lienModel);
+                integration.FlexcubeCasaLien(lienModel, twoFactorAuthDetails);
             }
 
 

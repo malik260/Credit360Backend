@@ -1702,6 +1702,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             flowLog += "nextLevelId " + this.nextLevelId + "," + Environment.NewLine;
             flowLog += "staffId " + this.staffId + "," + Environment.NewLine;
             flowLog += "toStaffId " + this.toStaffId + "," + Environment.NewLine;
+            flowLog += "targetId " + this.targetId + "," + Environment.NewLine;
             flowLog += "operationId " + this.operationId + "," + Environment.NewLine;
             flowLog += "productClassId " + this.productClassId + "," + Environment.NewLine;
             flowLog += "productId " + this.productId + "," + Environment.NewLine;
