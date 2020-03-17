@@ -200,6 +200,7 @@ namespace FintrakBanking.ViewModels.Credit
         
         public int tempApplicationCancellationId { get; set; }
         public IQueryable<string> staffName { get; set; }
+        public string creatorName { get; set; }
         public string comment { get; set; }
         public bool isOfferLetterAvailable { get; set; }
         public int? currentApprovalLevelTypeId { get; set; }
