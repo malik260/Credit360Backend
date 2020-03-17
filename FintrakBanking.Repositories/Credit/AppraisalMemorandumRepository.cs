@@ -2009,7 +2009,7 @@ namespace FintrakBanking.Repositories.Credit
                     commentStage = "Credit Appaisal",
                     toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                     fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-                })?.OrderByDescending(x => x.approvalTrailId).ToList();
+                })?.OrderByDescending(x => x.systemArrivalDateTime).ToList();
 
             //data.AddRange(GetOfferLetterTrail(applicationId));
             if (getAll)
@@ -2087,7 +2087,7 @@ namespace FintrakBanking.Repositories.Credit
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.OrderByDescending(x => x.approvalTrailId).ToList();
+            })?.OrderByDescending(x => x.systemArrivalDateTime).ToList();
             return data;
         }
 
@@ -2123,10 +2123,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.OrderByDescending(x => x.approvalTrailId).ToList();
+            })?.OrderByDescending(x => x.systemArrivalDateTime).ToList();
           
            
-            data.OrderByDescending(d => d.approvalTrailId);
+            data.OrderByDescending(d => d.systemArrivalDateTime);
             return data;
         }
 
@@ -2168,7 +2168,7 @@ namespace FintrakBanking.Repositories.Credit
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            })?.OrderBy(x => x.approvalTrailId).ToList();
+            })?.OrderBy(x => x.systemArrivalDateTime).ToList();
 
             if(currentLevelId == 0)
             {
@@ -2205,7 +2205,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                     toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                     fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-                })?.OrderBy(x => x.approvalTrailId).ToList();
+                })?.OrderBy(x => x.systemArrivalDateTime).ToList();
             }
 
 
@@ -2222,7 +2222,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             data = data2;
-            data.OrderByDescending(d => d.approvalTrailId).ToList();
+            data.OrderByDescending(d => d.systemArrivalDateTime).ToList();
             return data;
         }
 
