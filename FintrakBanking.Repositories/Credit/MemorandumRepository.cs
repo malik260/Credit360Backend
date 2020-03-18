@@ -562,7 +562,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.idfDocumentationChecklistData = IdfDocumentationChecklistHtml();
 
                 //CASH COLLATERIZED
-                this.cashCollaterizedCustomerInformationData = IdfCustomerInformationHtml();
+                this.cashCollaterizedCustomerInformationData = cashCollaterizedCustomerInformationHtml();
                 this.cashCollaterizedCustomerFacilityData = IdfCustomerFacilityHtml();
                 this.cashCollaterizedCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
                 this.cashCollaterizedCurrentRequestData = IdfCurrentRequestHtml();
@@ -8028,6 +8028,93 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
         }
+
+        public string cashCollaterizedCustomerInformationHtml()
+        {
+            var currentApplicationId = this.loanApplication.LOANAPPLICATIONID;
+            if (this.loanApplication == null)
+            {
+                var d = context.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && a.DELETED == false).FirstOrDefault();
+                currentApplicationId = (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
+                                     (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
+                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
+
+            }
+            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == currentApplicationId).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
+            var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+            var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <h3><b>CREDIT PROGRAM SHEET CASH COLLATERIZED</b></h3>
+                <br />
+                <h4><b>Customer Information</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Borrower</td>
+                        <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
+                    </tr>
+                   <tr>
+                        <td>Location</td>
+                        <td>{address}-</td>
+                        <td>Customer Risk Rating</td>
+                        <td>{customer?.CUSTOMERRATING}</td>
+                    </tr> 
+                     <tr>
+                        <td>Business</td>
+                        <td>{customer.OCCUPATION}</td>
+                        <td>Classification</td>
+                        <td>{riskRating?.CLASSIFICATION}</td>
+                    </tr>
+                   <tr>
+                        <td>Account Number</td>
+                        <td>{currentAccountNo}</td>
+                        <td>Account Opening Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr> 
+                     <tr>
+                        <td>Incorporation Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                        <td>Biz Commencement Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr>
+                   <tr>
+                        <td>Principal Promoters</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+
+                    <tr>
+                        <td>Contract Employer</td>
+                        <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Alternate Contract Employer</td>
+                       <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Discount Value (50%)</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
         public string NoncreditProgramCustomerInformationHtml()
         {
             var currentApplicationId = this.loanApplication.LOANAPPLICATIONID;
