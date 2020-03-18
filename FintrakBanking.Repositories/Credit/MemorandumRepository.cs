@@ -8050,7 +8050,7 @@ namespace FintrakBanking.Repositories.Credit
             var n = 0;
             result = result + $@"
                 <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
-                <h3><b>CREDIT PROGRAM SHEET CASH COLLATERIZED</b></h3>
+                <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
