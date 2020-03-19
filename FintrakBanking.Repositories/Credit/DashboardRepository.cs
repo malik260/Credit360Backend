@@ -159,6 +159,8 @@ namespace FintrakBanking.Repositories.Credit
             var staff = context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o).FirstOrDefault();
             var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId || c.staffRoleId == staff.STAFFROLEID).ToList();
             var staffApprovalLevels = approvalLevel.Select(x => x.approvalLevelId).Distinct();
+            var reliefStaff = general.GetStaffRlieved(staffId);
+            List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
 
             //int[] applicationStatus =  { (int)LoanApplicationStatusEnum.CancellationInProgress,
             //    (int)LoanApplicationStatusEnum.CancellationInProgress,
@@ -180,19 +182,22 @@ namespace FintrakBanking.Repositories.Credit
                         && (a.TOSTAFFID == staff.STAFFID || a.TOSTAFFID == null)
                         && a.RESPONSESTAFFID == null
                         //&& levelIds.Contains((int) a.TOAPPROVALLEVELID)
+                        && l.ISADHOCAPPLICATION != true
+                        && (a.TOSTAFFID == null || reliefStaff.Contains((int)a.TOSTAFFID))
+                        && (ExclusiveOperations.Contains(a.OPERATIONID) || ExclusiveOperations.Contains(a.DESTINATIONOPERATIONID ?? 0))
                         && staffApprovalLevels.ToList().Contains((int)a.TOAPPROVALLEVELID)
                         select new { x, l })?.ToList();
 
 
-            if (staff?.TBL_STAFF_ROLE.STAFFROLECODE == "RM")
-            {
-                data = data.Where(o => o.l.RELATIONSHIPMANAGERID == staffId)?.ToList();
+            //if (staff?.TBL_STAFF_ROLE.STAFFROLECODE == "RM")
+            //{
+            //    data = data.Where(o => o.l.RELATIONSHIPMANAGERID == staffId)?.ToList();
 
-            }
-            else if (staff?.TBL_STAFF_ROLE.STAFFROLECODE == "BM")
-            {
-                data = data.Where(o => o.l.BRANCHID == staff.BRANCHID)?.ToList();
-            }
+            //}
+            //else if (staff?.TBL_STAFF_ROLE.STAFFROLECODE == "BM")
+            //{
+            //    data = data.Where(o => o.l.BRANCHID == staff.BRANCHID)?.ToList();
+            //}
 
             List<DashboardViewModel> result = new List<DashboardViewModel>();
 
