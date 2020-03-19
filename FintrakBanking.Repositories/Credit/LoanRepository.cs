@@ -10302,6 +10302,49 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IQueryable<LoanViewModel> LoanPrepaymentApprovalList()
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            IQueryable<LoanViewModel> allFilteredLoan = null;
+
+            var loans = (from a in context.TBL_LOAN
+                         join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                         join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                         where a.ISDISBURSED == true && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                                     && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate)
+                         select new LoanViewModel
+                         {
+                             loanId = a.TERMLOANID,
+                             customerId = a.CUSTOMERID,
+                             customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                             firstName = b.FIRSTNAME,
+                             lastName = b.LASTNAME,
+                             loanReviewApplicationId = (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.LOANREVIEWAPPLICATIONID).FirstOrDefault() :
+                                                     (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.LOANREVIEWAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.LOANREVIEWAPPLICATIONID).FirstOrDefault(),
+
+                             applicationReferenceNumber = (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID join ap in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals ap.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select ap.APPLICATIONREFERENCENUMBER).FirstOrDefault() :
+                                                     (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID join ap in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals ap.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select ap.APPLICATIONREFERENCENUMBER).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID join ap in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals ap.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select ap.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                             dateTimeCreated = (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID join ap in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals ap.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.DATETIMECREATED).FirstOrDefault() :
+                                                     (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID join ap in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals ap.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.DATETIMECREATED).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID join ap in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals ap.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.DATETIMECREATED).FirstOrDefault(),
+
+                             customerCode = b.CUSTOMERCODE,
+                             productAccountName = c.PRODUCTACCOUNTNAME,
+                             loanReferenceNumber = a.LOANREFERENCENUMBER,
+                             principalAmount = a.PRINCIPALAMOUNT,
+                             loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                             productName = a.TBL_PRODUCT.PRODUCTNAME,
+                             productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                             currencyId = a.CURRENCYID,
+                             currencyCode = a.TBL_CURRENCY.CURRENCYCODE
+                         })?.ToList();
+
+            allFilteredLoan = loans.AsQueryable();
+            return allFilteredLoan;
+
+        }
 
         public List<LoanViewModel> GetApprovedLoanReviewAwaitingOperation(int staffId, int companyId)
         {

@@ -178,11 +178,13 @@ namespace FintrakBanking.Repositories.Customer
             };
 
             auditTrail.AddAuditTrail(audit);
+            var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
+
 
             try
             {
                 var output = context.SaveChanges() > 0;
-                var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
+                //var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
                 if (output == true)
                 {
                     UpdateCustomerCollateralId(customer.CUSTOMERCODE);
@@ -194,6 +196,13 @@ namespace FintrakBanking.Repositories.Customer
                     return null;
                 }
 
+            }
+            catch (APIErrorException ex) {
+                if (ex.Message.Contains("This customer does not have an account linked")) {
+                    return result;
+                }
+
+                throw ex;
             }
             catch(Exception ex)
             {

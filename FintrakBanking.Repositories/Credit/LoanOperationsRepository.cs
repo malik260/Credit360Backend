@@ -23290,6 +23290,7 @@ namespace FintrakBanking.Repositories.Credit
                 op.OPERATIONCOMPLETED = false;
                 op.CREATEDBY = userModel.staffId;
                 op.DATECREATED = DateTime.Now;
+                op.EFFECTIVEDATE = DateTime.Now;
 
                 context.TBL_LOAN_REVIEW_OPERATION.Add(op);
 
@@ -25450,8 +25451,13 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
 
+            if (model.proposedEffectiveDate.ToString("dd/MM/yyyy") == "01/01/0001")
+            {
+                model.proposedEffectiveDate = DateTime.Now;
+            }
             if (model.loanReviewOperationsId == 0)
             {
+               
                 var data = new TBL_LOAN_REVIEW_OPERATION
                 {
                     LOANID = model.loanId,
