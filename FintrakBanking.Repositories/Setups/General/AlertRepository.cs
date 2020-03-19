@@ -967,12 +967,12 @@ namespace FintrakBanking.Repositories.Setups.General
                             {
                                 emailList = emailList + ";" + zonalHead.EMAIL;
 
-                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+                               /* var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
 
                                 if (groupHead != null)
                                 {
                                     emailList = emailList + ";" + groupHead.EMAIL;
-                                }
+                                }*/
                             }
                         }
                     }

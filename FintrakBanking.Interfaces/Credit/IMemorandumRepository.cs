@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool Init(int operationId, int targetId, bool isDrawdwon = false);
         string Replace(string content);
         string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId);
-        string GetDrawdownMemoHtml(int staffId, int operationId, int targetId);
+        string GetDrawdownMemoHtml(int staffId, int targetId);
         //output document function
         string MemoMarkupHtml();
         string FacilityUpgradeSupportSchemeHtml();

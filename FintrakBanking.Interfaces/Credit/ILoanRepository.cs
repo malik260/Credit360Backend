@@ -20,10 +20,11 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        IQueryable<LoanViewModel> LoanPrepaymentApprovalList();
         CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId);
         List<OverrideItemVeiwModel> getBookingOverride(string customerCode);
         LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model);
-        bool ReferBackBooking(ApprovalViewModel model);
+        WorkflowResponse ReferBackBooking(ApprovalViewModel model);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
         decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);
@@ -119,7 +120,7 @@ namespace FintrakBanking.Interfaces.Credit
         //IEnumerable<LoanChargeFeeViewModel> GetDeferredRevolvingLoanFeeAwaitingApproval(int staffId, int companyId);
         //IEnumerable<LoanChargeFeeViewModel> GetDeferredContingentLoanFeeAwaitingApproval(int staffId, int companyId);
 
-        int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, bool isManual = false);
 
         bool GoForFeeOverrideApproval(ApprovalViewModel entity);
 

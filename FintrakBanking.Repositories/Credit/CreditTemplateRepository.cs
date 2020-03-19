@@ -386,8 +386,8 @@ var qry = Foo.GroupJoin(
                 raw.templateDocument = memo.Replace(raw.templateDocument);
                 if (templateId == 1)
                 {
-                    memo.UpdateEsg(raw.templateDocument);
-                    memo.UpdateGreenRating(raw.templateDocument);
+                    raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
+                    raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
                 }
                 replacedSections.Add(raw);
                 printedDoc = raw.title;
