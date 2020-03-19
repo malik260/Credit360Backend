@@ -105,6 +105,8 @@ namespace FintrakBanking.Entities.Models
 
         //[StringLength(500)]
         public string APPROVERCOMMENT { get; set; }
+        public string COREBANKINGREF{ get; set; }
+        public bool? ISMANUALBOOKING { get; set; }
 
         public DateTime? DATEAPPROVED { get; set; }
 

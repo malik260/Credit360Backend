@@ -7346,7 +7346,7 @@ namespace FintrakBanking.Repositories.Credit
                                    where c.FLOWCHANGEID == (short)FlowChangeEnum.CASHCOLLATERIZED
                                    //where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
                                        select new RevisedProcessFlowModel
-                                   {
+                                      {
                                        flowchangeId = c.FLOWCHANGEID,
                                        placeHolder = c.PLACEHOLDER,
                                        productClassId = c.PRODUCTCLASSID,
