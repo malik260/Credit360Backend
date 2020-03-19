@@ -551,7 +551,7 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("group-customer-members/{groupId}/")]
         public HttpResponseMessage SearchGroupCustomersBySearchQuery(string searchQuery, int groupId)
-        {
+       {
             var data = repo.SearchGroupCustomersBySearchQuery(searchQuery, groupId);
             if (data == null)
             {
