@@ -1,21 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class WorkflowTrackerViewModel
     {
         public string dueHours { get; set; }
-
         //public int dueDate;
         public int dueDay { get; set; }
-
         public object divisionCode { get; set; }
         public string divisionName { get; set; }
-
         public string customerDivisionShortCode { get; set; }
-
         public int approvalTrailId { get; set; }
-
+        public List<ApprovalTrailViewModel> comments { get; set; }
         public DateTime reportDate { get { return DateTime.Now; } }
         public string groupName { get; set; }
         public string operationName { get; set; }
@@ -29,6 +26,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public DateTime responseDate { get; set; }
         public int? requestStaffId { get; set; }
         public string responseStaffName { get; set; }
+        public string responsibleStaffName { get; set; }
+        public string reliefStaffName { get; set; }
         public string responseStaffCode { get; set; }
         public string responseApprovalLevel { get; set; }
         public int TargetId { get; set; }
@@ -55,5 +54,10 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int loanApplicationDetailId { get; set; }
         public byte[] reportData { get; set; }
         public string templateTypeName { get; set; }
+        public string apiRequestId { get; set; }
+        public int? loopedStaffId { get; set; }
+        public int? toStaffId { get; set; }
+        public int? fromApprovalLevelId { get; set; }
+        public int? toApprovalLevelId { get; set; }
     }
 }

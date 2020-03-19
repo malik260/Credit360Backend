@@ -164,6 +164,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             lastRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && lastRequest != null) //if it is not initiation
+            {
+                throw new SecureException("An error occured, Next Level can't be preset unless on refer back. Kindly refresh your browser and try again.");
+            }
 
             this.referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
@@ -181,7 +185,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
-
             }
             else
             {
@@ -246,8 +249,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
-            if (this.isFlowTest) return true;
             SaveFlowLog("Before Final Trail Logging");
+            if (this.isFlowTest) return true;
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -613,6 +616,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.toStaffId != null)
             {
                 var p = context.TBL_STAFF.Find(this.toStaffId);
+                response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
+            }
+
+            if (this.loopedStaffId != null && this.loopedStaffId > 0)
+            {
+                var p = context.TBL_STAFF.Find(this.loopedStaffId);
+                response.nextPersonId = this.loopedStaffId;
+                response.nextLevelName = p.TBL_STAFF_ROLE.STAFFROLENAME;
                 response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
             }
         }
@@ -1010,21 +1021,26 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? GetReportingLineStaffId() // if workflow is forced to use organogram
         {
             var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
+            var fromStaff = context.TBL_STAFF.Find(this.staffId);
             if (next == null) { return null; }
             if (this.toStaffId != null) { return toStaffId; }
             //if (this.toStaffId != null) { return null; }
-            if (this.externalInitialization == true) { return null; }
+            if (this.externalInitialization == true && !businessRoleIds.Contains(fromStaff.STAFFROLEID)) { return null; }
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
-            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || this.fromLevelId == null)
+            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (this.fromLevelId == null && !businessRoleIds.Contains(fromStaff.STAFFROLEID)))
             {
                 return null;
             }
             ReportingLine super = line.FirstOrDefault(x => x.levelRoleId == next.DefaultRoleId && x.levelIds.Contains(next.ApprovalLevelId));
             if (super == null)
             {
-                throw new SecureException("No Staff Was Setup as Your Supervisor!");
+                if (this.isFlowTest)
+                {
+                    return null;
+                }
+                throw new SecureException("No Staff Was Setup as Your Supervisor! Please select the approver to route your request to.");
                 //return null;
             }
 
@@ -1690,6 +1706,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             flowLog += "operationId " + this.operationId + "," + Environment.NewLine;
             flowLog += "productClassId " + this.productClassId + "," + Environment.NewLine;
             flowLog += "productId " + this.productId + "," + Environment.NewLine;
+            flowLog += "exclusiveFlowChangeId " + this.exclusiveFlowChangeId + "," + Environment.NewLine;
+            flowLog += "amount " + this.amount + "," + Environment.NewLine;
             flowLog += "requestLevelId " + this.requestLevelId + "," + Environment.NewLine;
             flowLog += "requestStaffId " + this.requestStaffId + "," + Environment.NewLine;
             flowLog += "currentStateId " + this.currentStateId + "," + Environment.NewLine;

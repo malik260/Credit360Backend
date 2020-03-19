@@ -286,7 +286,7 @@ namespace FintrakBanking.Repositories.credit
                                  where
                                  (
                                  x.DELETED == false
-                                 && t.OPERATIONID == (int)OperationsEnum.LCModificationApproval
+                                 && t.OPERATIONID == (int)OperationsEnum.LCEnhancementApproval
                                  && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcEnhancementInProgress
                                  )
                                  select new LcIssuanceApprovalViewModel
@@ -327,7 +327,7 @@ namespace FintrakBanking.Repositories.credit
                                      invoiceDueDate = x.INVOICEDUEDATE,
                                      lcReferenceNumber = x.LCREFERENCENUMBER,
                                      dateTimeCreated = (DateTime)x.DATETIMECREATED,
-                                 }).GroupBy(l => l.lcIssuanceId).Select(l => l.OrderByDescending(t => t.lcApprovalTrailId).FirstOrDefault())
+                                 }).GroupBy(l => l.tempLcIssuanceId).Select(l => l.OrderByDescending(t => t.lcApprovalTrailId).FirstOrDefault())
                                 .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                                 || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
                                 && l.loopedStaffId == staffId)).ToList();
@@ -471,7 +471,7 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForEnhancementApproval(int staffId)
         {
-            var operationId = (int)OperationsEnum.LCModificationApproval;
+            var operationId = (int)OperationsEnum.LCEnhancementApproval;
             IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 

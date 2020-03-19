@@ -1333,9 +1333,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var totalPreviouslyBookedAmount = principalAmount;
 
-            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.Sum() + (decimal)entity.loanScheduleInput.principalAmount);
+            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.ToList().Sum() + (decimal)entity.loanScheduleInput.principalAmount);
 
-            decimal lineReleasePrincipalAmount =0;
+            decimal lineReleasePrincipalAmount = 0;
             if (applicationDetail.ISLINEFACILITY == true)
             {
                 lineReleasePrincipalAmount = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT);
@@ -8280,6 +8280,7 @@ namespace FintrakBanking.Repositories.Credit
                                        approvalStatusId = atrail.APPROVALSTATUSID,
                                        approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                        loanApplicationId = m.LOANAPPLICATIONID,
+                                       operationId = m.OPERATIONID,
                                        loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                        applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                        applicationStatusId = m.APPLICATIONSTATUSID,
@@ -8346,6 +8347,7 @@ namespace FintrakBanking.Repositories.Credit
                                      approvalStatusId = atrail.APPROVALSTATUSID,
                                      approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                      loanApplicationId = m.LOANAPPLICATIONID,
+                                     operationId = m.OPERATIONID,
                                      loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                      applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                      applicationStatusId = m.APPLICATIONSTATUSID,
@@ -10272,6 +10274,10 @@ namespace FintrakBanking.Repositories.Credit
                                  customerName = b.FIRSTNAME + " " + b.LASTNAME,
                                  firstName = b.FIRSTNAME,
                                  lastName = b.LASTNAME,
+                                 loanReviewApplicationId = (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.LOANREVIEWAPPLICATIONID).FirstOrDefault() :
+                                                     (a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.LOANREVIEWAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANID == a.TERMLOANID select c.LOANREVIEWAPPLICATIONID).FirstOrDefault(),
+
                                  customerCode = b.CUSTOMERCODE,
                                  productAccountName = c.PRODUCTACCOUNTNAME,
                                  loanReferenceNumber = a.LOANREFERENCENUMBER,
@@ -12656,6 +12662,7 @@ namespace FintrakBanking.Repositories.Credit
                                                      (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID join o in context.TBL_OPERATIONS on aa.OPERATIONID equals o.OPERATIONID where c.LOANREVIEWAPPLICATIONID == b.LOANREVIEWAPPLICATIONID select o.OPERATIONNAME).FirstOrDefault(),
 
                                        loanReviewApplicationId = e.LOANAPPLICATIONID,
+                                       loanReviewOperationId = e.OPERATIONID,
                                        loanId = a.CONTINGENTLOANID,
                                        customerId = a.CUSTOMERID,
                                        reviewLoanDetaile = b.REVIEWDETAILS,
@@ -14539,7 +14546,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool ReferBackBooking(ApprovalViewModel model)
+        public WorkflowResponse ReferBackBooking(ApprovalViewModel model)
         {
             int staffId = model.staffId;
 
@@ -14645,7 +14652,8 @@ namespace FintrakBanking.Repositories.Credit
             //context.TBL_AUDIT.Add(audit);
             ////end of Audit section -------------------------------
 
-            return context.SaveChanges() > 0;
+            context.SaveChanges();
+            return workflow.Response;
         }
         #endregion
 

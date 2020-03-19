@@ -120,6 +120,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public decimal? prepaymentAmount;
+
         public int loanChargeFeeId { get; set; }
         public string chargeFeeName { get; set; }
         public decimal feeAmount { get; set; }
@@ -293,6 +295,9 @@ public int? newInterestFrequencyTypeId { get; set; }
 + interestOnPastDueInterest + interestOnPastDuePrincipal + outstandingPrincipal + accruedInterest; } }
         public List<feeDetails> fees { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
+        public int lmsLoanApplicationId { get; set; }
+        public int lmsOperationId { get; set; }
+        
         public int creditAppraisalOperationId { get; set; }
         public string lmsrApplicationReferenceNumber { get; set; }
         public decimal amount { get; set; }

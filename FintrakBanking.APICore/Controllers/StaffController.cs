@@ -609,11 +609,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("staff/approver-search/operation/{operationId}/currentLevel/{currentLevel}")]
-        public HttpResponseMessage SearchApprovers(int operationId, int currentLevel, string queryString = "")
+        [Route("staff/approver-search/operation/{operationId}/nextLevel/{nextLevel}")]
+        public HttpResponseMessage SearchApprovers(int operationId, int nextLevel, string queryString = "")
         {
             if (queryString == null) queryString = string.Empty;
-            var data = repo.SearchApprovers(operationId, currentLevel, token.GetRoleId, token.GetUserGroupId, queryString,token.GetCompanyId);
+            var data = repo.SearchApprovers(operationId, nextLevel, token.GetRoleId, token.GetUserGroupId, queryString,token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 

@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.Credit
         CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId);
         List<OverrideItemVeiwModel> getBookingOverride(string customerCode);
         LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model);
-        bool ReferBackBooking(ApprovalViewModel model);
+        WorkflowResponse ReferBackBooking(ApprovalViewModel model);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
         decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);

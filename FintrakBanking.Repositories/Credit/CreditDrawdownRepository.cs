@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Credit
                     join d in context.TBL_LOAN_APPLICATION_DETAIL on req.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                     join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                     join coy in context.TBL_COMPANY on m.COMPANYID equals coy.COMPANYID
-                    join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+                    join p in context.TBL_PRODUCT on req.PRODUCTID equals p.PRODUCTID
                     join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                     join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                     join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
@@ -338,6 +338,7 @@ namespace FintrakBanking.Repositories.Credit
                     select new CamProcessedLoanViewModel
                     {
                         loanBookingRequestId = req.LOAN_BOOKING_REQUESTID,
+                        bookingOperationId = req.OPERATIONID,
                         approvalTrailId = atrail.APPROVALTRAILID,
                         approvalStatusId = (short)atrail.APPROVALSTATUSID,
                         approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
@@ -381,7 +382,7 @@ namespace FintrakBanking.Repositories.Credit
                         loanTypeId = m.LOANAPPLICATIONTYPEID,
                         loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                         camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
-                        productId = d.APPROVEDPRODUCTID,
+                        productId = req.PRODUCTID,
                         productTypeId = p.PRODUCTTYPEID,
                         productTypeName = p.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                         productName = p.PRODUCTNAME,
@@ -885,11 +886,11 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
                         {
-                            item.allRequestAmount = item.allRequestAmount - disbursedOverdraft.Sum(x => x.OVERDRAFTLIMIT);
+                            if (disbursedOverdraft.Count() > 0) item.allRequestAmount = item.allRequestAmount - disbursedOverdraft.Sum(x => x.OVERDRAFTLIMIT);
                         }
                         if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
                         {
-                            item.allRequestAmount = item.allRequestAmount - disbursedContingent.Sum(x => x.CONTINGENTAMOUNT);
+                            if (disbursedContingent.Count() > 0) item.allRequestAmount = item.allRequestAmount - disbursedContingent.Sum(x => x.CONTINGENTAMOUNT);
                         }
                         else
                         {
@@ -1441,7 +1442,8 @@ namespace FintrakBanking.Repositories.Credit
                 createdBy = entity.createdBy,
                 companyId = entity.companyId,
                 applicationId = request.LOAN_BOOKING_REQUESTID,
-                comment = "Please approve this request for loan booking",
+                comment = entity.comment,
+                //comment = "Please approve this request for loan booking",
                 amount = entity.amount_Requested,
             };
 
