@@ -23285,7 +23285,7 @@ namespace FintrakBanking.Repositories.Credit
                 op.REVIEWDETAILS = "TenorChange";
                 op.TENOR = userModel.newTenor;
                 op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;
-                op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 op.ISMANAGEMENTINTERESTRATE = false;
                 op.OPERATIONCOMPLETED = false;
                 op.CREATEDBY = userModel.staffId;
@@ -23329,14 +23329,15 @@ namespace FintrakBanking.Repositories.Credit
                             targetId = op.LOANREVIEWOPERATIONID,
                             operationId = userModel.operationId,
                             BranchId = userModel.userBranchId,
-                            externalInitialization = true
+                            externalInitialization = true,
+                            deferredExecution = true
                         };
                         var response = workFlow.LogForApproval(entity);
 
                         if (response)
                         {
 
-                            if (userModel.fees != null)
+                            if (userModel.fees.Count() > 0)
                             {
                                 LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -23353,9 +23354,11 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 output = context.SaveChanges() > 0;
                             }
+                            
                             trans.Commit();
                             return output;
                         }
+                        
                     }
                     catch (Exception ex)
                     {
@@ -23374,7 +23377,7 @@ namespace FintrakBanking.Repositories.Credit
                 op.REVIEWDETAILS = "TenorChange";
                 op.TENOR = userModel.newTenor;
                 op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;
-                op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 op.ISMANAGEMENTINTERESTRATE = false;
                 op.OPERATIONCOMPLETED = false;
                 op.CREATEDBY = userModel.staffId;
