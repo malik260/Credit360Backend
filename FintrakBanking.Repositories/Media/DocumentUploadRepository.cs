@@ -941,7 +941,7 @@ namespace FintrakBanking.Repositories.Media
 
         public CustomerDocumentSearchViewModel GetCustomerDocuments(DocumentUploadViewModel model, UserInfo user)
         {
-            var customer = context.TBL_CUSTOMER
+            var customers = context.TBL_CUSTOMER
                 .Join(context.TBL_CASA, a => a.CUSTOMERID, b => b.CUSTOMERID, (a, b) => new { a, b })
                 .Select(x => new
                 {
@@ -951,13 +951,15 @@ namespace FintrakBanking.Repositories.Media
                     LASTNAME = x.a.LASTNAME,
                     PRODUCTACCOUNTNUMBER = x.b.PRODUCTACCOUNTNUMBER,
                 })
-                .Where(c => c.CUSTOMERCODE == model.customerCode || c.PRODUCTACCOUNTNUMBER == model.customerCode || c.FIRSTNAME.ToLower().Contains(model.customerCode.ToLower().Trim()) || model.customerCode.ToLower().Contains(c.FIRSTNAME.ToLower().Trim()))
-                .FirstOrDefault();
+                .Where(c => c.CUSTOMERCODE.Trim() == model.customerCode.Trim() || c.PRODUCTACCOUNTNUMBER == model.customerCode || c.FIRSTNAME.ToLower().Contains(model.customerCode.ToLower().Trim()) || c.MIDDLENAME.ToLower().Contains(model.customerCode.ToLower().Trim()) || c.LASTNAME.ToLower().Contains(model.customerCode.ToLower().Trim()))
+                //.Where(c => c.CUSTOMERCODE == model.customerCode || c.PRODUCTACCOUNTNUMBER == model.customerCode || c.FIRSTNAME.ToLower().Contains(model.customerCode.ToLower().Trim()) || model.customerCode.ToLower().Contains(c.FIRSTNAME.ToLower().Trim()))
+                .ToList();
 
-            if (customer == null) throw new SecureException("Customer not found!");
+            if (customers == null) throw new SecureException("Customer not found!");
 
             CustomerDocumentSearchViewModel result = new CustomerDocumentSearchViewModel();
-            result.customerName = customer.FIRSTNAME + " " + customer.MIDDLENAME + " " + customer.LASTNAME;
+            result.customerName = model.customerCode;
+            //result.customerName = customers.FIRSTNAME + " " + customers.MIDDLENAME + " " + customers.LASTNAME;
 
             //var usageQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.CUSTOMERCODE == customer.CUSTOMERCODE)
             //                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
@@ -982,58 +984,63 @@ namespace FintrakBanking.Repositories.Media
             //                    documentCategoryName = x.up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
             //                    owner = x.us.CREATEDBY == model.createdBy
             //                });
-
-            var usageQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.CUSTOMERCODE == customer.CUSTOMERCODE)
-                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
-                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
-                    new
-                    {
-                        documentUploadId = up.DOCUMENTUPLOADID,
-                        fileName = up.FILENAME,
-                        fileExtension = up.FILEEXTENSION,
-                        fileSize = up.FILESIZE,
-                        fileSizeUnit = up.FILESIZEUNIT,
+            IEnumerable<DocumentUploadViewModel> usageQuery = null;
+            var usageTemp = new List<DocumentUploadViewModel>();
+            foreach (var customer in customers)
+            {
+                var usage = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.CUSTOMERCODE.Trim() == customer.CUSTOMERCODE.Trim())
+               .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
+               , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
+                   new
+                   {
+                       documentUploadId = up.DOCUMENTUPLOADID,
+                       fileName = up.FILENAME,
+                       fileExtension = up.FILEEXTENSION,
+                       fileSize = up.FILESIZE,
+                       fileSizeUnit = up.FILESIZEUNIT,
                         //fileData = up.FILEDATA,
                         companyId = up.COMPANYID,
-                        issueDate = up.ISSUEDATE,
-                        expiryDate = up.EXPIRYDATE,
-                        physicalFilenumber = up.PHYSICALFILENUMBER,
-                        physicalLocation = up.PHYSICALLOCATION,
-                        documentTypeId = up.DOCUMENTTYPEID,
-                        documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
-                        documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
-                        documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                        owner = us.CREATEDBY == model.createdBy,
-                        dateTimeCreated = us.DATETIMECREATED,
-                        dateTimeUpdated = us.DATETIMEUPDATED,
-                        createdBy = us.CREATEDBY.Value,
-                    }
-            ).AsEnumerable()
-            .Select(up => new DocumentUploadViewModel
-            {
-                documentUploadId = up.documentUploadId,
-                fileName = up.fileName,
-                fileExtension = up.fileExtension,
-                fileSize = up.fileSize,
-                fileSizeUnit = up.fileSizeUnit,
-                //fileData = up.fileData,
-                companyId = up.companyId,
-                issueDate = up.issueDate,
-                expiryDate = up.expiryDate,
-                physicalFilenumber = up.physicalFilenumber,
-                physicalLocation = up.physicalLocation,
-                documentTypeId = up.documentTypeId,
-                documentTypeName = up.documentTypeName,
-                documentCategoryId = up.documentCategoryId,
-                documentCategoryName = up.documentCategoryName,
-                owner = up.owner,
-                dateTimeCreated = up.dateTimeCreated,
-                dateTimeUpdated = up.dateTimeUpdated,
-                createdBy = up.createdBy,
-                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
+                       issueDate = up.ISSUEDATE,
+                       expiryDate = up.EXPIRYDATE,
+                       physicalFilenumber = up.PHYSICALFILENUMBER,
+                       physicalLocation = up.PHYSICALLOCATION,
+                       documentTypeId = up.DOCUMENTTYPEID,
+                       documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                       documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                       documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                       owner = us.CREATEDBY == model.createdBy,
+                       dateTimeCreated = us.DATETIMECREATED,
+                       dateTimeUpdated = us.DATETIMEUPDATED,
+                       createdBy = us.CREATEDBY.Value,
+                   }
+                   ).AsEnumerable()
+                   .Select(up => new DocumentUploadViewModel
+                   {
+                       documentUploadId = up.documentUploadId,
+                       fileName = up.fileName,
+                       fileExtension = up.fileExtension,
+                       fileSize = up.fileSize,
+                       fileSizeUnit = up.fileSizeUnit,
+                        //fileData = up.fileData,
+                        companyId = up.companyId,
+                       issueDate = up.issueDate,
+                       expiryDate = up.expiryDate,
+                       physicalFilenumber = up.physicalFilenumber,
+                       physicalLocation = up.physicalLocation,
+                       documentTypeId = up.documentTypeId,
+                       documentTypeName = up.documentTypeName,
+                       documentCategoryId = up.documentCategoryId,
+                       documentCategoryName = up.documentCategoryName,
+                       owner = up.owner,
+                       dateTimeCreated = up.dateTimeCreated,
+                       dateTimeUpdated = up.dateTimeUpdated,
+                       createdBy = up.createdBy,
+                       uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
 
-            });
-           
+                   }).ToList();
+                usageTemp.AddRange(usage);
+            }
+            usageQuery = usageTemp;
             int documentCategoryId = model.documentCategoryId;
             int documentTypeId = model.documentTypeId;
 

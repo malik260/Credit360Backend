@@ -1863,7 +1863,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public string UpdateEsg(string body)
         {
-            var oldString = GetSubstringBetween("<tr class=green>", "</tr>", body);
+            var oldString = GetSubstringBetween("<tr class=esg>", "</tr>", body);
             var newString = String.Empty;
             newString = newString + $@"
                         <td><b>Environmental And Social Risk Summary:</b></td>
@@ -1879,7 +1879,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public string UpdateGreenRating(string body)
         {
-            var oldString = GetSubstringBetween("<tr class=esg>", "</tr>", body);
+            var oldString = GetSubstringBetween("<tr class=green>", "</tr>", body);
             var newString = String.Empty;
             newString = newString + $@"
                         <td><b>Overall Green Category:</b></td>

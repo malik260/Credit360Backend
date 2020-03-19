@@ -271,7 +271,8 @@ namespace FintrakBanking.Repositories.Credit
                         var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
                         {
                             username = "model.username",//for test, real value to be passed!!!
-                            passcode = "model.passCode"
+                            passcode = "model.passCode",
+                            skipAuthentication = true
                         };
                         PlaceLien(loanLienDetail.APPLICATIONDETAILID, twoFactorAuthDetails, entity.createdBy);
                     }

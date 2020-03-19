@@ -4397,6 +4397,8 @@ namespace FintrakBanking.Repositories.Credit
                                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                     join p in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals p.PRODUCTID
                                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                    let creatorStaff = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == x.CREATEDBY)
+                                    let jumpsToDrawDown = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == x.FLOWCHANGEID)
                                     //join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
                                     where
                                //y.RESPONSESTAFFID == null
@@ -4425,6 +4427,7 @@ namespace FintrakBanking.Repositories.Credit
                                         loanTypeId = x.LOANAPPLICATIONTYPEID,
                                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                        creatorName = creatorStaff.FIRSTNAME + " " + creatorStaff.MIDDLENAME + " " + creatorStaff.LASTNAME,
                                         applicationDate = x.APPLICATIONDATE,
                                         applicationAmount = x.APPLICATIONAMOUNT,
                                         bookingOperationId = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID).Select(r => r.OPERATIONID).FirstOrDefault(),
@@ -4448,7 +4451,7 @@ namespace FintrakBanking.Repositories.Credit
                                         isadhocapplication = x.ISADHOCAPPLICATION,
                                         approvalStatusId = (short)x.APPROVALSTATUSID,
                                         approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
-
+                                        isSkipAppraisalEnabled = jumpsToDrawDown != null ? jumpsToDrawDown.ISSKIPPROCESSENABLED : false,
                                         //currentApprovalLevel = context.TBL_APPROVAL_TRAIL.Where(o=>o.TARGETID == x.LOANAPPLICATIONID && operations.Contains(o.OPERATIONID)).Select(e=>e.FROMAPPROVALLEVELID != null ? e.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a").OrderByDescending(r => r).FirstOrDefault(), // y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                                         //approvalTrailId = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.LOANAPPLICATIONID && operations.Contains(o.OPERATIONID)).Select(e => e.APPROVALTRAILID).OrderByDescending(r => r).FirstOrDefault(),//y.APPROVALTRAILID,
                                         //responsiblePerson = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.LOANAPPLICATIONID && operations.Contains(o.OPERATIONID)).Select(y => y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME).OrderByDescending(r=>r).FirstOrDefault(), // y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
@@ -4479,6 +4482,7 @@ namespace FintrakBanking.Repositories.Credit
                                          join p in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals p.PRODUCTID
                                          join c in context.TBL_CUSTOMER_GROUP on x.CUSTOMERGROUPID equals c.CUSTOMERGROUPID
                                          let creatorStaff = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == x.CREATEDBY)
+                                         let jumpsToDrawDown = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == x.FLOWCHANGEID)
                                          //join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
                                          where
                                     //y.RESPONSESTAFFID == null
@@ -4530,6 +4534,7 @@ namespace FintrakBanking.Repositories.Credit
                                              isadhocapplication = x.ISADHOCAPPLICATION,
                                              approvalStatusId = (short)x.APPROVALSTATUSID,
                                              approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                             isSkipAppraisalEnabled = jumpsToDrawDown != null ? jumpsToDrawDown.ISSKIPPROCESSENABLED : false,
 
                                              //currentApprovalLevel = context.TBL_APPROVAL_TRAIL.Where(o=>o.TARGETID == x.LOANAPPLICATIONID && operations.Contains(o.OPERATIONID)).Select(e=>e.FROMAPPROVALLEVELID != null ? e.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a").OrderByDescending(r => r).FirstOrDefault(), // y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                                              //approvalTrailId = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.LOANAPPLICATIONID && operations.Contains(o.OPERATIONID)).Select(e => e.APPROVALTRAILID).OrderByDescending(r => r).FirstOrDefault(),//y.APPROVALTRAILID,
@@ -4574,8 +4579,16 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        x.currentApprovalLevel = x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : "NOT YET IN APPRAISAL";
-                        x.responsiblePerson = x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : "WITH ACCOUNT OFFICER";
+                        if (x.bookingRequestId > 0 || x.isSkipAppraisalEnabled)
+                        {
+                            x.currentApprovalLevel = "CLICK VIEW FOR DRAWDOWN DETAILS";
+                            x.responsiblePerson = "CLICK VIEW FOR DRAWDOWN DETAILS";
+                        }
+                        else
+                        {
+                            x.currentApprovalLevel = x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : "NOT YET IN APPRAISAL";
+                            x.responsiblePerson = x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : "WITH ACCOUNT OFFICER";
+                        }
                     }
 
                 }
@@ -4800,64 +4813,16 @@ namespace FintrakBanking.Repositories.Credit
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
+                var approvalOperations = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(f => f.OPERATIONID).ToList();
+                var applicationStatuses = new int[] { (int)LoanApplicationStatusEnum.AvailmentCompleted, (int)LoanApplicationStatusEnum.CAMCompleted };
                 int[] operations = new int[] {  (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.IndividualDrawdownRequest, (int)OperationsEnum.CorporateDrawdownRequest,
                                                 (int)OperationsEnum.CreditCardDrawdownRequest, (int)OperationsEnum.CRMSApproval,(int)OperationsEnum.OfferLetterApproval,
                                                 (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking};
+                int[] otherApprovalOperations = new int[] { (int)OperationsEnum.AdhocApproval, (int)OperationsEnum.OfferLetterApproval};
+                approvalOperations.AddRange(otherApprovalOperations);
                 int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved, (int)ApprovalStatusEnum.Authorised };
                 List<WorkflowTrackerViewModel> approvalRecord = new List<WorkflowTrackerViewModel>();
-
-                //var preBookingrecord = (from a in context.TBL_APPROVAL_TRAIL
-                //                        join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
-                //                        join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
-                //                        join e in context.TBL_LOAN_APPLICATION on a.TARGETID equals e.LOANAPPLICATIONID
-                //                        join d in context.TBL_LOAN_APPLICATION_DETAIL on e.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                //                        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                //                        where a.OPERATIONID == (int)OperationsEnum.LoanAvailment
-                //                           && a.RESPONSESTAFFID == null
-                //                           && a.APPROVALSTATEID == (int)ApprovalState.Ended
-                //                           && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                //                           && ((e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted)
-                //                || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestInitiated)
-                //                || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestCompleted)
-                //                || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingInProgress)
-                //                || (e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingCompleted))
-                //                && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
-                //                && e.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-
-                //                        // a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
-                //                        //&& a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
-                //                        select (new WorkflowTrackerViewModel
-                //                        {
-                //                            approvalStatusId = a.APPROVALSTATUSID,
-                //                            operationName = a.TBL_OPERATIONS.OPERATIONNAME,
-                //                            currentLevel = "Booking Initiation",//context.TBL_APPROVAL_LEVEL.Where(cl => cl.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(rec => rec.LEVELNAME).FirstOrDefault(),
-                //                            approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                //                            approvalState = a.TBL_APPROVAL_STATE.APPROVALSTATE,
-                //                            applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
-                //                            requestStaffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.FIRSTNAME,
-                //                            responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
-                //                            comment = a.COMMENT,
-                //                            systemArrivalDate = a.SYSTEMARRIVALDATETIME,
-                //                            systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                //                            requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
-                //                            responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
-                //                            customerName = d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
-                //                            //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : context.TBL_CUSTOMER.Where(q=>q.CUSTOMERID == d.CUSTOMERID).Select(cu=>cu.LASTNAME + " " + cu.MIDDLENAME + cu.LASTNAME).FirstOrDefault(),
-                //                            customerDivisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
-                //                            responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
-                //                            arrivalDate = a.ARRIVALDATE,
-                //                            applicationDate = e.SYSTEMDATETIME,
-                //                            amount = d.APPROVEDAMOUNT,
-                //                            TargetId = a.TARGETID,
-                //                            branchName = e.TBL_BRANCH.BRANCHNAME + " (" + e.TBL_BRANCH.BRANCHCODE + ") ",
-                //                            loanApplicationId = d.LOANAPPLICATIONID,
-                //                            loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
-
-                //                            approvalTrailId = a.APPROVALTRAILID,
-                //                            productNames = context.TBL_PRODUCT.Where(u => u.PRODUCTID == d.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
-                //                            apiRequestId = e.APIREQUESTID
-                //                        })
-                //           ).OrderByDescending(o => o.approvalTrailId);
+                
                 var drawdownsNotYetInitiated = (
                               from d in context.TBL_LOAN_APPLICATION_DETAIL
                               join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
@@ -4867,10 +4832,13 @@ namespace FintrakBanking.Repositories.Credit
                               join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                               join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                               let isInitiated = context.TBL_LOAN_BOOKING_REQUEST.Any(r => r.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID)
+                              let jumpsToDrawDown = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == e.FLOWCHANGEID)
                               let creator = e.TBL_STAFF
-                              where (d.LOANAPPLICATIONDETAILID == loanApplicationDetailId && operations.Contains(a.OPERATIONID) && !isInitiated
-                              && a.APPROVALSTATEID == (int)ApprovalState.Ended && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                              && e.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted)
+                              where (
+                              d.LOANAPPLICATIONDETAILID == loanApplicationDetailId && approvalOperations.Contains(a.OPERATIONID) && !isInitiated
+                              && ((a.APPROVALSTATEID == (int)ApprovalState.Ended && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                              && applicationStatuses.Contains(e.APPLICATIONSTATUSID)) || (jumpsToDrawDown != null && jumpsToDrawDown.ISSKIPPROCESSENABLED))
+                              )
                               orderby a.APPROVALTRAILID descending
                               select (new WorkflowTrackerViewModel
                               {
@@ -4908,6 +4876,7 @@ namespace FintrakBanking.Repositories.Credit
                                   fromApprovalLevelId = a.FROMAPPROVALLEVELID,
                                   toApprovalLevelId = a.TOAPPROVALLEVELID,
                                   requestStaffId = a.REQUESTSTAFFID,
+                                  isSkipAppraisalEnabled = jumpsToDrawDown != null ? jumpsToDrawDown.ISSKIPPROCESSENABLED : false,
                               })
                            ).OrderByDescending(o => o.approvalTrailId).ToList();
 
@@ -4918,6 +4887,7 @@ namespace FintrakBanking.Repositories.Credit
                               //join current in context.TBL_APPROVAL_TRAIL on bo.LOAN_BOOKING_REQUESTID equals current.TARGETID
                               //join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
                               //join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
+                              let jumpsToDrawDown = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == e.FLOWCHANGEID)
                               let current = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == bo.LOAN_BOOKING_REQUESTID && operations.Contains(t.OPERATIONID)).
                                             OrderByDescending(t => t.APPROVALTRAILID).FirstOrDefault()
                               join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
@@ -4962,6 +4932,7 @@ namespace FintrakBanking.Repositories.Credit
                                   fromApprovalLevelId = current.FROMAPPROVALLEVELID,
                                   toApprovalLevelId = current.TOAPPROVALLEVELID,
                                   requestStaffId = current.REQUESTSTAFFID,
+                                  isSkipAppraisalEnabled = jumpsToDrawDown != null ? jumpsToDrawDown.ISSKIPPROCESSENABLED : false,
                                   comments = (from a in context.TBL_APPROVAL_TRAIL
                                              join r in context.TBL_LOAN_BOOKING_REQUEST on a.TARGETID equals r.LOAN_BOOKING_REQUESTID
                                              where operations.Contains(a.OPERATIONID) && r.LOAN_BOOKING_REQUESTID == bo.LOAN_BOOKING_REQUESTID

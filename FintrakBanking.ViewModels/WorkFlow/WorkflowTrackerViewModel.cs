@@ -25,6 +25,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int sla { get; set; }
         public DateTime responseDate { get; set; }
         public int? requestStaffId { get; set; }
+        public bool isSkipAppraisalEnabled { get; set; }
         public string responseStaffName { get; set; }
         public string responsibleStaffName { get; set; }
         public string reliefStaffName { get; set; }
