@@ -16463,8 +16463,6 @@ namespace FintrakBanking.Repositories.Credit
                        && a.OPERATIONTYPEID == operationTypeId 
                        && a.LOANSYSTEMTYPEID == loanSystemTypeId
                        && a.OPERATIONCOMPLETED == false 
-                       && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
-                       && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                        select a;
 
@@ -17064,7 +17062,7 @@ namespace FintrakBanking.Repositories.Credit
                             CASA_ACCOUNTID = model.cASA_AccountId,
                             OVERDRAFTTOPUP = model.overDraftTopup,
                             FEE_CHARGES = model.fee_Charges,
-                            APPROVALSTATUSID = model.approvalStatusId,
+                            APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                             ISMANAGEMENTINTERESTRATE = model.isManagementRate,
                             SCHEDULETYPEID = model.scheduleTypeId,
                             SCHEDULEDAYINTERESTTYPEID = model.interestTypeId,
@@ -17075,6 +17073,7 @@ namespace FintrakBanking.Repositories.Credit
                             TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules,
                             PREPAYMENTMETHODID = model.prepaymentMethodId,
                             TARGETID = model.TargetId,
+                            
                         });
 
                         if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
@@ -17123,7 +17122,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         result = false;
 
-                        if (model.fees != null)
+                        if (model.fees.Count()>0)
                         {
                             LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17139,7 +17138,7 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             int resultStatus = context.SaveChanges();
-                            if (resultStatus > 1)
+                            if (resultStatus > 0)
                             {
                                 result = true;
                             }
@@ -17169,7 +17168,7 @@ namespace FintrakBanking.Repositories.Credit
                         reviewOperation.CASA_ACCOUNTID = model.cASA_AccountId;
                         reviewOperation.OVERDRAFTTOPUP = model.overDraftTopup;
                         reviewOperation.FEE_CHARGES = model.fee_Charges;
-                        reviewOperation.APPROVALSTATUSID = model.approvalStatusId;
+                        reviewOperation.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                         reviewOperation.ISMANAGEMENTINTERESTRATE = model.isManagementRate;
                         reviewOperation.SCHEDULETYPEID = model.scheduleTypeId;
                         reviewOperation.SCHEDULEDAYINTERESTTYPEID = model.interestTypeId;
@@ -17196,7 +17195,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         result = false;
 
-                        if (model.fees != null)
+                        if (model.fees.Count()>0)
                         {
                             LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
