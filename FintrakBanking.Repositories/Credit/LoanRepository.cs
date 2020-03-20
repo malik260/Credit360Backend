@@ -4778,7 +4778,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 //DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
 
-                if(loanProductInfo.PRODUCTCODE == "EBFC")
+                if(loanProductInfo?.PRODUCTCODE == "EBFC")
                 {
                     var statusCode = "90"; // Disbursement
                     LoanStatusChangeThroughAPI(loanApplicationRecord, user.comment, user.staffId, statusCode);
@@ -14669,7 +14669,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl != null && appl.APIREQUESTID != null)
             {
                 var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
-                if (product.PRODUCTCODE == "EBFC" && model.forbidExternalNotification == false)
+                if (product?.PRODUCTCODE == "EBFC" && model.forbidExternalNotification == false)
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();

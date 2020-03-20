@@ -4696,6 +4696,7 @@ namespace FintrakBanking.Repositories.Customer
                 entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                 entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
                 entity.RELATIONSHIPOFFICERID = temp.RELATIONSHIPOFFICERID;
+                entity.BUSINESSUNTID = temp.BUSINESSUNTID;
             }
 
             UpdateCustomerCollateralId(entity.CUSTOMERCODE);

@@ -1863,7 +1863,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public string UpdateEsg(string body)
         {
-            var oldString = GetSubstringBetween("<tr class=green>", "</tr>", body);
+            var oldString = GetSubstringBetween("<tr class=esg>", "</tr>", body);
             var newString = String.Empty;
             newString = newString + $@"
                         <td><b>Environmental And Social Risk Summary:</b></td>
@@ -1879,7 +1879,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public string UpdateGreenRating(string body)
         {
-            var oldString = GetSubstringBetween("<tr class=esg>", "</tr>", body);
+            var oldString = GetSubstringBetween("<tr class=green>", "</tr>", body);
             var newString = String.Empty;
             newString = newString + $@"
                         <td><b>Overall Green Category:</b></td>
@@ -6676,6 +6676,7 @@ namespace FintrakBanking.Repositories.Credit
             var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
             var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
             var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+           
             var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
 
             var result = String.Empty;
@@ -8931,7 +8932,13 @@ namespace FintrakBanking.Repositories.Credit
             var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
             var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
             var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
-           
+            var availableBalance = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.AVAILABLEBALANCE).FirstOrDefault();
+            var bookBalance = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.LEDGERBALANCE).FirstOrDefault();
+            var unAvailableBalance = bookBalance - availableBalance;
+            var availableBalanceFormat = string.Format("{0:#,##.00}", Convert.ToDecimal(availableBalance));
+            var bookBalanceFormat = string.Format("{0:#,##.00}", Convert.ToDecimal(bookBalance));
+            var unAvailableBalanceFormat = string.Format("{0:#,##.00}", Convert.ToDecimal(unAvailableBalance));
+
             var result = String.Empty;
                 result = result + $@"
                 <br />
@@ -8955,15 +8962,15 @@ namespace FintrakBanking.Repositories.Credit
                     </tr> 
                      <tr>
                         <td>Book Balance:</td>
-                        <td>N/A</td>
+                        <td>{bookBalanceFormat}</td>
                     </tr> 
                      <tr>
                         <td>Available Balance:</td>
-                        <td>N/A</td>
+                        <td>{availableBalanceFormat}</td>
                     </tr> 
                      <tr>
                         <td>Unavailable Balance: </td>
-                        <td>N/A</td>
+                        <td>{unAvailableBalanceFormat}</td>
                     </tr> 
                  ";
             result = result + $"</table>";

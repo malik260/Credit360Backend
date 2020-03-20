@@ -201,7 +201,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 }
 
             }
-            throw new SecureException("");
             ResponseMessage result = null;
             // if( LogOverDraftNormal(model))
             Task.Run(async () => result = await overDraft.FlexcubeCasaLien(model)).GetAwaiter().GetResult();
