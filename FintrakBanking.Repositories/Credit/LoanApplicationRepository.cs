@@ -2894,7 +2894,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.REQUIRECOLLATERAL = loan.requireCollateral;
             this.loanData.TOTALEXPOSUREAMOUNT = totalAmount;
             this.loanData.INTERESTRATE = loan.interestRate;
-            this.loanData.APPLICATIONDATE = genSetup.GetApplicationDate();
+            //this.loanData.APPLICATIONDATE = genSetup.GetApplicationDate();
             this.loanData.LOANINFORMATION = loan.loanInformation;
             this.loanData.ISRELATEDPARTY = loan.isRelatedParty;
             this.loanData.ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed;

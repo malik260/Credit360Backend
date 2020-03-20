@@ -755,7 +755,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var product = context.TBL_PRODUCT.Find(loanApplication.PRODUCTID);
 
-                if (product.PRODUCTCODE == "EBFC")
+                if (product?.PRODUCTCODE == "EBFC")
                 {
                     OfferLetterResponse offerLetters = new OfferLetterResponse();
                     var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();

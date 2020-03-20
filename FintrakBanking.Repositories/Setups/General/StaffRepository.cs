@@ -2050,7 +2050,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 searchQuery = searchQuery.Trim().ToLower();
-                var allLevelStaffs = (from l in context.TBL_APPROVAL_LEVEL
+                levelStaffs = (from l in context.TBL_APPROVAL_LEVEL
                                       join ls in context.TBL_APPROVAL_LEVEL_STAFF on l.APPROVALLEVELID equals ls.APPROVALLEVELID
                                       join s in context.TBL_STAFF on ls.STAFFID equals s.STAFFID
                                       where l.DELETED == false && ls.DELETED == false && s.DELETED == false

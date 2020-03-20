@@ -1036,7 +1036,7 @@ namespace FintrakBanking.Repositories.Media
                        dateTimeUpdated = up.dateTimeUpdated,
                        createdBy = up.createdBy,
                        uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
-
+                       customerName = customer.FIRSTNAME + " " + customer.MIDDLENAME + " " + customer.LASTNAME,
                    }).ToList();
                 usageTemp.AddRange(usage);
             }
