@@ -414,12 +414,28 @@ namespace FintrakBanking.Repositories.WorkFlow
                             ).ToList();
         }
 
+        private bool IsInAllGridLevels(IEnumerable<WorkflowSetup> grid, int staffId)
+        {
+            foreach(var level in grid)
+            {
+                var levelRole = context.TBL_APPROVAL_LEVEL.Find(level.ApprovalLevelId).STAFFROLEID;
+                var staff = context.TBL_STAFF.Find(staffId);
+                var levelRoleIsStaffRole = levelRole == staff.STAFFROLEID;
+                var staffInLevelStaffs = context.TBL_APPROVAL_LEVEL_STAFF.Any(l => l.STAFFID == staffId && l.APPROVALLEVELID == level.ApprovalLevelId);
+                if (!levelRoleIsStaffRole && !staffInLevelStaffs)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void MakerCheckerControl()
         {
             if (this.approvalGrid.Count() > 1 &&  statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
             {
                 var firstRequest = trailLog.OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
-                if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
+                if (firstRequest.REQUESTSTAFFID == this.staffId && IsInAllGridLevels(this.approvalGrid, this.staffId)) throw new SecureException("You cannot approve a process you initiated!");
             }
 
             var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
