@@ -680,7 +680,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanBookingRequestViewModel : GeneralEntity
     {
         public bool? chargeFeeOnce { get; set; }
-
+        public int? customerId { get; set; }
         public int? casaAccountId { get; set; }
         public int? casaAccountId2 { get; set; }
         public bool? isUsed { get; set; }

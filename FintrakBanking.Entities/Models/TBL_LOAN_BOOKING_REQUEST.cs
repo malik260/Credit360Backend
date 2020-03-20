@@ -34,6 +34,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public bool? ISUSED { get; set; }
+        public int? CUSTOMERID { get; set; }
 
         public int? CASAACCOUNTID { get; set; }
 
