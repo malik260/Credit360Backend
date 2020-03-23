@@ -1255,6 +1255,10 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
+                        <td></td>
+                        <td><img src='http://10.1.7.41:8082/assets/access.jpg' alt='Access Bank' width='150' height='100'></td>
+                    </tr>
+                    <tr>
                         <td><b>Reference Number:</b></td>
                         <td>{applicationReferenceNumber}</td>
                     </tr>
