@@ -1255,7 +1255,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -5901,7 +5901,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -6696,7 +6696,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -7982,7 +7982,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8072,7 +8072,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8162,7 +8162,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8251,7 +8251,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8973,7 +8973,7 @@ namespace FintrakBanking.Repositories.Credit
                
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>  
                         <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                    <tr>
