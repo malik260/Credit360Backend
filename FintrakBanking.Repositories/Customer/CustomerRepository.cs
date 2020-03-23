@@ -3386,7 +3386,7 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.customerCode.StartsWith(searchQuery)
                                    || x.branchName.StartsWith(searchQuery)
                                    || x.customerId.ToString().StartsWith(searchQuery)
-                                  // && g.CUSTOMERGROUPID == groupId
+                                   && g.CUSTOMERGROUPID == groupId
                              select x);
 
             var customerInfo = customers.ToList();
@@ -4696,6 +4696,7 @@ namespace FintrakBanking.Repositories.Customer
                 entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                 entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
                 entity.RELATIONSHIPOFFICERID = temp.RELATIONSHIPOFFICERID;
+                entity.BUSINESSUNTID = temp.BUSINESSUNTID;
             }
 
             UpdateCustomerCollateralId(entity.CUSTOMERCODE);

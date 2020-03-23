@@ -143,6 +143,8 @@ namespace FintrakBanking.Entities.Models
         public string LEGALCONTINGENTCODE { get; set; }
 
         public int? LOAN_BOOKING_REQUESTID { get; set; }
+        public string COREBANKINGREF { get; set; }
+        public bool? ISMANUALBOOKING { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
