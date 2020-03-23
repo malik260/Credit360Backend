@@ -2976,6 +2976,10 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             foreach (ESGChecklistDetailViewModel model in models)
             {
+                if (model.esgChecklistDefinitionId == 341)
+                {
+
+                }
                 var existItem = (from a in context.TBL_ESG_CHECKLIST_DETAIL
                                  where a.ESGCHECKLISTDETAILID == model.esgChecklistDetailId && a.ESGCHECKLISTDEFINITIONID == model.esgChecklistDefinitionId
                                  && a.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && a.DELETED == false
@@ -3107,6 +3111,7 @@ namespace FintrakBanking.Repositories.Credit
                               from q in gg.DefaultIfEmpty()
                               where s.LOANAPPLICATIONDETAILID == loanApplicationDetailId && k.DELETED == false
                               && k.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
+                              && s.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
                               select new ESGChecklistDefinitionAndDetailViewModel
                               {
                                   checkListDetailId = s.ESGCHECKLISTDETAILID,
@@ -3412,12 +3417,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             List<CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
             var detailItem = (from s in context.TBL_ESG_CHECKLIST_DETAIL
-                              join b in context.TBL_ESG_CHECKLIST_SUMMARY on s.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                               join k in context.TBL_ESG_CHECKLIST_DEFINITION on s.ESGCHECKLISTDEFINITIONID equals k.ESGCHECKLISTDEFINITIONID
                               join i in context.TBL_CHECKLIST_ITEM on k.CHECKLISTITEMID equals i.CHECKLISTITEMID
                               join c in context.TBL_SECTOR on k.SECTORID equals c.SECTORID
                               where s.LOANAPPLICATIONDETAILID == loanApplicationId && k.DELETED == false
                               && k.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
+                              && s.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
                               select new ESGChecklistDefinitionAndDetailViewModel
                               {
                                   checkListDetailId = s.ESGCHECKLISTDETAILID,
@@ -3495,7 +3500,7 @@ namespace FintrakBanking.Repositories.Credit
             var detailId = detailItem.Select(a => a.checkListDefinitionId).ToList();
             if (detailItem.Any())
             {
-                var checklist = detailList.Concat(definitionList.Where(x => !detailId.Contains(x.checkListDefinitionId)));
+                var checklist = detailList.Concat(definitionList.Where(x => !detailId.Contains(x.checkListDefinitionId))).ToList();
                 return checklist.ToList();
             }
             return data.ToList();
