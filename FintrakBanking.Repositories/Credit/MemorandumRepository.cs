@@ -1255,8 +1255,8 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td></td>
-                        <td><img src='http://localhost:4200/assets/access.jpg' alt='Access Bank' width='150' height='100'></td>
+                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
                     </tr>
                     <tr>
                         <td><b>Reference Number:</b></td>
@@ -5901,6 +5901,10 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
+                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
                         <td><b>Date</b></td>
                         <td>{DateTime.UtcNow}</td>
                     </tr>
@@ -6691,6 +6695,10 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -7974,6 +7982,10 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
+                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
                     </tr>
@@ -8059,6 +8071,10 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -8146,6 +8162,10 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
+                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
                     </tr>
@@ -8230,6 +8250,10 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -8947,7 +8971,11 @@ namespace FintrakBanking.Repositories.Credit
                 result = result + $@"
                 <br />
                
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>        
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>  
+                        <tr>
+                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                    <tr>
                         <td>Name of Customer:</td>
                         <td>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
