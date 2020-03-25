@@ -290,16 +290,11 @@ namespace FintrakBanking.ReportObjects
                            join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                            join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
                            join br in context.TBL_STAFF on a.CREATEDBY equals br.STAFFID
-                           where (a.ISDISBURSED
-                             && a.DISBURSEDATE >= startDate && a.DISBURSEDATE <= endDate)
-                         && a.COMPANYID == companyId
+                           where (a.ISDISBURSED && DbFunctions.TruncateTime(a.DISBURSEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DISBURSEDATE) <= DbFunctions.TruncateTime(endDate))
+                           && a.COMPANYID == companyId
                            orderby a.DISBURSEDATE descending
 
-
-
-
                            //  && a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID <= approvedCustomerSentivityLevelId
-
                            select new DisburstLoanViewModel
                            {
                                bookingRef = a.LOANREFERENCENUMBER,
