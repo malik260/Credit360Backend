@@ -2291,6 +2291,7 @@ namespace FintrakBanking.Repositories.Credit
             var details2 = app.TBL_LOAN_APPLICATION_DETAIL.ToList();
             var details = details2.Where(d => d.DELETED == false && d.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased
                                          && d.TBL_LOAN_APPLICATION.FLOWCHANGEID != (int)FlowChangeEnum.CASHCOLLATERIZED
+                                         && d.TBL_LOAN_APPLICATION.ISADHOCAPPLICATION == false
                                          && d.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual).ToList();
             foreach (var id in details)
             {

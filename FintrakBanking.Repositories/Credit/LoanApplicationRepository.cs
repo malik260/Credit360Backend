@@ -693,7 +693,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 refer.REFEREBACKSTATEID = (int)ApprovalState.Ended;
             }
-            ArchiveLoanApplication(loanApplicationId, (int)OperationsEnum.LoanApplication, 0);
+            ArchiveLoanApplication(loanApplicationId, (int)OperationsEnum.LoanApplication, 0, accountOfficerId);
             loan.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress;
             loan.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
             return context.SaveChanges() > 0;
@@ -3417,7 +3417,7 @@ namespace FintrakBanking.Repositories.Credit
         //    else return 0;
         //}
 
-        public bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus)
+        public bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus, int archivedBy)
         {
             short applicationStatusId = 0; 
             var app = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.LOANAPPLICATIONID == loanAppliactionId);
@@ -3592,7 +3592,11 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanApplDetailsArchive.FIELD3 = detailRow.FIELD3;
                 addLoanApplDetailsArchive.ISSPECIALISED = detailRow.ISSPECIALISED;
                 addLoanApplDetailsArchive.TENORFREQUENCYTYPEID = detailRow.TENORFREQUENCYTYPEID;
-
+                addLoanApplDetailsArchive.LOANDETAILREVIEWTYPEID = detailRow.LOANDETAILREVIEWTYPEID;
+                addLoanApplDetailsArchive.ISFACILITYCREATED = detailRow.ISFACILITYCREATED;
+                addLoanApplDetailsArchive.ISFEETAKEN = detailRow.ISFEETAKEN;
+                addLoanApplDetailsArchive.TAKEFEETYPEID = detailRow.TAKEFEETYPEID;
+                addLoanApplDetailsArchive.APPROVEDLINESTATUSID = detailRow.APPROVEDLINESTATUSID;
                 this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
             //}
             //return context.SaveChanges() != 0;
@@ -5746,7 +5750,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if ((context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.applicationId && !LoanApplicationStatus.Contains(x.APPLICATIONSTATUSID)).Any()) && applArchive == null)
             {
-                ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID,0);
+                ArchiveLoanApplication(appl.LOANAPPLICATIONID, appl.OPERATIONID, 0, model.createdBy);
             }
 
             
@@ -6555,7 +6559,7 @@ namespace FintrakBanking.Repositories.Credit
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
             val.LASTUPDATEDBY = data.createdBy;
             val.DATETIMEUPDATED = DateTime.Now;
-            ArchiveLoanApplication(data.loanApplicationId, (int)OperationsEnum.LoanApplicationCancellation, val.APPLICATIONSTATUSID);
+            ArchiveLoanApplication(data.loanApplicationId, (int)OperationsEnum.LoanApplicationCancellation, val.APPLICATIONSTATUSID, data.createdBy);
 
             var audit = new TBL_AUDIT
             {
@@ -7173,6 +7177,54 @@ namespace FintrakBanking.Repositories.Credit
                 companyLimit = context.TBL_COMPANY.FirstOrDefault().COMPANYLIMIT
             };
         }
+
+        public bool ModifyFacility(FacilityModificationViewModel model, int loanApplicationDetailId)
+        {
+            int saved;
+            using (var trans = context.Database.BeginTransaction())
+            {
+
+                var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
+                if (facility != null)
+                {
+                    ArchiveLoanApplicationDetails(loanApplicationDetailId);
+                    facility.APPROVEDPRODUCTID = model.approvedProductId;
+                    facility.PROPOSEDPRODUCTID = model.approvedProductId;
+                    facility.APPROVEDINTERESTRATE = model.approvedInterestRate;
+                    facility.PROPOSEDINTERESTRATE = model.approvedInterestRate;
+                    facility.APPROVEDTENOR = model.approvedTenor;
+                    facility.PROPOSEDTENOR = model.approvedTenor;
+                    facility.TENORFREQUENCYTYPEID = model.tenorModeId;
+                    facility.SUBSECTORID = model.subSectorId;
+                    facility.LOANDETAILREVIEWTYPEID = model.loanDetailReviewTypeId;
+                    facility.APPROVEDAMOUNT = model.approvedAmount;
+                    facility.PROPOSEDAMOUNT = model.approvedAmount;
+                }
+                if (model.productFees != null)
+                {
+                    if (model.productFees.Count > 0)
+                    {
+                        UpdateLoanDetailFees(model.productFees, loanApplicationDetailId, model.createdBy);
+                    }
+                }
+                saved = context.SaveChanges();
+                trans.Commit();
+            }
+            return saved > 0;
+        }
+
+        private void ValidateFacilityModification(TBL_LOAN_APPLICATION_DETAIL facility, FacilityModificationViewModel model)
+        {
+            if (model.approvedAmount > facility.APPROVEDAMOUNT)
+            {
+                throw new ConditionNotMetException("Amount Cannot be greater than Approved amount");
+            }
+            if (model.approvedAmount > facility.APPROVEDAMOUNT)
+            {
+                throw new ConditionNotMetException("Tenor Cannot be greater than Approved Tenor");
+            }
+        }
+        
 
         public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
         {

@@ -1512,6 +1512,18 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("modify-facility/{loanApplicationDetailId}")]
+        public HttpResponseMessage ModifyFacility([FromBody] FacilityModificationViewModel model, int loanApplicationDetailId)
+        {
+            var response = repo.GetTotalBankExposure();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
+
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application/cancellation")]
@@ -1530,6 +1542,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             data.createdBy = token.GetStaffId;
             data.companyId = token.GetCompanyId;
+            data.userBranchId = (short)token.GetBranchId;
             var response = repo.SaveCancelledApplcation(data);
             if (response == 1)
             {

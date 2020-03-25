@@ -1046,5 +1046,20 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal amount { get; set; }
     }
 
+    public class FacilityModificationViewModel : GeneralEntity
+    {
+        public int loanApplicationDetailId { get; set; }
+        public short approvedProductId { get; set; }
+        public double approvedInterestRate { get; set; }
+        public int approvedTenor { get; set; }
+        public int tenorModeId { get; set; }
+        public int sectorId { get; set; }
+        public short subSectorId { get; set; }
+        public int productClassId { get; set; }
+        public int loanDetailReviewTypeId { get; set; }
+        public int approvedAmount { get; set; }
+        public List<ProductFeesViewModel> productFees { get; set; }
+    }
+
 }
 
