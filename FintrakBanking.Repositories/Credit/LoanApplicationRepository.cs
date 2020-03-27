@@ -3208,7 +3208,11 @@ namespace FintrakBanking.Repositories.Credit
                 proposedAmount = d.PROPOSEDAMOUNT,
                 proposedInterestRate = d.PROPOSEDINTERESTRATE,
                 proposedProductId = d.PROPOSEDPRODUCTID,
-                proposedTenor = d.PROPOSEDTENOR,
+                proposedTenor = d.APPROVEDTENOR,
+                approvedAmount = d.APPROVEDAMOUNT,
+                approvedInterestRate = d.APPROVEDINTERESTRATE,
+                approvedProductId = d.APPROVEDPRODUCTID,
+                approvedTenor = d.APPROVEDTENOR,
                 exchangeRate = d.EXCHANGERATE,
                 currencyId = d.CURRENCYID,
                 customerId = d.CUSTOMERID,
@@ -7186,9 +7190,18 @@ namespace FintrakBanking.Repositories.Credit
             {
 
                 var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
-                if (facility != null)
+                var loan = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
+                if (facility != null && loan != null)
                 {
-                    ArchiveLoanApplicationDetails(loanApplicationDetailId);
+                    if (model.fees != null)
+                    {
+                        if (model.fees.Count > 0)
+                        {
+                            UpdateLoanDetailFees(model.fees, loanApplicationDetailId, model.createdBy);
+                        }
+                    }
+                    var difference = model.approvedAmount - facility.APPROVEDAMOUNT;
+                    ArchiveLoanApplication(facility.LOANAPPLICATIONID, (int)OperationsEnum.CreditAppraisal, 0, model.createdBy);
                     facility.APPROVEDPRODUCTID = model.approvedProductId;
                     facility.PROPOSEDPRODUCTID = model.approvedProductId;
                     facility.APPROVEDINTERESTRATE = model.approvedInterestRate;
@@ -7200,13 +7213,8 @@ namespace FintrakBanking.Repositories.Credit
                     facility.LOANDETAILREVIEWTYPEID = model.loanDetailReviewTypeId;
                     facility.APPROVEDAMOUNT = model.approvedAmount;
                     facility.PROPOSEDAMOUNT = model.approvedAmount;
-                }
-                if (model.productFees != null)
-                {
-                    if (model.productFees.Count > 0)
-                    {
-                        UpdateLoanDetailFees(model.productFees, loanApplicationDetailId, model.createdBy);
-                    }
+                    loan.APPLICATIONAMOUNT = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT);
+                    loan.TOTALEXPOSUREAMOUNT += difference;
                 }
                 saved = context.SaveChanges();
                 trans.Commit();

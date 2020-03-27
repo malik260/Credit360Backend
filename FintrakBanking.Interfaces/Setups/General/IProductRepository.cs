@@ -29,6 +29,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetProductAwaitingApprovals(int staffId, int companyId);
         ProductViewModel GetTempProductDetail(int productId);
         IEnumerable<ProductViewModel> GetAllProduct();
+        IEnumerable<ProductViewModel> GetProductsByProductClassProcess(int productClassProcessId);
         IEnumerable<ProductViewModel> GetProductByProductGroup(int companyId);
         ProductViewModel GetProductById(int productId);
         IEnumerable<ProductViewModel> GetProductByGroupAndCategory(short productGroupId, short productCategoryId);

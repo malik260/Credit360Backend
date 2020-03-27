@@ -1517,11 +1517,15 @@ namespace FintrakBanking.APICore.Controllers
         [Route("modify-facility/{loanApplicationDetailId}")]
         public HttpResponseMessage ModifyFacility([FromBody] FacilityModificationViewModel model, int loanApplicationDetailId)
         {
-            var response = repo.GetTotalBankExposure();
-
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-
-
+            var response = repo.ModifyFacility(model, loanApplicationDetailId);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Facility Has Been Modified Successfully" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Facility Modification was not Successful" });
+            }
         }
 
         [HttpGet]

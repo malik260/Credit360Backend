@@ -1057,8 +1057,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short subSectorId { get; set; }
         public int productClassId { get; set; }
         public int loanDetailReviewTypeId { get; set; }
-        public int approvedAmount { get; set; }
-        public List<ProductFeesViewModel> productFees { get; set; }
+        public decimal approvedAmount { get; set; }
+        public List<ProductFeesViewModel> fees { get; set; }
     }
 
 }
