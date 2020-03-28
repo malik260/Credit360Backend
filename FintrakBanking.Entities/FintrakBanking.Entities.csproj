@@ -76,12 +76,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <Compile Include="Models\TBL_BULK_PREPAYMENT.cs" />
     <Compile Include="Models\TBL_BULK_PREPAYMENTREVERSAL.cs" />
-=======
     <Compile Include="Models\TBL_LC_ISSUANCE_ARCHIVE.cs" />
->>>>>>> origin
     <Compile Include="Models\TBL_LINE_FACILITY_STATUS.cs" />
     <Compile Include="Models\TBL_LMSR_FLOW_ORDER.cs" />
     <Compile Include="Models\SqlDatabaseConfiguration.cs" />

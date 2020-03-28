@@ -18288,9 +18288,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
-<<<<<<< HEAD
+
                         workFlow.LogActivity();
-=======
+
                     var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == entity.operationId)
                          .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                          .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
@@ -18321,7 +18321,6 @@ namespace FintrakBanking.Repositories.Credit
                     workFlow.StatusId = (int)ApprovalStatusEnum.Referred;
                     workFlow.Comment = entity.comment;
                     workFlow.DeferredExecution = true;
->>>>>>> origin
 
                     // workFlow.LogActivity();
 
@@ -18366,17 +18365,16 @@ namespace FintrakBanking.Repositories.Credit
                     twoFADetails.skipAuthentication = true;
                     var fees = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
 
-<<<<<<< HEAD
+
                     if (workFlow.NewState != (int)ApprovalState.Ended)
-=======
+
                     foreach (var a in fees)
->>>>>>> origin
+
                     {
                         a.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                     }
-<<<<<<< HEAD
                     else if (workFlow.NewState == (int)ApprovalState.Ended)
-=======
+
                     reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                     reviewRecord.OPERATIONCOMPLETED = true;
                     context.SaveChanges();
@@ -18395,7 +18393,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
                     if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
->>>>>>> origin
+
                     {
                         var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 

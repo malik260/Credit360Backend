@@ -458,15 +458,15 @@ namespace FintrakBanking.Common.Enum
         CustomerFSCaptionGroupDeleted = 557,
         AlertGroupEmailAdded = 558,
 
-<<<<<<< HEAD
+
         CreateBulkPrepaymentReversal = 559,
         CreateBulkPrepayment = 560,
-=======
+
         LcEnhancementAdded = 559,
         LcEnhancementUpdated = 560,
         LcEnhancementDeleted = 561,
 
->>>>>>> origin
+
     };
     public enum RegulatoryTypeEnum
     {
