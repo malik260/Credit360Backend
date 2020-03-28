@@ -58,7 +58,9 @@ namespace FintrakBanking.Entities.Models
        // public int? DESTINATIONOPERATIONID { get; set; }
 
         public short? REFEREBACKSTATEID { get; set; }
-      
+        public bool? ISFROMPC { get; set; }
+        public string FLOW_LOG { get; set; }
+
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

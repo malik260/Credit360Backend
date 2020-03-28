@@ -18,6 +18,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
+        bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsLMSViewModel model, int id, UserInfo user);
+        LoanApplicationTagsLMSViewModel GetLoanApplicationTagsLMS(int id);
         IQueryable<LoanReviewApplicationViewModel> GetRejectedReviewLoanApplications(UserInfo user);
         IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user);
         List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId);
@@ -58,8 +60,8 @@ namespace FintrakBanking.Interfaces.Credit
         //IEnumerable<LoanApplicationViewModel> Search(string searchString);
 
         List<LoanApplicationViewModel> Search(string searchString, int staffId = 0);
-
-        List<WorkflowTrackerViewModel> SearchBookedLoans(string searchString);
+        List<LoanApplicationViewModel> SearchDrawDown(string searchString, int staffId = 0);
+        List<WorkflowTrackerViewModel> SearchBookedLoans(int loanApplicationDetailId);
 
 
 

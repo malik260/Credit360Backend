@@ -34,6 +34,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public bool? ISUSED { get; set; }
+        public int? CUSTOMERID { get; set; }
 
         public int? CASAACCOUNTID { get; set; }
 
@@ -61,6 +62,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? CRMSDATE { get; set; }
         public int? TENOR { get; set; }
         public short? APPROVEDLINESTATUSID { get; set; }
+
+        public bool? TAKEFEEONCE { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

@@ -953,7 +953,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-ratio-caption")]
         public HttpResponseMessage GetFsRatioCaption()
         {
@@ -978,7 +978,33 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-fs-ratio-caption-by-group/{fSCaptionGroupId}")]
+        public HttpResponseMessage GetFSRatioCaptionByFSCaptionGroupId(int fSCaptionGroupId)
+        {
+            try
+            {
+                var data = _fsRepo.GetFSRatioCaptionByFSCaptionGroupId(token.GetCompanyId, fSCaptionGroupId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
         public HttpResponseMessage GetFsRatioCaptionById(short ratioCaptionId)
         {

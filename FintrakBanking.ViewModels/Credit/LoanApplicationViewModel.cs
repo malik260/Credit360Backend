@@ -12,8 +12,10 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int? customerBusinessUnitId { get; set; }
         public string divisionShortCode { get; set; }
+        public int bookingRequestId { get; set; }
 
         public string divisionCode { get; set; }
+        
 
         public string approvedProductName { get; set; }
         public decimal? equityControl { get; set; }
@@ -76,8 +78,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string misCode { get; set; }
         public string teamMisCode { get; set; }
         public bool submittedForAppraisal { get; set; }
+        public string operationName { get; set; }
         public bool isRelatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
+        public bool isInvestmentGrade { set; get; }
+        public bool isProjectRelatedLoan { set; get; }
+        public bool isOnLending { set; get; }
+        public bool isInterventionFunds { set; get; }
+        public bool isORRBasedApproval { set; get; }
         public short approvalStatusId { get; set; }
 
         public decimal proposedAmount { get; set; }
@@ -87,7 +95,6 @@ namespace FintrakBanking.ViewModels.Credit
         public short subSectorId { get; set; }
         public int sectorId { get; set; }
         public string sectorName { get; set; }
-        public bool isInvestmentGrade { set; get; }
         public int? loantermSheetId { get; set; }
         public string customerName { get; set; }
         public int customerTypeId { get; set; }
@@ -139,6 +146,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int proposedProductId { get; set; }
         public string repaymentTerm { get; set; }
         public bool? isTakeOverApplication { get; set; }
+       
         public int? repaymentScheduleId { get; set; }
         public double proposedInterestRate { get; set; }
         public string proposedProductName { get; set; }
@@ -160,6 +168,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
         public bool isadhocapplication { get; set; }
+        public bool isSkipAppraisalEnabled { get; set; }
         public int? exclusiveOperationId { get; set; }
         public int? flowchangeId { get; set; }
         public int? loanApprovedLimitId { get; set; }
@@ -192,6 +201,7 @@ namespace FintrakBanking.ViewModels.Credit
         
         public int tempApplicationCancellationId { get; set; }
         public IQueryable<string> staffName { get; set; }
+        public string creatorName { get; set; }
         public string comment { get; set; }
         public bool isOfferLetterAvailable { get; set; }
         public int? currentApprovalLevelTypeId { get; set; }
@@ -230,6 +240,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string reviewLoanDetaile { get; set; }
         public string referenceNumber { get; set; }
         public DateTime systemDateTime { get; set; }
+        public int? bookingOperationId { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {
@@ -332,6 +343,7 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string approvedProductName { get; set; }
+        public bool? isLineFacility { get; set; }
 
         public int applicationStatusPosition { get; set; }
 
@@ -856,6 +868,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class ForwardReviewViewModel : GeneralEntity
     {
         public bool isFlowTest { get; set; }
+        public bool isFromPc { get; set; }
         public int forwardAction { get; set; } // statusId
         public int applicationId { get; set; } // targetId
         public int appraisalMemorandumId { get; set; }
@@ -953,13 +966,22 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationTagsViewModel : GeneralEntity
     {
-        public bool withoutInstruction;
+        public bool withInstruction { get; set; }
         public bool domiciliationNotInPlace;
-
         public bool isProjectRelated { get; set; }
         public bool isOnLending { get; set; }
         public bool isInterventionFunds { get; set; }
     }
+
+    public class LoanApplicationTagsLMSViewModel : GeneralEntity
+    {
+        public bool? withInstruction { get; set; }
+        public bool? domiciliationNotInPlace;
+        public bool? isProjectRelated { get; set; }
+        public bool? isOnLending { get; set; }
+        public bool? isInterventionFunds { get; set; }
+    }
+
 
     public class ApprovalLevelDetailsModel : GeneralEntity
     {

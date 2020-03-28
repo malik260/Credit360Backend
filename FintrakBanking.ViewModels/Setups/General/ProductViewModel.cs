@@ -38,6 +38,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool usedByLos { get; set; }
         public bool isFacilityLine { get; set; }
         public string operation { get; set; }
+        
 
         public int productId { get; set; }
         public short productTypeId { get; set; }
@@ -109,6 +110,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public double? collateralFCYLimit { get; set; }
         public decimal? customerLimit { get; set; }
         public double? productLimit { get; set; }
+        public double? invoiceLimit { get; set; }
         public bool? invoiceBased { get; set; }
         public bool? allowFundUsage { get; set; }
         public List<ProductCurrencyViewModel> currencies { get; set; }
@@ -203,6 +205,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public double? fcyLimit { get; set; }
         public decimal? customerLimit { get; set; }
         public double? productLimit { get; set; }
+        public double? invoiceLimit { get; set; }
         public bool? isInvoiceBased { get; set; }
 
         public short tempProductBehaviourId { get; set; }

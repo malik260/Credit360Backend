@@ -16,7 +16,7 @@
     LoanPreliminaryEvaluation = 9,
     CollateralSearchInitiation = 12,
     RevolvingLoanBooking = 13,
-    ContigentLoanBooking = 14,
+    ContigentLoanBooking = 14, 
     DailyInterestAccural = 15,
     InterestLoanRepayment = 16,
     LoanReversal = 17,
@@ -143,7 +143,6 @@
     CallMemo = 150,
     CashCollaterizedRequest = 153,
     //New Id's for existing Enumn that were edited
-
     AnnualReview = 200, //formerly id= 114
     IndictiveTermsheet = 201,   //formerly id = 115
     CreditCardsCashBacked = 202,    //formerly 116
@@ -174,7 +173,7 @@
     ContingentLiabilityRenewalApproval = 235,
     ContingentLiabilityUsageApproval = 236,
     ExpiredContigentLiabilityApproval = 237,
-    LCAmountModificationApproval = 238,
+    LCEnhancementApproval = 238,
     LCTerminationApproval = 239,
     GlobalInterestRateChangeApproval = 240,
     LoanReversalRepaymentApproval = 241,

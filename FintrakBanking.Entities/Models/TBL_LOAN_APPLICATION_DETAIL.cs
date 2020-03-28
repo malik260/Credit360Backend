@@ -81,7 +81,7 @@ namespace FintrakBanking.Entities.Models
 
         //[StringLength(3000)]
         public string CONSESSIONREASON { get; set; }
-
+        public bool? ISLINEFACILITY { get; set; }
         public bool HASDONECHECKLIST { get; set; }
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
@@ -95,7 +95,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? EFFECTIVEDATE { get; set; }
 
         public bool? ISTAKEOVERAPPLICATION { get; set; }
-
+        
         //[Column(TypeName = "date")]
         public DateTime? EXPIRYDATE { get; set; }
 
@@ -149,13 +149,20 @@ namespace FintrakBanking.Entities.Models
         //[StringLength(1000)]
         public string FIELD2 { get; set; }
         public decimal? FIELD3 { get; set; }
+        
         public bool ISSPECIALISED { get; set; }
+        
         //public int? TENORFREQUENCYTYPEID { get; set; }
         public int? TENORFREQUENCYTYPEID { get; set; }
         // public int? OPERATINGCASAACCOUNTID { get; set; }
         public bool? ISFACILITYCREATED { get; set; }
         [ForeignKey("TBL_LOAN_DETAIL_REVIEW_TYPE")]
         public int LOANDETAILREVIEWTYPEID { get; set; }
+        public bool? ISFEETAKEN { get; set; }
+        public short? TAKEFEETYPEID { get; set; }
+
+
+        public short? APPROVEDLINESTATUSID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
         public virtual TBL_LOAN_DETAIL_REVIEW_TYPE TBL_LOAN_DETAIL_REVIEW_TYPE { get; set; }

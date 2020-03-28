@@ -47,4 +47,16 @@ namespace FintrakBanking.Common.Enum
         Principal = 4,
         ApprovedLoanAmount = 8
     }
+
+    public enum TakeFeeTypeEnum
+    {
+        ApprovedAmount = 1,
+        UtilisedAmount = 2,
+    }
+
+    public enum LegalDocumentStatusEnum
+    {
+        Completed = 1,
+        Conditional = 2,
+    }
 }

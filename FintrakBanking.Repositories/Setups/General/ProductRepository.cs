@@ -184,6 +184,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     lcyLimit = p.COLLATERAL_LCY_LIMIT,
                     collateralLcyLimit = p.COLLATERAL_LCY_LIMIT,
                     productLimit = p.PRODUCT_LIMIT,
+                    invoiceLimit = p.INVOICE_LIMIT,
                     requireCasaAccount = p.REQUIRECASAACCOUNT
                 }).FirstOrDefault();
                 return data;
@@ -588,6 +589,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        //customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
                                        penalChargeGl = data.PENALCHARGEGL,
                                        penalChargeGlCode = (data.PENALCHARGEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                                       isFacilityLine = (data.ISFACILITYLINE.HasValue ? data.ISFACILITYLINE.Value: false),
 
                                        //customerTypeId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
 
@@ -681,6 +683,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
                         collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                         productLimit = d.PRODUCT_LIMIT,
+                        invoiceLimit = d.INVOICE_LIMIT,
                         isInvoiceBased = d.ISINVOICEBASED,
                         requireCasaAccount = (bool)d.REQUIRECASAACCOUNT,
                         allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
@@ -873,6 +876,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         lcyLimit = c.COLLATERAL_LCY_LIMIT,
                         requireCasaAccount = (bool)c.REQUIRECASAACCOUNT,
                         productLimit = c.PRODUCT_LIMIT,
+                        invoiceLimit = c.INVOICE_LIMIT,
                         allowFundUsage = c.ALLOWFUNDUSAGE != null ? (bool)c.ALLOWFUNDUSAGE : false,
                         isTemporaryOverDraft = c.ISTEMPORARYOVERDRAFT != null ? (bool)c.ISTEMPORARYOVERDRAFT : false,
                     }).FirstOrDefault(),
@@ -912,6 +916,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
                         collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                         productLimit = d.PRODUCT_LIMIT,
+                        invoiceLimit = d.INVOICE_LIMIT,
                         isInvoiceBased = d.ISINVOICEBASED
 
                     }).FirstOrDefault();
@@ -953,6 +958,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
                         collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                         productLimit = d.PRODUCT_LIMIT,
+                        invoiceLimit = d.INVOICE_LIMIT,
                         isInvoiceBased = d.ISINVOICEBASED
 
                     }).FirstOrDefault();
@@ -988,6 +994,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
                         collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                         productLimit = d.PRODUCT_LIMIT,
+                        invoiceLimit = d.INVOICE_LIMIT,
                         isInvoiceBased = d.ISINVOICEBASED
 
                     }).FirstOrDefault();
@@ -1220,6 +1227,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             item.collateralFCYLimit = x.COLLATERAL_FCY_LIMIT;
                             item.customerLimit = x.CUSTOMER_LIMIT;
                             item.productLimit = x.PRODUCT_LIMIT;
+                            item.invoiceLimit = x.INVOICE_LIMIT;
                             item.invoiceBased = x.ISINVOICEBASED;
                             item.requireCasaAccount = x.REQUIRECASAACCOUNT;
                             item.allowFundUsage = x.ALLOWFUNDUSAGE;
@@ -1355,6 +1363,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                            collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
                                            collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
                                            productLimit = d.PRODUCT_LIMIT,
+                                           invoiceLimit = d.INVOICE_LIMIT,
                                            isInvoiceBased = d.ISINVOICEBASED,
                                            allowFundUsage = d.ALLOWFUNDUSAGE != null ? (bool)d.ALLOWFUNDUSAGE : false,
                                            crmsRegulatoryId = d.CRMSREGULATORYID,
@@ -1503,69 +1512,88 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         currListToUpdate = context.TBL_PRODUCT_CURRENCY.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
 
-                        feeListToUpdate =
-                                   context.TBL_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
+                        feeListToUpdate = context.TBL_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
 
                         collateralListToUpdate = context.TBL_PRODUCT_COLLATERALTYPE.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
-                        foreach (var curr in currListToUpdate)
+
+                       if (currListToUpdate != null)
                         {
-                            context.TBL_PRODUCT_CURRENCY.Remove(curr);
+                            foreach (var curr in currListToUpdate)
+                            {
+                                context.TBL_PRODUCT_CURRENCY.Remove(curr);
+                            }
                         }
 
-                        foreach (var item in feeListToUpdate)
+                        if (feeListToUpdate != null)
                         {
-                            context.TBL_PRODUCT_CHARGE_FEE.Remove(item);
+                            foreach (var item in feeListToUpdate)
+                            {
+                                context.TBL_PRODUCT_CHARGE_FEE.Remove(item);
+                            }
                         }
 
-                        foreach (var item in collateralListToUpdate)
+                        if (collateralListToUpdate != null)
                         {
-                            context.TBL_PRODUCT_COLLATERALTYPE.Remove(item);
+                            foreach (var item in collateralListToUpdate)
+                            {
+                                context.TBL_PRODUCT_COLLATERALTYPE.Remove(item);
+                            }
                         }
+
                         // Insert updated records for currencies
-                        foreach (var c in currModel.ToList())
+                        if (currModel.Count() > 0)
                         {
-                            var curr = new TBL_PRODUCT_CURRENCY()
+                            foreach (var c in currModel.ToList())
                             {
-                                PRODUCTID = (short)productModel.PRODUCTID,
-                                CURRENCYID = c.CURRENCYID,
-                                CREATEDBY = c.CREATEDBY,
-                                DATETIMECREATED = genSetup.GetApplicationDate(),
-                            };
-                            productCurrencies.Add(curr);
+                                var curr = new TBL_PRODUCT_CURRENCY()
+                                {
+                                    PRODUCTID = (short)productModel.PRODUCTID,
+                                    CURRENCYID = c.CURRENCYID,
+                                    CREATEDBY = c.CREATEDBY,
+                                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                                };
+                                productCurrencies.Add(curr);
+                            }
                         }
 
-                        foreach (var item in feeModel.ToList())
+                        if (feeModel.Count() > 0)
                         {
-                            var feeList = new TBL_PRODUCT_CHARGE_FEE()
+                            foreach (var item in feeModel.ToList())
                             {
-                                PRODUCTID = (short)productModel.PRODUCTID,
-                                //ProductFeeId = item.ProductFeeId,
-                                CHARGEFEEID = item.CHARGEFEEID,
-                                DEPENDENTAMOUNT = item.DEPENDENTAMOUNT,
-                                RATEVALUE = item.RATEVALUE,
-                                COMPANYID = (int)item.COMPANYID,
-                                CREATEDBY = (int)item.CREATEDBY,
-                                DATETIMECREATED = genSetup.GetApplicationDate(),
-                                DELETED = false
-                            };
-                            productFees.Add(feeList);
+                                var feeList = new TBL_PRODUCT_CHARGE_FEE()
+                                {
+                                    PRODUCTID = (short)productModel.PRODUCTID,
+                                    //ProductFeeId = item.ProductFeeId,
+                                    CHARGEFEEID = item.CHARGEFEEID,
+                                    DEPENDENTAMOUNT = item.DEPENDENTAMOUNT,
+                                    RATEVALUE = item.RATEVALUE,
+                                    COMPANYID = (int)item.COMPANYID,
+                                    CREATEDBY = (int)item.CREATEDBY,
+                                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                                    DELETED = false
+                                };
+                                productFees.Add(feeList);
+                            }
                         }
 
-                        foreach (var item in collateralModel.ToList())
+                        if (collateralModel.Count() > 0)
                         {
-                            var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
+                            foreach (var item in collateralModel.ToList())
                             {
-                                PRODUCTID = (short)productModel.PRODUCTID,
-                                //PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
-                                COLLATERALTYPEID = item.COLLATERALTYPEID,
-                                COMPANYID = item.COMPANYID,
-                                CREATEDBY = item.CREATEDBY,
-                                DATETIMECREATED = genSetup.GetApplicationDate(),
-                                DELETED = false,
+                                var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
+                                {
+                                    PRODUCTID = (short)productModel.PRODUCTID,
+                                    //PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
+                                    COLLATERALTYPEID = item.COLLATERALTYPEID,
+                                    COMPANYID = item.COMPANYID,
+                                    CREATEDBY = item.CREATEDBY,
+                                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                                    DELETED = false,
 
-                            };
-                            productCollateral.Add(productCollaterals);
+                                };
+                                productCollateral.Add(productCollaterals);
 
+                            }
                         }
 
                         var existingProduct = productToUpdate;
@@ -1632,6 +1660,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 existingProductBehaviour.CRMSREGULATORYID = productBehaviourModel.CRMSREGULATORYID;
                                 existingProductBehaviour.PRODUCTID = existingProduct.PRODUCTID;
                                 existingProductBehaviour.PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT;
+                                existingProductBehaviour.INVOICE_LIMIT = productBehaviourModel.INVOICE_LIMIT;
                                 existingProductBehaviour.CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT;
                                 existingProductBehaviour.COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT;
                                 existingProductBehaviour.COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT;
@@ -1647,31 +1676,59 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     else
                     {
-                        foreach (var c in currModel.ToList())
+                        if (currModel.Count() > 0)
                         {
-                            var curr = new TBL_PRODUCT_CURRENCY()
+                            foreach (var c in currModel.ToList())
                             {
-                                //ProductId = c.ProductId,
-                                CURRENCYID = c.CURRENCYID,
-                                DATETIMECREATED = genSetup.GetApplicationDate(),
-                                DELETED = false
-                            };
-                            productCurrencies.Add(curr);
+                                var curr = new TBL_PRODUCT_CURRENCY()
+                                {
+                                    //ProductId = c.ProductId,
+                                    CURRENCYID = c.CURRENCYID,
+                                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                                    DELETED = false
+                                };
+                                productCurrencies.Add(curr);
+                            }
                         }
 
-                        foreach (var item in collateralModel.ToList())
+                        if (collateralModel.Count() > 0)
                         {
-                            var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
+                            foreach (var item in collateralModel.ToList())
                             {
-                                PRODUCTID = item.TEMP_PRODUCTID,
-                                //PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
-                                COLLATERALTYPEID = item.COLLATERALTYPEID,
-                                COMPANYID = item.COMPANYID,
-                                CREATEDBY = item.CREATEDBY,
-                                DATETIMECREATED = genSetup.GetApplicationDate(),
-                                DELETED = false,
-                            };
-                            productCollateral.Add(productCollaterals);
+                                var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
+                                {
+                                    PRODUCTID = item.TEMP_PRODUCTID,
+                                    //PRODUCTCOLLATERALTYPEID = item.PRODUCTCOLLATERALTYPEID,
+                                    COLLATERALTYPEID = item.COLLATERALTYPEID,
+                                    COMPANYID = item.COMPANYID,
+                                    CREATEDBY = item.CREATEDBY,
+                                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                                    DELETED = false,
+                                };
+                                productCollateral.Add(productCollaterals);
+                            }
+                        }
+
+                        if (feeModel.Count() > 0)
+                        {
+                            foreach (var item in feeModel.ToList())
+                            {
+                                var feeList = new TBL_PRODUCT_CHARGE_FEE()
+                                {
+                                    //ProductId = item.productId,
+                                    //ProductFeeId = item.ProductFeeId,
+                                    CHARGEFEEID = item.CHARGEFEEID,
+                                    DEPENDENTAMOUNT = item.DEPENDENTAMOUNT,
+                                    RATEVALUE = item.RATEVALUE,
+                                    COMPANYID = (int)item.COMPANYID,
+                                    CREATEDBY = (int)item.CREATEDBY,
+                                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                                    DELETED = false
+                                };
+                                //product.TBL_PRODUCT_CHARGE_FEE.Add(feeList);
+
+                                productFees.Add(feeList);
+                            }
                         }
 
                         if (productModel != null)
@@ -1753,6 +1810,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                     COLLATERAL_FCY_LIMIT = productBehaviourModel.COLLATERAL_FCY_LIMIT,
                                     CUSTOMER_LIMIT = productBehaviourModel.CUSTOMER_LIMIT,
                                     PRODUCT_LIMIT = productBehaviourModel.PRODUCT_LIMIT,
+                                    INVOICE_LIMIT = productBehaviourModel.INVOICE_LIMIT,
                                     ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE,
                                     ISTEMPORARYOVERDRAFT = productBehaviourModel.ISTEMPORARYOVERDRAFT,
                                     REQUIRECASAACCOUNT = productBehaviourModel.REQUIRECASAACCOUNT
@@ -1762,24 +1820,6 @@ namespace FintrakBanking.Repositories.Setups.General
                                 productBehaviourModel.ISCURRENT = false;
                                 product.TBL_PRODUCT_BEHAVIOUR.Add(productBehaviour);
 
-                            }
-                            foreach (var item in feeModel.ToList())
-                            {
-                                var feeList = new TBL_PRODUCT_CHARGE_FEE()
-                                {
-                                    //ProductId = item.productId,
-                                    //ProductFeeId = item.ProductFeeId,
-                                    CHARGEFEEID = item.CHARGEFEEID,
-                                    DEPENDENTAMOUNT = item.DEPENDENTAMOUNT,
-                                    RATEVALUE = item.RATEVALUE,
-                                    COMPANYID = (int)item.COMPANYID,
-                                    CREATEDBY = (int)item.CREATEDBY,
-                                    DATETIMECREATED = genSetup.GetApplicationDate(),
-                                    DELETED = false
-                                };
-                                //product.TBL_PRODUCT_CHARGE_FEE.Add(feeList);
-
-                                productFees.Add(feeList);
                             }
 
                         }
@@ -1983,7 +2023,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     COLLATERAL_LCY_LIMIT = behaviour.collateralLcyLimit,
                     COLLATERAL_FCY_LIMIT = behaviour.collateralFcyLimit,
                     CUSTOMER_LIMIT = behaviour.customerLimit,
-                    PRODUCT_LIMIT = behaviour.productLimit,
+                    PRODUCT_LIMIT = behaviour.invoiceLimit,
+                    INVOICE_LIMIT = behaviour.productLimit,
                     ISINVOICEBASED = behaviour.isInvoiceBased,
                     ISTEMPORARYOVERDRAFT = behaviour.isTemporaryOverDraft,
                     ALLOWFUNDUSAGE = behaviour.allowFundUsage,
@@ -2105,7 +2146,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingProductCollateral = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
 
                     // Remove exisiting product fees, currency and collaterals
-                    if (existingProductCurrencies.Count > 0)
+
+                    if (existingProductCurrencies.Count > 0 && productModel.currencies.Count()>0)
                     {
                         foreach (var curr in existingProductCurrencies)
                         {
@@ -2113,7 +2155,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         }
                     }
 
-                    if (existingProductFees.Count > 0)
+                    if (existingProductFees.Count > 0 && productModel.fees.Count()>0)
                     {
                         foreach (var fee in existingProductFees)
                         {
@@ -2121,7 +2163,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         }
                     }
 
-                    if (existingProductCollateral.Count > 0)
+                    if (existingProductCollateral.Count > 0 && productModel.collaterals.Count()>0)
                     {
                         foreach (var coll in existingProductCollateral)
                         {
@@ -2129,45 +2171,54 @@ namespace FintrakBanking.Repositories.Setups.General
                         }
                     }
 
-                    foreach (var item in productModel.currencies)
+                    if (productModel.currencies.Count() > 0)
                     {
-                        var productCurrency = new TBL_TEMP_PRODUCT_CURRENCY
+                        foreach (var item in productModel.currencies)
                         {
-                            //ProductId = (short)item.productId,
-                            CURRENCYID = item.currencyId,
-                            CREATEDBY = item.createdBy,
-                            DATETIMECREATED = genSetup.GetApplicationDate()
-                        };
-                        productCurrencies.Add(productCurrency);
+                            var productCurrency = new TBL_TEMP_PRODUCT_CURRENCY
+                            {
+                                //ProductId = (short)item.productId,
+                                CURRENCYID = item.currencyId,
+                                CREATEDBY = item.createdBy,
+                                DATETIMECREATED = genSetup.GetApplicationDate()
+                            };
+                            productCurrencies.Add(productCurrency);
+                        }
                     }
 
-                    foreach (var item in productModel.fees)
+                    if (productModel.fees.Count() > 0)
                     {
-                        var fee = new TBL_TEMP_PRODUCT_CHARGE_FEE()
+                        foreach (var item in productModel.fees)
                         {
-                            //ProductId = item.productId,
-                            CHARGEFEEID = item.feeId,
-                            DEPENDENTAMOUNT = item.dependentAmount,
-                            RATEVALUE = item.rateValue,
-                            COMPANYID = productModel.companyId,
-                            CREATEDBY = (int)item.createdBy,
-                            DATETIMECREATED = genSetup.GetApplicationDate(),
-                            DELETED = false
-                        };
-                        productFees.Add(fee);
+                            var fee = new TBL_TEMP_PRODUCT_CHARGE_FEE()
+                            {
+                                //ProductId = item.productId,
+                                CHARGEFEEID = item.feeId,
+                                DEPENDENTAMOUNT = item.dependentAmount,
+                                RATEVALUE = item.rateValue,
+                                COMPANYID = productModel.companyId,
+                                CREATEDBY = (int)item.createdBy,
+                                DATETIMECREATED = genSetup.GetApplicationDate(),
+                                DELETED = false
+                            };
+                            productFees.Add(fee);
+                        }
                     }
 
-                    foreach (var item in productModel.collaterals)
+                    if (productModel.collaterals.Count() > 0)
                     {
-                        var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYP()
+                        foreach (var item in productModel.collaterals)
                         {
-                            //ProductId = item.productId,
-                            COLLATERALTYPEID = item.collateralTypeId,
-                            COMPANYID = productModel.companyId,
-                            CREATEDBY = item.createdBy,
-                            DATETIMECREATED = genSetup.GetApplicationDate()
-                        };
-                        productCollaterals.Add(collateral);
+                            var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYP()
+                            {
+                                //ProductId = item.productId,
+                                COLLATERALTYPEID = item.collateralTypeId,
+                                COMPANYID = productModel.companyId,
+                                CREATEDBY = item.createdBy,
+                                DATETIMECREATED = genSetup.GetApplicationDate()
+                            };
+                            productCollaterals.Add(collateral);
+                        }
                     }
 
                     var tempProductToUpdate = existingTempProduct;
@@ -2240,6 +2291,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                             ISINVOICEBASED = productModel.productBehaviour.isInvoiceBased,
                             PRODUCT_LIMIT = productModel.productBehaviour.productLimit,
+                            INVOICE_LIMIT = productModel.productBehaviour.invoiceLimit,
                             ISTEMPORARYOVERDRAFT = productModel.productBehaviour.isTemporaryOverDraft,
                             ALLOWFUNDUSAGE = productModel.productBehaviour.allowFundUsage,
                             DATETIMECREATED = DateTime.Now,
@@ -2264,51 +2316,59 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     var targetProduct = context.TBL_PRODUCT.Find(productId);
                     var targetProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == targetProduct.PRODUCTID).FirstOrDefault();
-                    //Storing the updated product currencies
-                    foreach (var item in productModel.currencies)
+                     //Storing the updated product currencies
+                    if (productModel.currencies.Count() > 0)
                     {
-                        var currency = new TBL_TEMP_PRODUCT_CURRENCY()
+                        foreach (var item in productModel.currencies)
                         {
-                            //ProductId = item.productId,
-                            CURRENCYID = item.currencyId,
-                            CREATEDBY = productModel.createdBy,
-                            DATETIMECREATED = genSetup.GetApplicationDate()
-                        };
-                        productCurrencies.Add(currency);
+                            var currency = new TBL_TEMP_PRODUCT_CURRENCY()
+                            {
+                                //ProductId = item.productId,
+                                CURRENCYID = item.currencyId,
+                                CREATEDBY = productModel.createdBy,
+                                DATETIMECREATED = genSetup.GetApplicationDate()
+                            };
+                            productCurrencies.Add(currency);
+                        }
                     }
 
-                    foreach (var item in productModel.fees)
+                    if (productModel.fees.Count() > 0)
                     {
-                        var fee = new TBL_TEMP_PRODUCT_CHARGE_FEE()
+                        foreach (var item in productModel.fees)
                         {
-                            CHARGEFEEID = item.feeId,
-                            COMPANYID = productModel.companyId,
+                            var fee = new TBL_TEMP_PRODUCT_CHARGE_FEE()
+                            {
+                                CHARGEFEEID = item.feeId,
+                                COMPANYID = productModel.companyId,
 
-                            RATEVALUE = item.rateValue,
-                            DEPENDENTAMOUNT = item.dependentAmount,
+                                RATEVALUE = item.rateValue,
+                                DEPENDENTAMOUNT = item.dependentAmount,
 
-                            CREATEDBY = item.createdBy,
-                            DATETIMECREATED = genSetup.GetApplicationDate(),
-                            DELETED = false,
-                            //IsCurrent = true
-                        };
-                        productFees.Add(fee);
+                                CREATEDBY = item.createdBy,
+                                DATETIMECREATED = genSetup.GetApplicationDate(),
+                                DELETED = false,
+                                //IsCurrent = true
+                            };
+                            productFees.Add(fee);
+                        }
                     }
 
-                    foreach (var item in productModel.collaterals)
+                    if (productModel.collaterals.Count() > 0)
                     {
-                        var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYP()
+                        foreach (var item in productModel.collaterals)
                         {
-                            //ProductId = item.productId,
-                            COLLATERALTYPEID = item.collateralTypeId,
-                            COMPANYID = item.companyId,
-                            CREATEDBY = item.createdBy,
-                            DATETIMECREATED = genSetup.GetApplicationDate()
-                        };
-                        productCollaterals.Add(collateral);
+                            var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYP()
+                            {
+                                //ProductId = item.productId,
+                                COLLATERALTYPEID = item.collateralTypeId,
+                                COMPANYID = item.companyId,
+                                CREATEDBY = item.createdBy,
+                                DATETIMECREATED = genSetup.GetApplicationDate()
+                            };
+                            productCollaterals.Add(collateral);
+                        }
                     }
-
-                    //End of storing the updated product currencies
+                        //End of storing the updated product currencies
                     tempProduct = new TBL_TEMP_PRODUCT()
                     {
                         ISFACILITYLINE = productModel.isFacilityLine,
@@ -2380,6 +2440,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ISCURRENT = true,
                         ISINVOICEBASED = productModel.productBehaviour.isInvoiceBased,
                         PRODUCT_LIMIT = productModel.productBehaviour.productLimit,
+                        INVOICE_LIMIT = productModel.productBehaviour.invoiceLimit,
                         ALLOWFUNDUSAGE = productModel.productBehaviour.allowFundUsage,
                         ISTEMPORARYOVERDRAFT = productModel.productBehaviour.isTemporaryOverDraft,
                         DATETIMECREATED = DateTime.Now,

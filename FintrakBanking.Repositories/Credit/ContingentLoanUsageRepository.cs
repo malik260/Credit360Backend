@@ -93,7 +93,8 @@ namespace FintrakBanking.Repositories.Credit
                                 amountRequested = r.CUSTOMERPROPOSEDAMOUNT,
                                 loanReviewApplicationId = r.LOANREVIEWAPPLICATIONID,
                                 operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == l.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
-                                loanApplicationNumber=l.APPLICATIONREFERENCENUMBER
+                                loanApplicationNumber=l.APPLICATIONREFERENCENUMBER,
+
 
                             }).ToList();
 

@@ -122,7 +122,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.AdhocAppraisalMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "ADHOC APPLICATION") });
         }
 
         [HttpPost]
@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LcAppraisalMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC ISSUANCE request has been APPROVED successfully" : "The LC ISSUANCE request has been REJECTED successfully") : "The LC ISSUANCE request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC ISSUANCE") });
         }
 
         [HttpPost]
@@ -152,7 +152,37 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LcReleaseMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC SHIPPING DOCUMENTS RELEASE request has been APPROVED successfully" : "The LC SHIPPING DOCUMENTS RELEASE request has been REJECTED successfully") : "The LC SHIPPING DOCUMENTS RELEASE request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC RELEASE") });
+        }
+
+        [HttpPost]
+        [Route("lc-cancelation/forward")]
+        public HttpResponseMessage LcCancelationMemorandum([FromBody] LcForwardViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.LcCancelationMemorandum(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC CANCELATION") });
+        }
+
+        [HttpPost]
+        [Route("lc/enhancement-forward")]
+        public HttpResponseMessage LcEnhancementMemorandum([FromBody] LcForwardViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.LcEnhancementMemorandum(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC ENHANCEMENT") });
         }
 
         [HttpPost]
@@ -167,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LcUssanceMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC USANCE request has been APPROVED successfully" : "The LC USANCE request has been REJECTED successfully") : "The LC USANCE request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC USSANCE") });
         }
 
         [HttpPost]
@@ -182,7 +212,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LetterGenerationRequestMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LETTER GENERATION request has been APPROVED successfully" : "The LETTER GENERATION request has been REJECTED successfully") : "The LETTER GENERATION request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LETTER GENERATION") });
         }
 
         [HttpPost]
@@ -197,7 +227,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The Collateral swap request has been acted on successfully" : "The Collateral swap request has been APPROVED successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "COLLATERAL SWAP") });
         }
 
 

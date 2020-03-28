@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Repositories.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,7 +89,7 @@ namespace FintrakBanking.Repositories.Credit
                  lastComment = x.trail == null ? "" : x.trail.COMMENT,
                  toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
                  requestStaffId = x.trail == null ? 0 : x.trail.REQUESTSTAFFID,
-
+                 systemArrivalDate = x.application.DATETIMECREATED,
                  applicationDate = x.application.APPLICATIONDATE,
                  approvalStatus = x.application.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                  approvalStatusId = (int)x.application.APPROVALSTATUSID,
@@ -193,6 +194,7 @@ namespace FintrakBanking.Repositories.Credit
             int staffId = user.staffId;
             int branchId = user.BranchId;
             int companyId = user.companyId;
+            var staff = context.TBL_STAFF.FirstOrDefault(O => O.STAFFID == staffId);
 
             var approvalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication)
                 .Select(x=>x.OPERATIONID).ToList();
@@ -241,6 +243,8 @@ namespace FintrakBanking.Repositories.Credit
                  (alaba, trail) => new { application = alaba.ab.a, trail, branch = alaba.b, customer = alaba.c })
              .Select(x => new LoanReviewApplicationViewModel
              {
+                 staffId = staffId,
+                 staffRoleCode = context.TBL_STAFF_ROLE.FirstOrDefault(O => O.STAFFROLEID == staff.STAFFROLEID).STAFFROLECODE,
                  //approvalStateId = trail == null ? 0 : trail.APPROVALSTATEID,
                  approvalState = x.trail == null ? "Pending" : x.trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                  approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
@@ -254,6 +258,7 @@ namespace FintrakBanking.Repositories.Credit
                  //creditAppraisalLoanApplicationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == d.LOANID select aa.LOANAPPLICATIONID).FirstOrDefault(),
                  applicationDate = x.application.APPLICATIONDATE,
                  approvalStatus = x.application.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                 systemArrivalDate = x.application.DATETIMECREATED,
                  approvalStatusId = (int)x.application.APPROVALSTATUSID,
                  createdBy = x.application.CREATEDBY,
                  loanReviewApplicationId = x.application.LOANAPPLICATIONID,
@@ -602,7 +607,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
-                    DELETED = false
+                    DELETED = false,
+                    CURRENCYID = (short)loan.currencyId,
                     //LOANREFERENCENUMBER = loan.loanReferenceNumber
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
@@ -805,6 +811,20 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
             workflow.IsFlowTest = model.isFlowTest;
+            workflow.IsFromPc = model.isFromPc;
+            workflow.LevelBusinessRule = new LevelBusinessRule
+            {
+                Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                PepAmount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                Pep = model.politicallyExposed,
+                //InsiderRelated = appl.ISRELATEDPARTY ?? false,
+                ProjectRelated = appl.ISPROJECTRELATED ?? false,
+                OnLending = appl.ISONLENDING ?? false,
+                InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
+                WithInstruction = appl.WITHINSTRUCTION ?? false,
+                //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
+                DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+            };
 
 
             if (model.forwardAction == 8 || model.forwardAction == 9)
@@ -1208,6 +1228,7 @@ namespace FintrakBanking.Repositories.Credit
                 result = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Select(loan => new LoanViewModel
                 {
                     customerId = loan.CUSTOMERID,
+                    currencyId = loan.CURRENCYID,
                     effectiveDate = startDate,
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
@@ -1222,6 +1243,7 @@ namespace FintrakBanking.Repositories.Credit
                 result = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId).Select(loan => new LoanViewModel
                 {
                     customerId = loan.CUSTOMERID,
+                    currencyId = loan.CURRENCYID,
                     effectiveDate = startDate,
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
@@ -1236,6 +1258,7 @@ namespace FintrakBanking.Repositories.Credit
                 result = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).Select(loan => new LoanViewModel
                 {
                     customerId = loan.CUSTOMERID,
+                    currencyId = loan.CURRENCYID,
                     effectiveDate = startDate,
                     maturityDate = loan.MATURITYDATE,
                     interestRate = 0,
@@ -1250,6 +1273,7 @@ namespace FintrakBanking.Repositories.Credit
                 result = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == loanId).Select(loan => new LoanViewModel
                 {
                     customerId = loan.CUSTOMERID,
+                    currencyId = loan.CURRENCYID,
                     effectiveDate = startDate,
                     tenorUsed = loan.APPROVEDTENOR,
                     interestRate = loan.APPROVEDINTERESTRATE,
@@ -1494,8 +1518,11 @@ namespace FintrakBanking.Repositories.Credit
                                    applicationStatusId = a.APPLICATIONSTATUSID,
                                    applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(k => k.APPLICATIONSTATUSID == a.APPLICATIONSTATUSID).Select(k => k.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
                                    branchName = a.TBL_BRANCH.BRANCHNAME,
-                                   relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                                   relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                   //relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                   //relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                   relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPOFFICERID).Select(o=>o.FIRSTNAME +" "+o.MIDDLENAME+ " "+o.LASTNAME).FirstOrDefault(),
+                                   relationshipManagerName = context.TBL_STAFF.Where(s => s.STAFFID == l.RELATIONSHIPMANAGERID).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+
                                    createdBy = a.CREATEDBY,
                                    operationId = a.OPERATIONID,
                                    isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()
@@ -1561,8 +1588,11 @@ namespace FintrakBanking.Repositories.Credit
                                         applicationStatusId = a.APPLICATIONSTATUSID,
                                         applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(k => k.APPLICATIONSTATUSID == a.APPLICATIONSTATUSID).Select(k => k.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
                                         branchName = a.TBL_BRANCH.BRANCHNAME,
-                                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                        //relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                        //relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+
                                         createdBy = a.CREATEDBY,
                                         operationId = a.OPERATIONID,
                                         isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()

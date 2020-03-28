@@ -967,12 +967,12 @@ namespace FintrakBanking.Repositories.Setups.General
                             {
                                 emailList = emailList + ";" + zonalHead.EMAIL;
 
-                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+                               /* var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
 
                                 if (groupHead != null)
                                 {
                                     emailList = emailList + ";" + groupHead.EMAIL;
-                                }
+                                }*/
                             }
                         }
                     }
@@ -1271,6 +1271,85 @@ namespace FintrakBanking.Repositories.Setups.General
                 SendAlertNotification(alerts);
             }
         }
+
+        //public void GetDigitalLoanExceptionNPL()
+        //{
+        //    //GetDigitalLoanExceptionNPL method
+        //    var exceptionNPLs = ( from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+
+        //    if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+        //    {
+
+        //        foreach (var exceptionNPL in exceptionNPLs)
+        //        {
+        //            var alertTitle = "DIGITAL LOAN EXCEPTION-NPL";
+        //            var alertTemplate = "This is to inform you that "+ exceptionNPL.PRODUCTNAME +" has increased by {{percentahe}}. Please click here for details of this report" ;
+        //            string emailList = "";
+        //            var staffFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == staff.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
+        //            if (staffFullName == "vacant" || staffFullName == "")
+        //            {
+        //                staffFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == staff.misCode).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+        //            }
+        //            emailList = GetBusinessUsersEmails(staff.misCode);
+
+        //            List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+        //            var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
+
+        //            if (loanInformation != null && loanInformation.Count() > 0)
+        //            {
+        //                var n = 0;
+        //                var result = $@"
+        //             <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+        //                <tr>
+        //                    <td><b>S/N</b></td>
+        //                    <td><b>Customer Name</b></td>
+        //                    <td><b>Reference Number</b></td>
+        //                    <td><b>Amount</b></td>
+        //                    <td><b>Maturity Date</b></td>
+        //                    <td><b>Number Of Days</b></td>
+        //                </tr>
+        //             ";
+
+        //                foreach (var t in loanInformation)
+        //                {
+        //                    n++;
+
+        //                    var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+        //                    var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
+        //                    int numberOfDays = (t.MATURITYDATE.Value - DateTime.Now).Days;
+
+        //                    result = result + $@"
+        //                <tr>
+        //                    <td>{n}</td>
+        //                    <td>{t.CUSTOMERNAME}</td>
+        //                    <td>{t.REFERENCENUMBER}</td>
+        //                    <td>{$"{amount}"}</td>
+        //                    <td>{$"{maturityDate}"}</td>
+        //                    <td>{numberOfDays}</td>
+        //                </tr>
+        //                ";
+        //                }
+
+        //                result = result + $"</table>";
+
+        //                alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
+        //                alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+
+        //                emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+        //                //var em = "benjamin.gbaaikye@fintraksoftware.com";
+        //                alert.receiverEmailList.Add(emailList);
+        //                alert.template = alertTemplate;
+        //                alert.alertTitle = alertTitle;
+        //                alert.canFire = true;
+        //                alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+        //                alerts.Add(alert);
+        //            }
+        //        }
+
+        //        SendAlertNotification(alerts);
+        //    }
+        //}
         public void GetCreditCardMaturingObligations()
         {
             // GetCreditCardMaturingObligations method

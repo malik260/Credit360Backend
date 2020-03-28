@@ -105,5 +105,12 @@
         public short? LOANAPPLICATIONTYPEID { get; set; }
         public short? PRODUCT_CLASS_PROCESSID { get; set; }
         public decimal? APPROVEDAMOUNT { get; set; }
+
+        public bool? ISPROJECTRELATED { get; set; }
+        public bool? ISONLENDING { get; set; }
+        public bool? ISINTERVENTIONFUNDS { get; set; }
+        public bool? WITHINSTRUCTION { get; set; }
+        public bool? DOMICILIATIONNOTINPLACE { get; set; }
+
     }
 }

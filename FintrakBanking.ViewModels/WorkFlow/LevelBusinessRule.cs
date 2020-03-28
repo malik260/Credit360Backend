@@ -14,7 +14,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool OnLending { get; set; }
         public bool InterventionFunds { get; set; }
         public bool OrrBasedApproval { get; set; }
-        public bool WithoutInstruction { get; set; }
+        public bool WithInstruction { get; set; }
         public bool DomiciliationNotInPlace { get; set; }
     }
 }

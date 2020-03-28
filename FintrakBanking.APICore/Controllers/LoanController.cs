@@ -638,8 +638,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("loan-booking/approval/{loanBookingRequestId}")]
-        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
+        [Route("loan-booking/approval/{loanBookingRequestId}/{isManual}")]
+        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId, bool isManual)
         {
             model.applicationUrl = HttpContext.Current.Request.Path;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -648,7 +648,7 @@ namespace FintrakBanking.APICore.Controllers
             model.BranchId = (short)token.GetBranchId;
             model.staffId = token.GetStaffId;
 
-            var responseId = repo.GoForApproval(model, loanBookingRequestId);
+            var responseId = repo.GoForApproval(model, loanBookingRequestId, isManual);
             var dynamicMessage = string.Empty;
             if (responseId == 1)
             {
@@ -1095,9 +1095,9 @@ namespace FintrakBanking.APICore.Controllers
             entity.userIPAddress = Request.RequestUri.Host;
             entity.createdBy = token.GetStaffId;
 
-            bool data = repo.ReferBackBooking(entity);
+            var response = repo.ReferBackBooking(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request was sent to " + response.nextPersonName + " successful" });
         }
 
 

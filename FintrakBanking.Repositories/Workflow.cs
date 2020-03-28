@@ -77,6 +77,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool endProcess = false;
         private AlertPlaceholders placeholders = null;
         private LevelBusinessRule levelBusinessRule = null;
+        private bool? isFromPc = false;
+        private string flow_log = String.Empty;
         //private WorkflowResponse response = null;
 
         private float? interestRateConcession = null;
@@ -128,8 +130,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         public AlertPlaceholders Placeholders { set { placeholders = value; } }
         public WorkflowResponse Response { get { return response; } set { response = value; } }
         public bool isCrossOperationProcess { get; private set; }
-        
-        
+        public bool? IsFromPc { set { isFromPc = value; } }
+        public string Flow_log { set { flow_log = value; } }
+
+
+
 
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
@@ -141,13 +146,14 @@ namespace FintrakBanking.Repositories.WorkFlow
         private IEnumerable<WorkflowSetup> approvalGrid;
         private int slaInterval = 780; // 1month
         List<ReportingLine> line = new List<ReportingLine>();
-
+        private List<int> creditOperationIds;
         public bool LogActivity()
         {
             ValidateCall();
             InitializeOperation();
             if (Authorization() == false) { return false; }
 
+            creditOperationIds = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(o => o.OPERATIONID).ToList();
             this.trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
                                 && x.OPERATIONID == this.operationId
@@ -158,6 +164,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             lastRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && lastRequest != null) //if it is not initiation
+            {
+                throw new SecureException("An error occured, Next Level can't be preset unless on refer back. Kindly refresh your browser and try again.");
+            }
 
             this.referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
@@ -169,13 +179,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                             ).ToList();
 
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
+            SaveFlowLog("Initiation");
 
 
             if (lastRequest == null)
             {
                 if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
-
             }
             else
             {
@@ -190,7 +200,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (lastRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(lastRequest.REQUESTSTAFFID, lastRequest.FROMAPPROVALLEVELID, lastRequest.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
             }
-
+            SaveFlowLog("After last request Validation");
             if (lastRequest !=null) CustomJump(lastRequest.TOAPPROVALLEVELID, lastRequest.FROMAPPROVALLEVELID);
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
@@ -198,7 +208,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.useOrganogram == true) toStaffId = GetReportingLineStaffId();
 
-            if (this.neededNumberOfApproval > 1 && ActionIsApprovalDecision())
+            //if (this.neededNumberOfApproval > 1 && ActionIsApprovalDecision())
+            if (this.neededNumberOfApproval > 1)
             {
                 ResolveLevelMultipleApproval();
             }
@@ -239,6 +250,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
+            SaveFlowLog("Before Final Trail Logging");
             if (this.isFlowTest) return true;
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
@@ -260,13 +272,20 @@ namespace FintrakBanking.Repositories.WorkFlow
                 LOOPEDROLEID = this.loopedRoleId,
                 LOOPEDSTAFFID = this.loopedStaffId,
                 REFEREBACKSTATEID = this.referBackStateId,
-                DESTINATIONOPERATIONID = this.destinationOperationId
-
+                DESTINATIONOPERATIONID = this.destinationOperationId,
+                ISFROMPC = this.isFromPc,
+                FLOW_LOG = this.flow_log
             });
 
-            if (this.deferredExecution) { return true; }
+            if (this.deferredExecution)
+            {
+                return true;
+            }
             this.saved = context.SaveChanges() > 0;
-            if (this.saved) return true;
+            if (this.saved)
+            {
+                return true;
+            }
 
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
         }
@@ -379,6 +398,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 var orderedAllocation = staffAllocations.Where(x => staffInrole.Select(c => c.STAFFID).Contains(x.staffId)).OrderBy(x => x.pendingJobCount).FirstOrDefault();
                 if (this.toStaffId == null) { this.toStaffId = orderedAllocation.staffId; }
+                SaveFlowLog("After AllocateBySBU");
 
             }
         }
@@ -394,12 +414,28 @@ namespace FintrakBanking.Repositories.WorkFlow
                             ).ToList();
         }
 
+        private bool IsInAllGridLevels(IEnumerable<WorkflowSetup> grid, int staffId)
+        {
+            foreach(var level in grid)
+            {
+                var levelRole = context.TBL_APPROVAL_LEVEL.Find(level.ApprovalLevelId).STAFFROLEID;
+                var staff = context.TBL_STAFF.Find(staffId);
+                var levelRoleIsStaffRole = levelRole == staff.STAFFROLEID;
+                var staffInLevelStaffs = context.TBL_APPROVAL_LEVEL_STAFF.Any(l => l.STAFFID == staffId && l.APPROVALLEVELID == level.ApprovalLevelId);
+                if (!levelRoleIsStaffRole && !staffInLevelStaffs)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void MakerCheckerControl()
         {
-            if (statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
+            if (this.approvalGrid.Count() > 1 &&  statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
             {
                 var firstRequest = trailLog.OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
-                if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
+                if (firstRequest.REQUESTSTAFFID == this.staffId && IsInAllGridLevels(this.approvalGrid, this.staffId)) throw new SecureException("You cannot approve a process you initiated!");
             }
 
             var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
@@ -599,6 +635,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var p = context.TBL_STAFF.Find(this.toStaffId);
                 response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
             }
+
+            if (this.loopedStaffId != null && this.loopedStaffId > 0)
+            {
+                var p = context.TBL_STAFF.Find(this.loopedStaffId);
+                response.nextPersonId = this.loopedStaffId;
+                response.nextLevelName = p.TBL_STAFF_ROLE.STAFFROLENAME;
+                response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
+            }
         }
 
         public void NextProcess(
@@ -701,6 +745,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
             
             approvalGrid = approvalLevels;
+            SaveFlowLog("After Get Approval Levels");
+
             next = approvalLevels.FirstOrDefault();
 
             if (sameDesk) 
@@ -710,6 +756,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             if (this.nextLevelId != null) next = approvalLevels.FirstOrDefault(x => x.ApprovalLevelId == (int)this.nextLevelId);
+            SaveFlowLog("After Initial Next is Set");
 
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
             {
@@ -789,6 +836,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     (x.GroupPosition > currentLevel.GroupPosition) // next group
                     || (x.LevelPosition > currentLevel.LevelPosition && x.GroupPosition == currentLevel.GroupPosition) // same group
                     );
+            SaveFlowLog("if this.nextLevelId == null && fromLevelId != null");
             }
             else
             {
@@ -802,11 +850,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.slaInterval = nextlevel.SLAINTERVAL;
                     next.RouteViaStaffOrganogram = nextlevel.ROUTEVIASTAFFORGANOGRAM;
                 }
+             SaveFlowLog("Else of (if this.nextLevelId == null && fromLevelId != null)");
             }
 
             if (next == null) // end of process
             {
                 this.nextLevelId = null;
+                SaveFlowLog("if (next == null)");
                 return true;
             }
             else
@@ -988,21 +1038,26 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? GetReportingLineStaffId() // if workflow is forced to use organogram
         {
             var businessRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
+            var fromStaff = context.TBL_STAFF.Find(this.staffId);
             if (next == null) { return null; }
             if (this.toStaffId != null) { return toStaffId; }
             //if (this.toStaffId != null) { return null; }
-            if (this.externalInitialization == true) { return null; }
+            if (this.externalInitialization == true && !businessRoleIds.Contains(fromStaff.STAFFROLEID)) { return null; }
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
-            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || this.fromLevelId == null)
+            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (this.fromLevelId == null && !businessRoleIds.Contains(fromStaff.STAFFROLEID)))
             {
                 return null;
             }
             ReportingLine super = line.FirstOrDefault(x => x.levelRoleId == next.DefaultRoleId && x.levelIds.Contains(next.ApprovalLevelId));
             if (super == null)
             {
-                throw new SecureException("No Staff Was Setup as Your Supervisor!");
+                if (this.isFlowTest)
+                {
+                    return null;
+                }
+                throw new SecureException("No Staff Was Setup as Your Supervisor! Please select the approver to route your request to.");
                 //return null;
             }
 
@@ -1111,9 +1166,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool IsLastApprover(TBL_APPROVAL_LEVEL level)
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId).ToList();
-            if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE)
+            if (IsLastLevel(approvalLevels, level) && (level.CANAPPROVE))
             //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
-                {
+            {
                 return true;
             }
                 return false;
@@ -1380,7 +1435,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.ONLENDING && levelBusinessRule.OnLending == true) flagChecked = true;
             if (rule.INTERVENTIONFUNDS && levelBusinessRule.InterventionFunds == true) flagChecked = true;
             if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == true) flagChecked = true;
-            if (rule.WITHOUTINSTRUCTION && levelBusinessRule.WithoutInstruction == true) flagChecked = true;
+            if (rule.WITHINSTRUCTION && levelBusinessRule.WithInstruction == true) flagChecked = true;
             if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
 
             if (limitChecked && flagChecked) return limitChecked && limitChecked;
@@ -1591,6 +1646,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             keepPending = model.keepPending;
             deferredExecution = model.deferredExecution;
             IsFlowTest = model.isFlowTest;
+            IsFromPc = model.isFromPc;
             destinationOperationId = model.destinationOperationId;
             businessUnitId = model.businessUnitId;
             var response = LogActivity();
@@ -1648,7 +1704,54 @@ namespace FintrakBanking.Repositories.WorkFlow
             var productClass = context.TBL_PRODUCT_CLASS.Find(productClassIds.FirstOrDefault()); // TODO: COUTION! which product to be prioritized?
             return productClass.PRODUCTCLASSID;
         }
+
+        private void SaveFlowLog(string stage)
+        {
+            if (!creditOperationIds.Contains(this.operationId))
+            {
+                return;
+            }
+            String flowLog = String.Empty;
+            flowLog += "{" + Environment.NewLine;
+            flowLog += "Stage " + stage + "," + Environment.NewLine;
+            flowLog += "statusId " + this.statusId + "," + Environment.NewLine;
+            flowLog += "fromLevelId " + this.fromLevelId + "," + Environment.NewLine;
+            flowLog += "nextLevelId " + this.nextLevelId + "," + Environment.NewLine;
+            flowLog += "staffId " + this.staffId + "," + Environment.NewLine;
+            flowLog += "toStaffId " + this.toStaffId + "," + Environment.NewLine;
+            flowLog += "targetId " + this.targetId + "," + Environment.NewLine;
+            flowLog += "operationId " + this.operationId + "," + Environment.NewLine;
+            flowLog += "productClassId " + this.productClassId + "," + Environment.NewLine;
+            flowLog += "productId " + this.productId + "," + Environment.NewLine;
+            flowLog += "exclusiveFlowChangeId " + this.exclusiveFlowChangeId + "," + Environment.NewLine;
+            flowLog += "amount " + this.amount + "," + Environment.NewLine;
+            flowLog += "requestLevelId " + this.requestLevelId + "," + Environment.NewLine;
+            flowLog += "requestStaffId " + this.requestStaffId + "," + Environment.NewLine;
+            flowLog += "currentStateId " + this.currentStateId + "," + Environment.NewLine;
+            flowLog += "approvalLevels " + ((this.approvalGrid == null) ? String.Empty : AppendApprovalDetail(this.approvalGrid.ToList()) + Environment.NewLine);
+            flowLog += "next " + ((this.next == null ) ? String.Empty : (this.next.Level?.LEVELNAME + " " + this.next.ApprovalLevelId.ToString()) + "," + Environment.NewLine);
+            flowLog += "isLoopResponse " + this.isLoopResponse + "," + Environment.NewLine;
+            flowLog += "newStateId " + this.newStateId + "," + Environment.NewLine;
+            flowLog += "isFlowTest " + this.isFlowTest + "," + Environment.NewLine;
+            flowLog += "isFromPc " + this.isFromPc + "," + Environment.NewLine;
+            flowLog += "}," + Environment.NewLine;
+            this.flow_log += flowLog;
+        }
+
+        private string AppendApprovalDetail(List<WorkflowSetup> approvalGrid)
+        {
+            var flowLog = String.Empty;
+            foreach (var level in approvalGrid)
+            {
+                flowLog += "{LevelId " + level.ApprovalLevelId + ", ";
+                flowLog += "LevelName " + level.Level?.LEVELNAME + "},";
+            }
+                return flowLog;
+        }
+
+
     }
+
 
     public class WorkflowSetup
     {
