@@ -193,6 +193,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
         [HttpGet, Route("customer-collateral/release-collateral-awaiting-approval")]
         public HttpResponseMessage GetCollateralReleaseAwaitingApproval()
         {
@@ -2294,9 +2295,9 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.DeleteProposedCollateral(model);
             if (response)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been deleted successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The collateral has been unproposed successfully" });
             }
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error unproposing this collateral" });
         }
 
         [HttpPost, Route("delete-duplicate-collateral")]
@@ -2308,7 +2309,7 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.DeleteDuplicatedCollateral(model);
             if (response)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been deleted successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The collateral has been deleted successfully" });
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "You can not delete a collateral that is not created by you" });
         }

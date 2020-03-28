@@ -161,6 +161,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             if (result.Message.IsSuccessStatusCode)
             {
+                var convenantDetail = context.TBL_LOAN_COVENANT_DETAIL.Where(c => c.LOANID == model.loanId)?.FirstOrDefault();
+                if(convenantDetail != null)
+                {
+                    convenantDetail.COVENANTDATE = DateTime.Now;
+                    convenantDetail.DATETIMEUPDATED = DateTime.Now;
+                    context.SaveChanges();
+                }
                 //if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 //{
                 //    throw new SecureException(result.APIResponse.message);
