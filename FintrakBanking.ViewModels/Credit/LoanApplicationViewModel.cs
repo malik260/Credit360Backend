@@ -168,6 +168,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
         public bool isadhocapplication { get; set; }
+        public bool isSkipAppraisalEnabled { get; set; }
         public int? exclusiveOperationId { get; set; }
         public int? flowchangeId { get; set; }
         public int? loanApprovedLimitId { get; set; }
@@ -1043,6 +1044,21 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationDetailId { get; set; }
         public int collateralId { get; set; }
         public decimal amount { get; set; }
+    }
+
+    public class FacilityModificationViewModel : GeneralEntity
+    {
+        public int loanApplicationDetailId { get; set; }
+        public short approvedProductId { get; set; }
+        public double approvedInterestRate { get; set; }
+        public int approvedTenor { get; set; }
+        public int tenorModeId { get; set; }
+        public int sectorId { get; set; }
+        public short subSectorId { get; set; }
+        public int productClassId { get; set; }
+        public int loanDetailReviewTypeId { get; set; }
+        public decimal approvedAmount { get; set; }
+        public List<ProductFeesViewModel> fees { get; set; }
     }
 
 }

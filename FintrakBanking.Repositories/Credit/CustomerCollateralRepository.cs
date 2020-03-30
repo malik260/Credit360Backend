@@ -302,11 +302,11 @@ namespace FintrakBanking.Repositories.Credit
                           {
                               a
                           }).ToList();
-            if (record.Count != 0)
+            if (record.Count > 0)
             {
                 var legal = record.Where(x => x.a.TARGETID == collateralRelease.COLLATERALCUSTOMERID && x.a.JOBTYPEID == (short)JobTypeEnum.legal).ToList();
                 var middleOfficeVerification = record.Where(x => x.a.TARGETID == collateralRelease.COLLATERALCUSTOMERID && x.a.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification).ToList();
-                if (legal.Count != 0)
+                if (legal.Count > 0)
                 {
 
                 }
@@ -316,7 +316,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 if (collateralRelease.COLLATERALRELEASETYPEID == 1) //Final Release
                 {
-                    if (middleOfficeVerification.Count != 0)
+                    if (middleOfficeVerification.Count > 0)
                     {
 
                     }
@@ -656,9 +656,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var release = context.TBL_COLLATERAL_RELEASE.Where(a => a.COLLATERALRELEASEID == entity.collateralReleaseId).FirstOrDefault();
 
-            ValidateJobRequestCheck(release);
+            //ValidateJobRequestCheck(release);
 
-            PendingJobRequestCheck(release);
+           // PendingJobRequestCheck(release);
 
 
             // var collateral = context.TBL_COLLATERAL_CUSTOMER.Find(entity.collateralId);
@@ -674,7 +674,7 @@ namespace FintrakBanking.Repositories.Credit
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                  DEVICENAME = CommonHelpers.GetDeviceName(),
+                DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
        
             };
@@ -767,7 +767,7 @@ namespace FintrakBanking.Repositories.Credit
                 saved = context.SaveChanges() > 0;
 
                 var document = documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(a => a.COLLATERALCUSTOMERID == release.COLLATERALCUSTOMERID).ToList();
-                if (document != null)
+                if (document.Count()>0)
                 {
                     foreach (var a in document)
                     {
@@ -783,7 +783,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.releaseType == 2) //Temporary Release
             {
-                if (entity.documents != null)
+                if (entity.documents.Count() > 0)
                 {
                     saved = context.SaveChanges() > 0;
 

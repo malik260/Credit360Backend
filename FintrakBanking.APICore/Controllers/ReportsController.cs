@@ -177,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan-disbursedloans")]            
         public HttpResponseMessage GetDisburstLoans(DateRange dateRange) 
         {
