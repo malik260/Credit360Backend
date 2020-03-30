@@ -2,8 +2,6 @@ namespace FintrakBanking.Entities.StagingModels
 {
     using System;
     using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
     using FintrakBanking.Entities.Models;
 
     //[DbConfigurationType(typeof(OracleDatabaseConfiguration))]
