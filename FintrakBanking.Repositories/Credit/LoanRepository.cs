@@ -4648,6 +4648,14 @@ namespace FintrakBanking.Repositories.Credit
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 }
 
+                var convenantDetail = context.TBL_LOAN_COVENANT_DETAIL.Where(c => c.LOANID == loanId)?.FirstOrDefault();
+                if (convenantDetail != null)
+                {
+                    convenantDetail.COVENANTDATE = DateTime.Now;
+                    convenantDetail.DATETIMEUPDATED = DateTime.Now;
+                    context.SaveChanges();
+                }
+
                 var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanRecord.LOANAPPLICATIONDETAILID);
                 var loanProductInfo = context.TBL_PRODUCT.Find(loanRecord.PRODUCTID);
 
@@ -4840,6 +4848,14 @@ namespace FintrakBanking.Repositories.Credit
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 }
 
+                var convenantDetail = context.TBL_LOAN_COVENANT_DETAIL.Where(c => c.LOANID == loanId)?.FirstOrDefault();
+                if (convenantDetail != null)
+                {
+                    convenantDetail.COVENANTDATE = DateTime.Now;
+                    convenantDetail.DATETIMEUPDATED = DateTime.Now;
+                    context.SaveChanges();
+                }
+
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
                     var reviewDate = revolvingLoanRecord.EFFECTIVEDATE.AddDays(31); //.BOOKINGDATE.AddMonths(1);
@@ -4875,6 +4891,7 @@ namespace FintrakBanking.Repositories.Credit
                             channel_code = "FINTRAK",
                             maker_id = staffCode,
                             checker_id = staffCode,
+                            loanId = loanId,
                             loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
                         };
@@ -5015,6 +5032,14 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(contingentLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
+                }
+
+                var convenantDetail = context.TBL_LOAN_COVENANT_DETAIL.Where(c => c.LOANID == loanId)?.FirstOrDefault();
+                if (convenantDetail != null)
+                {
+                    convenantDetail.COVENANTDATE = DateTime.Now;
+                    convenantDetail.DATETIMEUPDATED = DateTime.Now;
+                    context.SaveChanges();
                 }
 
                 contingentLoanRecord.DATEAPPROVED = DateTime.Now;

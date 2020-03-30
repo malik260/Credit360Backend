@@ -38,6 +38,7 @@ namespace FintrakBanking.ViewModels.Flexcube
         public string checker_id { get; set; }
         public string maker_id { get; set; }
         public int loanApplicationId { get; set; }
+        public int loanId { get; set; }
 
     }
 

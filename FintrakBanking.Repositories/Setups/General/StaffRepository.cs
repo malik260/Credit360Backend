@@ -2035,15 +2035,14 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-
-        public IEnumerable<simpleStaffModel> SearchApprovers(int operationId,int nextLevel, int roleId, int groupId, string searchQuery ="", int companyId=0)
+        public IEnumerable<simpleStaffModel> SearchApprovers(int levelId, string searchQuery ="", int companyId=0)
         {
-            var level = context.TBL_APPROVAL_LEVEL.Find(nextLevel);
+            var level = context.TBL_APPROVAL_LEVEL.Find(levelId);
             //var allLevelStaffs = level.TBL_APPROVAL_LEVEL_STAFF.Select(l => l.TBL_STAFF).ToList();
             
 
             //var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId, level.GROUPID);
-            var nextApprovalLvlRoleId = level.STAFFROLEID;
+            var approvalLvlRoleId = level.STAFFROLEID;
             IQueryable<simpleStaffModel> staff = null;
             IQueryable<simpleStaffModel> levelStaffs = null;
 
@@ -2070,27 +2069,46 @@ namespace FintrakBanking.Repositories.Setups.General
                                           staffRoleId = s.STAFFROLEID,
                                       }).Distinct();
 
-                staff =
-                    context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId)
-                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                    .Join(context.TBL_APPROVAL_LEVEL, mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-                    .Join(context.TBL_STAFF.Where(x => x.DELETED == false
-                         && x.STAFFROLEID == nextApprovalLvlRoleId)
-                        .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
-                        || x.MIDDLENAME.ToLower().Contains(searchQuery)
-                        || x.LASTNAME.ToLower().Contains(searchQuery)
-                        || x.STAFFCODE.ToLower().Contains(searchQuery))
-                    , mgl => mgl.l.STAFFROLEID, s => s.STAFFROLEID, (mgl, s) => new { mgl, s })
-                    .Select(o => new simpleStaffModel
-                    {
-                        staffId = o.s.STAFFID,
-                        firstName = o.s.FIRSTNAME,
-                        middleName = o.s.MIDDLENAME,
-                        lastName = o.s.LASTNAME,
-                        staffCode = o.s.STAFFCODE,
-                        staffRoleName = o.s.TBL_STAFF_ROLE.STAFFROLENAME,
-                        staffRoleId = o.s.STAFFROLEID,
-                    }).Distinct();
+                //staff =
+                //    context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId)
+                //    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                //    .Join(context.TBL_APPROVAL_LEVEL, mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+                //    .Join(context.TBL_STAFF.Where(x => x.DELETED == false
+                //         && x.STAFFROLEID == nextApprovalLvlRoleId)
+                //        .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
+                //        || x.MIDDLENAME.ToLower().Contains(searchQuery)
+                //        || x.LASTNAME.ToLower().Contains(searchQuery)
+                //        || x.STAFFCODE.ToLower().Contains(searchQuery))
+                //    , mgl => mgl.l.STAFFROLEID, s => s.STAFFROLEID, (mgl, s) => new { mgl, s })
+                //    .Select(o => new simpleStaffModel
+                //    {
+                //        staffId = o.s.STAFFID,
+                //        firstName = o.s.FIRSTNAME,
+                //        middleName = o.s.MIDDLENAME,
+                //        lastName = o.s.LASTNAME,
+                //        staffCode = o.s.STAFFCODE,
+                //        staffRoleName = o.s.TBL_STAFF_ROLE.STAFFROLENAME,
+                //        staffRoleId = o.s.STAFFROLEID,
+                //    }).Distinct();
+
+                staff = (from l in context.TBL_APPROVAL_LEVEL
+                         join s in context.TBL_STAFF on l.STAFFROLEID equals s.STAFFROLEID
+                         where l.DELETED == false && s.DELETED == false
+                         && l.APPROVALLEVELID == level.APPROVALLEVELID
+                         && (s.FIRSTNAME.ToLower().Contains(searchQuery)
+                           || s.MIDDLENAME.ToLower().Contains(searchQuery)
+                           || s.LASTNAME.ToLower().Contains(searchQuery)
+                           || s.STAFFCODE.ToLower().Contains(searchQuery))
+                         select new simpleStaffModel
+                         {
+                             staffId = s.STAFFID,
+                             firstName = s.FIRSTNAME,
+                             middleName = s.MIDDLENAME,
+                             lastName = s.LASTNAME,
+                             staffCode = s.STAFFCODE,
+                             staffRoleName = s.TBL_STAFF_ROLE.STAFFROLENAME,
+                             staffRoleId = s.STAFFROLEID,
+                         }).Distinct();
             }
             if (levelStaffs == null)
             {

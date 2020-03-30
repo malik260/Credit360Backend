@@ -919,7 +919,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var conditions = GetConditionsPrecedentToDrawdownFacility(LOANAPPLICATIONDETAILID).GroupBy(c => c.typeId).ToList(); // new
-            result = result + $@"<br />
+            if (conditions.Count() > 0) { 
+                result = result + $@"<br />
                 <h3><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
@@ -927,25 +928,26 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
                     </tr>
                  ";
-            
-            foreach (var g in conditions)
-            {
-                var n = 0;
-                var c = g.FirstOrDefault();
-                result += c.title;
-                foreach (var e in g)
+
+                foreach (var g in conditions)
                 {
-                    n++;
-                    result = result + $@"
-                    <tr>
-                        <td>{n}</td>
-                        <td>{e.name}</td>
-                    </tr>
-                    ";
+                    var n = 0;
+                    var c = g.FirstOrDefault();
+                    result += c.title;
+                    foreach (var e in g)
+                    {
+                        n++;
+                        result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{e.name}</td>
+                        </tr>
+                        ";
+                    }
+
                 }
-                
+              result = result + $"</table><br/>";
             }
-            result = result + $"</table><br/>";
             return result;
 
         }
@@ -1255,7 +1257,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -1317,7 +1319,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetFees(loanApplicationId.LOANAPPLICATIONDETAILID) + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(loanApplicationId.LOANAPPLICATIONDETAILID) + GetTransactionsDynamicsDrawdownMarkup(loanApplicationId.LOANAPPLICATIONID) + GetDrawdownApprovalsMarkupLOS2(targetId);
+            result = result + GetFees(loanApplicationId.LOANAPPLICATIONDETAILID) + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(loanApplicationId.LOANAPPLICATIONDETAILID) + GetTransactionsDynamicsDrawdownMarkup(loanApplicationId.LOANAPPLICATIONID)+ GetIsLineFacilityMarkup(bookingId.LOANAPPLICATIONDETAILID) + GetDrawdownApprovalsMarkupLOS2(targetId);
             return result;
         }
 
@@ -1733,13 +1735,15 @@ namespace FintrakBanking.Repositories.Credit
             var transactions = GetdrawdownTransactionsDynamics(loanApplicationId).GroupBy(t => t.typeId); // new
 
             var result = String.Empty;
-            result = result + $@"<br/><h3><b>TRANSACTIONS DYNAMICS</b></h3>";
-            foreach (var group in transactions)
+            if (transactions.Count() > 0)
             {
-                var n = 0;
-                var c = group.FirstOrDefault();
-                //result += c.title;
-                result = result + $@"
+                result = result + $@"<br/><h3><b>TRANSACTIONS DYNAMICS</b></h3>";
+                foreach (var group in transactions)
+                {
+                    var n = 0;
+                    var c = group.FirstOrDefault();
+                    //result += c.title;
+                    result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
                         <td colspan=2><b>{c.title}</b></td>
@@ -1750,19 +1754,81 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
                     </tr>
                  ";
-                
-                foreach (var t in group)
-                {
-                    n++;
-                    result = result + $@"
+
+                    foreach (var t in group)
+                    {
+                        n++;
+                        result = result + $@"
                         <tr>
                             <td>{n}</td>
                             <td>{t.name}</td>
                         </tr>
                 ";
+                    }
+                    result = result + $"</table>";
                 }
-                result = result + $"</table>";
             }
+            return result;
+        }
+
+        private string GetIsLineFacilityMarkup(int loanApplicationId)
+        {
+            var isLineFacility = context.TBL_LOAN_APPLICATION_DETAIL.Where(a=>a.LOANAPPLICATIONDETAILID == loanApplicationId && a.ISLINEFACILITY == true)?.FirstOrDefault();
+            var result = String.Empty;
+            var n = 0;
+            if (isLineFacility != null)
+            {
+                var isLineFacilityProduct = context.TBL_PRODUCT.Where(p => p.PRODUCTID == isLineFacility.APPROVEDPRODUCTID).Select(p => p.PRODUCTNAME)?.FirstOrDefault();
+                var approvedAmount = string.Format("{0:#,##.00}", Convert.ToDecimal(isLineFacility.APPROVEDAMOUNT));
+                var createdDate = isLineFacility.DATETIMECREATED.ToString("dd-MM-yyyy");
+                var isLineFacilityDetail = context.TBL_LOAN_BOOKING_REQUEST.Where(b=>b.LOANAPPLICATIONDETAILID == isLineFacility.LOANAPPLICATIONDETAILID && b.APPROVEDLINESTATUSID == null)?.ToList();
+                
+                result = result + $@"<br/><h3><b>LINE FACILITY DETAIL</b></h3>";
+                result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                 <tr>
+                        <td><b>Facility</b></td>
+                        <td>{isLineFacilityProduct.ToUpper()}</td>
+                        <td><b>Approved Amount</b></td>
+                        <td>{approvedAmount}</td>
+                        <td><b>Approved Date</b></td>
+                        <td>{createdDate}</td>
+                    </tr>";
+
+                if (isLineFacilityDetail.Count() > 0)
+                {
+                     result = result + $@"
+                     <tr>
+                        <td>S/N</td>
+                        <td>Customer</td>
+                        <td>Amount Requested</td>
+                        <td>Date Requested</td>
+                        <td>Account Number</td>
+                        <td>Account Name</td>
+                     </tr>";
+
+                    foreach (var group in isLineFacilityDetail)
+                    {
+                        var customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == group.CUSTOMERID).Select(c => c.FIRSTNAME + "" + c.MIDDLENAME + "" + c.LASTNAME)?.FirstOrDefault();
+                        var approvedAmount2 = string.Format("{0:#,##.00}", Convert.ToDecimal(group.AMOUNT_REQUESTED));
+                        var createdDate2 = group.DATETIMECREATED.ToString("dd-MM-yyyy");
+                        var accountNumber = context.TBL_CASA.Where(a => a.CASAACCOUNTID == group.CASAACCOUNTID).Select(a => a.PRODUCTACCOUNTNUMBER)?.FirstOrDefault();
+                        var accountName = context.TBL_CASA.Where(a => a.CASAACCOUNTID == group.CASAACCOUNTID).Select(a => a.PRODUCTACCOUNTNAME)?.FirstOrDefault();
+
+                        n++;
+                        result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{customer}</td>
+                            <td>{approvedAmount2}</td>
+                            <td>{createdDate2}</td>
+                            <td>{accountNumber}</td>
+                            <td>{accountName}</td>
+                        </tr>";
+                    }
+                    
+                }
+            }
+            result = result + $"</table><br/>";
             return result;
         }
 
@@ -5901,7 +5967,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -6696,7 +6762,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -7982,7 +8048,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8072,7 +8138,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8162,7 +8228,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8251,7 +8317,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                     <tr>
@@ -8973,7 +9039,7 @@ namespace FintrakBanking.Repositories.Credit
                
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>  
                         <tr>
-                        <td colspan=2 align=right><img src='http://localhost:4200/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
                     </tr>
                    <tr>
