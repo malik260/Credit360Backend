@@ -643,6 +643,47 @@ namespace FintrakBanking.Repositories.WorkFlow
                 response.nextLevelName = p.TBL_STAFF_ROLE.STAFFROLENAME;
                 response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
             }
+            response.responseMessage = SetResponseMessage(response);
+        }
+
+        private String SetResponseMessage(WorkflowResponse response, string itemHeading = "")
+        {
+            if (response.stateId != (int)ApprovalState.Ended)
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Referred)
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextLevelName;
+                    }
+                }
+                else
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextLevelName;
+                    }
+                }
+            }
+            else
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    return "The " + itemHeading + " request has been APPROVED successfully";
+                }
+                else
+                {
+                    return "The " + itemHeading + " request has been DISAPPROVED successfully";
+                }
+            }
         }
 
         public void NextProcess(
@@ -1042,7 +1083,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (next == null) { return null; }
             if (this.toStaffId != null) { return toStaffId; }
             //if (this.toStaffId != null) { return null; }
-            if (this.externalInitialization == true && !businessRoleIds.Contains(fromStaff.STAFFROLEID)) { return null; }
+            //if (this.externalInitialization == true && !businessRoleIds.Contains(fromStaff.STAFFROLEID)) { return null; }
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
@@ -1142,6 +1183,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (level.ISPOLITICALLYEXPOSED == true) { return true; }
             return false;
         }
+
+        //private bool WithinLevelStaffLimit(TBL_APPROVAL_LEVEL level)
+        //{
+
+        //}
 
         private bool WithinAllLimits()
         {

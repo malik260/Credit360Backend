@@ -71,6 +71,23 @@ namespace FintrakBanking.Repositories.Credit
                     });
         }
 
+        public WorkflowResponse LogApprovalForMessage(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
+        {
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.Comment = model.comment;
+            workflow.ExternalInitialization = externalInitialization;
+            workflow.StatusId = ApprovalStatusId;
+            workflow.DeferredExecution = true;
+            workflow.Amount = model.amount;
+            
+            workflow.LogActivity();
+
+            return workflow.Response;
+        }
+
         public bool LogApproval(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
         {
             if (externalInitialization)
@@ -83,6 +100,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.ExternalInitialization = externalInitialization;
                 workflow.StatusId = ApprovalStatusId;
                 workflow.Amount = model.amount;
+                if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
             }
 
             if (!externalInitialization)
@@ -95,6 +113,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.OperationId = operationId;
                 workflow.DeferredExecution = true;
                 workflow.ExternalInitialization = false;
+                if (model.toStaffId > 0) workflow.ToStaffId = model.toStaffId;
             }
 
             workflow.LogActivity();
@@ -179,7 +198,7 @@ namespace FintrakBanking.Repositories.Credit
             return totalExposures;
         }
 
-        public int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId)
+        public WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId)
         {
             using (var trans = context.Database.BeginTransaction())
             {
@@ -236,7 +255,8 @@ namespace FintrakBanking.Repositories.Credit
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                     trans.Commit();
                     context.SaveChanges();
-                    return 3;
+                    return workflow.Response;
+                    //return 3;
                 }
 
                 else if (workflow.NewState == (int)ApprovalState.Ended)
@@ -281,7 +301,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.SaveChanges();
                     trans.Commit();
-                    return 0;
+                    workflow.Response.responseMessage += " but CRMS Code Capture Might be needed.";
+                    return workflow.Response;
+                    //return 0;
                 }
 
                 else
@@ -289,7 +311,8 @@ namespace FintrakBanking.Repositories.Credit
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestInitiated;
                     context.SaveChanges();
                     trans.Commit();
-                    return 1;
+                    return workflow.Response;
+                    //return 1;
                 }
             }
 
@@ -1322,7 +1345,7 @@ namespace FintrakBanking.Repositories.Credit
         //     select (decimal?)l.OVERDRAFTLIMIT).Sum() ?? 0;
         //}
 
-        public bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> models)
+        public WorkflowResponse AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> models)
         {
             using (var trans = context.Database.BeginTransaction())
             {
@@ -1342,7 +1365,9 @@ namespace FintrakBanking.Repositories.Credit
                             //    PlaceLien(model.loanApplicationDetailId, twoFactorAuthDetails);
                             //}
                             trans.Rollback();
-                            return false;
+                            workflow.Response = null;
+                            return workflow.Response;
+                            //return false;
                         }
                     }
                     else
@@ -1350,7 +1375,9 @@ namespace FintrakBanking.Repositories.Credit
                         if (!UpdateLoanBookingRequests(applicationStatusId, model))
                         {
                             trans.Rollback();
-                            return false;
+                            workflow.Response = null;
+                            return workflow.Response;
+                            //return false;
                         }
                     }
 
@@ -1366,13 +1393,81 @@ namespace FintrakBanking.Repositories.Credit
                     //}
                 }
                 trans.Commit();
-                return true;
+                return workflow.Response;
+                //return true;
+            }
+        }
+
+        public int GetNextLevelForBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> entities)
+        {
+            var entity = entities.FirstOrDefault();
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+
+                var requestedFacility = context.TBL_PRODUCT.Find(entity.productId);
+
+                var request = new TBL_LOAN_BOOKING_REQUEST
+                {
+                    AMOUNT_REQUESTED = entity.amount_Requested,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                    LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                    CASAACCOUNTID = entity.casaAccountId,
+                    CUSTOMERID = entity.customerId,
+                    CASAACCOUNTID2 = entity.casaAccountId2,
+                    ISUSED = false,
+                    PRODUCTID = entity.productId,
+                    DATETIMECREATED = DateTime.Now,
+                    CREATEDBY = entity.createdBy,
+                    TENOR = entity.tenor,
+                    TAKEFEEONCE = entity.chargeFeeOnce,
+                };
+                context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                context.SaveChanges();
+
+                var approvalModel = new ForwardViewModel
+                {
+                    createdBy = entity.createdBy,
+                    companyId = entity.companyId,
+                    applicationId = request.LOAN_BOOKING_REQUESTID,
+                    comment = entity.comment,
+                    //comment = "Please approve this request for loan booking",
+                    amount = entity.amount_Requested,
+                };
+
+                if (requestedFacility.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
+                {
+                    LogApprovalForMessage(approvalModel, (short)OperationsEnum.CreditCardDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                }
+                else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
+                {
+                    if (requestedFacility.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                    {
+                        LogApprovalForMessage(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    }
+                    else
+                    {
+                        LogApprovalForMessage(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    }
+                }
+                else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
+                {
+                    if (GetRevolvingTrancheDisbursementOperationId(loanApplicationDetails.LOANAPPLICATIONDETAILID))
+                    {
+                        LogApprovalForMessage(approvalModel, (short)OperationsEnum.RevolvingTranchDisbursement, true, (int)ApprovalStatusEnum.Pending);
+                    }
+                    else
+                    {
+                        LogApprovalForMessage(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    }
+                }
+                trans.Rollback();
+                return workflow.Response.nextLevelId.Value;
             }
         }
 
         private bool AddLoanBookingRequests(int applicationStatusId, LoanBookingRequestViewModel entity)
         {
-
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             if (entity.amount_Requested > loanApplicationDetails.APPROVEDAMOUNT)
             {
@@ -1446,6 +1541,7 @@ namespace FintrakBanking.Repositories.Credit
                 comment = entity.comment,
                 //comment = "Please approve this request for loan booking",
                 amount = entity.amount_Requested,
+                toStaffId = entity.toStaffId,
             };
 
             if (requestedFacility.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
