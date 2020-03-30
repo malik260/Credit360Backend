@@ -2172,7 +2172,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if(currentLevelId == 0)
             {
-                currentLevelId = data.LastOrDefault().toApprovalLevelId ?? 0;
+                currentLevelId = data.LastOrDefault()?.toApprovalLevelId ?? 0;
             }
 
             if (data.Count > 0 && currentLevelId > 0)
