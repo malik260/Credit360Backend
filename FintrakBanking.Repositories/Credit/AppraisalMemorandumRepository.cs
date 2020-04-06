@@ -453,6 +453,7 @@ namespace FintrakBanking.Repositories.Credit
                     InterventionFunds = appl.ISINTERVENTIONFUNDS,
                     OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
+                    esrm = appl.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual
                 };
 
                 if (model.forwardAction == 8 || model.forwardAction == 9)
@@ -1114,7 +1115,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
+                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentCompleted;
                     appl.AVAILMENTDATE = DateTime.Now;
                     appl.APPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;

@@ -1409,14 +1409,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
            
             List<WorkflowSetup> grid = new List<WorkflowSetup>();
-            //bool canSkipRule = levelBusinessRule.InsiderRelated == true;
-            //levelBusinessRule.Amount = this.amount;
 
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
                 var testField = level.Level.LEVELNAME;
-                //this.levelBusinessRule = level?.LevelBusinessRule;
 
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule))
                 {
@@ -1476,6 +1473,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if ((rule.PEP && pepAmount > 0) && (levelBusinessRule.Pep && pepAmount <= levelBusinessRule.PepAmount)) limitChecked = flagChecked = true;
 
+            //if ((rule.TENOR >= levelBusinessRule.tenor) && (rule.TENOR > 0 && levelBusinessRule.tenor > 0)) limitChecked = true;//by ify to be used later
+
             //if (rule.PEP && levelBusinessRule.Pep == true) flagChecked = true;
             if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == true) flagChecked = true;
             if (rule.PROJECTRELATED && levelBusinessRule.ProjectRelated == true) flagChecked = true;
@@ -1484,6 +1483,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == true) flagChecked = true;
             if (rule.WITHINSTRUCTION && levelBusinessRule.WithInstruction == true) flagChecked = true;
             if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
+            if (rule.ESRM && levelBusinessRule.esrm) flagChecked = true;
 
             if (limitChecked && flagChecked) return limitChecked && limitChecked;
             if (limitChecked || flagChecked) return true;

@@ -21,6 +21,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool withoutInstruction { get; set; }
         public bool domiciliationNotInPlace { get; set; }
         public string description { get; set; }
+        public bool esrm { get; set; }
         public int? tenor { get; set; }
     }
 }

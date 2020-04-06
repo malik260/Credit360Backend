@@ -55,6 +55,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     ORRBASEDAPPROVAL = model.orrBasedApproval,
                     WITHINSTRUCTION = model.withoutInstruction,
                     DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace,
+                    ESRM = model.esrm,
                     TENOR = model.tenor,
 
                     COMPANYID = model.companyId,
@@ -145,6 +146,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     onLending = x.ONLENDING,
                     interventionFunds = x.INTERVENTIONFUNDS,
                     orrBasedApproval = x.ORRBASEDAPPROVAL,
+                    esrm = x.ESRM,
                     tenor = x.TENOR,
                     withoutInstruction = x.WITHINSTRUCTION,
                     domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
@@ -171,6 +173,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 orrBasedApproval = rule.ORRBASEDAPPROVAL,
                 withoutInstruction = rule.WITHINSTRUCTION,
                 domiciliationNotInPlace = rule.DOMICILIATIONNOTINPLACE,
+                esrm = rule.ESRM,
                 tenor = rule.TENOR,
             };
         }
@@ -190,6 +193,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 entity.ONLENDING = model.onLending;
                 entity.INTERVENTIONFUNDS = model.interventionFunds;
                 entity.ORRBASEDAPPROVAL = model.orrBasedApproval;
+                entity.ESRM = model.esrm;
                 entity.TENOR = model.tenor;
                 entity.WITHINSTRUCTION = model.withoutInstruction;
                 entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
