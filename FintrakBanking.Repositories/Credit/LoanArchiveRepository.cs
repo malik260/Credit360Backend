@@ -211,8 +211,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 ArchiveUtilizedLoanDocumentUsage(f.DOCUMENTUSAGEID);
             }
-            DeleteLoanDocumentUsage(addLoanApplDetailsArchive.LOANAPPLICATIONID, loanApplicationDetailId);
-            return context.SaveChanges() != 0;
+            if (context.SaveChanges() > 0)
+            {
+                DeleteLoanDocumentUsage(addLoanApplDetailsArchive.LOANAPPLICATIONID, loanApplicationDetailId);
+                return true;
+            }
+            return false;
            
         }
 
