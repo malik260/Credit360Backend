@@ -1069,8 +1069,13 @@ namespace FintrakBanking.Repositories.Finance
 
             var eodOperationProcesses = (from e in context.TBL_EOD_OPERATION_LOG
                                          join f in context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION) on e.EODOPERATIONID equals f.EODOPERATIONID
-                                         where e.COMPANYID == companyId && e.EODDATE == dateChange && (e.EODSTATUSID == (int)EodOperationStatusEnum.Processing
-                                         && e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingForceDebit || e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue || e.EODOPERATIONID == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover)
+                                         where e.COMPANYID == companyId && e.EODDATE == dateChange
+                                         && 
+                                         (e.EODSTATUSID == (int)EodOperationStatusEnum.Processing
+                                         && 
+                                         (e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingForceDebit 
+                                         || e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue 
+                                         || e.EODOPERATIONID == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover))
                                          select new FinanceEndofdayViewModel()
                                          {
                                              eodOperationLogId = e.EODOPERATIONLOGID,

@@ -702,6 +702,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public int? operationId { get; set; }
         public int? tenor { get; set; }
+        public int toStaffId { get; set; }
         public bool isLienPlacementForLoan { get; set; }
 
 

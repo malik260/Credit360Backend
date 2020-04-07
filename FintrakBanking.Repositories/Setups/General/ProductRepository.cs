@@ -568,6 +568,23 @@ namespace FintrakBanking.Repositories.Setups.General
                        };
             }
 
+            public IEnumerable<ProductViewModel> GetProductsByProductClassProcess(int productClassProcessId)
+            {
+                var productData = (from p in context.TBL_PRODUCT
+                                   //join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
+                                   //join pcp in context.TBL_PRODUCT_CLASS_PROCESS on pc.PRODUCT_CLASS_PROCESSID equals pcp.PRODUCT_CLASS_PROCESSID
+                                   where p.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == productClassProcessId
+                                   && p.DELETED == false
+                                   select new ProductViewModel()
+                                   {
+                                       productId = p.PRODUCTID,
+                                       usedByLos = p.USEDBYLOS,
+                                       productName = p.PRODUCTNAME
+                                   }).ToList();
+
+                return productData;
+            }
+
             private IEnumerable<ProductViewModel> AllProduct()
             {
                 var productData = (from data in context.TBL_PRODUCT
@@ -807,7 +824,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                    productId = data.PRODUCTID,
                                    productName = data.PRODUCTNAME,
                                    productTypeName = data.PRODUCTNAME,
-                                   productTypeId = data.PRODUCTID
+                                   productTypeId = data.PRODUCTTYPEID
 
                                }).ToList();
            

@@ -53,23 +53,27 @@ namespace FintrakBanking.APICore.Controllers
             model.BranchId = (short)token.GetBranchId;
             model.staffId = token.GetStaffId;
 
-            var responseId = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
-
-            if (responseId == 1)
+            var response = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
+            if (response != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                    new { success = true, message = response.responseMessage });
             }
-            else if (responseId == 0)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                                        new { success = true, message = "Loan request has been successfully approved" });
-            }
-            else if (responseId == 3)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                                        new { success = true, message = "Loan request was successfully disapproved" });
-            }
+            //if (responseId == 1)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK,
+            //        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            //}
+            //else if (responseId == 0)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK,
+            //                            new { success = true, message = "Loan request has been successfully approved" });
+            //}
+            //else if (responseId == 3)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK,
+            //                            new { success = true, message = "Loan request was successfully disapproved" });
+            //}
             else
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -106,11 +110,11 @@ namespace FintrakBanking.APICore.Controllers
             }
 
 
-            var data = repo.AddLoanBookingRequest(applicationId, models);
-            if (data)
+            var response = repo.AddLoanBookingRequest(applicationId, models);
+            if (response != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Drawdown Request successfully sent for processing!" });
+                    new { success = true, message = response.responseMessage });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
@@ -118,6 +122,30 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-application/request-booking/next/{applicationId}")]
+        public HttpResponseMessage GetNextLevelForBookingRequest(int applicationId, [FromBody] List<LoanBookingRequestViewModel> models)
+        {
+            foreach (var model in models)
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+            }
+
+            var data = repo.GetNextLevelForBookingRequest(applicationId, models);
+            if (data > 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data, message = "NextLevelId fetching was successfull!" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "NextLevelId fetching was unsuccessful!" });
+
+        }
 
     }
 }

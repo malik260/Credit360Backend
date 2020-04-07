@@ -453,6 +453,7 @@ namespace FintrakBanking.Repositories.Credit
                     InterventionFunds = appl.ISINTERVENTIONFUNDS,
                     OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
+                    esrm = appl.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual
                 };
 
                 if (model.forwardAction == 8 || model.forwardAction == 9)
@@ -598,7 +599,7 @@ namespace FintrakBanking.Repositories.Credit
                     else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                     {
                         SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
-                        loanApp.ArchiveLoanApplication(model.applicationId, operationId, (short)LoanApplicationStatusEnum.ApplicationRejected);
+                        loanApp.ArchiveLoanApplication(model.applicationId, operationId, (short)LoanApplicationStatusEnum.ApplicationRejected, model.createdBy);
 
                     } 
 
@@ -1069,7 +1070,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                     {
-                        loanApp.ArchiveLoanApplication(model.applicationId, operationId, (short)LoanApplicationStatusEnum.ApplicationRejected);
+                        loanApp.ArchiveLoanApplication(model.applicationId, operationId, (short)LoanApplicationStatusEnum.ApplicationRejected, model.createdBy);
                         //SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
                 }
 
@@ -1114,11 +1115,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
+                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentCompleted;
                     appl.AVAILMENTDATE = DateTime.Now;
                     appl.APPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;
-                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest,null, model.applicationId, null, "New approved application", true, false, false,model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID);
+                    //workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest,null, model.applicationId, null, "New approved application", true, false, false,model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID);
                 }
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
@@ -2172,7 +2173,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if(currentLevelId == 0)
             {
-                currentLevelId = data.LastOrDefault().toApprovalLevelId ?? 0;
+                currentLevelId = data.LastOrDefault()?.toApprovalLevelId ?? 0;
             }
 
             if (data.Count > 0 && currentLevelId > 0)
