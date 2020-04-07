@@ -33,6 +33,7 @@
         public bool DOMICILIATIONNOTINPLACE { get; set; }
 
         public int COMPANYID { get; set; }
+        public bool ESRM { get; set; }
         public int? TENOR { get; set; }
 
         public int CREATEDBY { get; set; }
