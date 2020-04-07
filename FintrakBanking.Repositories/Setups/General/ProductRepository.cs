@@ -2511,67 +2511,70 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
 
-            //private bool UpdateProduct2(int productId, ProductViewModel product)
-            //{
-            //    var data = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productId);
+        //private bool UpdateProduct2(int productId, ProductViewModel product)
+        //{
+        //    var data = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productId);
 
-            //    if (data == null)
-            //        return false;
+        //    if (data == null)
+        //        return false;
 
-            //    //data.CompanyId = product.companyId;
-            //    //data.ProductTypeId = product.productTypeId;
-            //    //data.ProductCategoryId = product.productCategoryId;
-            //    //data.ProductCode = product.productCode;
-            //    data.ProductName = product.productName;
-            //    //data.ProductPriceIndexId = product.productPriceIndexId;
-            //    //data.ProductDescription = product.productDescription;
-            //    //data.PrincipalBalanceGl = product.principalBalanceGl;
-            //    //data.InterestIncomeExpenseGl = product.interestIncomeExpenseGl;
-            //    //data.InterestReceivablePayableGl = product.interestReceivablePayableGl;
-            //    //data.DormantGl = product.dormantGl;
-            //    //data.PremiumDiscountGl = product.premiumDiscountGl;
-            //    //data.DealType = product.dealType;
-            //    //data.DealClassificationId = product.dealClassificationId;
-            //    //data.MaximumTenor = product.maximumTenor;
-            //    //data.MinimumTenor = product.minimumTenor;
-            //    //data.MaximumRate = product.maximumRate;
-            //    //data.MinimumRate = product.minimumRate;
-            //    //data.MinimumBalance = product.minimumBalance;
+        //    //data.CompanyId = product.companyId;
+        //    //data.ProductTypeId = product.productTypeId;
+        //    //data.ProductCategoryId = product.productCategoryId;
+        //    //data.ProductCode = product.productCode;
+        //    data.ProductName = product.productName;
+        //    //data.ProductPriceIndexId = product.productPriceIndexId;
+        //    //data.ProductDescription = product.productDescription;
+        //    //data.PrincipalBalanceGl = product.principalBalanceGl;
+        //    //data.InterestIncomeExpenseGl = product.interestIncomeExpenseGl;
+        //    //data.InterestReceivablePayableGl = product.interestReceivablePayableGl;
+        //    //data.DormantGl = product.dormantGl;
+        //    //data.PremiumDiscountGl = product.premiumDiscountGl;
+        //    //data.DealType = product.dealType;
+        //    //data.DealClassificationId = product.dealClassificationId;
+        //    //data.MaximumTenor = product.maximumTenor;
+        //    //data.MinimumTenor = product.minimumTenor;
+        //    //data.MaximumRate = product.maximumRate;
+        //    //data.MinimumRate = product.minimumRate;
+        //    //data.MinimumBalance = product.minimumBalance;
 
-            //    //data.ApprovedBy = product.approvedBy;
-            //    //data.Completed = product.completed;
-            //    //data.Approved = product.approved;
+        //    //data.ApprovedBy = product.approvedBy;
+        //    //data.Completed = product.completed;
+        //    //data.Approved = product.approved;
 
-            //    data.LastUpdatedBy = product.lastUpdatedBy;
-            //    data.DateTimeUpdated = DateTime.Now;
+        //    data.LastUpdatedBy = product.lastUpdatedBy;
+        //    data.DateTimeUpdated = DateTime.Now;
 
-            //    // Audit Section ---------------------------
-            //    var audit = new tbl_Audit
-            //    {
-            //        AuditTypeId = (short)AuditTypeEnum.ProductUpdated,
-            //        StaffId = (int)product.createdBy,
-            //        BranchId = (short)product.userBranchId,
-            //        Detail = $"Updated tbl_Product: '{product.productTypeName}' ",
-            //        IPAddress = product.userIPAddress,
-            //        Url = product.applicationUrl,
-            //        ApplicationDate = genSetup.GetApplicaionDate(),
-            //        SystemDateTime = DateTime.Now
-            //    };
+        //    // Audit Section ---------------------------
+        //    var audit = new tbl_Audit
+        //    {
+        //        AuditTypeId = (short)AuditTypeEnum.ProductUpdated,
+        //        StaffId = (int)product.createdBy,
+        //        BranchId = (short)product.userBranchId,
+        //        Detail = $"Updated tbl_Product: '{product.productTypeName}' ",
+        //        IPAddress = product.userIPAddress,
+        //        Url = product.applicationUrl,
+        //        ApplicationDate = genSetup.GetApplicaionDate(),
+        //        SystemDateTime = DateTime.Now
+        //    };
 
-            //    this.auditTrail.AddAuditTrail(audit);
-            //    //end of Audit section -------------------------------
-            //    return this.SaveAll();
-            //}
+        //    this.auditTrail.AddAuditTrail(audit);
+        //    //end of Audit section -------------------------------
+        //    return this.SaveAll();
+        //}
 
-            //public bool DeleteProduct(int productId)
-            //{
-            //    throw new NotImplementedException();
-            //}
+        //public bool DeleteProduct(int productId)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-            #endregion tbl_Product Region
+        #endregion tbl_Product Region
 
-            #region product Price Index
-            public int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity)
+        #region product Price Index
+
+        public int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 entity.operationId = (int)OperationsEnum.GlobalInterestRateChange;
 
@@ -2593,7 +2596,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         workFlow.OperationId = entity.operationId;
                         workFlow.DeferredExecution = true;
                         workFlow.ExternalInitialization = false;
-
                         workFlow.LogActivity();
 
                         //context.savechanges();
@@ -2618,6 +2620,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
                             context.SaveChanges();
                             trans.Commit();
+                            trans.Dispose();
+
                             return 3;
 
                         }
@@ -2639,6 +2643,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                 context.SaveChanges();
                                 loanOperations.ProcessGlobalInterestRepricing(globalPriceIndex.EFFECTIVEDATE, globalPriceIndex.PRODUCTPRICEINDEXID, (short)entity.createdBy, globalPriceIndex.ISMARKETINDUCED, globalPriceIndex.PRODUCTPRICEINDEXGLOBALID);
                                 trans.Commit();
+                                trans.Dispose();
+
                                 return 1;
 
                             }
@@ -2649,6 +2655,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                 globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
                                 context.SaveChanges();
                                 trans.Commit();
+                                trans.Dispose();
+
                                 return 2;
                             }
 
@@ -2656,6 +2664,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         else
                         {
                             trans.Commit();
+                            trans.Dispose();
+
                         }
 
                         return 0;
@@ -2667,11 +2677,112 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                 }
 
-
-
             }
 
-            public List<ProductPriceIndexDailyViewModel> getProductPriceIndexHistory(DateTime startDate, DateTime endDate, int companyId)
+        }
+
+
+        //public int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity)
+        //{
+        //    entity.operationId = (int)OperationsEnum.GlobalInterestRateChange;
+
+        //    entity.externalInitialization = false;
+
+
+        //    using (var trans = context.Database.BeginTransaction())
+        //    {
+        //        try
+        //        {
+        //            // workFlow.LogForApproval(entity);
+        //            // var b = workFlow.NextLevelId ?? 0;
+
+        //            workFlow.StaffId = entity.staffId;
+        //            workFlow.CompanyId = entity.companyId;
+        //            workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+        //            workFlow.TargetId = entity.targetId;
+        //            workFlow.Comment = entity.comment;
+        //            workFlow.OperationId = entity.operationId;
+        //            workFlow.DeferredExecution = true;
+        //            workFlow.ExternalInitialization = false;
+
+        //            workFlow.LogActivity();
+
+        //            //context.savechanges();
+        //            //if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+        //            //{
+        //            //    trans.Rollback();
+        //            //    throw new SecureException("Approval Failed");
+        //            //}
+
+        //            var globalPriceIndex = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Find(entity.targetId);
+
+        //            //if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+        //            //{
+
+        //            //    globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+        //            //    context.SaveChanges();
+        //            //    trans.Commit();
+        //            //    return 2;
+        //            //}
+        //            if (workFlow.NewState != (int)ApprovalState.Ended)
+        //            {
+        //                globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
+        //                context.SaveChanges();
+        //                trans.Commit();
+        //                return 3;
+
+        //            }
+        //            if (workFlow.NewState == (int)ApprovalState.Ended)
+        //            {
+        //                if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
+        //                {
+        //                    var appDate = genSetup.GetApplicationDate();
+        //                    if (globalPriceIndex.EFFECTIVEDATE == appDate)
+        //                    {
+        //                        var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.Find(globalPriceIndex.PRODUCTPRICEINDEXID);
+        //                        priceIndex.PRICEINDEXRATE = globalPriceIndex.NEWRATE;
+        //                        priceIndex.DATETIMEUPDATED = DateTime.Now;
+        //                        priceIndex.LASTUPDATEDBY = entity.createdBy;
+        //                    }
+        //                    globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+        //                    globalPriceIndex.DATETIMEUPDATED = DateTime.Now;
+        //                    globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
+        //                    context.SaveChanges();
+        //                    loanOperations.ProcessGlobalInterestRepricing(globalPriceIndex.EFFECTIVEDATE, globalPriceIndex.PRODUCTPRICEINDEXID, (short)entity.createdBy, globalPriceIndex.ISMARKETINDUCED, globalPriceIndex.PRODUCTPRICEINDEXGLOBALID);
+        //                    trans.Commit();
+        //                    return 1;
+
+        //                }
+        //                else if (workFlow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+        //                {
+        //                    globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+        //                    globalPriceIndex.DATETIMEUPDATED = DateTime.Now;
+        //                    globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
+        //                    context.SaveChanges();
+        //                    trans.Commit();
+        //                    return 2;
+        //                }
+
+        //            }
+        //            else
+        //            {
+        //                trans.Commit();
+        //            }
+
+        //            return 0;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            trans.Rollback();
+        //            throw new SecureException(ex.Message);
+        //        }
+        //    }
+
+
+
+        //}
+
+        public List<ProductPriceIndexDailyViewModel> getProductPriceIndexHistory(DateTime startDate, DateTime endDate, int companyId)
             {
 
                 var result = from x in context.TBL_PRODUCT_PRICE_INDEX_DAILY
@@ -2738,8 +2849,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 return (from data in context.TBL_PRODUCT_PRICE_INDEX_GLOBAL
                         join atrail in context.TBL_APPROVAL_TRAIL on data.PRODUCTPRICEINDEXGLOBALID equals atrail.TARGETID
                         // where  data.DELETED == false && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                        && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                        where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                        && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
+                        atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || 
+                        data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                         && atrail.RESPONSESTAFFID == null
                         && atrail.OPERATIONID == (int)OperationsEnum.GlobalInterestRateChange
                         //&& atrail.TOAPPROVALLEVELID == staffApprovalLevelId

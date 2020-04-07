@@ -217,6 +217,7 @@ namespace FintrakBanking.MonitoringMessageLogger
             Bind<IAuthourisedSignatoryRepository>().To<AuthourisedSignatoryRepository>();
             Bind<IAlertRepository>().To<AlertRepository>();
             Bind<ICashFlowLendingRepository>().To<CashFlowLendingRepository>();
+            Bind<ILoanArchiveRepository>().To<LoanArchiveRepository>();
 
 
         }
