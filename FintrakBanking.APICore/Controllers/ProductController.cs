@@ -1450,6 +1450,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("product-price-index-global-approval")]
@@ -1473,6 +1474,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("product-price-index-global")]
