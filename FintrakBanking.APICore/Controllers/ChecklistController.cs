@@ -1205,6 +1205,18 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("get-deferral-approval-trail/targetId/{targetId}/operationId/{operationId}")]
+        public HttpResponseMessage GetDeferralApprovalTrail(int targetId, int operationId)
+        {
+            var data = repo.GetDeferralApprovalTrail(targetId, operationId);
+            if (data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
+        }
+
+        [HttpGet]
         [ClaimsAuthorization]
         [Route("validate-checklist/{applicationId}")]
         public HttpResponseMessage ValidateChecklist(int applicationId)

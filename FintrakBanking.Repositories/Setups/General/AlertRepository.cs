@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
         #region other code logic
-        public AlertRepository() {}
+        //public AlertRepository() {}
 
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
         {
