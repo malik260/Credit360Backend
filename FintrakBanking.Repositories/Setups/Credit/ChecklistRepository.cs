@@ -1913,7 +1913,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ChecklistApprovalViewModel> GetDeferralDocumentsAwaitingApproval(int staffId, int companyId)
         {
-            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.DeferralDocumentApproval).ToList();
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ProvisionOfDeferredDocument).ToList();
             var staff = from s in context.TBL_STAFF select s;
 
             var dataLOS = (from a in context.TBL_LOAN_APPLICATION_DETAIL
@@ -1921,7 +1921,7 @@ namespace FintrakBanking.Repositories.Credit
                            join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                            join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
                            where c.ISLMS == false
-                           && ((atrail.OPERATIONID == (int)OperationsEnum.DeferralDocumentApproval))
+                           && ((atrail.OPERATIONID == (int)OperationsEnum.ProvisionOfDeferredDocument))
                                && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                && atrail.RESPONSESTAFFID == null
                                && atrail.LOOPEDSTAFFID == null
@@ -1979,7 +1979,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.TargetId = model.conditionId;
                 workflow.NextLevelId = null;
                 workflow.Comment = model.comment;
-                workflow.OperationId = (int)OperationsEnum.DeferralDocumentApproval;
+                workflow.OperationId = (int)OperationsEnum.ProvisionOfDeferredDocument;
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
 
@@ -2556,7 +2556,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.TargetId = loanConditionId;
                 workflow.NextLevelId = null;
                 workflow.Comment = "Request for Deferral Document Approval";
-                workflow.OperationId = (int)OperationsEnum.DeferralDocumentApproval;
+                workflow.OperationId = (int)OperationsEnum.ProvisionOfDeferredDocument;
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
 
