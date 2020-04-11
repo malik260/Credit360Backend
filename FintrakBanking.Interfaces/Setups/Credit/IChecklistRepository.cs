@@ -135,5 +135,7 @@ namespace FintrakBanking.Interfaces.Setups
         #endregion
         IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistItemSimulationDetails(int productId);
         bool PopulateLoanApplicationChecklist(int loanApplicationId, int staffId, int companyId, int productClassProcessId);
+
+        IEnumerable<ApprovalTrailViewModel> GetDeferralApprovalTrail(int targetId, int operationId);
     }
 }
