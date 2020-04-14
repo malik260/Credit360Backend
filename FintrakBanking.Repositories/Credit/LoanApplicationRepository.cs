@@ -3237,7 +3237,7 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
-            fields.proposedTenor = proposedTenor;
+            fields.proposedTenor = fields.approvedTenor = proposedTenor;
 
             var invoiceDetails = (from a in context.TBL_LOAN_APPLICATION_DETL_INV
                                   where a.LOANAPPLICATIONDETAILID == detailId
@@ -4529,6 +4529,7 @@ namespace FintrakBanking.Repositories.Credit
                                              interestRate = x.INTERESTRATE,
                                              applicationTenor = x.APPLICATIONTENOR,
                                              productClassId = x.PRODUCTCLASSID,
+                                             productId = shortx.PRODUCTID ?? 0,
 
                                              productClassProcessId = x.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESSID,
                                              submittedForAppraisal = x.SUBMITTEDFORAPPRAISAL,
@@ -4576,6 +4577,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var x in allRecord)
                 {
+                    x.operationName = GetWorkFlowName(int operationId, int ? productClassId, int ? productId);
                     var appRecord = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.loanApplicationId && operations.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).FirstOrDefault();
                     if (appRecord != null)
                     {
@@ -4672,6 +4674,35 @@ namespace FintrakBanking.Repositories.Credit
                 return applications; */
 
             }
+        }
+
+        private string GetWorkFlowName(int operationId, int? productClassId, int? productId)
+        {
+            var operationName = String.Empty;
+
+            if (operationId == (int)OperationsEnum.CreditAppraisal)
+            {
+                if (productId != null)
+                {
+                    var workflowMapping = context.TBL_APPROVAL_GROUP_MAPPING.Where(m => m.OPERATIONID == operationId && m.PRODUCTCLASSID == productClassId && m.PRODUCTID == productId);
+                    if (workflowMapping != null)
+                    {
+                        operationName = context.TBL_PRODUCT.FirstOrDefault(o => o.PRODUCTID == productId).PRODUCTNAME;
+                        return operationName;
+                    }
+                }
+                if (productClassId != null)
+                {
+                    var workflowMapping = context.TBL_APPROVAL_GROUP_MAPPING.Where(m => m.OPERATIONID == operationId && m.PRODUCTCLASSID == productClassId && m.PRODUCTID == null);
+                    if (workflowMapping != null)
+                    {
+                        operationName = context.TBL_PRODUCT_CLASS.FirstOrDefault(o => o.PRODUCTCLASSID == productClassId).PRODUCTCLASSNAME;
+                        return operationName;
+                    }
+                }
+            }
+            operationName = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == operationId).OPERATIONNAME;
+            return operationName;
         }
 
         public List<LoanApplicationViewModel> SearchDrawDown(string searchString, int staffId = 0)

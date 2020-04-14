@@ -16,6 +16,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool OrrBasedApproval { get; set; }
         public bool WithInstruction { get; set; }
         public bool DomiciliationNotInPlace { get; set; }
+        public bool isContingentFacility { get; set; }
+        public bool isRevolvingFacility { get; set; }
+        public bool isRenewal { get; set; }
         public bool esrm { get; set; }
         public int? tenor { get; set; }
     }
