@@ -4446,6 +4446,7 @@ namespace FintrakBanking.Repositories.Credit
                                         interestRate = x.INTERESTRATE,
                                         applicationTenor = x.APPLICATIONTENOR,
                                         productClassId = x.PRODUCTCLASSID,
+                                        productId = (short)(x.PRODUCTID ?? 0),
                                         loanInformation = x.LOANINFORMATION,
                                         productClassProcessId = x.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESSID,
                                         submittedForAppraisal = x.SUBMITTEDFORAPPRAISAL,
@@ -4478,7 +4479,6 @@ namespace FintrakBanking.Repositories.Credit
                                         createdBy = x.CREATEDBY,
                                         loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
                                         operationId = x.OPERATIONID,
-                                        operationName = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == x.OPERATIONID).OPERATIONNAME,
                                         owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
                                         // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                         isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
@@ -4529,7 +4529,8 @@ namespace FintrakBanking.Repositories.Credit
                                              interestRate = x.INTERESTRATE,
                                              applicationTenor = x.APPLICATIONTENOR,
                                              productClassId = x.PRODUCTCLASSID,
-                                             productId = shortx.PRODUCTID ?? 0,
+                                             productId = (short)(x.PRODUCTID ?? 0),
+                                             loanInformation = x.LOANINFORMATION,
 
                                              productClassProcessId = x.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESSID,
                                              submittedForAppraisal = x.SUBMITTEDFORAPPRAISAL,
@@ -4564,7 +4565,6 @@ namespace FintrakBanking.Repositories.Credit
                                              createdBy = x.CREATEDBY,
                                              loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
                                              operationId = x.OPERATIONID,
-                                             operationName = context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID == x.OPERATIONID).OPERATIONNAME,
                                              owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
                                              // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                              isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
@@ -4577,7 +4577,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var x in allRecord)
                 {
-                    x.operationName = GetWorkFlowName(int operationId, int ? productClassId, int ? productId);
+                    x.operationName = GetWorkFlowName(x.operationId.Value, x.productClassId, x.productId);
                     var appRecord = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == x.loanApplicationId && operations.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).FirstOrDefault();
                     if (appRecord != null)
                     {
@@ -4682,18 +4682,18 @@ namespace FintrakBanking.Repositories.Credit
 
             if (operationId == (int)OperationsEnum.CreditAppraisal)
             {
-                if (productId != null)
+                if (productId > 0)
                 {
-                    var workflowMapping = context.TBL_APPROVAL_GROUP_MAPPING.Where(m => m.OPERATIONID == operationId && m.PRODUCTCLASSID == productClassId && m.PRODUCTID == productId);
+                    var workflowMapping = context.TBL_APPROVAL_GROUP_MAPPING.Where(m => m.OPERATIONID == operationId && m.PRODUCTCLASSID == productClassId && m.PRODUCTID == productId).ToList();
                     if (workflowMapping != null)
                     {
                         operationName = context.TBL_PRODUCT.FirstOrDefault(o => o.PRODUCTID == productId).PRODUCTNAME;
                         return operationName;
                     }
                 }
-                if (productClassId != null)
+                if (productClassId > 0)
                 {
-                    var workflowMapping = context.TBL_APPROVAL_GROUP_MAPPING.Where(m => m.OPERATIONID == operationId && m.PRODUCTCLASSID == productClassId && m.PRODUCTID == null);
+                    var workflowMapping = context.TBL_APPROVAL_GROUP_MAPPING.Where(m => m.OPERATIONID == operationId && m.PRODUCTCLASSID == productClassId && m.PRODUCTID == null).ToList();
                     if (workflowMapping != null)
                     {
                         operationName = context.TBL_PRODUCT_CLASS.FirstOrDefault(o => o.PRODUCTCLASSID == productClassId).PRODUCTCLASSNAME;
