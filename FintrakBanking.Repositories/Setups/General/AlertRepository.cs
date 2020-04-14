@@ -20,25 +20,28 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    public class AlertRepository : IAlertRepository
+    public class AlertRepository : IAlertRepository 
     {
         private IExternalAlertRepository externalAlertRepository;
         private FinTrakBankingContext context;
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
+        private ILoanArchiveRepository loanArchive;
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
-                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository)
+                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository,
+                                ILoanArchiveRepository _loanArchive)
         {
             this.context = _context;
             this.context2 = _context2;
             this.audit = _audit;
             this.general = _general;
-            this.externalAlertRepository = _externalAlertRepository; 
+            this.externalAlertRepository = _externalAlertRepository;
+            this.loanArchive = _loanArchive;
         }
 
         #region other code logic
-        public AlertRepository() {}
+        //public AlertRepository() {}
 
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
         {
@@ -895,6 +898,10 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
                 TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
+
+                TimeSpan archiveStart = new TimeSpan(20, 0, 0); //8 o'pm
+                TimeSpan archiveEnd = new TimeSpan(21, 0, 0); //11 o'pm
+
                 TimeSpan now = DateTime.Now.TimeOfDay;
 
                 if ((now >= start) && (now <= end))
@@ -905,6 +912,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetPastDueObligationsReminderByGroupHeads();
                     state = true;
                 }
+                else if ((now >= archiveStart) && (now <= archiveEnd))
+                {
+                    ProcessLoanArchive();  
+                }
+                
 
             }
             return state;
@@ -1270,6 +1282,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 SendAlertNotification(alerts);
             }
+        }
+
+        public bool ProcessLoanArchive()
+        {
+            return loanArchive.ProcessLoanArchieving();
+            
         }
 
         //public void GetDigitalLoanExceptionNPL()

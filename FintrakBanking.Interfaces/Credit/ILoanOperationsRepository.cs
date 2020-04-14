@@ -40,7 +40,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanClassification(DateTime applicationDate, int companyId, int staffId);
 
-        void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId);
+        bool ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId);
 
         bool ProcessReleaseLien(DateTime applicationDate, int companyId, int staffId);
 
