@@ -14,9 +14,10 @@ namespace FintrakBanking.Entities.StagingModels
         [Key]
         public int ID { get; set; }
         public DateTime DATE { get; set; }
-        public decimal PRODUCTNAME { get; set; }
+        public string PRODUCTNAME { get; set; }
         public decimal DPD { get; set; }
         public decimal NPL { get; set; }
         public decimal DISBURSEMENT { get; set; }
+        public decimal? LIQUIDATION { get; set; }
     }
 }
