@@ -1372,11 +1372,17 @@ namespace FintrakBanking.Repositories.WorkFlow
                 throw new SecureException("There is no approval workflow setup for the OPERATION: " + operation.OPERATIONNAME);
             }
 
+            TBL_APPROVAL_TRAIL initiator = new TBL_APPROVAL_TRAIL();
+            if (mappings.FirstOrDefault().ALLOWMULTIPLEINITIATOR == true)
+            {
+                 initiator = GetAllTrail().OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
+            }
+
             var levels = mappings
                            .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                            .Join(context.TBL_APPROVAL_LEVEL, mg => mg.m.GROUPID, l => l.GROUPID, (mg, l) =>
                            new { Mapping = mg.m, Level = l })
-                           .Where(x => x.Level.ISACTIVE == true && x.Level.DELETED == false)
+                           .Where(x => x.Level.ISACTIVE == true && x.Level.DELETED == false && (x.Mapping.ALLOWMULTIPLEINITIATOR == true && (x.Level.ROLEIDTOROUTE== initiator.REQUESTSTAFFID || x.Level.ROLEIDTOROUTE ==null) ))
                            .Select(x => new WorkflowSetup
                            {
                                // Sn = index + 1,

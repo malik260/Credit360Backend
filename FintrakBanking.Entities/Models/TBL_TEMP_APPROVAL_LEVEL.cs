@@ -112,6 +112,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? APPROVALBUSINESSRULEID { get; set; }
 
+        public int? ROLEIDTOROUTE { get; set; }
+
         //  public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }
 
         //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
