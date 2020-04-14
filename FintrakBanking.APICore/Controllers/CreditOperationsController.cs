@@ -700,22 +700,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("undisbursed-loan-details/")]
         public HttpResponseMessage SearchForLoansUnDisbursed(int loanId, int loanType)
         {
-            try
-            {
-                var data = loanRepo.GetUnDisbursedLoanByLoanId(loanId, loanType);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data });
-            }
-            catch (SecureException ex)
+            var data = loanRepo.GetUnDisbursedLoanByLoanId(loanId, loanType);
+            if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
+                   new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
         }
 
         [HttpGet]
@@ -723,47 +715,36 @@ namespace FintrakBanking.APICore.Controllers
         [Route("cancel-full-and-final/{loanId}/status/{statusId}")]
         public HttpResponseMessage CancelFullAndFinal(int loanId, int statusId)
         {
-            try
+
+            if (statusId == (int)FullAndFinalStatusEnum.Cancelled)
             {
-
-                if (statusId == (int)FullAndFinalStatusEnum.Cancelled)
-                {
-                    var response = loanRepo.CancelFullAndFinal(loanId, statusId);
-                }
-                else if (statusId == (int)FullAndFinalStatusEnum.Completed)
-                {
-                    var loan = repo.GetLoanInformation(loanId);
-
-                    LoanReviewOperationViewModel model = new LoanReviewOperationViewModel();
-
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-                    model.approvalStatusId = (int)ApprovalStatusEnum.Pending;
-                    model.loanId = loanId;
-                    model.productTypeId = loan.PRODUCTID;
-                    model.loanSystemTypeId = loan.LOANSYSTEMTYPEID;
-                    model.operationTypeId = (int)OperationsEnum.FullAndFinalCompleteWriteOff;
-                    model.reviewDetails = "Full And Final Complete Write-Off";
-                    model.approvalStatusId = 0;
-                    model.operationCompleted = false;
-                    model.proposedEffectiveDate = generalSetup.GetApplicationDate();
-
-                    var response = repo.AddOperationReview(model);
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                     new { success = true, message = "Record created successfully" });
-
+                var response = loanRepo.CancelFullAndFinal(loanId, statusId);
             }
-            catch (SecureException ex)
+            else if (statusId == (int)FullAndFinalStatusEnum.Completed)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
+                var loan = repo.GetLoanInformation(loanId);
+
+                LoanReviewOperationViewModel model = new LoanReviewOperationViewModel();
+
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                model.loanId = loanId;
+                model.productTypeId = loan.PRODUCTID;
+                model.loanSystemTypeId = loan.LOANSYSTEMTYPEID;
+                model.operationTypeId = (int)OperationsEnum.FullAndFinalCompleteWriteOff;
+                model.reviewDetails = "Full And Final Complete Write-Off";
+                model.approvalStatusId = 0;
+                model.operationCompleted = false;
+                model.proposedEffectiveDate = generalSetup.GetApplicationDate();
+
+                var response = repo.AddOperationReview(model);
             }
 
-
+            return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, message = "Record created successfully" });
         }
 
         [HttpGet]
