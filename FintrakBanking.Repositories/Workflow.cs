@@ -1373,12 +1373,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             TBL_APPROVAL_TRAIL initiator = new TBL_APPROVAL_TRAIL();
-            if (mappings.FirstOrDefault().ALLOWMULTIPLEINITIATOR == true)
-            {
-                 initiator = GetAllTrail().OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
-            }
+            
 
-            var levels = mappings
+            List<WorkflowSetup> levels = new List<WorkflowSetup>();
+
+             levels = mappings
                            .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                            .Join(context.TBL_APPROVAL_LEVEL, mg => mg.m.GROUPID, l => l.GROUPID, (mg, l) =>
                            new { Mapping = mg.m, Level = l })
@@ -1407,13 +1406,22 @@ namespace FintrakBanking.Repositories.WorkFlow
                                SlaInterval = x.Level.SLAINTERVAL,
                                LevelTypeId = x.Level.LEVELTYPEID,
                                LevelBusinessRuleId = x.Level.APPROVALBUSINESSRULEID,
-                               LevelBusinessRule = x.Level.TBL_APPROVAL_BUSINESS_RULE
+                               LevelBusinessRule = x.Level.TBL_APPROVAL_BUSINESS_RULE,
+                               AllowMultipleInitiator = x.Mapping.ALLOWMULTIPLEINITIATOR,
+                               ROLEIDTOROUTE = x.Level.ROLEIDTOROUTE
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition)
                            .ToList();
 
-           
+            if (mappings.FirstOrDefault().ALLOWMULTIPLEINITIATOR == true)
+            {
+                initiator = GetAllTrail().OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
+                var requestStaff = context.TBL_STAFF.Find(initiator.REQUESTSTAFFID);
+
+                levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
+            }
+
             List<WorkflowSetup> grid = new List<WorkflowSetup>();
 
             int n = 0;
@@ -1859,6 +1867,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public TBL_APPROVAL_GROUP_MAPPING Mapping { get; set; }
         public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
         public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
+        public bool AllowMultipleInitiator { get; set; }
+        public int? ROLEIDTOROUTE { get; set; }
     }
 
     public class ReportingLine
