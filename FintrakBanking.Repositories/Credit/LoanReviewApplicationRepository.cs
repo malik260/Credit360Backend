@@ -512,6 +512,16 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Only one operation request is allowed for APS release related applications!");
             }
 
+            var doesOperationExist = (from a in context.TBL_LOAN_REVIEW_OPERATION
+                                              where a.OPERATIONTYPEID == model.operationId
+                                              && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                              && a.OPERATIONCOMPLETED == false
+                                             select a).ToList();
+            if (doesOperationExist.Count() > 0)
+            {
+                throw new SecureException("The requested operation already exist and going through approval");
+            }
+
             int staffId = model.createdBy;
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
