@@ -938,7 +938,20 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Vote = model.vote;
                 workflow.DeferredExecution = true;
                 workflow.IsFlowTest = model.isFlowTest;
-
+                workflow.IsFromPc = model.isFromPc;
+                workflow.LevelBusinessRule = new LevelBusinessRule
+                {
+                    Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                    PepAmount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                    Pep = model.politicallyExposed,
+                    //InsiderRelated = appl.ISRELATEDPARTY ?? false,
+                    ProjectRelated = appl.ISPROJECTRELATED ?? false,
+                    OnLending = appl.ISONLENDING ?? false,
+                    InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
+                    WithInstruction = appl.WITHINSTRUCTION ?? false,
+                    //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
+                    DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+                };
 
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
 

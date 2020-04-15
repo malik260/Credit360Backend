@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     PRODUCTCLASSID = model.productClassId,
                     PRODUCTID = model.productId,
                     POSITION = model.position,
-
+                    ALLOWMULTIPLEINITIATOR = model.allowMultipleInitiator,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = generalSetup.GetApplicationDate(),
                     DELETED=false
@@ -308,6 +308,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                                 groupName = data.TBL_APPROVAL_GROUP.GROUPNAME,
                                                 position = data.POSITION,
                                                 createdBy = data.CREATEDBY,
+                                                allowMultipleInitiator = data.ALLOWMULTIPLEINITIATOR
                                             })
                                             .OrderBy(x => x.position);
 
@@ -331,6 +332,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 data.CREATEDBY = model.createdBy;
                 data.DATETIMECREATED = generalSetup.GetApplicationDate();
                 data.GROUPOPERATIONMAPPINGID = operationMappingId;
+                data.ALLOWMULTIPLEINITIATOR = model.allowMultipleInitiator;
 
                 var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
                 var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
@@ -365,6 +367,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     DATETIMECREATED = generalSetup.GetApplicationDate(),
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     GROUPOPERATIONMAPPINGID = operationMappingId,
+                    ALLOWMULTIPLEINITIATOR = model.allowMultipleInitiator,
                     OPERATION = "update"
                 };
 

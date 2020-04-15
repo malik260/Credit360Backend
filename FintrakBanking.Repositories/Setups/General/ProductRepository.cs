@@ -581,7 +581,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        usedByLos = p.USEDBYLOS,
                                        productName = p.PRODUCTNAME
                                    }).ToList();
-
+                
                 return productData;
             }
 

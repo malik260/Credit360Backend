@@ -244,6 +244,7 @@ namespace FintrakBanking.Repositories.Credit
                     InterventionFunds = application.ISINTERVENTIONFUNDS,
                     OrrBasedApproval = application.ISORRBASEDAPPROVAL,
                     DomiciliationNotInPlace = application.DOMICILIATIONNOTINPLACE,
+                    isContingentFacility = request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
                 };
 
                 workflow.LogActivity();
