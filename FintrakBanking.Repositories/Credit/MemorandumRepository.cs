@@ -5570,7 +5570,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGreenRatingDetailMarkup()
         {
             var result = String.Empty;
-            var greenDetails = GetGreenLoanIdentificationDetails();
+            var greenDetails = GetGreenLoanIdentificationDetails().Where(g => g.score != 6);
             var greenSummary = greenDetails.GroupBy(d => d.score).Select(d => d.FirstOrDefault()).ToList();
             result += $@"
                         <ul>
