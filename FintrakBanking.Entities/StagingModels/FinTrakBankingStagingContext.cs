@@ -2,8 +2,6 @@ namespace FintrakBanking.Entities.StagingModels
 {
     using System;
     using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
     using FintrakBanking.Entities.Models;
 
     //[DbConfigurationType(typeof(OracleDatabaseConfiguration))]
@@ -15,8 +13,8 @@ namespace FintrakBanking.Entities.StagingModels
         {
         }
         
-        //public virtual DbSet<TBL_TRIGGER_MEASURESPRODUCTNAME> TBL_TRIGGER_MEASURESPRODUCTNAME { get; set; }
-        //public virtual DbSet<TBL_TRIGGER_MEASURESMODULE> TBL_TRIGGER_MEASURESMODULE { get; set; }
+        public virtual DbSet<TBL_TRIGGER_MEASURESPRODUCTNAME> TBL_TRIGGER_MEASURESPRODUCTNAME { get; set; }
+        public virtual DbSet<TBL_TRIGGER_MEASURESMODULE> TBL_TRIGGER_MEASURESMODULE { get; set; }
         public virtual DbSet<STG_BRANCH> STG_BRANCH { get; set; }
         public virtual DbSet<STG_LOAN_MART> STG_LOAN_MART { get; set; }
         public virtual DbSet<STG_STAFFMIS> STG_STAFFMIS { get; set; }

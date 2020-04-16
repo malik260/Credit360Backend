@@ -184,8 +184,9 @@
     FacilityLineLimitChangeApproval = 246,
     FacilityLineTenorChangeApproval = 247,
     LoanRecoveryApproval = 248,
- 
 
+    ProvisionOfDeferredDocument = 259,
+    DeferralExtension = 260
 }
 
 

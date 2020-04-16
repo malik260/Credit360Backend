@@ -53,9 +53,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool requiredOfferLetter { get; set; }
     }
 
-    public class StaffGroupEmailViewModel : GeneralEntity
+    public class StaffGroupEmailViewModel
     {
-
         public int groupEmailId { get; set; }
         public string groupCode { get; set; }
         public string groupName { get; set; }
