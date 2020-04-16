@@ -1381,7 +1381,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                            .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                            .Join(context.TBL_APPROVAL_LEVEL, mg => mg.m.GROUPID, l => l.GROUPID, (mg, l) =>
                            new { Mapping = mg.m, Level = l })
-                           .Where(x => x.Level.ISACTIVE == true && x.Level.DELETED == false && (x.Mapping.ALLOWMULTIPLEINITIATOR == true && (x.Level.ROLEIDTOROUTE== initiator.REQUESTSTAFFID || x.Level.ROLEIDTOROUTE ==null) ))
+                           .Where(x => x.Level.ISACTIVE == true && x.Level.DELETED == false)
                            .Select(x => new WorkflowSetup
                            {
                                // Sn = index + 1,
