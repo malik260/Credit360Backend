@@ -1943,7 +1943,7 @@ namespace FintrakBanking.Repositories.Credit
                                applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                //dateCreated = b.DATETIMECREATED,
-                               dateCreated = atrail.RESPONSEDATE,
+                               dateCreated = atrail.SYSTEMARRIVALDATETIME,
                                comment = atrail.COMMENT,
                                operationId = atrail.OPERATIONID,
                                //Loan Information
@@ -2001,7 +2001,7 @@ namespace FintrakBanking.Repositories.Credit
                                applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                //dateCreated = b.DATETIMECREATED,
-                               dateCreated = atrail.RESPONSEDATE,
+                               dateCreated = atrail.SYSTEMARRIVALDATETIME,
                                comment = atrail.COMMENT,
                                operationId = atrail.OPERATIONID,
                                //Loan Information
@@ -2022,7 +2022,7 @@ namespace FintrakBanking.Repositories.Credit
                                toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                                fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
 
-                           }).ToList();
+                           }).ToList().GroupBy(O => new { O.applicationReferenceNumber, O.conditionId, O.dateCreated, O.customerId }).Select(O => O.FirstOrDefault());
 
             return dataLOS;
         }
