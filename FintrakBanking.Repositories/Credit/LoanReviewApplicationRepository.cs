@@ -512,8 +512,10 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Only one operation request is allowed for APS release related applications!");
             }
 
+            var synOperationId = context.TBL_OPERATIONS.Find(model.operationId).SYNCHOPERATIONID;
+
             var doesOperationExist = (from a in context.TBL_LOAN_REVIEW_OPERATION
-                                              where a.OPERATIONTYPEID == model.operationId
+                                              where a.OPERATIONTYPEID == synOperationId
                                               && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                               && a.OPERATIONCOMPLETED == false
                                              select a).ToList();

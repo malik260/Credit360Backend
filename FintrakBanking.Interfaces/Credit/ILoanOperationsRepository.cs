@@ -16,7 +16,8 @@ namespace FintrakBanking.Interfaces.Credit
     public interface ILoanOperationsRepository
     {
         string GetTransactionReferenceNo();
-
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId);
+        bool CreditDocumentationFilling(CreditDocumentationViewModel model);
         bool UpdateLoanClassification(DateTime applicationDate, int companyId);
         bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId);
         bool DoesOperationExist(int loanId, int operationTypeId, int loanSystemTypeId);
