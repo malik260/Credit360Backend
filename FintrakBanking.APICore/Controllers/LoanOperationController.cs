@@ -614,7 +614,6 @@ namespace FintrakBanking.APICore.Controllers
             entity.createdBy = token.GetStaffId;
             entity.companyId = token.GetCompanyId;
             entity.userBranchId = (short)token.GetBranchId;
-
             var data = repo.CreditDocumentationFilling(entity);
             if (data)
             {
