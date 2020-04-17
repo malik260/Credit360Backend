@@ -1495,33 +1495,17 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.ONLENDING && levelBusinessRule.OnLending == true) flagChecked = true;
             if (rule.INTERVENTIONFUNDS && levelBusinessRule.InterventionFunds == true) flagChecked = true;
             if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == true) flagChecked = true;
-            if (rule.WITHINSTRUCTION && levelBusinessRule.WithInstruction == true) flagChecked = true;
+            if (rule.WITHINSTRUCTION && !levelBusinessRule.WithInstruction) flagChecked = true;
             if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
             if (rule.ESRM && levelBusinessRule.esrm) flagChecked = true;
-
-            if (rule.ISFORCONTINGENTFACILITY && !levelBusinessRule.isContingentFacility) flagChecked = limitChecked = false;
-            if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = (minimumAmount > 0 || maximumAmount > 0) ? limitChecked : true;
-
-            if (rule.ISFORREVOLVINGFACILITY && !levelBusinessRule.isRevolvingFacility) flagChecked = limitChecked = false;
-            if (rule.ISFORREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility) flagChecked = (minimumAmount > 0 || maximumAmount > 0) ? limitChecked : true;
-
-            if (rule.ISFORRENEWAL && !levelBusinessRule.isRenewal) flagChecked = limitChecked = false;
-            if (rule.ISFORRENEWAL && levelBusinessRule.isRenewal) flagChecked = (minimumAmount > 0 || maximumAmount > 0) ? limitChecked : true;
-
-            if (rule.EXEMPTCONTINGENTFACILITY && !levelBusinessRule.isContingentFacility) flagChecked = true;
-            if (rule.EXEMPTCONTINGENTFACILITY && levelBusinessRule.isContingentFacility && (minimumAmount > 0 || maximumAmount > 0)) flagChecked = limitChecked = !limitChecked; //any amt entered is subject to the contingent amt
-
-            if (rule.EXEMPTREVOLVINGFACILITY && !levelBusinessRule.isRevolvingFacility) flagChecked = true;
-            if (rule.EXEMPTREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility && (minimumAmount > 0 || maximumAmount > 0)) flagChecked = limitChecked = !limitChecked;
-
-            if (rule.EXEMPTRENEWAL && !levelBusinessRule.isRenewal) flagChecked = true;
-            if (rule.EXEMPTRENEWAL && levelBusinessRule.isRenewal && (minimumAmount > 0 || maximumAmount > 0)) flagChecked = limitChecked = !limitChecked;
-
             //if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
             //if (rule.ISFORREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility) flagChecked = true;
             //if (rule.ISFORRENEWAL && levelBusinessRule.isRenewal) flagChecked = true;
-            //if (rule.EXEMPTREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility) flagChecked = false;
-            //if (rule.EXEMPTRENEWAL && levelBusinessRule.isRenewal) flagChecked = false;
+            if (rule.EXEMPTCONTINGENTFACILITY && !levelBusinessRule.isContingentFacility) flagChecked = true;
+            //if (rule.EXEMPTREVOLVINGFACILITY && !levelBusinessRule.isRevolvingFacility) flagChecked = true;
+            //if (rule.EXEMPTRENEWAL && !levelBusinessRule.isRenewal) flagChecked = true;
+
+
 
 
             if (limitChecked && flagChecked) return limitChecked && limitChecked;
