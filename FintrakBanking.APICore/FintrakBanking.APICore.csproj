@@ -1758,6 +1758,7 @@
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="CFLAuthentication\App_Data\" />
+    <Folder Include="Views\Testing\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">

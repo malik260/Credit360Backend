@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
 
         [Key]
         public int CONTINGENTLOANID { get; set; }
-
+        public bool ISPRINTED { get; set; }
         public short LOANSYSTEMTYPEID { get; set; }
 
         public int CUSTOMERID { get; set; }

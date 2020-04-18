@@ -556,11 +556,10 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-collateral-loan/{loanId}")]
-        public HttpResponseMessage GetCollateralDetailLMS(int loanId)
+        public HttpResponseMessage GetCollateralDetailLMS([FromUri]int loanId)
         {
-            try
-            {
-                var data = repo.CollateralByLoanId(loanId);
+
+            List<CollateralViewModel> data = repo.CollateralByLoanId(loanId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -568,12 +567,6 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
         }
 
         [HttpPost]
