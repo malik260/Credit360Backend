@@ -28069,39 +28069,13 @@ namespace FintrakBanking.Repositories.Credit
 
                                           }).ToList(),
                                       }).ToList();
-            //foreach (var can in dataContingentLoan)
-            //{
-            //    var test = can.lmsLoanReferenceNumber;
-            //}
-            //foreach (var can in dataRevolvingLoan)
-            //{
-            //    var test = can.lmsLoanReferenceNumber;
-            //}
+            
             var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var contingentLoanData = dataContingentLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var unionAll = termLoanData.Union(revolvingLoanData);
 
             var data = unionAll.Union(contingentLoanData);
-
-            //List<LoanReviewOperationApprovalViewModel> lcyLoans = new List<LoanReviewOperationApprovalViewModel>();
-            //List<LoanReviewOperationApprovalViewModel> fcyLoans = new List<LoanReviewOperationApprovalViewModel>();
-
-            //var isLCYUser = activities.Contains("lcy-user");
-            //var isFCYUser = activities.Contains("fcy-user");
-
-            //if (isLCYUser == true)
-            //{
-            //    lcyLoans = data.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
-            //}
-
-            //if (isFCYUser == true)
-            //{
-            //    fcyLoans = data.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
-
-            //}
-
-            //data = lcyLoans.Union(fcyLoans).ToList();
 
             return data;
         }
