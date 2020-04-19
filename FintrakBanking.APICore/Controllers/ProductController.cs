@@ -1406,8 +1406,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-price-index-global-approval")]
         public HttpResponseMessage GoForApprovalGlobalPriceIndex([FromBody]ApprovalViewModel entity)
         {
-            try
-            {
+            
                 entity.BranchId = token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.staffId = token.GetStaffId;
@@ -1436,19 +1435,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
                 }
-            }
-            catch (ConditionNotMetException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
-            }
-            catch (System.Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
-            }
+            
         }
 
         [HttpGet]
@@ -1503,8 +1490,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-price-index-global")]
         public HttpResponseMessage AddProductPriceIndexGlobal([FromBody] ProductPriceIndexGlobalViewModel model)
         {
-            try
-            {
+           
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -1520,16 +1506,8 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 else
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Global Interest Rate not created" });
-            }
-            catch (ConditionNotMetException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+                        new { success = false, message = "Error creating Global Interest Rate" });
+            
         }
 
         [HttpPut]
@@ -1542,8 +1520,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "product price index not found" });
             }
 
-            try
-            {
+            
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -1551,15 +1528,14 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                repo.UpdateProductPriceIndexGlobal(productPriceIndexGlobalId, model);
+               if( repo.UpdateProductPriceIndexGlobal(productPriceIndexGlobalId, model)) { 
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = productPriceIndexGlobalId, message = "global interest rate change has been updated successfully and sent for Approval" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            }else
+            
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error updating global interest rate change" });
+            
         }
 
         [HttpGet]
