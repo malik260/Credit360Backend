@@ -247,9 +247,9 @@ namespace FintrakBanking.ViewModels.Credit
             if (sla == 0) return "success";
             if (elapse == 0 || elapse == null) return "success";
             float factor = (float)(elapse / sla) * 100;
-            if (factor <= 30) return "success";
-            if (factor <= 70) return "warning";
             if (factor <= 100) return "danger";
+            if (factor <= 70) return "warning";
+            if (factor <= 30) return "success";
             return "danger";
         }
 
