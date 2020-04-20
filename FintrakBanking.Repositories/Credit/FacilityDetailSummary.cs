@@ -71,7 +71,6 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-
         public List<CollateralViewModel> CollateralByLoanId(int loanId)
         {
             var data = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
@@ -86,7 +85,6 @@ namespace FintrakBanking.Repositories.Credit
                             collateralCode = c.COLLATERALCODE,
                             collateralValue = c.COLLATERALVALUE,
                             haircut = c.HAIRCUT
-
                         }).ToList();
             return data;
         }

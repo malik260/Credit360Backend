@@ -121,7 +121,7 @@ namespace FintrakBanking.Entities.Models
         public bool SHOULD_DISBURSE { get; set; }
 
         public bool ISDISBURSED { get; set; }
-
+        public bool ISPRINTED { get; set; }
         public int? DISBURSEDBY { get; set; }
 
         //[StringLength(500)]

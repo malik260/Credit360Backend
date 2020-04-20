@@ -850,5 +850,17 @@ namespace FintrakBanking.APICore.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
         }
+
+        [HttpGet]
+        [Route("global-interest-rate-change-comments/trail/{applicationId}/operation/{operationId}")]
+        public HttpResponseMessage GetGlobalInterestRateChangeTrail(int applicationId, int operationId)
+        {
+            var data = repo.GetGlobalInterestRateChangeTrail(applicationId, operationId);
+            if (data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
+        }
     }
 }
