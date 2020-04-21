@@ -1166,7 +1166,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-deferral-documents-awaiting-approval")]
+        [Route("get-deferred-documents-awaiting-approval")]
         public HttpResponseMessage GetDeferralDocumentsAwaitingApproval()
         {
             try
@@ -1185,9 +1185,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-deferred-extensions-awaiting-approval")]
+        public HttpResponseMessage GetDeferralExtensionsAwaitingApproval()
+        {
+            try
+            {
+                var data = repo.GetDeferralExtensionsAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("submit-deferral-document-for-approval")]
+        [Route("submit-deferred-document-for-approval")]
         public HttpResponseMessage SubmitDeferralDocumentForApproval([FromBody] ConditionPrecedentViewModel model)
         {
             try
@@ -1199,6 +1220,28 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
 
                 var res = repo.SubmitDeferralDocumentForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("submit-deferred-extension-for-approval")]
+        public HttpResponseMessage SubmitDeferralExtensionForApproval([FromBody] ConditionPrecedentViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = repo.SubmitDeferralExtensionForApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
             }
             catch (SecureException ex)

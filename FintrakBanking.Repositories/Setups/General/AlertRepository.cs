@@ -930,8 +930,6 @@ namespace FintrakBanking.Repositories.Setups.General
             GetDigitalLoanLiquidationIncrease();
             GetDigitalLoanLiquidationModuleIncrease();
             */
-
-            /*
             if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
@@ -950,13 +948,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetPastDueObligationsReminderByGroupHeads();
                     state = true;
                 }
-                else if ((now >= archiveStart) && (now <= archiveEnd))
-                {
-                    ProcessLoanArchive();
-                }
+                //else if ((now >= archiveStart) && (now <= archiveEnd))
+                //{
+                //    ProcessLoanArchive();
+                //}
             }
-            */
-
+            
             return state;
 
             /*GetLoanExpirationReminder(); 
@@ -1118,23 +1115,27 @@ namespace FintrakBanking.Repositories.Setups.General
                          tempResult = tempResult + $"</table><br/>";
                         result = result + tempResult;
                     }
-                    
-                   
-                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
-                    alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
-                    
-                    emailList = groupHeadDetail.EMAIL +";"+ GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE)+";"+ defaultEmail+ ";jobomeg@accessbankplc.com";
-                    //var em = "benjamin.gbaaikye@fintraksoftware.com";
-                    alert.receiverEmailList.Add(emailList);
-                    alert.template = alertTemplate;
-                    alert.alertTitle = alertTitle;
-                    alert.canFire = true;
-                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
-                    alerts.Add(alert);
+                    if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                    {
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
+                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+
+                        emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
+
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                        alerts.Add(alert);
+                    }
                 }
-
-                SendAlertNotification(alerts);
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
             }
         }
 
@@ -1219,20 +1220,25 @@ namespace FintrakBanking.Repositories.Setups.General
                         result = result + tempResult;
                     }
 
-                    alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
-                    alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+                    if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                    {
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
+                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                    emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
-                    //var em = "OLUKAYODE.AJAYI@ACCESSBANKPLC.com"; //"benjamin.gbaaikye@fintraksoftware.com";
-                    alert.receiverEmailList.Add(emailList);
-                    alert.template = alertTemplate;
-                    alert.alertTitle = alertTitle;
-                    alert.canFire = true;
-                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                        emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
-                    alerts.Add(alert);
+                        alerts.Add(alert);
+                    }
                 }
-                SendAlertNotification(alerts);
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
             }
         }
 
@@ -1304,22 +1310,27 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         result = result + $"</table>";
 
-                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
-                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+                        if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
+                            alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                        emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                        //var em = "benjamin.gbaaikye@fintraksoftware.com";
-                        alert.receiverEmailList.Add(emailList);
-                        alert.template = alertTemplate;
-                        alert.alertTitle = alertTitle;
-                        alert.canFire = true;
-                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                            emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
-                        alerts.Add(alert);
+                            alerts.Add(alert);
+                        }
                     }
                 }
 
-                SendAlertNotification(alerts);
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
             }
         }
 
@@ -1855,21 +1866,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         result = result + $"</table>";
 
-                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
-                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+                        if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
+                            alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                        emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                        //var em = "benjamin.gbaaikye@fintraksoftware.com";
-                        alert.receiverEmailList.Add(emailList);
-                        alert.template = alertTemplate;
-                        alert.alertTitle = alertTitle;
-                        alert.canFire = true;
-                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                            emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
-                        alerts.Add(alert);
+                            alerts.Add(alert);
+                        }
                     }
                 }
-                SendAlertNotification(alerts);
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
             }
         }
         public void GetRiskAssetsReportNotification()

@@ -431,6 +431,70 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
+        [HttpGet, Route("pool-application-approval-process")]
+        public HttpResponseMessage GetPoolApplications([FromUri] int operationId, [FromUri] int? classId, [FromUri] string searchString)
+        {
+            IQueryable<LoanApplicationViewModel> items;
+            items = repo.GetPoolApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
+
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+
+                searchString = searchString.Trim().ToLower();
+                items = (from x in items
+                         where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
+                         || x.applicantName.ToLower().StartsWith(searchString)
+                         || x.applicationAmount.ToString() == searchString
+                         //|| x.customerGroupName.ToLower().StartsWith(searchString)
+                         select x);
+            }
+
+            var data = items.ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+        }
+
+        [HttpGet, Route("reassign-application/{approvalTrailId}/{staffId}")]
+        public HttpResponseMessage ReassignApplication(int approvalTrailId, int staffId)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.AssignApplication(approvalTrailId, staffId, entity);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request was reassigned successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
+        }
+
+        [HttpGet, Route("selfAssign-application/{approvalTrailId}")]
+        public HttpResponseMessage AssignApplication(int approvalTrailId)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.AssignApplication(approvalTrailId, token.GetStaffId, entity);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request was assigned successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
+        }
+
         [HttpGet, Route("adhoc-approval/{operationId}/class/{classId}")]
         public HttpResponseMessage getApplicationsToBeAdhocApprovedForInitiateBooking(int operationId, int? classId)
         {
@@ -785,6 +849,18 @@ namespace FintrakBanking.APICore.Controllers
             WorkflowResponse response = repo.GetWorkflowNextStatusLms(entity);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+        }
+
+        [HttpGet]
+        [Route("global-interest-rate-change-comments/trail/{applicationId}/operation/{operationId}")]
+        public HttpResponseMessage GetGlobalInterestRateChangeTrail(int applicationId, int operationId)
+        {
+            var data = repo.GetGlobalInterestRateChangeTrail(applicationId, operationId);
+            if (data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
     }
 }
