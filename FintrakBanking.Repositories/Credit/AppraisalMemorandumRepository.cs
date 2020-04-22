@@ -2975,9 +2975,8 @@ namespace FintrakBanking.Repositories.Credit
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.RESPONSESTAFFID == null
                 && levelIds.Contains((int)x.TOAPPROVALLEVELID)
-                //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                //&& (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
-                && (staffs.Contains((int)x.TOSTAFFID))
+                && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
+                //&& (staffs.Contains((int)x.TOSTAFFID))
             ),
             a => a.LOANAPPLICATIONID,
             b => b.TARGETID,
@@ -3069,7 +3068,6 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
-
             return applications;
 
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
@@ -3108,7 +3106,7 @@ namespace FintrakBanking.Repositories.Credit
                 && x.RESPONSESTAFFID == null
                 && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                 //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
+                //&& (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
             ),
             a => a.LOANAPPLICATIONID,
             b => b.TARGETID,
@@ -3209,32 +3207,37 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity model)
         {
+            bool saved = false;
             using (var trans = context.Database.BeginTransaction())
             {
                 if (approvalTrailId > 0)
                 {
+                    var systemDateNow = DateTime.Now;
                     var trail = context.TBL_APPROVAL_TRAIL.Find(approvalTrailId);
+                    var trailForAudit = context.TBL_APPROVAL_TRAIL.Find(approvalTrailId);
+                    var level = context.TBL_APPROVAL_LEVEL.Find(trail.TOAPPROVALLEVELID);
                     if (trail != null)
                     {
                         trail.TOSTAFFID = staffId;
+                        trail.SYSTEMARRIVALDATETIME = systemDateNow;
                     }
-                }
 
-                var audit = new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.ApplicationReassigned,
-                    STAFFID = model.createdBy,
-                    BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Reassigning of Request on TrailId: '{ approvalTrailId }', to staff with staffId: '{ staffId }'",
-                    IPADDRESS = CommonHelpers.GetLocalIpAddress(), // model.userIPAddress,
-                    URL = model.applicationUrl,
-                    APPLICATIONDATE = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now,
-                    DEVICENAME = CommonHelpers.GetDeviceName(),
-                    OSNAME = CommonHelpers.FriendlyName()
-                };
-                this.audit.AddAuditTrail(audit);
-                trans.Commit();
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.ApplicationReassigned,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"Reassigning of Request to staff with staffId: '{ staffId }'. Trail before reassigning '{trailForAudit.ToString()}'",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(), // model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = systemDateNow,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    trans.Commit();
+                }
             }
 
             return context.SaveChanges() > 0;
