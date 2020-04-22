@@ -2975,9 +2975,8 @@ namespace FintrakBanking.Repositories.Credit
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.RESPONSESTAFFID == null
                 && levelIds.Contains((int)x.TOAPPROVALLEVELID)
-                //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                //&& (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
-                && (staffs.Contains((int)x.TOSTAFFID))
+                && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
+                //&& (staffs.Contains((int)x.TOSTAFFID))
             ),
             a => a.LOANAPPLICATIONID,
             b => b.TARGETID,
@@ -3069,7 +3068,6 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
-
             return applications;
 
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
