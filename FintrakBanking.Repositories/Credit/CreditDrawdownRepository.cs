@@ -244,6 +244,7 @@ namespace FintrakBanking.Repositories.Credit
                     InterventionFunds = application.ISINTERVENTIONFUNDS,
                     OrrBasedApproval = application.ISORRBASEDAPPROVAL,
                     DomiciliationNotInPlace = application.DOMICILIATIONNOTINPLACE,
+                    isContingentFacility = request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
                 };
 
                 workflow.LogActivity();
@@ -881,7 +882,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
-                var approvedLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.APPLICATIONSTATUSID != null && t.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceInProgress).Select(t => t.LCISSUANCEID).ToList();
+                var approvedLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted).Select(t => t.LCISSUANCEID).ToList();
                 var lcIFFRequests = context.TBL_LC_ISSUANCE.Where(l => l.DELETED == false && l.FUNDSOURCEID == (int)LCFundSource.IFF);
                 var lcapprovedLCIFFs = lcIFFRequests.Where(i => approvedLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT });
                 var lcapprovedLCIFFsRecords = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId);

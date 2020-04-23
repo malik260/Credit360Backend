@@ -457,11 +457,12 @@ namespace FintrakBanking.Common.Enum
         // Ade
         CustomerFSCaptionGroupDeleted = 557,
         AlertGroupEmailAdded = 558,
-
+        //lc lms
         LcEnhancementAdded = 559,
         LcEnhancementUpdated = 560,
         LcEnhancementDeleted = 561,
         CreditDocumentationPrinted = 562,
+        ApplicationReassigned = 563,
 
     };
     public enum RegulatoryTypeEnum

@@ -17035,8 +17035,8 @@ namespace FintrakBanking.Repositories.Credit
             using (TransactionScope transactionScope = new TransactionScope())
             {
 
-                try
-                {
+                //try
+               // {
                     var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
                     if (model.operationTypeId == (int)OperationsEnum.TenorChange)
                     {
@@ -17178,8 +17178,6 @@ namespace FintrakBanking.Repositories.Credit
                             }
                         }
                     }
-
-
 
                     int _operationTypeId = 0;
                     if ((int)OperationsEnum.Prepayment == model.operationTypeId || (int)OperationsEnum.LoanTermination == model.operationTypeId)
@@ -17393,26 +17391,27 @@ namespace FintrakBanking.Repositories.Credit
                             result = context.SaveChanges() > 0;
                         }
                     }
+                
                     transactionScope.Complete();
 
                     transactionScope.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    transactionScope.Dispose();
+                //}
+                //catch (Exception ex)
+                //{
+                //    transactionScope.Dispose();
 
-                    var innerException = "";
-                    if (ex.InnerException != null)
-                    {
-                        innerException = ex.InnerException.InnerException.Message;
-                    }
+                //    var innerException = "";
+                //    if (ex.InnerException != null)
+                //    {
+                //        innerException = ex.InnerException.InnerException.Message;
+                //    }
 
-                    // stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+                //    // stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
 
-                    //context.SaveChanges();
+                //    //context.SaveChanges();
 
-                    throw ex;
-                }
+                //    throw ex;
+                //}
             }
 
             return result;

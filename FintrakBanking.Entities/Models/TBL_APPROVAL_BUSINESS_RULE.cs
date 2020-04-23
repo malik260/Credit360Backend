@@ -31,9 +31,15 @@
         public bool ORRBASEDAPPROVAL { get; set; }
         public bool WITHINSTRUCTION { get; set; }
         public bool DOMICILIATIONNOTINPLACE { get; set; }
+        public bool ESRM { get; set; }
+        public bool ISFORCONTINGENTFACILITY { get; set; }
+        public bool ISFORREVOLVINGFACILITY { get; set; }
+        public bool ISFORRENEWAL { get; set; }
+        public bool EXEMPTCONTINGENTFACILITY { get; set; }
+        public bool EXEMPTREVOLVINGFACILITY { get; set; }
+        public bool EXEMPTRENEWAL { get; set; }
 
         public int COMPANYID { get; set; }
-        public bool ESRM { get; set; }
         public int? TENOR { get; set; }
 
         public int CREATEDBY { get; set; }

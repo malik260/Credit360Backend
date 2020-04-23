@@ -56,6 +56,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     WITHINSTRUCTION = model.withoutInstruction,
                     DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace,
                     ESRM = model.esrm,
+                    ISFORCONTINGENTFACILITY = model.isForContingentFacility,
+                    ISFORREVOLVINGFACILITY = model.isForRevolvingFacility,
+                    ISFORRENEWAL = model.isForRenewal,
+                    EXEMPTCONTINGENTFACILITY = model.exemptContingentFacility,
+                    EXEMPTREVOLVINGFACILITY = model.exemptRevolvingFacility,
+                    EXEMPTRENEWAL = model.exemptRenewal,
                     TENOR = model.tenor,
 
                     COMPANYID = model.companyId,
@@ -147,6 +153,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     interventionFunds = x.INTERVENTIONFUNDS,
                     orrBasedApproval = x.ORRBASEDAPPROVAL,
                     esrm = x.ESRM,
+                    isForContingentFacility = x.ISFORCONTINGENTFACILITY,
+                    isForRevolvingFacility = x.ISFORREVOLVINGFACILITY,
+                    isForRenewal = x.ISFORRENEWAL,
+                    exemptContingentFacility = x.EXEMPTCONTINGENTFACILITY,
+                    exemptRevolvingFacility = x.EXEMPTREVOLVINGFACILITY,
+                    exemptRenewal = x.EXEMPTRENEWAL,
                     tenor = x.TENOR,
                     withoutInstruction = x.WITHINSTRUCTION,
                     domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
@@ -174,6 +186,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 withoutInstruction = rule.WITHINSTRUCTION,
                 domiciliationNotInPlace = rule.DOMICILIATIONNOTINPLACE,
                 esrm = rule.ESRM,
+                isForContingentFacility = rule.ISFORCONTINGENTFACILITY,
+                isForRevolvingFacility = rule.ISFORREVOLVINGFACILITY,
+                isForRenewal = rule.ISFORRENEWAL,
+                exemptContingentFacility = rule.EXEMPTCONTINGENTFACILITY,
+                exemptRevolvingFacility = rule.EXEMPTREVOLVINGFACILITY,
+                exemptRenewal = rule.EXEMPTRENEWAL,
                 tenor = rule.TENOR,
             };
         }
@@ -194,6 +212,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 entity.INTERVENTIONFUNDS = model.interventionFunds;
                 entity.ORRBASEDAPPROVAL = model.orrBasedApproval;
                 entity.ESRM = model.esrm;
+                entity.ISFORCONTINGENTFACILITY = model.isForContingentFacility;
+                entity.ISFORREVOLVINGFACILITY = model.isForRevolvingFacility;
+                entity.ISFORRENEWAL = model.isForRenewal;
+                entity.EXEMPTCONTINGENTFACILITY = model.exemptContingentFacility;
+                entity.EXEMPTREVOLVINGFACILITY = model.exemptRevolvingFacility;
+                entity.EXEMPTRENEWAL = model.exemptRenewal;
                 entity.TENOR = model.tenor;
                 entity.WITHINSTRUCTION = model.withoutInstruction;
                 entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
