@@ -345,7 +345,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -2840,12 +2839,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>3.99248in</Width>
+              <Width>4.02581in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.44584in</Height>
+              <Height>0.45001in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2880,7 +2879,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>2.35721in</Height>
+              <Height>2.58638in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2888,13 +2887,13 @@
                       <Source>Database</Source>
                       <Value>=Fields!fileData.Value</Value>
                       <MIMEType>image/png</MIMEType>
-                      <Sizing>Fit</Sizing>
                       <Style>
                         <Border>
                           <Style>None</Style>
                         </Border>
                       </Style>
                     </Image>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -2920,8 +2919,8 @@
         <DataSetName>supportImages</DataSetName>
         <Top>13.80778in</Top>
         <Left>0.23167in</Left>
-        <Height>2.80305in</Height>
-        <Width>3.99248in</Width>
+        <Height>3.03638in</Height>
+        <Width>4.02581in</Width>
         <ZIndex>21</ZIndex>
         <Style>
           <Border>
@@ -2930,7 +2929,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>16.61083in</Height>
+    <Height>17.03583in</Height>
     <Style />
   </Body>
   <Width>11.09833in</Width>
