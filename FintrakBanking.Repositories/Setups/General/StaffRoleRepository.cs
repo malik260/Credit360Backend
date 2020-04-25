@@ -231,6 +231,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 OSNAME = CommonHelpers.FriendlyName(),
             });
 
+            var test = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == entity.companyId
+                                && x.OPERATIONID == (int)OperationsEnum.StaffRoleCreation
+                                && x.TARGETID == staffRole.STAFFROLEID
+                                && x.RESPONSESTAFFID == null
+                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).ToList();
+
             if (context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == entity.companyId
                                 && x.OPERATIONID == (int)OperationsEnum.StaffRoleCreation

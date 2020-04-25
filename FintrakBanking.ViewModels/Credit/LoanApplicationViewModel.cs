@@ -485,6 +485,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string sectorName { get; set; }
         public string productClass { get; set; }
 
+        public string interestRepayment { get; set; }
+        public int? interestRepaymentId { get; set; }
+        public string moratorium { get; set; }
+        public bool? isMoratorium { get; set; }
+
 
         public string priceIndexName { get; set; }
         public int? priceIndexId { get; set; }
