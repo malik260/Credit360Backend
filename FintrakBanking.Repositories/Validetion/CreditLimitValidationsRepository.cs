@@ -1040,7 +1040,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             if (entity.scenerio == 1)
             {
                 var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == entity.applicationId);
-                approvedAmount = (double)appl.APPROVEDAMOUNT;
+                approvedAmount = appl?.APPROVEDAMOUNT != null ? (double)appl?.APPROVEDAMOUNT : (double)0;
             }
 
             if (entity.scenerio == 2)

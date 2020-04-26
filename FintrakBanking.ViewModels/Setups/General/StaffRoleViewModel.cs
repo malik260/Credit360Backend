@@ -20,8 +20,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int approvalStatusId { get; set; }
         public List<UserGroup> userGroup { get; set; }
         public List<UserActivities> activities { get; set; }
-        
-        
+        public short? allocationTypeId { get; set; }
+
+
+
 
 
         public List<int> userGroupIds { get; set; }
