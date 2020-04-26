@@ -240,7 +240,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             MakerCheckerControl();
 
-            //RandomizeAllocation();
+            RandomizeAllocation();
 
             SendNotifications();
 
@@ -324,7 +324,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId).Select(d => d.STAFFID).ToList();
                     approvalStaff.AddRange(staffInrole.Select(d => d.STAFFID).ToList());
 
-                    if (!context.TBL_STAFF_ROLE.Where(x => roles.Contains(x.STAFFROLEID) && x.USEROUNDROBIN == true).Any())
+                    if (!context.TBL_STAFF_ROLE.Where(x => roles.Contains(x.STAFFROLEID) && x.APPROVALFLOWTYPEID == (short)ApprovalFlowTypeEnum.ROUNDROBIN).Any())
                     {
                         return;
                     }
@@ -376,7 +376,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var approvalStaff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevelId).Select(d => d.STAFFID).ToList();
                 approvalStaff.AddRange(staffInrole.Select(d => d.STAFFID).ToList());
 
-                if (!context.TBL_STAFF_ROLE.Where(x => roles.Contains(x.STAFFROLEID) && x.USESBUROUTING == true).Any())
+                if (!context.TBL_STAFF_ROLE.Where(x => roles.Contains(x.STAFFROLEID) && x.APPROVALFLOWTYPEID == (short)ApprovalFlowTypeEnum.SBUROUTING).Any())
                 {
                     return;
                 }
