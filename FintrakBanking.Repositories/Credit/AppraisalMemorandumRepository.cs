@@ -2558,7 +2558,11 @@ namespace FintrakBanking.Repositories.Credit
                         conditionPrecedent = x.d.CONDITIONPRECIDENT,
                         conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
                         transactionDynamics = x.d.TRANSACTIONDYNAMICS,
-                        
+
+                        schedule = x.d.REPAYMENTSCHEDULEID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.REPAYMENTSCHEDULEID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
+                        interestRepayment = x.d.INTERESTREPAYMENTID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.INTERESTREPAYMENTID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
+                        interestRepaymentId = x.d.INTERESTREPAYMENTID,
+                        moratorium = x.d.MORATORIUM
                     })
                     .ToList();
 
@@ -2977,9 +2981,8 @@ namespace FintrakBanking.Repositories.Credit
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.RESPONSESTAFFID == null
                 && levelIds.Contains((int)x.TOAPPROVALLEVELID)
-                //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
-                //&& (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
-                && (staffs.Contains((int)x.TOSTAFFID))
+                && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
+                //&& (staffs.Contains((int)x.TOSTAFFID))
             ),
             a => a.LOANAPPLICATIONID,
             b => b.TARGETID,
@@ -3069,7 +3072,6 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
-
             return applications;
 
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));

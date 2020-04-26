@@ -3132,7 +3132,12 @@ namespace FintrakBanking.Repositories.Credit
                 CRMSVALIDATED = false,
                 ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
                 ISLINEFACILITY = a.isLineFacility,
-                LOANDETAILREVIEWTYPEID = a.loanDetailReviewTypeId
+                LOANDETAILREVIEWTYPEID = a.loanDetailReviewTypeId,
+
+                ISMORATORIUM = a.isMoratorium,
+                INTERESTREPAYMENT = a.interestRepayment,
+                INTERESTREPAYMENTID = a.interestRepaymentId,
+                MORATORIUM = a.moratorium
                 //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
             };
 
