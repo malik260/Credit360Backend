@@ -691,7 +691,7 @@ namespace FintrakBanking.Repositories.Credit
                                                       join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANID equals b.LOANAPPLICATIONDETAILID
                                                       join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                                       where a.LOANID == loanId && a.LOANSYSTEMTYPEID == loanSystemTypeId && a.LOANREVIEWOPERATIONID != loanReviewOperationId
-                                         && a.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility && (a.FEEAMOUNT - a.EARNEDFEEAMOUNT) > 0 //&& a.FEEAMOUNT > 0
+                                                      && a.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility && (a.FEEAMOUNT - a.EARNEDFEEAMOUNT) > 0 //&& a.FEEAMOUNT > 0
                                                       select new DailyInterestAccrualViewModel()
                                                       {
                                                           referenceNumber = c.APPLICATIONREFERENCENUMBER + '-' + b.LOANAPPLICATIONDETAILID,
@@ -750,39 +750,40 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
                     {
-                        var termLoans = (from a in context.TBL_LOAN_FEE
-                                         join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                                         join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
-                                         where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.LOANSYSTEMTYPEID == loanSystemTypeId
-                                         && (a.LOANREVIEWOPERATIONID.Equals(null) || !a.LOANREVIEWOPERATIONID.Equals(loanReviewOperationId))
-                                         && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && (a.FEEAMOUNT - a.EARNEDFEEAMOUNT) > 0 //&& a.FEEAMOUNT > 0
-                                         select new DailyInterestAccrualViewModel()
-                                         {
-                                             referenceNumber = b.LOANREFERENCENUMBER,
-                                             productId = b.PRODUCTID,
-                                             branchId = b.BRANCHID,
-                                             companyId = b.COMPANYID,
-                                             currencyId = b.CURRENCYID,
-                                             exchangeRate = b.EXCHANGERATE,
-                                             interestRate = b.INTERESTRATE,
-                                             date = applicationDate,
-                                             effectiveDate = b.EFFECTIVEDATE,
-                                             maturityDate = b.MATURITYDATE,
-                                             mainAmount = earnAmount,
-                                             categoryId = (short)DailyAccrualCategory.Fee,
-                                             transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
-                                             baseReferenceNumber = null,
-                                             //dayCountConventionId = d.DAYCOUNTCONVENTIONID,
-                                             chargedFeeId = a.CHARGEFEEID,
-                                             loanChargedFeeId = a.LOANCHARGEFEEID,
-                                         }).FirstOrDefault();
+                       
+                            var termLoans = (from a in context.TBL_LOAN_FEE
+                                             join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                                             join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                                             where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.LOANSYSTEMTYPEID == loanSystemTypeId
+                                             && (a.LOANREVIEWOPERATIONID.Value.Equals(null) || !a.LOANREVIEWOPERATIONID.Value.Equals(loanReviewOperationId))
+                                             && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && (a.FEEAMOUNT - a.EARNEDFEEAMOUNT) > 0 //&& a.FEEAMOUNT>0 
+                                             select new DailyInterestAccrualViewModel()
+                                             {
+                                                 referenceNumber = b.LOANREFERENCENUMBER,
+                                                 productId = b.PRODUCTID,
+                                                 branchId = b.BRANCHID,
+                                                 companyId = b.COMPANYID,
+                                                 currencyId = b.CURRENCYID,
+                                                 exchangeRate = b.EXCHANGERATE,
+                                                 interestRate = b.INTERESTRATE,
+                                                 date = applicationDate,
+                                                 effectiveDate = b.EFFECTIVEDATE,
+                                                 maturityDate = b.MATURITYDATE,
+                                                 mainAmount = earnAmount,
+                                                 categoryId = (short)DailyAccrualCategory.Fee,
+                                                 transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
+                                                 baseReferenceNumber = null,
+                                                 //dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+                                                 chargedFeeId = a.CHARGEFEEID,
+                                                 loanChargedFeeId = a.LOANCHARGEFEEID,
+                                             }).FirstOrDefault();
 
-                        viewModel = termLoans;
-
+                            viewModel = termLoans;
                     }
-
-                    financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee,  loanSystemTypeId);
-
+                    if (viewModel != null)
+                    {
+                        financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee, loanSystemTypeId);
+                    }
                 }
 
 

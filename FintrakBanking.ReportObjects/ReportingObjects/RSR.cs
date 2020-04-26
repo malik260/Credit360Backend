@@ -182,8 +182,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     projectSiteReportId = x.PROJECTSITEREPORTID,
                     imageCaption = x.IMAGECAPTION,
                     fileData = x.FILEDATA,
-                })
-                .ToList();
+                }).ToList();
         }
 
         public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)

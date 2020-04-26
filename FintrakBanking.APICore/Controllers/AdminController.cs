@@ -917,8 +917,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("two-factor-auth-last-approval")]
         public HttpResponseMessage TwoFactorAuthenticationEnabled(int operationId,int? productClassId, int? productId, decimal levelAmount = 0)
         {
-            try
-            {
+            
                 var data = repo.Enable2FAForLastApproval(token.GetStaffId, operationId, productClassId ,productId, levelAmount);
                 if (!data)
                 {
@@ -927,12 +926,6 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
         }
         #endregion
 
