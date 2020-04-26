@@ -114,6 +114,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
                 model.staffId = token.GetStaffId;
+                model.lastUpdatedBy = token.GetStaffId;
 
                 var data = repoMapping.UpdateApprovalGroupMapping(operationMappingId, model);
 
