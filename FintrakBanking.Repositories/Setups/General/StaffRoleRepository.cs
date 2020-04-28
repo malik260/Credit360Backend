@@ -98,6 +98,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             workEndDuration = a.WORKENDDURATION,
                             workStartDuration = a.WORKSTARTDURATION,
                             allocationTypeId = b.APPROVALFLOWTYPEID,
+                            staffId = staffId,
                         }).FirstOrDefault();
             return role;
         }
