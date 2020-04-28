@@ -103,7 +103,7 @@ namespace FintrakBanking.Entities.Models
         public bool WITHINSTRUCTION { get; set; }
         public bool DOMICILIATIONNOTINPLACE { get; set; }
         
-        public int CREATEDBY { get; set; }
+        public int OWNEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
 
@@ -170,6 +170,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISMULTIPLEPRODUCTDRAWDOWN { get; set; }
         public short? APPROVEDLINESTATUSID { get; set; }
+        public int CREATEDBY { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

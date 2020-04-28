@@ -394,7 +394,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
-                    atInitiator = x.c.a.CREATEDBY == staffId,
+                    atInitiator = x.c.a.OWNEDBY == staffId,
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                     loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID)
                                                  select new LoanApplicationCollateralViewModel
@@ -500,7 +500,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
-                    atInitiator = x.c.a.CREATEDBY == staffId,
+                    atInitiator = x.c.a.OWNEDBY == staffId,
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                     loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID)
                                                  select new LoanApplicationCollateralViewModel
@@ -2856,7 +2856,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var appla = context.TBL_LOAN_APPLICATION.Find(model.targetId);
                 productClassId = appla.PRODUCTCLASSID;
-                staffId = appla.CREATEDBY;
+                staffId = appla.OWNEDBY;
             }
             if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
             {

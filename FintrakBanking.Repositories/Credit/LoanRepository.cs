@@ -2877,7 +2877,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
@@ -3032,7 +3032,7 @@ namespace FintrakBanking.Repositories.Credit
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -3843,7 +3843,7 @@ namespace FintrakBanking.Repositories.Credit
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -7466,7 +7466,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
@@ -7589,7 +7589,7 @@ namespace FintrakBanking.Repositories.Credit
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                         join p in context.TBL_PRODUCT on  d.APPROVEDPRODUCTID equals p.PRODUCTID
                         where a.COMPANYID == companyId && d.DELETED == false
-                        && staffIds.Contains(a.CREATEDBY)
+                        && staffIds.Contains(a.OWNEDBY)
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -7661,7 +7661,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = a.APPROVEDDATE,
                             groupApprovedAmount = a.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = a.CREATEDBY,
+                            createdBy = a.OWNEDBY,
                             newApplicationDate = a.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = a.AVAILMENTDATE,
@@ -7761,7 +7761,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
@@ -9136,7 +9136,7 @@ namespace FintrakBanking.Repositories.Credit
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -9636,7 +9636,7 @@ namespace FintrakBanking.Repositories.Credit
                                             0)
                                 ),
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -15169,7 +15169,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             systemCurrentDate = systemDate,
