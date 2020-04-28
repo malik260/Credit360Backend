@@ -1443,8 +1443,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-price-index-global-approval")]
         public HttpResponseMessage GetAllProductPriceIndexGlobalAwaitingApproval()
         {
-            try
-            {
+            
                 var token = new TokenDecryptionHelper();
                 var data = repo.GetProductPriceIndexGlobalAwaitingApproval(token.GetStaffId).ToList();
                 if (data == null)
@@ -1455,11 +1454,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
         }
 
         [HttpGet]
@@ -1467,8 +1461,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-price-index-global")]
         public HttpResponseMessage GetAllProductPriceIndexGlobal()
         {
-            try
-            {
+            
                 var token = new TokenDecryptionHelper();
                 var data = repo.GetProductPriceIndexGlobal().ToList();
                 if (data == null)
@@ -1479,12 +1472,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
         }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("product-price-index-global")]

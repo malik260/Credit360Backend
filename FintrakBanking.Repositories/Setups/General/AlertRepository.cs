@@ -935,9 +935,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
                 TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
 
-                TimeSpan archiveStart = new TimeSpan(20, 0, 0); //8 o'pm
-                TimeSpan archiveEnd = new TimeSpan(21, 0, 0); //11 o'pm
-
+                 
                 TimeSpan now = DateTime.Now.TimeOfDay;
 
                 if ((now >= start) && (now <= end))
@@ -948,12 +946,14 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetPastDueObligationsReminderByGroupHeads();
                     state = true;
                 }
-                //else if ((now >= archiveStart) && (now <= archiveEnd))
-                //{
-                //    ProcessLoanArchive();
-                //}
+                /*TimeSpan archiveStart = new TimeSpan(20, 0, 0); //8 o'pm
+                 TimeSpan archiveEnd = new TimeSpan(21, 0, 0); //11 o'pm
+                 else if ((now >= archiveStart) && (now <= archiveEnd))
+                 {
+                    ProcessLoanArchive();
+                 } */
             }
-            
+
             return state;
 
             /*GetLoanExpirationReminder(); 
@@ -1334,11 +1334,11 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
-        public bool ProcessLoanArchive()
-        {
-            return loanArchive.ProcessLoanArchieving();
+        //public bool ProcessLoanArchive()
+        //{
+        //    return loanArchive.ProcessLoanArchieving();
 
-        }
+        //}
 
 
         public void GetCreditCardMaturingObligations()

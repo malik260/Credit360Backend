@@ -475,6 +475,26 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
         }
 
+        [HttpPut, Route("self-assign-multiple-approval-item")]
+        public HttpResponseMessage SelfAssignmultipleApprovalItem([FromBody] List<ForwardViewModel> model)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.SelfAssignMultpleApplication(model, entity);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request assigned successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
+        }
+
         [HttpGet, Route("selfAssign-application/{approvalTrailId}")]
         public HttpResponseMessage AssignApplication(int approvalTrailId)
         {

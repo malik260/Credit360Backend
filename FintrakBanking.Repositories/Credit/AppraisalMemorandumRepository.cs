@@ -2558,7 +2558,11 @@ namespace FintrakBanking.Repositories.Credit
                         conditionPrecedent = x.d.CONDITIONPRECIDENT,
                         conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
                         transactionDynamics = x.d.TRANSACTIONDYNAMICS,
-                        
+
+                        //schedule = x.d.REPAYMENTSCHEDULEID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.REPAYMENTSCHEDULEID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
+                        interestRepayment = x.d.INTERESTREPAYMENTID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.INTERESTREPAYMENTID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
+                        interestRepaymentId = x.d.INTERESTREPAYMENTID,
+                        moratorium = x.d.MORATORIUM
                     })
                     .ToList();
 
@@ -2949,7 +2953,7 @@ namespace FintrakBanking.Repositories.Credit
             List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
             List<int> levelIds = new List<int>();
             //List<int> levelIds2 = new List<int>();
-
+           
             ExclusiveOperations.Add(operationId);
             foreach(var i in ExclusiveOperations)
             {
@@ -2957,6 +2961,8 @@ namespace FintrakBanking.Repositories.Credit
             }
             
             var staffs = general.GetStaffRlieved(staffId);
+            var currentStaff = context.TBL_STAFF.Find(staffs[0]);
+
             IQueryable<LoanApplicationViewModel> applications = null;
 
             var query = new List<LoanApplicationViewModel>();
@@ -2996,7 +3002,7 @@ namespace FintrakBanking.Repositories.Credit
                                         .FirstOrDefault(),
             productClassId = x.a.PRODUCTCLASSID,
             productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-            
+
             customerGroupId = x.a.CUSTOMERGROUPID,
             loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
@@ -3023,7 +3029,7 @@ namespace FintrakBanking.Repositories.Credit
             customerBusinessUnitId = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == x.a.CUSTOMERID).Select(c => c.BUSINESSUNTID).FirstOrDefault(),
             timeIn = x.b.SYSTEMARRIVALDATETIME,
             slaTime = x.b.SLADATETIME,
-            
+
             loanInformation = x.a.LOANINFORMATION,
             submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
@@ -3052,9 +3058,7 @@ namespace FintrakBanking.Repositories.Credit
             requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
             operationId = x.a.OPERATIONID,
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
-            tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
-            
-            
+            tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,           
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA)
@@ -3241,6 +3245,16 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return context.SaveChanges() > 0;
+        }
+
+        public bool SelfAssignMultpleApplication(List<ForwardViewModel> models, GeneralEntity userEntity)
+        {
+            bool response = false;
+            foreach(var model in models)
+            {
+                if (model.trailId != null) { response = AssignApplication(model.trailId.Value, userEntity.createdBy, userEntity); }
+            }
+            return response;
         }
 
         public bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity model)

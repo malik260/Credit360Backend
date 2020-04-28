@@ -127,6 +127,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isSpecialised { get; set; }
         public short? crmsRepaymentTypeId { get; set; }
 
+        public string moratorium { get; set; }
+        public int? interestRepaymentId { get; set; }
+        public string interestRepayment { get; set; }
+
         public string proposedTenorString
         {
             get
