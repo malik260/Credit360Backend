@@ -104,7 +104,8 @@ namespace FintrakBanking.Entities.Models
         public bool NOTINXDS { get; set; }
         public bool NOTINCRC { get; set; }
         public int? ARCHIVEDBY { get; set; }
-
+        public short? APPROVEDLINESTATUSID { get; set; }
+        public int OWNEDBY { get; set; }
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }

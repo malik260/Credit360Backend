@@ -8996,7 +8996,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string TodHeaderHtml()
         {
-            var staff = context.TBL_STAFF.Where(s => s.STAFFID == this.loanApplication.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == this.loanApplication.OWNEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
             var branch = context.TBL_BRANCH.Where(s => s.BRANCHID == this.loanApplication.BRANCHID).Select(s => s.BRANCHNAME).FirstOrDefault();
             var result = String.Empty;
             result = result + $@"

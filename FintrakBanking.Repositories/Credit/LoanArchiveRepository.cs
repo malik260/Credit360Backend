@@ -95,7 +95,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApplArchive.ISORRBASEDAPPROVAL = app.ISORRBASEDAPPROVAL;
             loanApplArchive.WITHINSTRUCTION = app.WITHINSTRUCTION;
             loanApplArchive.DOMICILIATIONNOTINPLACE = app.DOMICILIATIONNOTINPLACE;
-            loanApplArchive.CREATEDBY = app.CREATEDBY;
+            loanApplArchive.CREATEDBY = app.OWNEDBY;
             loanApplArchive.DATETIMECREATED = app.DATETIMECREATED;
             loanApplArchive.LASTUPDATEDBY = app.LASTUPDATEDBY;
             loanApplArchive.DATETIMEUPDATED = app.DATETIMEUPDATED;

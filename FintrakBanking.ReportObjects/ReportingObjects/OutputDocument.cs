@@ -98,7 +98,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                    operationId = a.OPERATIONID,
                                    customerId = c.CUSTOMERID,
                                    customerCode = c.CUSTOMERCODE,
-                                   createdBy = a.CREATEDBY,
+                                   createdBy = a.OWNEDBY,
                                    applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                    targetReferenceNumber = a.APPLICATIONREFERENCENUMBER
                                }).ToList();

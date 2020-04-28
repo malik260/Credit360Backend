@@ -169,6 +169,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int currentApprovalLevelSlaInterval { get; set; }
         public bool isadhocapplication { get; set; }
         public bool isSkipAppraisalEnabled { get; set; }
+        public bool isAtDrawDown { get; set; }
         public int? exclusiveOperationId { get; set; }
         public int? flowchangeId { get; set; }
         public int? loanApprovedLimitId { get; set; }

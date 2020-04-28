@@ -455,8 +455,28 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
-        [HttpGet, Route("reassign-application/{approvalTrailId}/{staffId}")]
-        public HttpResponseMessage ReassignApplication(int approvalTrailId, int staffId)
+        [HttpPut, Route("reassign-application/owner/{staffId}")]
+        public HttpResponseMessage ChangeApplicationOwner([FromBody] int loanApplicationId, int staffId)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.ChangeApplicationOwner(loanApplicationId, staffId, entity);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Ownership was reassigned successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
+        }
+
+        [HttpPut, Route("reassign-application/{staffId}")]
+        public HttpResponseMessage ReassignApplication([FromBody] int approvalTrailId, int staffId)
         {
             var entity = new GeneralEntity
             {
@@ -495,8 +515,8 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
         }
 
-        [HttpGet, Route("selfAssign-application/{approvalTrailId}")]
-        public HttpResponseMessage AssignApplication(int approvalTrailId)
+        [HttpPut, Route("selfAssign-application")]
+        public HttpResponseMessage AssignApplication([FromBody] int approvalTrailId)
         {
             var entity = new GeneralEntity
             {
