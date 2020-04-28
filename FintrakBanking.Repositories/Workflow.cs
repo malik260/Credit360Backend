@@ -1414,19 +1414,21 @@ namespace FintrakBanking.Repositories.WorkFlow
                            .ThenBy(x => x.LevelPosition)
                            .ToList();
 
-            if (mappings.FirstOrDefault().ALLOWMULTIPLEINITIATOR == true)
-            {
-                initiator = GetAllTrail().OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
-                var requestStaff = context.TBL_STAFF.Find(initiator.REQUESTSTAFFID);
-
-                levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
-            }
+            
 
             List<WorkflowSetup> grid = new List<WorkflowSetup>();
 
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
+                if (mappings.Where(x => x.GROUPID == level.Group.GROUPID && x.ALLOWMULTIPLEINITIATOR == true ).Any())
+                {
+                    initiator = GetAllTrail().OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
+                    var requestStaff = context.TBL_STAFF.Find(initiator.REQUESTSTAFFID);
+
+                    if(level.ROLEIDTOROUTE != requestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null) { continue; }
+                   // levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
+                }
                 var testField = level.Level.LEVELNAME;
 
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule))
