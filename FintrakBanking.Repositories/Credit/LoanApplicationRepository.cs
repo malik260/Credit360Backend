@@ -4599,7 +4599,7 @@ namespace FintrakBanking.Repositories.Credit
                         x.approvalTrailId = singleRec.APPROVALTRAILID;//y.APPROVALTRAILID,
                         //x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a" : singleRec.TBL_STAFF1.STAFFCODE + " - " + singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                         x.responsiblePerson = singleRec.TOSTAFFID == null ? (singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : (x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : (x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : "CLICK VIEW FOR DRAWDOWN DETAILS"))) : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
-                        x.currentOperationId =   singleRec.OPERATIONID;
+                        x.currentOperationId = singleRec.OPERATIONID;
                     }
                     else
                     {
@@ -4614,79 +4614,16 @@ namespace FintrakBanking.Repositories.Credit
                             x.responsiblePerson = x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : "WITH ACCOUNT OFFICER";
                         }
                     }
-
+                    x.isAtDrawDown = IsAtDrawDown(x.currentApprovalLevel, "CLICK VIEW FOR DRAWDOWN DETAILS");
                 }
 
                 return allRecord;
-
-                /*var applications = context.TBL_LOAN_APPLICATION
-                        .Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
-                        .Join(context.TBL_CUSTOMER, g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
-                        .Join(context.TBL_CASA, o => o.c.CUSTOMERID, s => s.CUSTOMERID, (o, s) => new { o, s })
-                        .GroupJoin(context.TBL_APPROVAL_TRAIL.Where(t => t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended), q => q.o.g.a.LOANAPPLICATIONID, t => t.TARGETID, (q, t) => new { q, t })
-                        .SelectMany(x =>
-                            x.t.DefaultIfEmpty(),
-                            (x, y) => new LoanApplicationViewModel
-                            {
-                                firstName = x.q.o.c.FIRSTNAME,
-                                middleName = x.q.o.c.MIDDLENAME,
-                                lastName = x.q.o.c.LASTNAME,
-                                customerCode = x.q.o.c.CUSTOMERCODE,
-                                applicationReferenceNumber = x.q.o.g.a.APPLICATIONREFERENCENUMBER,
-
-                                loanApplicationId = x.q.o.g.a.LOANAPPLICATIONID,
-                                customerId = x.q.o.g.a.CUSTOMERID,
-                                branchId = x.q.o.g.a.BRANCHID,
-                                customerGroupId = x.q.o.g.a.CUSTOMERGROUPID,
-                                loanTypeId = x.q.o.g.a.LOANAPPLICATIONTYPEID,
-                                relationshipOfficerId = x.q.o.g.a.RELATIONSHIPOFFICERID,
-                                relationshipManagerId = x.q.o.g.a.RELATIONSHIPMANAGERID,
-                                applicationDate = x.q.o.g.a.APPLICATIONDATE,
-                                applicationAmount = x.q.o.g.a.APPLICATIONAMOUNT,
-                                approvedAmount = x.q.o.g.a.APPROVEDAMOUNT,
-                                interestRate = x.q.o.g.a.INTERESTRATE,
-                                applicationTenor = x.q.o.g.a.APPLICATIONTENOR,
-
-                                submittedForAppraisal = x.q.o.g.a.SUBMITTEDFORAPPRAISAL,
-                                customerInfoValidated = x.q.o.g.a.CUSTOMERINFOVALIDATED,
-                                isRelatedParty = x.q.o.g.a.ISRELATEDPARTY,
-                                isPoliticallyExposed = x.q.o.g.a.ISPOLITICALLYEXPOSED,
-                                approvalStatusId = (short)x.q.o.g.a.APPROVALSTATUSID,
-                                approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.q.o.g.a.APPROVALSTATUSID).APPROVALSTATUSNAME,
-
-                                currentApprovalLevel = y == null ? "n/a" : y.TBL_APPROVAL_LEVEL1.LEVELNAME,
-                                approvalTrailId = y == null ? 0 : y.APPROVALTRAILID,
-                                responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
-
-                                applicationStatusId = x.q.o.g.a.APPLICATIONSTATUSID,
-                                applicationStatus = x.q.o.g.a.TBL_LOAN_APPLICATION_STATUS.APPLICATIONSTATUSNAME, // <----------------- new 
-                                branchName = x.q.o.g.a.TBL_BRANCH.BRANCHNAME,
-                                relationshipOfficerName = x.q.o.g.a.TBL_STAFF.FIRSTNAME + " " + x.q.o.g.a.TBL_STAFF.MIDDLENAME + " " + x.q.o.g.a.TBL_STAFF.LASTNAME,
-                                relationshipManagerName = x.q.o.g.a.TBL_STAFF1.FIRSTNAME + " " + x.q.o.g.a.TBL_STAFF1.MIDDLENAME + " " + x.q.o.g.a.TBL_STAFF1.LASTNAME,
-                                misCode = x.q.o.g.a.MISCODE,
-                                customerGroupName = x.q.o.g.a.CUSTOMERGROUPID.HasValue ? x.q.o.g.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                                loanTypeName = x.q.o.g.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                createdBy = x.q.o.g.a.CREATEDBY,
-                                loanPreliminaryEvaluationId = x.q.o.g.a.LOANPRELIMINARYEVALUATIONID,
-                                operationId = x.q.o.g.a.OPERATIONID,
-                                accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
-                                isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.q.o.g.a.APPLICATIONREFERENCENUMBER).Any()
-                            })
-                        .Where(x => x.applicationReferenceNumber == searchString
-                            || x.firstName.ToLower().Contains(searchString)
-                            || x.lastName.ToLower().Contains(searchString)
-                            || x.middleName.ToLower().Contains(searchString)
-                            || x.customerCode.ToLower().Contains(searchString)
-                            || x.createdBy == context.TBL_STAFF.Where(o=>o.STAFFCODE== searchString.ToUpper()).Select(o=>o.STAFFID).FirstOrDefault()
-                            )
-                        ;
-
-                var list = applications.ToList();
-                applications = applications.OrderByDescending(x => x.approvalTrailId).GroupBy(x => x.applicationReferenceNumber).Select(x => x.FirstOrDefault());
-                //var filteredList = applications.ToList();
-                return applications; */
-
             }
+        }
+
+        private bool IsAtDrawDown(string currentApprovalLevel, string drawDownString)
+        {
+            return currentApprovalLevel.Trim().Contains(drawDownString);
         }
 
         private string GetWorkFlowName(int operationId, int? productClassId, int? productId)
