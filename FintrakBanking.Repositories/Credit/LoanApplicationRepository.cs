@@ -263,7 +263,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                             loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                            createdBy = a.CREATEDBY,
+                            createdBy = a.OWNEDBY,
                             applicationDate = a.APPLICATIONDATE,
                             applicationTenor = a.APPLICATIONTENOR,
                             applicationAmount = a.APPLICATIONAMOUNT,
@@ -671,7 +671,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("This Loan doesn't exist on the System");
             }
 
-            if (!(staffs.Contains(loan.CREATEDBY)))
+            if (!(staffs.Contains(loan.OWNEDBY)))
             {
                 throw new SecureException("You cannot modify a Loan you didn't initiate!");
             }
@@ -704,7 +704,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = from a in context.TBL_LOAN_APPLICATION
                        where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress
                        && a.COMPANYID == companyId && a.DELETED == false
-                          && (a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId)
+                          && (a.OWNEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId)
                           && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                           && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
 
@@ -739,7 +739,7 @@ namespace FintrakBanking.Repositories.Credit
                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                            loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                            loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                           createdBy = a.CREATEDBY,
+                           createdBy = a.OWNEDBY,
                            applicationDate = a.APPLICATIONDATE,
                            dateTimeCreated = a.DATETIMECREATED,
                            applicationTenor = Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0),
@@ -836,7 +836,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerGroupId = a.CUSTOMERGROUPID.Value,
                             loanTypeId = a.LOANAPPLICATIONTYPEID,
                             //loanStatusId = a.LoanStatusId,
-                            createdBy = a.CREATEDBY,
+                            createdBy = a.OWNEDBY,
                             applicationDate = a.APPLICATIONDATE,
                             dateTimeCreated = a.DATETIMECREATED
                         }).ToList();
@@ -1513,7 +1513,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false,false,false,null);
+                workflow.NextProcess(appl.COMPANYID, appl.OWNEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false,false,false,null);
                 context.SaveChanges();
                 return 1;
             }
@@ -2659,6 +2659,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANINFORMATION = loan.loanInformation,
                 ISRELATEDPARTY = loan.isRelatedParty,
                 ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed,
+                OWNEDBY = (int)loan.createdBy,
                 CREATEDBY = (int)loan.createdBy,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
@@ -3517,6 +3518,8 @@ namespace FintrakBanking.Repositories.Credit
             loanApplArchive.LOANAPPROVEDLIMITID = app.LOANAPPROVEDLIMITID;
             loanApplArchive.FLOWCHANGEID = app.FLOWCHANGEID;
             loanApplArchive.ISMULTIPLEPRODUCTDRAWDOWN = app.ISMULTIPLEPRODUCTDRAWDOWN;
+            loanApplArchive.APPROVEDLINESTATUSID = app.APPROVEDLINESTATUSID;
+            loanApplArchive.OWNEDBY = app.OWNEDBY;
             loanApplArchive.ARCHIVINGOPERATIONID = operationId;
             context.TBL_LOAN_APPLICATION_ARCHIVE.Add(loanApplArchive);
             foreach(var f in details)
@@ -4406,7 +4409,7 @@ namespace FintrakBanking.Repositories.Credit
                                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                     join p in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals p.PRODUCTID
                                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
-                                    let creatorStaff = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == x.CREATEDBY)
+                                    let creatorStaff = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == x.OWNEDBY)
                                     let jumpsToDrawDown = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == x.FLOWCHANGEID)
                                     //join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
                                     where
@@ -4418,7 +4421,7 @@ namespace FintrakBanking.Repositories.Credit
                             || c.FIRSTNAME.ToLower().Contains(searchString)
                             || c.LASTNAME.ToLower().Contains(searchString)
                             || c.MIDDLENAME.ToLower().Contains(searchString)
-                            || x.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                            || x.OWNEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
                                     select new LoanApplicationViewModel
                                     {
                                         firstName = c.FIRSTNAME,
@@ -4476,10 +4479,10 @@ namespace FintrakBanking.Repositories.Credit
                                         misCode = x.MISCODE,
                                         customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                                         loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(o => o.LOANAPPLICATIONTYPEID == x.LOANAPPLICATIONTYPEID).Select(o => o.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
-                                        createdBy = x.CREATEDBY,
+                                        createdBy = x.OWNEDBY,
                                         loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
                                         operationId = x.OPERATIONID,
-                                        owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
+                                        owner = x.OWNEDBY == staffId ? true : relifestaff != 0 ? true : false,
                                         // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                         isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
                                         isFacilityCreated = a.ISFACILITYCREATED,
@@ -4490,7 +4493,7 @@ namespace FintrakBanking.Repositories.Credit
                                          join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                          join p in context.TBL_PRODUCT on a.APPROVEDPRODUCTID equals p.PRODUCTID
                                          join c in context.TBL_CUSTOMER_GROUP on x.CUSTOMERGROUPID equals c.CUSTOMERGROUPID
-                                         let creatorStaff = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == x.CREATEDBY)
+                                         let creatorStaff = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == x.OWNEDBY)
                                          let jumpsToDrawDown = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == x.FLOWCHANGEID)
                                          //join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
                                          where
@@ -4502,7 +4505,7 @@ namespace FintrakBanking.Repositories.Credit
                                  || c.GROUPNAME.ToLower().Contains(searchString)
                                  || c.GROUPCODE.ToLower().Contains(searchString)
                                  || c.GROUPDESCRIPTION.ToLower().Contains(searchString)
-                                 || x.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                                 || x.OWNEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
                                          select new LoanApplicationViewModel
                                          {
                                              //firstName = c.FIRSTNAME,
@@ -4562,10 +4565,10 @@ namespace FintrakBanking.Repositories.Credit
                                              misCode = x.MISCODE,
                                              customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                                              loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(o => o.LOANAPPLICATIONTYPEID == x.LOANAPPLICATIONTYPEID).Select(o => o.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
-                                             createdBy = x.CREATEDBY,
+                                             createdBy = x.OWNEDBY,
                                              loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
                                              operationId = x.OPERATIONID,
-                                             owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
+                                             owner = x.OWNEDBY == staffId ? true : relifestaff != 0 ? true : false,
                                              // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                              isOfferLetterAvailable = context.TBL_LOAN_OFFER_LETTER.Where(ol => ol.LOANAPPLICATIONID == x.LOANAPPLICATIONID && ol.ISLMS == false).Any(),
                                              isFacilityCreated = a.ISFACILITYCREATED,
@@ -4583,6 +4586,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         var singleRec = appRecord;
                         x.currentApprovalLevel = singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : "CLICK VIEW FOR DRAWDOWN DETAILS"; // y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                        x.currentApprovalLevelId = singleRec.TOAPPROVALLEVELID > 0 ? singleRec.TOAPPROVALLEVELID : 0;
                         x.approvalTrailId = singleRec.APPROVALTRAILID;//y.APPROVALTRAILID,
                         //x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a" : singleRec.TBL_STAFF1.STAFFCODE + " - " + singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                         x.responsiblePerson = singleRec.TOSTAFFID == null ? (singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : (x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : (x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : "CLICK VIEW FOR DRAWDOWN DETAILS"))) : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
@@ -4722,7 +4726,7 @@ namespace FintrakBanking.Repositories.Credit
                         || c.FIRSTNAME.ToLower().Contains(searchString)
                         || c.LASTNAME.ToLower().Contains(searchString)
                         || c.MIDDLENAME.ToLower().Contains(searchString)
-                        || x.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                        || x.OWNEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
                                 select new LoanApplicationViewModel
                                 {
                                     firstName = c.FIRSTNAME,
@@ -4763,7 +4767,7 @@ namespace FintrakBanking.Repositories.Credit
                                     misCode = x.MISCODE,
                                     customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                                     loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(o => o.LOANAPPLICATIONTYPEID == x.LOANAPPLICATIONTYPEID).Select(o => o.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
-                                    createdBy = x.CREATEDBY,
+                                    createdBy = x.OWNEDBY,
                                     loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
                                     operationId = x.OPERATIONID,
                                     //owner = x.CREATEDBY == staffId ? true : relifestaff != 0 ? true : false,
@@ -4780,7 +4784,7 @@ namespace FintrakBanking.Repositories.Credit
                              || c.GROUPNAME.ToLower().Contains(searchString)
                              || c.GROUPCODE.ToLower().Contains(searchString)
                              || c.GROUPDESCRIPTION.ToLower().Contains(searchString)
-                             || x.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                             || x.OWNEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
                                      select new LoanApplicationViewModel
                                      {
                                          customerName = c.GROUPNAME,
@@ -4816,7 +4820,7 @@ namespace FintrakBanking.Repositories.Credit
                                          misCode = x.MISCODE,
                                          customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                                          loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(o => o.LOANAPPLICATIONTYPEID == x.LOANAPPLICATIONTYPEID).Select(o => o.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
-                                         createdBy = x.CREATEDBY,
+                                         createdBy = x.OWNEDBY,
                                          loanPreliminaryEvaluationId = x.LOANPRELIMINARYEVALUATIONID,
                                          operationId = x.OPERATIONID,
                                          bookingRequestId = r.LOAN_BOOKING_REQUESTID,
@@ -5520,7 +5524,7 @@ namespace FintrakBanking.Repositories.Credit
                 misCode = x.a.MISCODE,
                 customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                 loanTypeName = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                createdBy = x.a.CREATEDBY,
+                createdBy = x.a.OWNEDBY,
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                 loanTermSheetId = x.a.LOANTERMSHEETID,
                 customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "N/A",
@@ -5573,7 +5577,7 @@ namespace FintrakBanking.Repositories.Credit
                 isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
                 approvalStatusId = (short)x.APPROVALSTATUSID,
                 applicationStatusId = x.APPLICATIONSTATUSID,
-                createdBy = x.CREATEDBY,
+                createdBy = x.OWNEDBY,
                 misCode = x.MISCODE,
 
                 applicationStatus = x.TBL_LOAN_APPLICATION_STATUS.APPLICATIONSTATUSNAME, // <----------------- new 
@@ -5803,7 +5807,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.ISADHOCAPPLICATION == true)
             {
                 appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
-                var receiverLevelId = GetFirstAdhocReceiverLevel(entity.CREATEDBY, appl.OPERATIONID, appl.PRODUCTCLASSID, false);
+                var receiverLevelId = GetFirstAdhocReceiverLevel(entity.OWNEDBY, appl.OPERATIONID, appl.PRODUCTCLASSID, false);
                 workflow.NextLevelId = receiverLevelId;
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
@@ -6491,7 +6495,7 @@ namespace FintrakBanking.Repositories.Credit
                                     //  approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == a.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                     applicationStatusId = a.APPLICATIONSTATUSID,
                                     branchName = a.TBL_BRANCH.BRANCHNAME,
-                                    createdBy = a.CREATEDBY,
+                                    createdBy = a.OWNEDBY,
                                     loanPreliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
                                     loanTermSheetId = a.LOANTERMSHEETID,
                                     operationId = a.OPERATIONID,
@@ -7284,7 +7288,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanApplicationTagsViewModel GetLoanApplicationTags(int id)
         {
             var entity = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == id && x.DELETED == false);
-
+            if (entity == null) return new LoanApplicationTagsViewModel();
             return new LoanApplicationTagsViewModel
             {
                 isProjectRelated = entity.ISPROJECTRELATED,

@@ -2203,7 +2203,7 @@ namespace FintrakBanking.Repositories.Credit
                                 approvedDate = m.APPROVEDDATE,
                                 groupApprovedAmount = m.APPROVEDAMOUNT,
                                 approvedTenor = d.APPROVEDTENOR,
-                                createdBy = m.CREATEDBY,
+                                createdBy = m.OWNEDBY,
                                 newApplicationDate = m.APPLICATIONDATE,
                                 dateTimeCreated = d.DATETIMECREATED,
                                 availmentDate = m.AVAILMENTDATE,
