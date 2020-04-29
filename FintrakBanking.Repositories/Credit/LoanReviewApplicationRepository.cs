@@ -512,16 +512,16 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Only one operation request is allowed for APS release related applications!");
             }
 
-            var synOperationId = context.TBL_OPERATIONS.Find(model.operationId).SYNCHOPERATIONID;
+            //var synOperationId = context.TBL_OPERATIONS.Find(model.operationId).SYNCHOPERATIONID;
 
             var doesOperationExist = (from a in context.TBL_LOAN_REVIEW_OPERATION
-                                              where a.OPERATIONTYPEID == synOperationId
-                                              && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                              where a.OPERATIONTYPEID == model.operationId
+                                              && (a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                                               && a.OPERATIONCOMPLETED == false
                                              select a).ToList();
             if (doesOperationExist.Count() > 0)
             {
-                throw new SecureException("The requested operation already exist and going through approval");
+                //throw new SecureException("The requested operation already exist and going through approval");
             }
 
             int staffId = model.createdBy;
@@ -540,7 +540,7 @@ namespace FintrakBanking.Repositories.Credit
                     result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
 
                     if (result == false)
-                        throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
+                        throw new ConditionNotMetException("Customer Must Have More Than One Tranche to Proceed With Sub Allocation");
 
                 }
                 else if (detail.operationId == (int)OperationsEnum.OverdraftSubAllocation)
@@ -548,7 +548,7 @@ namespace FintrakBanking.Repositories.Credit
                     result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
 
                     if (result == false)
-                        throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
+                        throw new ConditionNotMetException("Customer Must Have More Than One Tranche to Proceed With Sub Allocation");
 
                 }
                 //else if(detail.operationId == (int)OperationsEnum.)
@@ -1721,7 +1721,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                             loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                            createdBy = a.CREATEDBY,
+                            createdBy = a.OWNEDBY,
                             applicationDate = a.APPLICATIONDATE,
                             applicationTenor = a.APPLICATIONTENOR,
                             applicationAmount = a.APPLICATIONAMOUNT,

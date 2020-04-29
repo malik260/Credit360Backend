@@ -361,6 +361,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class RepaymentScheduleTermsViewModel
     {
         public string terms { get; set; }
+        public string schedule { get; set; }
         public int repaymentScheduleId { get; set; }
         public int applicationDetailId { get; set; }
         public string productCustomerName { get; set; }

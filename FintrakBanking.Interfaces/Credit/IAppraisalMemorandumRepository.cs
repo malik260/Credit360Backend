@@ -62,6 +62,9 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
         IQueryable<LoanApplicationViewModel> GetPoolApplications(int operationId, int companyId, int branchId, int staffId, int? classId);
         bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity entity);
+        bool ChangeApplicationOwner(int loanApplicationId, int staffId, GeneralEntity entity);
+
+        bool SelfAssignMultpleApplication(List<ForwardViewModel> models, GeneralEntity userEntity);
 
         IQueryable<LoanApplicationViewModel> GetPendingAdhocApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
 

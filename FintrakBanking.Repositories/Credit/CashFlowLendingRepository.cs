@@ -1023,7 +1023,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANINFORMATION = loan.loanInformation,
                 ISRELATEDPARTY = loan.isRelatedParty,
                 ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed,
-                CREATEDBY = (int)loan.createdBy,
+                OWNEDBY = (int)loan.createdBy,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 CUSTOMERGROUPID = loan.customerGroupId,
@@ -1303,7 +1303,7 @@ namespace FintrakBanking.Repositories.Credit
             loanData.LOANINFORMATION = loan.loanInformation;
             loanData.ISRELATEDPARTY = loan.isRelatedParty;
             loanData.ISPOLITICALLYEXPOSED = loan.isPoliticallyExposed;
-            loanData.CREATEDBY = (int)loan.createdBy;
+            loanData.OWNEDBY = (int)loan.createdBy;
             loanData.DATETIMECREATED = genSetup.GetApplicationDate();
             loanData.SYSTEMDATETIME = DateTime.Now;
             loanData.CASAACCOUNTID = loan.casaAccountId;
@@ -1683,7 +1683,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false, false,false, null);
+                workflow.NextProcess(appl.COMPANYID, appl.OWNEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false, false,false, null);
                 context.SaveChanges();
                 return 1;
             }

@@ -97,6 +97,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleCode = b.STAFFROLECODE.Trim(),
                             workEndDuration = a.WORKENDDURATION,
                             workStartDuration = a.WORKSTARTDURATION,
+                            allocationTypeId = b.APPROVALFLOWTYPEID,
+                            staffId = staffId,
                         }).FirstOrDefault();
             return role;
         }
@@ -165,7 +167,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 });
             }
 
-            foreach (var item in entity.userGroupIds)
+            foreach (var item in entity?.userGroupIds)
             {
                 tempGroups.Add(new TBL_TEMP_PROFILE_STAFF_ROL_GRP()
                 {

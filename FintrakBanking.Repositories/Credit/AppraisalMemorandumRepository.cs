@@ -927,7 +927,7 @@ namespace FintrakBanking.Repositories.Credit
                              relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
                              misCode = a.MISCODE,
                              loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                             createdBy = a.CREATEDBY,
+                             createdBy = a.OWNEDBY,
                              loanPreliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
                              customerGroupId = a.CUSTOMERGROUPID,
                              customerId = a.CUSTOMERID,
@@ -2543,7 +2543,7 @@ namespace FintrakBanking.Repositories.Credit
                         exchangeRate = x.d.EXCHANGERATE,
                         terms = x.d.REPAYMENTTERMS,
                         repaymentScheduleId = x.d.REPAYMENTSCHEDULEID,
-                        //schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
+                        schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
                         crmsRepaymentTypeId = x.d.CRMSREPAYMENTAGREEMENTID,
@@ -2559,7 +2559,7 @@ namespace FintrakBanking.Repositories.Credit
                         conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
                         transactionDynamics = x.d.TRANSACTIONDYNAMICS,
 
-                        schedule = x.d.REPAYMENTSCHEDULEID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.REPAYMENTSCHEDULEID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
+                        //schedule = x.d.REPAYMENTSCHEDULEID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.REPAYMENTSCHEDULEID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
                         interestRepayment = x.d.INTERESTREPAYMENTID != null ? context.TBL_REPAYMENT_TERM.Where(O => O.REPAYMENTSCHEDULEID == x.d.INTERESTREPAYMENTID).FirstOrDefault().REPAYMENTTERMDETAIL : null,
                         interestRepaymentId = x.d.INTERESTREPAYMENTID,
                         moratorium = x.d.MORATORIUM
@@ -2840,7 +2840,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                 loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                 loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                createdBy = a.CREATEDBY,
+                createdBy = a.OWNEDBY,
                 applicationDate = a.APPLICATIONDATE,
                 applicationTenor = a.APPLICATIONTENOR,
                 applicationAmount = a.APPLICATIONAMOUNT,
@@ -2953,7 +2953,7 @@ namespace FintrakBanking.Repositories.Credit
             List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
             List<int> levelIds = new List<int>();
             //List<int> levelIds2 = new List<int>();
-
+           
             ExclusiveOperations.Add(operationId);
             foreach(var i in ExclusiveOperations)
             {
@@ -2961,6 +2961,8 @@ namespace FintrakBanking.Repositories.Credit
             }
             
             var staffs = general.GetStaffRlieved(staffId);
+            var currentStaff = context.TBL_STAFF.Find(staffs[0]);
+
             IQueryable<LoanApplicationViewModel> applications = null;
 
             var query = new List<LoanApplicationViewModel>();
@@ -3000,7 +3002,7 @@ namespace FintrakBanking.Repositories.Credit
                                         .FirstOrDefault(),
             productClassId = x.a.PRODUCTCLASSID,
             productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-            
+
             customerGroupId = x.a.CUSTOMERGROUPID,
             loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
@@ -3027,7 +3029,7 @@ namespace FintrakBanking.Repositories.Credit
             customerBusinessUnitId = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == x.a.CUSTOMERID).Select(c => c.BUSINESSUNTID).FirstOrDefault(),
             timeIn = x.b.SYSTEMARRIVALDATETIME,
             slaTime = x.b.SLADATETIME,
-            
+
             loanInformation = x.a.LOANINFORMATION,
             submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
@@ -3040,7 +3042,7 @@ namespace FintrakBanking.Repositories.Credit
             relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
             misCode = x.a.MISCODE,
             loanTypeName = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-            createdBy = x.a.CREATEDBY,
+            createdBy = x.a.OWNEDBY,
             loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
             customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
             customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
@@ -3056,9 +3058,7 @@ namespace FintrakBanking.Repositories.Credit
             requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
             operationId = x.a.OPERATIONID,
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
-            tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
-            
-            
+            tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,           
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA)
@@ -3171,7 +3171,7 @@ namespace FintrakBanking.Repositories.Credit
             relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
             misCode = x.a.MISCODE,
             loanTypeName = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-            createdBy = x.a.CREATEDBY,
+            createdBy = x.a.OWNEDBY,
             loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
             customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
             customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
@@ -3209,6 +3209,54 @@ namespace FintrakBanking.Repositories.Credit
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
+        public bool ChangeApplicationOwner(int loanApplicationId, int staffId, GeneralEntity model)
+        {
+            bool saved = false;
+            using (var trans = context.Database.BeginTransaction())
+            {
+                if (loanApplicationId > 0)
+                {
+                    var systemDateNow = DateTime.Now;
+                    var appl = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
+                    var applForAudit = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
+                    if (appl != null)
+                    {
+                            appl.OWNEDBY = staffId;
+                            appl.LASTUPDATEDBY = model.createdBy;
+                            appl.DATETIMEUPDATED = systemDateNow;
+                    }
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.ApplicationReassigned,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"Reassigning of ownership to staff with staffId: '{ staffId }'. Loan Application before reassigning '{applForAudit.ToString()}'",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(), // model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = systemDateNow,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    trans.Commit();
+                }
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
+        public bool SelfAssignMultpleApplication(List<ForwardViewModel> models, GeneralEntity userEntity)
+        {
+            bool response = false;
+            foreach(var model in models)
+            {
+                if (model.trailId != null) { response = AssignApplication(model.trailId.Value, userEntity.createdBy, userEntity); }
+            }
+            return response;
+        }
+
         public bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity model)
         {
             bool saved = false;
@@ -3222,8 +3270,16 @@ namespace FintrakBanking.Repositories.Credit
                     var level = context.TBL_APPROVAL_LEVEL.Find(trail.TOAPPROVALLEVELID);
                     if (trail != null)
                     {
-                        trail.TOSTAFFID = staffId;
-                        trail.SYSTEMARRIVALDATETIME = systemDateNow;
+                        if (trail.FROMAPPROVALLEVELID == trail.TOAPPROVALLEVELID && trail.LOOPEDSTAFFID > 0)
+                        {
+                            trail.LOOPEDSTAFFID = staffId;
+                            trail.SYSTEMARRIVALDATETIME = systemDateNow;
+                        }
+                        else
+                        {
+                            trail.TOSTAFFID = staffId;
+                            trail.SYSTEMARRIVALDATETIME = systemDateNow;
+                        }
                     }
 
                     var audit = new TBL_AUDIT
@@ -3602,6 +3658,7 @@ namespace FintrakBanking.Repositories.Credit
                     applicationDetailId = x.LOANAPPLICATIONDETAILID,
                     terms = x.REPAYMENTTERMS,
                     repaymentScheduleId = (int)x.REPAYMENTSCHEDULEID,
+                    schedule = context.TBL_REPAYMENT_TERM.FirstOrDefault(r => r.REPAYMENTSCHEDULEID == x.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
                     productCustomerName = x.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME
                 }).ToList();
 

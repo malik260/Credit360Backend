@@ -16644,7 +16644,7 @@ namespace FintrakBanking.Repositories.Credit
                        && a.OPERATIONTYPEID == operationTypeId 
                        && a.LOANSYSTEMTYPEID == loanSystemTypeId
                        && a.OPERATIONCOMPLETED == false 
-                       && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                       && (a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                        select a;
 
             if (data.Any())
@@ -23234,7 +23234,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             // systemCurrentDate = systemDate,
