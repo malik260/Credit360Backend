@@ -434,6 +434,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                    revolvingType = context.TBL_LOAN_REVOLVING_TYPE.Where(x => x.REVOLVINGTYPEID == a.REVOLVINGTYPEID).Select(x => x.REVOLVINGTYPENAME).FirstOrDefault(),
                                    relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+
                                    pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                    pastDueInterest = a.PASTDUEINTEREST,
                                    interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
@@ -461,6 +462,8 @@ namespace FintrakBanking.Repositories.Credit
                 loanDetails.overdraftUndrawnAmount = overDraftLimit - Math.Abs(availableBalance);
                 loanDetails.overdraftDrawnAmount = Math.Abs(availableBalance);
             }
+
+            loanDetails.pastDueDays = loanDetails.pastDueDate != null ? DateTime.Now > loanDetails.pastDueDate ? (DateTime.Now.Subtract(loanDetails.pastDueDate.Value).Days) : 0 : 0;
             return loanDetails;
         }
 
@@ -633,6 +636,8 @@ namespace FintrakBanking.Repositories.Credit
                                    productPriceIndex = ld.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == ld.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
                                    crmsCode = lr.CRMSCODE
                                }).FirstOrDefault();
+
+            loanDetails.pastDueDays = loanDetails.pastDueDate != null ? DateTime.Now > loanDetails.pastDueDate ? (DateTime.Now.Subtract(loanDetails.pastDueDate.Value).Days) : 0 : 0;
             return loanDetails;
         }
 
@@ -740,6 +745,7 @@ namespace FintrakBanking.Repositories.Credit
                                    approvedComment = a.APPROVERCOMMENT,
                                    loanStatus = context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == a.LOANSTATUSID).Select(x => x.ACCOUNTSTATUS).FirstOrDefault(),
                                    //   scheduleDayCountConvention = context.TBL_LOAN_SCHEDULE_DAILY.Where(x=>x.DAILYSCHEDULEID == a.SCHEDULEDAYCOUNTCONVENTIONID).Select(x=>x.BALLONAMOUNT).FirstOrDefault(),
+                                   pastDueDate = a.PASTDUEDATE,
                                    pastDueInterest = a.PASTDUEINTEREST,
                                    pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                    interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
@@ -760,6 +766,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
             loanDetails.accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanDetails.loanId && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault();
             loanDetails.totalRepayment = PresentRepayments(loanDetails.loanReferenceNumber, loanDetails.companyId);
+            loanDetails.pastDueDays = loanDetails.pastDueDate != null ? DateTime.Now > loanDetails.pastDueDate ? (DateTime.Now.Subtract(loanDetails.pastDueDate.Value).Days) : 0 : 0;
 
             return loanDetails;
 

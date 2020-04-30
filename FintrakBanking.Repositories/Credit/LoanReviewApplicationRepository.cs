@@ -171,6 +171,7 @@ namespace FintrakBanking.Repositories.Credit
                         customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                         statusId = d.APPROVALSTATUSID,
                         terms = d.REPAYMENTTERMS,
+                        currencyId = d.CURRENCYID,
                         schedule = context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault() == null ? "" : context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault(),
 
                     })
@@ -338,6 +339,7 @@ namespace FintrakBanking.Repositories.Credit
                           accountName = d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME,
                           accountNumber = d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER,
                           terms = d.REPAYMENTTERMS,
+                          currencyId = d.CURRENCYID,
                           schedule = context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault() == null ? "" : context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault(),
                       })
 
@@ -512,16 +514,16 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Only one operation request is allowed for APS release related applications!");
             }
 
-            var synOperationId = context.TBL_OPERATIONS.Find(model.operationId).SYNCHOPERATIONID;
+            //var synOperationId = context.TBL_OPERATIONS.Find(model.operationId).SYNCHOPERATIONID;
 
             var doesOperationExist = (from a in context.TBL_LOAN_REVIEW_OPERATION
-                                              where a.OPERATIONTYPEID == synOperationId
-                                              && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                              where a.OPERATIONTYPEID == model.operationId
+                                              && (a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                                               && a.OPERATIONCOMPLETED == false
                                              select a).ToList();
             if (doesOperationExist.Count() > 0)
             {
-                throw new SecureException("The requested operation already exist and going through approval");
+                //throw new SecureException("The requested operation already exist and going through approval");
             }
 
             int staffId = model.createdBy;
@@ -540,7 +542,7 @@ namespace FintrakBanking.Repositories.Credit
                     result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
 
                     if (result == false)
-                        throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
+                        throw new ConditionNotMetException("Customer Must Have More Than One Tranche to Proceed With Sub Allocation");
 
                 }
                 else if (detail.operationId == (int)OperationsEnum.OverdraftSubAllocation)
@@ -548,7 +550,7 @@ namespace FintrakBanking.Repositories.Credit
                     result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
 
                     if (result == false)
-                        throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
+                        throw new ConditionNotMetException("Customer Must Have More Than One Tranche to Proceed With Sub Allocation");
 
                 }
                 //else if(detail.operationId == (int)OperationsEnum.)

@@ -16644,7 +16644,7 @@ namespace FintrakBanking.Repositories.Credit
                        && a.OPERATIONTYPEID == operationTypeId 
                        && a.LOANSYSTEMTYPEID == loanSystemTypeId
                        && a.OPERATIONCOMPLETED == false 
-                       && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                       && (a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                        select a;
 
             if (data.Any())
