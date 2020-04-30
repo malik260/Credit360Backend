@@ -6143,7 +6143,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddLoanCollateralMapping(int loanApplicationId, int loanId, short loanSystemTypeId)
         {
-            var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).ToList();
+            var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED == false).ToList();
             foreach (var entity in collateralModel)
             {
                 var collateral = new TBL_LOAN_COLLATERAL_MAPPING
