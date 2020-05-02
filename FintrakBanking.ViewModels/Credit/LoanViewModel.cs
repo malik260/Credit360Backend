@@ -300,6 +300,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal pastDueTotal { get; set; }
         public decimal overDraftCheckAmount { get; set; }
 
+        public DateTime? pastDueDate { get; set; }
+        public int? pastDueDays { get; set; }
         public decimal pastDuePrincipal { get; set; }
         public decimal pastDueInterest { get; set; }
         public decimal interestOnPastDuePrincipal { get; set; }
@@ -703,6 +705,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public int? operationId { get; set; }
         public int? tenor { get; set; }
+        public int toStaffId { get; set; }
         public bool isLienPlacementForLoan { get; set; }
 
 

@@ -908,9 +908,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                 && !approvals.Contains(a.APPROVALSTATUSID)
                                 && !disbursedLoans.Contains(d.LOANAPPLICATIONID)
                                 && a.APPROVALSTATEID != (int)ApprovalState.Ended 
-                               //&& a.OPERATIONID == (param.operationId == -1 ? a.OPERATIONID : param.operationId) 
-                               //&& a.APPROVALSTATUSID == (param.approvalStatus == -1 ? a.APPROVALSTATUSID : param.approvalStatus )
-                              select (new WorkflowTrackerViewModel
+                               select (new WorkflowTrackerViewModel
                               {
                                   approvalStatusId = a.APPROVALSTATUSID,
                                   operationName = a.TBL_OPERATIONS.OPERATIONNAME,
@@ -922,23 +920,16 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                   responseStaffName = a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.FIRSTNAME,
                                   comment = a.COMMENT,
                                   systemArrivalDate = a.SYSTEMARRIVALDATETIME,
-                                  //dueDay = (int)(currentDate.Date - a.SYSTEMARRIVALDATETIME.Date).Days,
-                                  //dueHours = (currentDate - a.SYSTEMARRIVALDATETIME.Date).TotalHours.ToString(),
                                   systemResponseDate = a.SYSTEMRESPONSEDATETIME,
                                   requestApprovalLevel = a.TBL_APPROVAL_LEVEL.LEVELNAME,
                                   responseApprovalLevel = a.TBL_APPROVAL_LEVEL1.LEVELNAME,
                                   customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : d.TBL_CUSTOMER.LASTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.FIRSTNAME,
-                                  //customerName = d.CUSTOMERID == null ? d.TBL_CUSTOMER_GROUP.GROUPNAME : context.TBL_CUSTOMER.Where(q=>q.CUSTOMERID == d.CUSTOMERID).Select(cu=>cu.LASTNAME + " " + cu.MIDDLENAME + cu.LASTNAME).FirstOrDefault(),
                                   divisionCode =  (from p in context.TBL_PROFILE_BUSINESS_UNIT join  t in context.TBL_CUSTOMER on p.BUSINESSUNITID equals t.BUSINESSUNTID where t.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(), 
                                   divisionName = (from p in context.TBL_PROFILE_BUSINESS_UNIT join t in context.TBL_CUSTOMER on p.BUSINESSUNITID equals t.BUSINESSUNTID where t.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITNAME).FirstOrDefault(), 
                                   responseDate = a.RESPONSEDATE.HasValue ? (DateTime)a.RESPONSEDATE : (DateTime)(DateTime.Now),
                                   arrivalDate = a.ARRIVALDATE,
                                   applicationDate = d.SYSTEMDATETIME,
                                   customerDivisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
-                                  //  amount = d.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == d.LOANAPPLICATIONID).Select(x=>x.APPROVEDAMOUNT).FirstOrDefault(),
-
-                                  //   amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == d.LOANAPPLICATIONID).ToList().Sum(x => x.APPROVEDAMOUNT),
-
                                   TargetId = a.TARGETID,
                                   branchName = d.TBL_BRANCH.BRANCHNAME + " (" + d.TBL_BRANCH.BRANCHCODE + ") ",
                                   loanApplicationId = d.LOANAPPLICATIONID,
@@ -946,16 +937,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
                               })
                               ).ToList()
-                              //.Select(x=>
-                              //{
-                              // // x.amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONID == x.loanApplicationId).Sum(m => m.APPROVEDAMOUNT * (decimal)m.EXCHANGERATE);
-                              //    x.amount = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONID == x.loanApplicationId).Sum(m => m.APPROVEDAMOUNT);
-
-                              //    return x;
-
-                              //})
+                              
                               .OrderBy(o => o.approvalTrailId);
-                //  ).OrderBy(o=>o.approvalTrailId);
 
                 var records = record.OrderByDescending(o => o.approvalTrailId);
 
@@ -970,7 +953,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     {
                         ProductName += rec.TBL_PRODUCT.PRODUCTNAME + ",";
                         amount += (decimal)rec.APPROVEDAMOUNT * (decimal)rec.EXCHANGERATE;
-                        //item.productNames += rec.TBL_PRODUCT.PRODUCTNAME + ",";
                     }
                     serial += 1;
                     item.productNames = ProductName;
@@ -978,7 +960,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     item.serial = count;
                     approvalRecord.Add(item);
                 }
-                //var test = approvalRecord.ToList();
 
                 return approvalRecord.OrderBy(o => o.serial).ToList();
             }

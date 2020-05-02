@@ -20,6 +20,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddBulkPrepaymentReversalData(LoanViewModel data, int batchCode, DateTime applicationDate);
         string GetTransactionReferenceNo();
         List<LoanViewModel> GetRunningPrepaymentLoans(int companyId, int loanId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId);
+        bool CreditDocumentationFilling(CreditDocumentationViewModel model);
         bool UpdateLoanClassification(DateTime applicationDate, int companyId);
         bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId);
         bool DoesOperationExist(int loanId, int operationTypeId, int loanSystemTypeId);
@@ -43,7 +45,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanClassification(DateTime applicationDate, int companyId, int staffId);
 
-        void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId);
+        bool ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId);
 
         bool ProcessReleaseLien(DateTime applicationDate, int companyId, int staffId);
 

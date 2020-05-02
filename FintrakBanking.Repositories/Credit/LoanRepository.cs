@@ -41,6 +41,7 @@ using System.Net;
 using System.Text;
 using FintrakBanking.ViewModels.Flexcube;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
+using System.Configuration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -2923,7 +2924,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
@@ -3078,7 +3079,7 @@ namespace FintrakBanking.Repositories.Credit
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -3890,7 +3891,7 @@ namespace FintrakBanking.Repositories.Credit
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -4520,6 +4521,14 @@ namespace FintrakBanking.Repositories.Credit
         {
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
             var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
+            var dynamicMessage = string.Empty;
+            var staffEmail = context.TBL_STAFF.Find(request.CREATEDBY);
+            var customer = context.TBL_CUSTOMER.Find(appDetail.CUSTOMERID);
+            var loanBrief = "for customer: (" + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " Customer Code:" + customer.CUSTOMERCODE + ")" +
+                            " with loan purpose " + appDetail.LOANPURPOSE.ToUpper() + " and loan amount " + string.Format("{0:#,##.00}", Convert.ToDecimal(request.AMOUNT_REQUESTED));
+
+            List<string> receiverEmailList = new List<string>();
+            AlertsViewModel alert = new AlertsViewModel();
 
             using (var trans = context.Database.BeginTransaction())
             {
@@ -4549,7 +4558,28 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 2;
+                        if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved)
+                        {
+                            alert.receiverEmailList.Add(staffEmail.EMAIL);
+                            dynamicMessage = "Loan has been successfully disbursed";
+                            if (entity.operationId == (short)OperationsEnum.RevolvingLoanBooking)
+                            {
+                                dynamicMessage = "Overdraft facility grant successfully committed " + loanBrief;
+                                LogEmailAlert(dynamicMessage, "Loan Disbursement, Overdraft facility grant successfully", alert.receiverEmailList, "10023", 10023, "OverDraftLoanDisbursement");
+                            }
+                            if (entity.operationId == (short)OperationsEnum.ContigentLoanBooking)
+                            {
+                                dynamicMessage = "Contingent Liability has been committed successfully " + loanBrief;
+                                LogEmailAlert(dynamicMessage, "Loan Disbursement, Contingent Liability has been committed successfully", alert.receiverEmailList, "10023", 10023, "ContingentLiabilityDisbursement");
+                            }
+                            if (entity.operationId == (short)OperationsEnum.TermLoanBooking)
+                            {
+                                dynamicMessage = "Loan has been successfully disbursed " + loanBrief;
+                                LogEmailAlert(dynamicMessage, "Loan Disbursement,  Term Loan has been successfully disbursed", alert.receiverEmailList, "10023", 10023, "TermLoanDisbursement");
+                            }
+                            
+                            return 2;
+                        }
                         else return 3;
                     }
                 }
@@ -4670,6 +4700,61 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.SaveChanges() > 0;
         }
 
+
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
+        {
+            try
+            {
+                string recipient = string.Join("", recipients.ToArray());
+                string messageSubject = alertSubject + " ALERT";
+                string messageContent = messageBody;
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = messageContent,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = referenceCode,
+                    targetId = targetId,
+                    operationMethod = operationMehtod,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                new SecureException(ex.ToString());
+            }
+        }
+
+        private void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
+
+        }
+
+
         private void ProcessLoanBookingApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN loanRecord, ApprovalViewModel user, bool isManual)
         {
             var systemDate = generalSetup.GetApplicationDate();
@@ -4693,6 +4778,14 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     //var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
+                }
+
+                var convenantDetail = context.TBL_LOAN_COVENANT_DETAIL.Where(c => c.LOANID == loanId)?.FirstOrDefault();
+                if (convenantDetail != null)
+                {
+                    convenantDetail.COVENANTDATE = DateTime.Now;
+                    convenantDetail.DATETIMEUPDATED = DateTime.Now;
+                    context.SaveChanges();
                 }
 
                 var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanRecord.LOANAPPLICATIONDETAILID);
@@ -4887,6 +4980,14 @@ namespace FintrakBanking.Repositories.Credit
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 }
 
+                var convenantDetail = context.TBL_LOAN_COVENANT_DETAIL.Where(c => c.LOANID == loanId)?.FirstOrDefault();
+                if (convenantDetail != null)
+                {
+                    convenantDetail.COVENANTDATE = DateTime.Now;
+                    convenantDetail.DATETIMEUPDATED = DateTime.Now;
+                    context.SaveChanges();
+                }
+
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
                     var reviewDate = revolvingLoanRecord.EFFECTIVEDATE.AddDays(31); //.BOOKINGDATE.AddMonths(1);
@@ -4922,6 +5023,7 @@ namespace FintrakBanking.Repositories.Credit
                             channel_code = "FINTRAK",
                             maker_id = staffCode,
                             checker_id = staffCode,
+                            loanId = loanId,
                             loanApplicationId = revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
 
                         };
@@ -5062,6 +5164,14 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(contingentLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
+                }
+
+                var convenantDetail = context.TBL_LOAN_COVENANT_DETAIL.Where(c => c.LOANID == loanId)?.FirstOrDefault();
+                if (convenantDetail != null)
+                {
+                    convenantDetail.COVENANTDATE = DateTime.Now;
+                    convenantDetail.DATETIMEUPDATED = DateTime.Now;
+                    context.SaveChanges();
                 }
 
                 contingentLoanRecord.DATEAPPROVED = DateTime.Now;
@@ -6081,7 +6191,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddLoanCollateralMapping(int loanApplicationId, int loanId, short loanSystemTypeId)
         {
-            var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).ToList();
+            var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED == false).ToList();
             foreach (var entity in collateralModel)
             {
                 var collateral = new TBL_LOAN_COLLATERAL_MAPPING
@@ -7404,7 +7514,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
@@ -7527,7 +7637,7 @@ namespace FintrakBanking.Repositories.Credit
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                         join p in context.TBL_PRODUCT on  d.APPROVEDPRODUCTID equals p.PRODUCTID
                         where a.COMPANYID == companyId && d.DELETED == false
-                        && staffIds.Contains(a.CREATEDBY)
+                        && staffIds.Contains(a.OWNEDBY)
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -7599,7 +7709,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = a.APPROVEDDATE,
                             groupApprovedAmount = a.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = a.CREATEDBY,
+                            createdBy = a.OWNEDBY,
                             newApplicationDate = a.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = a.AVAILMENTDATE,
@@ -7699,7 +7809,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
@@ -9075,7 +9185,7 @@ namespace FintrakBanking.Repositories.Credit
                             repaymentTerms = d.REPAYMENTTERMS,
                             repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             applicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -9575,7 +9685,7 @@ namespace FintrakBanking.Repositories.Credit
                                             0)
                                 ),
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
@@ -15108,7 +15218,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             systemCurrentDate = systemDate,

@@ -185,6 +185,9 @@
     FacilityLineTenorChangeApproval = 247,
     LoanRecoveryApproval = 248,
 
+    ProvisionOfDeferredDocument = 259,
+    DeferralExtension = 260,
+
 
     ReversalOfPrepayment = 249,
     BulkLiquidation = 250,

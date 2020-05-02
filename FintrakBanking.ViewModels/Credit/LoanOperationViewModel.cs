@@ -17,6 +17,17 @@ namespace FintrakBanking.ViewModels.Credit
         public bool required { get; set; }
     }
 
+    public class CreditDocumentationViewModel : GeneralEntity
+    {
+        public int loanId { get; set; }
+        public string loanReviewApplicationId { get; set; }
+        public string lmsrApplicationReferenceNumber { get; set; }
+        public string productName { get; set; }
+        public string customerName { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int customerId { get; set; }
+    }
+
     public class LoanBulkInterestReviewViewModel : GeneralEntity
     {
         public int bulkInterestRateReviewId { get; set; }

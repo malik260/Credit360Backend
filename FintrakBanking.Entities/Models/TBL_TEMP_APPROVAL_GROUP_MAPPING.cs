@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public int POSITION { get; set; }
 
+        public bool ALLOWMULTIPLEINITIATOR { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

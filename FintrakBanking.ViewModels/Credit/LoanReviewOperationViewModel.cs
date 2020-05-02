@@ -501,6 +501,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string accountNumber { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
         public int creditAppraisalOperationId { get; set; }
+        public short? currencyId { get; set; }
+
     }
 
     public class LMSOperationListViewModel

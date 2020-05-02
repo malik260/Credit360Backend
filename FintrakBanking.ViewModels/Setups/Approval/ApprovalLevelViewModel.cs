@@ -6,6 +6,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
 {
     public class ApprovalLevelViewModel : GeneralEntity
     {
+        public int? roleIdToRoute { get; set; }
 
         public int approvalLevelId { get; set; }
         public int tempApprovalLevelId { get; set; }

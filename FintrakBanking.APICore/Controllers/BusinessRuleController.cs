@@ -13,8 +13,6 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
@@ -79,7 +77,11 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool data = repo.UpdateBusinessRule(model, id,user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1, message = "The record has been updated successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
 
         [HttpDelete]
@@ -96,7 +98,11 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool data = repo.DeleteBusinessRule(id,user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1, message = "The record has been deleted successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
         }
 
 

@@ -81,6 +81,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public string nextPersonName { get; set; }
 
         public string nextOperationName { get; set; }
+        public string responseMessage { get; set; }
         public bool success { get; set; }
         public int? fromLevelId { get; set; }
         public bool isFinal { get; set; }

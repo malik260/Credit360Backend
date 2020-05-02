@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
         public string CONDITION { get; set; }
 
         public bool ISSATISFIED { get; set; }
+        public bool ISTRANSACTIONDYNAMICS { get; set; }
 
         public DateTime? DATETIMECREATED { get; set; }
 

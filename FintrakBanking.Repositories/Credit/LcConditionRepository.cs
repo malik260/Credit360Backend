@@ -47,6 +47,7 @@ namespace FintrakBanking.Repositories.credit
                     lcIssuanceId = x.LCISSUANCEID,
                     condition = x.CONDITION,
                     isSatisfied = x.ISSATISFIED,
+                    isTransactionDynamics = x.ISTRANSACTIONDYNAMICS
                 })
                 .ToList();
         }
@@ -60,6 +61,7 @@ namespace FintrakBanking.Repositories.credit
                     lcIssuanceId = x.LCISSUANCEID,
                     condition = x.CONDITION,
                     isSatisfied = x.ISSATISFIED,
+                    isTransactionDynamics = x.ISTRANSACTIONDYNAMICS
                 })
                 .ToList();
         }
@@ -74,6 +76,7 @@ namespace FintrakBanking.Repositories.credit
                 lcIssuanceId = entity.LCISSUANCEID,
                 condition = entity.CONDITION,
                 isSatisfied = entity.ISSATISFIED,
+                isTransactionDynamics = entity.ISTRANSACTIONDYNAMICS
             };
         }
 
@@ -87,6 +90,7 @@ namespace FintrakBanking.Repositories.credit
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
+                ISTRANSACTIONDYNAMICS = model.isTransactionDynamics,
             };
 
             context.TBL_LC_CONDITION.Add(entity);
@@ -117,6 +121,7 @@ namespace FintrakBanking.Repositories.credit
             entity.LCISSUANCEID = model.lcIssuanceId;
             entity.CONDITION = model.condition;
             entity.ISSATISFIED = model.isSatisfied;
+            entity.ISTRANSACTIONDYNAMICS = model.isTransactionDynamics;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
