@@ -120,8 +120,7 @@
     LmsOperations = 116,
     EarnUnEarnedFee = 117,
     CRMSApproval = 118,
-    RevolvingTranchDisbursement = 154,
-
+    
     //
     AdhocApproval = 133,
     OriginalDocumentApproval = 134,
@@ -132,6 +131,7 @@
     ProjectSiteReportApproval = 139,
     lcUssance = 140,
     CreditCardDrawdownRequest = 141,
+    RevolvingTranchDisbursement = 154,
     LetterGenerationRequest = 142,
     CollateralValuationRequest = 144,
     CreditCardsSalaryBacked = 145,

@@ -505,6 +505,7 @@ namespace FintrakBanking.Repositories.Credit
              }).FirstOrDefault();
             return list;
         }
+
         public string SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
             if (model.applicationDetails.Count() > 1 &&
