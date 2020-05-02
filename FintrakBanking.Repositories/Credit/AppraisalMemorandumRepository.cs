@@ -577,11 +577,6 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         appl.APPROVEDDATE = applicationDate;
                         appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
-                        if (appl.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
-                        {
-                            appl.APPROVALSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-                            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                        }
 
                         if (appl.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
                         {
