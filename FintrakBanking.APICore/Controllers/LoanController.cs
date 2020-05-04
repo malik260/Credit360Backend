@@ -305,6 +305,26 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("add-existing-loan")]
+        public HttpResponseMessage AddExistingLoan([FromBody] LoanViewModel entity)
+        {
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            var data = repo.AddExistingLoan(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = entity.productTypeName + " successfully imported" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error importing this record" });
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("maintain-facility-line")]
         public HttpResponseMessage UpdateFacilityLineStatus([FromBody] LoanViewModel entity)
         {
