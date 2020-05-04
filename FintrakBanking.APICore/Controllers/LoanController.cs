@@ -18,6 +18,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Extensions;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
+using System.Globalization;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -1644,6 +1645,93 @@ namespace FintrakBanking.APICore.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
            
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-loan-recovery-assignment/{accreditedConsultant}/{expCompletionDate}")]
+        public HttpResponseMessage saveBulkLoanAssignmentToAgent(int accreditedConsultant, DateTime? expCompletionDate, [FromBody] List<LoanRecoveryAssignmentViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            var data = repo.saveBulkLoanAssignmentToAgent(models, accreditedConsultant, expCompletionDate, user);
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Loan(s) Recovery Successfully assigned to the Agent" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery assignment unsuccessfully" });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("collateral-liquidation-recovery")]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddCollateralLiquidationRecovery()
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+            try
+            {
+                var entity = new CollateralLiquidationRecoveryViewModel();
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.fileSizeUnit = provider.FormData["fileSizeUnit"];
+                entity.overwrite = provider.FormData["overwrite"] == "true";
+                entity.applicationReferenceNumber = provider.FormData["applicationReferenceNumber"];
+                entity.loanId = Convert.ToInt32(provider.FormData["loanId"]);
+                entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
+                entity.accreditedConsultant = Convert.ToInt32(provider.FormData["accreditedConsultant"]);
+                entity.loanAssignId = Convert.ToInt32(provider.FormData["loanAssignId"]);
+                entity.totalRecoveryAmount = Convert.ToDecimal(provider.FormData["totalRecoveryAmount"]);
+                entity.recoveredAmount = Convert.ToDecimal(provider.FormData["recoveredAmount"]);
+                entity.collateralCode = provider.FormData["collateralCode"];
+                entity.collectionMode = provider.FormData["collectionMode"];
+                entity.receiptDate = Convert.ToDateTime(provider.FormData["receiptDate"]).Date;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                int response = repo.AddCollateralLiquidationRecovery(entity, buffer);
+
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt has been uploaded successfully" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt already exist" });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt" });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("liquidation-receipt-download/{liquidationRecoveryReceiptId}")]
+        public HttpResponseMessage GetLiquidationReceipt(int liquidationRecoveryReceiptId)
+        {
+            CollateralLiquidationRecoveryViewModel data = repo.GetLiquidationReceipt(liquidationRecoveryReceiptId);
+            if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]

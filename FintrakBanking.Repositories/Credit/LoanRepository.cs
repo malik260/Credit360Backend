@@ -16209,6 +16209,113 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
+        public bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, UserInfo user)
+        {
+            List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
+            if (models == null || accreditedConsultant == 0 || expCompletionDate == null)
+            {
+                  throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
+            }
+
+            foreach (var customerRequest in models)
+            {
+                customerRequest.createdBy = user.createdBy;
+                customerRequest.accreditedConsultant = accreditedConsultant;
+                customerRequest.expCompletionDate = expCompletionDate;
+
+                var loanData = addBulkLoanAssignmentToAgent(customerRequest);
+
+                    bulkLoanTable.Add(loanData);
+            }
+            context.TBL_LOAN_RECOVERY_ASSIGNMENT.AddRange(bulkLoanTable);
+            return context.SaveChanges() > 0;
+        }
+
+        public int AddCollateralLiquidationRecovery(CollateralLiquidationRecoveryViewModel model, byte[] buffer)
+        {
+            bool isFullyRecovered = false;
+            decimal outstandingAmount = 0;
+            if (model.totalRecoveryAmount == model.recoveredAmount)
+            {
+                outstandingAmount = 0;
+                isFullyRecovered = true;
+                var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+                update.ISFULLYRECOVERED = true;
+                context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(update);
+                context.SaveChanges();
+            }
+            else
+            {
+                outstandingAmount = (model.totalRecoveryAmount - model.recoveredAmount);
+                isFullyRecovered = false;
+            }
+            var existing = context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Where(x => x.FILENAME == model.fileName)
+            .Select(x => new CollateralLiquidationRecoveryViewModel
+            {
+               collateralLiquidationRecoveryId = x.COLLATERALLIQUIDATIONRECOVERYID,
+               loanId = x.LOANID,
+               applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+               customerId = x.CUSTOMERID,
+               accreditedConsultant= x.ACCREDITEDCONSULTANT,
+               isFullyRecovered= x.ISFULLYRECOVERED,
+               fileData = x.FILEDATA,
+               fileName = x.FILENAME,
+               fileExtension = x.FILEEXTENSION,
+               fileSize = x.FILESIZE,
+               fileSizeUnit = x.FILESIZEUNIT,
+               receiptDate = x.RECEIPTDATE,
+               totalRecoveryAmount = x.TOTALRECOVERYAMOUNT,
+               recoveredAmount= x.RECOVEREDAMOUNT,
+               outstandingAmount = x.OUTSTANDINGAMOUNT,
+               collateralCode = x.COLLATERALCODE,
+               collectionMode = x.COLLECTIONMODE,
+               createdBy = x.CREATEDBY,
+               dateTimeCreated = x.DATETIMECREATED,
+               loanAssignId = x.LOANASSIGNID
+            }).FirstOrDefault();
+
+            if (existing != null && model.overwrite == false) return 3;
+
+            var entity = new TBL_COLLATERAL_LIQUIDATION_RECOVERY
+            {
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension.ToLower(),
+                FILESIZE = model.fileSize,
+                FILESIZEUNIT = model.fileSizeUnit,
+                FILEDATA = buffer,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                LOANID = model.loanId,
+                APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
+                CUSTOMERID = model.customerId,
+                ACCREDITEDCONSULTANT = model.accreditedConsultant,
+                ISFULLYRECOVERED = isFullyRecovered,
+                RECEIPTDATE = model.receiptDate,
+                TOTALRECOVERYAMOUNT = model.totalRecoveryAmount,
+                RECOVEREDAMOUNT = model.recoveredAmount,
+                OUTSTANDINGAMOUNT = outstandingAmount,
+                COLLATERALCODE = model.collateralCode,
+                COLLECTIONMODE = model.collectionMode,
+                LOANASSIGNID = model.loanAssignId
+            };
+
+            context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Add(entity);
+            context.SaveChanges();
+            return 2;
+        }
+
+        public CollateralLiquidationRecoveryViewModel GetLiquidationReceipt(int liquidationRecoveryReceiptId)
+        {
+            return (from x in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY
+                    where x.COLLATERALLIQUIDATIONRECOVERYID == liquidationRecoveryReceiptId
+                    select new CollateralLiquidationRecoveryViewModel
+                    {
+                        collateralLiquidationRecoveryId = x.COLLATERALLIQUIDATIONRECOVERYID,
+                        fileData = x.FILEDATA,
+                        fileName = x.FILENAME,
+                        fileExtension = x.FILEEXTENSION,
+                    }).FirstOrDefault();
+        }
         private TBL_LOAN_BOOKING_REQUEST addBookingRequest(multipleDisbursementOutputViewModel entity, short? approvalStatusid, UserInfo user)
         {
             var request = new TBL_LOAN_BOOKING_REQUEST
@@ -16573,6 +16680,22 @@ namespace FintrakBanking.Repositories.Credit
                 SHOULDDISBURSE = entity.shouldDisburse,
                 TENOR = entity.tenor,
                 APPROVALSTATUS = (short)ApprovalStatusEnum.Pending
+            };
+            return data;
+        }
+
+
+        private TBL_LOAN_RECOVERY_ASSIGNMENT addBulkLoanAssignmentToAgent(LoanRecoveryAssignmentViewModel entity)
+        {
+            var data = new TBL_LOAN_RECOVERY_ASSIGNMENT
+            {
+                LOANID = entity.loanId,
+                APPLICATIONREFERENCENUMBER = entity.applicationReferenceNumber,
+                CUSTOMERID = entity.customerId,
+                ACCREDITEDCONSULTANT = entity.accreditedConsultant,
+                DATEASSIGNED = DateTime.Now,
+                CREATEDBY = entity.createdBy,
+                EXPCOMPLETIONDATE = entity.expCompletionDate
             };
             return data;
         }

@@ -781,6 +781,66 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/recovery-write-off-analysis")]
+        public HttpResponseMessage GetAllLoansOperationWriteOffAnalysis()
+        {
+            var data = repo.GetAllLoansOperationWriteOffAnalysis(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/recovery-analysis")]
+        public HttpResponseMessage GetLoanOperationRecoveryAnalysis()
+        {
+            var data = repo.GetLoanOperationRecoveryAnalysis(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/recovery-analysis/{accreditedConsultantId}")]
+        public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent(int accreditedConsultantId)
+        {
+            var data = repo.getAllLoansOperationRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/recovery-report/{accreditedConsultantId}")]
+        public HttpResponseMessage GetAllLoansRecoveredByAgent(int accreditedConsultantId)
+        {
+            var data = repo.GetAllLoansRecoveredByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/approved-loan-review")]
         public HttpResponseMessage GetApprovedLoanReviewed()
         {
