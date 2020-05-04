@@ -243,9 +243,9 @@
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
-        public virtual TBL_CASA TBL_CASA { get; set; }
+        //public virtual TBL_CASA TBL_CASA { get; set; }
 
-        public virtual TBL_CASA TBL_CASA1 { get; set; }
+        //public virtual TBL_CASA TBL_CASA1 { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
@@ -253,21 +253,21 @@
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual TBL_DAY_COUNT_CONVENTION TBL_DAY_COUNT_CONVENTION { get; set; }
+        //public virtual TBL_DAY_COUNT_CONVENTION TBL_DAY_COUNT_CONVENTION { get; set; }
 
-        public virtual TBL_DAY_INTEREST_TYPE TBL_DAY_INTEREST_TYPE { get; set; }
+        //public virtual TBL_DAY_INTEREST_TYPE TBL_DAY_INTEREST_TYPE { get; set; }
 
-        public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
+        //public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
 
-        public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE1 { get; set; }
+        //public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE1 { get; set; }
 
-        public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE2 { get; set; }
+        //public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE2 { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 
-        public virtual TBL_STAFF TBL_STAFF { get; set; }
+        //public virtual TBL_STAFF TBL_STAFF { get; set; }
 
-        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
+        //public virtual TBL_STAFF TBL_STAFF1 { get; set; }
 
         public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
 
@@ -277,15 +277,15 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_SCHEDULE_PERIODIC> TBL_LOAN_SCHEDULE_PERIODIC { get; set; }
 
-        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
+        //public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 
         //public virtual TBL_LMSR_APPLICATION_DETAIL TBL_LMSR_APPLICATION_DETAIL { get; set; }
 
-        public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE { get; set; }
+        //public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE { get; set; }
 
-        public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE1 { get; set; }
+        //public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE1 { get; set; }
 
-        public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE2 { get; set; }
+        //public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE2 { get; set; }
 
         public virtual TBL_LOAN_SCHEDULE_TYPE TBL_LOAN_SCHEDULE_TYPE { get; set; }
 
