@@ -301,6 +301,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal pastDueTotal { get; set; }
         public decimal overDraftCheckAmount { get; set; }
 
+        public DateTime? pastDueDate { get; set; }
+        public int? pastDueDays { get; set; }
         public decimal pastDuePrincipal { get; set; }
         public decimal pastDueInterest { get; set; }
         public decimal interestOnPastDuePrincipal { get; set; }

@@ -225,6 +225,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.ExternalInitialization = false;
                 workflow.Amount = request.AMOUNT_REQUESTED;
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
+                workflow.IsFromPc = entity.isFromPc;
                 //if(request.AMOUNT_REQUESTED > 100000000)
                 //workflow.FinalLevel = application.TRANCHEAPPROVAL_LEVELID;
 
@@ -424,7 +425,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvedDate = m.APPROVEDDATE,
                         groupApprovedAmount = m.APPROVEDAMOUNT,
                         approvedTenor = d.APPROVEDTENOR,
-                        createdBy = m.CREATEDBY,
+                        createdBy = m.OWNEDBY,
                         newApplicationDate = m.APPLICATIONDATE,
                         dateTimeCreated = d.DATETIMECREATED,
                         availmentDate = m.AVAILMENTDATE,
@@ -529,7 +530,7 @@ namespace FintrakBanking.Repositories.Credit
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                          where a.COMPANYID == companyId && d.DELETED == false
-                         && a.CREATEDBY == staffId
+                         && a.OWNEDBY == staffId
                          && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -600,7 +601,7 @@ namespace FintrakBanking.Repositories.Credit
                              approvedDate = a.APPROVEDDATE,
                              groupApprovedAmount = a.APPROVEDAMOUNT,
                              approvedTenor = d.APPROVEDTENOR,
-                             createdBy = a.CREATEDBY,
+                             createdBy = a.OWNEDBY,
                              newApplicationDate = a.APPLICATIONDATE,
                              dateTimeCreated = d.DATETIMECREATED,
                              availmentDate = a.AVAILMENTDATE,
@@ -700,7 +701,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
@@ -790,7 +791,7 @@ namespace FintrakBanking.Repositories.Credit
                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                          join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                          where a.COMPANYID == companyId && d.DELETED == false
-                         && staffIds.Contains(a.CREATEDBY)
+                         && staffIds.Contains(a.OWNEDBY)
                          && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -861,7 +862,7 @@ namespace FintrakBanking.Repositories.Credit
                              approvedDate = a.APPROVEDDATE,
                              groupApprovedAmount = a.APPROVEDAMOUNT,
                              approvedTenor = d.APPROVEDTENOR,
-                             createdBy = a.CREATEDBY,
+                             createdBy = a.OWNEDBY,
                              newApplicationDate = a.APPLICATIONDATE,
                              dateTimeCreated = d.DATETIMECREATED,
                              availmentDate = a.AVAILMENTDATE,
@@ -960,7 +961,7 @@ namespace FintrakBanking.Repositories.Credit
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                          where a.COMPANYID == companyId && d.DELETED == false
-                         && a.CREATEDBY == staffId
+                         && a.OWNEDBY == staffId
                          && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -1031,7 +1032,7 @@ namespace FintrakBanking.Repositories.Credit
                              approvedDate = a.APPROVEDDATE,
                              groupApprovedAmount = a.APPROVEDAMOUNT,
                              approvedTenor = d.APPROVEDTENOR,
-                             createdBy = a.CREATEDBY,
+                             createdBy = a.OWNEDBY,
                              newApplicationDate = a.APPLICATIONDATE,
                              dateTimeCreated = d.DATETIMECREATED,
                              availmentDate = a.AVAILMENTDATE,
