@@ -269,6 +269,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal overdraftDrawnAmount{ get; set; }
         public decimal overdraftUndrawnAmount { get; set; }
 
+        public bool isExternalFacility { get; set; }
+        public bool isSavedExternalFacility { get; set; }
+
         public List<ApprovalLevelStaffViewModel> loanOperationApprovers { get; set; }
 
         //............Loan Repayment Schedule Model..........................//
