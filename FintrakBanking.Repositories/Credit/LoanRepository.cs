@@ -13670,6 +13670,7 @@ namespace FintrakBanking.Repositories.Credit
                                      loanId = a.EXTERNALLOANID,
                                      customerId = a.CUSTOMERID,
                                      currencyId = a.CURRENCYID,
+                                     casaAccountId = c.CASAACCOUNTID,
                                      //applicationDetailId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID where p.TERMLOANID == a.EXTERNALLOANID select l.LOANAPPLICATIONDETAILID).FirstOrDefault(),
                                      customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                      loanReferenceNumber = a.LOANREFERENCENUMBER,
@@ -13688,7 +13689,7 @@ namespace FintrakBanking.Repositories.Credit
                                      loanStatusId = a.LOANSTATUSID,
                                      loanSystemTypeId = a.LOANSYSTEMTYPEID,
 
-                                     productClassId = p.PRODUCTCLASSID ,
+                                     productClassId = p.PRODUCTCLASSID,
                                      productId = a.PRODUCTID,
                                      productClassProcessId = p.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                                      //loanApplicationTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
@@ -13710,6 +13711,7 @@ namespace FintrakBanking.Repositories.Credit
                                  select new LoanViewModel
                                  {
                                      loanId = a.ID,
+                                     //casaAccountId = int.Parse(a.ACCOUNTNUMBER),
                                      //customerId = Convert.ToInt16(a.CUSTOMERID),
                                      //currencyId = a.CURRENCYID,
                                      //applicationDetailId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID where p.TERMLOANID == a.TERMLOANID select l.LOANAPPLICATIONDETAILID).FirstOrDefault(),
@@ -13791,6 +13793,8 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == localGlobalReference.ACCOUNTOFFICERCODE).FirstOrDefault();
+            if (accountOfficer == null) { throw new ConditionNotMetException("Account Officer does not exist on Credit360!"); }
+
             double interestRate = Convert.ToDouble(localGlobalReference.INTERESTRATE);
 
             if (product != null && product.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan) entity.operationId = (short)OperationsEnum.TermLoanBooking;
@@ -13812,7 +13816,7 @@ namespace FintrakBanking.Repositories.Credit
             if (localGlobalReference.CBNCLASSIFICATION.ToUpper() == "DOUBTFUL") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.Doubtful;
             if (localGlobalReference.CBNCLASSIFICATION.ToUpper() == "WATCHLIST") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.WatchList;
 
-            var data = new TBL_LOAN_EXTERNAL
+            var data = new TBL_LOAN_EXTERNAL()
             {
                 //LOAN_BOOKING_REQUESTID = entity.loanBookingRequestId,
                 //LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
@@ -13835,7 +13839,8 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = customer.CUSTOMERID,
                 PRODUCTID = product.PRODUCTID,
                 COMPANYID = entity.companyId,
-                CASAACCOUNTID = entity.casaAccountId,
+                SCHEDULETYPEID = entity.scheduleTypeId < 1 ? (short) 1 : entity.scheduleTypeId, // CHECK THIS VALUE
+                CASAACCOUNTID = 4019, //entity.casaAccountId, // CHECK THIS VALUE
                 CASAACCOUNTID2 = entity.casaAccountId2,
                 BRANCHID = accountOfficer.BRANCHID ?? 1,
                 SHOULD_DISBURSE = false, //entity.loanScheduleInput.shouldDisburse,
@@ -13876,7 +13881,7 @@ namespace FintrakBanking.Repositories.Credit
                 FIRSTPRINCIPALPAYMENTDATE = localGlobalReference.SCHEDULEDUEDATE ?? DateTime.Now, //entity.loanScheduleInput.principalFirstpaymentDate,
                 FIRSTINTERESTPAYMENTDATE = localGlobalReference.SCHEDULEDUEDATE ?? DateTime.Now, //entity.loanScheduleInput.interestFirstpaymentDate,
                 ALLOWFORCEDEBITREPAYMENT = false,
-                SCHEDULEDAYCOUNTCONVENTIONID = entity.loanScheduleInput.accrualBasis,
+                SCHEDULEDAYCOUNTCONVENTIONID = entity.loanScheduleInput?.accrualBasis ?? 1, // CHECK THIS VALUE
                 USER_PRUDENTIAL_GUIDE_STATUSID = (short)loanPerformanceStatus,
                 EXT_PRUDENT_GUIDELINE_STATUSID = loanPerformanceStatus,
                 INT_PRUDENT_GUIDELINE_STATUSID = loanPerformanceStatus,
