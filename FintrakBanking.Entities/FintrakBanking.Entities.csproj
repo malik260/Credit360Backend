@@ -131,6 +131,7 @@
     <Compile Include="Models\TBL_LOAN_CAMSOL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_MAPPING_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_DETAIL_REVIEW_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_EXTERNAL.cs" />
     <Compile Include="Models\TBL_LOAN_FULLANDFINAL_STATUS.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_ASSIGNMENT.cs" />
     <Compile Include="Models\TBL_OPERATION_CAMSOL_LIST.cs" />
