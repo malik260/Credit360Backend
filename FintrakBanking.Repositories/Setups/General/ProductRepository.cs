@@ -2592,7 +2592,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity)
         {
-            
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 entity.operationId = (int)OperationsEnum.GlobalInterestRateChange;

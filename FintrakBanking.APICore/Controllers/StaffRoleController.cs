@@ -9,6 +9,10 @@ using FintrakBanking.ViewModels.Setups.General;
 using System;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels;
+using System.Threading.Tasks;
+using System.Text;
+using System.Linq;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -121,7 +125,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        
+        [HttpPost] [ClaimsAuthorization]
         [Route("staff-role")]
         public HttpResponseMessage AddUpdateStaffRole([FromBody] StaffRoleViewModel entity)
         {

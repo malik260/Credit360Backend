@@ -111,6 +111,300 @@ namespace FintrakBanking.Repositories.Setups.General
         //    return this.SaveAll();
         //}
 
+        public staffBulkFeedbackViewModel UploadBulkPrepaymentData(StaffDocumentViewModel model, byte[] file)
+        {
+            var applicationDate = genSetup.GetApplicationDate();
+
+            var staffInfo = new List<StaffInfoViewModel>();
+
+            var failedStaffInfo = new List<StaffInfoViewModel>();
+
+            var staffBulkFeedbackViewModel = new staffBulkFeedbackViewModel();
+            var setupGlobal = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+
+            // Loads a spreadsheet from a file with the specified path
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
+
+            MemoryStream ms = new MemoryStream(file);
+
+            ExcelFile ef = new ExcelFile();
+
+            try
+            {
+                ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+
+            //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
+
+            CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+            var jobTitle = context.TBL_STAFF_JOBTITLE.FirstOrDefault();
+            for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            {
+                var rowSuccess = true;
+                int excelRowPosition = 1;
+                StaffInfoViewModel staffRowData = new StaffInfoViewModel();
+                Users getADDetails = new Users();
+
+                for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
+                {
+                    ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+
+
+                    string cellName = CellRange.RowColumnToPosition(j, i);
+                    string cellRow = ExcelRowCollection.RowIndexToName(j);
+                    string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
+                    excelRowPosition = Convert.ToInt32(cellRow);
+                    if (Convert.ToInt32(cellRow) == 1) continue;
+
+                    switch (cellColumn)
+                    {
+                        case "A":
+                            staffRowData.loanReferenceNumber = cell.Value.ToString();
+
+                            var exist = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber).FirstOrDefault();
+
+                            if (exist == null)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Loan Reference Number Does Not Exist. ";
+                            }
+
+                            var existence = (from a in context.TBL_LOAN
+                                             where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                             select (a)).ToList();
+
+                            if (existence.Count == 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Transaction Reference Number Does Not Exist Today. ";
+                            }
+
+
+                            var pastDueExistence = (from a in context.TBL_LOAN
+                                                    where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && a.LOANSTATUSID == (int)LoanStatusEnum.Active && (a.PASTDUEPRINCIPAL > 0 || a.PASTDUEINTEREST > 0)
+                                                    select (a)).ToList();
+
+                            if (pastDueExistence.Count > 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Transaction Reference Number Does Has Past Due Abligation. ";
+                            }
+
+
+                            var irregularScheduleTypeExistence = (from a in context.TBL_LOAN
+                                                                  where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && a.LOANSTATUSID == (int)LoanStatusEnum.Active && a.SCHEDULETYPEID == (int)LoanScheduleTypeEnum.IrregularSchedule
+                                                                  select (a)).ToList();
+
+                            if (pastDueExistence.Count > 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Irregular Schedule Cannot Form Part Of Bulk Irregular Schedule. ";
+                            }
+
+
+                            break;
+
+                        case "B":
+
+                            staffRowData.amount = Convert.ToDecimal(cell.Value.ToString());
+
+                            var existAmount = (from a in context.TBL_LOAN
+                                               join b in context.TBL_LOAN_REVIEW_OPERATION on a.TERMLOANID equals b.LOANID
+                                               where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && b.OPERATIONTYPEID == (int)OperationsEnum.Prepayment && b.OPERATIONDATE == DbFunctions.TruncateTime(applicationDate) && b.PREPAYMENT == staffRowData.amount && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                               select (b)).ToList();
+
+                            if (existAmount.Count > 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Prepayment Amount Does Exist Against This Transaction Reference Number Today. ";
+                            }
+
+
+                            var reversal = context.TBL_BULK_PREPAYMENT.Where(x => x.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && x.AMOUNT == staffRowData.amount && x.PROCESSDATE == DbFunctions.TruncateTime(applicationDate)).ToList();
+
+                            if (reversal.Count != 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Prepayment Amount Transaction Reference Number Already Exist. ";
+                            }
+
+
+
+                            break;
+
+                    }
+                }
+
+                if (rowSuccess && excelRowPosition > 1)
+                {
+                    staffRowData.message = "Success";
+                    staffInfo.Add(staffRowData);
+                }
+                else if (!rowSuccess && excelRowPosition > 1) failedStaffInfo.Add(staffRowData);
+
+            };
+            if (staffInfo.Count() < 1)
+            {
+                staffBulkFeedbackViewModel.commitedRows = staffInfo;
+                staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
+            }
+            else
+            {
+                //staffBulkFeedbackViewModel.commitedRows = staffInfo;
+                //staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
+
+                var batchCode = CommonHelpers.GenerateRandomDigitCodeNew(10);
+
+                long batchCodeInt = Convert.ToInt64(batchCode);
+
+                batchCodeInt = Math.Abs(batchCodeInt);
+
+                foreach (var staffInfoRow in staffInfo)
+                {
+                    staffInfoRow.createdBy = model.createdBy;
+                    staffInfoRow.companyId = model.companyId;
+                    staffInfoRow.BranchId = model.userBranchId;
+                    staffInfoRow.applicationUrl = model.applicationUrl;
+                    staffInfoRow.userIPAddress = model.userIPAddress;
+                    staffInfoRow.applicationUrl = model.applicationUrl;
+
+                    staffBulkFeedbackViewModel.commitedRows = staffInfo;
+                    staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
+
+                    //var response = AddBulkPrepaymentData(staffInfoRow, batchCode, applicationDate);
+
+                    var response = AddBulkPrepaymentData(staffInfoRow, (int)batchCodeInt, applicationDate);
+
+
+                    if (!response)
+                    {
+                        staffBulkFeedbackViewModel.discardedRows.Add(staffInfoRow);
+                        staffBulkFeedbackViewModel.commitedRows.Remove(staffInfoRow);
+                        staffBulkFeedbackViewModel.failureCount = staffBulkFeedbackViewModel.failureCount + 1;
+                        staffBulkFeedbackViewModel.successCount = staffBulkFeedbackViewModel.successCount - 1;
+                    }
+
+                };
+
+
+                //var rec = context.TBL_BULK_PREPAYMENT.Where(x => x.BATCHID == batchCode).FirstOrDefault();
+
+                var rec = context.TBL_BULK_PREPAYMENT.Where(x => x.BATCHID == (int)batchCodeInt).FirstOrDefault();
+
+
+                if (rec != null)
+                {
+
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CreateBulkPrepayment,
+                        STAFFID = model.createdBy,
+                        BRANCHID = model.userBranchId,
+                        DETAIL = $"Initiated Bulk Prepayment with code '{batchCodeInt}'",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
+                    };
+
+                    auditTrail.AddAuditTrail(audit);
+
+                    var output = context.SaveChanges() > 0;
+
+                    workflow.StaffId = model.createdBy;
+                    workflow.CompanyId = model.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    //workflow.TargetId = batchCode;
+                    workflow.TargetId = (int)batchCodeInt;
+                    workflow.Comment = "Bulk Prepayment Initiated";
+                    workflow.OperationId = (int)OperationsEnum.BulkLiquidation;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+
+
+                }
+
+                context.SaveChanges();
+
+            }
+
+            return staffBulkFeedbackViewModel;
+        }
+
+
+        public bool AddBulkPrepaymentData(StaffInfoViewModel staffModel, int batchCode, DateTime applicationDate)
+        {
+
+            var bulkPrepaymentInfo = new TBL_BULK_PREPAYMENT()
+            {
+                BATCHID = batchCode,
+                LOANREFERENCENUMBER = staffModel.loanReferenceNumber,
+                AMOUNT = staffModel.amount,
+                CREATEDBY = staffModel.createdBy,
+                LASTUPDATEDBY = staffModel.createdBy,
+                PROCESSDATE = applicationDate,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+            };
+
+            context.TBL_BULK_PREPAYMENT.Add(bulkPrepaymentInfo);
+
+            var output = context.SaveChanges() > 0;
+
+            return output;
+        }
+
+        public bool UpdatePrepayment(int staffid, StaffInfoViewModel staffModel)
+        {
+            bool isUpdate = false;
+
+            var data = context.TBL_BULK_PREPAYMENT.Where(x => x.BULK_PREPAYMENTID == staffModel.prepaymentId).FirstOrDefault();
+
+            if (data != null)
+            {
+                data.AMOUNT = staffModel.amount;
+            }
+
+            var output = context.SaveChanges();
+
+            if (output > 0)
+            {
+                isUpdate = true;
+            }
+
+            return isUpdate;
+        }
+
+
+        public bool DeleteBulkPrepayment(int bulkPrepaymentId, UserInfo user)
+        {
+
+            bool result = false;
+
+            var targetRecord = context.TBL_BULK_PREPAYMENT.Where(x => x.BULK_PREPAYMENTID == bulkPrepaymentId).FirstOrDefault();
+
+            context.TBL_BULK_PREPAYMENT.Remove(targetRecord);
+
+            result = context.SaveChanges() > 0;
+
+            return result;
+
+        }
+
+
         public IEnumerable<StaffInfoViewModel> GetAllStaff()
         {
             var staff = (from c in context.TBL_STAFF
@@ -542,6 +836,25 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
+
+
+        public IEnumerable<StaffInfoViewModel> GetAllUnprocessedBulkPrepayment()
+        {
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        select new StaffInfoViewModel()
+                        {
+                            prepaymentId = a.BULK_PREPAYMENTID,
+                            batchCode = Math.Abs(a.BATCHID),
+                            loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            processedDate = a.PROCESSDATE,
+                            amount = a.AMOUNT,
+                        }).OrderBy(x => x.batchCode).ToList();
+
+
+            return data;
+        }
+
 
         public bool LogDeleteRequestStaff(int staffId, UserInfo user)
         {

@@ -331,11 +331,11 @@ namespace FintrakBanking.Repositories.Credit
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
             List<int> levelIds = new List<int>();
-            foreach (var i in operationIds) { levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList()); }
+            foreach(var i in operationIds) { levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList()); }
 
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IndividualDrawdownRequest).ToList());
-            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditCardDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IndividualDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditCardDrawdownRequest).ToList());
 
             List<CamProcessedLoanViewModel> data = new List<CamProcessedLoanViewModel>();
 
@@ -551,6 +551,7 @@ namespace FintrakBanking.Repositories.Credit
                              applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              customerId = d.CUSTOMERID,
+                             
                              //customerCode = from cust in context.TBL_CUSTOMER where cust.CUSTOMERID == d.CUSTOMERID select cust.CUSTOMERCODE.FirstOrDefault( ,
                              customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                              customerGroupId = a.CUSTOMERGROUPID.HasValue ? a.CUSTOMERGROUPID : 0,
@@ -650,6 +651,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                             applicationStatusId = m.APPLICATIONSTATUSID,
                             customerId = d.CUSTOMERID,
+                            systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                             //customerCode = from cust in context.TBL_CUSTOMER where cust.CUSTOMERID == d.CUSTOMERID select cust.CUSTOMERCODE.FirstOrDefault( ,
                             customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
