@@ -776,11 +776,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("staff/approver-search/operation/{operationId}/nextLevel/{nextLevel}")]
-        public HttpResponseMessage SearchApprovers(int operationId, int nextLevel, string queryString = "")
+        [Route("staff/approver-search/levelId/{levelId}")]
+        public HttpResponseMessage SearchApprovers(int levelId, string queryString = "")
         {
             if (queryString == null) queryString = string.Empty;
-            var data = repo.SearchApprovers(operationId, nextLevel, token.GetRoleId, token.GetUserGroupId, queryString,token.GetCompanyId);
+            var data = repo.SearchApprovers(levelId, queryString, token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 

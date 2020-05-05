@@ -20,8 +20,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int approvalStatusId { get; set; }
         public List<UserGroup> userGroup { get; set; }
         public List<UserActivities> activities { get; set; }
-        
-        
+        public short? allocationTypeId { get; set; }
+
+
+
 
 
         public List<int> userGroupIds { get; set; }
@@ -53,9 +55,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool requiredOfferLetter { get; set; }
     }
 
-    public class StaffGroupEmailViewModel : GeneralEntity
+    public class StaffGroupEmailViewModel
     {
-
         public int groupEmailId { get; set; }
         public string groupCode { get; set; }
         public string groupName { get; set; }

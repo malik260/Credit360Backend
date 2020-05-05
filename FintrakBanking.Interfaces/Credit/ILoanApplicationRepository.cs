@@ -107,7 +107,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
         int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false);
-        bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus);
+        bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus, int archivedBy);
         void ArchiveLoanApplicationDetails(int loanApplicationDetailId);
         int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, int? exclusiveFlowChangeId, bool next = false);
         int? GetFirstLevelStaffId(int levelId, int userBranch);
@@ -213,6 +213,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteLoanApplicationDetailLien(int id, UserInfo user);
         RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId);
         CurrentCustomerExposure GetTotalBankExposure();
+        bool ModifyFacility(FacilityModificationViewModel model, int loanApplicationDetailId);
         IEnumerable<LoanDetailReviewTypeViewModel> GetAllLoanDetailReviewTypes();
         List<CurrentCustomerExposure> GetExposures(TBL_LOAN_APPLICATION loanApplication);
         //IEnumerable<LoanApplicationLienViewModel> GetRacDetails();

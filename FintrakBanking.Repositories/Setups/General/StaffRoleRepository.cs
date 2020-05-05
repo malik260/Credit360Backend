@@ -116,6 +116,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleCode = b.STAFFROLECODE.Trim(),
                             workEndDuration = a.WORKENDDURATION,
                             workStartDuration = a.WORKSTARTDURATION,
+                            allocationTypeId = b.APPROVALFLOWTYPEID,
+                            staffId = staffId,
                         }).FirstOrDefault();
             return role;
         }
@@ -184,7 +186,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 });
             }
 
-            foreach (var item in entity.userGroupIds)
+            foreach (var item in entity?.userGroupIds)
             {
                 tempGroups.Add(new TBL_TEMP_PROFILE_STAFF_ROL_GRP()
                 {
@@ -249,6 +251,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
             });
+
+            var test = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == entity.companyId
+                                && x.OPERATIONID == (int)OperationsEnum.StaffRoleCreation
+                                && x.TARGETID == staffRole.STAFFROLEID
+                                && x.RESPONSESTAFFID == null
+                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).ToList();
 
             if (context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == entity.companyId

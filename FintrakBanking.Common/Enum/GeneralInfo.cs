@@ -465,6 +465,8 @@ namespace FintrakBanking.Common.Enum
         LcEnhancementAdded = 559,
         LcEnhancementUpdated = 560,
         LcEnhancementDeleted = 561,
+        CreditDocumentationPrinted = 562,
+        ApplicationReassigned = 563,
 
 
     };

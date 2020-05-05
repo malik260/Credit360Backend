@@ -147,6 +147,7 @@
     <Compile Include="Credit\LcShippingRepository.cs" />
     <Compile Include="Credit\LcUssanceRepository.cs" />
     <Compile Include="Credit\LetterGenerationRequestRepository.cs" />
+    <Compile Include="Credit\LoanArchiveRepository.cs" />
     <Compile Include="Credit\OriginalDocumentReleaseRepository.cs" />
     <Compile Include="Credit\ProjectSiteReportRepository.cs" />
     <Compile Include="Credit\TestCollateralRepository.cs" />

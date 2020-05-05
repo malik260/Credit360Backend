@@ -58,6 +58,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short applicationStatusId { get; set; }
         public decimal legalLendingLimit { get; set; }
         public bool isFromPc { get; set; }
+        public int toStaffId { get; set; }
 
     }
 
@@ -125,6 +126,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int? crmsCollateralTypeId { get; set; }
         public bool isSpecialised { get; set; }
         public short? crmsRepaymentTypeId { get; set; }
+
+        public string moratorium { get; set; }
+        public int? interestRepaymentId { get; set; }
+        public string interestRepayment { get; set; }
 
         public string proposedTenorString
         {
@@ -356,6 +361,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class RepaymentScheduleTermsViewModel
     {
         public string terms { get; set; }
+        public string schedule { get; set; }
         public int repaymentScheduleId { get; set; }
         public int applicationDetailId { get; set; }
         public string productCustomerName { get; set; }
