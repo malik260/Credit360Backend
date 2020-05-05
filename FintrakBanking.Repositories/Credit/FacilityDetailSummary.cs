@@ -95,6 +95,11 @@ namespace FintrakBanking.Repositories.Credit
             return GetDisbursedLoanByLoan(loanId);
         }
 
+        public LoanViewModel ThirdPartyFacilityDetails(string referenceNumber)
+        {
+            return GetThirdPartyLoansByReferenceNumber(referenceNumber);
+        }
+
         public LoanViewModel LMSFacilityDetail(int loanId)
         {
             return GetLMSLoanByLoan(loanId);
@@ -767,10 +772,145 @@ namespace FintrakBanking.Repositories.Credit
             loanDetails.accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanDetails.loanId && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault();
             loanDetails.totalRepayment = PresentRepayments(loanDetails.loanReferenceNumber, loanDetails.companyId);
             loanDetails.pastDueDays = loanDetails.pastDueDate != null ? DateTime.Now > loanDetails.pastDueDate ? (DateTime.Now.Subtract(loanDetails.pastDueDate.Value).Days) : 0 : 0;
+<<<<<<< HEAD
+=======
 
             return loanDetails;
 
         }
+
+        private LoanViewModel GetThirdPartyLoansByReferenceNumber(string referenceNumber)
+        {
+            var loanDetails = (from a in context.TBL_LOAN_EXTERNAL
+                              // join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                               //join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
+                               //join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                               join f in context.TBL_PRODUCT on a.PRODUCTID equals f.PRODUCTID
+                               join pt in context.TBL_PRODUCT_TYPE on f.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                               //let fpp = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Select(x => x.FIRSTPRINCIPALPAYMENTDATE).FirstOrDefault()
+                               //let ipp = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Select(x => x.FIRSTINTERESTPAYMENTDATE).FirstOrDefault()
+                               join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                               join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                               join cur in context.TBL_CURRENCY on a.CURRENCYID equals cur.CURRENCYID
+                               join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                               join ro in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals ro.STAFFID
+                               join rm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals rm.STAFFID
+                               where a.LOANREFERENCENUMBER == referenceNumber
+                               //&& a.ISDISBURSED == true
+                               select new LoanViewModel
+                               {
+                                   loanId = a.EXTERNALLOANID,
+                                   //loanApplicationId = a.LOANAPPLICATIONDETAILID,
+                                   customerId = a.CUSTOMERID,
+                                   customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                   customerCode = b.CUSTOMERCODE,
+                                   productId = a.PRODUCTID,
+                                   companyId = a.COMPANYID,
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                   casaAccountId = a.CASAACCOUNTID,
+                                   loanPurpose = "N/A", //d.LOANPURPOSE,
+                                   branchId = a.BRANCHID,
+                                   branchName = br.BRANCHNAME,
+                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                   applicationReferenceNumber =  "N/A",
+                                   principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
+                                   //principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                   interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
+                                   //interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
+                                   productTypeId = f.PRODUCTTYPEID,
+                                   productName = f.PRODUCTNAME,
+                                   productTypeName = pt.PRODUCTTYPENAME,
+                                   principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
+                                   interestNumberOfInstallment = a.INTERESTNUMBEROFINSTALLMENT,
+                                   relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                   relationshipOfficerName = ro.FIRSTNAME + " " + ro.MIDDLENAME + " " + ro.LASTNAME,
+                                   relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                   relationshipManagerName = rm.FIRSTNAME + " " + rm.MIDDLENAME + " " + rm.LASTNAME,
+                                   misCode = a.MISCODE,
+                                   teamMiscode = a.TEAMMISCODE,
+                                   interestRate = a.INTERESTRATE,
+                                   effectiveDate = a.EFFECTIVEDATE,
+                                   maturityDate = a.MATURITYDATE,
+                                   bookingDate = a.BOOKINGDATE,
+                                   principalAmount = a.PRINCIPALAMOUNT,
+                                   principalInstallmentLeft = a.PRINCIPALINSTALLMENTLEFT,
+                                   interestInstallmentLeft = a.INTERESTINSTALLMENTLEFT,
+                                   approvalStatusId = a.APPROVALSTATUSID,
+                                   approvedBy = a.APPROVEDBY,
+                                   approverComment = a.APPROVERCOMMENT,
+                                   dateApproved = a.DATEAPPROVED,
+                                   loanStatusId = a.LOANSTATUSID,
+                                   scheduleTypeId = a.SCHEDULETYPEID,
+                                   scheduleTypeName = a.TBL_LOAN_SCHEDULE_TYPE.SCHEDULETYPENAME,
+                                   isDisbursed = a.ISDISBURSED,
+                                   isDisbursedState = a.ISDISBURSED ? "Yes" : "No",
+                                   disbursedBy = a.DISBURSEDBY,
+                                   disburserComment = a.DISBURSERCOMMENT,
+                                   disburseDate = a.DISBURSEDATE,
+                                   operationId = a.OPERATIONID,
+                                   operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                   subSectorName = a.TBL_SUB_SECTOR.NAME,
+                                   sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                   casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
+                                   // casaAccountNumber1 =context.TBL_CASA.Where(o=>o.CASAACCOUNTID== a.CASAACCOUNTID).Select(o=>o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                   casaAccountNumber2 = context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                   productAccountName = c.PRODUCTACCOUNTNAME,
+                                   //customerGroupId = e.CUSTOMERGROUPID,
+                                   //loanTypeId = e.LOANAPPLICATIONTYPEID,
+                                   //loanTypeName = e.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                   equityContribution = a.EQUITYCONTRIBUTION,
+                                   firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
+                                   firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
+                                   outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                   outstandingInterest = a.OUTSTANDINGINTEREST,
+                                   principalAdditionCount = a.PRINCIPALADDITIONCOUNT ?? 0,
+                                   principalReductionCount = a.PRINCIPALREDUCTIONCOUNT ?? 0,
+                                   fixedPrincipal = a.FIXEDPRINCIPAL,
+                                   profileLoan = a.PROFILELOAN,
+                                   dischargeLetter = a.DISCHARGELETTER,
+                                   suspendInterest = a.SUSPENDINTEREST,
+                                   customerSensitivityLevelId = b.CUSTOMERSENSITIVITYLEVELID,
+                                   createdBy = a.CREATEDBY,
+                                   dateTimeCreated = a.DATETIMECREATED,
+                                   //isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
+                                   exchangeRate = a.EXCHANGERATE,
+                                   currencyId = a.CURRENCYID,
+                                   currency = cur.CURRENCYNAME,
+                                   productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
+                                   approvedByName = context.TBL_STAFF.Where(x => x.STAFFID == a.APPROVEDBY).Select(x => x.FIRSTNAME + "" + x.LASTNAME).FirstOrDefault(),
+                                   approvedComment = a.APPROVERCOMMENT,
+                                   loanStatus = context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == a.LOANSTATUSID).Select(x => x.ACCOUNTSTATUS).FirstOrDefault(),
+                                   //   scheduleDayCountConvention = context.TBL_LOAN_SCHEDULE_DAILY.Where(x=>x.DAILYSCHEDULEID == a.SCHEDULEDAYCOUNTCONVENTIONID).Select(x=>x.BALLONAMOUNT).FirstOrDefault(),
+                                   pastDueDate = a.PASTDUEDATE,
+                                   pastDueInterest = a.PASTDUEINTEREST,
+                                   pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                                   interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                                   interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                                   externalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.EXT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
+                                   // internalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.INT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
+                                   userPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.USER_PRUDENTIAL_GUIDE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
+                                   productPriceIndexName = context.TBL_PRODUCT_PRICE_INDEX.Where(q => q.PRODUCTPRICEINDEXID == context.TBL_PRODUCT.Where(x => x.PRODUCTID == a.PRODUCTID).FirstOrDefault().TBL_PRODUCT_PRICE_INDEX.PRODUCTPRICEINDEXID).Select(q => q.PRICEINDEXNAME).FirstOrDefault(),
+                                   nostroAccountId = a.NOSTROACCOUNTID,
+                                   nostroRateCode = context.TBL_CURRENCY_RATECODE.Where(x => x.RATECODEID == a.NOSTRORATECODEID).Select(x => x.RATECODE).FirstOrDefault(),
+                                   nostroRateAmount = a.NOSTRORATEAMOUNT,
+                                   notstroCurrency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.NOSTROCURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
+                                   //productPriceIndex = d.PRODUCTPRICEINDEXID != null ? context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == d.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
+                                   //accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.TERMLOANID && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault(),  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
+                                   //productPriceIndex = d.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == d.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
+                                   //crmsCode = lr.CRMSCODE
+                               }).FirstOrDefault();
+            var applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+            loanDetails.accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanDetails.loanId && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault();
+            loanDetails.totalRepayment = PresentRepayments(loanDetails.loanReferenceNumber, loanDetails.companyId);
+            loanDetails.pastDueDays = loanDetails.pastDueDate != null ? DateTime.Now > loanDetails.pastDueDate ? (DateTime.Now.Subtract(loanDetails.pastDueDate.Value).Days) : 0 : 0;
+>>>>>>> master
+
+            return loanDetails;
+
+        }
+
         private decimal PresentRepayments(string loanRefNo, int compoanyId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())

@@ -776,10 +776,14 @@ namespace FintrakBanking.Repositories.Credit
                                              }).FirstOrDefault();
 
                             viewModel = termLoans;
+<<<<<<< HEAD
+=======
                     }
-
-                    financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee, loanSystemTypeId);
-
+                    if (viewModel != null)
+                    {
+                        financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee, loanSystemTypeId);
+>>>>>>> master
+                    }
                 }
 
 
@@ -18518,8 +18522,28 @@ namespace FintrakBanking.Repositories.Credit
                 bool result = false;
                 int data = 0;
 
+                List<string> receiverEmailList = new List<string>();
+                AlertsViewModel alert = new AlertsViewModel();
+                var dynamicMessage = string.Empty;
+                var staffEmail = context.TBL_STAFF.Find(entity.staffId);
+                var lmsApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(reviewRecord.LOANREVIEWAPPLICATIONID);
+                var lmsApplication = context.TBL_LMSR_APPLICATION.Find(lmsApplicationDetail.LOANAPPLICATIONID);
+                var customer = context.TBL_CUSTOMER.Find(lmsApplicationDetail.CUSTOMERID);
+
                 if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                 {
+
+                    alert.receiverEmailList.Add(staffEmail.EMAIL);
+                    if (entity.operationId == (int)OperationsEnum.OverdraftInterestRate)
+                    {
+                        dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
+                        LogEmailAlert(dynamicMessage, "Overdraft Interest Rate Change Notification ", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
+                    }
+                    if (entity.operationId == (int)OperationsEnum.ContractualInterestRateChange)
+                    {
+                        dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
+                        LogEmailAlert(dynamicMessage, "Contractual Interest Rate Change Notification ", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
+                    }
 
                     //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
                     if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
@@ -18594,11 +18618,17 @@ namespace FintrakBanking.Repositories.Credit
                     result = LoanRephasementProcess(twoFADetails, reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
                     if (result == true)
                     {
-                        //foreach(var item in validate)
-                        //{
-                        //    item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                        //}
-
+                        alert.receiverEmailList.Add(staffEmail.EMAIL);
+                        if (entity.operationId == (int)OperationsEnum.OverdraftInterestRate)
+                        {
+                            dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME +" "+ customer.LASTNAME + " "+ customer.MIDDLENAME + " ) has been Approved";
+                            LogEmailAlert(dynamicMessage, "Overdraft Interest Rate Change Notification ", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
+                        }
+                        if (entity.operationId == (int)OperationsEnum.ContractualInterestRateChange )
+                        {
+                            dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Approved";
+                            LogEmailAlert(dynamicMessage, "Contractual Interest Rate Change Notification ", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
+                        }
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         output = context.SaveChanges() > 0;
                     }
@@ -18616,6 +18646,58 @@ namespace FintrakBanking.Repositories.Credit
             // return data;
         }
 
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
+        {
+            try
+            {
+                string recipient = string.Join("", recipients.ToArray());
+                string messageSubject = alertSubject + " ALERT";
+                string messageContent = messageBody;
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = messageContent,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = referenceCode,
+                    targetId = targetId,
+                    operationMethod = operationMehtod,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                new SecureException(ex.ToString());
+            }
+        }
+
+        private void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
+
+        }
         public List<FinanceTransactionViewModel> BuildLoanOperationsManualChargeFeesPosting(int loanChargeFeeId)
         {
             var loanFee = context.TBL_LOAN_FEE.Find(loanChargeFeeId);
@@ -24130,6 +24212,7 @@ namespace FintrakBanking.Repositories.Credit
                 var loans = from a in context.TBL_LOAN
                             where a.MATURITYDATE >= effectiveDate && a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTPRICEINDEXID == productPriceIndexID
                             select a;
+<<<<<<< HEAD
 
                 LoanPaymentRestructureScheduleInputViewModel loanInput = new LoanPaymentRestructureScheduleInputViewModel();
 
@@ -24146,6 +24229,24 @@ namespace FintrakBanking.Repositories.Credit
                         loanInput.interestRate = newInterestRate;
                         //loanInput.
 
+=======
+
+                LoanPaymentRestructureScheduleInputViewModel loanInput = new LoanPaymentRestructureScheduleInputViewModel();
+
+                foreach (var item in loans)
+                {
+                    var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == item.PRODUCTPRICEINDEXID);
+                    if (priceIndex != null)
+                    {
+                        var customerRate = item.INTERESTRATE - item.PRODUCTPRICEINDEXRATE;
+                        var newInterestRate = priceIndex.PRICEINDEXRATE + customerRate;
+
+                        loanInput.operationId = (int)OperationsEnum.InterestRepricing; // item.OPERATIONID;
+                        loanInput.loanId = item.TERMLOANID;
+                        loanInput.interestRate = newInterestRate;
+                        //loanInput.
+
+>>>>>>> master
                         TBL_LOAN_REVIEW_OPERATION reviewOperation = new TBL_LOAN_REVIEW_OPERATION();
 
                         context.TBL_LOAN_REVIEW_OPERATION.Add(new TBL_LOAN_REVIEW_OPERATION
@@ -24242,6 +24343,73 @@ namespace FintrakBanking.Repositories.Credit
                         }
 
                         //loanInput.
+<<<<<<< HEAD
+=======
+
+                        TBL_LOAN_REVIEW_OPERATION reviewOperation = new TBL_LOAN_REVIEW_OPERATION();
+
+                        try
+                        {
+                            reviewOperation = new TBL_LOAN_REVIEW_OPERATION
+                            {
+                                LOANID = item.TERMLOANID,
+                                LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
+                                OPERATIONTYPEID = (int)OperationsEnum.InterestRepricing,
+                                EFFECTIVEDATE = effectiveDate,
+                                REVIEWDETAILS = "Global Interest Rate Change",
+                                INTERATERATE = newInterestRate,
+                                PREPAYMENT = item.OUTSTANDINGPRINCIPAL,
+                                PRINCIPALFREQUENCYTYPEID = item.PRINCIPALFREQUENCYTYPEID,
+                                INTERESTFREQUENCYTYPEID = item.INTERESTFREQUENCYTYPEID,
+                                PRINCIPALFIRSTPAYMENTDATE = item.FIRSTPRINCIPALPAYMENTDATE,
+                                INTERESTFIRSTPAYMENTDATE = item.FIRSTINTERESTPAYMENTDATE,
+                                MATURITYDATE = item.MATURITYDATE,
+                                //TENOR = item.,
+                                //CASA_ACCOUNTID = model.cASA_AccountId,
+                                //OVERDRAFTTOPUP = model.overDraftTopup,
+                                //FEE_CHARGES = model.fee_Charges,
+                                APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
+                                ISMANAGEMENTINTERESTRATE = false,
+                                SCHEDULETYPEID = item.SCHEDULETYPEID,
+                                SCHEDULEDAYINTERESTTYPEID = item.SCHEDULEDAYINTERESTTYPEID,
+                                SCHEDULEDAYCOUNTCONVENTIONID = item.SCHEDULEDAYCOUNTCONVENTIONID,
+                                OPERATIONCOMPLETED = false,
+                                CREATEDBY = staffId,
+                                DATECREATED = DateTime.Now,
+                                ISMARKETINDUCED = isMarketInduced,
+                                PRODUCTPRICEINDEXGLOBALID = productPriceIndexGlobalId,
+                            };
+
+                            context.TBL_LOAN_REVIEW_OPERATION.Add(reviewOperation);
+                        }
+                        catch (Exception ex)
+                        {
+
+                            throw ex;
+                        }
+
+
+                        try
+                        {
+                            context.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw ex;
+                        }
+
+                        loanInput.loanReviewOperationsId = reviewOperation.LOANREVIEWOPERATIONID;
+
+                        try
+                        {
+                            InterestRateReview((int)loanInput.loanId, loanInput, effectiveDate, staffId, context);
+                        }
+                        catch (Exception ex)
+                        {
+
+                            throw ex;
+                        }
+>>>>>>> master
 
                         TBL_LOAN_REVIEW_OPERATION reviewOperation = new TBL_LOAN_REVIEW_OPERATION();
 
@@ -24308,10 +24476,15 @@ namespace FintrakBanking.Repositories.Credit
                         }
 
 
-
                         item.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE;
                         item.INTERESTRATE = newInterestRate;
 
+<<<<<<< HEAD
+                        item.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE;
+                        item.INTERESTRATE = newInterestRate;
+
+=======
+>>>>>>> master
                     }
                 }
 
@@ -24802,6 +24975,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+<<<<<<< HEAD
 
         public bool InterestRateReview(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId, FinTrakBankingContext context)
         {
@@ -24825,6 +24999,31 @@ namespace FintrakBanking.Repositories.Credit
                     ArchiveDailySchedule(loanId, archiveBatchCode, context);
 
 
+=======
+
+        public bool InterestRateReview(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId, FinTrakBankingContext context)
+        {
+            bool output = false;
+
+            try
+            {
+                var systemDate = generalSetup.GetApplicationDate();
+                loanInput.date = systemDate;
+                var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
+                var reviewData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == loanId && x.OPERATIONTYPEID == loanInput.operationId && x.OPERATIONCOMPLETED == false).FirstOrDefault();
+
+                if (LoanExist(loanId) > 0)
+                {
+
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+                    DeleteLoanExist(loanId, systemDate, context);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode, context);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode, context);
+                    ArchiveDailySchedule(loanId, archiveBatchCode, context);
+
+
+>>>>>>> master
                     if (loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.ConstantPrincipalAndInterest)
                     {
 
@@ -24954,6 +25153,36 @@ namespace FintrakBanking.Repositories.Credit
 
                         //----------generate and save periodic loan schedule -----------------------------------
                         List<LoanPaymentSchedulePeriodicViewModel> periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
+<<<<<<< HEAD
+
+                        List<TBL_LOAN_SCHEDULE_PERIODIC> tblPeriodicSchedule = new List<TBL_LOAN_SCHEDULE_PERIODIC>();
+
+                        foreach (var item in periodicSchedule)
+                        {
+                            TBL_LOAN_SCHEDULE_PERIODIC schedule = new TBL_LOAN_SCHEDULE_PERIODIC();
+
+                            schedule.LOANID = loanId;
+                            schedule.PAYMENTNUMBER = item.paymentNumber;
+                            schedule.PAYMENTDATE = item.paymentDate;
+                            schedule.STARTPRINCIPALAMOUNT = Convert.ToDecimal(item.startPrincipalAmount);
+                            schedule.PERIODPAYMENTAMOUNT = Convert.ToDecimal(item.periodPaymentAmount);
+                            schedule.PERIODINTERESTAMOUNT = Convert.ToDecimal(item.periodInterestAmount);
+                            schedule.PERIODPRINCIPALAMOUNT = Convert.ToDecimal(item.periodPrincipalAmount);
+                            schedule.ENDPRINCIPALAMOUNT = Convert.ToDecimal(item.endPrincipalAmount);
+                            schedule.INTERESTRATE = loanInput.interestRate;
+                            schedule.AMORTISEDSTARTPRINCIPALAMOUNT = Convert.ToDecimal(item.amortisedStartPrincipalAmount);
+                            schedule.AMORTISEDPERIODPAYMENTAMOUNT = Convert.ToDecimal(item.amortisedPeriodPaymentAmount);
+                            schedule.AMORTISEDPERIODINTERESTAMOUNT = Convert.ToDecimal(item.amortisedPeriodInterestAmount);
+                            schedule.AMORTISEDPERIODPRINCIPALAMOUNT = Convert.ToDecimal(item.amortisedPeriodPrincipalAmount);
+                            schedule.AMORTISEDENDPRINCIPALAMOUNT = Convert.ToDecimal(item.amortisedEndPrincipalAmount);
+                            schedule.EFFECTIVEINTERESTRATE = item.effectiveInterestRate;
+                            schedule.CREATEDBY = staffId;
+                            schedule.DATETIMECREATED = systemDate;
+
+                            tblPeriodicSchedule.Add(schedule);
+                        }
+                        //-------------------------------------------------------------------------------------
+=======
 
                         List<TBL_LOAN_SCHEDULE_PERIODIC> tblPeriodicSchedule = new List<TBL_LOAN_SCHEDULE_PERIODIC>();
 
@@ -24983,7 +25212,11 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         //-------------------------------------------------------------------------------------
 
+>>>>>>> master
 
+                        List<LoanPaymentScheduleDailyViewModel> dailySchedule = loanSchedule.GenerateDailyLoanSchedule(loanInput);
+
+<<<<<<< HEAD
                         List<LoanPaymentScheduleDailyViewModel> dailySchedule = loanSchedule.GenerateDailyLoanSchedule(loanInput);
 
                         MergeDailyScheduleNew(loanId, applicationDate, dailySchedule, context);
@@ -25089,6 +25322,111 @@ namespace FintrakBanking.Repositories.Credit
                         loan.INTERESTNUMBEROFINSTALLMENT = periodicSchedule.Count() - 1;
 
 
+=======
+                        MergeDailyScheduleNew(loanId, applicationDate, dailySchedule, context);
+
+                        var itemToRemovePeriodic = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC
+                                                    where p.LOANID == loanId
+                                                    select p);
+
+                        if (itemToRemovePeriodic != null)
+                        {
+                            context.TBL_LOAN_SCHEDULE_PERIODIC.RemoveRange(itemToRemovePeriodic);
+                            context.SaveChanges();
+                        }
+
+                        context.TBL_LOAN_SCHEDULE_PERIODIC.AddRange(tblPeriodicSchedule); ////change to Temp table
+                        context.SaveChanges();
+
+                        //////----------generate and save daily loan schedule -----------------------------------
+                        ////List<LoanPaymentScheduleDailyViewModel> dailySchedule = loanSchedule.GenerateDailyLoanSchedule(loanInput);
+
+                        ////List<TBL_LOAN_SCHEDULE_DAILY> tblDailySchedule = new List<TBL_LOAN_SCHEDULE_DAILY>();
+
+                        ////foreach (var item in dailySchedule)
+                        ////{
+                        ////    TBL_LOAN_SCHEDULE_DAILY schedule = new TBL_LOAN_SCHEDULE_DAILY();
+
+                        ////    schedule.LOANID = loanId;
+                        ////    schedule.PAYMENTNUMBER = item.paymentNumber;
+                        ////    schedule.DATE = item.date;
+                        ////    schedule.PAYMENTDATE = item.paymentDate;
+                        ////    schedule.OPENINGBALANCE = Convert.ToDecimal(item.openingBalance);
+                        ////    schedule.STARTPRINCIPALAMOUNT = Convert.ToDecimal(item.startPrincipalAmount);
+                        ////    schedule.DAILYPAYMENTAMOUNT = Convert.ToDecimal(item.dailyPaymentAmount);
+                        ////    schedule.DAILYINTERESTAMOUNT = Convert.ToDecimal(item.dailyInterestAmount);
+                        ////    schedule.DAILYPRINCIPALAMOUNT = Convert.ToDecimal(item.dailyPrincipalAmount);
+                        ////    schedule.CLOSINGBALANCE = Convert.ToDecimal(item.closingBalance);
+                        ////    schedule.ENDPRINCIPALAMOUNT = Convert.ToDecimal(item.endPrincipalAmount);
+                        ////    schedule.ACCRUEDINTEREST = Convert.ToDecimal(item.accruedInterest);
+                        ////    schedule.AMORTISEDCOST = Convert.ToDecimal(item.amortisedCost);
+                        ////    schedule.INTERESTRATE = item.norminalInterestRate;
+                        ////    schedule.AMORTISEDOPENINGBALANCE = Convert.ToDecimal(item.amOpeningBalance);
+                        ////    schedule.AMORTISEDSTARTPRINCIPALAMOUNT = Convert.ToDecimal(item.amStartPrincipalAmount);
+                        ////    schedule.AMORTISEDDAILYPAYMENTAMOUNT = Convert.ToDecimal(item.amDailyPaymentAmount);
+                        ////    schedule.AMORTISEDDAILYINTERESTAMOUNT = Convert.ToDecimal(item.amDailyInterestAmount);
+                        ////    schedule.AMORTISEDDAILYPRINCIPALAMOUNT = Convert.ToDecimal(item.amDailyPrincipalAmount);
+                        ////    schedule.AMORTISEDCLOSINGBALANCE = Convert.ToDecimal(item.amClosingBalance);
+                        ////    schedule.AMORTISEDENDPRINCIPALAMOUNT = Convert.ToDecimal(item.amEndPrincipalAmount);
+                        ////    schedule.AMORTISEDACCRUEDINTEREST = Convert.ToDecimal(item.amAccruedInterest);
+                        ////    schedule.AMORTISED_AMORTISEDCOST = Convert.ToDecimal(item.amAmortisedCost);
+                        ////    schedule.DISCOUNTPREMIUM = Convert.ToDecimal(item.discountPremium);
+                        ////    schedule.UNEARNEDFEE = Convert.ToDecimal(item.unEarnedFee);
+                        ////    schedule.EARNEDFEE = Convert.ToDecimal(item.earnedFee);
+                        ////    schedule.EFFECTIVEINTERESTRATE = item.effectiveInterestRate;
+                        ////    schedule.NUMBEROFPERIODS = item.numberOfPeriods;
+                        ////    schedule.BALLONAMOUNT = Convert.ToDecimal(item.balloonAmt);
+                        ////    schedule.CREATEDBY = staffId;
+                        ////    schedule.DATETIMECREATED = systemDate;
+
+                        ////    tblDailySchedule.Add(schedule);
+                        ////}
+                        //////----------------------------------------------------------------
+
+
+                        //------------adding records to the database--------------------------
+
+                        //if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                        //{ context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }////change to Temp table
+
+
+                        //var itemToRemovePeriodic = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC
+                        //                            where p.LOANID == loanId
+                        //                            select p);
+
+                        //if (itemToRemovePeriodic != null)
+                        //{
+                        //    context.TBL_LOAN_SCHEDULE_PERIODIC.RemoveRange(itemToRemovePeriodic);
+                        //    context.SaveChanges();
+                        //}
+
+
+                        //var itemToRemoveDaily = (from p in context.TBL_LOAN_SCHEDULE_DAILY
+                        //                         where p.LOANID == loanId
+                        //                         select p);
+
+                        //if (itemToRemoveDaily != null)
+                        //{
+                        //    context.TBL_LOAN_SCHEDULE_DAILY.RemoveRange(itemToRemoveDaily);
+                        //    context.SaveChanges();
+                        //}
+
+                        //context.TBL_LOAN_SCHEDULE_PERIODIC.AddRange(tblPeriodicSchedule);////change to Temp table
+
+                        ////context.TBL_LOAN_SCHEDULE_DAILY.AddRange(tblDailySchedule); ////change to Temp table
+                        //context.SaveChanges();
+
+                        //MergeDailySchedule(loanId, applicationDate);
+                        //MergePeriodicSchedule(loanId, applicationDate);
+
+                        //----------update loan details -----------------------------------
+                        var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
+                        loan.MATURITYDATE = (DateTime)reviewData.MATURITYDATE;
+                        loan.PRINCIPALNUMBEROFINSTALLMENT = periodicSchedule.Count() - 1;
+                        loan.INTERESTNUMBEROFINSTALLMENT = periodicSchedule.Count() - 1;
+
+
+>>>>>>> master
                         decimal newOutstandingPrincipal = 0;
 
                         var loanPeriodicSchedule = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loan.TERMLOANID && x.PAYMENTDATE == applicationDate).FirstOrDefault();
@@ -25111,6 +25449,7 @@ namespace FintrakBanking.Repositories.Credit
                         //-------------------------------------------------
 
                     }
+<<<<<<< HEAD
 
                     var result = false;
 
@@ -25266,6 +25605,359 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 decimal previousAccruedDailyInterest = (decimal?)previousDailyInterest ?? 0;
+                decimal.Round(previousAccruedDailyInterest, 2, MidpointRounding.AwayFromZero);
+
+                double dailyAccuralAmount = ((loanInput.interestRate / 100) * (double)loan.OUTSTANDINGPRINCIPAL * (1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID)));
+
+                decimal currentAccruedDailyInterest = (decimal?)currentDailyInterest ?? 0;
+                decimal.Round(currentAccruedDailyInterest, 2, MidpointRounding.AwayFromZero);
+
+                decimal accruedDailyInterestDiff = previousAccruedDailyInterest - currentAccruedDailyInterest;
+
+                if (accruedDailyInterestDiff != 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostLoanPositiveReversalEntries(loanInput, (decimal)accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
+
+                    output = true;
+
+                }
+
+
+            }
+            else
+            {
+
+                DateTime newDate = loanSchePeriodicDate.PAYMENTDATE.AddDays(-1);
+                var dailyAccrualRecord = context.TBL_DAILY_ACCRUAL.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= newCurrentDate && x.DATE <= loanSchePeriodicDate.PAYMENTDATE && x.CATEGORYID == (short)DailyAccrualCategory.TermLoan);
+
+=======
+
+                    var result = false;
+
+                    result = context.SaveChanges() > 0;
+
+                    if (reviewData.EFFECTIVEDATE < systemDate)
+                    {
+                        //result = LoanBackDateFunction(loanId, applicationDate, systemDate, (decimal)product.PENALCHARGERATE, loanInput);
+                        result = LoanBackDateFunction(loanId, applicationDate, systemDate, loanInput, context);
+                    }
+
+                    if (result)
+                    {
+                        output = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+
+            }
+            return output;
+        }
+
+        public bool LoanBackDateFunction(int loanId, DateTime effectiveDate, DateTime currentDate, LoanPaymentRestructureScheduleInputViewModel loanInput, FinTrakBankingContext context)
+        {
+            bool output = false;
+            var result = "";
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
+            var loan = context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            int counter = 0;
+
+            var loanSchePeriodicData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.TBL_LOAN.TERMLOANID == loanId
+                 && x.PAYMENTDATE >= effectiveDate && x.PAYMENTDATE <= currentDate && x.PAYMENTNUMBER != 0).OrderByDescending(x => x.PERIODICSCHEDULEID);
+
+            decimal loanSchePeriodicPrincipal = 0;
+
+            try
+            {
+                loanSchePeriodicPrincipal = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.TBL_LOAN.TERMLOANID == loanId
+               && x.PAYMENTDATE >= effectiveDate && x.PAYMENTDATE <= currentDate && x.PAYMENTNUMBER != 0).Sum(x => x.PERIODPRINCIPALAMOUNT);
+            }
+            catch (Exception)
+            {
+                loanSchePeriodicPrincipal = 0;
+            }
+
+
+            var loanSchePeriodicDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.TBL_LOAN.TERMLOANID == loanId
+                && x.PAYMENTDATE >= effectiveDate && x.PAYMENTDATE <= currentDate && x.PAYMENTNUMBER != 0).OrderByDescending(x => x.PAYMENTDATE).Take(1).FirstOrDefault();
+
+
+            int dateDiff = DateDiff(effectiveDate, currentDate);
+
+            List<TBL_DAILY_ACCRUAL_TEMP> tblDailyAccrualTempList = new List<TBL_DAILY_ACCRUAL_TEMP>();
+
+            for (int i = 0; i < dateDiff; i++)
+            {
+
+                TBL_DAILY_ACCRUAL_TEMP tblDailyAccrualTemp = new TBL_DAILY_ACCRUAL_TEMP();
+
+                DateTime dateAdd = effectiveDate.AddDays(i);
+
+                if (dateAdd == currentDate)
+                {
+                    break;
+                }
+
+                tblDailyAccrualTemp.REFERENCENUMBER = loan.LOANREFERENCENUMBER;
+                tblDailyAccrualTemp.CATEGORYID = (short)DailyAccrualCategory.TermLoan;
+                tblDailyAccrualTemp.TRANSACTIONTYPEID = (byte)LoanTransactionTypeEnum.Interest;
+                tblDailyAccrualTemp.PRODUCTID = loan.PRODUCTID;
+                tblDailyAccrualTemp.COMPANYID = loan.COMPANYID;
+                tblDailyAccrualTemp.BRANCHID = loan.BRANCHID;
+                tblDailyAccrualTemp.CURRENCYID = loan.CURRENCYID;
+                tblDailyAccrualTemp.EXCHANGERATE = loan.EXCHANGERATE;
+                tblDailyAccrualTemp.MAINAMOUNT = GetRepaymentStartAmount(loanId, dateAdd);
+                tblDailyAccrualTemp.INTERESTRATE = loanInput.interestRate;
+                tblDailyAccrualTemp.DAYCOUNTCONVENTIONID = loan.SCHEDULEDAYCOUNTCONVENTIONID;
+                tblDailyAccrualTemp.DAILYACCURALAMOUNT = (decimal)((loanInput.interestRate / 100) * (double)GetRepaymentStartAmount(loanId, dateAdd) * (1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID)));
+                tblDailyAccrualTemp.REPAYMENTPOSTEDSTATUS = false;
+                tblDailyAccrualTemp.SYSTEMDATETIME = 0;
+                tblDailyAccrualTemp.CHARGEFEEID = (int)ChargeFeeDetailTypeEnum.Primary;
+                tblDailyAccrualTemp.DATE = dateAdd;
+                tblDailyAccrualTemp.DAILYACCURALAMOUNT2 = 0;
+
+
+                tblDailyAccrualTempList.Add(tblDailyAccrualTemp);
+
+            }
+
+            var deleteDailyAccrcual = new List<TBL_DAILY_ACCRUAL_TEMP>();
+
+            try
+            {
+                deleteDailyAccrcual = context.TBL_DAILY_ACCRUAL_TEMP.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER).ToList();
+            }
+            catch (Exception)
+            {
+
+                deleteDailyAccrcual = null;
+            }
+
+
+            if (deleteDailyAccrcual != null)
+            {
+                context.TBL_DAILY_ACCRUAL_TEMP.RemoveRange(deleteDailyAccrcual);
+                context.SaveChanges();
+            }
+
+            if (tblDailyAccrualTempList.Count() != 0)
+            {
+                context.TBL_DAILY_ACCRUAL_TEMP.AddRange(tblDailyAccrualTempList);
+                context.SaveChanges();
+            }
+
+
+            counter = loanSchePeriodicData.Count();
+
+            DateTime newCurrentDate = currentDate.AddDays(-1);
+
+            if (counter == 0)
+            {
+                decimal previousDailyInterest = 0;
+
+                try
+                {
+                    previousDailyInterest = context.TBL_DAILY_ACCRUAL.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= effectiveDate && x.DATE <= newCurrentDate && x.CATEGORYID == (short)DailyAccrualCategory.TermLoan).Sum(x => x.DAILYACCURALAMOUNT);
+                }
+                catch (Exception)
+                {
+
+                    previousDailyInterest = 0;
+                }
+
+                decimal currentDailyInterest = 0;
+
+                try
+                {
+                    currentDailyInterest = context.TBL_DAILY_ACCRUAL_TEMP.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= effectiveDate && x.DATE <= newCurrentDate && x.CATEGORYID == (short)DailyAccrualCategory.TermLoan).Sum(x => x.DAILYACCURALAMOUNT);
+
+                }
+                catch (Exception)
+                {
+
+                    currentDailyInterest = 0;
+                }
+>>>>>>> master
+
+                decimal previousDailyInterest = dailyAccrualRecord.Any() ? dailyAccrualRecord.Sum(x => x.DAILYACCURALAMOUNT) : 0;
+                var currentDailyInterestRecord = context.TBL_DAILY_ACCRUAL_TEMP.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= newCurrentDate && x.DATE <= loanSchePeriodicDate.PAYMENTDATE && x.CATEGORYID == (short)DailyAccrualCategory.TermLoan);
+                decimal currentDailyInterest = currentDailyInterestRecord.Any() ? currentDailyInterestRecord.Sum(x => x.DAILYACCURALAMOUNT) : 0;
+
+                decimal previousAccruedDailyInterest = (decimal?)previousDailyInterest ?? 0;
+<<<<<<< HEAD
+
+                decimal.Round(previousAccruedDailyInterest, 2, MidpointRounding.AwayFromZero);
+
+                double dailyAccuralAmount = ((loanInput.interestRate / 100) * (double)loan.OUTSTANDINGPRINCIPAL * (1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID)));
+
+                decimal currentAccruedDailyInterest = (decimal?)currentDailyInterest ?? 0;
+                decimal.Round(currentAccruedDailyInterest, 2, MidpointRounding.AwayFromZero);
+
+                decimal accruedDailyInterestDiff = previousAccruedDailyInterest - currentAccruedDailyInterest;
+
+                if (accruedDailyInterestDiff != 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostLoanPositiveReversalEntries(loanInput, (decimal)accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
+
+                    output = true;
+
+                }
+
+                var previousPeriodicForPrincipal = from d in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
+                                                   where d.LOANID == loanId
+                                                   let periodicPrincipal = context.TBL_LOAN_SCHEDULE_PERIODIC_ARC.Where(a => a.LOANID == loanId
+                                                   && a.PAYMENTDATE >= DbFunctions.TruncateTime(effectiveDate) && a.PAYMENTDATE <= DbFunctions.TruncateTime(currentDate)
+                                                   ).Sum(a => (double?)a.PERIODPRINCIPALAMOUNT ?? 0)
+                                                   select periodicPrincipal;
+
+                var currentPeriodicForPrincipal = from d in context.TBL_LOAN_SCHEDULE_PERIODIC
+                                                  where d.LOANID == loanId
+                                                  let periodicPrincipal = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(a => a.LOANID == loanId
+                                                  && a.PAYMENTDATE >= DbFunctions.TruncateTime(effectiveDate) && a.PAYMENTDATE <= DbFunctions.TruncateTime(currentDate)
+                                                  ).Sum(a => (double?)a.PERIODPRINCIPALAMOUNT ?? 0)
+                                                  select periodicPrincipal;
+
+
+                decimal previousPeriodicPrincipal = (decimal?)previousPeriodicForPrincipal.FirstOrDefault() ?? 0;
+                decimal.Round(previousPeriodicPrincipal, 2, MidpointRounding.AwayFromZero);
+
+                decimal currentPeriodicPrincipal = (decimal?)currentPeriodicForPrincipal.FirstOrDefault() ?? 0;
+                decimal.Round(currentPeriodicPrincipal, 2, MidpointRounding.AwayFromZero);
+
+                decimal periodicPrincipalDiff = previousPeriodicPrincipal - currentPeriodicPrincipal;
+
+                if (periodicPrincipalDiff != 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostLoanPositiveReversalCasaEntries(loanInput, periodicPrincipalDiff, product.PRINCIPALBALANCEGL.Value, "Principal Reversal", loanInput.operationId));
+
+                    output = true;
+                }
+
+                var previousPeriodicRecord = context.TBL_DAILY_ACCRUAL.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= effectiveDate && x.DATE <= newDate && x.CATEGORYID == (short)DailyAccrualCategory.TermLoan).ToList();
+                decimal previousPeriodic = 0;
+                decimal currentPeriodic = 0;
+                if (previousPeriodicRecord.Count() > 0)
+                {
+                    previousPeriodic = previousPeriodicRecord.Sum(x => x.DAILYACCURALAMOUNT);
+                }
+
+                //decimal previousPeriodic = context.TBL_DAILY_ACCRUAL.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= effectiveDate && x.DATE <= newDate && x.CATEGORYID == (short)DailyAccrualCategory.TermLoan).Sum(x => x.DAILYACCURALAMOUNT);
+
+                var currentPeriodicRecord = context.TBL_DAILY_ACCRUAL_TEMP.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= effectiveDate && x.DATE <= newDate && x.CATEGORYID == (short)DailyAccrualCategory.TermLoan);
+                if (currentPeriodicRecord.Count() > 0)
+                {
+                    currentPeriodic = currentPeriodicRecord.Sum(x => x.DAILYACCURALAMOUNT);
+                }
+
+                // currentPeriodic = context.TBL_DAILY_ACCRUAL_TEMP.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= effectiveDate && x.DATE <= newDate && x.CATEGORYID == (short)DailyAccrualCategory.TermLoan).Sum(x => x.DAILYACCURALAMOUNT);
+
+                decimal previousPeriodicInterest = (decimal?)previousPeriodic ?? 0;
+                decimal.Round(previousPeriodicInterest, 2, MidpointRounding.AwayFromZero);
+
+                decimal currentPeriodicInterest = (decimal?)currentPeriodic ?? 0;
+                decimal.Round(currentPeriodicInterest, 2, MidpointRounding.AwayFromZero);
+
+                decimal periodicInterestDiff = previousPeriodicInterest - currentPeriodicInterest;
+
+
+                if (periodicInterestDiff != 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostLoanPositiveReversalCasaEntries(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal", loanInput.operationId));
+
+                    output = true;
+
+                }
+
+
+            }
+
+
+            var tblDailyAccrualTempNew = context.TBL_DAILY_ACCRUAL.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= effectiveDate && x.DATE <= currentDate).ToList().OrderBy(x => x.DATE);
+
+            List<TBL_DAILY_ACCRUAL_ARCHIVE> tblDailyAccrualListNew = new List<TBL_DAILY_ACCRUAL_ARCHIVE>();
+
+            foreach (TBL_DAILY_ACCRUAL tblDailyAccrual in tblDailyAccrualTempNew)
+            {
+                TBL_DAILY_ACCRUAL_ARCHIVE tblDailyAccrualNew = new TBL_DAILY_ACCRUAL_ARCHIVE();
+
+                tblDailyAccrualNew.REFERENCENUMBER = tblDailyAccrual.REFERENCENUMBER;
+                tblDailyAccrualNew.CATEGORYID = tblDailyAccrual.CATEGORYID;
+                tblDailyAccrualNew.TRANSACTIONTYPEID = tblDailyAccrual.TRANSACTIONTYPEID;
+                tblDailyAccrualNew.PRODUCTID = tblDailyAccrual.PRODUCTID;
+                tblDailyAccrualNew.COMPANYID = tblDailyAccrual.COMPANYID;
+                tblDailyAccrualNew.BRANCHID = tblDailyAccrual.BRANCHID;
+                tblDailyAccrualNew.CURRENCYID = tblDailyAccrual.CURRENCYID;
+                tblDailyAccrualNew.EXCHANGERATE = tblDailyAccrual.EXCHANGERATE;
+                tblDailyAccrualNew.MAINAMOUNT = tblDailyAccrual.MAINAMOUNT;
+                tblDailyAccrualNew.INTERESTRATE = tblDailyAccrual.INTERESTRATE;
+                tblDailyAccrualNew.DAYCOUNTCONVENTIONID = tblDailyAccrual.DAYCOUNTCONVENTIONID;
+                tblDailyAccrualNew.DAILYACCURALAMOUNT = tblDailyAccrual.DAILYACCURALAMOUNT;
+                tblDailyAccrualNew.REPAYMENTPOSTEDSTATUS = tblDailyAccrual.REPAYMENTPOSTEDSTATUS;
+                tblDailyAccrualNew.SYSTEMDATETIME = tblDailyAccrual.SYSTEMDATETIME;
+                tblDailyAccrualNew.DATE = tblDailyAccrual.DATE;
+                tblDailyAccrualNew.DAILYACCURALAMOUNT2 = tblDailyAccrual.DAILYACCURALAMOUNT2;
+                tblDailyAccrualNew.CHARGEFEEID = (int)ChargeFeeDetailTypeEnum.Primary;
+                tblDailyAccrualNew.ARCHIVEBATCHCODE = CommonHelpers.GenerateRandomDigitCode(10);
+                tblDailyAccrualNew.ARCHIVEDATE = currentDate;
+                tblDailyAccrualNew.DAILYACCURALID = tblDailyAccrual.DAILYACCURALID;
+
+
+                tblDailyAccrualListNew.Add(tblDailyAccrualNew);
+            }
+
+
+            if (tblDailyAccrualListNew.Count() != 0)
+            {
+                context.TBL_DAILY_ACCRUAL_ARCHIVE.AddRange(tblDailyAccrualListNew);
+                context.SaveChanges();
+            }
+
+            var deleteDailyAccrualNew = context.TBL_DAILY_ACCRUAL.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= effectiveDate && x.DATE <= currentDate).ToList();
+
+            if (deleteDailyAccrualNew != null)
+            {
+                context.TBL_DAILY_ACCRUAL.RemoveRange(deleteDailyAccrualNew);
+                context.SaveChanges();
+            }
+
+            var dailyAccrualNew = context.TBL_DAILY_ACCRUAL_TEMP.Where(x => x.REFERENCENUMBER == loan.LOANREFERENCENUMBER && x.DATE >= effectiveDate && x.DATE <= currentDate).ToList();
+
+            List<TBL_DAILY_ACCRUAL> tblDailyAccrualList = new List<TBL_DAILY_ACCRUAL>();
+
+            foreach (TBL_DAILY_ACCRUAL_TEMP tblDailyAccrual in dailyAccrualNew)
+            {
+                TBL_DAILY_ACCRUAL tblDailyAccruallNew = new TBL_DAILY_ACCRUAL();
+
+                tblDailyAccruallNew.REFERENCENUMBER = tblDailyAccrual.REFERENCENUMBER;
+                tblDailyAccruallNew.CATEGORYID = tblDailyAccrual.CATEGORYID;
+                tblDailyAccruallNew.TRANSACTIONTYPEID = tblDailyAccrual.TRANSACTIONTYPEID;
+                tblDailyAccruallNew.PRODUCTID = tblDailyAccrual.PRODUCTID;
+                tblDailyAccruallNew.COMPANYID = tblDailyAccrual.COMPANYID;
+                tblDailyAccruallNew.BRANCHID = tblDailyAccrual.BRANCHID;
+                tblDailyAccruallNew.CURRENCYID = tblDailyAccrual.CURRENCYID;
+                tblDailyAccruallNew.EXCHANGERATE = tblDailyAccrual.EXCHANGERATE;
+                tblDailyAccruallNew.MAINAMOUNT = tblDailyAccrual.MAINAMOUNT;
+                tblDailyAccruallNew.INTERESTRATE = tblDailyAccrual.INTERESTRATE;
+                tblDailyAccruallNew.DAYCOUNTCONVENTIONID = tblDailyAccrual.DAYCOUNTCONVENTIONID;
+                tblDailyAccruallNew.DAILYACCURALAMOUNT = tblDailyAccrual.DAILYACCURALAMOUNT;
+                tblDailyAccruallNew.REPAYMENTPOSTEDSTATUS = tblDailyAccrual.REPAYMENTPOSTEDSTATUS;
+                tblDailyAccruallNew.SYSTEMDATETIME = tblDailyAccrual.SYSTEMDATETIME;
+                tblDailyAccruallNew.DATE = tblDailyAccrual.DATE;
+                tblDailyAccruallNew.DAILYACCURALAMOUNT2 = tblDailyAccrual.DAILYACCURALAMOUNT2;
+                //tblDailyAccruallNew.CHARGEFEEID = (int)ChargeFeeDetailTypeEnum.Primary;
+
+
+                tblDailyAccrualList.Add(tblDailyAccruallNew);
+            }
+
+
+=======
                 decimal.Round(previousAccruedDailyInterest, 2, MidpointRounding.AwayFromZero);
 
                 double dailyAccuralAmount = ((loanInput.interestRate / 100) * (double)loan.OUTSTANDINGPRINCIPAL * (1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID)));
@@ -25463,6 +26155,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
+>>>>>>> master
             if (tblDailyAccrualList.Count() != 0)
             {
                 context.TBL_DAILY_ACCRUAL.AddRange(tblDailyAccrualList);
@@ -25475,6 +26168,55 @@ namespace FintrakBanking.Repositories.Credit
 
         public void ProcessAutomaticCommercialLoanRollover(DateTime applicationDate, int companyId, int staffId)
         {
+<<<<<<< HEAD
+
+
+            var currencyRate = (from b in context.TBL_LOAN
+                                where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true && b.COMPANYID == companyId
+                                select new CurrencyExchangeRateViewModel()
+                                {
+                                    currencyId = b.CURRENCYID,
+                                    companyId = b.COMPANYID,
+                                }).ToList().Distinct().Select(x =>
+                                {
+                                    x.sellingRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, (int)x.companyId).sellingRate;
+                                    return x;
+                                }).ToList();
+
+
+
+            DateTime dateChange = applicationDate;
+
+            dateChange = dateChange.AddDays(-1);
+
+            var model = (from a in context.TBL_LOAN_MATURITY_INSTRUCTION
+                         join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                         where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                         && b.ALLOWFORCEDEBITREPAYMENT == true && a.ISUSED == false && b.ISDISBURSED == true
+                         select new LoanRepaymentViewModel()
+                         {
+                             productId = b.PRODUCTID,
+                             branchId = b.BRANCHID,
+                             companyId = b.COMPANYID,
+                             currencyId = b.CURRENCYID,
+                             //exchangeRate = b.EXCHANGERATE,
+                             periodInterestAmount = b.OUTSTANDINGINTEREST,
+                             periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
+                             interestRate = b.INTERESTRATE,
+                             paymentDate = applicationDate,
+                             loanId = b.TERMLOANID,
+                             totalAmount = 0,
+                             casaAccountId = b.CASAACCOUNTID,
+                             loanRefNo = b.LOANREFERENCENUMBER,
+                             maturityInstructionTypeId = a.INSTRUCTIONTYPEID
+                         }).ToList().Select(x =>
+                         {
+                             //x.exchangeRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, x.companyId).sellingRate;
+                             x.exchangeRate = currencyRate.Where(m => m.currencyId == x.currencyId).Select(m => m.sellingRate).FirstOrDefault();
+                             return x;
+                         }).ToList();
+=======
 
 
             var currencyRate = (from b in context.TBL_LOAN
@@ -25523,7 +26265,11 @@ namespace FintrakBanking.Repositories.Credit
                              return x;
                          }).ToList();
 
+>>>>>>> master
 
+            //var eod_Operation_Log = context.TBL_EOD_OPERATION_LOG.Where(c => c.EODDATE == applicationDate).FirstOrDefault();
+
+<<<<<<< HEAD
             //var eod_Operation_Log = context.TBL_EOD_OPERATION_LOG.Where(c => c.EODDATE == applicationDate).FirstOrDefault();
 
 
@@ -25548,6 +26294,30 @@ namespace FintrakBanking.Repositories.Credit
             //            eod_operation_Detail.EODDATE = applicationDate;
             //            eod_operation_Detail_List.Add(eod_operation_Detail);
 
+=======
+
+            //List<TBL_EOD_OPERATION_LOG_DETAIL> eod_operation_Detail_List = new List<TBL_EOD_OPERATION_LOG_DETAIL>();
+
+            //if (model == null)
+            //{
+            //    var eodOperations = context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION).ToList();
+
+            //    foreach (LoanRepaymentViewModel loan in model)
+            //    {
+
+            //        TBL_EOD_OPERATION_LOG_DETAIL eod_operation_Detail = new TBL_EOD_OPERATION_LOG_DETAIL();
+
+            //        var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFRENCENUMBER == loan.loanRefNo && c.EODDATE == applicationDate).FirstOrDefault();
+
+            //        if (checkExistence == null)
+            //        {
+            //            eod_operation_Detail.EODOPERATIONLOGID = eod_Operation_Log.EODOPERATIONLOGID;
+            //            eod_operation_Detail.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
+            //            eod_operation_Detail.REFRENCENUMBER = loan.loanRefNo;
+            //            eod_operation_Detail.EODDATE = applicationDate;
+            //            eod_operation_Detail_List.Add(eod_operation_Detail);
+
+>>>>>>> master
             //        }
 
             //    }
@@ -25581,6 +26351,17 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (checkExistence == null)
                 {
+<<<<<<< HEAD
+
+                    TBL_LOAN loanRecord = context.TBL_LOAN.Find(item.loanId);
+                    if (loanRecord.MATURITYDATE == applicationDate)
+                    {
+                        _transactionReferenceNo = item.loanRefNo + " - rollover";
+                        RolloverCommercialLoanByAutomaticProcess(loanRecord);
+                    }
+
+                }
+=======
 
                     TBL_LOAN loanRecord = context.TBL_LOAN.Find(item.loanId);
                     if (loanRecord.MATURITYDATE == applicationDate)
@@ -25592,7 +26373,14 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
+>>>>>>> master
 
+
+                //    }
+                //    catch (Exception ex)
+                //    {
+
+<<<<<<< HEAD
 
                 //    }
                 //    catch (Exception ex)
@@ -25614,8 +26402,31 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
+=======
+                //        eod_Operation_Log_Detail_Set_Value.EODDATE = DateTime.Now;
+                //        eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
+                //        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.loanRefNo} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                //        context.SaveChanges();
+                //    }
+                //    eod_Operation_Log_Detail_Set_Value.EODDATE = DateTime.Now;
+                //    eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                //    eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
+                //    context.SaveChanges();
 
 
+
+                //}
+
+
+
+
+
+            }
+>>>>>>> master
+
+            context.SaveChanges();
+
+<<<<<<< HEAD
             }
 
             context.SaveChanges();
@@ -25686,6 +26497,74 @@ namespace FintrakBanking.Repositories.Credit
             newLoanEntry.FIRSTPRINCIPALPAYMENTDATE = newLoan.FIRSTPRINCIPALPAYMENTDATE;
             newLoanEntry.FIRSTINTERESTPAYMENTDATE = newLoan.FIRSTINTERESTPAYMENTDATE;
 
+=======
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            {
+                BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
+
+                bulkPosting.WriteBulkProcessLoanDisbursmentRollOverToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate, companyId, staffId, out _transactionReferenceNo);
+            }
+        }
+
+        public int ReBookLoan(TBL_LOAN newLoan)
+        {
+            var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(newLoan.BRANCHID, newLoan.PRODUCTID, newLoan.LOANSYSTEMTYPEID);
+
+            TBL_LOAN newLoanEntry = new TBL_LOAN();
+            newLoanEntry.PRODUCTPRICEINDEXRATE = newLoan.PRODUCTPRICEINDEXRATE;
+            newLoanEntry.CUSTOMERRISKRATINGID = newLoan.CUSTOMERRISKRATINGID;
+            newLoanEntry.LOANSYSTEMTYPEID = newLoan.LOANSYSTEMTYPEID;
+            newLoanEntry.CUSTOMERID = newLoan.CUSTOMERID;
+            newLoanEntry.PRODUCTID = newLoan.PRODUCTID;
+            newLoanEntry.COMPANYID = newLoan.COMPANYID;
+            newLoanEntry.LOAN_BOOKING_REQUESTID = newLoan.LOAN_BOOKING_REQUESTID;
+            newLoanEntry.LOANAPPLICATIONDETAILID = newLoan.LOANAPPLICATIONDETAILID;
+            newLoanEntry.CASAACCOUNTID = newLoan.CASAACCOUNTID;
+            newLoanEntry.CASAACCOUNTID2 = newLoan.CASAACCOUNTID2;
+            newLoanEntry.LOANSYSTEMTYPEID = newLoan.LOANSYSTEMTYPEID;
+            newLoanEntry.BRANCHID = newLoan.BRANCHID;
+            newLoanEntry.OPERATIONID = newLoan.OPERATIONID;
+            newLoanEntry.SUBSECTORID = newLoan.SUBSECTORID;
+            newLoanEntry.CURRENCYID = newLoan.CURRENCYID;
+            newLoanEntry.EXCHANGERATE = newLoan.EXCHANGERATE;
+            newLoanEntry.LOANREFERENCENUMBER = loanReferenceNumber;
+            newLoanEntry.RELATED_LOAN_REFERENCE_NUMBER = newLoan.LOANREFERENCENUMBER;
+            newLoanEntry.PRINCIPALNUMBEROFINSTALLMENT = newLoan.PRINCIPALNUMBEROFINSTALLMENT;
+            newLoanEntry.INTERESTNUMBEROFINSTALLMENT = newLoan.INTERESTINSTALLMENTLEFT;
+            newLoanEntry.RELATIONSHIPOFFICERID = newLoan.RELATIONSHIPOFFICERID;
+            newLoanEntry.RELATIONSHIPMANAGERID = newLoan.RELATIONSHIPMANAGERID;
+            newLoanEntry.MISCODE = newLoan.MISCODE;
+            newLoanEntry.TEAMMISCODE = newLoan.TEAMMISCODE;
+            newLoanEntry.INTERESTRATE = newLoan.INTERESTRATE;
+            newLoanEntry.EFFECTIVEDATE = newLoan.MATURITYDATE;
+            newLoanEntry.MATURITYDATE = newLoan.MATURITYDATE;
+            newLoanEntry.BOOKINGDATE = newLoan.BOOKINGDATE;
+            newLoanEntry.PRINCIPALINSTALLMENTLEFT = newLoan.PRINCIPALINSTALLMENTLEFT;
+            newLoanEntry.INTERESTINSTALLMENTLEFT = newLoan.INTERESTINSTALLMENTLEFT;
+            newLoanEntry.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+            newLoanEntry.APPROVERCOMMENT = newLoan.APPROVERCOMMENT;
+            newLoanEntry.LOANSTATUSID = (short)LoanStatusEnum.Active;
+            newLoanEntry.SCHEDULETYPEID = newLoan.SCHEDULETYPEID;
+            newLoanEntry.SCHEDULEDAYCOUNTCONVENTIONID = newLoan.SCHEDULEDAYCOUNTCONVENTIONID;
+            newLoanEntry.SCHEDULEDAYINTERESTTYPEID = newLoan.SCHEDULEDAYINTERESTTYPEID;
+            newLoanEntry.SHOULD_DISBURSE = newLoan.SHOULD_DISBURSE;
+            newLoanEntry.ISDISBURSED = newLoan.ISDISBURSED;
+            newLoanEntry.EQUITYCONTRIBUTION = newLoan.EQUITYCONTRIBUTION;
+            newLoanEntry.PASTDUEPRINCIPAL = newLoan.PASTDUEPRINCIPAL;
+            newLoanEntry.PASTDUEINTEREST = newLoan.PASTDUEINTEREST;
+            newLoanEntry.INTERESTONPASTDUEPRINCIPAL = newLoan.INTERESTONPASTDUEPRINCIPAL;
+            newLoanEntry.INTERESTONPASTDUEINTEREST = newLoan.INTERESTONPASTDUEINTEREST;
+            newLoanEntry.PENALCHARGEAMOUNT = newLoan.PENALCHARGEAMOUNT;
+            newLoanEntry.FIXEDPRINCIPAL = newLoan.FIXEDPRINCIPAL;
+            newLoanEntry.PROFILELOAN = newLoan.PROFILELOAN;
+            newLoanEntry.DISCHARGELETTER = newLoan.DISCHARGELETTER;
+            newLoanEntry.SUSPENDINTEREST = newLoan.SUSPENDINTEREST;
+            newLoanEntry.ALLOWFORCEDEBITREPAYMENT = newLoan.ALLOWFORCEDEBITREPAYMENT;
+            newLoanEntry.FIRSTPRINCIPALPAYMENTDATE = newLoan.FIRSTPRINCIPALPAYMENTDATE;
+            newLoanEntry.FIRSTINTERESTPAYMENTDATE = newLoan.FIRSTINTERESTPAYMENTDATE;
+
+>>>>>>> master
             newLoanEntry.INT_PRUDENT_GUIDELINE_STATUSID = newLoan.INT_PRUDENT_GUIDELINE_STATUSID;
             newLoanEntry.EXT_PRUDENT_GUIDELINE_STATUSID = newLoan.EXT_PRUDENT_GUIDELINE_STATUSID;
             newLoanEntry.USER_PRUDENTIAL_GUIDE_STATUSID = newLoan.USER_PRUDENTIAL_GUIDE_STATUSID;
@@ -25708,6 +26587,7 @@ namespace FintrakBanking.Repositories.Credit
                 return 0;
             }
         }
+<<<<<<< HEAD
 
         public bool DeleteLoanExist(int loanId, DateTime applicationDate, FinTrakBankingContext context)
         {
@@ -25843,6 +26723,158 @@ namespace FintrakBanking.Repositories.Credit
                 //.Concat
 
                 counter = model1.Count();
+=======
+
+        public bool DeleteLoanExist(int loanId, DateTime applicationDate, FinTrakBankingContext context)
+        {
+            bool output = false;
+
+            var removeLoan_Archive = (from p in context.TBL_LOAN_ARCHIVE
+                                      where p.LOANID == loanId && p.CHANGEEFFECTIVEDATE == applicationDate
+                                      select p);
+            var removeLoan_Schedule_Periodic_Archive = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
+                                                        where p.LOANID == loanId && p.ARCHIVEDATE == applicationDate
+                                                        select p);
+            var removeLoan_Schedule_Daily_Archive = (from p in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV
+                                                     where p.LOANID == loanId && p.ARCHIVEDATE == applicationDate
+                                                     select p);
+            var removeLoan_Schedule_Daily_Temp = (from p in context.TBL_LOAN_SCHEDULE_DAILY_TEMP
+                                                  where p.LOANID == loanId
+                                                  select p);
+            var removeLoan_Schedule_Periodic_Temp = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
+                                                     where p.LOANID == loanId
+                                                     select p);
+
+            var removeOD_Archive = (from p in context.TBL_LOAN_REVOLVING_ARCHIVE
+                                    where p.REVOLVINGLOANID == loanId && p.ARCHIVEDATE == applicationDate
+                                    select p);
+
+            var removeLoan_IrregularSchedule = (from p in context.TBL_LOAN_SCHEDULE_IREGUL_INPUT
+                                                where p.LOANID == loanId
+                                                select p);
+
+            if (removeLoan_Archive != null)
+            {
+                context.TBL_LOAN_ARCHIVE.RemoveRange(removeLoan_Archive);
+            }
+            if (removeLoan_Schedule_Periodic_Archive != null)
+            {
+                context.TBL_LOAN_SCHEDULE_PERIODIC_ARC.RemoveRange(removeLoan_Schedule_Periodic_Archive);
+
+            }
+            if (removeLoan_Schedule_Daily_Archive != null)
+            {
+                context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV.RemoveRange(removeLoan_Schedule_Daily_Archive);
+
+            }
+            if (removeLoan_Schedule_Daily_Temp != null)
+            {
+                context.TBL_LOAN_SCHEDULE_DAILY_TEMP.RemoveRange(removeLoan_Schedule_Daily_Temp);
+
+            }
+            if (removeLoan_Schedule_Periodic_Temp != null)
+            {
+                context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.RemoveRange(removeLoan_Schedule_Periodic_Temp);
+
+            }
+            if (removeOD_Archive != null)
+            {
+                context.TBL_LOAN_REVOLVING_ARCHIVE.RemoveRange(removeOD_Archive);
+
+            }
+
+            if (removeLoan_IrregularSchedule != null)
+            {
+                context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.RemoveRange(removeLoan_IrregularSchedule);
+
+            }
+
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
+            }
+            output = true;
+
+            return output;
+        }
+
+        public List<LoanPaymentScheduleDailyViewModel> MergeDailyScheduleNew(int loanId, DateTime applicationDate, List<LoanPaymentScheduleDailyViewModel> dailySchedule, FinTrakBankingContext context)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+            int no = 0;//number.Count() - 1;
+
+            List<LoanPaymentScheduleDailyViewModel> model1 = new List<LoanPaymentScheduleDailyViewModel>();
+            List<LoanPaymentScheduleDailyViewModel> model2 = new List<LoanPaymentScheduleDailyViewModel>();
+            List<LoanPaymentScheduleDailyViewModel> model = new List<LoanPaymentScheduleDailyViewModel>();
+
+            int counter = 0;
+
+            try
+            {
+                model1 = (from a in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV
+                          where a.LOANID == loanId && a.ARCHIVEDATE == DbFunctions.TruncateTime(systemDate)
+                          && a.DATE < DbFunctions.TruncateTime(applicationDate)
+                          orderby a.PAYMENTNUMBER ascending
+                          select new LoanPaymentScheduleDailyViewModel()
+                          {
+                              loanId = a.LOANID,
+                              paymentNumber = a.PAYMENTNUMBER,
+                              date = a.DATE,
+                              paymentDate = a.PAYMENTDATE,
+                              openingBalance = (double)a.OPENINGBALANCE,
+                              startPrincipalAmount = (double)a.STARTPRINCIPALAMOUNT,
+                              dailyPaymentAmount = (double)a.DAILYPAYMENTAMOUNT,
+                              dailyInterestAmount = (double)a.DAILYINTERESTAMOUNT,
+                              dailyPrincipalAmount = (double)a.DAILYPRINCIPALAMOUNT,
+                              closingBalance = (double)a.CLOSINGBALANCE,
+                              endPrincipalAmount = (double)a.ENDPRINCIPALAMOUNT,
+                              amortisedCost = (double)a.AMORTISEDCOST,
+                              accruedInterest = (double)a.ACCRUEDINTEREST,
+                              norminalInterestRate = a.INTERESTRATE,
+>>>>>>> master
+
+                              amOpeningBalance = (double)a.AMORTISEDOPENINGBALANCE,
+                              amStartPrincipalAmount = (double)a.AMORTISEDSTARTPRINCIPALAMOUNT,
+                              amDailyPaymentAmount = (double)a.AMORTISEDDAILYPAYMENTAMOUNT,
+                              amDailyInterestAmount = (double)a.AMORTISEDDAILYINTERESTAMOUNT,
+                              amDailyPrincipalAmount = (double)a.AMORTISEDDAILYPRINCIPALAMOUNT,
+                              amClosingBalance = (double)a.AMORTISEDCLOSINGBALANCE,
+                              amEndPrincipalAmount = (double)a.AMORTISEDENDPRINCIPALAMOUNT,
+                              amAccruedInterest = (double)a.AMORTISEDACCRUEDINTEREST,
+                              amAmortisedCost = (double)a.AMORTISED_AMORTISEDCOST,
+                              discountPremium = (double)a.DISCOUNTPREMIUM,
+                              unEarnedFee = (double)a.UNEARNEDFEE,
+                              earnedFee = (double)a.EARNEDFEE,
+                              effectiveInterestRate = a.EFFECTIVEINTERESTRATE,
+                              numberOfPeriods = a.NUMBEROFPERIODS,
+                              ballonAmount = (double)a.BALLONAMOUNT,
+                              createdBy = a.CREATEDBY,
+                              dateTimeCreated = a.DATETIMECREATED,
+                          }).ToList();
+
+<<<<<<< HEAD
+                //model2 = dailySchedule.Where(a => a.loanId == loanId && a.date >= DbFunctions.TruncateTime(applicationDate)).OrderBy(a => a.paymentDate).ToList();
+
+                model2 = dailySchedule.OrderBy(a => a.paymentDate).ToList();
+
+                List<LoanPaymentScheduleDailyViewModel> LoanPaymentScheduleDaily = new List<LoanPaymentScheduleDailyViewModel>();
+
+                foreach (LoanPaymentScheduleDailyViewModel _model in model2)
+                {
+
+                    if (_model.date >= applicationDate)
+                    {
+                        LoanPaymentScheduleDailyViewModel _LoanPaymentScheduleDaily = new LoanPaymentScheduleDailyViewModel();
+
+=======
+                //.Concat
+
+                counter = model1.Count();
 
 
                 //model2 = dailySchedule.Where(a => a.loanId == loanId && a.date >= DbFunctions.TruncateTime(applicationDate)).OrderBy(a => a.paymentDate).ToList();
@@ -25858,6 +26890,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         LoanPaymentScheduleDailyViewModel _LoanPaymentScheduleDaily = new LoanPaymentScheduleDailyViewModel();
 
+>>>>>>> master
                         counter = counter + 1;
 
                         _LoanPaymentScheduleDaily.loanId = _model.loanId;
@@ -25998,6 +27031,7 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
+<<<<<<< HEAD
 
             catch (Exception ex)
             {
@@ -26010,7 +27044,81 @@ namespace FintrakBanking.Repositories.Credit
             return model;
 
         }
+=======
 
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+
+            context.SaveChanges();
+            return model;
+>>>>>>> master
+
+        }
+
+<<<<<<< HEAD
+        public List<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId, string archiveBatchCode, FinTrakBankingContext context)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+            var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
+                         where a.LOANID == loanId
+                         select new LoanPaymentSchedulePeriodicViewModel()
+                         {
+                             loanId = a.LOANID,
+                             paymentNumber = a.PAYMENTNUMBER,
+                             paymentDate = a.PAYMENTDATE,
+                             startPrincipalAmount = (double)a.STARTPRINCIPALAMOUNT,
+                             periodPaymentAmount = (double)a.PERIODPAYMENTAMOUNT,
+                             periodInterestAmount = (double)a.PERIODINTERESTAMOUNT,
+                             periodPrincipalAmount = (double)a.PERIODPRINCIPALAMOUNT,
+                             endPrincipalAmount = (double)a.ENDPRINCIPALAMOUNT,
+                             interestRate = a.INTERESTRATE,
+                             amortisedStartPrincipalAmount = (double)a.AMORTISEDSTARTPRINCIPALAMOUNT,
+                             amortisedPeriodPaymentAmount = (double)a.AMORTISEDPERIODPAYMENTAMOUNT,
+                             amortisedPeriodInterestAmount = (double)a.AMORTISEDPERIODINTERESTAMOUNT,
+                             amortisedPeriodPrincipalAmount = (double)a.AMORTISEDPERIODPRINCIPALAMOUNT,
+                             amortisedEndPrincipalAmount = (double)a.AMORTISEDENDPRINCIPALAMOUNT,
+                             effectiveInterestRate = a.EFFECTIVEINTERESTRATE,
+                             createdBy = a.CREATEDBY,
+                             dateTimeCreated = a.DATETIMECREATED,
+
+                         }).ToList();
+
+            List<TBL_LOAN_SCHEDULE_PERIODIC_ARC> loanSchedulePeriodicArchive = new List<TBL_LOAN_SCHEDULE_PERIODIC_ARC>();
+
+
+
+            foreach (var item in model)
+            {
+
+                TBL_LOAN_SCHEDULE_PERIODIC_ARC addLoanSchedulePeriodicArchive = new TBL_LOAN_SCHEDULE_PERIODIC_ARC();
+
+
+                addLoanSchedulePeriodicArchive.LOANID = item.loanId;
+                addLoanSchedulePeriodicArchive.ARCHIVEDATE = systemDate;
+                addLoanSchedulePeriodicArchive.PAYMENTNUMBER = item.paymentNumber;
+                addLoanSchedulePeriodicArchive.PAYMENTDATE = item.paymentDate;
+                addLoanSchedulePeriodicArchive.STARTPRINCIPALAMOUNT = (decimal)item.startPrincipalAmount;
+                addLoanSchedulePeriodicArchive.PERIODPAYMENTAMOUNT = (decimal)item.periodPaymentAmount;
+                addLoanSchedulePeriodicArchive.PERIODINTERESTAMOUNT = (decimal)item.periodInterestAmount;
+                addLoanSchedulePeriodicArchive.PERIODPRINCIPALAMOUNT = (decimal)item.periodPrincipalAmount;
+                addLoanSchedulePeriodicArchive.ENDPRINCIPALAMOUNT = (decimal)item.endPrincipalAmount;
+                addLoanSchedulePeriodicArchive.INTERESTRATE = item.interestRate;
+                addLoanSchedulePeriodicArchive.AMORTISEDSTARTPRINCIPALAMOUNT = (decimal)item.amortisedStartPrincipalAmount;
+                addLoanSchedulePeriodicArchive.AMORTISEDPERIODPAYMENTAMOUNT = (decimal)item.amortisedPeriodPaymentAmount;
+                addLoanSchedulePeriodicArchive.AMORTISEDPERIODINTERESTAMOUNT = (decimal)item.amortisedPeriodInterestAmount;
+                addLoanSchedulePeriodicArchive.AMORTISEDPERIODPRINCIPALAMOUNT = (decimal)item.amortisedPeriodPrincipalAmount;
+                addLoanSchedulePeriodicArchive.AMORTISEDENDPRINCIPALAMOUNT = (decimal)item.amortisedEndPrincipalAmount;
+                addLoanSchedulePeriodicArchive.EFFECTIVEINTERESTRATE = item.effectiveInterestRate;
+                addLoanSchedulePeriodicArchive.CREATEDBY = item.createdBy;
+                addLoanSchedulePeriodicArchive.DATETIMECREATED = item.dateTimeCreated;
+                addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = archiveBatchCode;
+
+                loanSchedulePeriodicArchive.Add(addLoanSchedulePeriodicArchive);
+=======
 
         public List<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId, string archiveBatchCode, FinTrakBankingContext context)
         {
@@ -26073,6 +27181,1606 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
+            context.TBL_LOAN_SCHEDULE_PERIODIC_ARC.AddRange(loanSchedulePeriodicArchive);
+
+            context.SaveChanges();
+            return model;
+
+        }
+
+        public List<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode, FinTrakBankingContext context)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+            var model = (from a in context.TBL_LOAN_SCHEDULE_DAILY
+                         where a.LOANID == loanId
+                         select new LoanPaymentScheduleDailyViewModel()
+                         {
+                             loanId = a.LOANID,
+                             paymentNumber = a.PAYMENTNUMBER,
+                             date = a.DATE,
+                             paymentDate = a.PAYMENTDATE,
+                             openingBalance = (double)a.OPENINGBALANCE,
+                             startPrincipalAmount = (double)a.STARTPRINCIPALAMOUNT,
+                             dailyPaymentAmount = (double)a.DAILYPAYMENTAMOUNT,
+                             dailyInterestAmount = (double)a.DAILYINTERESTAMOUNT,
+                             dailyPrincipalAmount = (double)a.DAILYPRINCIPALAMOUNT,
+                             closingBalance = (double)a.CLOSINGBALANCE,
+                             endPrincipalAmount = (double)a.ENDPRINCIPALAMOUNT,
+                             amortisedCost = (double)a.AMORTISEDCOST,
+                             accruedInterest = (double)a.ACCRUEDINTEREST,
+                             norminalInterestRate = a.INTERESTRATE,
+                             amOpeningBalance = (double)a.AMORTISEDOPENINGBALANCE,
+                             amStartPrincipalAmount = (double)a.AMORTISEDSTARTPRINCIPALAMOUNT,
+                             amDailyPaymentAmount = (double)a.AMORTISEDDAILYPAYMENTAMOUNT,
+                             amDailyInterestAmount = (double)a.AMORTISEDDAILYINTERESTAMOUNT,
+                             amDailyPrincipalAmount = (double)a.AMORTISEDDAILYPRINCIPALAMOUNT,
+                             amClosingBalance = (double)a.AMORTISEDCLOSINGBALANCE,
+                             amEndPrincipalAmount = (double)a.AMORTISEDENDPRINCIPALAMOUNT,
+                             amAccruedInterest = (double)a.AMORTISEDACCRUEDINTEREST,
+                             amAmortisedCost = (double)a.AMORTISED_AMORTISEDCOST,
+                             discountPremium = (double)a.DISCOUNTPREMIUM,
+                             unEarnedFee = (double)a.UNEARNEDFEE,
+                             earnedFee = (double)a.EARNEDFEE,
+                             effectiveInterestRate = a.EFFECTIVEINTERESTRATE,
+                             numberOfPeriods = a.NUMBEROFPERIODS,
+                             ballonAmount = (double)a.BALLONAMOUNT,
+                             createdBy = a.CREATEDBY,
+                             dateTimeCreated = a.DATETIMECREATED,
+
+                         }).ToList();
+
+            List<TBL_LOAN_SCHEDULE_DAILY_ARCHIV> loanScheduleDailyArchive = new List<TBL_LOAN_SCHEDULE_DAILY_ARCHIV>();
+
+            foreach (var item in model)
+            {
+                TBL_LOAN_SCHEDULE_DAILY_ARCHIV addLoanScheduleDailyArchive = new TBL_LOAN_SCHEDULE_DAILY_ARCHIV();
+
+                addLoanScheduleDailyArchive.LOANID = loanId;
+                addLoanScheduleDailyArchive.ARCHIVEDATE = systemDate;
+                addLoanScheduleDailyArchive.PAYMENTNUMBER = item.paymentNumber;
+                addLoanScheduleDailyArchive.DATE = item.date;
+                addLoanScheduleDailyArchive.PAYMENTDATE = item.paymentDate;
+                addLoanScheduleDailyArchive.OPENINGBALANCE = Convert.ToDecimal(item.openingBalance);
+                addLoanScheduleDailyArchive.STARTPRINCIPALAMOUNT = Convert.ToDecimal(item.startPrincipalAmount);
+                addLoanScheduleDailyArchive.DAILYPAYMENTAMOUNT = Convert.ToDecimal(item.dailyPaymentAmount);
+                addLoanScheduleDailyArchive.DAILYINTERESTAMOUNT = Convert.ToDecimal(item.dailyInterestAmount);
+                addLoanScheduleDailyArchive.DAILYPRINCIPALAMOUNT = Convert.ToDecimal(item.dailyPrincipalAmount);
+                addLoanScheduleDailyArchive.CLOSINGBALANCE = Convert.ToDecimal(item.closingBalance);
+                addLoanScheduleDailyArchive.ENDPRINCIPALAMOUNT = Convert.ToDecimal(item.endPrincipalAmount);
+                addLoanScheduleDailyArchive.ACCRUEDINTEREST = Convert.ToDecimal(item.accruedInterest);
+                addLoanScheduleDailyArchive.AMORTISEDCOST = Convert.ToDecimal(item.amortisedCost);
+                addLoanScheduleDailyArchive.INTERESTRATE = item.norminalInterestRate;
+                addLoanScheduleDailyArchive.AMORTISEDOPENINGBALANCE = Convert.ToDecimal(item.amOpeningBalance);
+                addLoanScheduleDailyArchive.AMORTISEDSTARTPRINCIPALAMOUNT = Convert.ToDecimal(item.amStartPrincipalAmount);
+                addLoanScheduleDailyArchive.AMORTISEDDAILYPAYMENTAMOUNT = Convert.ToDecimal(item.amDailyPaymentAmount);
+                addLoanScheduleDailyArchive.AMORTISEDDAILYINTERESTAMOUNT = Convert.ToDecimal(item.amDailyInterestAmount);
+                addLoanScheduleDailyArchive.AMORTISEDDAILYPRINCIPALAMOUNT = Convert.ToDecimal(item.amDailyPrincipalAmount);
+                addLoanScheduleDailyArchive.AMORTISEDCLOSINGBALANCE = Convert.ToDecimal(item.amClosingBalance);
+                addLoanScheduleDailyArchive.AMORTISEDENDPRINCIPALAMOUNT = Convert.ToDecimal(item.amEndPrincipalAmount);
+                addLoanScheduleDailyArchive.AMORTISEDACCRUEDINTEREST = Convert.ToDecimal(item.amAccruedInterest);
+                addLoanScheduleDailyArchive.AMORTISED_AMORTISEDCOST = Convert.ToDecimal(item.amAmortisedCost);
+                addLoanScheduleDailyArchive.DISCOUNTPREMIUM = Convert.ToDecimal(item.discountPremium);
+                addLoanScheduleDailyArchive.UNEARNEDFEE = Convert.ToDecimal(item.unEarnedFee);
+                addLoanScheduleDailyArchive.EARNEDFEE = Convert.ToDecimal(item.earnedFee);
+                addLoanScheduleDailyArchive.EFFECTIVEINTERESTRATE = item.effectiveInterestRate;
+                addLoanScheduleDailyArchive.NUMBEROFPERIODS = item.numberOfPeriods;
+                addLoanScheduleDailyArchive.BALLONAMOUNT = Convert.ToDecimal(item.balloonAmt);
+                addLoanScheduleDailyArchive.CREATEDBY = item.createdBy;
+                addLoanScheduleDailyArchive.DATETIMECREATED = item.dateTimeCreated;
+                addLoanScheduleDailyArchive.ARCHIVEDATE = generalSetup.GetApplicationDate();
+                addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = archiveBatchCode;
+
+                loanScheduleDailyArchive.Add(addLoanScheduleDailyArchive);
+
+            }
+
+            context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV.AddRange(loanScheduleDailyArchive);
+
+            context.SaveChanges();
+            return model;
+        }
+
+
+
+        public void CommercialPaperChangeOperativeAccount(int casaPayAccountId, int newCasaPayAccountId)
+        { //TODO rework
+            TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
+                                         where //p.CASAACCOUNTID2 == casaPayAccountId &&
+                                 p.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                         select p).SingleOrDefault();
+            var casa = this.context.TBL_CASA.Where(x => x.CASAACCOUNTID == newCasaPayAccountId && x.ACCOUNTSTATUSID == (short)CASAAccountStatusEnum.Active).FirstOrDefault().CASAACCOUNTID;
+
+            // result.CASAACCOUNTID2 = casa;
+            context.SaveChanges();
+        }
+
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber)
+        {
+            var data = (from ln in context.TBL_LOAN
+                        where ln.MATURITYDATE > DateTime.Now
+                        && ln.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        && ln.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
+                        && ln.COMPANYID == companyId
+                        orderby ln.MATURITYDATE descending
+                        select new LoanReviewOperationApprovalViewModel
+                        {
+                            loanId = ln.TERMLOANID,
+                            customerId = ln.CUSTOMERID,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            branchId = ln.BRANCHID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                            companyId = ln.COMPANYID,
+                            exchangeRate = ln.EXCHANGERATE,
+                            principalAmount = ln.PRINCIPALAMOUNT,
+                            interestRate = ln.INTERESTRATE,
+                            outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                            outstandingInterest = ln.OUTSTANDINGINTEREST,
+                            maturityAmount = ln.OUTSTANDINGPRINCIPAL + ln.OUTSTANDINGINTEREST,
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            createdByName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.LASTNAME,
+                            dischargeLetter = ln.DISCHARGELETTER,
+
+                            relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                            misCode = ln.MISCODE,
+                            teamMiscode = ln.TEAMMISCODE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+
+                            approverComment = ln.APPROVERCOMMENT,
+                            dateApproved = ln.DATEAPPROVED,
+
+                            isDisbursed = ln.ISDISBURSED,
+                            disburserComment = ln.DISBURSERCOMMENT,
+                            disburseDate = ln.DISBURSEDATE,
+                            newTenor = DbFunctions.DiffDays(ln.MATURITYDATE, ln.EFFECTIVEDATE).Value,
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                            operationId = ln.OPERATIONID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                            subSectorId = ln.SUBSECTORID,
+                            subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                            sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+
+                            customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
+                            productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            currencyId = ln.CURRENCYID,
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            loanStatusId = ln.LOANSTATUSID,
+                            comment = "",
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions()
+        {
+            var data = (from a in context.TBL_LOAN_MATURITY_INSTRUCTION
+                        where a.ISUSED == false
+                        select new MaturityIntructionViewModel
+                        {
+                            instructionTypeId = a.INSTRUCTIONTYPEID,
+                            instructionTypeName = a.TBL_LOAN_MATURITY_INSTRU_TYPE.INSTRUCTIONTYPENAME,
+                            newTenor = a.TENOR,
+                            loanId = a.LOANID,
+                            maturityInstructionId = a.MATURITYINSTRUCTIONID,
+                            loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                            loanReferenceNumber = context.TBL_LOAN.Where(x => x.TERMLOANID == a.LOANID).FirstOrDefault().LOANREFERENCENUMBER,
+                            oldTenor = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONDETAILID == context.TBL_LOAN.Where(n => n.LOANAPPLICATIONDETAILID == c.LOANAPPLICATIONDETAILID).FirstOrDefault().LOANAPPLICATIONDETAILID).FirstOrDefault().APPROVEDTENOR,
+
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY,
+                        }).ToList();
+            foreach (var i in data)
+            {
+                var outstandingPrincipal = (decimal)context.TBL_LOAN.Where(x => x.TERMLOANID == i.loanId).FirstOrDefault().OUTSTANDINGPRINCIPAL;
+                var outstandingInterest = (decimal)context.TBL_LOAN.Where(x => x.TERMLOANID == i.loanId).FirstOrDefault().OUTSTANDINGINTEREST;
+                var interestRate = (double)context.TBL_LOAN.Where(x => x.TERMLOANID == i.loanId).FirstOrDefault().INTERESTRATE;
+                var customer = (from b in context.TBL_CUSTOMER join k in context.TBL_LOAN on b.CUSTOMERID equals k.CUSTOMERID where k.TERMLOANID == i.loanId select b).FirstOrDefault();
+
+                i.outstandingPrincipal = outstandingPrincipal;
+                i.outstandingInterest = outstandingInterest;
+                i.interestRate = interestRate;
+
+                i.customerName = customer.FIRSTNAME + " " + customer.MIDDLENAME + " " + customer.LASTNAME;
+
+            }
+            var g = data.ToList();
+            return data;
+        }
+
+        public List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId)
+        {
+            var data = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                       join ln in context.TBL_LOAN on a.LOANAPPLICATIONDETAILID equals ln.LOANAPPLICATIONDETAILID
+                       join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                       where ln.LOANSTATUSID == (short)LoanStatusEnum.Active
+                       // && ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                       && ln.COMPANYID == companyId
+                       orderby ln.MATURITYDATE descending
+                       select new LoanReviewOperationParentChildViewModel
+                       {
+                           applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                           loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                           firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                           middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                           lastName = a.TBL_CUSTOMER.LASTNAME,
+                           approvedAmount = a.APPROVEDAMOUNT,
+                           approvedInterestRate = a.APPROVEDINTERESTRATE,
+                           approvedProductName = a.TBL_PRODUCT.PRODUCTNAME,
+                           customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                           customerCode = c.CUSTOMERCODE,
+                           approvedTenor = a.APPROVEDTENOR,
+                           //lineEffectiveDate =  (DateTime)a.EXPIRYDATE.Value.AddDays(- (int)a.APPROVEDTENOR) ,
+                           expiryDate = (DateTime)a.EXPIRYDATE,
+                           //tenorLeft = a.APPROVEDTENOR - (int)a.EXPIRYDATE.Value.AddDays(-(int)a.APPROVEDTENOR).Day
+
+                       };
+            var v = data;
+            return data.ToList();
+        }
+
+        public IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType()
+        {
+            var data = from a in context.TBL_LOAN_MATURITY_INSTRU_TYPE
+                       select new MaturityIntructionViewModel
+                       {
+                           instructionTypeId = a.INSTRUCTIONTYPEID,
+                           instructionTypeName = a.INSTRUCTIONTYPENAME,
+                       };
+
+            return data.ToList();
+        }
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId)
+        {
+            bool output = false;
+            var systemDate = generalSetup.GetApplicationDate();
+
+            TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
+                                         where p.LOANREFERENCENUMBER == refNo
+                                         select p).SingleOrDefault();
+
+            result.LOANSTATUSID = (short)LoanStatusEnum.Cancelled;
+
+            context.SaveChanges();
+
+            output = true;
+
+            return output;
+
+        }
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool CommercialPaperCancellation(int aplicationId, DateTime applicationDate, int staffId)
+        {
+            bool output = false;
+            var systemDate = generalSetup.GetApplicationDate();
+
+            TBL_LOAN_APPLICATION result = (from p in context.TBL_LOAN_APPLICATION
+                                           where p.LOANAPPLICATIONID == aplicationId
+                                           select p).SingleOrDefault();
+
+            result.APPLICATIONSTATUSID = (short)LoanStatusEnum.Cancelled;
+
+            context.SaveChanges();
+
+            output = true;
+
+            return output;
+
+        }
+
+        public List<LoanReviewOperationParentChildViewModel> GetCommercialLoansLines(int companyId)
+        {
+            var data = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                       join ln in context.TBL_LOAN on a.LOANAPPLICATIONDETAILID equals ln.LOANAPPLICATIONDETAILID
+                       where //ln.MATURITYDATE < DateTime.Now
+                             //ln.LOANSTATUSID == (short)LoanStatusEnum.Completed || ln.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        ln.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
+                       && ln.COMPANYID == companyId
+                       orderby ln.MATURITYDATE descending
+                       select new LoanReviewOperationParentChildViewModel
+                       {
+                           applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                           loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                           firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                           middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                           lastName = a.TBL_CUSTOMER.LASTNAME,
+                           approvedAmount = a.APPROVEDAMOUNT,
+                           approvedInterestRate = a.APPROVEDINTERESTRATE,
+                           approvedProductName = a.TBL_PRODUCT.PRODUCTNAME,
+                       };
+            var c = data.ToList();
+            //foreach(var i in data)
+            //{
+            //    var startDate = i.effectiveDate;
+            //    var endDate = i.expiryDate;
+            //    if(i.expiryDate != null && i.effectiveDate != null)
+            //    {
+            //        i.interestAtMuturity = loan.getTotalInterest((decimal)i.approvedAmount, (double)i.approvedInterestRate, loan.getDaysInLoanPeriod(startDate,endDate.Value));
+            //    }
+
+            //}
+
+            return data.ToList();
+        }
+
+        public List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoansByApplicationDetailId(int companyId, int loanApplicationDetailID)
+        {
+            var data = (from ln in context.TBL_LOAN
+                        where ln.LOANAPPLICATIONDETAILID == loanApplicationDetailID
+                        ////&& ln.MATURITYDATE < DateTime.Now
+                        ////&& ln.LOANSTATUSID == (short)LoanStatusEnum.Active || ln.LOANSTATUSID == (short)LoanStatusEnum.Completed
+                        && ln.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
+                        && ln.COMPANYID == companyId
+                        orderby ln.MATURITYDATE descending
+                        select new LoanReviewOperationApprovalViewModel
+                        {
+                            loanId = ln.TERMLOANID,
+                            customerId = ln.CUSTOMERID,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            branchId = ln.BRANCHID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            relatedReferenceNumber = ln.RELATED_LOAN_REFERENCE_NUMBER,
+                            loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                            companyId = ln.COMPANYID,
+                            exchangeRate = ln.EXCHANGERATE,
+
+                            principalAmount = ln.PRINCIPALAMOUNT,
+                            interestRate = ln.INTERESTRATE,
+                            interestAmount = ln.OUTSTANDINGINTEREST,
+                            outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                            outstandingInterest = ln.OUTSTANDINGINTEREST,
+
+                            maturityAmount = ln.OUTSTANDINGPRINCIPAL + ln.OUTSTANDINGINTEREST,
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            createdByName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.LASTNAME,
+                            dischargeLetter = ln.DISCHARGELETTER,
+
+                            relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                            misCode = ln.MISCODE,
+                            teamMiscode = ln.TEAMMISCODE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+
+                            approverComment = ln.APPROVERCOMMENT,
+                            dateApproved = ln.DATEAPPROVED,
+
+                            isDisbursed = ln.ISDISBURSED,
+                            disburserComment = ln.DISBURSERCOMMENT,
+                            disburseDate = ln.DISBURSEDATE,
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                            operationId = ln.OPERATIONID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                            subSectorId = ln.SUBSECTORID,
+                            subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                            sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+
+                            customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
+                            productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            currencyId = ln.CURRENCYID,
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            loanStatusId = ln.LOANSTATUSID,
+                            comment = "",
+                        });
+            return data.ToList();
+        }
+
+        public List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoans(int companyId)
+        {
+            var date = DateTime.Now.Date;
+            var data = (from ln in context.TBL_LOAN
+                        where //ln.MATURITYDATE < DateTime.Now &&
+                         ln.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
+                        && ln.COMPANYID == companyId
+                        orderby ln.MATURITYDATE descending
+                        select new LoanReviewOperationApprovalViewModel
+                        {
+                            loanId = ln.TERMLOANID,
+                            customerId = ln.CUSTOMERID,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            branchId = ln.BRANCHID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            relatedReferenceNumber = ln.RELATED_LOAN_REFERENCE_NUMBER,
+                            loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                            companyId = ln.COMPANYID,
+                            exchangeRate = ln.EXCHANGERATE,
+
+                            principalAmount = ln.PRINCIPALAMOUNT,
+                            interestRate = ln.INTERESTRATE,
+                            interestAmount = ln.OUTSTANDINGINTEREST,
+                            outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                            outstandingInterest = ln.OUTSTANDINGINTEREST,
+
+                            maturityAmount = ln.OUTSTANDINGPRINCIPAL + ln.OUTSTANDINGINTEREST,
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            createdByName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.LASTNAME,
+                            dischargeLetter = ln.DISCHARGELETTER,
+
+                            relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                            misCode = ln.MISCODE,
+                            teamMiscode = ln.TEAMMISCODE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+
+                            approverComment = ln.APPROVERCOMMENT,
+                            dateApproved = ln.DATEAPPROVED,
+
+                            isDisbursed = ln.ISDISBURSED,
+                            disburserComment = ln.DISBURSERCOMMENT,
+                            disburseDate = ln.DISBURSEDATE,
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                            operationId = ln.OPERATIONID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                            subSectorId = ln.SUBSECTORID,
+                            subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                            sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+
+                            customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
+                            productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            currencyId = ln.CURRENCYID,
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            loanStatusId = ln.LOANSTATUSID,
+                            comment = "",
+                        });
+            return data.ToList();
+        }
+
+        public LoanViewModel GetContingentByLoanId(int contingentLoanId)
+        {
+            //decimal overDraftLimit = 0;
+            decimal availableBalance = 0;
+            //var odDetail = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.REVOLVINGLOANID == revolvingLoanId);
+            var odDetail = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == contingentLoanId);
+            if (odDetail != null)
+            {
+                //overDraftLimit = odDetail.OVERDRAFTLIMIT;
+                availableBalance = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == odDetail.CASAACCOUNTID).AVAILABLEBALANCE;
+            }
+            //var overDraftDetail = (from a in context.TBL_LOAN_REVOLVING
+            //                       join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+            //                       join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+            //                       where a.REVOLVINGLOANID == revolvingLoanId
+            //                       select new LoanViewModel
+            //                       {
+            //                           loanId = a.REVOLVINGLOANID,
+            //                           customerId = a.CUSTOMERID,
+            //                           customerName = b.FIRSTNAME + " " + b.LASTNAME,
+            //                           customerCode = b.CUSTOMERCODE,
+            //                           productId = a.PRODUCTID,
+            //                           companyId = a.COMPANYID,
+            //                           casaAccountId = a.CASAACCOUNTID,
+            //                           branchId = a.BRANCHID,
+            //                           branchName = a.TBL_BRANCH.BRANCHNAME,
+            //                           loanReferenceNumber = a.LOANREFERENCENUMBER,
+            //                           //applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+            //                           //loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+            //                           //productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+            //                           //productName = a.TBL_PRODUCT.PRODUCTNAME,
+            //                           //productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+            //                           //relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+            //                           //relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+            //                           //relationshipManagerId = a.RELATIONSHIPMANAGERID,
+            //                           //relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
+            //                           //misCode = a.MISCODE,
+            //                           //teamMiscode = a.TEAMMISCODE,
+            //                           //interestRate = a.INTERESTRATE,
+            //                           //effectiveDate = a.EFFECTIVEDATE,
+            //                           //maturityDate = a.MATURITYDATE,
+            //                           //bookingDate = a.BOOKINGDATE,
+            //                           //principalAmount = a.OVERDRAFTLIMIT,
+            //                           //approvalStatusId = a.APPROVALSTATUSID,
+            //                           //approverComment = a.APPROVERCOMMENT,
+            //                           //dateApproved = a.DATEAPPROVED,
+            //                           //loanStatusId = a.LOANSTATUSID,
+            //                           //isDisbursed = a.ISDISBURSED,
+            //                           //disburserComment = a.DISBURSERCOMMENT,
+            //                           //disburseDate = a.DISBURSEDATE,
+            //                           //operationId = a.OPERATIONID,
+            //                           //operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+            //                           //subSectorName = a.TBL_SUB_SECTOR.NAME,
+            //                           //sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+            //                           //casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+            //                           //productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
+            //                           //customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+            //                           //loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+            //                           //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+            //                           outstandingPrincipal = availableBalance,
+            //                           dischargeLetter = a.DISCHARGELETTER,
+            //                           suspendInterest = a.SUSPENDINTEREST,
+            //                           customerSensitivityLevelId = a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+            //                           createdBy = a.CREATEDBY,
+            //                           dateTimeCreated = a.DATETIMECREATED,
+            //                           exchangeRate = a.EXCHANGERATE,
+            //                           currencyId = a.CURRENCYID,
+            //                           currency = a.TBL_CURRENCY.CURRENCYNAME,
+            //                       }).FirstOrDefault();
+
+            var overDraftDetail = (from a in context.TBL_LOAN_CONTINGENT
+                                   join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
+                                   join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                   join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                   join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                   join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                   join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
+                                   join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
+                                   join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                   where a.CONTINGENTLOANID == contingentLoanId
+                                   select new LoanViewModel
+                                   {
+                                       loanId = a.CONTINGENTLOANID,
+                                       customerId = a.CUSTOMERID,
+                                       customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                       customerCode = b.CUSTOMERCODE,
+                                       productId = a.PRODUCTID,
+                                       companyId = a.COMPANYID,
+                                       casaAccountId = a.CASAACCOUNTID,
+                                       branchId = a.BRANCHID,
+                                       branchName = br.BRANCHNAME,
+                                       loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       loanApplicationId = lp.LOANAPPLICATIONID,
+                                       productTypeId = pr.PRODUCTTYPEID,
+                                       productName = pr.PRODUCTNAME,
+                                       productTypeName = pr.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                       relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                       relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                       relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                       relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                       misCode = a.MISCODE,
+                                       teamMiscode = a.TEAMMISCODE,
+                                       //interestRate = a.INTERESTRATE,
+                                       effectiveDate = a.EFFECTIVEDATE,
+                                       maturityDate = a.MATURITYDATE,
+                                       bookingDate = a.BOOKINGDATE,
+                                       principalAmount = a.CONTINGENTAMOUNT,
+                                       approvalStatusId = a.APPROVALSTATUSID,
+                                       approverComment = a.APPROVERCOMMENT,
+                                       dateApproved = a.DATEAPPROVED,
+                                       loanStatusId = a.LOANSTATUSID,
+                                       isDisbursed = a.ISDISBURSED,
+                                       disburserComment = a.DISBURSERCOMMENT,
+                                       disburseDate = a.DISBURSEDATE,
+                                       operationId = a.OPERATIONID,
+                                       operationName = tt.OPERATIONNAME,
+                                       subSectorName = a.TBL_SUB_SECTOR.NAME,
+                                       sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                       casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                       productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       customerGroupId = lp.CUSTOMERGROUPID,
+                                       loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                       loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                       outstandingPrincipal = availableBalance,
+                                       dischargeLetter = a.DISCHARGELETTER,
+                                       //suspendInterest = a.SUSPENDINTEREST,
+                                       customerSensitivityLevelId = b.CUSTOMERSENSITIVITYLEVELID,
+                                       createdBy = a.CREATEDBY,
+                                       dateTimeCreated = a.DATETIMECREATED,
+                                       exchangeRate = a.EXCHANGERATE,
+                                       currencyId = a.CURRENCYID,
+                                       currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                   }).FirstOrDefault();
+            //if (availableBalance > 0)
+            //{
+            //    contingentDetail.overDraft = overDraftLimit;
+            //}
+            //else
+            //{
+            //    overDraftDetail.overDraft = overDraftLimit - Math.Abs(availableBalance);
+            //}
+            return overDraftDetail;
+
+        }
+
+        public bool SaveDocument(LoanReviewOperationViewModel model, byte[] file)
+        {
+            var review = context.TBL_LOAN_REVIEW_OPERATION.Where(a => a.LOANID == model.loanId && a.OPERATIONCOMPLETED == false && a.LOANSYSTEMTYPEID == model.loanSystemTypeId).FirstOrDefault();
+
+
+
+            var rec = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
+
+            var data = new TBL_TEMP_MEDIA_LOAN_DOCUMENTS
+            {
+                FILEDATA = file,
+                DOCUMENTTITLE = model.documentTitle,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                LOANREFERENCENUMBER = rec.LOANREFERENCENUMBER,
+                LOANAPPLICATIONNUMBER = rec.LOANREFERENCENUMBER,
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = (int)model.createdBy,
+                ISPRIMARYDOCUMENT = true,
+                COMPANYID = model.companyId,
+                LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.ContingentLiability,
+                TEMPLOANREVIEWOPERATIONID = review.LOANREVIEWOPERATIONID,
+                PHYSICALLOCATION = "N/A",
+                DOCUMENTTYPEID = 4,
+
+            };
+
+            documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Add(data);
+            try
+            {
+                return documentContext.SaveChanges() != 0;
+            }
+            catch (Exception ex) { }
+
+            return documentContext.SaveChanges() != 0;
+        }
+
+
+        public bool SaveMainDocument(LoanReviewOperationViewModel model, int loanId, byte[] file, int loanreviewoperationId)
+        {
+            var rec = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).FirstOrDefault();
+
+            var data = new TBL_TEMP_MEDIA_LOAN_DOCUMENTS
+            {
+                FILEDATA = file,
+                DOCUMENTTITLE = model.documentTitle,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                LOANREFERENCENUMBER = rec.LOANREFERENCENUMBER,
+                LOANAPPLICATIONNUMBER = rec.LOANREFERENCENUMBER,
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = (int)model.createdBy,
+                ISPRIMARYDOCUMENT = true,
+                COMPANYID = model.companyId,
+                LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.ContingentLiability,
+                TEMPLOANREVIEWOPERATIONID = loanreviewoperationId,
+                PHYSICALLOCATION = "N/A",
+                DOCUMENTTYPEID = 4,
+
+            };
+
+            documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Add(data);
+            try
+            {
+                return documentContext.SaveChanges() != 0;
+            }
+            catch (Exception ex) { }
+
+            return documentContext.SaveChanges() != 0;
+        }
+
+        public bool VerifyLegalContingentCode(string legalContingentCode)
+        {
+            bool result = false;
+            var record = (from a in context.TBL_LOAN_CONTINGENT
+                          join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                          where a.LEGALCONTINGENTCODE == legalContingentCode
+                          select a.LEGALCONTINGENTCODE
+                          ).FirstOrDefault();
+            if (string.IsNullOrEmpty(record))
+            {
+                result = false;
+            }
+            else
+            {
+                result = true;
+            }
+            return result;
+        }
+
+
+        //public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model)
+        public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer)
+        {
+            var record = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
+            //bool validatelegalContingentCode =false;
+            if ((int)OperationsEnum.ContingentLiabilityRenewal == model.operationTypeId)
+            {
+                bool validatelegalContingentCode = VerifyLegalContingentCode(model.legalContingentCode);
+                if (validatelegalContingentCode)
+                {
+                    throw new ConditionNotMetException("Legal Contingent Code Provided Has Been Used Before..");
+                }
+            }
+
+
+
+            bool output = false;
+            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+
+            if (model.loanReviewOperationsId == 0)
+            {
+                var data = new TBL_LOAN_REVIEW_OPERATION
+                {
+                    LOANID = model.loanId,
+                    //LOANSYSTEMTYPEID = model.productTypeId,
+                    LOANSYSTEMTYPEID = model.loanSystemTypeId,
+                    OPERATIONTYPEID = model.operationTypeId,
+                    EFFECTIVEDATE = model.proposedEffectiveDate,
+                    REVIEWDETAILS = model.reviewDetails,
+                    INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate,
+                    PREPAYMENT = model.prepayment ?? 0,
+                    PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
+                    INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
+                    PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate,
+                    INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate,
+                    MATURITYDATE = model.maturityDate,
+                    TENOR = model.tenor,
+                    CASA_ACCOUNTID = model.cASA_AccountId,
+                    OVERDRAFTTOPUP = model.overDraftTopup,
+                    FEE_CHARGES = model.fee_Charges,
+                    APPROVALSTATUSID = model.approvalStatusId,
+                    ISMANAGEMENTINTERESTRATE = model.isManagementRate,
+                    SCHEDULETYPEID = model.scheduleTypeId,
+                    SCHEDULEDAYINTERESTTYPEID = model.interestTypeId,
+                    SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountId,
+                    OPERATIONCOMPLETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATECREATED = DateTime.Now,
+                    LOANREVIEWAPPLICATIONID = model.lmsApplicationDetailId == 0 ? null : model.lmsApplicationDetailId,
+                    LEGALCONTINGENTCODE = model.legalContingentCode,
+                    //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
+                };
+                // Audit Section ---------------------------
+
+                var referenceNo = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == data.LOANID).FirstOrDefault().LOANREFERENCENUMBER;
+
+                var operationPerformed = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+                if (operationPerformed != null)
+                {
+                    operationPerformed.OPERATIONPERFORMED = true;
+                }
+
+                //ContingentLiabilityTermination = 86,
+                //ContingentLiabilityRenewal = 85
+
+                short _AUDITTYPEID = 0;
+                string DETAIL = string.Empty;
+
+                if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityRenewal)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRenewal;
+                    DETAIL = $"Contingent Liability Renewal Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTermination)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTermination;
+                    DETAIL = $"Contingent Liability Termination Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTenorExtension;
+                    DETAIL = $"Contingent Liability Tenor Extension Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountReduction)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
+                    DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountAddition)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountAddition;
+                    DETAIL = $"Contingent Liability Amount Addition Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
+                    DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.CancelContingentLiability)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.CancelContingentLiability;
+                    DETAIL = $"Cancel Contingent Liability Approval in process for contingent: '{ referenceNo}' ";
+                }
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = _AUDITTYPEID,
+                    DETAIL = DETAIL,
+                    STAFFID = model.createdBy,
+                    BRANCHID = model.userBranchId,
+                    IPADDRESS = model.userIPAddress,
+                    URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+
+                //end of Audit section -----------------------
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        context.TBL_LOAN_REVIEW_OPERATION.Add(data);
+                        auditTrail.AddAuditTrail(audit);
+                        int status = 0;
+                        try
+                        {
+                            output = context.SaveChanges() > 0;
+                        }
+                        catch (DbEntityValidationException ex)
+                        {
+
+                            string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                            throw new DbEntityValidationException(errorMessages);
+                        }
+
+
+                        status = (int)ApprovalStatusEnum.Pending;
+
+                        workFlow.StaffId = model.createdBy;
+                        workFlow.CompanyId = model.companyId;
+                        workFlow.StatusId = status;//(int)ApprovalStatusEnum.Pending;
+                        workFlow.TargetId = data.LOANREVIEWOPERATIONID;
+                        workFlow.Comment = "Initiation";
+                        workFlow.OperationId = model.operationTypeId;
+                        workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                        workFlow.ExternalInitialization = true;
+                        //if ((int)OperationsEnum.Prepayment != model.operationTypeId)
+                        //{
+                        var response = workFlow.LogActivity();
+                        //}
+
+                        //output = context.SaveChanges() > 0;
+
+
+                        if (model.fees != null)
+                        {
+                            LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                            feeDetails.feeDetails = model.fees;
+                            feeDetails.createdBy = model.createdBy;
+                            feeDetails.userIPAddress = model.userIPAddress;
+                            feeDetails.userBranchId = model.userBranchId;
+                            feeDetails.applicationUrl = model.applicationUrl;
+                            feeDetails.companyId = model.companyId;
+                            feeDetails.loanOperationReviewId = data.LOANREVIEWOPERATIONID;
+                            output = SubmitTakeFee(feeDetails);
+                        }
+                        else
+                        {
+                            output = context.SaveChanges() > 0;
+                        }
+
+                        if (buffer != null) { SaveMainDocument(model, data.LOANID, buffer, data.LOANREVIEWOPERATIONID); }
+                        trans.Commit();
+
+
+                        //if ((int)OperationsEnum.Prepayment == model.operationTypeId)
+                        //{
+                        //    int loanReviewOperationsId = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == model.loanId).LOANREVIEWOPERATIONID;
+                        //    LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.createdBy);
+                        //}
+
+                        return output;
+
+
+                    }
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+            else
+            {
+                var reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
+
+                reviewOperation.LOANID = model.loanId;
+                reviewOperation.LOANSYSTEMTYPEID = model.loanSystemTypeId;
+                reviewOperation.OPERATIONTYPEID = model.operationTypeId;
+                reviewOperation.EFFECTIVEDATE = model.proposedEffectiveDate;
+                reviewOperation.REVIEWDETAILS = model.reviewDetails;
+                reviewOperation.INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate;
+                reviewOperation.PREPAYMENT = model.prepayment ?? 0;
+                reviewOperation.PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId;
+                reviewOperation.INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId;
+                reviewOperation.PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate;
+                reviewOperation.INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate;
+                reviewOperation.MATURITYDATE = model.maturityDate;
+                reviewOperation.TENOR = model.tenor;
+                reviewOperation.CASA_ACCOUNTID = model.cASA_AccountId;
+                reviewOperation.OVERDRAFTTOPUP = model.overDraftTopup;
+                reviewOperation.FEE_CHARGES = model.fee_Charges;
+                reviewOperation.APPROVALSTATUSID = model.approvalStatusId;
+                reviewOperation.ISMANAGEMENTINTERESTRATE = model.isManagementRate;
+                reviewOperation.SCHEDULETYPEID = model.scheduleTypeId;
+                reviewOperation.SCHEDULEDAYINTERESTTYPEID = model.interestTypeId;
+                reviewOperation.SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountId;
+                reviewOperation.OPERATIONCOMPLETED = false;
+                reviewOperation.CREATEDBY = model.createdBy;
+                reviewOperation.DATECREATED = DateTime.Now;
+                reviewOperation.LEGALCONTINGENTCODE = model.legalContingentCode;
+                //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
+
+                reviewApplicationDetail.OPERATIONPERFORMED = true;
+
+                var referenceNo = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == reviewOperation.LOANID).FirstOrDefault().LOANREFERENCENUMBER;
+
+                short _AUDITTYPEID = 0;
+                string DETAIL = string.Empty;
+
+                if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityRenewal)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRenewal;
+                    DETAIL = $"Contingent Liability Renewal Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTermination)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTermination;
+                    DETAIL = $"Contingent Liability Termination Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTenorExtension;
+                    DETAIL = $"Contingent Liability Tenor Extension Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountReduction)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
+                    DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountAddition)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountAddition;
+                    DETAIL = $"Contingent Liability Amount Addition Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
+                    DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.CancelContingentLiability)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.CancelContingentLiability;
+                    DETAIL = $"Cancel Contingent Liability Approval in process for contingent: '{ referenceNo}' ";
+                }
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = _AUDITTYPEID,
+                    DETAIL = DETAIL,
+                    STAFFID = model.createdBy,
+                    BRANCHID = model.userBranchId,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+                auditTrail.AddAuditTrail(audit);
+
+                if (model.fees != null)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                    feeDetails.feeDetails = model.fees;
+                    feeDetails.createdBy = model.createdBy;
+                    feeDetails.userIPAddress = model.userIPAddress;
+                    feeDetails.userBranchId = model.userBranchId;
+                    feeDetails.applicationUrl = model.applicationUrl;
+                    feeDetails.companyId = model.companyId;
+                    feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                    output = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    output = context.SaveChanges() > 0;
+                }
+                //output = context.SaveChanges() > 0;
+                if (buffer != null) { SaveMainDocument(model, reviewOperation.LOANID, buffer, reviewOperation.LOANREVIEWOPERATIONID); }
+
+                return output;
+            }
+
+        }
+
+        public bool AddOperationReviewContingent(LoanReviewOperationViewModel model)
+        {
+            bool output = false;
+            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+
+            if (model.proposedEffectiveDate.ToString("dd/MM/yyyy") == "01/01/0001")
+            {
+                model.proposedEffectiveDate = DateTime.Now;
+            }
+            if (model.loanReviewOperationsId == 0)
+            {
+               
+                var data = new TBL_LOAN_REVIEW_OPERATION
+                {
+                    LOANID = model.loanId,
+                    //LOANSYSTEMTYPEID = model.productTypeId,
+                    LOANSYSTEMTYPEID = model.loanSystemTypeId,
+                    OPERATIONTYPEID = model.operationTypeId,
+                    EFFECTIVEDATE = model.proposedEffectiveDate, //generalSetup.GetApplicationDate(),
+                    REVIEWDETAILS = model.reviewDetails,
+                    INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate,
+                    PREPAYMENT = model.prepayment ?? 0,
+                    PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
+                    INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
+                    PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate,
+                    INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate,
+                    MATURITYDATE = model.maturityDate,
+                    TENOR = model.tenor,
+                    CASA_ACCOUNTID = model.cASA_AccountId,
+                    OVERDRAFTTOPUP = model.overDraftTopup,
+                    FEE_CHARGES = model.fee_Charges,
+                    APPROVALSTATUSID = model.approvalStatusId,
+                    ISMANAGEMENTINTERESTRATE = model.isManagementRate,
+                    SCHEDULETYPEID = model.scheduleTypeId,
+                    SCHEDULEDAYINTERESTTYPEID = model.interestTypeId,
+                    SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountId,
+                    OPERATIONCOMPLETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATECREATED = DateTime.Now,
+                    LOANREVIEWAPPLICATIONID = model.lmsApplicationDetailId == 0 ? null : model.lmsApplicationDetailId,
+                    LEGALCONTINGENTCODE = model.legalContingentCode,
+                    //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
+                };
+                // Audit Section ---------------------------
+
+                var referenceNo = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == data.LOANID).FirstOrDefault().LOANREFERENCENUMBER;
+
+                var operationPerformed = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+                if (operationPerformed != null)
+                {
+                    operationPerformed.OPERATIONPERFORMED = true;
+                }
+
+                //ContingentLiabilityTermination = 86,
+                //ContingentLiabilityRenewal = 85
+
+                short _AUDITTYPEID = 0;
+                string DETAIL = string.Empty;
+
+                if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityRenewal)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRenewal;
+                    DETAIL = $"Contingent Liability Renewal Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTermination)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTermination;
+                    DETAIL = $"Contingent Liability Termination Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTenorExtension;
+                    DETAIL = $"Contingent Liability Tenor Extension Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountReduction)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
+                    DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountAddition)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountAddition;
+                    DETAIL = $"Contingent Liability Amount Addition Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
+                    DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.CancelContingentLiability)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.CancelContingentLiability;
+                    DETAIL = $"Cancel Contingent Liability Approval in process for contingent: '{ referenceNo}' ";
+                }
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = _AUDITTYPEID,
+                    DETAIL = DETAIL,
+                    STAFFID = model.createdBy,
+                    BRANCHID = model.userBranchId,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = model.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                //end of Audit section -----------------------
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        context.TBL_LOAN_REVIEW_OPERATION.Add(data);
+                        auditTrail.AddAuditTrail(audit);
+                        int status = 0;
+                        try
+                        {
+                            output = context.SaveChanges() > 0;
+                        }
+                        catch (DbEntityValidationException ex)
+                        {
+
+                            string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                            throw new DbEntityValidationException(errorMessages);
+                        }
+
+
+                        status = (int)ApprovalStatusEnum.Pending;
+
+                        workFlow.StaffId = model.createdBy;
+                        workFlow.CompanyId = model.companyId;
+                        workFlow.StatusId = status;//(int)ApprovalStatusEnum.Pending;
+                        workFlow.TargetId = data.LOANREVIEWOPERATIONID;
+                        workFlow.Comment = "Initiation";
+                        workFlow.OperationId = model.operationTypeId;
+                        workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                        workFlow.ExternalInitialization = true;
+                        //if ((int)OperationsEnum.Prepayment != model.operationTypeId)
+                        //{
+                        var response = workFlow.LogActivity();
+                        //}
+
+                        //output = context.SaveChanges() > 0;
+
+
+                        if (model.fees != null)
+                        {
+                            LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                            feeDetails.feeDetails = model.fees;
+                            feeDetails.createdBy = model.createdBy;
+                            feeDetails.userIPAddress = model.userIPAddress;
+                            feeDetails.userBranchId = model.userBranchId;
+                            feeDetails.applicationUrl = model.applicationUrl;
+                            feeDetails.companyId = model.companyId;
+                            feeDetails.loanOperationReviewId = data.LOANREVIEWOPERATIONID;
+                            output = SubmitTakeFee(feeDetails);
+                        }
+                        else
+                        {
+                            output = context.SaveChanges() > 0;
+                        }
+
+
+                        trans.Commit();
+
+
+                        //if ((int)OperationsEnum.Prepayment == model.operationTypeId)
+                        //{
+                        //    int loanReviewOperationsId = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == model.loanId).LOANREVIEWOPERATIONID;
+                        //    LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.createdBy);
+                        //}
+
+                        return output;
+
+
+                    }
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+            else
+            {
+                var reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
+
+                reviewOperation.LOANID = model.loanId;
+                reviewOperation.LOANSYSTEMTYPEID = model.loanSystemTypeId;
+                reviewOperation.OPERATIONTYPEID = model.operationTypeId;
+                reviewOperation.EFFECTIVEDATE = model.proposedEffectiveDate;
+                reviewOperation.REVIEWDETAILS = model.reviewDetails;
+                reviewOperation.INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate;
+                reviewOperation.PREPAYMENT = model.prepayment ?? 0;
+                reviewOperation.PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId;
+                reviewOperation.INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId;
+                reviewOperation.PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate;
+                reviewOperation.INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate;
+                reviewOperation.MATURITYDATE = model.maturityDate;
+                reviewOperation.TENOR = model.tenor;
+                reviewOperation.CASA_ACCOUNTID = model.cASA_AccountId;
+                reviewOperation.OVERDRAFTTOPUP = model.overDraftTopup;
+                reviewOperation.FEE_CHARGES = model.fee_Charges;
+                reviewOperation.APPROVALSTATUSID = model.approvalStatusId;
+                reviewOperation.ISMANAGEMENTINTERESTRATE = model.isManagementRate;
+                reviewOperation.SCHEDULETYPEID = model.scheduleTypeId;
+                reviewOperation.SCHEDULEDAYINTERESTTYPEID = model.interestTypeId;
+                reviewOperation.SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountId;
+                reviewOperation.OPERATIONCOMPLETED = false;
+                reviewOperation.CREATEDBY = model.createdBy;
+                reviewOperation.DATECREATED = DateTime.Now;
+                reviewOperation.LEGALCONTINGENTCODE = model.legalContingentCode;
+                //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
+
+                reviewApplicationDetail.OPERATIONPERFORMED = true;
+
+                var referenceNo = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == reviewOperation.LOANID).FirstOrDefault().LOANREFERENCENUMBER;
+
+                short _AUDITTYPEID = 0;
+                string DETAIL = string.Empty;
+
+                if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityRenewal)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRenewal;
+                    DETAIL = $"Contingent Liability Renewal Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTermination)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTermination;
+                    DETAIL = $"Contingent Liability Termination Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTenorExtension;
+                    DETAIL = $"Contingent Liability Tenor Extension Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountReduction)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
+                    DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountAddition)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountAddition;
+                    DETAIL = $"Contingent Liability Amount Addition Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
+                    DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.CancelContingentLiability)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.CancelContingentLiability;
+                    DETAIL = $"Cancel Contingent Liability Approval in process for contingent: '{ referenceNo}' ";
+                }
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = _AUDITTYPEID,
+                    DETAIL = DETAIL,
+                    STAFFID = model.createdBy,
+                    BRANCHID = model.userBranchId,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                };
+                auditTrail.AddAuditTrail(audit);
+
+                if (model.fees != null)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                    feeDetails.feeDetails = model.fees;
+                    feeDetails.createdBy = model.createdBy;
+                    feeDetails.userIPAddress = model.userIPAddress;
+                    feeDetails.userBranchId = model.userBranchId;
+                    feeDetails.applicationUrl = model.applicationUrl;
+                    feeDetails.companyId = model.companyId;
+                    feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                    output = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    output = context.SaveChanges() > 0;
+                }
+                //output = context.SaveChanges() > 0;
+
+                return output;
+            }
+
+        }
+
+
+
+        #endregion END OF COMMERCIAL PAPER
+
+        #region Flow Type For Custom Facility Repayment Report
+        public List<ItemValue> FlowTypes()
+        {
+            BulkTransactionPosting flow = new BulkTransactionPosting();
+            return flow.GetFlowTypes();
+        }
+
+        #endregion
+
+        public bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId)
+        {
+            var messageBody = "A recovery email";
+            var subject = "RECOVERY EMAIL";
+            if (accreditedConsultantId == 0) return false;
+
+            var data = consultant.GetAccreditedConsultants(companyId, accreditedConsultantId);
+            if (data == null) return false;
+
+            var email = (from m in context.TBL_ACCREDITEDCONSULTANT
+                         where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTID == accreditedConsultantId
+                         select new { m.EMAILADDRESS }).FirstOrDefault();
+
+            var emailLog = new TBL_MESSAGE_LOG
+            {
+                DATETIMERECEIVED = DateTime.Now,
+                FROMADDRESS = email.EMAILADDRESS,
+                TOADDRESS = email.EMAILADDRESS,
+                MESSAGEBODY = messageBody,
+                MESSAGESUBJECT = subject,
+                MESSAGESTATUSID = 1,
+                MESSAGETYPEID = 1,
+                OPERATIONID = (int)OperationsEnum.LoanRecovery,
+                SENDONDATETIME = DateTime.Now,
+
+            };
+
+            context.TBL_MESSAGE_LOG.Add(emailLog);
+
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                STAFFID = staffId,
+                BRANCHID = branchId,
+                DETAIL = $"A recovery Email has been sent to accredited consultant with consultantId  '{ accreditedConsultantId}' ",
+                // IPADDRESS = model.userIPAddress,
+                //URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            });
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
+
+        public IEnumerable<LoanReviewIrregularScheduleViewModel> GetLoanReviewOperationIrregularSchedule(int loanReviewOperationId)
+        {
+            return context.TBL_LOAN_REVIEW_OPRATN_IREG_SC.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationId)
+                .Select(c => new LoanReviewIrregularScheduleViewModel
+                {
+                    PaymentDate = c.PAYMENTDATE,
+                    PaymentAmount = c.PAYMENTAMOUNT
+                })
+                .ToList();
+        }
+
+        private UserCurrencyViewFilter GetUserCurrencyViewFilter(int companyId, int userId)
+        {
+            UserCurrencyViewFilter result = new UserCurrencyViewFilter();
+            result.DefaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == userId).FirstOrDefault();
+
+            var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
+            //var activities = admin.GetUserActivitiesByUser(userId);
+            result.CanSeeLocalCurrency = activities.Contains("lcy-user");
+            result.CanSeeForeignCurrency = activities.Contains("fcy-user");
+            return result;
+        }
+
+        public bool UpdateLoanClassification(DateTime applicationDate, int companyId, int staffId)
+        {
+
+            bool result = false;
+
+            try
+            {
+                var loans = context.TBL_LOAN.Where(x => x.PASTDUEDATE != null && x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.COMPANYID == companyId).ToList();
+
+
+                var eod_Operation_Log = context.TBL_EOD_OPERATION_LOG.Where(c => c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanClassification && c.COMPANYID == companyId).FirstOrDefault();
+
+
+                List<TBL_EOD_OPERATION_LOG_DETAIL> eod_operation_Detail_List = new List<TBL_EOD_OPERATION_LOG_DETAIL>();
+
+                if (loans.Count() != 0)
+                {
+                    var eodOperations = context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION).ToList();
+
+                    foreach (TBL_LOAN loan in loans)
+                    {
+
+                        TBL_EOD_OPERATION_LOG_DETAIL eod_operation_Detail = new TBL_EOD_OPERATION_LOG_DETAIL();
+
+                        var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.LOANREFERENCENUMBER && c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanClassification).FirstOrDefault();
+
+                        if (checkExistence == null)
+                        {
+                            eod_operation_Detail.EODOPERATIONLOGID = eod_Operation_Log.EODOPERATIONLOGID;
+                            eod_operation_Detail.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
+                            eod_operation_Detail.EODOPERATIONID = (int)EodOperationEnum.UpdateLoanClassification;
+                            eod_operation_Detail.REFERENCENUMBER = loan.LOANREFERENCENUMBER;
+                            eod_operation_Detail.EODDATE = applicationDate;
+                            eod_operation_Detail.EODUSERID = staffId;
+                            eod_operation_Detail_List.Add(eod_operation_Detail);
+
+                        }
+
+                    }
+
+                    context.TBL_EOD_OPERATION_LOG_DETAIL.AddRange(eod_operation_Detail_List);
+
+                    context.SaveChanges();
+
+                }
+
+
+
+                int dateDiff = 0;
+
+                foreach (TBL_LOAN table in loans)
+                {
+
+
+                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == table.LOANREFERENCENUMBER && c.EODDATE == applicationDate && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanClassification).FirstOrDefault();
+
+                    if (checkExistence != null)
+                    {
+
+                        var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == table.LOANREFERENCENUMBER && c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanClassification).FirstOrDefault();
+
+                        eod_Operation_Log_Detail_Set_Value.STARTDATETIME = DateTime.Now;
+                        eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+
+                        context.SaveChanges();
+
+                        try
+                        {
+
+
+                            _transactionReferenceNo = table.LOANREFERENCENUMBER;
+
+                            dateDiff = (applicationDate - (DateTime)table.PASTDUEDATE).Days;
+
+                            var prudExternal = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => dateDiff >= x.EXTERNALMINIMUM && dateDiff <= x.EXTERNALMAXIMUM).FirstOrDefault();
+
+                            if (prudExternal != null)
+                            {
+                                table.EXT_PRUDENT_GUIDELINE_STATUSID = prudExternal.PRUDENTIALGUIDELINESTATUSID;
+                            }
+
+                            var prudInternal = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => dateDiff >= x.INTERNALMINIMUM && dateDiff <= x.INTERNALMAXIMUM).FirstOrDefault();
+
+                            if (prudInternal != null)
+                            {
+                                table.INT_PRUDENT_GUIDELINE_STATUSID = prudInternal.PRUDENTIALGUIDELINESTATUSID;
+                            }
+
+                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
+                            context.SaveChanges();
+
+                        }
+                        catch (Exception ex)
+                        {
+
+                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
+                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {table.LOANREFERENCENUMBER} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                            context.SaveChanges();
+                        }
+
+
+                    }
+
+
+                }
+
+                context.SaveChanges();
+
+                result = true;
+
+            }
+            catch (Exception ex)
+            {
+
+                result = false;
+                throw ex;
+
+            }
+
+
+            return result;
+        }
+
+        public bool UpdateLoanClassification(DateTime applicationDate, int companyId)
+        {
+
+            bool result = false;
+
+            try
+            {
+                var loans = context.TBL_LOAN.Where(x => x.PASTDUEDATE != null && x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.COMPANYID == companyId).ToList();
+
+                int dateDiff = 0;
+
+                foreach (TBL_LOAN table in loans)
+                {
+
+
+
+                    _transactionReferenceNo = table.LOANREFERENCENUMBER;
+
+                    dateDiff = (applicationDate - (DateTime)table.PASTDUEDATE).Days;
+
+                    var prudExternal = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => dateDiff >= x.EXTERNALMINIMUM && dateDiff <= x.EXTERNALMAXIMUM).FirstOrDefault();
+
+                    if (prudExternal != null)
+                    {
+                        table.EXT_PRUDENT_GUIDELINE_STATUSID = prudExternal.PRUDENTIALGUIDELINESTATUSID;
+                    }
+
+                    var prudInternal = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => dateDiff >= x.INTERNALMINIMUM && dateDiff <= x.INTERNALMAXIMUM).FirstOrDefault();
+
+                    if (prudInternal != null)
+                    {
+                        table.INT_PRUDENT_GUIDELINE_STATUSID = prudInternal.PRUDENTIALGUIDELINESTATUSID;
+                    }
+
+
+                }
+
+                context.SaveChanges();
+
+                result = true;
+
+            }
+            catch (Exception ex)
+            {
+
+                result = false;
+                throw ex;
+
+            }
+
+
+            return result;
+        }
+
+        public bool DailyWrittenOffFacilityAccrual(DateTime applicationDate, int companyId, int staffId)
+        {
+
+            try
+            {
+                bool result = false;
+>>>>>>> master
+
+            }
+
+<<<<<<< HEAD
             context.TBL_LOAN_SCHEDULE_PERIODIC_ARC.AddRange(loanSchedulePeriodicArchive);
 
             context.SaveChanges();
@@ -28305,6 +31013,2450 @@ namespace FintrakBanking.Repositories.Credit
                 // Audit Section ---------------------------
                 this.auditTrail.AddAuditTrail(new TBL_AUDIT
                 {
+=======
+                var currencyRate = (from a in context.TBL_LOAN
+                                    where a.LOANSTATUSID == (short)LoanStatusEnum.WriteOff && a.COMPANYID == companyId
+                                    select new CurrencyExchangeRateViewModel()
+                                    {
+                                        currencyId = a.CURRENCYID,
+                                        companyId = a.COMPANYID,
+                                    }).ToList().Distinct().Select(x =>
+                                    {
+                                        x.sellingRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, (int)x.companyId).sellingRate;
+                                        return x;
+                                    }).ToList();
+
+
+                var scheduledLoan = (from b in context.TBL_LOAN
+                                     join e in context.TBL_PRODUCT on b.PRODUCTID equals e.PRODUCTID
+                                     join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
+                                     join g in context.TBL_LOAN_CAMSOL on b.TERMLOANID equals g.LOANID
+                                     where b.LOANSTATUSID == (short)LoanStatusEnum.WriteOff && g.CAMSOLTYPEID == (int)CamsolTypeEnum.camsol && b.COMPANYID == companyId
+                                     select new DailyInterestAccrualViewModel()
+                                     {
+                                         loanId = b.TERMLOANID,
+                                         referenceNumber = b.LOANREFERENCENUMBER,
+                                         productId = b.PRODUCTID,
+                                         branchId = b.BRANCHID,
+                                         companyId = b.COMPANYID,
+                                         currencyId = b.CURRENCYID,
+                                         interestRate = (double)e.WRITEOFFRATE,
+                                         date = applicationDate,
+                                         mainAmount = g.BALANCE, //a.STARTPRINCIPALAMOUNT,
+                                         categoryId = (short)DailyAccrualCategory.WrittenOffTermLoanInterestAccural,
+                                         transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
+                                         baseReferenceNumber = null,
+                                         dayCountConventionId = b.SCHEDULEDAYCOUNTCONVENTIONID,
+
+                                     }).ToList().Select(x =>
+                                     {
+                                         //x.exchangeRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, x.companyId).sellingRate;
+                                         x.exchangeRate = currencyRate.Where(m => m.currencyId == x.currencyId).Select(m => m.sellingRate).FirstOrDefault();
+                                         x.dailyAccuralAmount = ((x.interestRate / 100) * (double)x.mainAmount * (1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId)));
+                                         return x;
+                                     });
+
+
+                var allLoans = scheduledLoan.ToList().Where(x => x.dailyAccuralAmount > 0);
+
+                List<TBL_DAILY_ACCRUAL> allAccrual = new List<TBL_DAILY_ACCRUAL>();
+
+
+                foreach (var item in allLoans)
+                {
+                    _transactionReferenceNo = item.referenceNumber;
+
+                    TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
+
+                    dailyAccrual.REFERENCENUMBER = item.referenceNumber;
+                    dailyAccrual.PRODUCTID = item.productId;
+                    dailyAccrual.BRANCHID = item.branchId;
+                    dailyAccrual.EXCHANGERATE = item.exchangeRate;
+                    dailyAccrual.CURRENCYID = item.currencyId;
+                    dailyAccrual.INTERESTRATE = item.interestRate;
+                    dailyAccrual.DATE = item.date;
+                    dailyAccrual.DAILYACCURALAMOUNT = (decimal)Math.Abs(item.dailyAccuralAmount);
+                    dailyAccrual.MAINAMOUNT = item.mainAmount;
+                    dailyAccrual.CATEGORYID = item.categoryId;
+                    dailyAccrual.COMPANYID = item.companyId;
+                    dailyAccrual.DAYCOUNTCONVENTIONID = item.dayCountConventionId;
+                    dailyAccrual.BASEREFERENCENUMBER = item.baseReferenceNumber;
+                    dailyAccrual.TRANSACTIONTYPEID = item.transactionTypeId;
+
+
+                    allAccrual.Add(dailyAccrual);
+
+                    var camsol = context.TBL_LOAN_CAMSOL.Where(c => c.LOANID == item.loanId && c.COMPANYID == companyId).FirstOrDefault();
+                    camsol.WRITTENOFFACCRUALAMOUNT = camsol.WRITTENOFFACCRUALAMOUNT + (decimal)item.dailyAccuralAmount;
+                    context.SaveChanges();
+
+                }
+                this.context.TBL_DAILY_ACCRUAL.AddRange(allAccrual);
+                context.SaveChanges();
+
+
+                var model = (from a in context.TBL_DAILY_ACCRUAL
+                             join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                             join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
+                             join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
+                             where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.WrittenOffTermLoanInterestAccural && a.COMPANYID == companyId
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID, a.EXCHANGERATE, a.REFERENCENUMBER } into groupedQ
+                             select new DailyInterestAccrualViewModel()
+                             {
+                                 productId = groupedQ.Key.PRODUCTID,
+                                 branchId = groupedQ.Key.BRANCHID,
+                                 companyId = groupedQ.Key.COMPANYID,
+                                 currencyId = groupedQ.Key.CURRENCYID,
+                                 categoryId = groupedQ.Key.CATEGORYID,
+                                 productCode = groupedQ.Key.PRODUCTCODE,
+                                 currencyCode = groupedQ.Key.CURRENCYCODE,
+                                 branchCode = groupedQ.Key.BRANCHCODE,
+                                 exchangeRate = groupedQ.Key.EXCHANGERATE,
+                                 referenceNumber = groupedQ.Key.REFERENCENUMBER,
+
+                                 dailyAccuralAmount = (double)groupedQ.Sum(i => (double)i.DAILYACCURALAMOUNT * i.EXCHANGERATE),
+
+                             }).ToList();
+                //.Select(x =>
+                //{
+                //    x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
+                //    return x;
+                //}).ToList();
+
+                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
+
+                    result = bulkPosting.WriteBulkDailyWrittenOffFacilityAccrualToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate, companyId, staffId, out _transactionReferenceNo);
+
+                }
+                else
+                {
+                    foreach (var item in model)
+                    {
+                        item.date = applicationDate;
+
+                        result = financeTransaction.PostDailyWriteoffLoansInterestAccrual(item);
+                    }
+                }
+
+                if (result)
+                {
+                    return result;
+                }
+                return false;
+
+                //result = true;
+
+                //return result;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+
+            }
+
+        }
+
+        public bool GetRepaymentDate(int loanId)
+        {
+
+            var applicationDate = generalSetup.GetApplicationDate();
+
+            var repamentPeriod = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.PAYMENTDATE == applicationDate && x.LOANID == loanId).FirstOrDefault();
+
+            if (repamentPeriod != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
+
+            var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
+
+            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement).Select(c => c.OPERATIONID).ToList();
+            List<int> ids = new List<int>();
+
+            foreach (var operationId in operationIds)
+            {
+                ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
+            }
+
+            var dataLoan = (from ln in context.TBL_LOAN
+                            join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
+                            join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                            join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                            join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                            join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                            join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                            join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                            join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                            join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                            join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                            join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                            where
+                            ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && op.OPERATIONCOMPLETED == true
+                            && ln.ISPRINTED == false
+
+                            orderby op.DATECREATED descending
+                            select new LoanReviewOperationApprovalViewModel
+                            {
+                                creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                creditAppraisalOperationId = lp.OPERATIONID,
+                                loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                loanId = ln.TERMLOANID,
+                                loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                customerId = ln.CUSTOMERID,
+                                productId = ln.PRODUCTID,
+                                prepaymentAmount = op.PREPAYMENT,
+                                productTypeId = pr.PRODUCTTYPEID,
+                                casaAccountId = ln.CASAACCOUNTID,
+                                casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                branchId = ln.BRANCHID,
+                                amount = ld.APPROVEDAMOUNT,
+                                lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                  join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                  where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                  select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                                loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
+                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                interestFrequencyTypeId = ln.INTERESTFREQUENCYTYPEID != null ? (short)ln.INTERESTFREQUENCYTYPEID : (short)0,
+                                interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
+                                interestNumberOfInstallment = ln.INTERESTNUMBEROFINSTALLMENT,
+                                relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                misCode = ln.MISCODE,
+                                teamMiscode = ln.TEAMMISCODE,
+                                interestRate = ln.INTERESTRATE,
+                                effectiveDate = ln.EFFECTIVEDATE,
+                                maturityDate = ln.MATURITYDATE,
+                                bookingDate = ln.BOOKINGDATE,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
+                                interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
+                                approvalStatusId = op.APPROVALSTATUSID,
+                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                approvedBy = (int)ln.APPROVEDBY,
+                                approverComment = ln.APPROVERCOMMENT,
+                                dateApproved = ln.DATEAPPROVED,
+                                loanStatusId = ln.LOANSTATUSID,
+                                scheduleTypeId = ln.SCHEDULETYPEID,
+                                isDisbursed = ln.ISDISBURSED,
+                                disbursedBy = (int)ln.DISBURSEDBY,
+                                disburserComment = ln.DISBURSERCOMMENT,
+                                disburseDate = ln.DISBURSEDATE,
+                                customerGroupId = lp.CUSTOMERGROUPID,
+                                operationId = ln.OPERATIONID,
+                                loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                equityContribution = ln.EQUITYCONTRIBUTION,
+                                subSectorId = ln.SUBSECTORID,
+                                subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                firstPrincipalPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                firstInterestPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                                principalAdditionCount = ln.PRINCIPALADDITIONCOUNT,
+                                principalReductionCount = ln.PRINCIPALREDUCTIONCOUNT,
+                                fixedPrincipal = ln.FIXEDPRINCIPAL,
+                                profileLoan = ln.PROFILELOAN,
+                                dischargeLetter = ln.DISCHARGELETTER,
+                                suspendInterest = ln.SUSPENDINTEREST,
+                                scheduled = ln.ISSCHEDULEDPREPAYMENT,
+                                isScheduledPrepayment = ln.ISSCHEDULEDPREPAYMENT,
+                                scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
+                                scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
+                                customerCode = cu.CUSTOMERCODE,
+                                productAccountNumber = ch.ACCOUNTCODE,
+                                productAccountName = ch.ACCOUNTNAME,
+                                loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                currencyId = ln.CURRENCYID,
+                                branchName = br.BRANCHNAME,
+                                relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                productName = pr.PRODUCTNAME,
+                                comment = "",
+                                operationTypeId = op.OPERATIONTYPEID,
+                                operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
+                                newEffectiveDate = op.EFFECTIVEDATE,
+                                reviewDetails = op.REVIEWDETAILS,
+                                prepayment = op.PREPAYMENT,
+                                newInterateRate = op.INTERATERATE,
+                                newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newTenor = op.TENOR,
+                                cASA_AccountId = op.CASA_ACCOUNTID,
+                                cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                overDraftTopup = op.OVERDRAFTTOPUP,
+                                fee_Charges = op.FEE_CHARGES,
+                                scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                newMaturityDate = op.MATURITYDATE,
+                                approvedAmount = ld.APPROVEDAMOUNT,
+                                creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                pastDueInterest = ln.PASTDUEINTEREST,
+                                pastDuePrincipal = ln.PASTDUEPRINCIPAL,
+                                interestOnPastDueInterest = ln.INTERESTONPASTDUEINTEREST,
+                                interestOnPastDuePrincipal = ln.INTERESTONPASTDUEPRINCIPAL,
+                                outstandingInterest = ln.OUTSTANDINGINTEREST,
+                                accruedInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
+                                dateTimeCreated = op.DATECREATED,
+                                fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                {
+                                    chargeFeeId = mp.CHARGEFEEID,
+                                    feeAmount = mp.FEEAMOUNT,
+                                    description = mp.DESCRIPTION,
+                                    casaAccount = mp.CASAACCOUNTID,
+                                    loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                    chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                    casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                }).ToList(),
+                            }).ToList();
+
+            var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
+                                     join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
+                                     join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                     join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                     join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                     join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                     join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                     join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                     join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                     join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                     join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                     join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                     where
+                                     ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && op.OPERATIONCOMPLETED == true
+                                     && ln.ISPRINTED == false
+
+                                     orderby op.DATECREATED descending
+                                     select new LoanReviewOperationApprovalViewModel
+                                     {
+                                         creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                         creditAppraisalOperationId = lp.OPERATIONID,
+                                         lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                         lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                         loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                         appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                         loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                         loanId = ln.REVOLVINGLOANID,
+                                         loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                         customerId = ln.CUSTOMERID,
+                                         productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+                                         prepaymentAmount = op.PREPAYMENT,
+                                         casaAccountId = ln.CASAACCOUNTID,
+                                         casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         branchId = ln.BRANCHID,
+                                         lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                           join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                           where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                           select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                         loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                         applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                         relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                         relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                         misCode = ln.MISCODE,
+                                         teamMiscode = ln.TEAMMISCODE,
+                                         interestRate = ln.INTERESTRATE,
+                                         effectiveDate = ln.EFFECTIVEDATE,
+                                         maturityDate = ln.MATURITYDATE,
+                                         bookingDate = ln.BOOKINGDATE,
+                                         approvalStatusId = op.APPROVALSTATUSID,
+                                         approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                         approvedBy = (int)ln.APPROVEDBY,
+                                         approverComment = ln.APPROVERCOMMENT,
+                                         dateApproved = ln.DATEAPPROVED,
+                                         loanStatusId = ln.LOANSTATUSID,
+                                         isDisbursed = ln.ISDISBURSED,
+                                         disburserComment = ln.DISBURSERCOMMENT,
+                                         disburseDate = ln.DISBURSEDATE,
+                                         customerGroupId = lp.CUSTOMERGROUPID,
+                                         operationId = ln.OPERATIONID,
+                                         loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                         subSectorId = ln.SUBSECTORID,
+                                         subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                         sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                         dischargeLetter = ln.DISCHARGELETTER,
+                                         suspendInterest = ln.SUSPENDINTEREST,
+                                         customerCode = cu.CUSTOMERCODE,
+                                         loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                         customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                         currencyId = ln.CURRENCYID,
+                                         branchName = br.BRANCHNAME,
+                                         relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                         relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                         productName = pr.PRODUCTNAME,
+                                         comment = "",
+                                         operationTypeId = op.OPERATIONTYPEID,
+                                         operationTypeName = tt.OPERATIONNAME, 
+                                         newEffectiveDate = op.EFFECTIVEDATE,
+                                         reviewDetails = op.REVIEWDETAILS,
+                                         prepayment = op.PREPAYMENT,
+                                         newInterateRate = op.INTERATERATE,
+                                         newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                         newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                         newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                         newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newTenor = op.TENOR,
+                                         cASA_AccountId = op.CASA_ACCOUNTID,
+                                         cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         overDraftTopup = op.OVERDRAFTTOPUP,
+                                         fee_Charges = op.FEE_CHARGES,
+                                         scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                         scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                         scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                         scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                         scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                         newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                         newMaturityDate = op.MATURITYDATE,
+                                         dateTimeCreated = op.DATECREATED,
+                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                         currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                         productAccountNumber = "N/A", 
+                                         productAccountName = "N/A",
+                                         approvedAmount = ld.APPROVEDAMOUNT,
+                                         creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                         fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                         {
+                                             chargeFeeId = mp.CHARGEFEEID,
+                                             feeAmount = mp.FEEAMOUNT,
+                                             description = mp.DESCRIPTION,
+                                             casaAccount = mp.CASAACCOUNTID,
+                                             loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                             chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                             casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                         }).ToList(),
+                                     }).ToList();
+
+
+            var dataContingentLoan = (from ln in context.TBL_LOAN_CONTINGENT
+                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.CONTINGENTLOANID equals op.LOANID
+                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                      join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                      join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                      join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                                      where
+                                      ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && op.OPERATIONCOMPLETED == true
+                                      && ln.ISPRINTED == false
+
+                                      orderby op.DATECREATED descending
+                                      select new LoanReviewOperationApprovalViewModel
+                                      {
+                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                          creditAppraisalOperationId = lp.OPERATIONID,
+                                          lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                          lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                          loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                          appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                          loanId = ln.CONTINGENTLOANID,
+                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                          customerId = ln.CUSTOMERID,
+                                          productId = ln.PRODUCTID,
+                                          productTypeId = pr.PRODUCTTYPEID,
+                                          productTypeName = context.TBL_PRODUCT_TYPE.Where(x => x.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(m => m.PRODUCTTYPENAME).FirstOrDefault(),
+                                          casaAccountId = ln.CASAACCOUNTID,
+                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          branchId = ln.BRANCHID,
+                                          lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                            join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                            where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                            select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                          loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                          applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                          relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                          relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                          misCode = ln.MISCODE,
+                                          teamMiscode = ln.TEAMMISCODE,
+                                          principalAmount = ln.CONTINGENTAMOUNT,
+                                          //interestRate = ln.INTERESTRATE,
+                                          effectiveDate = ln.EFFECTIVEDATE,
+                                          maturityDate = ln.MATURITYDATE,
+                                          bookingDate = ln.BOOKINGDATE,
+                                          approvalStatusId = op.APPROVALSTATUSID,
+                                          approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                          approvedBy = (int)ln.APPROVEDBY,
+                                          approverComment = ln.APPROVERCOMMENT,
+                                          dateApproved = ln.DATEAPPROVED,
+                                          loanStatusId = ln.LOANSTATUSID,
+                                          isDisbursed = ln.ISDISBURSED,
+                                          disburserComment = ln.DISBURSERCOMMENT,
+                                          disburseDate = ln.DISBURSEDATE,
+                                          customerGroupId = lp.CUSTOMERGROUPID,
+                                          operationId = ln.OPERATIONID,
+                                          loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                          subSectorId = ln.SUBSECTORID,
+                                          subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                          sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                          dischargeLetter = ln.DISCHARGELETTER,
+                                          //suspendInterest = ln.SUSPENDINTEREST,
+                                          customerCode = cu.CUSTOMERCODE,
+                                          loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                          customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                          currencyId = ln.CURRENCYID,
+                                          currency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == ln.CURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
+                                          branchName = br.BRANCHNAME,
+                                          relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                          relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                          productName = pr.PRODUCTNAME,
+                                          comment = "",
+                                          operationTypeId = op.OPERATIONTYPEID,
+                                          operationTypeName = tt.OPERATIONNAME, 
+                                          newEffectiveDate = op.EFFECTIVEDATE,
+                                          reviewDetails = op.REVIEWDETAILS,
+                                          prepayment = op.PREPAYMENT,
+                                          newInterateRate = op.INTERATERATE,
+                                          newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                          newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                          newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                          newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newTenor = op.TENOR,
+                                          cASA_AccountId = op.CASA_ACCOUNTID,
+                                          cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          overDraftTopup = op.OVERDRAFTTOPUP,
+                                          fee_Charges = op.FEE_CHARGES,
+                                          scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                          scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                          scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                          scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                          scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                          newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                          newMaturityDate = op.MATURITYDATE,
+                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          dateTimeCreated = op.DATECREATED,
+                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                          productAccountNumber = ch.ACCOUNTCODE,
+                                          productAccountName = ch.ACCOUNTNAME,
+                                          prepaymentAmount = op.PREPAYMENT,
+                                          approvedAmount = ld.APPROVEDAMOUNT,
+                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                          fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                          {
+                                              chargeFeeId = mp.CHARGEFEEID,
+                                              feeAmount = mp.FEEAMOUNT,
+                                              description = mp.DESCRIPTION,
+                                              casaAccount = mp.CASAACCOUNTID,
+                                              loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                              chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                              casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                          }).ToList(),
+                                      }).ToList();
+            
+            var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var contingentLoanData = dataContingentLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var unionAll = termLoanData.Union(revolvingLoanData);
+
+            var data = unionAll.Union(contingentLoanData);
+
+            return data;
+        }
+
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansOperationWriteOffAnalysis(int staffId, int companyId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
+
+            var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
+
+            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement).Select(c => c.OPERATIONID).ToList();
+            List<int> ids = new List<int>();
+
+            foreach (var operationId in operationIds)
+            {
+                ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
+            }
+
+            var dataLoan = (from ln in context.TBL_LOAN
+                            join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
+                            join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                            join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                            join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                            join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                            join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                            join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                            join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                            join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                            join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                            join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                            where
+                            ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff
+
+                            orderby op.DATECREATED descending
+                            select new LoanReviewOperationApprovalViewModel
+                            {
+                                creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                creditAppraisalOperationId = lp.OPERATIONID,
+                                loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                loanId = ln.TERMLOANID,
+                                loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                customerId = ln.CUSTOMERID,
+                                productId = ln.PRODUCTID,
+                                prepaymentAmount = op.PREPAYMENT,
+                                productTypeId = pr.PRODUCTTYPEID,
+                                casaAccountId = ln.CASAACCOUNTID,
+                                casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                branchId = ln.BRANCHID,
+                                amount = ld.APPROVEDAMOUNT,
+                                lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                  join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                  where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                  select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                                loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
+                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                interestFrequencyTypeId = ln.INTERESTFREQUENCYTYPEID != null ? (short)ln.INTERESTFREQUENCYTYPEID : (short)0,
+                                interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
+                                interestNumberOfInstallment = ln.INTERESTNUMBEROFINSTALLMENT,
+                                relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                misCode = ln.MISCODE,
+                                teamMiscode = ln.TEAMMISCODE,
+                                interestRate = ln.INTERESTRATE,
+                                effectiveDate = ln.EFFECTIVEDATE,
+                                maturityDate = ln.MATURITYDATE,
+                                bookingDate = ln.BOOKINGDATE,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
+                                interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
+                                approvalStatusId = op.APPROVALSTATUSID,
+                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                approvedBy = (int)ln.APPROVEDBY,
+                                approverComment = ln.APPROVERCOMMENT,
+                                dateApproved = ln.DATEAPPROVED,
+                                loanStatusId = ln.LOANSTATUSID,
+                                scheduleTypeId = ln.SCHEDULETYPEID,
+                                isDisbursed = ln.ISDISBURSED,
+                                disbursedBy = (int)ln.DISBURSEDBY,
+                                disburserComment = ln.DISBURSERCOMMENT,
+                                disburseDate = ln.DISBURSEDATE,
+                                customerGroupId = lp.CUSTOMERGROUPID,
+                                operationId = ln.OPERATIONID,
+                                loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                equityContribution = ln.EQUITYCONTRIBUTION,
+                                subSectorId = ln.SUBSECTORID,
+                                subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                firstPrincipalPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                firstInterestPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                                principalAdditionCount = ln.PRINCIPALADDITIONCOUNT,
+                                principalReductionCount = ln.PRINCIPALREDUCTIONCOUNT,
+                                fixedPrincipal = ln.FIXEDPRINCIPAL,
+                                profileLoan = ln.PROFILELOAN,
+                                dischargeLetter = ln.DISCHARGELETTER,
+                                suspendInterest = ln.SUSPENDINTEREST,
+                                scheduled = ln.ISSCHEDULEDPREPAYMENT,
+                                isScheduledPrepayment = ln.ISSCHEDULEDPREPAYMENT,
+                                scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
+                                scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
+                                customerCode = cu.CUSTOMERCODE,
+                                productAccountNumber = ch.ACCOUNTCODE,
+                                productAccountName = ch.ACCOUNTNAME,
+                                loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                currencyId = ln.CURRENCYID,
+                                branchName = br.BRANCHNAME,
+                                relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                productName = pr.PRODUCTNAME,
+                                comment = "",
+                                operationTypeId = op.OPERATIONTYPEID,
+                                operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
+                                newEffectiveDate = op.EFFECTIVEDATE,
+                                reviewDetails = op.REVIEWDETAILS,
+                                prepayment = op.PREPAYMENT,
+                                newInterateRate = op.INTERATERATE,
+                                newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newTenor = op.TENOR,
+                                cASA_AccountId = op.CASA_ACCOUNTID,
+                                cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                overDraftTopup = op.OVERDRAFTTOPUP,
+                                fee_Charges = op.FEE_CHARGES,
+                                scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                newMaturityDate = op.MATURITYDATE,
+                                approvedAmount = ld.APPROVEDAMOUNT,
+                                creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                pastDueInterest = ln.PASTDUEINTEREST,
+                                pastDuePrincipal = ln.PASTDUEPRINCIPAL,
+                                interestOnPastDueInterest = ln.INTERESTONPASTDUEINTEREST,
+                                interestOnPastDuePrincipal = ln.INTERESTONPASTDUEPRINCIPAL,
+                                outstandingInterest = ln.OUTSTANDINGINTEREST,
+                                accruedInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
+                                dateTimeCreated = op.DATECREATED,
+                                fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                {
+                                    chargeFeeId = mp.CHARGEFEEID,
+                                    feeAmount = mp.FEEAMOUNT,
+                                    description = mp.DESCRIPTION,
+                                    casaAccount = mp.CASAACCOUNTID,
+                                    loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                    chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                    casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                }).ToList(),
+                            }).ToList();
+
+            var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
+                                     join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
+                                     join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                     join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                     join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                     join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                     join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                     join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                     join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                     join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                     join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                     join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                     where
+                                     ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff
+
+                                     orderby op.DATECREATED descending
+                                     select new LoanReviewOperationApprovalViewModel
+                                     {
+                                         creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                         creditAppraisalOperationId = lp.OPERATIONID,
+                                         lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                         lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                         loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                         appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                         loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                         loanId = ln.REVOLVINGLOANID,
+                                         loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                         customerId = ln.CUSTOMERID,
+                                         productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+                                         prepaymentAmount = op.PREPAYMENT,
+                                         casaAccountId = ln.CASAACCOUNTID,
+                                         casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         branchId = ln.BRANCHID,
+                                         lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                           join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                           where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                           select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                         loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                         applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                         relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                         relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                         misCode = ln.MISCODE,
+                                         teamMiscode = ln.TEAMMISCODE,
+                                         interestRate = ln.INTERESTRATE,
+                                         effectiveDate = ln.EFFECTIVEDATE,
+                                         maturityDate = ln.MATURITYDATE,
+                                         bookingDate = ln.BOOKINGDATE,
+                                         approvalStatusId = op.APPROVALSTATUSID,
+                                         approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                         approvedBy = (int)ln.APPROVEDBY,
+                                         approverComment = ln.APPROVERCOMMENT,
+                                         dateApproved = ln.DATEAPPROVED,
+                                         loanStatusId = ln.LOANSTATUSID,
+                                         isDisbursed = ln.ISDISBURSED,
+                                         disburserComment = ln.DISBURSERCOMMENT,
+                                         disburseDate = ln.DISBURSEDATE,
+                                         customerGroupId = lp.CUSTOMERGROUPID,
+                                         operationId = ln.OPERATIONID,
+                                         loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                         subSectorId = ln.SUBSECTORID,
+                                         subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                         sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                         dischargeLetter = ln.DISCHARGELETTER,
+                                         suspendInterest = ln.SUSPENDINTEREST,
+                                         customerCode = cu.CUSTOMERCODE,
+                                         loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                         customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                         currencyId = ln.CURRENCYID,
+                                         branchName = br.BRANCHNAME,
+                                         relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                         relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                         productName = pr.PRODUCTNAME,
+                                         comment = "",
+                                         operationTypeId = op.OPERATIONTYPEID,
+                                         operationTypeName = tt.OPERATIONNAME,
+                                         newEffectiveDate = op.EFFECTIVEDATE,
+                                         reviewDetails = op.REVIEWDETAILS,
+                                         prepayment = op.PREPAYMENT,
+                                         newInterateRate = op.INTERATERATE,
+                                         newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                         newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                         newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                         newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newTenor = op.TENOR,
+                                         cASA_AccountId = op.CASA_ACCOUNTID,
+                                         cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         overDraftTopup = op.OVERDRAFTTOPUP,
+                                         fee_Charges = op.FEE_CHARGES,
+                                         scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                         scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                         scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                         scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                         scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                         newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                         newMaturityDate = op.MATURITYDATE,
+                                         dateTimeCreated = op.DATECREATED,
+                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                         currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                         productAccountNumber = "N/A",
+                                         productAccountName = "N/A",
+                                         approvedAmount = ld.APPROVEDAMOUNT,
+                                         creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                         fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                         {
+                                             chargeFeeId = mp.CHARGEFEEID,
+                                             feeAmount = mp.FEEAMOUNT,
+                                             description = mp.DESCRIPTION,
+                                             casaAccount = mp.CASAACCOUNTID,
+                                             loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                             chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                             casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                         }).ToList(),
+                                     }).ToList();
+
+
+            var dataContingentLoan = (from ln in context.TBL_LOAN_CONTINGENT
+                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.CONTINGENTLOANID equals op.LOANID
+                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                      join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                      join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                      join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                                      where
+                                      ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff
+
+                                      orderby op.DATECREATED descending
+                                      select new LoanReviewOperationApprovalViewModel
+                                      {
+                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                          creditAppraisalOperationId = lp.OPERATIONID,
+                                          lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                          lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                          loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                          appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                          loanId = ln.CONTINGENTLOANID,
+                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                          customerId = ln.CUSTOMERID,
+                                          productId = ln.PRODUCTID,
+                                          productTypeId = pr.PRODUCTTYPEID,
+                                          productTypeName = context.TBL_PRODUCT_TYPE.Where(x => x.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(m => m.PRODUCTTYPENAME).FirstOrDefault(),
+                                          casaAccountId = ln.CASAACCOUNTID,
+                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          branchId = ln.BRANCHID,
+                                          lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                            join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                            where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                            select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                          loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                          applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                          relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                          relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                          misCode = ln.MISCODE,
+                                          teamMiscode = ln.TEAMMISCODE,
+                                          principalAmount = ln.CONTINGENTAMOUNT,
+                                          //interestRate = ln.INTERESTRATE,
+                                          effectiveDate = ln.EFFECTIVEDATE,
+                                          maturityDate = ln.MATURITYDATE,
+                                          bookingDate = ln.BOOKINGDATE,
+                                          approvalStatusId = op.APPROVALSTATUSID,
+                                          approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                          approvedBy = (int)ln.APPROVEDBY,
+                                          approverComment = ln.APPROVERCOMMENT,
+                                          dateApproved = ln.DATEAPPROVED,
+                                          loanStatusId = ln.LOANSTATUSID,
+                                          isDisbursed = ln.ISDISBURSED,
+                                          disburserComment = ln.DISBURSERCOMMENT,
+                                          disburseDate = ln.DISBURSEDATE,
+                                          customerGroupId = lp.CUSTOMERGROUPID,
+                                          operationId = ln.OPERATIONID,
+                                          loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                          subSectorId = ln.SUBSECTORID,
+                                          subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                          sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                          dischargeLetter = ln.DISCHARGELETTER,
+                                          //suspendInterest = ln.SUSPENDINTEREST,
+                                          customerCode = cu.CUSTOMERCODE,
+                                          loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                          customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                          currencyId = ln.CURRENCYID,
+                                          currency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == ln.CURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
+                                          branchName = br.BRANCHNAME,
+                                          relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                          relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                          productName = pr.PRODUCTNAME,
+                                          comment = "",
+                                          operationTypeId = op.OPERATIONTYPEID,
+                                          operationTypeName = tt.OPERATIONNAME,
+                                          newEffectiveDate = op.EFFECTIVEDATE,
+                                          reviewDetails = op.REVIEWDETAILS,
+                                          prepayment = op.PREPAYMENT,
+                                          newInterateRate = op.INTERATERATE,
+                                          newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                          newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                          newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                          newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newTenor = op.TENOR,
+                                          cASA_AccountId = op.CASA_ACCOUNTID,
+                                          cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          overDraftTopup = op.OVERDRAFTTOPUP,
+                                          fee_Charges = op.FEE_CHARGES,
+                                          scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                          scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                          scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                          scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                          scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                          newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                          newMaturityDate = op.MATURITYDATE,
+                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          dateTimeCreated = op.DATECREATED,
+                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                          productAccountNumber = ch.ACCOUNTCODE,
+                                          productAccountName = ch.ACCOUNTNAME,
+                                          prepaymentAmount = op.PREPAYMENT,
+                                          approvedAmount = ld.APPROVEDAMOUNT,
+                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                          fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                          {
+                                              chargeFeeId = mp.CHARGEFEEID,
+                                              feeAmount = mp.FEEAMOUNT,
+                                              description = mp.DESCRIPTION,
+                                              casaAccount = mp.CASAACCOUNTID,
+                                              loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                              chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                              casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                          }).ToList(),
+                                      }).ToList();
+
+            var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var contingentLoanData = dataContingentLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var unionAll = termLoanData.Union(revolvingLoanData);
+
+            var data = unionAll.Union(contingentLoanData);
+
+            return data;
+        }
+
+
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var loansId = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ISFULLYRECOVERED == false).Select(x=>x.LOANID).ToList();
+
+            var dataLoan = (from ln in context.TBL_LOAN
+                            join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
+                            join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                            join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                            join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                            join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                            join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                            join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                            join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                            join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                            join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                            join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                            where
+                            !loansId.Contains(ln.TERMLOANID)
+                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && op.OPERATIONCOMPLETED == true
+                            && ln.ISPRINTED == false
+
+                            orderby op.DATECREATED descending
+                            select new LoanReviewOperationApprovalViewModel
+                            {
+                                creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                creditAppraisalOperationId = lp.OPERATIONID,
+                                loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                loanApplicationDetailId = ld.LOANAPPLICATIONDETAILID,
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                loanId = ln.TERMLOANID,
+                                loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                customerId = ln.CUSTOMERID,
+                                productId = ln.PRODUCTID,
+                                prepaymentAmount = op.PREPAYMENT,
+                                productTypeId = pr.PRODUCTTYPEID,
+                                casaAccountId = ln.CASAACCOUNTID,
+                                casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                branchId = ln.BRANCHID,
+                                amount = ld.APPROVEDAMOUNT,
+                                lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                  join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                  where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                  select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                                loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
+                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                interestFrequencyTypeId = ln.INTERESTFREQUENCYTYPEID != null ? (short)ln.INTERESTFREQUENCYTYPEID : (short)0,
+                                interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
+                                interestNumberOfInstallment = ln.INTERESTNUMBEROFINSTALLMENT,
+                                relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                misCode = ln.MISCODE,
+                                teamMiscode = ln.TEAMMISCODE,
+                                interestRate = ln.INTERESTRATE,
+                                effectiveDate = ln.EFFECTIVEDATE,
+                                maturityDate = ln.MATURITYDATE,
+                                bookingDate = ln.BOOKINGDATE,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
+                                interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
+                                approvalStatusId = op.APPROVALSTATUSID,
+                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                approvedBy = (int)ln.APPROVEDBY,
+                                approverComment = ln.APPROVERCOMMENT,
+                                dateApproved = ln.DATEAPPROVED,
+                                loanStatusId = ln.LOANSTATUSID,
+                                scheduleTypeId = ln.SCHEDULETYPEID,
+                                isDisbursed = ln.ISDISBURSED,
+                                disbursedBy = (int)ln.DISBURSEDBY,
+                                disburserComment = ln.DISBURSERCOMMENT,
+                                disburseDate = ln.DISBURSEDATE,
+                                customerGroupId = lp.CUSTOMERGROUPID,
+                                operationId = ln.OPERATIONID,
+                                loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                equityContribution = ln.EQUITYCONTRIBUTION,
+                                subSectorId = ln.SUBSECTORID,
+                                subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                firstPrincipalPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                firstInterestPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                                principalAdditionCount = ln.PRINCIPALADDITIONCOUNT,
+                                principalReductionCount = ln.PRINCIPALREDUCTIONCOUNT,
+                                fixedPrincipal = ln.FIXEDPRINCIPAL,
+                                profileLoan = ln.PROFILELOAN,
+                                dischargeLetter = ln.DISCHARGELETTER,
+                                suspendInterest = ln.SUSPENDINTEREST,
+                                scheduled = ln.ISSCHEDULEDPREPAYMENT,
+                                isScheduledPrepayment = ln.ISSCHEDULEDPREPAYMENT,
+                                scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
+                                scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
+                                customerCode = cu.CUSTOMERCODE,
+                                productAccountNumber = ch.ACCOUNTCODE,
+                                productAccountName = ch.ACCOUNTNAME,
+                                loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                currencyId = ln.CURRENCYID,
+                                branchName = br.BRANCHNAME,
+                                relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                productName = pr.PRODUCTNAME,
+                                comment = "",
+                                operationTypeId = op.OPERATIONTYPEID,
+                                operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
+                                newEffectiveDate = op.EFFECTIVEDATE,
+                                reviewDetails = op.REVIEWDETAILS,
+                                prepayment = op.PREPAYMENT,
+                                newInterateRate = op.INTERATERATE,
+                                newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newTenor = op.TENOR,
+                                cASA_AccountId = op.CASA_ACCOUNTID,
+                                cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                overDraftTopup = op.OVERDRAFTTOPUP,
+                                fee_Charges = op.FEE_CHARGES,
+                                scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                newMaturityDate = op.MATURITYDATE,
+                                approvedAmount = ld.APPROVEDAMOUNT,
+                                creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                pastDueInterest = ln.PASTDUEINTEREST,
+                                pastDuePrincipal = ln.PASTDUEPRINCIPAL,
+                                interestOnPastDueInterest = ln.INTERESTONPASTDUEINTEREST,
+                                interestOnPastDuePrincipal = ln.INTERESTONPASTDUEPRINCIPAL,
+                                outstandingInterest = ln.OUTSTANDINGINTEREST,
+                                accruedInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
+                                dateTimeCreated = op.DATECREATED,
+                                fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                {
+                                    chargeFeeId = mp.CHARGEFEEID,
+                                    feeAmount = mp.FEEAMOUNT,
+                                    description = mp.DESCRIPTION,
+                                    casaAccount = mp.CASAACCOUNTID,
+                                    loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                    chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                    casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                }).ToList(),
+                            }).ToList();
+
+            var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
+                                     join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
+                                     join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                     join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                     join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                     join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                     join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                     join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                     join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                     join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                     join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                     join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                     where
+                                     !loansId.Contains(ln.REVOLVINGLOANID)
+                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && op.OPERATIONCOMPLETED == true
+                                     && ln.ISPRINTED == false
+
+                                     orderby op.DATECREATED descending
+                                     select new LoanReviewOperationApprovalViewModel
+                                     {
+                                         loanApplicationDetailId = ld.LOANAPPLICATIONDETAILID,
+                                         creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                         creditAppraisalOperationId = lp.OPERATIONID,
+                                         lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                         lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                         loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                         appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                         loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                         loanId = ln.REVOLVINGLOANID,
+                                         loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                         customerId = ln.CUSTOMERID,
+                                         productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+                                         prepaymentAmount = op.PREPAYMENT,
+                                         casaAccountId = ln.CASAACCOUNTID,
+                                         casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         branchId = ln.BRANCHID,
+                                         lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                           join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                           where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                           select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                         loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                         applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                         relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                         relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                         misCode = ln.MISCODE,
+                                         teamMiscode = ln.TEAMMISCODE,
+                                         interestRate = ln.INTERESTRATE,
+                                         effectiveDate = ln.EFFECTIVEDATE,
+                                         maturityDate = ln.MATURITYDATE,
+                                         bookingDate = ln.BOOKINGDATE,
+                                         approvalStatusId = op.APPROVALSTATUSID,
+                                         approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                         approvedBy = (int)ln.APPROVEDBY,
+                                         approverComment = ln.APPROVERCOMMENT,
+                                         dateApproved = ln.DATEAPPROVED,
+                                         loanStatusId = ln.LOANSTATUSID,
+                                         isDisbursed = ln.ISDISBURSED,
+                                         disburserComment = ln.DISBURSERCOMMENT,
+                                         disburseDate = ln.DISBURSEDATE,
+                                         customerGroupId = lp.CUSTOMERGROUPID,
+                                         operationId = ln.OPERATIONID,
+                                         loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                         subSectorId = ln.SUBSECTORID,
+                                         subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                         sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                         dischargeLetter = ln.DISCHARGELETTER,
+                                         suspendInterest = ln.SUSPENDINTEREST,
+                                         customerCode = cu.CUSTOMERCODE,
+                                         loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                         customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                         currencyId = ln.CURRENCYID,
+                                         branchName = br.BRANCHNAME,
+                                         relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                         relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                         productName = pr.PRODUCTNAME,
+                                         comment = "",
+                                         operationTypeId = op.OPERATIONTYPEID,
+                                         operationTypeName = tt.OPERATIONNAME,
+                                         newEffectiveDate = op.EFFECTIVEDATE,
+                                         reviewDetails = op.REVIEWDETAILS,
+                                         prepayment = op.PREPAYMENT,
+                                         newInterateRate = op.INTERATERATE,
+                                         newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                         newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                         newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                         newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newTenor = op.TENOR,
+                                         cASA_AccountId = op.CASA_ACCOUNTID,
+                                         cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         overDraftTopup = op.OVERDRAFTTOPUP,
+                                         fee_Charges = op.FEE_CHARGES,
+                                         scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                         scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                         scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                         scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                         scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                         newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                         newMaturityDate = op.MATURITYDATE,
+                                         dateTimeCreated = op.DATECREATED,
+                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                         currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                         productAccountNumber = "N/A",
+                                         productAccountName = "N/A",
+                                         approvedAmount = ld.APPROVEDAMOUNT,
+                                         creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                         fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                         {
+                                             chargeFeeId = mp.CHARGEFEEID,
+                                             feeAmount = mp.FEEAMOUNT,
+                                             description = mp.DESCRIPTION,
+                                             casaAccount = mp.CASAACCOUNTID,
+                                             loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                             chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                             casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                         }).ToList(),
+                                     }).ToList();
+
+
+            var dataContingentLoan = (from ln in context.TBL_LOAN_CONTINGENT
+                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.CONTINGENTLOANID equals op.LOANID
+                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                      join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                      join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                      join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                                      where
+                                      !loansId.Contains(ln.CONTINGENTLOANID)
+                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && op.OPERATIONCOMPLETED == true
+                                      && ln.ISPRINTED == false
+
+                                      orderby op.DATECREATED descending
+                                      select new LoanReviewOperationApprovalViewModel
+                                      {
+                                          loanApplicationDetailId = ld.LOANAPPLICATIONDETAILID,
+                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                          creditAppraisalOperationId = lp.OPERATIONID,
+                                          lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                          lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                          loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                          appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                          loanId = ln.CONTINGENTLOANID,
+                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                          customerId = ln.CUSTOMERID,
+                                          productId = ln.PRODUCTID,
+                                          productTypeId = pr.PRODUCTTYPEID,
+                                          productTypeName = context.TBL_PRODUCT_TYPE.Where(x => x.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(m => m.PRODUCTTYPENAME).FirstOrDefault(),
+                                          casaAccountId = ln.CASAACCOUNTID,
+                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          branchId = ln.BRANCHID,
+                                          lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                            join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                            where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                            select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                          loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                          applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                          relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                          relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                          misCode = ln.MISCODE,
+                                          teamMiscode = ln.TEAMMISCODE,
+                                          principalAmount = ln.CONTINGENTAMOUNT,
+                                          //interestRate = ln.INTERESTRATE,
+                                          effectiveDate = ln.EFFECTIVEDATE,
+                                          maturityDate = ln.MATURITYDATE,
+                                          bookingDate = ln.BOOKINGDATE,
+                                          approvalStatusId = op.APPROVALSTATUSID,
+                                          approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                          approvedBy = (int)ln.APPROVEDBY,
+                                          approverComment = ln.APPROVERCOMMENT,
+                                          dateApproved = ln.DATEAPPROVED,
+                                          loanStatusId = ln.LOANSTATUSID,
+                                          isDisbursed = ln.ISDISBURSED,
+                                          disburserComment = ln.DISBURSERCOMMENT,
+                                          disburseDate = ln.DISBURSEDATE,
+                                          customerGroupId = lp.CUSTOMERGROUPID,
+                                          operationId = ln.OPERATIONID,
+                                          loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                          subSectorId = ln.SUBSECTORID,
+                                          subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                          sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                          dischargeLetter = ln.DISCHARGELETTER,
+                                          //suspendInterest = ln.SUSPENDINTEREST,
+                                          customerCode = cu.CUSTOMERCODE,
+                                          loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                          customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                          currencyId = ln.CURRENCYID,
+                                          currency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == ln.CURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
+                                          branchName = br.BRANCHNAME,
+                                          relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                          relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                          productName = pr.PRODUCTNAME,
+                                          comment = "",
+                                          operationTypeId = op.OPERATIONTYPEID,
+                                          operationTypeName = tt.OPERATIONNAME,
+                                          newEffectiveDate = op.EFFECTIVEDATE,
+                                          reviewDetails = op.REVIEWDETAILS,
+                                          prepayment = op.PREPAYMENT,
+                                          newInterateRate = op.INTERATERATE,
+                                          newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                          newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                          newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                          newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newTenor = op.TENOR,
+                                          cASA_AccountId = op.CASA_ACCOUNTID,
+                                          cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          overDraftTopup = op.OVERDRAFTTOPUP,
+                                          fee_Charges = op.FEE_CHARGES,
+                                          scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                          scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                          scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                          scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                          scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                          newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                          newMaturityDate = op.MATURITYDATE,
+                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          dateTimeCreated = op.DATECREATED,
+                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                          productAccountNumber = ch.ACCOUNTCODE,
+                                          productAccountName = ch.ACCOUNTNAME,
+                                          prepaymentAmount = op.PREPAYMENT,
+                                          approvedAmount = ld.APPROVEDAMOUNT,
+                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                          fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                          {
+                                              chargeFeeId = mp.CHARGEFEEID,
+                                              feeAmount = mp.FEEAMOUNT,
+                                              description = mp.DESCRIPTION,
+                                              casaAccount = mp.CASAACCOUNTID,
+                                              loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                              chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                              casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                          }).ToList(),
+                                      }).ToList();
+
+            var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var contingentLoanData = dataContingentLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var unionAll = termLoanData.Union(revolvingLoanData);
+
+            var data = unionAll.Union(contingentLoanData);
+
+            return data;
+        }
+
+        public IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+
+            var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                            join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                            join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
+                            join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                            join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                            join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                            join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                            join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                            join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                            join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                            join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                            join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                            join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                            where
+                            lr.ISFULLYRECOVERED == false && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && op.OPERATIONCOMPLETED == true
+                            && ln.ISPRINTED == false
+
+                            orderby op.DATECREATED descending
+                            select new LoanReviewOperationApprovalViewModel
+                            {
+                                expCompletionDate = lr.EXPCOMPLETIONDATE,
+                                loanAssignId = lr.LOANASSIGNID,
+                                creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                creditAppraisalOperationId = lp.OPERATIONID,
+                                loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                loanId = ln.TERMLOANID,
+                                loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                customerId = ln.CUSTOMERID,
+                                productId = ln.PRODUCTID,
+                                prepaymentAmount = op.PREPAYMENT,
+                                productTypeId = pr.PRODUCTTYPEID,
+                                casaAccountId = ln.CASAACCOUNTID,
+                                casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                branchId = ln.BRANCHID,
+                                amount = ld.APPROVEDAMOUNT,
+                                lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                  join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                  where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                  select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                                loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
+                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                interestFrequencyTypeId = ln.INTERESTFREQUENCYTYPEID != null ? (short)ln.INTERESTFREQUENCYTYPEID : (short)0,
+                                interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
+                                interestNumberOfInstallment = ln.INTERESTNUMBEROFINSTALLMENT,
+                                relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                misCode = ln.MISCODE,
+                                teamMiscode = ln.TEAMMISCODE,
+                                interestRate = ln.INTERESTRATE,
+                                effectiveDate = ln.EFFECTIVEDATE,
+                                maturityDate = ln.MATURITYDATE,
+                                bookingDate = ln.BOOKINGDATE,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
+                                interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
+                                approvalStatusId = op.APPROVALSTATUSID,
+                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                approvedBy = (int)ln.APPROVEDBY,
+                                approverComment = ln.APPROVERCOMMENT,
+                                dateApproved = ln.DATEAPPROVED,
+                                loanStatusId = ln.LOANSTATUSID,
+                                scheduleTypeId = ln.SCHEDULETYPEID,
+                                isDisbursed = ln.ISDISBURSED,
+                                disbursedBy = (int)ln.DISBURSEDBY,
+                                disburserComment = ln.DISBURSERCOMMENT,
+                                disburseDate = ln.DISBURSEDATE,
+                                customerGroupId = lp.CUSTOMERGROUPID,
+                                operationId = ln.OPERATIONID,
+                                loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                equityContribution = ln.EQUITYCONTRIBUTION,
+                                subSectorId = ln.SUBSECTORID,
+                                subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                firstPrincipalPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                firstInterestPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                                principalAdditionCount = ln.PRINCIPALADDITIONCOUNT,
+                                principalReductionCount = ln.PRINCIPALREDUCTIONCOUNT,
+                                fixedPrincipal = ln.FIXEDPRINCIPAL,
+                                profileLoan = ln.PROFILELOAN,
+                                dischargeLetter = ln.DISCHARGELETTER,
+                                suspendInterest = ln.SUSPENDINTEREST,
+                                scheduled = ln.ISSCHEDULEDPREPAYMENT,
+                                isScheduledPrepayment = ln.ISSCHEDULEDPREPAYMENT,
+                                scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
+                                scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
+                                customerCode = cu.CUSTOMERCODE,
+                                productAccountNumber = ch.ACCOUNTCODE,
+                                productAccountName = ch.ACCOUNTNAME,
+                                loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                currencyId = ln.CURRENCYID,
+                                branchName = br.BRANCHNAME,
+                                relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                productName = pr.PRODUCTNAME,
+                                comment = "",
+                                operationTypeId = op.OPERATIONTYPEID,
+                                operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
+                                newEffectiveDate = op.EFFECTIVEDATE,
+                                reviewDetails = op.REVIEWDETAILS,
+                                prepayment = op.PREPAYMENT,
+                                newInterateRate = op.INTERATERATE,
+                                newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newTenor = op.TENOR,
+                                cASA_AccountId = op.CASA_ACCOUNTID,
+                                cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                overDraftTopup = op.OVERDRAFTTOPUP,
+                                fee_Charges = op.FEE_CHARGES,
+                                scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                newMaturityDate = op.MATURITYDATE,
+                                approvedAmount = ld.APPROVEDAMOUNT,
+                                creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                pastDueInterest = ln.PASTDUEINTEREST,
+                                pastDuePrincipal = ln.PASTDUEPRINCIPAL,
+                                interestOnPastDueInterest = ln.INTERESTONPASTDUEINTEREST,
+                                interestOnPastDuePrincipal = ln.INTERESTONPASTDUEPRINCIPAL,
+                                outstandingInterest = ln.OUTSTANDINGINTEREST,
+                                accruedInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
+                                dateTimeCreated = op.DATECREATED,
+                                fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                {
+                                    chargeFeeId = mp.CHARGEFEEID,
+                                    feeAmount = mp.FEEAMOUNT,
+                                    description = mp.DESCRIPTION,
+                                    casaAccount = mp.CASAACCOUNTID,
+                                    loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                    chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                    casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                }).ToList(),
+                            }).ToList();
+
+            var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                     join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
+                                     join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                     join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                     join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                     join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                     join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                     join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                     join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                     join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                     join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                     join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                     where
+                                     lr.ISFULLYRECOVERED == false && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && op.OPERATIONCOMPLETED == true
+                                     && ln.ISPRINTED == false
+
+                                     orderby op.DATECREATED descending
+                                     select new LoanReviewOperationApprovalViewModel
+                                     {
+                                         expCompletionDate = lr.EXPCOMPLETIONDATE,
+                                         loanAssignId = lr.LOANASSIGNID,
+                                         creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                         creditAppraisalOperationId = lp.OPERATIONID,
+                                         lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                         lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                         loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                         appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                         loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                         loanId = ln.REVOLVINGLOANID,
+                                         loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                         customerId = ln.CUSTOMERID,
+                                         productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+                                         prepaymentAmount = op.PREPAYMENT,
+                                         casaAccountId = ln.CASAACCOUNTID,
+                                         casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         branchId = ln.BRANCHID,
+                                         lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                           join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                           where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                           select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                         loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                         applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                         relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                         relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                         misCode = ln.MISCODE,
+                                         teamMiscode = ln.TEAMMISCODE,
+                                         interestRate = ln.INTERESTRATE,
+                                         effectiveDate = ln.EFFECTIVEDATE,
+                                         maturityDate = ln.MATURITYDATE,
+                                         bookingDate = ln.BOOKINGDATE,
+                                         approvalStatusId = op.APPROVALSTATUSID,
+                                         approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                         approvedBy = (int)ln.APPROVEDBY,
+                                         approverComment = ln.APPROVERCOMMENT,
+                                         dateApproved = ln.DATEAPPROVED,
+                                         loanStatusId = ln.LOANSTATUSID,
+                                         isDisbursed = ln.ISDISBURSED,
+                                         disburserComment = ln.DISBURSERCOMMENT,
+                                         disburseDate = ln.DISBURSEDATE,
+                                         customerGroupId = lp.CUSTOMERGROUPID,
+                                         operationId = ln.OPERATIONID,
+                                         loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                         subSectorId = ln.SUBSECTORID,
+                                         subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                         sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                         dischargeLetter = ln.DISCHARGELETTER,
+                                         suspendInterest = ln.SUSPENDINTEREST,
+                                         customerCode = cu.CUSTOMERCODE,
+                                         loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                         customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                         currencyId = ln.CURRENCYID,
+                                         branchName = br.BRANCHNAME,
+                                         relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                         relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                         productName = pr.PRODUCTNAME,
+                                         comment = "",
+                                         operationTypeId = op.OPERATIONTYPEID,
+                                         operationTypeName = tt.OPERATIONNAME,
+                                         newEffectiveDate = op.EFFECTIVEDATE,
+                                         reviewDetails = op.REVIEWDETAILS,
+                                         prepayment = op.PREPAYMENT,
+                                         newInterateRate = op.INTERATERATE,
+                                         newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                         newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                         newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                         newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newTenor = op.TENOR,
+                                         cASA_AccountId = op.CASA_ACCOUNTID,
+                                         cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         overDraftTopup = op.OVERDRAFTTOPUP,
+                                         fee_Charges = op.FEE_CHARGES,
+                                         scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                         scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                         scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                         scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                         scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                         newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                         newMaturityDate = op.MATURITYDATE,
+                                         dateTimeCreated = op.DATECREATED,
+                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                         currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                         productAccountNumber = "N/A",
+                                         productAccountName = "N/A",
+                                         approvedAmount = ld.APPROVEDAMOUNT,
+                                         creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                         fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                         {
+                                             chargeFeeId = mp.CHARGEFEEID,
+                                             feeAmount = mp.FEEAMOUNT,
+                                             description = mp.DESCRIPTION,
+                                             casaAccount = mp.CASAACCOUNTID,
+                                             loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                             chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                             casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                         }).ToList(),
+                                     }).ToList();
+
+
+            var dataContingentLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                      join ln in context.TBL_LOAN_CONTINGENT on lr.LOANID equals ln.CONTINGENTLOANID
+                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.CONTINGENTLOANID equals op.LOANID
+                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                      join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                      join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                      join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                                      where
+                                      lr.ISFULLYRECOVERED == false && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && op.OPERATIONCOMPLETED == true
+                                      && ln.ISPRINTED == false
+
+                                      orderby op.DATECREATED descending
+                                      select new LoanReviewOperationApprovalViewModel
+                                      {
+                                          expCompletionDate = lr.EXPCOMPLETIONDATE,
+                                          loanAssignId = lr.LOANASSIGNID,
+                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                          creditAppraisalOperationId = lp.OPERATIONID,
+                                          lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                          lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                          loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                          appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                          loanId = ln.CONTINGENTLOANID,
+                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                          customerId = ln.CUSTOMERID,
+                                          productId = ln.PRODUCTID,
+                                          productTypeId = pr.PRODUCTTYPEID,
+                                          productTypeName = context.TBL_PRODUCT_TYPE.Where(x => x.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(m => m.PRODUCTTYPENAME).FirstOrDefault(),
+                                          casaAccountId = ln.CASAACCOUNTID,
+                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          branchId = ln.BRANCHID,
+                                          lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                            join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                            where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                            select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                          loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                          applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                          relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                          relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                          misCode = ln.MISCODE,
+                                          teamMiscode = ln.TEAMMISCODE,
+                                          principalAmount = ln.CONTINGENTAMOUNT,
+                                          //interestRate = ln.INTERESTRATE,
+                                          effectiveDate = ln.EFFECTIVEDATE,
+                                          maturityDate = ln.MATURITYDATE,
+                                          bookingDate = ln.BOOKINGDATE,
+                                          approvalStatusId = op.APPROVALSTATUSID,
+                                          approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                          approvedBy = (int)ln.APPROVEDBY,
+                                          approverComment = ln.APPROVERCOMMENT,
+                                          dateApproved = ln.DATEAPPROVED,
+                                          loanStatusId = ln.LOANSTATUSID,
+                                          isDisbursed = ln.ISDISBURSED,
+                                          disburserComment = ln.DISBURSERCOMMENT,
+                                          disburseDate = ln.DISBURSEDATE,
+                                          customerGroupId = lp.CUSTOMERGROUPID,
+                                          operationId = ln.OPERATIONID,
+                                          loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                          subSectorId = ln.SUBSECTORID,
+                                          subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                          sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                          dischargeLetter = ln.DISCHARGELETTER,
+                                          //suspendInterest = ln.SUSPENDINTEREST,
+                                          customerCode = cu.CUSTOMERCODE,
+                                          loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                          customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                          currencyId = ln.CURRENCYID,
+                                          currency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == ln.CURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
+                                          branchName = br.BRANCHNAME,
+                                          relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                          relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                          productName = pr.PRODUCTNAME,
+                                          comment = "",
+                                          operationTypeId = op.OPERATIONTYPEID,
+                                          operationTypeName = tt.OPERATIONNAME,
+                                          newEffectiveDate = op.EFFECTIVEDATE,
+                                          reviewDetails = op.REVIEWDETAILS,
+                                          prepayment = op.PREPAYMENT,
+                                          newInterateRate = op.INTERATERATE,
+                                          newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                          newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                          newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                          newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newTenor = op.TENOR,
+                                          cASA_AccountId = op.CASA_ACCOUNTID,
+                                          cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          overDraftTopup = op.OVERDRAFTTOPUP,
+                                          fee_Charges = op.FEE_CHARGES,
+                                          scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                          scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                          scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                          scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                          scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                          newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                          newMaturityDate = op.MATURITYDATE,
+                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          dateTimeCreated = op.DATECREATED,
+                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                          productAccountNumber = ch.ACCOUNTCODE,
+                                          productAccountName = ch.ACCOUNTNAME,
+                                          prepaymentAmount = op.PREPAYMENT,
+                                          approvedAmount = ld.APPROVEDAMOUNT,
+                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                          fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                          {
+                                              chargeFeeId = mp.CHARGEFEEID,
+                                              feeAmount = mp.FEEAMOUNT,
+                                              description = mp.DESCRIPTION,
+                                              casaAccount = mp.CASAACCOUNTID,
+                                              loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                              chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                              casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                          }).ToList(),
+                                      }).ToList();
+
+            var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var contingentLoanData = dataContingentLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var unionAll = termLoanData.Union(revolvingLoanData);
+
+            var data = unionAll.Union(contingentLoanData);
+
+            return data;
+        }
+
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId, int accreditedConsultantId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            
+            var dataLoan = (from lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY
+                            join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                            join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
+                            join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                            join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                            join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                            join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                            join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                            join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                            join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                            join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                            join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                            join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                            where
+                            lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && op.OPERATIONCOMPLETED == true
+                            && ln.ISPRINTED == false
+
+                            orderby op.DATECREATED descending
+                            select new LoanReviewOperationApprovalViewModel
+                            {
+
+                                collateralLiquidationRecoveryId = lr.COLLATERALLIQUIDATIONRECOVERYID,
+                                accreditedConsultant = lr.ACCREDITEDCONSULTANT,
+                                isFullyRecovered = lr.ISFULLYRECOVERED,
+                                fileName = lr.FILENAME,
+                                fileExtension = lr.FILEEXTENSION,
+                                fileSize = lr.FILESIZE,
+                                fileSizeUnit = lr.FILESIZEUNIT,
+                                receiptDate = lr.RECEIPTDATE,
+                                totalRecoveryAmount = lr.TOTALRECOVERYAMOUNT,
+                                recoveredAmount = lr.RECOVEREDAMOUNT,
+                                outstandingAmount = lr.OUTSTANDINGAMOUNT,
+                                collateralCode = lr.COLLATERALCODE,
+                                collectionMode = lr.COLLECTIONMODE,
+                                createdBy = lr.CREATEDBY,
+                                //dateTimeCreated = lr.DATETIMECREATED,
+
+                                creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                creditAppraisalOperationId = lp.OPERATIONID,
+                                loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                loanId = ln.TERMLOANID,
+                                loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                customerId = ln.CUSTOMERID,
+                                productId = ln.PRODUCTID,
+                                prepaymentAmount = op.PREPAYMENT,
+                                productTypeId = pr.PRODUCTTYPEID,
+                                casaAccountId = ln.CASAACCOUNTID,
+                                casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                branchId = ln.BRANCHID,
+                                amount = ld.APPROVEDAMOUNT,
+                                lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                  join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                  where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                  select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                                loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                principalFrequencyTypeId = ln.PRINCIPALFREQUENCYTYPEID != null ? (short)ln.PRINCIPALFREQUENCYTYPEID : (short)0,
+                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                interestFrequencyTypeId = ln.INTERESTFREQUENCYTYPEID != null ? (short)ln.INTERESTFREQUENCYTYPEID : (short)0,
+                                interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.MODE,
+                                principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
+                                interestNumberOfInstallment = ln.INTERESTNUMBEROFINSTALLMENT,
+                                relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                misCode = ln.MISCODE,
+                                teamMiscode = ln.TEAMMISCODE,
+                                interestRate = ln.INTERESTRATE,
+                                effectiveDate = ln.EFFECTIVEDATE,
+                                maturityDate = ln.MATURITYDATE,
+                                bookingDate = ln.BOOKINGDATE,
+                                principalAmount = ln.OUTSTANDINGPRINCIPAL, //\\\ln.PrincipalAmount,
+                                principalInstallmentLeft = ln.PRINCIPALINSTALLMENTLEFT,
+                                interestInstallmentLeft = ln.INTERESTINSTALLMENTLEFT,
+                                approvalStatusId = op.APPROVALSTATUSID,
+                                approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                approvedBy = (int)ln.APPROVEDBY,
+                                approverComment = ln.APPROVERCOMMENT,
+                                dateApproved = ln.DATEAPPROVED,
+                                loanStatusId = ln.LOANSTATUSID,
+                                scheduleTypeId = ln.SCHEDULETYPEID,
+                                isDisbursed = ln.ISDISBURSED,
+                                disbursedBy = (int)ln.DISBURSEDBY,
+                                disburserComment = ln.DISBURSERCOMMENT,
+                                disburseDate = ln.DISBURSEDATE,
+                                customerGroupId = lp.CUSTOMERGROUPID,
+                                operationId = ln.OPERATIONID,
+                                loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                equityContribution = ln.EQUITYCONTRIBUTION,
+                                subSectorId = ln.SUBSECTORID,
+                                subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                firstPrincipalPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                firstInterestPaymentDate = ln.FIRSTINTERESTPAYMENTDATE,
+                                outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                                principalAdditionCount = ln.PRINCIPALADDITIONCOUNT,
+                                principalReductionCount = ln.PRINCIPALREDUCTIONCOUNT,
+                                fixedPrincipal = ln.FIXEDPRINCIPAL,
+                                profileLoan = ln.PROFILELOAN,
+                                dischargeLetter = ln.DISCHARGELETTER,
+                                suspendInterest = ln.SUSPENDINTEREST,
+                                scheduled = ln.ISSCHEDULEDPREPAYMENT,
+                                isScheduledPrepayment = ln.ISSCHEDULEDPREPAYMENT,
+                                scheduledPrepaymentAmount = ln.SCHEDULEDPREPAYMENTAMOUNT,
+                                scheduledPrepaymentDate = ln.SCHEDULEDPREPAYMENTDATE,
+                                customerCode = cu.CUSTOMERCODE,
+                                productAccountNumber = ch.ACCOUNTCODE,
+                                productAccountName = ch.ACCOUNTNAME,
+                                loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                currencyId = ln.CURRENCYID,
+                                branchName = br.BRANCHNAME,
+                                relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                productName = pr.PRODUCTNAME,
+                                comment = "",
+                                operationTypeId = op.OPERATIONTYPEID,
+                                operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
+                                newEffectiveDate = op.EFFECTIVEDATE,
+                                reviewDetails = op.REVIEWDETAILS,
+                                prepayment = op.PREPAYMENT,
+                                newInterateRate = op.INTERATERATE,
+                                newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                newTenor = op.TENOR,
+                                cASA_AccountId = op.CASA_ACCOUNTID,
+                                cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                overDraftTopup = op.OVERDRAFTTOPUP,
+                                fee_Charges = op.FEE_CHARGES,
+                                scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                newMaturityDate = op.MATURITYDATE,
+                                approvedAmount = ld.APPROVEDAMOUNT,
+                                creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                pastDueInterest = ln.PASTDUEINTEREST,
+                                pastDuePrincipal = ln.PASTDUEPRINCIPAL,
+                                interestOnPastDueInterest = ln.INTERESTONPASTDUEINTEREST,
+                                interestOnPastDuePrincipal = ln.INTERESTONPASTDUEPRINCIPAL,
+                                outstandingInterest = ln.OUTSTANDINGINTEREST,
+                                accruedInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
+                                dateTimeCreated = op.DATECREATED,
+                                fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                {
+                                    chargeFeeId = mp.CHARGEFEEID,
+                                    feeAmount = mp.FEEAMOUNT,
+                                    description = mp.DESCRIPTION,
+                                    casaAccount = mp.CASAACCOUNTID,
+                                    loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                    chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                    casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                }).ToList(),
+                            }).ToList();
+
+            var dataRevolvingLoan = (from lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY
+                                     join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                     join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
+                                     join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                     join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                     join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                     join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                     join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                     join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                     join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                     join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                     join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                     join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                     where
+                                     lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && op.OPERATIONCOMPLETED == true
+                                     && ln.ISPRINTED == false
+
+                                     orderby op.DATECREATED descending
+                                     select new LoanReviewOperationApprovalViewModel
+                                     {
+                                         collateralLiquidationRecoveryId = lr.COLLATERALLIQUIDATIONRECOVERYID,
+                                         accreditedConsultant = lr.ACCREDITEDCONSULTANT,
+                                         isFullyRecovered = lr.ISFULLYRECOVERED,
+                                         fileName = lr.FILENAME,
+                                         fileExtension = lr.FILEEXTENSION,
+                                         fileSize = lr.FILESIZE,
+                                         fileSizeUnit = lr.FILESIZEUNIT,
+                                         receiptDate = lr.RECEIPTDATE,
+                                         totalRecoveryAmount = lr.TOTALRECOVERYAMOUNT,
+                                         recoveredAmount = lr.RECOVEREDAMOUNT,
+                                         outstandingAmount = lr.OUTSTANDINGAMOUNT,
+                                         collateralCode = lr.COLLATERALCODE,
+                                         collectionMode = lr.COLLECTIONMODE,
+                                         createdBy = lr.CREATEDBY,
+                                         //dateTimeCreated = lr.DATETIMECREATED,
+
+                                         creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                         creditAppraisalOperationId = lp.OPERATIONID,
+                                         lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                         lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                         loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                         appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                         loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                         loanId = ln.REVOLVINGLOANID,
+                                         loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                         customerId = ln.CUSTOMERID,
+                                         productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+                                         prepaymentAmount = op.PREPAYMENT,
+                                         casaAccountId = ln.CASAACCOUNTID,
+                                         casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         branchId = ln.BRANCHID,
+                                         lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                           join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                           where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                           select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                         loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                         applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                         relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                         relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                         misCode = ln.MISCODE,
+                                         teamMiscode = ln.TEAMMISCODE,
+                                         interestRate = ln.INTERESTRATE,
+                                         effectiveDate = ln.EFFECTIVEDATE,
+                                         maturityDate = ln.MATURITYDATE,
+                                         bookingDate = ln.BOOKINGDATE,
+                                         approvalStatusId = op.APPROVALSTATUSID,
+                                         approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                         approvedBy = (int)ln.APPROVEDBY,
+                                         approverComment = ln.APPROVERCOMMENT,
+                                         dateApproved = ln.DATEAPPROVED,
+                                         loanStatusId = ln.LOANSTATUSID,
+                                         isDisbursed = ln.ISDISBURSED,
+                                         disburserComment = ln.DISBURSERCOMMENT,
+                                         disburseDate = ln.DISBURSEDATE,
+                                         customerGroupId = lp.CUSTOMERGROUPID,
+                                         operationId = ln.OPERATIONID,
+                                         loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                         subSectorId = ln.SUBSECTORID,
+                                         subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                         sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                         dischargeLetter = ln.DISCHARGELETTER,
+                                         suspendInterest = ln.SUSPENDINTEREST,
+                                         customerCode = cu.CUSTOMERCODE,
+                                         loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                         customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                         currencyId = ln.CURRENCYID,
+                                         branchName = br.BRANCHNAME,
+                                         relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                         relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                         productName = pr.PRODUCTNAME,
+                                         comment = "",
+                                         operationTypeId = op.OPERATIONTYPEID,
+                                         operationTypeName = tt.OPERATIONNAME,
+                                         newEffectiveDate = op.EFFECTIVEDATE,
+                                         reviewDetails = op.REVIEWDETAILS,
+                                         prepayment = op.PREPAYMENT,
+                                         newInterateRate = op.INTERATERATE,
+                                         newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                         newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                         newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                         newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                         newTenor = op.TENOR,
+                                         cASA_AccountId = op.CASA_ACCOUNTID,
+                                         cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                         cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         overDraftTopup = op.OVERDRAFTTOPUP,
+                                         fee_Charges = op.FEE_CHARGES,
+                                         scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                         scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                         scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                         scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                         scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                         newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                         newMaturityDate = op.MATURITYDATE,
+                                         dateTimeCreated = op.DATECREATED,
+                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                         currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                         productAccountNumber = "N/A",
+                                         productAccountName = "N/A",
+                                         approvedAmount = ld.APPROVEDAMOUNT,
+                                         creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                         fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                         {
+                                             chargeFeeId = mp.CHARGEFEEID,
+                                             feeAmount = mp.FEEAMOUNT,
+                                             description = mp.DESCRIPTION,
+                                             casaAccount = mp.CASAACCOUNTID,
+                                             loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                             chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                             casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                         }).ToList(),
+                                     }).ToList();
+
+
+            var dataContingentLoan = (from lr in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY
+                                      join ln in context.TBL_LOAN_CONTINGENT on lr.LOANID equals ln.CONTINGENTLOANID
+                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.CONTINGENTLOANID equals op.LOANID
+                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
+                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                      join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                      join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                      join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                                      where
+                                      lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && op.OPERATIONCOMPLETED == true
+                                      && ln.ISPRINTED == false
+
+                                      orderby op.DATECREATED descending
+                                      select new LoanReviewOperationApprovalViewModel
+                                      {
+                                          collateralLiquidationRecoveryId = lr.COLLATERALLIQUIDATIONRECOVERYID,
+                                          accreditedConsultant = lr.ACCREDITEDCONSULTANT,
+                                          isFullyRecovered = lr.ISFULLYRECOVERED,
+                                          fileName = lr.FILENAME,
+                                          fileExtension = lr.FILEEXTENSION,
+                                          fileSize = lr.FILESIZE,
+                                          fileSizeUnit = lr.FILESIZEUNIT,
+                                          receiptDate = lr.RECEIPTDATE,
+                                          totalRecoveryAmount = lr.TOTALRECOVERYAMOUNT,
+                                          recoveredAmount = lr.RECOVEREDAMOUNT,
+                                          outstandingAmount = lr.OUTSTANDINGAMOUNT,
+                                          collateralCode = lr.COLLATERALCODE,
+                                          collectionMode = lr.COLLECTIONMODE,
+                                          createdBy = lr.CREATEDBY,
+                                          //dateTimeCreated = lr.DATETIMECREATED,
+
+                                          creditAppraisalLoanApplicationId = lp.LOANAPPLICATIONID,
+                                          creditAppraisalOperationId = lp.OPERATIONID,
+                                          lmsLoanApplicationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.LOANAPPLICATIONID).FirstOrDefault(),
+                                          lmsOperationId = (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (ln.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault() :
+                                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID select c.OPERATIONID).FirstOrDefault(),
+
+                                          loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
+                                          appraisalOperationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.OPERATIONID).FirstOrDefault(),
+                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
+                                          loanId = ln.CONTINGENTLOANID,
+                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                          customerId = ln.CUSTOMERID,
+                                          productId = ln.PRODUCTID,
+                                          productTypeId = pr.PRODUCTTYPEID,
+                                          productTypeName = context.TBL_PRODUCT_TYPE.Where(x => x.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(m => m.PRODUCTTYPENAME).FirstOrDefault(),
+                                          casaAccountId = ln.CASAACCOUNTID,
+                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          branchId = ln.BRANCHID,
+                                          lmsrApplicationReferenceNumber = (from c in context.TBL_LMSR_APPLICATION_DETAIL
+                                                                            join l in context.TBL_LMSR_APPLICATION on c.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                                                                            where c.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID
+                                                                            select l.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+
+                                          loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                                          applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
+                                          relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                                          relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                          misCode = ln.MISCODE,
+                                          teamMiscode = ln.TEAMMISCODE,
+                                          principalAmount = ln.CONTINGENTAMOUNT,
+                                          //interestRate = ln.INTERESTRATE,
+                                          effectiveDate = ln.EFFECTIVEDATE,
+                                          maturityDate = ln.MATURITYDATE,
+                                          bookingDate = ln.BOOKINGDATE,
+                                          approvalStatusId = op.APPROVALSTATUSID,
+                                          approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                          approvedBy = (int)ln.APPROVEDBY,
+                                          approverComment = ln.APPROVERCOMMENT,
+                                          dateApproved = ln.DATEAPPROVED,
+                                          loanStatusId = ln.LOANSTATUSID,
+                                          isDisbursed = ln.ISDISBURSED,
+                                          disburserComment = ln.DISBURSERCOMMENT,
+                                          disburseDate = ln.DISBURSEDATE,
+                                          customerGroupId = lp.CUSTOMERGROUPID,
+                                          operationId = ln.OPERATIONID,
+                                          loanTypeId = lp.LOANAPPLICATIONTYPEID,
+                                          subSectorId = ln.SUBSECTORID,
+                                          subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                                          sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                          dischargeLetter = ln.DISCHARGELETTER,
+                                          //suspendInterest = ln.SUSPENDINTEREST,
+                                          customerCode = cu.CUSTOMERCODE,
+                                          loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                          customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                          currencyId = ln.CURRENCYID,
+                                          currency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == ln.CURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
+                                          branchName = br.BRANCHNAME,
+                                          relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                          relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                          productName = pr.PRODUCTNAME,
+                                          comment = "",
+                                          operationTypeId = op.OPERATIONTYPEID,
+                                          operationTypeName = tt.OPERATIONNAME,
+                                          newEffectiveDate = op.EFFECTIVEDATE,
+                                          reviewDetails = op.REVIEWDETAILS,
+                                          prepayment = op.PREPAYMENT,
+                                          newInterateRate = op.INTERATERATE,
+                                          newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                          newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                          newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                          newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                          newTenor = op.TENOR,
+                                          cASA_AccountId = op.CASA_ACCOUNTID,
+                                          cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                          cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                          overDraftTopup = op.OVERDRAFTTOPUP,
+                                          fee_Charges = op.FEE_CHARGES,
+                                          scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                          scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                          scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                          scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                          scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                          newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                          newMaturityDate = op.MATURITYDATE,
+                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          dateTimeCreated = op.DATECREATED,
+                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                          productAccountNumber = ch.ACCOUNTCODE,
+                                          productAccountName = ch.ACCOUNTNAME,
+                                          prepaymentAmount = op.PREPAYMENT,
+                                          approvedAmount = ld.APPROVEDAMOUNT,
+                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                          fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                          {
+                                              chargeFeeId = mp.CHARGEFEEID,
+                                              feeAmount = mp.FEEAMOUNT,
+                                              description = mp.DESCRIPTION,
+                                              casaAccount = mp.CASAACCOUNTID,
+                                              loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                              chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                              casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                          }).ToList(),
+                                      }).ToList();
+
+            var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var contingentLoanData = dataContingentLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var unionAll = termLoanData.Union(revolvingLoanData);
+
+            var data = unionAll.Union(contingentLoanData);
+
+            return data;
+        }
+
+        public bool CreditDocumentationFilling(CreditDocumentationViewModel model)
+        {
+                var creditDocumentationDetail = "documentation for loan ID: "+model.loanId +" with LOS reference number: "+model.applicationReferenceNumber +" " +
+                                            "LMS reference number: "+model.lmsrApplicationReferenceNumber + ", LMS loanReviewApplicationId: " + model.loanReviewApplicationId +" " +
+                                            "productName: "+model.productName+ ", customerName: "+model.customerName+ ",customerId: " +model.customerId;
+
+                var termLoan = this.context.TBL_LOAN.Find(model.loanId);
+                if(termLoan != null)
+                {
+                    termLoan.ISPRINTED = true;
+                
+                }
+                var contingentLoan = this.context.TBL_LOAN_CONTINGENT.Find(model.loanId);
+                if (contingentLoan != null)
+                {
+                    contingentLoan.ISPRINTED = true;
+
+                }
+                var revolvingLoan = this.context.TBL_LOAN_REVOLVING.Find(model.loanId);
+                if (revolvingLoan != null)
+                {
+                    revolvingLoan.ISPRINTED = true;
+
+                }
+                var auditStaff = context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE).FirstOrDefault();
+                // Audit Section ---------------------------
+                this.auditTrail.AddAuditTrail(new TBL_AUDIT
+                {
+>>>>>>> master
                     AUDITTYPEID = (short)AuditTypeEnum.CreditDocumentationPrinted,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,

@@ -192,6 +192,9 @@
     ReversalOfPrepayment = 249,
     BulkLiquidation = 250,
 
+
+    ProvisionOfDeferredDocument = 259,
+    DeferralExtension = 260
 }
 
 

@@ -12,6 +12,8 @@ namespace FintrakBanking.Interfaces.Setups.General
    public interface IAccreditedConsultantsRepository
     {
         //Solicitor
+        IEnumerable<AccreditedConsultantsViewModel> GetSearchedAgent(string search);
+        IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId);
         IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultants(int getCompanyId);
         IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId);
         IEnumerable<AccreditedConsultantTypeViewModel> GetAccreditedConsultantType();
