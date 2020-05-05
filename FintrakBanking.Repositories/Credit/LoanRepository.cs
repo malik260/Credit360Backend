@@ -13792,7 +13792,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFCODE == localGlobalReference.ACCOUNTOFFICERCODE).FirstOrDefault();
+            var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFID ==  customer.RELATIONSHIPOFFICERID).FirstOrDefault();
             if (accountOfficer == null) { throw new ConditionNotMetException("Account Officer does not exist on Credit360!"); }
 
             double interestRate = Convert.ToDouble(localGlobalReference.INTERESTRATE);
@@ -13848,7 +13848,7 @@ namespace FintrakBanking.Repositories.Credit
                 //PRINCIPALFREQUENCYTYPEID = entity.loanScheduleInput.principalFrequency,
                 //INTERESTFREQUENCYTYPEID = entity.loanScheduleInput.interestFrequency,
 
-                RELATIONSHIPOFFICERID = accountOfficer.STAFFID,
+                RELATIONSHIPOFFICERID = (int)customer.RELATIONSHIPOFFICERID,
                 RELATIONSHIPMANAGERID = accountOfficer.SUPERVISOR_STAFFID ?? accountOfficer.STAFFID,
                 //MISCODE = localGlobalReference.MISCODE,
                 //TEAMMISCODE = application.TEAMMISCODE,
@@ -13905,44 +13905,14 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
+            context.TBL_AUDIT.Add(audit);
             ////end of Audit section -------------------------------
 
-            using (var trans = context.Database.BeginTransaction())
-            {
-                //confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
-                entity.feeOverride = true;
+            context.TBL_LOAN_EXTERNAL.Add(data);
 
-                var loan = context.TBL_LOAN_EXTERNAL.Add(data);
+            return context.SaveChanges() > 0;
 
-
-                return context.SaveChanges() > 0;
-   
-                    
-                   // if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, false, (int)ApprovalStatusEnum.Processing))
-                   // {
-                       
-
-                        //AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        //AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
-                      
-                        //AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        //AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        //entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
-
-                        //var staffCode = context.TBL_STAFF.Find(entity.createdBy).STAFFCODE;
-                        // CreateFacilityOnThirdParty(loan.PRODUCTID, loan.LOANAPPLICATIONDETAILID, loan.CASAACCOUNTID, loan.EFFECTIVEDATE, loan.MATURITYDATE, (short) LoanSystemTypeEnum.TermDisbursedFacility, staffCode, staffCode);
-
-                        //if (!entity.feeOverride) PostLoanFees(entity);
-                        //context.SaveChanges();
-
-                        //trans.Commit();
-                  //  }
-
-             
-            }
+          
         }
 
 
