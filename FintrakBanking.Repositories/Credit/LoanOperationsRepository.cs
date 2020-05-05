@@ -18328,8 +18328,28 @@ namespace FintrakBanking.Repositories.Credit
                 bool result = false;
                 int data = 0;
 
+                List<string> receiverEmailList = new List<string>();
+                AlertsViewModel alert = new AlertsViewModel();
+                var dynamicMessage = string.Empty;
+                var staffEmail = context.TBL_STAFF.Find(entity.staffId);
+                var lmsApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(reviewRecord.LOANREVIEWAPPLICATIONID);
+                var lmsApplication = context.TBL_LMSR_APPLICATION.Find(lmsApplicationDetail.LOANAPPLICATIONID);
+                var customer = context.TBL_CUSTOMER.Find(lmsApplicationDetail.CUSTOMERID);
+
                 if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                 {
+
+                    alert.receiverEmailList.Add(staffEmail.EMAIL);
+                    if (entity.operationId == (int)OperationsEnum.OverdraftInterestRate)
+                    {
+                        dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
+                        LogEmailAlert(dynamicMessage, "Overdraft Interest Rate Change Notification ", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
+                    }
+                    if (entity.operationId == (int)OperationsEnum.ContractualInterestRateChange)
+                    {
+                        dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
+                        LogEmailAlert(dynamicMessage, "Contractual Interest Rate Change Notification ", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
+                    }
 
                     //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
                     if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
@@ -18397,11 +18417,17 @@ namespace FintrakBanking.Repositories.Credit
                     result = LoanRephasementProcess(twoFADetails, reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
                     if (result == true)
                     {
-                        //foreach(var item in validate)
-                        //{
-                        //    item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                        //}
-
+                        alert.receiverEmailList.Add(staffEmail.EMAIL);
+                        if (entity.operationId == (int)OperationsEnum.OverdraftInterestRate)
+                        {
+                            dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME +" "+ customer.LASTNAME + " "+ customer.MIDDLENAME + " ) has been Approved";
+                            LogEmailAlert(dynamicMessage, "Overdraft Interest Rate Change Notification ", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
+                        }
+                        if (entity.operationId == (int)OperationsEnum.ContractualInterestRateChange )
+                        {
+                            dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Approved";
+                            LogEmailAlert(dynamicMessage, "Contractual Interest Rate Change Notification ", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
+                        }
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         output = context.SaveChanges() > 0;
                     }
@@ -18419,6 +18445,58 @@ namespace FintrakBanking.Repositories.Credit
             // return data;
         }
 
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
+        {
+            try
+            {
+                string recipient = string.Join("", recipients.ToArray());
+                string messageSubject = alertSubject + " ALERT";
+                string messageContent = messageBody;
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = messageContent,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = referenceCode,
+                    targetId = targetId,
+                    operationMethod = operationMehtod,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                new SecureException(ex.ToString());
+            }
+        }
+
+        private void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
+
+        }
         public List<FinanceTransactionViewModel> BuildLoanOperationsManualChargeFeesPosting(int loanChargeFeeId)
         {
             var loanFee = context.TBL_LOAN_FEE.Find(loanChargeFeeId);
