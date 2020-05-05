@@ -2592,10 +2592,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity)
         {
-<<<<<<< HEAD
-=======
-            
->>>>>>> master
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 entity.operationId = (int)OperationsEnum.GlobalInterestRateChange;
@@ -2719,9 +2715,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
         }
 
-<<<<<<< HEAD
-
-=======
         public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
         {
             try
@@ -2775,7 +2768,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
         }
 
->>>>>>> master
         //public int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity)
         //{
         //    entity.operationId = (int)OperationsEnum.GlobalInterestRateChange;

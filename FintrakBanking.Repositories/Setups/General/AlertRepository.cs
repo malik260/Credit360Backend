@@ -1356,13 +1356,7 @@ namespace FintrakBanking.Repositories.Setups.General
         //    return loanArchive.ProcessLoanArchieving();
 
         //}
-<<<<<<< HEAD
 
-
-=======
-
-
->>>>>>> master
         public void GetCreditCardMaturingObligations()
         {
             // GetCreditCardMaturingObligations method

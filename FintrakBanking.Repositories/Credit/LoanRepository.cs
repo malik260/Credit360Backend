@@ -42,10 +42,7 @@ using System.Text;
 using FintrakBanking.ViewModels.Flexcube;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System.Configuration;
-<<<<<<< HEAD
-=======
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
->>>>>>> master
 
 namespace FintrakBanking.Repositories.Credit
 {

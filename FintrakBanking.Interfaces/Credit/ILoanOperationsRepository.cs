@@ -15,22 +15,19 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansOperationWriteOffAnalysis(int staffId, int companyId);
+
         List<LoanViewModel> GetCurrentPrepayment(int companyId);
 
         List<LoanViewModel> GetRunningPrepaymentLoans(int companyId, int loanId);
 
-        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansOperationWriteOffAnalysis(int staffId, int companyId);
-
         List<LoanViewModel> AddBulkPrepaymentReversal(LoanReviewOperationViewModel model, int companyId);
         bool AddBulkPrepaymentReversalData(LoanViewModel data, int batchCode, DateTime applicationDate);
         string GetTransactionReferenceNo();
-<<<<<<< HEAD
-        List<LoanViewModel> GetRunningPrepaymentLoans(int companyId, int loanId);
-=======
+     
         IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId, int accreditedConsultantId);
         IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId);
->>>>>>> master
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId);
         bool CreditDocumentationFilling(CreditDocumentationViewModel model);
         bool UpdateLoanClassification(DateTime applicationDate, int companyId);

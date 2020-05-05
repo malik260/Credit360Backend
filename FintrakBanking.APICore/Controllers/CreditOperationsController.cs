@@ -899,8 +899,6 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
-<<<<<<< HEAD
-=======
         }
 
         [HttpGet]
@@ -929,17 +927,10 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "No record found" });
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-
->>>>>>> master
         }
 
         [HttpGet]
         [ClaimsAuthorization]
-<<<<<<< HEAD
-        [Route("loan-operation/awaiting-approval")]
-        public HttpResponseMessage GetLoanOperationAwaitingApproval(){
-            var data = repo.GetLoanOperationAwaitingApproval(token.GetStaffId, token.GetCompanyId);
-=======
         [Route("loan-operation/recovery-write-off-analysis")]
         public HttpResponseMessage GetAllLoansOperationWriteOffAnalysis()
         {
@@ -974,7 +965,6 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent(int accreditedConsultantId)
         {
             var data = repo.getAllLoansOperationRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId);
->>>>>>> master
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -986,17 +976,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-<<<<<<< HEAD
-        [Route("loan-operation/awaiting-documentation")]
-        public HttpResponseMessage GetLoanOperationAwaitingDocumentation()
-        {
-            var data = repo.GetLoanOperationDocumentation(token.GetStaffId, token.GetCompanyId);
-=======
         [Route("loan-operation/recovery-report/{accreditedConsultantId}")]
         public HttpResponseMessage GetAllLoansRecoveredByAgent(int accreditedConsultantId)
         {
             var data = repo.GetAllLoansRecoveredByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId);
->>>>>>> master
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
