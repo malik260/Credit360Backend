@@ -11,7 +11,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanReviewOperationsId { get; set; }
         public string legalContingentCode { get; set; }
 
-
+        public List<LoanViewModel> dataCollection { get; set; }
         public int loanId { get; set; }
 
         public short productTypeId { get; set; }
