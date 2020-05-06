@@ -11,7 +11,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanReviewOperationsId { get; set; }
         public string legalContingentCode { get; set; }
 
-
+        public List<LoanViewModel> dataCollection { get; set; }
         public int loanId { get; set; }
 
         public short productTypeId { get; set; }
@@ -106,22 +106,54 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanReviewIrregularScheduleViewModel
     {
         public int IrregularScheduleInputId { get; set; }
-
         public int LoanReviewOperationId { get; set; }
-
         public DateTime PaymentDate { get; set; }
-
         public decimal PaymentAmount { get; set; }
-
         public int CreatedBy { get; set; }
-
         public DateTime DateTimeCreated { get; set; }
+    }
+
+    public class LoanRecoveryAssignmentViewModel
+    {
+        public int loanAssignId { get; set; }
+        public int loanId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public DateTime dateAssigned { get; set; }
+        public int createdBy { get; set; }
+        public bool isFullyRecovered { get; set; }
+        public DateTime? expCompletionDate { get; set; }
+    }
+
+    public class CollateralLiquidationRecoveryViewModel : GeneralEntity
+    {
+        public int collateralLiquidationRecoveryId { get; set; }
+        public int loanId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public int loanAssignId { get; set; }
+        public bool isFullyRecovered { get; set; }
+        public bool overwrite { get; set; }
+        public byte[] fileData { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public int fileSize { get; set; }
+        public string fileSizeUnit { get; set; }
+        public DateTime receiptDate { get; set; }
+        public decimal totalRecoveryAmount { get; set; }
+        public decimal recoveredAmount { get; set; }
+        public decimal? outstandingAmount { get; set; }
+        public string collateralCode { get; set; }
+        public string collectionMode { get; set; }
     }
 
     public class LoanReviewOperationApprovalViewModel
     {
         public decimal? prepaymentAmount;
-
+        public DateTime? expCompletionDate { get; set; }
+        public int loanAssignId { get; set; }
         public int loanChargeFeeId { get; set; }
         public string chargeFeeName { get; set; }
         public decimal feeAmount { get; set; }
@@ -149,7 +181,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string casaAccount { get; set; }
 
         public string casaAccountName { get; set; }
- public int loanApplicationDetailId { get; set; }
+        public int loanApplicationDetailId { get; set; }
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
@@ -301,6 +333,24 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int creditAppraisalOperationId { get; set; }
         public string lmsrApplicationReferenceNumber { get; set; }
         public decimal amount { get; set; }
+
+
+        public int collateralLiquidationRecoveryId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public bool isFullyRecovered { get; set; }
+        public bool overwrite { get; set; }
+        public byte[] fileData { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public int fileSize { get; set; }
+        public string fileSizeUnit { get; set; }
+        public DateTime receiptDate { get; set; }
+        public decimal totalRecoveryAmount { get; set; }
+        public decimal recoveredAmount { get; set; }
+        public decimal? outstandingAmount { get; set; }
+        public string collateralCode { get; set; }
+        public string collectionMode { get; set; }
+        public int createdBy { get; set; }
     }
 
 

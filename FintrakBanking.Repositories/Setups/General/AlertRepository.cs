@@ -986,8 +986,25 @@ namespace FintrakBanking.Repositories.Setups.General
         private bool CompareDate()
         {
             DateTime currentDate = DateTime.Now;
-           var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate) && (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminder")).FirstOrDefault();
-            
+           var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate) 
+                        && (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" 
+                        || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminder"
+                        /*|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationModuleIncrease"*/
+                        )).FirstOrDefault();
+
             if (DBdate == null)
             {
                 return true;
@@ -1339,7 +1356,6 @@ namespace FintrakBanking.Repositories.Setups.General
         //    return loanArchive.ProcessLoanArchieving();
 
         //}
-
 
         public void GetCreditCardMaturingObligations()
         {
