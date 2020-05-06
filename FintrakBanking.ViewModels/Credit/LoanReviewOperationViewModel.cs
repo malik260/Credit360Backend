@@ -483,6 +483,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public DateTime systemArrivalDate { get; set; }
 
         public string staffRoleCode { get; set; }
+
+        public string loanReferenceNumber { get; set; }
     }
 
     public class applicationDetails
