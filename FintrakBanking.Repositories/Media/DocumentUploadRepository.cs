@@ -68,6 +68,7 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId, int operationId, int targetId, bool isOperationSpecific=false)
         {
+
             var firstQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
                 , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
@@ -117,11 +118,13 @@ namespace FintrakBanking.Repositories.Media
                     createdBy = up.createdBy,
                     uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
 
-                })
-                .OrderBy(x => x.dateTimeCreated)
-                .ThenBy(x => x.documentCategoryId)
-                .ThenBy(x => x.documentTypeId)?
-                .ToList();
+                 })
+                 .OrderBy(x => x.dateTimeCreated)
+                 .ThenBy(x => x.documentCategoryId)
+                 .ThenBy(x => x.documentTypeId)?
+                 .ToList();
+
+
 
             var customerId = (from ccb in context.TBL_CUSTOMER_CREDIT_BUREAU
                               join app in context.TBL_LOAN_APPLICATION_DETAIL on ccb.CUSTOMERID equals app.CUSTOMERID

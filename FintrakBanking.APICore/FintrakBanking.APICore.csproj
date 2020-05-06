@@ -505,6 +505,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\TransactionDataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TransactionDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.cs">
       <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

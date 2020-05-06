@@ -1357,7 +1357,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
         //}
 
-
         public void GetCreditCardMaturingObligations()
         {
             // GetCreditCardMaturingObligations method

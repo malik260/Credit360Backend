@@ -88,23 +88,31 @@ namespace FintrakBanking.APICore.Controllers
         [Route("facilty-details/{loanId}")]
         public HttpResponseMessage GetFacilityDetail(int loanId)
         {
-            try
-            {
-                var data = repo.FacilityDetail(loanId);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data });
-            }
-            catch (SecureException ex)
+            var data = repo.FacilityDetail(loanId);
+            if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
+                   new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("third-party-facilty-details/{loanReferenceNumber}")]
+        public HttpResponseMessage ThirdPartyFacilityDetails(string loanReferenceNumber)
+        {
+            var data = repo.ThirdPartyFacilityDetails(loanReferenceNumber);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
