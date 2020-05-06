@@ -188,6 +188,7 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
         }
 
+     
         public IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? classId)
         {
             // var declarations
@@ -207,23 +208,11 @@ namespace FintrakBanking.Repositories.Credit
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
             operationIds.AddRange(approvalOperations);
-            //// TODO
-            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
-            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(79);
-            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(107);
-            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(108);
-            //if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(109);
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
-            // get approval levels 
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
-            //var ids = levelIds.ToList();
-            //ids.Add(71); // --------------- REMOVE!!!
-            //ids.Add(79); // --------------- REMOVE!!!
-
-            // query
 
             var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch)
              .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
@@ -316,11 +305,13 @@ namespace FintrakBanking.Repositories.Credit
                         reviewStageId = d.REVIEWSTAGEID,
                         loanId = d.LOANID,
                         creditAppraisalOperationId = (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.OPERATIONID).FirstOrDefault() :
+                                                     (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ExternalFacility) ? 0 :
                                                      (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.OPERATIONID).FirstOrDefault() :
                                                      (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.OPERATIONID).FirstOrDefault(),
 
 
                         creditAppraisalLoanApplicationId = (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
+                                                    (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ExternalFacility) ? 0 :
                                                      (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
                                                      (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault(),
                         loanSystemTypeId = d.LOANSYSTEMTYPEID,
@@ -336,8 +327,12 @@ namespace FintrakBanking.Repositories.Credit
                           approvedAmount = d.APPROVEDAMOUNT,
                           customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                           statusId = d.APPROVALSTATUSID,
-                          accountName = d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME,
-                          accountNumber = d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER,
+                          accountName = d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME :
+                                                                                                                d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ExternalFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_EXTERNAL.Where(M => M.EXTERNALLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME :
+                                                                                                                d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : d.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME,
+                          accountNumber = d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN.Where(M => M.TERMLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER :
+                           d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ExternalFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_EXTERNAL.Where(M => M.EXTERNALLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNAME :
+                          d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_REVOLVING.Where(M => M.REVOLVINGLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : d.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability ? context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_CONTINGENT.Where(M => M.CONTINGENTLOANID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER : context.TBL_CASA.Where(O => O.CASAACCOUNTID == (context.TBL_LOAN_APPLICATION_DETAIL.Where(M => M.LOANAPPLICATIONDETAILID == d.LOANID).FirstOrDefault().CASAACCOUNTID)).FirstOrDefault().PRODUCTACCOUNTNUMBER,
                           terms = d.REPAYMENTTERMS,
                           currencyId = d.CURRENCYID,
                           schedule = context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault() == null ? "" : context.TBL_REPAYMENT_TERM.Where(r => r.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(r => r.REPAYMENTTERMDETAIL).FirstOrDefault(),
@@ -350,7 +345,7 @@ namespace FintrakBanking.Repositories.Credit
                 .OrderByDescending(x => x.loanReviewApplicationId);
 
             var list = applications.ToList();
-                //var count = applications.Count();
+            var count = applications.Where(x=>x.referenceNumber == "0000001040" || x.referenceNumber == "0000001039").ToList();
             
             return applications; 
         }
@@ -641,13 +636,18 @@ namespace FintrakBanking.Repositories.Credit
 
             if (assetManagement)
             {
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
+                var targetID = application.LOANAPPLICATIONID;
+                if (model.loanSystemTypeId == (short)LoanSystemTypeEnum.ExternalFacility) targetID = loan.loanId;
+
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, targetID, null, "Initiation", true, true, true);
                 application.OPERATIONID = (short)model.operationId;//79;
                 context.Entry(application).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
+                var targetID = application.LOANAPPLICATIONID;
+                if (model.loanSystemTypeId == (short)LoanSystemTypeEnum.ExternalFacility) targetID = loan.loanId;
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, targetID, null, "Initiation", true, true, true);
             }
 
             if (context.SaveChanges() > 0)
@@ -1260,6 +1260,21 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OUTSTANDINGPRINCIPAL,
                     loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
+                })
+                .FirstOrDefault();
+            }
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.ExternalFacility)
+            {
+                result = context.TBL_LOAN_EXTERNAL.Where(x => x.EXTERNALLOANID == loanId).Select(loan => new LoanViewModel
+                {
+                    customerId = loan.CUSTOMERID,
+                    currencyId = loan.CURRENCYID,
+                    effectiveDate = startDate,
+                    maturityDate = loan.MATURITYDATE,
+                    interestRate = loan.INTERESTRATE,
+                    outstandingPrincipal = loan.OUTSTANDINGPRINCIPAL,
+                    //loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
                     loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
