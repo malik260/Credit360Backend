@@ -28614,6 +28614,7 @@ namespace FintrakBanking.Repositories.Credit
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
                             where
                             !loansId.Contains(ln.TERMLOANID)
+                            && pr.EXCLUDEFROMLITIGATION == false
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == true
@@ -28773,6 +28774,7 @@ namespace FintrakBanking.Repositories.Credit
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                      where
                                      !loansId.Contains(ln.REVOLVINGLOANID)
+                                     && pr.EXCLUDEFROMLITIGATION == false
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == true
@@ -28905,6 +28907,7 @@ namespace FintrakBanking.Repositories.Credit
                                       join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
                                       where
                                       !loansId.Contains(ln.CONTINGENTLOANID)
+                                      && pr.EXCLUDEFROMLITIGATION == false
                                       && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && op.OPERATIONCOMPLETED == true
@@ -29053,6 +29056,7 @@ namespace FintrakBanking.Repositories.Credit
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
                             where
                             lr.ISFULLYRECOVERED == false && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                            && pr.EXCLUDEFROMLITIGATION == false
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == true
@@ -29214,6 +29218,7 @@ namespace FintrakBanking.Repositories.Credit
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                      where
                                      lr.ISFULLYRECOVERED == false && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                     && pr.EXCLUDEFROMLITIGATION == false
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == true
@@ -29348,6 +29353,7 @@ namespace FintrakBanking.Repositories.Credit
                                       join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
                                       where
                                       lr.ISFULLYRECOVERED == false && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                      && pr.EXCLUDEFROMLITIGATION == false
                                       && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && op.OPERATIONCOMPLETED == true
@@ -29497,6 +29503,7 @@ namespace FintrakBanking.Repositories.Credit
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
                             where
                             lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                            && pr.EXCLUDEFROMLITIGATION == false
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == true
@@ -29673,6 +29680,7 @@ namespace FintrakBanking.Repositories.Credit
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                      where
                                      lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                     && pr.EXCLUDEFROMLITIGATION == false
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == true
@@ -29821,6 +29829,7 @@ namespace FintrakBanking.Repositories.Credit
                                       join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
                                       where
                                       lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                      && pr.EXCLUDEFROMLITIGATION == false
                                       && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && op.OPERATIONCOMPLETED == true
