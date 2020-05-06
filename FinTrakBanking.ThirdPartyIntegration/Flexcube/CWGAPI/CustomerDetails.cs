@@ -65,7 +65,7 @@
                 HttpResponseMessage response = null;
                // ResponseMessageViewModel res = null;
                 string responseMessage = "";
-                string responseData = "";
+                //string responseData = "";
                 getAPIURLSettings("Customer");
 
                 try
@@ -93,34 +93,40 @@
                     if (response.IsSuccessStatusCode)
                     {
                         //var customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
+                        responseMessage = await response.Content.ReadAsStringAsync();
+                        JObject jsonString = JObject.Parse(responseMessage);
 
-                        responseData = await response.Content.ReadAsStringAsync();
-                        JObject jsonString = JObject.Parse(responseData);
-                        var data = jsonString["data"].ToString();
-
-                        var objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(data);
-
-                        foreach (var customerModel in objData)
+                        if (responseMessage.Contains("data"))
                         {
-                            if (customerModel.customerType == "C") { customerModel.customerTypeId = 2; }
-                            else { customerModel.customerTypeId = 1; }
+                            var data = jsonString["data"].ToString();
+                            var objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(data);
 
-                            if (customerModel.gender == "M") { customerModel.gender = "Male"; }
-                            if (customerModel.gender == "F") { customerModel.gender = "Female"; }
-
-                            if (customerModel.customerTypeId == (short)CustomerTypeEnum.Corporate || customerModel.customerType == "C")
+                            foreach (var customerModel in objData)
                             {
-                                customerModel.firstName = customerModel.companyName == null ? customerModel.company_name : customerModel.companyName;
-                                customerModel.companyName = customerModel.company_name;
-                            }
-                            customerModel.isPoliticallyExposed = customerModel.politicallyExposedPerson > 0;
+                                if (customerModel.customerType == "C") { customerModel.customerTypeId = 2; }
+                                else { customerModel.customerTypeId = 1; }
 
-                            customers.Add(customerModel);
+                                if (customerModel.gender == "M") { customerModel.gender = "Male"; }
+                                if (customerModel.gender == "F") { customerModel.gender = "Female"; }
+
+                                if (customerModel.customerTypeId == (short)CustomerTypeEnum.Corporate || customerModel.customerType == "C")
+                                {
+                                    customerModel.firstName = customerModel.companyName == null ? customerModel.company_name : customerModel.companyName;
+                                    customerModel.companyName = customerModel.company_name;
+                                }
+
+                                customerModel.isPoliticallyExposed = customerModel.politicallyExposedPerson > 0;
+                                customers.Add(customerModel);
+                            }
+                        }
+                        else if (responseMessage.Contains("33"))
+                        {
+                            throw new APIErrorException($"Core Banking API Error - {responseMessage}");
                         }
 
-
                     }
-                    responseMessage = await response.Content.ReadAsStringAsync();
+
+                    //responseMessage = await response.Content.ReadAsStringAsync();
                     handler.Dispose();
                     client.Dispose();
 
@@ -136,19 +142,23 @@
                     //};
                     //FinTrakBankingContext logContext = new FinTrakBankingContext();
 
-                   // logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    // logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                     //logContext.SaveChanges();
 
                     return customers;
                 }
-                catch(Exception ex)
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message}");
+                }
+                catch (Exception ex)
                 {
                     var innerExceptionMessage = "";
                     if (ex.InnerException != null)
                         innerExceptionMessage = ex.InnerException.Message;
 
-                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                    throw new Exception($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
                 }
                 finally
                 {
@@ -162,10 +172,9 @@
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
+
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
-
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
                     logContext.SaveChanges();
                 }
 
@@ -284,7 +293,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"{API_URL}/GetCustomerAccountBalance/{customerAccount}",
+                        APIURL = $"{API_URL}GetCustomerAccountBalance/{customerAccount}",
                         LOGTYPEID = 1,
                         REFERENCENUMBER = customerAccount,
                         REQUESTDATETIME = requestDatetime,
@@ -379,7 +388,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"{API_URL}GetCustomerAccountsBalance/{customerCode}",
+                        APIURL = $"{API_URL}GetCustomerAccountBalances/{customerCode}",
                         LOGTYPEID = 5,
                         REFERENCENUMBER = customerCode,
                         REQUESTDATETIME = requestDatetime,

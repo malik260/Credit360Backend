@@ -43,6 +43,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool Saved { get; }
         float? InterestRateConcession { set; }
         float? FeeRateConcession { set; }
+        bool? IsFromPc { set; }
+        string Flow_log { set; }
 
         AlertPlaceholders Placeholders { set; }
         WorkflowResponse Response { get; set; }
@@ -79,6 +81,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public string nextPersonName { get; set; }
 
         public string nextOperationName { get; set; }
+        public string responseMessage { get; set; }
         public bool success { get; set; }
         public int? fromLevelId { get; set; }
         public bool isFinal { get; set; }

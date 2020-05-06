@@ -105,6 +105,8 @@ namespace FintrakBanking.Entities.Models
 
         //[StringLength(500)]
         public string APPROVERCOMMENT { get; set; }
+        public string COREBANKINGREF{ get; set; }
+        public bool? ISMANUALBOOKING { get; set; }
 
         public DateTime? DATEAPPROVED { get; set; }
 
@@ -119,7 +121,7 @@ namespace FintrakBanking.Entities.Models
         public bool SHOULD_DISBURSE { get; set; }
 
         public bool ISDISBURSED { get; set; }
-
+        public bool ISPRINTED { get; set; }
         public int? DISBURSEDBY { get; set; }
 
         //[StringLength(500)]

@@ -122,7 +122,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.AdhocAppraisalMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "ADHOC APPLICATION") });
         }
 
         [HttpPost]
@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LcAppraisalMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC ISSUANCE request has been APPROVED successfully" : "The LC ISSUANCE request has been REJECTED successfully") : "The LC ISSUANCE request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC ISSUANCE") });
         }
 
         [HttpPost]
@@ -152,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LcReleaseMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC SHIPPING DOCUMENTS RELEASE request has been APPROVED successfully" : "The LC SHIPPING DOCUMENTS RELEASE request has been REJECTED successfully") : "The LC SHIPPING DOCUMENTS RELEASE request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC RELEASE") });
         }
 
         [HttpPost]
@@ -167,7 +167,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LcCancelationMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC CANCELATION request has been APPROVED successfully" : "The LC CANCELATION request has been REJECTED successfully") : "The LC CANCELATION request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC CANCELATION") });
         }
 
         [HttpPost]
@@ -182,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LcEnhancementMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC CANCELATION request has been APPROVED successfully" : "The LC CANCELATION request has been REJECTED successfully") : "The LC CANCELATION request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC ENHANCEMENT") });
         }
 
         [HttpPost]
@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LcUssanceMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC USANCE request has been APPROVED successfully" : "The LC USANCE request has been REJECTED successfully") : "The LC USANCE request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LC USSANCE") });
         }
 
         [HttpPost]
@@ -212,7 +212,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.LetterGenerationRequestMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LETTER GENERATION request has been APPROVED successfully" : "The LETTER GENERATION request has been REJECTED successfully") : "The LETTER GENERATION request has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LETTER GENERATION") });
         }
 
         [HttpPost]
@@ -227,7 +227,7 @@ namespace FintrakBanking.APICore.Controllers
 
             WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The Collateral swap request has been acted on successfully" : "The Collateral swap request has been APPROVED successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "COLLATERAL SWAP") });
         }
 
 
@@ -429,6 +429,110 @@ namespace FintrakBanking.APICore.Controllers
                 .ToList();
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+        }
+
+        [HttpGet, Route("pool-application-approval-process")]
+        public HttpResponseMessage GetPoolApplications([FromUri] int operationId, [FromUri] int? classId, [FromUri] string searchString)
+        {
+            IQueryable<LoanApplicationViewModel> items;
+            items = repo.GetPoolApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
+
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+
+                searchString = searchString.Trim().ToLower();
+                items = (from x in items
+                         where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
+                         || x.applicantName.ToLower().StartsWith(searchString)
+                         || x.applicationAmount.ToString() == searchString
+                         //|| x.customerGroupName.ToLower().StartsWith(searchString)
+                         select x);
+            }
+
+            var data = items.ToList();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+        }
+
+        [HttpPut, Route("reassign-application/owner/{staffId}")]
+        public HttpResponseMessage ChangeApplicationOwner([FromBody] int loanApplicationId, int staffId)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.ChangeApplicationOwner(loanApplicationId, staffId, entity);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Ownership was reassigned successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
+        }
+
+        [HttpPut, Route("reassign-application/{staffId}")]
+        public HttpResponseMessage ReassignApplication([FromBody] int approvalTrailId, int staffId)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.AssignApplication(approvalTrailId, staffId, entity);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request was reassigned successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
+        }
+
+        [HttpPut, Route("self-assign-multiple-approval-item")]
+        public HttpResponseMessage SelfAssignmultipleApprovalItem([FromBody] List<ForwardViewModel> model)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.SelfAssignMultpleApplication(model, entity);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request assigned successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured when trying to reassign" });
+        }
+
+        [HttpPut, Route("selfAssign-application")]
+        public HttpResponseMessage AssignApplication([FromBody] int approvalTrailId)
+        {
+            var entity = new GeneralEntity
+            {
+                userBranchId = (short)token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path
+            };
+
+            var reassigned = repo.AssignApplication(approvalTrailId, token.GetStaffId, entity);
+            if (reassigned)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request was assigned successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
         }
 
         [HttpGet, Route("adhoc-approval/{operationId}/class/{classId}")]
@@ -785,6 +889,18 @@ namespace FintrakBanking.APICore.Controllers
             WorkflowResponse response = repo.GetWorkflowNextStatusLms(entity);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+        }
+
+        [HttpGet]
+        [Route("global-interest-rate-change-comments/trail/{applicationId}/operation/{operationId}")]
+        public HttpResponseMessage GetGlobalInterestRateChangeTrail(int applicationId, int operationId)
+        {
+            var data = repo.GetGlobalInterestRateChangeTrail(applicationId, operationId);
+            if (data.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
     }
 }

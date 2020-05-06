@@ -60,7 +60,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISONLENDING { get; set; }
         public bool ISINTERVENTIONFUNDS { get; set; }
         public bool ISORRBASEDAPPROVAL { get; set; }
-        public bool WITHOUTINSTRUCTION { get; set; }
+        public bool WITHINSTRUCTION { get; set; }
         public bool DOMICILIATIONNOTINPLACE { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
@@ -103,7 +103,9 @@ namespace FintrakBanking.Entities.Models
         public bool NOTINCAMSOL { get; set; }
         public bool NOTINXDS { get; set; }
         public bool NOTINCRC { get; set; }
-
+        public int? ARCHIVEDBY { get; set; }
+        public short? APPROVEDLINESTATUSID { get; set; }
+        public int OWNEDBY { get; set; }
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }

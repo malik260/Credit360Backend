@@ -492,10 +492,10 @@ namespace FintrakBanking.Repositories.Credit
                 this.obligorClassification = GetObligorClassification();
                 this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SINGLEOBLIGORLIMIT;
                 this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-                if (this.loanApplication.TBL_CUSTOMER?.CUSTOMERTYPEID == (int)CustomerTypeEnum.Individual)
+                if (this.loanApplication.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased)
                 {
                     //continue
-                    this.globalExposure = GetGloabalExposures();
+                    //this.globalExposure = GetGloabalExposures();
                 }
                 else
                 {
@@ -562,7 +562,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.idfDocumentationChecklistData = IdfDocumentationChecklistHtml();
 
                 //CASH COLLATERIZED
-                this.cashCollaterizedCustomerInformationData = IdfCustomerInformationHtml();
+                this.cashCollaterizedCustomerInformationData = cashCollaterizedCustomerInformationHtml();
                 this.cashCollaterizedCustomerFacilityData = IdfCustomerFacilityHtml();
                 this.cashCollaterizedCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
                 this.cashCollaterizedCurrentRequestData = IdfCurrentRequestHtml();
@@ -637,8 +637,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.managementProfile = GetManagementProfileMarkup();
                 this.ownership = GetOwnershipMarkup();
                 this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
-                this.conditionsPrecedentToDrawdown = GetConditionsPrecedentToDrawdownMarkup();
-                this.transactionsDynamics = GetTransactionsDynamicsMarkup();
+                this.conditionsPrecedentToDrawdown = FussCustomerConditionSubsequentHtml();
+                this.transactionsDynamics = FussCustomerConditionDynamicsHtml(); //GetTransactionsDynamicsMarkup();
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
                 // out ducument properties definition
@@ -792,7 +792,7 @@ namespace FintrakBanking.Repositories.Credit
                     this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
                     this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
                 }
-                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId)?.CHARGEFEEID;
+                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;
             
                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
                 string customerName = String.Empty;
@@ -809,7 +809,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.principalRepayment = "";
                 this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
                 this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-                this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
+                this.otherFee = (context.TBL_CHARGE_FEE_DETAIL.FirstOrDefault(p => p.CHARGEFEEID == chargeFeeId)?.VALUE) ?? 0; 
                 this.effectiveDate = loanApplication.APPROVEDDATE;
                 this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
                 this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.TBL_STAFF.MISCODE;
@@ -819,11 +819,10 @@ namespace FintrakBanking.Repositories.Credit
                 //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
                 this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
-                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(o=>o.AMOUNT_REQUESTED.ToString("#,##.00")).FirstOrDefault() ?? "0.00";
+                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault()?.AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
 
             return true;
         }
-
 
         private bool InitializeCashBackMemoProperties(int operationId, int targetId) // feeder
         {
@@ -879,8 +878,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = new List<DropDownSelect>();
 
-            if (this.lmsrApplication == null)
-            {
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
                 var conditions = new List<ConditionPrecedentViewModel>();
 
@@ -897,31 +894,6 @@ namespace FintrakBanking.Repositories.Credit
                         result.Add(new DropDownSelect { typeId = b.loanApplicationDetailId, id = b.conditionId, name = b.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
                     }
                 }
-            }
-            else
-            {
-                var d = context.TBL_LMSR_APPLICATION_DETAIL.Where(a =>a.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && a.DELETED == false).FirstOrDefault();
-                var currentApplicationId = (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
-                                     (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
-                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
-
-                var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == currentApplicationId && x.DELETED == false).ToList();
-                var conditions = new List<ConditionPrecedentViewModel>();
-
-                foreach (var b in details)
-                {
-                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == b.LOANREVIEWAPPLICATIONID));
-                }
-
-                foreach (var f in conditions)
-                {
-                    if (f.condition != null)
-                    {
-                        var detail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == f.loanApplicationDetailId).FirstOrDefault();
-                        result.Add(new DropDownSelect { typeId = f.loanApplicationDetailId, id = f.conditionId, name = f.condition, title = detail.TBL_PRODUCT.PRODUCTNAME });
-                    }
-                }
-            }
            
             return result;
         }
@@ -947,7 +919,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var conditions = GetConditionsPrecedentToDrawdownFacility(LOANAPPLICATIONDETAILID).GroupBy(c => c.typeId).ToList(); // new
-            result = result + $@"<br />
+            if (conditions.Count() > 0) { 
+                result = result + $@"<br />
                 <h3><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
@@ -955,36 +928,35 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
                     </tr>
                  ";
-            
-            foreach (var g in conditions)
-            {
-                var n = 0;
-                var c = g.FirstOrDefault();
-                result += c.title;
-                foreach (var e in g)
+
+                foreach (var g in conditions)
                 {
-                    n++;
-                    result = result + $@"
-                    <tr>
-                        <td>{n}</td>
-                        <td>{e.name}</td>
-                    </tr>
-                    ";
+                    var n = 0;
+                    var c = g.FirstOrDefault();
+                    result += c.title;
+                    foreach (var e in g)
+                    {
+                        n++;
+                        result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{e.name}</td>
+                        </tr>
+                        ";
+                    }
+
                 }
-                
+              result = result + $"</table><br/>";
             }
-            result = result + $"</table>";
             return result;
 
         }
 
-        public List<DropDownSelect> GetTransactionsDynamics()
+        public List<DropDownSelect> GetdrawdownTransactionsDynamics(int targetIds)
         {
             var result = new List<DropDownSelect>();
 
-            if (this.lmsrApplication == null)
-            {
-                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
+                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetIds && x.DELETED == false).ToList();
                 var allTransactions = this.transactionsRepo.GetAllTransactionDynamics().OrderBy(a => a.position);
                 var transactions = new List<TransactionDynamicsViewModel>();
 
@@ -1002,34 +974,36 @@ namespace FintrakBanking.Repositories.Credit
                         result.Add(new DropDownSelect { typeId = (int)t.loanApplicationDetailId, name = t.dynamics, title = detail.TBL_PRODUCT1.PRODUCTNAME });
                     }
                 }
-            }
-            else
+            
+            return result;
+        }
+
+        public List<DropDownSelect> GetTransactionsDynamics()
+        {
+            var result = new List<DropDownSelect>();
+
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
+            var allTransactions = this.transactionsRepo.GetAllTransactionDynamics().OrderBy(a => a.position);
+            var transactions = new List<TransactionDynamicsViewModel>();
+
+            foreach (var b in details)
             {
-                var d = context.TBL_LMSR_APPLICATION_DETAIL.Where(a=>a.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && a.DELETED == false).FirstOrDefault();
-                var currentApplicationId = (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
-                                     (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
-                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
+                var transactionSelect = allTransactions.Where(x => x.loanApplicationDetailId == b.LOANAPPLICATIONDETAILID).ToList();
+                transactions.AddRange(transactionSelect);
+            }
 
-                var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == currentApplicationId && x.DELETED == false).ToList();
-                var conditions = new List<ConditionPrecedentViewModel>();
-
-                foreach (var b in details)
+            foreach (var t in transactions)
+            {
+                if (t.dynamics != null)
                 {
-                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == b.LOANREVIEWAPPLICATIONID));
-                }
-
-                foreach (var f in conditions)
-                {
-                    if (f.condition != null)
-                    {
-                        var detail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == f.loanApplicationDetailId).FirstOrDefault();
-                        result.Add(new DropDownSelect { typeId = f.loanApplicationDetailId, id = f.conditionId, name = f.condition, title = detail.TBL_PRODUCT.PRODUCTNAME });
-                    }
+                    var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == t.loanApplicationDetailId).FirstOrDefault();
+                    result.Add(new DropDownSelect { typeId = (int)t.loanApplicationDetailId, name = t.dynamics, title = detail.TBL_PRODUCT1.PRODUCTNAME });
                 }
             }
 
             return result;
         }
+
 
         public string GetObligorClassification()
         {
@@ -1187,12 +1161,12 @@ namespace FintrakBanking.Repositories.Credit
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
             })?.ToList();
 
-            return data;
+            return data.OrderByDescending(d=>d.systemArrivalDateTime);
         }
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailDrawdown(int applicationId, int operationId)
         {
-            var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList();
+            var bookingIds = context.TBL_LOAN_BOOKING_REQUEST.Where(b => b.LOANAPPLICATIONDETAILID == applicationId).Select(b => b.LOAN_BOOKING_REQUESTID).ToList().Distinct();
             var allstaff = this.GetAllStaffNames();
             var trail = context.TBL_APPROVAL_TRAIL.Where(x=>x.OPERATIONID == operationId && x.FROMAPPROVALLEVELID !=null && bookingIds.Contains(x.TARGETID)).ToList();
 
@@ -1220,7 +1194,7 @@ namespace FintrakBanking.Repositories.Credit
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
             })?.ToList();
 
-            return data;
+            return data.OrderByDescending(d=>d.systemArrivalDateTime);
         }
 
 
@@ -1259,13 +1233,33 @@ namespace FintrakBanking.Repositories.Credit
         }
         //markups
 
-        public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
+        public string GetDrawdownMemoHtml(int staffId, int targetId)
         {
-            var isInitialize = InitializeDrawdownMemoProperties(targetId, operationId);
+            if (targetId == 0)
+            {
+                return null;
+            }
+            var bookingId = context.TBL_LOAN_BOOKING_REQUEST.Find(targetId);
+            var loanApplicationId = new TBL_LOAN_APPLICATION_DETAIL();
+            if (bookingId == null)
+            {
+                bookingId = (from b in context.TBL_LOAN_BOOKING_REQUEST join c in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID where b.LOANAPPLICATIONDETAILID == targetId select b).FirstOrDefault();
+            }
+            if (bookingId != null)
+            {
+                loanApplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Find(bookingId.LOANAPPLICATIONDETAILID);
+            }
+            var appraisalOperation = context.TBL_LOAN_APPLICATION.Find(loanApplicationId.LOANAPPLICATIONID).OPERATIONID;
+
+            var isInitialize = InitializeDrawdownMemoProperties(loanApplicationId.LOANAPPLICATIONDETAILID, appraisalOperation);
                         
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                     <tr>
                         <td><b>Reference Number:</b></td>
                         <td>{applicationReferenceNumber}</td>
@@ -1325,9 +1319,10 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetFees(targetId)+ GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(this.loanApplicationDetail.LOANAPPLICATIONDETAILID) + GetDrawdownApprovalsMarkupLOS2(this.targetId, this.operationId) + GetOtherConditionsHtml();
+            result = result + GetFees(loanApplicationId.LOANAPPLICATIONDETAILID) + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetConditionsPrecedentToDrawdownFacilityMarkup(loanApplicationId.LOANAPPLICATIONDETAILID) + GetTransactionsDynamicsDrawdownMarkup(loanApplicationId.LOANAPPLICATIONID)+ GetIsLineFacilityMarkup(bookingId.LOANAPPLICATIONDETAILID) + GetDrawdownApprovalsMarkupLOS2(targetId);
             return result;
         }
+
 
         public string GetFees(int targetId)
         {
@@ -1620,9 +1615,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 var c = g.FirstOrDefault();
-                result += c.title;
+                //result += c.title;
                 result = result + $@"
                 <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
+                <tr>
+                        <th colspan=2><b>{c.title}</b></th>
+                        <th></th>
+                    </tr>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS</b></th>
@@ -1702,15 +1701,20 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var group in transactions)
             {
                 var n = 0;
+                var c = group.FirstOrDefault();
+                //result += c.title;
                 result = result + $@"
                 <table style='font face: arial; size:12px' border=1 align=center width=1000px cellpadding=0 cellspacing=0>
+                     <tr>
+                       <th colspan=2><b>{c.title}</b></th>
+                       <th></th>
+                       </tr>                    
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
                     </tr>
                  ";
-                var c = group.FirstOrDefault();
-                result += c.title;
+                
                 foreach (var t in group)
                 {
                     n++;
@@ -1725,7 +1729,109 @@ namespace FintrakBanking.Repositories.Credit
             }
             return result;
         }
-        
+
+        private string GetTransactionsDynamicsDrawdownMarkup(int loanApplicationId)
+        {
+            var transactions = GetdrawdownTransactionsDynamics(loanApplicationId).GroupBy(t => t.typeId); // new
+
+            var result = String.Empty;
+            if (transactions.Count() > 0)
+            {
+                result = result + $@"<br/><h3><b>TRANSACTIONS DYNAMICS</b></h3>";
+                foreach (var group in transactions)
+                {
+                    var n = 0;
+                    var c = group.FirstOrDefault();
+                    //result += c.title;
+                    result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2><b>{c.title}</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>TRANSACTIONS DYNAMICS</b></th>
+                    </tr>
+                 ";
+
+                    foreach (var t in group)
+                    {
+                        n++;
+                        result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{t.name}</td>
+                        </tr>
+                ";
+                    }
+                    result = result + $"</table>";
+                }
+            }
+            return result;
+        }
+
+        private string GetIsLineFacilityMarkup(int loanApplicationId)
+        {
+            var isLineFacility = context.TBL_LOAN_APPLICATION_DETAIL.Where(a=>a.LOANAPPLICATIONDETAILID == loanApplicationId && a.ISLINEFACILITY == true)?.FirstOrDefault();
+            var result = String.Empty;
+            var n = 0;
+            if (isLineFacility != null)
+            {
+                var isLineFacilityProduct = context.TBL_PRODUCT.Where(p => p.PRODUCTID == isLineFacility.APPROVEDPRODUCTID).Select(p => p.PRODUCTNAME)?.FirstOrDefault();
+                var approvedAmount = string.Format("{0:#,##.00}", Convert.ToDecimal(isLineFacility.APPROVEDAMOUNT));
+                var createdDate = isLineFacility.DATETIMECREATED.ToString("dd-MM-yyyy");
+                var isLineFacilityDetail = context.TBL_LOAN_BOOKING_REQUEST.Where(b=>b.LOANAPPLICATIONDETAILID == isLineFacility.LOANAPPLICATIONDETAILID && b.APPROVEDLINESTATUSID == null)?.ToList();
+                
+                result = result + $@"<br/><h3><b>LINE FACILITY DETAIL</b></h3>";
+                result = result + $@"<table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                 <tr>
+                        <td><b>Facility</b></td>
+                        <td>{isLineFacilityProduct.ToUpper()}</td>
+                        <td><b>Approved Amount</b></td>
+                        <td>{approvedAmount}</td>
+                        <td><b>Approved Date</b></td>
+                        <td>{createdDate}</td>
+                    </tr>";
+
+                if (isLineFacilityDetail.Count() > 0)
+                {
+                     result = result + $@"
+                     <tr>
+                        <td>S/N</td>
+                        <td>Customer</td>
+                        <td>Amount Requested</td>
+                        <td>Date Requested</td>
+                        <td>Account Number</td>
+                        <td>Account Name</td>
+                     </tr>";
+
+                    foreach (var group in isLineFacilityDetail)
+                    {
+                        var customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == group.CUSTOMERID).Select(c => c.FIRSTNAME + "" + c.MIDDLENAME + "" + c.LASTNAME)?.FirstOrDefault();
+                        var approvedAmount2 = string.Format("{0:#,##.00}", Convert.ToDecimal(group.AMOUNT_REQUESTED));
+                        var createdDate2 = group.DATETIMECREATED.ToString("dd-MM-yyyy");
+                        var accountNumber = context.TBL_CASA.Where(a => a.CASAACCOUNTID == group.CASAACCOUNTID).Select(a => a.PRODUCTACCOUNTNUMBER)?.FirstOrDefault();
+                        var accountName = context.TBL_CASA.Where(a => a.CASAACCOUNTID == group.CASAACCOUNTID).Select(a => a.PRODUCTACCOUNTNAME)?.FirstOrDefault();
+
+                        n++;
+                        result = result + $@"
+                        <tr>
+                            <td>{n}</td>
+                            <td>{customer}</td>
+                            <td>{approvedAmount2}</td>
+                            <td>{createdDate2}</td>
+                            <td>{accountNumber}</td>
+                            <td>{accountName}</td>
+                        </tr>";
+                    }
+                    
+                }
+            }
+            result = result + $"</table><br/>";
+            return result;
+        }
+
         private string GetBusinessSectorsMarkupLOS()
         {
             var result = String.Empty;
@@ -1798,11 +1904,11 @@ namespace FintrakBanking.Repositories.Credit
                         <td><b>Director-related? (Yes / No):</b></td>
                         <td>{getIsDirectorRelated()}</td>
                     </tr>
-                    <tr>
+                    <tr class=esg>
                         <td><b>Environmental And Social Risk Summary:</b></td>
                         <td>{GetEnvironmentalSocialRiskMarkup()}</td>
                     </tr>
-                    <tr>
+                    <tr class=green>
                         <td><b>Overall Green Category:</b></td>
                         <td>{GetGreenRatingDetailMarkup()}</td>
                         <td>{GetGreenRatingSummaryMarkup()}</td>
@@ -1810,6 +1916,52 @@ namespace FintrakBanking.Repositories.Credit
                  ";
             result = result + $"</table>";
             return result;
+        }
+
+        private string GetSubstringBetween(string startString, string endString, string body)
+        {
+            int index = body.IndexOf(startString);
+            if (index == -1)
+            {
+                return String.Empty;
+            }
+            int startIndex = index + startString.Length;
+            int endIndex = body.IndexOf(endString, startIndex);
+            string content = body.Substring(startIndex, endIndex - startIndex);
+            return content;
+        }
+
+        public string UpdateEsg(string body)
+        {
+            var oldString = GetSubstringBetween("<tr class=esg>", "</tr>", body);
+            var newString = String.Empty;
+            newString = newString + $@"
+                        <td><b>Environmental And Social Risk Summary:</b></td>
+                        <td>{GetEnvironmentalSocialRiskMarkup()}</td>
+                    ";
+            if (string.IsNullOrEmpty(oldString))
+            {
+                return body;
+            }
+            body = body.Replace(oldString, newString);
+            return body;
+        }
+
+        public string UpdateGreenRating(string body)
+        {
+            var oldString = GetSubstringBetween("<tr class=green>", "</tr>", body);
+            var newString = String.Empty;
+            newString = newString + $@"
+                        <td><b>Overall Green Category:</b></td>
+                        <td>{GetGreenRatingDetailMarkup()}</td>
+                        <td>{GetGreenRatingSummaryMarkup()}</td>
+                    ";
+            if (string.IsNullOrEmpty(oldString))
+            {
+                return body;
+            }
+            body = body.Replace(oldString, newString);
+            return body;
         }
 
         private string GetGroupFacilitySummaryFCYMarkupLOS()
@@ -4367,6 +4519,197 @@ namespace FintrakBanking.Repositories.Credit
         //}
 
 
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailDrawdownMemoReversal(int applicationId, bool getAll = true)
+        {
+            int[] operations = { (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
+                (int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ContigentLoanBooking,
+                (int)OperationsEnum.RevolvingLoanBooking,(int)OperationsEnum.TermLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,
+                (int)OperationsEnum.RevolvingTranchDisbursement
+            };
+            var staffRoles = context.TBL_STAFF_ROLE.ToList();
+            var staffs = from s in context.TBL_STAFF select s;
+            var allstaff = this.GetAllStaffNames();
+
+           
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId).ToList();
+
+            if (getAll)
+            {
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId).ToList();
+            }
+
+            var data = trail.Select(x => new ApprovalTrailViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                comment = x.COMMENT,
+                targetId = x.TARGETID,
+                operationId = x.OPERATIONID,
+                arrivalDate = x.ARRIVALDATE,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelId = x.TOAPPROVALLEVELID,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
+                approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                vote = x.VOTE,
+                //applicationId = application.LOANAPPLICATIONID,
+                commentStage = "Drawdown",
+                toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+            })?.OrderByDescending(x => x.systemArrivalDateTime).ToList();
+
+            //data.AddRange(GetOfferLetterTrail(applicationId));
+            var bookingId = context.TBL_LOAN_BOOKING_REQUEST.Find(applicationId);
+            var loanApplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Find(bookingId.LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
+            var appraisalOperation = context.TBL_LOAN_APPLICATION.Find(loanApplicationId).OPERATIONID;
+
+            if (getAll)
+            {
+                data.AddRange(GetNonAppraisalTrail(loanApplicationId, (short)OperationsEnum.OfferLetterApproval, "Offer Letter"));
+                data.AddRange(GetNonAppraisalTrail(loanApplicationId, (short)OperationsEnum.LoanAvailment, "Availment"));
+                data.AddRange(GetNonAppraisalTrail(loanApplicationId, appraisalOperation, "Credit Appraisal"));
+            }
+
+            data.OrderByDescending(d => d.systemArrivalDateTime);
+
+            return data;
+        }
+
+
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrailMemo(int applicationId, int operationId, bool getAll = true)
+        {
+
+            var staffRoles = context.TBL_STAFF_ROLE.ToList();
+            var staffs = from s in context.TBL_STAFF select s;
+
+            var allstaff = this.GetAllStaffNames();
+
+            var application = context.TBL_LOAN_APPLICATION_DETAIL.Find(applicationId);
+
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.TBL_LOAN_APPLICATION.OPERATIONID && x.TARGETID == application.LOANAPPLICATIONID).ToList();
+
+            if (getAll)
+            {
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == application.TBL_LOAN_APPLICATION.OPERATIONID && x.TARGETID == application.LOANAPPLICATIONID).ToList();
+            }
+
+            var data = trail.Select(x => new ApprovalTrailViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                comment = x.COMMENT,
+                targetId = x.TARGETID,
+                operationId = x.OPERATIONID,
+                arrivalDate = x.ARRIVALDATE,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelId = x.TOAPPROVALLEVELID,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
+                approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                //applicationId = application.LOANAPPLICATIONID,
+                commentStage = "Credit Appaisal",
+                toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+            })?.OrderByDescending(x => x.systemArrivalDateTime).ToList();
+
+            //data.AddRange(GetOfferLetterTrail(applicationId));
+            if (getAll)
+            {
+                data.AddRange(GetNonAppraisalTrail(application.LOANAPPLICATIONID, (short)OperationsEnum.OfferLetterApproval, "Offer Letter"));
+                data.AddRange(GetNonAppraisalTrail(application.LOANAPPLICATIONID, (short)OperationsEnum.LoanAvailment, "Availment"));
+
+                foreach (var t in data.ToList())
+                {
+                    var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == application.LOANAPPLICATIONID).ToList();
+                    foreach (var f in facilities)
+                    {
+                        var request = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID);
+                        foreach (var r in request)
+                        {
+                            if (r?.OPERATIONID != null)
+                            {
+                                data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, r.OPERATIONID ?? 0, "Drawdown"));
+                            }
+                            data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, (short)OperationsEnum.TermLoanBooking, "Booking"));
+                            data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, (short)OperationsEnum.RevolvingLoanBooking, "Booking"));
+                            data.AddRange(GetNonAppraisalTrail(r.LOAN_BOOKING_REQUESTID, (short)OperationsEnum.ContigentLoanBooking, "Booking"));
+                        }
+                    }
+                };
+            }
+
+            //for Filtering multiple occuring levels
+            var data2 = data.ToList();
+            var testData = data.ToList();
+            foreach (var t in testData)
+            {
+                var firstTrailForLevel = testData.OrderBy(x => x.approvalTrailId).FirstOrDefault(x => x.fromApprovalLevelId == t.fromApprovalLevelId);
+                var multipleTrails = testData.Where(d => d.fromApprovalLevelId == firstTrailForLevel.fromApprovalLevelId && d.approvalTrailId != firstTrailForLevel.approvalTrailId).ToList();
+                foreach (var tr in multipleTrails)
+                {
+                    data2.GroupBy(d => d.systemArrivalDateTime == tr.systemArrivalDateTime);
+                }
+            }
+            data = data2;
+
+            data.OrderByDescending(d => d.systemArrivalDateTime);
+
+            return data;
+        }
+
+        private IEnumerable<ApprovalTrailViewModel> GetNonAppraisalTrail(int applicationId, int operationid, string commentStage)
+        {
+            var staffRoles = context.TBL_STAFF_ROLE.ToList();
+            var staffs = from s in context.TBL_STAFF select s;
+
+            var allstaff = this.GetAllStaffNames();
+
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationid && x.TARGETID == applicationId).ToList();
+
+            var data = trail.Select(x => new ApprovalTrailViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                comment = x.COMMENT,
+                targetId = x.TARGETID,
+                arrivalDate = x.ARRIVALDATE,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelId = x.TOAPPROVALLEVELID,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
+                approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                commentStage = commentStage,
+                vote = x.VOTE,
+                toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+            })?.ToList();
+
+
+            data.OrderByDescending(d => d.systemArrivalDateTime);
+            return data;
+        }
+
         private string GetDrawdownApprovalsMarkupLOS()
         {
             var appraisals = GetAppraisalMemorandumTrailDrawdown(this.targetId, GetCurrentOperationId()).OrderBy(a => a.approvalTrailId);
@@ -4402,10 +4745,10 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private string GetDrawdownApprovalsMarkupLOS2(int targetId, int operationId)
+        private string GetDrawdownApprovalsMarkupLOS2(int targetId)
         {
 
-            var appraisals = GetAppraisalMemorandumTrailDrawdown(targetId, operationId).OrderBy(a => a.approvalTrailId);
+            var appraisals = GetAppraisalMemorandumTrailDrawdownMemoReversal(targetId).OrderByDescending(a => a.systemArrivalDateTime);
             var result = String.Empty;
             result = result + $@"
                 <br/>
@@ -4418,6 +4761,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>
                         <th><b>Comment</b></th>
+                        <th><b>Decision</b></th>
                        <th><b>Date</b></th>
                     </tr>
                     ";
@@ -4428,6 +4772,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
                         <td>{trail.comment}</td>
+                        <td>{GetDecision(trail.vote)}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>
                 ";
@@ -5225,7 +5570,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGreenRatingDetailMarkup()
         {
             var result = String.Empty;
-            var greenDetails = GetGreenLoanIdentificationDetails();
+            var greenDetails = GetGreenLoanIdentificationDetails().Where(g => g.score != 6);
             var greenSummary = greenDetails.GroupBy(d => d.score).Select(d => d.FirstOrDefault()).ToList();
             result += $@"
                         <ul>
@@ -5621,6 +5966,10 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h3><b>MEMO</b></h3>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                     <tr>
                         <td><b>Date</b></td>
                         <td>{DateTime.UtcNow}</td>
@@ -6401,6 +6750,7 @@ namespace FintrakBanking.Repositories.Credit
             var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
             var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
             var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+           
             var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
 
             var result = String.Empty;
@@ -6411,6 +6761,10 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -7694,6 +8048,10 @@ namespace FintrakBanking.Repositories.Credit
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
                     </tr>
@@ -7753,6 +8111,97 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
         }
+
+        public string cashCollaterizedCustomerInformationHtml()
+        {
+            var currentApplicationId = this.loanApplication.LOANAPPLICATIONID;
+            if (this.loanApplication == null)
+            {
+                var d = context.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && a.DELETED == false).FirstOrDefault();
+                currentApplicationId = (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
+                                     (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
+                                     (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
+
+            }
+            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == currentApplicationId).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
+            var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+            var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
+                <br />
+                <h4><b>Customer Information</b></h4>
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
+                    <tr>
+                        <td>Borrower</td>
+                        <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
+                    </tr>
+                   <tr>
+                        <td>Location</td>
+                        <td>{address}-</td>
+                        <td>Customer Risk Rating</td>
+                        <td>{customer?.CUSTOMERRATING}</td>
+                    </tr> 
+                     <tr>
+                        <td>Business</td>
+                        <td>{customer.OCCUPATION}</td>
+                        <td>Classification</td>
+                        <td>{riskRating?.CLASSIFICATION}</td>
+                    </tr>
+                   <tr>
+                        <td>Account Number</td>
+                        <td>{currentAccountNo}</td>
+                        <td>Account Opening Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr> 
+                     <tr>
+                        <td>Incorporation Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                        <td>Biz Commencement Date</td>
+                        <td>{customer.DATEOFBIRTH?.ToString("dd-MM-yyyy")}</td>
+                    </tr>
+                   <tr>
+                        <td>Principal Promoters</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+
+                    <tr>
+                        <td>Contract Employer</td>
+                        <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Alternate Contract Employer</td>
+                       <td colspane='3'>N/A</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>N/A</td>
+                    </tr>
+                   <tr>
+                        <td>Discount Value (50%)</td>
+                        <td colspane='3'>N/A</td>
+                        
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
         public string NoncreditProgramCustomerInformationHtml()
         {
             var currentApplicationId = this.loanApplication.LOANAPPLICATIONID;
@@ -7778,6 +8227,10 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -7863,6 +8316,10 @@ namespace FintrakBanking.Repositories.Credit
                 <br />
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -8539,7 +8996,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string TodHeaderHtml()
         {
-            var staff = context.TBL_STAFF.Where(s => s.STAFFID == this.loanApplication.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == this.loanApplication.OWNEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
             var branch = context.TBL_BRANCH.Where(s => s.BRANCHID == this.loanApplication.BRANCHID).Select(s => s.BRANCHNAME).FirstOrDefault();
             var result = String.Empty;
             result = result + $@"
@@ -8569,12 +9026,22 @@ namespace FintrakBanking.Repositories.Credit
             var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
             var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
             var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
-           
+            var availableBalance = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.AVAILABLEBALANCE).FirstOrDefault();
+            var bookBalance = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.LEDGERBALANCE).FirstOrDefault();
+            var unAvailableBalance = bookBalance - availableBalance;
+            var availableBalanceFormat = string.Format("{0:#,##.00}", Convert.ToDecimal(availableBalance));
+            var bookBalanceFormat = string.Format("{0:#,##.00}", Convert.ToDecimal(bookBalance));
+            var unAvailableBalanceFormat = string.Format("{0:#,##.00}", Convert.ToDecimal(unAvailableBalance));
+
             var result = String.Empty;
                 result = result + $@"
                 <br />
                
-                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>        
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>  
+                        <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>
                    <tr>
                         <td>Name of Customer:</td>
                         <td>{customer?.FIRSTNAME} {customer?.MIDDLENAME} {customer?.LASTNAME}</td>
@@ -8593,15 +9060,15 @@ namespace FintrakBanking.Repositories.Credit
                     </tr> 
                      <tr>
                         <td>Book Balance:</td>
-                        <td>N/A</td>
+                        <td>{bookBalanceFormat}</td>
                     </tr> 
                      <tr>
                         <td>Available Balance:</td>
-                        <td>N/A</td>
+                        <td>{availableBalanceFormat}</td>
                     </tr> 
                      <tr>
                         <td>Unavailable Balance: </td>
-                        <td>N/A</td>
+                        <td>{unAvailableBalanceFormat}</td>
                     </tr> 
                  ";
             result = result + $"</table>";
@@ -10919,7 +11386,7 @@ namespace FintrakBanking.Repositories.Credit
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
             }).ToList();
 
-            return data;
+            return data.OrderByDescending(d=>d.systemArrivalDateTime);
         }
         public ApprovalTrailViewModel GetDeferralnAprroval(int operationId, int targetId)
         {

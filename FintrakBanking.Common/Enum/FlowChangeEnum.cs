@@ -23,6 +23,15 @@ namespace FintrakBanking.Common.Enum
         SALARYBACKED = 3
     }
 
+    public enum ApprovalFlowTypeEnum
+    {
+        ROUNDROBIN = 1,
+        SBUROUTING = 2,
+        POOL = 3
+    }
+
+
+
 }
 
 

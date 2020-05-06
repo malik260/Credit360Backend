@@ -190,8 +190,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("work-flow-tracker/operation/{operationId}/target/{targetId}")]
         public async Task<HttpResponseMessage> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId)
         {
-            try
-            {
                var data = await repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId);
 
                 if (data == null)
@@ -200,11 +198,6 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
-            }
         }
 
         
@@ -212,8 +205,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("work-flow-tracker/approval-trail/all")]
         public async Task<HttpResponseMessage> GetAllRecordsOnApprovalTrail([FromUri] int page, [FromUri] int itemsPerPage)
         {
-            try
-            {
                 var item = repo.GetAllRecordsOnApprovalTrail(token.GetCompanyId);
 
                 var data = await item.Skip(page).Take(itemsPerPage)
@@ -225,11 +216,6 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = item.Count() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
-            }
         }
 
         [HttpGet]
@@ -237,8 +223,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("work-flow-tracker/approval-status")]
         public HttpResponseMessage GetAllApprovalStatus()
         {
-            try
-            {
                 var data = repo.GetAllApprovalStatus();
 
                 if (data == null)
@@ -247,19 +231,14 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data  });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
-            }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("work-flow-tracker/approval-operation")]
         public HttpResponseMessage GetAllApprovalOperations()
         {
-            try
-            {
+            
                 var data = repo.GetAllApprovalOperations();
 
                 if (data == null)
@@ -268,11 +247,6 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
-            }
         }
         #endregion Workflow Tracker
 
@@ -284,8 +258,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             var token = new TokenDecryptionHelper();
 
-            try
-            {
+            
                 var data = repo.GetApprovalMointoring(dateRange);
 
                 if (data == null)
@@ -294,11 +267,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
-            }
+            
         }
 
         [HttpPost]
@@ -307,8 +276,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             var token = new TokenDecryptionHelper();
 
-            try
-            {
                 var data = repo.GetBookingMointoring(dateRange);
 
                 if (data == null)
@@ -317,11 +284,6 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
-            }
         }
 
         [HttpGet]
@@ -329,8 +291,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("work-flow-tracker/target/{targetId}")]
         public HttpResponseMessage GetApprovalTrailByTargetId(int targetId)
         {
-            try
-            {
+            
                 var data = repo.GetApprovalTrailByTargetId(targetId, token.GetCompanyId);
 
                 if (data == null)
@@ -339,19 +300,13 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
-            }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("work-flow-tracker/booking/target/{targetId}")]
         public HttpResponseMessage GetBookingApprovalTrailByTargetId(int targetId)
         {
-            try
-            {
                 var data = repo.GetBookingApprovalTrailByTargetId(targetId, token.GetCompanyId);
 
                 if (data == null)
@@ -360,11 +315,6 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
-            }
         }
 
         [HttpPost]

@@ -286,7 +286,7 @@ namespace FintrakBanking.Repositories.credit
                                  where
                                  (
                                  x.DELETED == false
-                                 && t.OPERATIONID == (int)OperationsEnum.LCModificationApproval
+                                 && t.OPERATIONID == (int)OperationsEnum.LCEnhancementApproval
                                  && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcEnhancementInProgress
                                  )
                                  select new LcIssuanceApprovalViewModel
@@ -327,7 +327,7 @@ namespace FintrakBanking.Repositories.credit
                                      invoiceDueDate = x.INVOICEDUEDATE,
                                      lcReferenceNumber = x.LCREFERENCENUMBER,
                                      dateTimeCreated = (DateTime)x.DATETIMECREATED,
-                                 }).GroupBy(l => l.lcIssuanceId).Select(l => l.OrderByDescending(t => t.lcApprovalTrailId).FirstOrDefault())
+                                 }).GroupBy(l => l.tempLcIssuanceId).Select(l => l.OrderByDescending(t => t.lcApprovalTrailId).FirstOrDefault())
                                 .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                                 || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
                                 && l.loopedStaffId == staffId)).ToList();
@@ -471,7 +471,7 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForEnhancementApproval(int staffId)
         {
-            var operationId = (int)OperationsEnum.LCModificationApproval;
+            var operationId = (int)OperationsEnum.LCEnhancementApproval;
             IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
@@ -780,8 +780,28 @@ namespace FintrakBanking.Repositories.credit
             return model;
         }
 
+        public void ValidateLcEnhancement(LcIssuanceViewModel model)
+        {
+            var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
+            if(lc == null)
+            {
+                throw new SecureException("You Cannot Enhance an Lc that does not exist!");
+            }
+
+            if (model.letterOfCreditAmount < lc.LETTEROFCREDITAMOUNT)
+            {
+                throw new SecureException("New Lc Amount cannot be less than Initial Lc Amount!");
+            }
+
+            if (model.letterOfcreditExpirydate < lc.LETTEROFCREDITEXPIRYDATE)
+            {
+                throw new SecureException("New Lc Expiry Date cannot be less than Initial Lc Expiry Date!");
+            }
+        }
+
         public LcIssuanceViewModel AddLcEnhanceMent(LcIssuanceViewModel model)
         {
+            ValidateLcEnhancement(model);
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
             //var lc = context.TBL_LC_ISSUANCE.FirstOrDefault(l => l.LCREFERENCENUMBER == model.lcReferenceNumber);

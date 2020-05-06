@@ -95,14 +95,15 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
 
+        public bool? ISLINEFACILITY { get; set; }
         public bool ISPROJECTRELATED { get; set; }
         public bool ISONLENDING { get; set; }
         public bool ISINTERVENTIONFUNDS { get; set; }
         public bool ISORRBASEDAPPROVAL { get; set; }
-        public bool WITHOUTINSTRUCTION { get; set; }
+        public bool WITHINSTRUCTION { get; set; }
         public bool DOMICILIATIONNOTINPLACE { get; set; }
         
-        public int CREATEDBY { get; set; }
+        public int OWNEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
 
@@ -169,6 +170,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISMULTIPLEPRODUCTDRAWDOWN { get; set; }
         public short? APPROVEDLINESTATUSID { get; set; }
+        public int CREATEDBY { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

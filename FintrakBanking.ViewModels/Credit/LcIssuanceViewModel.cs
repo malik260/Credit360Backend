@@ -145,6 +145,8 @@ namespace FintrakBanking.ViewModels.credit
 
         public bool isSatisfied { get; set; }
 
+        public bool isTransactionDynamics { get; set; }
+
     }
     #endregion LCCONDITIONS
 

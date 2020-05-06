@@ -110,9 +110,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Users\FINTRAK\Desktop\XLeratorDLL-financial.dll</HintPath>
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +147,7 @@
     <Compile Include="Credit\LcShippingRepository.cs" />
     <Compile Include="Credit\LcUssanceRepository.cs" />
     <Compile Include="Credit\LetterGenerationRequestRepository.cs" />
+    <Compile Include="Credit\LoanArchiveRepository.cs" />
     <Compile Include="Credit\OriginalDocumentReleaseRepository.cs" />
     <Compile Include="Credit\ProjectSiteReportRepository.cs" />
     <Compile Include="Credit\TestCollateralRepository.cs" />

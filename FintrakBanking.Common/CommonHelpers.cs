@@ -127,6 +127,28 @@ namespace FintrakBanking.Common
             return output;
         }
 
+
+
+
+        public static string GenerateRandomDigitCodeNew(int length)
+        {
+            //var random = new Random();
+            //int values = 0;
+            //for (int i = 0; i < length; i++)
+            // values = random.Next(10);
+
+            //return values;
+
+            var random = new Random();
+            string str = string.Empty;
+            for (int i = 0; i < length; i++)
+                str = String.Concat(str, random.Next(10).ToString());
+            return str;
+
+        }
+
+
+
         /// <summary>
         /// Verifies that a string is in valid e-mail format
         /// </summary>

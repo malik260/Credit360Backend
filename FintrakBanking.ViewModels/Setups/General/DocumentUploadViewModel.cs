@@ -59,6 +59,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string documentCategoryName { get; set; }
         public bool owner { get; set; }
         public string uploadedBy { get; set; }
+        public string customerName { get; set; }
 
         public string fileSizeString { get {
                 string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
@@ -74,6 +75,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int customerId { get; set; }
         public int customerGroupId { get; set; }
         public bool overwrite { get; set; }
+        public int customerCreditBureauId { get; set; }
 
     }
 

@@ -9,12 +9,14 @@ using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.Entities.Models;
+using System;
 
 namespace FintrakBanking.Interfaces.Credit
 {
     public interface IAppraisalMemorandumRepository
     {
         //IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId);
+        IEnumerable<ApprovalTrailViewModel> GetGlobalInterestRateChangeTrail(int applicationId, int operationid);
         IEnumerable<ApprovalTrailViewModel> GetCallmemoApprovalTrail(int applicationId, int operationId);
         AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId);
 
@@ -34,6 +36,8 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse LcUssanceMemorandum(LcForwardViewModel model);
 
         WorkflowResponse LetterGenerationRequestMemorandum(LetterGenerationRequestViewModel model);
+
+        String ResponseMessage(WorkflowResponse response, string itemHeading);
         WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
@@ -56,6 +60,11 @@ namespace FintrakBanking.Interfaces.Credit
         //bool Confirmation(int type, int applicationId);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
+        IQueryable<LoanApplicationViewModel> GetPoolApplications(int operationId, int companyId, int branchId, int staffId, int? classId);
+        bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity entity);
+        bool ChangeApplicationOwner(int loanApplicationId, int staffId, GeneralEntity entity);
+
+        bool SelfAssignMultpleApplication(List<ForwardViewModel> models, GeneralEntity userEntity);
 
         IQueryable<LoanApplicationViewModel> GetPendingAdhocApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
 

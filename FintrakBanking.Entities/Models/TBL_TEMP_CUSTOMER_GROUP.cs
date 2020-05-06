@@ -44,6 +44,8 @@ namespace FintrakBanking.Entities.Models
         public short APPROVALSTATUSID { get; set; }
 
         public int COMPANYID { get; set; }
+        public string GROUPADDRESS { get; set; }
+        public string GROUPCONTACTPERSON { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

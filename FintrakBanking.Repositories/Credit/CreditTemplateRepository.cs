@@ -372,6 +372,7 @@ var qry = Foo.GroupJoin(
                     description = x.DESCRIPTION,
                     canEdit = x.CANEDIT, // system
                     // editable = sectionIds.Contains(x.TEMPLATESECTIONID),
+                    templateSectionId = x.TEMPLATESECTIONID,
                     templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
                 })
                 .ToList();
@@ -381,7 +382,13 @@ var qry = Foo.GroupJoin(
             memo.Init(operationId, targetId); //content = memo.Replace(content);
             foreach (var raw in rawSections)
             {
+                var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
                 raw.templateDocument = memo.Replace(raw.templateDocument);
+                if (templateId == 1)
+                {
+                    raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
+                    raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
+                }
                 replacedSections.Add(raw);
                 printedDoc = raw.title;
             }
@@ -501,6 +508,8 @@ var qry = Foo.GroupJoin(
                 detail.TEMPLATEDOCUMENT = entity.templateDocument;
                 detail.LASTUPDATEDBY = entity.staffId;
                 detail.DATETIMEUPDATED = DateTime.Now;
+
+                
                 return context.SaveChanges() > 0;
 
             }

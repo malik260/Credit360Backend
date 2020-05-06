@@ -18,6 +18,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
+        bool UpdateLoanApplicationTagsLMS(LoanApplicationTagsLMSViewModel model, int id, UserInfo user);
+        LoanApplicationTagsLMSViewModel GetLoanApplicationTagsLMS(int id);
         IQueryable<LoanReviewApplicationViewModel> GetRejectedReviewLoanApplications(UserInfo user);
         IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user);
         List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId);
@@ -59,7 +61,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanApplicationViewModel> Search(string searchString, int staffId = 0);
         List<LoanApplicationViewModel> SearchDrawDown(string searchString, int staffId = 0);
-        List<WorkflowTrackerViewModel> SearchBookedLoans(string searchString);
+        List<WorkflowTrackerViewModel> SearchBookedLoans(int loanApplicationDetailId);
 
 
 
@@ -105,7 +107,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
         int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false);
-        bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus);
+        bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus, int archivedBy);
         void ArchiveLoanApplicationDetails(int loanApplicationDetailId);
         int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, int? exclusiveFlowChangeId, bool next = false);
         int? GetFirstLevelStaffId(int levelId, int userBranch);
@@ -211,6 +213,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteLoanApplicationDetailLien(int id, UserInfo user);
         RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId);
         CurrentCustomerExposure GetTotalBankExposure();
+        bool ModifyFacility(FacilityModificationViewModel model, int loanApplicationDetailId);
         IEnumerable<LoanDetailReviewTypeViewModel> GetAllLoanDetailReviewTypes();
         List<CurrentCustomerExposure> GetExposures(TBL_LOAN_APPLICATION loanApplication);
         //IEnumerable<LoanApplicationLienViewModel> GetRacDetails();

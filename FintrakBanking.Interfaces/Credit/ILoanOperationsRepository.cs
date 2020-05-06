@@ -15,8 +15,21 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
-        string GetTransactionReferenceNo();
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansOperationWriteOffAnalysis(int staffId, int companyId);
 
+        List<LoanViewModel> GetCurrentPrepayment(int companyId);
+
+        List<LoanViewModel> GetRunningPrepaymentLoans(int companyId, int loanId);
+
+        List<LoanViewModel> AddBulkPrepaymentReversal(LoanReviewOperationViewModel model, int companyId);
+        bool AddBulkPrepaymentReversalData(LoanViewModel data, int batchCode, DateTime applicationDate);
+        string GetTransactionReferenceNo();
+     
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId, int accreditedConsultantId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId);
+        bool CreditDocumentationFilling(CreditDocumentationViewModel model);
         bool UpdateLoanClassification(DateTime applicationDate, int companyId);
         bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId);
         bool DoesOperationExist(int loanId, int operationTypeId, int loanSystemTypeId);
@@ -40,7 +53,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanClassification(DateTime applicationDate, int companyId, int staffId);
 
-        void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId);
+        bool ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId);
 
         bool ProcessReleaseLien(DateTime applicationDate, int companyId, int staffId);
 

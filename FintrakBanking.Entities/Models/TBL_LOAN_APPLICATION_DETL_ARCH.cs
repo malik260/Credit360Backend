@@ -83,7 +83,15 @@ namespace FintrakBanking.Entities.Models
         public bool ISSPECIALISED { get; set; }
         //public int? TENORFREQUENCYTYPEID { get; set; }
         public int? TENORFREQUENCYTYPEID { get; set; }
-
+        public bool? ISFACILITYCREATED { get; set; }
+        public int LOANDETAILREVIEWTYPEID { get; set; }
+        public bool? ISFEETAKEN { get; set; }
+        public short? TAKEFEETYPEID { get; set; }
+        public short? APPROVEDLINESTATUSID { get; set; }
+        public string INTERESTREPAYMENT { get; set; }
+        public int? INTERESTREPAYMENTID { get; set; }
+        public string MORATORIUM { get; set; }
+        public bool? ISMORATORIUM { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

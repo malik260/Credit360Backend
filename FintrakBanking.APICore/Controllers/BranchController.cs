@@ -345,12 +345,11 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("branch-search")]
         public HttpResponseMessage SearchForBranch(string searchQuery)
         {
-            try
-            {
+            
                 var data = _repo.GetSearchedBranch(searchQuery);
                 if (data == null)
                 {
@@ -359,13 +358,10 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
+           
         }
+
+        
         #endregion Branch Setup
     }
 

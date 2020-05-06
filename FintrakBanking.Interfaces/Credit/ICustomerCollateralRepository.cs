@@ -17,6 +17,7 @@ namespace FintrakBanking.Interfaces.Credit
         #region Collateral
 
         //int AddCollateral(CollateralViewModel entity, byte[] file);
+        IEnumerable<CollateralCoverageViewModel> CalculateCoverateOfCollateralLMS(CollateralCoverageViewModel model);
         bool DeleteDuplicatedCollateral(CollateralViewModel model);
         int AddCollateral(CollateralViewModel entity);
         int AddReleaseDocument(CollateralViewModel model, byte[] file);

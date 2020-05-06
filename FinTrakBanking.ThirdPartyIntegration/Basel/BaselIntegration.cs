@@ -172,7 +172,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 responseMessage = await response.Content.ReadAsStringAsync();
                 List<MainGroupRatingAndRatioViewModel> customerGroupRatios = new List<MainGroupRatingAndRatioViewModel>();
 
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode && responseMessage.Contains("financial_Period"))
                 {
                     var result = await response.Content.ReadAsAsync<List<MainGroupRatingAndRatioViewModel>>();
                     //var responseData = await response.Content.ReadAsStringAsync();
@@ -249,7 +249,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 responseMessage = await response.Content.ReadAsStringAsync();
 
                 CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode && responseMessage.Contains("companY_RATING"))
                 {
                     var result = await response.Content.ReadAsAsync<CutomerRatingViewModel>();
                     //var responseData = await response.Content.ReadAsStringAsync();
@@ -328,7 +328,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 responseMessage = await response.Content.ReadAsStringAsync();
 
                 FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode && responseMessage.Contains("probability_of_Default"))
                 {
                     var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
                     //var responseData = await response.Content.ReadAsStringAsync();
@@ -407,7 +407,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 responseMessage = await response.Content.ReadAsStringAsync();
 
                 FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode && responseMessage.Contains("probability_of_Default"))
                 {
                     var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
                     //var responseData = await response.Content.ReadAsStringAsync();
@@ -486,7 +486,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 responseMessage = await response.Content.ReadAsStringAsync();
 
                 FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
-                if (response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode && responseMessage.Contains("probability_of_Default"))
                 {
                     var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
                     //var responseData = await response.Content.ReadAsStringAsync();

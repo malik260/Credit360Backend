@@ -153,7 +153,9 @@ namespace FintrakBanking.Repositories.Customer
                 GROUPNAME = entity.groupName,
                 GROUPDESCRIPTION = entity.groupDescription,
                 CREATEDBY = (int)entity.createdBy,
-                DATETIMECREATED = genSetup.GetApplicationDate()
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                GROUPADDRESS = entity.groupAddress,
+                GROUPCONTACTPERSON = entity.groupContactPerson
             };
             context.TBL_CUSTOMER_GROUP.Add(group);
 
@@ -180,8 +182,7 @@ namespace FintrakBanking.Repositories.Customer
         public bool DoesGroupNameExist(string groupName, string groupCode)
         {
             var exist = (from a in context.TBL_CUSTOMER_GROUP
-                         where
-a.GROUPNAME == groupName || a.GROUPCODE == groupCode
+                         where a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                          select a).Any();
             return exist;
         }
@@ -199,7 +200,9 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 COMPANYID = custGroupModel.companyId,
-                ISCURRENT = true
+                ISCURRENT = true,
+                GROUPADDRESS = custGroupModel.groupAddress,
+                GROUPCONTACTPERSON = custGroupModel.groupContactPerson,
             };
 
             // Audit Section ---------------------------
@@ -297,7 +300,9 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                             riskRatingId = a.RISKRATINGID,
                             customerGroupId = a.CUSTOMERGROUPID,
                             dateTimeCreated = a.DATETIMECREATED,
-                            createdBy = a.CREATEDBY
+                            createdBy = a.CREATEDBY,
+                            groupAddress = a.GROUPADDRESS,
+                            groupContactPerson = a.GROUPCONTACTPERSON
                         });
             return data;
         }
@@ -324,7 +329,9 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                             riskRatingId = a.RISKRATINGID,
                             customerGroupId = a.CUSTOMERGROUPID,
                             dateTimeCreated = a.DATETIMECREATED,
-                            createdBy = a.CREATEDBY
+                            createdBy = a.CREATEDBY,
+                            groupAddress = a.GROUPADDRESS,
+                            groupContactPerson = a.GROUPCONTACTPERSON
                         }).ToList();
             return data;
         }
@@ -346,6 +353,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             group.GROUPDESCRIPTION = entity.groupDescription;
             group.RISKRATINGID = entity.riskRatingId;
             group.LASTUPDATEDBY = (int)entity.createdBy;
+            group.GROUPADDRESS = entity.groupAddress;
+            group.GROUPCONTACTPERSON = entity.groupContactPerson;
             group.DATETIMEUPDATED = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
@@ -405,6 +414,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 tempGroupToUpdate.COMPANYID = entity.companyId;
                 tempGroupToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 tempGroupToUpdate.ISCURRENT = true;
+                tempGroupToUpdate.GROUPADDRESS = entity.groupAddress;
+                tempGroupToUpdate.GROUPCONTACTPERSON = entity.groupContactPerson;
             }
             else
             {
@@ -421,6 +432,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     COMPANYID = entity.companyId,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     ISCURRENT = true,
+                    GROUPADDRESS = entity.groupAddress,
+                    GROUPCONTACTPERSON = entity.groupContactPerson
                 };
 
                 context.TBL_TEMP_CUSTOMER_GROUP.Add(tempCustomerGroup);
@@ -519,6 +532,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 existingCustomerGroup.RISKRATINGID = customerGroupModel?.RISKRATINGID;
                 existingCustomerGroup.CREATEDBY = customerGroupModel.CREATEDBY;
                 existingCustomerGroup.DATETIMEUPDATED = DateTime.Now;
+                existingCustomerGroup.GROUPADDRESS = customerGroupModel.GROUPADDRESS;
+                existingCustomerGroup.GROUPCONTACTPERSON = customerGroupModel.GROUPCONTACTPERSON;
             }
             else //Insert a new customer group record into the real customer group table
             {
@@ -529,6 +544,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     GROUPDESCRIPTION = customerGroupModel.GROUPDESCRIPTION,
                     RISKRATINGID = customerGroupModel.RISKRATINGID,
                     CREATEDBY = customerGroupModel.CREATEDBY,
+                    GROUPADDRESS = customerGroupModel.GROUPADDRESS,
+                    GROUPCONTACTPERSON = customerGroupModel.GROUPCONTACTPERSON,
                     DATETIMECREATED = genSetup.GetApplicationDate()
                 };
                 context.TBL_CUSTOMER_GROUP.Add(customerGroup);
@@ -580,6 +597,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                         riskRatingId = c.RISKRATINGID,
                         groupDescription = c.GROUPDESCRIPTION,
                         operationId = atrail.OPERATIONID,
+                        groupAddress = c.GROUPADDRESS,
+                        groupContactPerson = c.GROUPCONTACTPERSON
                     });
         }
 
@@ -1287,7 +1306,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
             var data = (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
                     join g in context.TBL_CUSTOMER_GROUP on c.CUSTOMERGROUPID equals g.CUSTOMERGROUPID
-                    join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
+                    join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID 
                     join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPMAPPINGID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending 
                     && c.ISCURRENT == true

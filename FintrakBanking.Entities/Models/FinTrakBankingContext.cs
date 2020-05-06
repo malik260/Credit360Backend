@@ -19,6 +19,13 @@ namespace FintrakBanking.Entities.Models
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; } 
         //public virtual DbSet<TBL_ENDOFDAY_MONITORING> TBL_ENDOFDAY_MONITORING { get; set; } 
+
+        public virtual DbSet<TBL_COLLATERAL_LIQUIDATION_RECOVERY> TBL_COLLATERAL_LIQUIDATION_RECOVERY { get; set; }
+        public virtual DbSet<TBL_LOAN_RECOVERY_ASSIGNMENT> TBL_LOAN_RECOVERY_ASSIGNMENT { get; set; }
+
+        public virtual DbSet<TBL_LOAN_APPLICATION_FINAL_ARCHIVE> TBL_LOAN_APPLICATION_FINAL_ARCHIVE { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_DETAIL_FINAL_ARCHIVE> TBL_LOAN_APPLICATION_DETAIL_FINAL_ARCHIVE { get; set; }
+        public virtual DbSet<TBL_SECTOR_GLOBAL_LIMIT> TBL_SECTOR_GLOBAL_LIMIT { get; set; }
         public virtual DbSet<TBL_TEMP_LC_ISSUANCE> TBL_TEMP_LC_ISSUANCE { get; set; }
         public virtual DbSet<TBL_LC_ISSUANCE_ARCHIVE> TBL_LC_ISSUANCE_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_DETAIL_REVIEW_TYPE> TBL_LOAN_DETAIL_REVIEW_TYPE { get; set; }
@@ -29,6 +36,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ALERT_GENERAL_TEMPLATE> TBL_ALERT_GENERAL_TEMPLATE { get; set; }
         public virtual DbSet<TBL_INTERNAL_EXPOSURE> TBL_INTERNAL_EXPOSURE { get; set; }
         public virtual DbSet<TBL_PSR_IMAGES> TBL_PSR_IMAGES { get; set; }
+
+        public virtual DbSet<TBL_BULK_PREPAYMENTREVERSAL> TBL_BULK_PREPAYMENTREVERSAL { get; set; }
+        public virtual DbSet<TBL_BULK_PREPAYMENT> TBL_BULK_PREPAYMENT { get; set; }
+         
         public virtual DbSet<TBL_CREDIT_OFFICER_STAFFROLE> TBL_CREDIT_OFFICER_STAFFROLE { get; set; }
         public virtual DbSet<TBL_GLOBAL_EXPOSURE> TBL_GLOBAL_EXPOSURE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_DEPOSIT_ARCHV> TBL_COLLATERAL_DEPOSIT_ARCHV { get; set; }
@@ -266,6 +277,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LMSR_FLOW_ORDER> TBL_LMSR_FLOW_ORDER { get; set; }
         public virtual DbSet<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
         public virtual DbSet<TBL_LOAN> TBL_LOAN { get; set; }
+        public virtual DbSet<TBL_LOAN_EXTERNAL> TBL_LOAN_EXTERNAL { get; set; }
         public virtual DbSet<TBL_LOAN_RECOVERY_PAYMENT> TBL_LOAN_RECOVERY_PAYMENT { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_ARCHIVE> TBL_LOAN_APPLICATION_ARCHIVE { get; set; }
@@ -335,7 +347,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_REVIEW_APPLICATN_CAM> TBL_LOAN_REVIEW_APPLICATN_CAM { get; set; }
         public virtual DbSet<TBL_LOAN_REVIEW_OPERATION> TBL_LOAN_REVIEW_OPERATION { get; set; }
         public virtual DbSet<TBL_LOAN_REVIEW_OPRATN_IREG_SC> TBL_LOAN_REVIEW_OPRATN_IREG_SC { get; set; }
-        public virtual DbSet<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }
+        public virtual DbSet<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; } 
         public virtual DbSet<TBL_LOAN_REVOLVING_ARCHIVE> TBL_LOAN_REVOLVING_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_REVOLVING_TYPE> TBL_LOAN_REVOLVING_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_SCHEDULE_CATEGORY> TBL_LOAN_SCHEDULE_CATEGORY { get; set; }
