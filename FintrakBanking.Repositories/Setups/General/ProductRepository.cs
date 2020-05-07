@@ -614,6 +614,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
                                        productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                                        productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
+                                       excludeFromLitigation = data.EXCLUDEFROMLITIGATION,
 
                                        productCode = data.PRODUCTCODE,
                                        productName = data.PRODUCTNAME + " " + data.PRODUCTCODE,
@@ -1091,6 +1092,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                                       productPriceIndexId = c.PRODUCTPRICEINDEXID,
                                                       productPriceIndexName = c.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                                                       productPriceIndexSpread = c.PRODUCTPRICEINDEXSPREAD,
+                                                      excludeFromLitigation = c.EXCLUDEFROMLITIGATION,
 
                                                       productCode = c.PRODUCTCODE,
                                                       productName = c.PRODUCTNAME,
@@ -1331,6 +1333,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productCode = tp.PRODUCTCODE,
                                        productName = tp.PRODUCTNAME,
                                        productDescription = tp.PRODUCTDESCRIPTION,
+                                       excludeFromLitigation = tp.EXCLUDEFROMLITIGATION,
 
                                        productGroupId = tp.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
 
@@ -1636,9 +1639,11 @@ namespace FintrakBanking.Repositories.Setups.General
                             existingProduct.PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL;
                             existingProduct.OVERDRAWNGL = productModel.OVERDRAWNGL;
                             existingProduct.ISFACILITYLINE = productModel.ISFACILITYLINE;
+                            existingProduct.EXCLUDEFROMLITIGATION = productModel.EXCLUDEFROMLITIGATION;
 
                             existingProduct.PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID;
                             existingProduct.PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD;
+
 
                             existingProduct.DEALTYPEID = productModel.DEALTYPEID;
                             existingProduct.DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID;
@@ -1775,6 +1780,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 RISKRATINGID = productModel.RISKRATINGID,
                                 PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID,
                                 PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD,
+                                EXCLUDEFROMLITIGATION = productModel.EXCLUDEFROMLITIGATION,
 
                                 DEALTYPEID = productModel.DEALTYPEID,
                                 DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID,
@@ -1992,6 +1998,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DORMANTGL = productModel.dormantGl,
                     PREMIUMDISCOUNTGL = productModel.premiumDiscountGl,
                     OVERDRAWNGL = productModel.overdrawnGl,
+                    EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation,
 
                     PRODUCTPRICEINDEXID = productModel.productPriceIndexId,
                     PRODUCTPRICEINDEXSPREAD = productModel.productPriceIndexSpread,
@@ -2156,8 +2163,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (existingTempProduct != null)
                 {
                     var existingTempProductBehaviour = context.TBL_TEMP_PRODUCT_BEHAVIOUR
-                        .FirstOrDefault(x => x.PRODUCTCODE.ToLower() ==
-                            productModel.productCode.ToLower()
+                        .FirstOrDefault(x => x.PRODUCTCODE.ToLower() == productModel.productCode.ToLower()
                                 && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
                     existingProductCurrencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
                     existingProductFees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
@@ -2252,6 +2258,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     tempProductToUpdate.PRINCIPALBALANCEGL = productModel.principalBalanceGl;
                     tempProductToUpdate.PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2;
                     tempProductToUpdate.PENALCHARGEGL = productModel.penalChargeGl;
+                    tempProductToUpdate.EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation;
 
                     tempProductToUpdate.INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl;
                     tempProductToUpdate.INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl;
@@ -2426,6 +2433,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ALLOWRATE = productModel.allowRate,
                         ALLOWTENOR = productModel.allowTenor,
                         ALLOWOVERDRAWN = productModel.allowOverdrawn,
+                        EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation,
 
                         CREATEDBY = productModel.createdBy,
                         DATETIMECREATED = DateTime.Now,

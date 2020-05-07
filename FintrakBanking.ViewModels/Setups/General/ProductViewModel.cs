@@ -128,6 +128,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short productClassProcessId { get; set; }
         public short customerTypeId { get; set; }
         public decimal? penalChargeRate { get; set; }
+        public bool excludeFromLitigation { get; set; }
 
     }
 
