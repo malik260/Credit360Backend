@@ -526,8 +526,16 @@ namespace FintrakBanking.Repositories.Credit
             int staffId = model.createdBy;
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
-           // int camOperationId = GetCamOperation(model.performanceTypeId);
-            
+            // int camOperationId = GetCamOperation(model.performanceTypeId);
+
+            int loanId = 0;
+            if (model.loanSystemTypeId == (short)LoanSystemTypeEnum.ExternalFacility)
+            {
+                var thirdpatyLoan = context.TBL_LOAN_EXTERNAL.Where(x => x.LOANREFERENCENUMBER == model.loanReferenceNumber).FirstOrDefault();
+                if (thirdpatyLoan != null) loanId = thirdpatyLoan.EXTERNALLOANID;
+            }
+
+
             bool result = true;
 
             foreach (var detail in model.applicationDetails)
@@ -589,8 +597,11 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var detail in model.applicationDetails)
             {
-                loan = GetLoanInformation(detail.loanSystemTypeId, detail.loanId, applicationDate);
-                int tenor = detail.loanSystemTypeId == 4 ? loan.tenorUsed : loan.tenor;
+                
+                if (model.loanSystemTypeId != (short)LoanSystemTypeEnum.ExternalFacility) { loanId = detail.loanId; }
+
+                loan = GetLoanInformation(detail.loanSystemTypeId, loanId, applicationDate);
+                int tenor = detail.loanSystemTypeId == 4 ? loan.tenorUsed : loan?.tenor ?? 0;
 
                 context.TBL_LMSR_APPLICATION_DETAIL.Add(new TBL_LMSR_APPLICATION_DETAIL
                 {

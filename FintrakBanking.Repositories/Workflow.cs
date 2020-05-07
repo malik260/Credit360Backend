@@ -1421,12 +1421,12 @@ namespace FintrakBanking.Repositories.WorkFlow
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
-                if (mappings.Where(x => x.GROUPID == level.Group.GROUPID && x.ALLOWMULTIPLEINITIATOR == true ).Any())
+                if (initiator != null && mappings.Where(x => x.GROUPID == level.Group.GROUPID && x.ALLOWMULTIPLEINITIATOR == true ).Any())
                 {
                     initiator = GetAllTrail().OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
-                    var requestStaff = context.TBL_STAFF.Find(initiator.REQUESTSTAFFID);
+                    var requestStaff = context.TBL_STAFF.Find(initiator?.REQUESTSTAFFID);
 
-                    if(level.ROLEIDTOROUTE != requestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null) { continue; }
+                    if(requestStaff != null && level.ROLEIDTOROUTE != requestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null) { continue; }
                    // levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
                 }
                 var testField = level.Level.LEVELNAME;
