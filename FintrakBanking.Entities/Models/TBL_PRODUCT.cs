@@ -54,10 +54,11 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISMULTIPLECURENCY { get; set; }
         public bool? ISFACILITYLINE { get; set; }
+        public bool EXCLUDEFROMLITIGATION { get; set; }
 
         public short PRODUCTCLASSID { get; set; }
 
-        [Required]
+        ////[Required]
         //[StringLength(50)]
         public string PRODUCTCODE { get; set; }
 
