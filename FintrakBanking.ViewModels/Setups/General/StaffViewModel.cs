@@ -97,6 +97,15 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string StaffName { get; set; }
     }
 
+    public class BatchPrepaymentViewModel
+    {
+        public int? batchCode { get; set; }
+        public int? numberOfLoans { get; set; }
+        public decimal totalAmount { get; set; }
+        public DateTime? processedDate { get; set; }
+
+    }
+
 
     public class StaffMISViewModel
     {
