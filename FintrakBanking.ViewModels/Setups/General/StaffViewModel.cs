@@ -11,6 +11,11 @@ namespace FintrakBanking.ViewModels.Setups.General
        
         public IEnumerable <DepartmentViewModel> departmentUnits;
         public string supervisorStaffName { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public decimal amount { get; set; }
+        public DateTime? processedDate { get; set; }
+        public int prepaymentId { get; set; }
+        public int? batchCode { get; set; }
         public string message { get; set; }
         public string staffRoleCode { get; set; }
         public string branchCode { get; set; }

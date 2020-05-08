@@ -62,6 +62,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
       <Private>True</Private>
@@ -77,6 +78,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\TBL_DOCUMENT_USAGE_FINAL_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_BULK_PREPAYMENT.cs" />
+    <Compile Include="Models\TBL_BULK_PREPAYMENTREVERSAL.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_LIQUIDATION_RECOVERY.cs" />
     <Compile Include="Models\TBL_LC_ISSUANCE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LINE_FACILITY_STATUS.cs" />
     <Compile Include="Models\TBL_LMSR_FLOW_ORDER.cs" />
@@ -130,7 +134,9 @@
     <Compile Include="Models\TBL_LOAN_CAMSOL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_MAPPING_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_DETAIL_REVIEW_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_EXTERNAL.cs" />
     <Compile Include="Models\TBL_LOAN_FULLANDFINAL_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_ASSIGNMENT.cs" />
     <Compile Include="Models\TBL_OPERATION_CAMSOL_LIST.cs" />
     <Compile Include="Models\TBL_OPERATION_SIGNATORY.cs" />
     <Compile Include="Models\TBL_AUTHORISED_SIGNATORY.cs" />

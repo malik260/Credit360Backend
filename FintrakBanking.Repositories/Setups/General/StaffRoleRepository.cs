@@ -53,6 +53,25 @@ namespace FintrakBanking.Repositories.Setups.General
                         }).SingleOrDefault();
             return role;
         }
+
+
+
+        public bool DeleteBulkPrepayment(int bulkPrepaymentId, UserInfo user)
+        {
+
+            bool result = false;
+
+            var targetRecord = context.TBL_BULK_PREPAYMENT.Where(x => x.BULK_PREPAYMENTID == bulkPrepaymentId).FirstOrDefault();
+
+            context.TBL_BULK_PREPAYMENT.Remove(targetRecord);
+
+            result = context.SaveChanges() > 0;
+
+            return result;
+
+        }
+
+
         public IEnumerable<StaffRoleViewModel> GetStaffRoleByCompanyId(int companyId)
         {
            

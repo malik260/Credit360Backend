@@ -15,6 +15,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -613,6 +614,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
                                        productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                                        productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
+                                       excludeFromLitigation = data.EXCLUDEFROMLITIGATION,
 
                                        productCode = data.PRODUCTCODE,
                                        productName = data.PRODUCTNAME + " " + data.PRODUCTCODE,
@@ -1090,6 +1092,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                                       productPriceIndexId = c.PRODUCTPRICEINDEXID,
                                                       productPriceIndexName = c.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                                                       productPriceIndexSpread = c.PRODUCTPRICEINDEXSPREAD,
+                                                      excludeFromLitigation = c.EXCLUDEFROMLITIGATION,
 
                                                       productCode = c.PRODUCTCODE,
                                                       productName = c.PRODUCTNAME,
@@ -1330,6 +1333,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productCode = tp.PRODUCTCODE,
                                        productName = tp.PRODUCTNAME,
                                        productDescription = tp.PRODUCTDESCRIPTION,
+                                       excludeFromLitigation = tp.EXCLUDEFROMLITIGATION,
 
                                        productGroupId = tp.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
 
@@ -1635,9 +1639,11 @@ namespace FintrakBanking.Repositories.Setups.General
                             existingProduct.PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL;
                             existingProduct.OVERDRAWNGL = productModel.OVERDRAWNGL;
                             existingProduct.ISFACILITYLINE = productModel.ISFACILITYLINE;
+                            existingProduct.EXCLUDEFROMLITIGATION = productModel.EXCLUDEFROMLITIGATION;
 
                             existingProduct.PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID;
                             existingProduct.PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD;
+
 
                             existingProduct.DEALTYPEID = productModel.DEALTYPEID;
                             existingProduct.DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID;
@@ -1774,6 +1780,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 RISKRATINGID = productModel.RISKRATINGID,
                                 PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID,
                                 PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD,
+                                EXCLUDEFROMLITIGATION = productModel.EXCLUDEFROMLITIGATION,
 
                                 DEALTYPEID = productModel.DEALTYPEID,
                                 DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID,
@@ -1991,6 +1998,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DORMANTGL = productModel.dormantGl,
                     PREMIUMDISCOUNTGL = productModel.premiumDiscountGl,
                     OVERDRAWNGL = productModel.overdrawnGl,
+                    EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation,
 
                     PRODUCTPRICEINDEXID = productModel.productPriceIndexId,
                     PRODUCTPRICEINDEXSPREAD = productModel.productPriceIndexSpread,
@@ -2155,8 +2163,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (existingTempProduct != null)
                 {
                     var existingTempProductBehaviour = context.TBL_TEMP_PRODUCT_BEHAVIOUR
-                        .FirstOrDefault(x => x.PRODUCTCODE.ToLower() ==
-                            productModel.productCode.ToLower()
+                        .FirstOrDefault(x => x.PRODUCTCODE.ToLower() == productModel.productCode.ToLower()
                                 && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
                     existingProductCurrencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
                     existingProductFees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
@@ -2251,6 +2258,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     tempProductToUpdate.PRINCIPALBALANCEGL = productModel.principalBalanceGl;
                     tempProductToUpdate.PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2;
                     tempProductToUpdate.PENALCHARGEGL = productModel.penalChargeGl;
+                    tempProductToUpdate.EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation;
 
                     tempProductToUpdate.INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl;
                     tempProductToUpdate.INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl;
@@ -2425,6 +2433,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ALLOWRATE = productModel.allowRate,
                         ALLOWTENOR = productModel.allowTenor,
                         ALLOWOVERDRAWN = productModel.allowOverdrawn,
+                        EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation,
 
                         CREATEDBY = productModel.createdBy,
                         DATETIMECREATED = DateTime.Now,
@@ -2624,6 +2633,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         var globalPriceIndex = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Find(entity.targetId);
 
+                        List<string> receiverEmailList = new List<string>();
+                        AlertsViewModel alert = new AlertsViewModel();
+
+                        var productPriceIndex = context.TBL_PRODUCT_PRICE_INDEX.Find(globalPriceIndex.PRODUCTPRICEINDEXID);
+                        var dynamicMessage = string.Empty;
+                        var staffEmail = context.TBL_STAFF.Find(globalPriceIndex.CREATEDBY);
+                        var messageStatus = "";
+                            dynamicMessage = "Global Interest Rate Change on Product Price Index: " + productPriceIndex.PRICEINDEXDESCRIPTION.ToUpper() + " from old interest rate " + globalPriceIndex.OLDRATE+ " to new interest rate " + globalPriceIndex .NEWRATE+ " has been " +messageStatus;
+
+
                         //if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                         //{
 
@@ -2644,8 +2663,11 @@ namespace FintrakBanking.Repositories.Setups.General
                         }
                         if (workFlow.NewState == (int)ApprovalState.Ended)
                         {
+                            alert.receiverEmailList.Add(staffEmail.EMAIL);
                             if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
                             {
+                                
+                                messageStatus = "Approved";
                                 var appDate = genSetup.GetApplicationDate();
                                 if (globalPriceIndex.EFFECTIVEDATE == appDate)
                                 {
@@ -2658,6 +2680,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 globalPriceIndex.DATETIMEUPDATED = DateTime.Now;
                                 globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
                                 context.SaveChanges();
+                                LogEmailAlert(dynamicMessage, "Global Interest Rate Change Notification ", alert.receiverEmailList, "10021", 10022, "GlobalInterestRateChange");
                                 loanOperations.ProcessGlobalInterestRepricing(globalPriceIndex.EFFECTIVEDATE, globalPriceIndex.PRODUCTPRICEINDEXID, (short)entity.createdBy, globalPriceIndex.ISMARKETINDUCED, globalPriceIndex.PRODUCTPRICEINDEXGLOBALID);
                                 trans.Commit();
                                 trans.Dispose();
@@ -2667,9 +2690,11 @@ namespace FintrakBanking.Repositories.Setups.General
                             }
                             else if (workFlow.StatusId == (int)ApprovalStatusEnum.Disapproved)
                             {
+                                messageStatus = "Disapproved";
                                 globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                                 globalPriceIndex.DATETIMEUPDATED = DateTime.Now;
                                 globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
+                                LogEmailAlert(dynamicMessage, "Global Interest Rate Change Notification ", alert.receiverEmailList, "10021", 10022, "GlobalInterestRateChange");
                                 context.SaveChanges();
                                 trans.Commit();
                                 trans.Dispose();
@@ -2698,6 +2723,58 @@ namespace FintrakBanking.Repositories.Setups.General
 
         }
 
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
+        {
+            try
+            {
+                string recipient = string.Join("", recipients.ToArray());
+                string messageSubject = alertSubject + " ALERT";
+                string messageContent = messageBody;
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = messageContent,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = referenceCode,
+                    targetId = targetId,
+                    operationMethod = operationMehtod,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                new SecureException(ex.ToString());
+            }
+        }
+
+        private void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
+
+        }
 
         //public int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity)
         //{
