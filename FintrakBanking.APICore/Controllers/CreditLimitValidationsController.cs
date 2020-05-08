@@ -424,17 +424,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("obligor-limit")]
         public HttpResponseMessage GetAllObligorLimit()
         {
-            try
-            {
-                var response = repo.GetAllObligorLimit();
-
+            
+            var response = repo.GetAllObligorLimit();
+            if (response != null) { 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            }else
+            
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
         }
+
+
         [HttpPost]
         [Route("obligor-limit")]
         public HttpResponseMessage AddUpdateObligorLimit([FromBody] ObligorLimitViewModel entity)
