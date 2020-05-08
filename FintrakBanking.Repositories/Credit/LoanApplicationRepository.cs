@@ -4599,6 +4599,7 @@ namespace FintrakBanking.Repositories.Credit
                         x.approvalTrailId = singleRec.APPROVALTRAILID;//y.APPROVALTRAILID,
                         //x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a" : singleRec.TBL_STAFF1.STAFFCODE + " - " + singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                         x.responsiblePerson = singleRec.TOSTAFFID == null ? (singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : (x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : (x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : "CLICK VIEW FOR DRAWDOWN DETAILS"))) : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                        x.toStaffId = singleRec.TOSTAFFID;
                         x.currentOperationId = singleRec.OPERATIONID;
                     }
                     else
@@ -6218,10 +6219,10 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = model.operationId;
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = model.productClassId;
-            workflow.ProductId = model.productId;
+            workflow.ProductClassId = model.productClassId > 0 ? model.productClassId : null;
+            workflow.ProductId = model.productId > 0 ? model.productId : null;
             workflow.NextLevelId = model.receiverLevelId;
-            workflow.ToStaffId = model.receiverStaffId;
+            workflow.ToStaffId = model.receiverStaffId > 0 ? model.receiverStaffId : null;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             workflow.LogActivity();
