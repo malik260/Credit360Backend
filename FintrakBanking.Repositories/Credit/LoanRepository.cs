@@ -13828,7 +13828,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
 
-                if(customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360 and could not be imported. API failed!"); }
+                if(customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360 and could not be imported."); }
             }
 
             var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.ACCOUNTNUMBER).FirstOrDefault();

@@ -526,8 +526,20 @@ namespace FintrakBanking.Repositories.Credit
             int staffId = model.createdBy;
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
-           // int camOperationId = GetCamOperation(model.performanceTypeId);
-            
+            // int camOperationId = GetCamOperation(model.performanceTypeId);
+
+            int loanId = 0;
+            if (model.loanSystemTypeId == (short)LoanSystemTypeEnum.ExternalFacility)
+            {
+                var thirdpatyLoan = context.TBL_LOAN_EXTERNAL.Where(x => x.LOANREFERENCENUMBER == model.loanReferenceNumber).FirstOrDefault();
+                if (thirdpatyLoan != null)
+                {
+                    model.customerId = thirdpatyLoan.CUSTOMERID;
+                    loanId = thirdpatyLoan.EXTERNALLOANID;
+                }
+            }
+
+
             bool result = true;
 
             foreach (var detail in model.applicationDetails)
@@ -589,13 +601,16 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var detail in model.applicationDetails)
             {
-                loan = GetLoanInformation(detail.loanSystemTypeId, detail.loanId, applicationDate);
+                
+                if (model.loanSystemTypeId != (short)LoanSystemTypeEnum.ExternalFacility) { loanId = detail.loanId; }
+
+                loan = GetLoanInformation(detail.loanSystemTypeId, loanId, applicationDate);
                 int tenor = detail.loanSystemTypeId == 4 ? loan.tenorUsed : loan.tenor;
 
                 context.TBL_LMSR_APPLICATION_DETAIL.Add(new TBL_LMSR_APPLICATION_DETAIL
                 {
                     LOANAPPLICATIONID = application.LOANAPPLICATIONID,
-                    LOANID = detail.loanId,
+                    LOANID = loanId,
                     LOANSYSTEMTYPEID = detail.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facilizzty..Contingent Liability*/
                     OPERATIONID = (short) model.operationId, // detail.operationId, // refactor to operationId from ui!
                     REVIEWDETAILS = detail.reviewDetails,
@@ -638,18 +653,14 @@ namespace FintrakBanking.Repositories.Credit
 
             if (assetManagement)
             {
-                var targetID = application.LOANAPPLICATIONID;
-                if (model.loanSystemTypeId == (short)LoanSystemTypeEnum.ExternalFacility) targetID = loan.loanId;
 
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, targetID, null, "Initiation", true, true, true);
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
                 application.OPERATIONID = (short)model.operationId;//79;
                 context.Entry(application).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
-                var targetID = application.LOANAPPLICATIONID;
-                if (model.loanSystemTypeId == (short)LoanSystemTypeEnum.ExternalFacility) targetID = loan.loanId;
-                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, targetID, null, "Initiation", true, true, true);
+                workflow.NextProcess(model.companyId, staffId, (short)model.operationId, null, application.LOANAPPLICATIONID, null, "Initiation", true, true, true);
             }
 
             if (context.SaveChanges() > 0)
