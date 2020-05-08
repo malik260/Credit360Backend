@@ -177,6 +177,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                 staffRowData.message = staffRowData.message + "Loan Reference Number Does Not Exist. ";
                             }
 
+                            staffRowData.customerId = exist.CUSTOMERID;
+
                             var existence = (from a in context.TBL_LOAN
                                              where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                                              select (a)).ToList();
@@ -322,17 +324,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     var output = context.SaveChanges() > 0;
 
-                    workflow.StaffId = model.createdBy;
-                    workflow.CompanyId = model.companyId;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                    //workflow.TargetId = batchCode;
-                    workflow.TargetId = (int)batchCodeInt;
-                    workflow.Comment = "Bulk Prepayment Initiated";
-                    workflow.OperationId = (int)OperationsEnum.BulkLiquidation;
-                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                    workflow.ExternalInitialization = true;
-                    workflow.LogActivity();
-
+                    //workflow.StaffId = model.createdBy;
+                    //workflow.CompanyId = model.companyId;
+                    //workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    ////workflow.TargetId = batchCode;
+                    //workflow.TargetId = (int)batchCodeInt;
+                    //workflow.Comment = "Bulk Prepayment Initiated";
+                    //workflow.OperationId = (int)OperationsEnum.BulkLiquidation;
+                    //workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    //workflow.ExternalInitialization = true;
+                    //workflow.LogActivity();
 
                 }
 
@@ -358,6 +359,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DATETIMECREATED = DateTime.Now,
                 DELETED = false,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                CUSTOMERID = staffModel.customerId
             };
 
             context.TBL_BULK_PREPAYMENT.Add(bulkPrepaymentInfo);
@@ -851,8 +853,80 @@ namespace FintrakBanking.Repositories.Setups.General
                             amount = a.AMOUNT,
                         }).OrderBy(x => x.batchCode).ToList();
 
+            return data;
+        }
+
+        public IEnumerable<BatchPrepaymentViewModel> GetAllUnprocessedBulkPrepaymentBatch()
+        {
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        select new StaffInfoViewModel()
+                        {
+                            prepaymentId = a.BULK_PREPAYMENTID,
+                            batchCode = Math.Abs(a.BATCHID),
+                            //loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            processedDate = a.PROCESSDATE,
+                            amount = a.AMOUNT,
+                            customerId = a.CUSTOMERID
+                        }).OrderBy(x => x.batchCode).ToList();
+
+            var result = data.GroupBy(b => b.batchCode).Select(b => new BatchPrepaymentViewModel()
+                            {
+                                batchCode = b.First().batchCode,
+                                numberOfLoans = b.Count(),
+                                totalAmount = b.Sum(a => a.amount),
+                                processedDate = b.First().processedDate,
+                                customerId = b.First().customerId
+
+                            }).ToList();
+            return result;
+        }
+
+        private IEnumerable<TBL_BULK_PREPAYMENT> GetUnprocessedBulkPrepaymentByBatch(int batchId)
+        {
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.BATCHID == batchId && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved 
+                         && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing 
+                        select a).ToList();
 
             return data;
+        }
+
+        public bool SubmitBatchPrepaymentForApproval(ApprovalViewModel model)
+        {
+            bool response = false;
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.targetId;
+                workflow.Comment = model.comment; // "Bulk Prepayment Initiated";
+                workflow.OperationId = (int)OperationsEnum.BulkLiquidation;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                var batchLoans = GetUnprocessedBulkPrepaymentByBatch(model.targetId);
+
+                foreach (var batchLoan in batchLoans)
+                {
+                    batchLoan.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                }
+
+                try
+                {
+                    response = context.SaveChanges() > 0;
+                    transaction.Commit();
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
         }
 
 
