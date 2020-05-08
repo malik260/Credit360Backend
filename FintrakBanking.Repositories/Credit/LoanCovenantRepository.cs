@@ -408,7 +408,7 @@ namespace FintrakBanking.Repositories.Customer
                         eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
                         context.SaveChanges();
 
-                        if(covenant.PREVIOUSCOVENANTDATE.Value.Date == DateTime.Now.Date)
+                        if((DateTime)covenant.PREVIOUSCOVENANTDATE.Value.Date == DateTime.Now.Date)
                         {
                             AlertsViewModel alerts = new AlertsViewModel();
                             string emailList = "";
