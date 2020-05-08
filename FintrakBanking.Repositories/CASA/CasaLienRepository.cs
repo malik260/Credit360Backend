@@ -25,10 +25,11 @@ namespace FintrakBanking.Repositories.CASA
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
         private ITwoFactorAuthIntegrationService twoFactorAuth;
+        private TransactionPosting tran;
         bool USE_TWO_FACTOR_AUTHENTICATION = false;
         bool USE_THIRD_PARTY_INTEGRATION = false;
         //private ILoanOperationsRepository creditOperations;
-        private TransactionPosting tran;
+       
         public CasaLienRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
                                             //ILoanOperationsRepository _creditOperations, 
                                             FinTrakBankingContext _context, TransactionPosting tran, ITwoFactorAuthIntegrationService _twoFactorAuth)
