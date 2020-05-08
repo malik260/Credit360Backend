@@ -177,6 +177,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                 staffRowData.message = staffRowData.message + "Loan Reference Number Does Not Exist. ";
                             }
 
+                            staffRowData.customerId = exist.CUSTOMERID;
+
                             var existence = (from a in context.TBL_LOAN
                                              where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                                              select (a)).ToList();
@@ -357,6 +359,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DATETIMECREATED = DateTime.Now,
                 DELETED = false,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                CUSTOMERID = staffModel.customerId
             };
 
             context.TBL_BULK_PREPAYMENT.Add(bulkPrepaymentInfo);
@@ -864,6 +867,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             //loanReferenceNumber = a.LOANREFERENCENUMBER,
                             processedDate = a.PROCESSDATE,
                             amount = a.AMOUNT,
+                            customerId = a.CUSTOMERID
                         }).OrderBy(x => x.batchCode).ToList();
 
             var result = data.GroupBy(b => b.batchCode).Select(b => new BatchPrepaymentViewModel()
@@ -871,7 +875,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                 batchCode = b.First().batchCode,
                                 numberOfLoans = b.Count(),
                                 totalAmount = b.Sum(a => a.amount),
-                                processedDate = b.First().processedDate
+                                processedDate = b.First().processedDate,
+                                customerId = b.First().customerId
 
                             }).ToList();
             return result;

@@ -79,6 +79,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public AppUserViewModel user { get; set; }
         public string businessUnitName { get; set; }
         public string misCode { get; set; }
+        public int? customerId { get; set; }
+
     }
 
     public class staffBulkFeedbackViewModel
@@ -103,6 +105,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? numberOfLoans { get; set; }
         public decimal totalAmount { get; set; }
         public DateTime? processedDate { get; set; }
+        public int? customerId { get; set; }
 
     }
 
