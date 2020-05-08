@@ -349,8 +349,8 @@ namespace FintrakBanking.Repositories.Customer
                     TBL_EOD_OPERATION_LOG_DETAIL eod_operation_Detail = new TBL_EOD_OPERATION_LOG_DETAIL();
 
                     //var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.COVENANTDETAIL && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
-
-                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.LOANCOVENANTDETAILID.ToString() + '-' + loan.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+                    var refNumber = loan.LOANCOVENANTDETAILID.ToString() + '-' + loan.LOANAPPLICATIONDETAILID.ToString();
+                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == refNumber && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
 
                     if (checkExistence == null)
                     {
@@ -376,13 +376,13 @@ namespace FintrakBanking.Repositories.Customer
             transactionReferenceNo = "";
             foreach (var covenant in covenants)
             {
-
-                var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+                var refNumber = covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString();
+                var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == refNumber && c.EODDATE == date && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
 
                 if (checkExistence != null)
                 {
 
-                    var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+                    var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == refNumber && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
 
                     eod_Operation_Log_Detail_Set_Value.STARTDATETIME = DateTime.Now;
                     eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
@@ -396,10 +396,8 @@ namespace FintrakBanking.Repositories.Customer
                         //transactionReferenceNo = covenant.COVENANTDETAIL.ToString();
 
                         transactionReferenceNo = covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString();
-
                         covenant.PREVIOUSCOVENANTDATE = (DateTime)covenant.NEXTCOVENANTDATE;
                         covenant.NEXTCOVENANTDATE = GetFrequencyDate((int)covenant.FREQUENCYTYPEID, (DateTime)covenant.NEXTCOVENANTDATE);
-
 
                         eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
                         eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
@@ -407,7 +405,7 @@ namespace FintrakBanking.Repositories.Customer
                         eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
                         context.SaveChanges();
 
-                        if((DateTime)covenant.PREVIOUSCOVENANTDATE.Value.Date == DateTime.Now.Date)
+                        if((DateTime)covenant.PREVIOUSCOVENANTDATE.Value.Date == DateTime.Now.Date && covenant.COVENANTTYPEID == (short)LoanCovenantTypeEnum.Cleanup)
                         {
                             AlertsViewModel alerts = new AlertsViewModel();
                             string emailList = "";
