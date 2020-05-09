@@ -844,6 +844,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = (from a in context.TBL_BULK_PREPAYMENT
                         where a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
                         select new StaffInfoViewModel()
                         {
                             prepaymentId = a.BULK_PREPAYMENTID,
@@ -860,6 +861,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = (from a in context.TBL_BULK_PREPAYMENT
                         where a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
                         select new StaffInfoViewModel()
                         {
                             prepaymentId = a.BULK_PREPAYMENTID,
