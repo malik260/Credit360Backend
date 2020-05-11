@@ -884,17 +884,25 @@ namespace FintrakBanking.Repositories.Setups.General
             return result;
         }
 
-        private IEnumerable<TBL_BULK_PREPAYMENT> GetUnprocessedBulkPrepaymentByBatch(int batchId)
+        private IEnumerable<TBL_BULK_PREPAYMENT> GetPendingBulkPrepaymentByBatch(int batchId)
         {
             var data = (from a in context.TBL_BULK_PREPAYMENT
-                        where a.BATCHID == batchId && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved 
-                         && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing 
+                        where a.BATCHID == batchId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending 
                         select a).ToList();
 
             return data;
         }
 
-        public bool SubmitBatchPrepaymentForApproval(ApprovalViewModel model)
+        private IEnumerable<TBL_BULK_PREPAYMENT> GetProcessingBulkPrepaymentByBatch(int batchId)
+        {
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.BATCHID == batchId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        select a).ToList();
+
+            return data;
+        }
+
+        public bool SubmitPrepaymentBatchForApproval(ApprovalViewModel model)
         {
             bool response = false;
 
@@ -910,7 +918,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
 
-                var batchLoans = GetUnprocessedBulkPrepaymentByBatch(model.targetId);
+                var batchLoans = GetPendingBulkPrepaymentByBatch(model.targetId);
 
                 foreach (var batchLoan in batchLoans)
                 {
@@ -931,6 +939,111 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
+        public IEnumerable<BatchPrepaymentViewModel> GetBulkPrepaymentsAwaitingApprovalBatch(int staffId, int companyId)
+        {
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.BulkLiquidationApproval).ToList();
+            var staff = from s in context.TBL_STAFF select s;
+
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        select new StaffInfoViewModel()
+                        {
+                            prepaymentId = a.BULK_PREPAYMENTID,
+                            batchCode = Math.Abs(a.BATCHID),
+                            //loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            processedDate = a.PROCESSDATE,
+                            amount = a.AMOUNT,
+                            customerId = a.CUSTOMERID
+                        }).OrderBy(x => x.batchCode).ToList();
+
+            var batch = data.GroupBy(b => b.batchCode).Select(b => new BatchPrepaymentViewModel()
+            {
+                batchCode = b.First().batchCode,
+                numberOfLoans = b.Count(),
+                totalAmount = b.Sum(a => a.amount),
+                processedDate = b.First().processedDate,
+                customerId = b.First().customerId
+
+            }).ToList();
+
+            var result = (from a in batch
+                           join atrail in context.TBL_APPROVAL_TRAIL on a.batchCode equals atrail.TARGETID
+                           where ((atrail.OPERATIONID == (int)OperationsEnum.BulkLiquidation))
+                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                               && atrail.RESPONSESTAFFID == null
+                               && atrail.LOOPEDSTAFFID == null
+                           orderby a.processedDate descending
+                           select new BatchPrepaymentViewModel()
+                           {
+                               batchCode = a.batchCode,
+                               numberOfLoans = a.numberOfLoans,
+                               totalAmount = a.totalAmount,
+                               processedDate = a.processedDate,
+                               customerId = a.customerId,
+
+                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               dateCreated = atrail.SYSTEMARRIVALDATETIME,
+                               comment = atrail.COMMENT,
+                               operationId = atrail.OPERATIONID,
+                               approvalStatusId = atrail.APPROVALSTATUSID,
+                               toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                               fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+
+                           }).ToList();
+
+            return result;
+        }
+
+        public bool SubmitPrepaymentBatchForWorkflowApproval(ApprovalViewModel model)
+        {
+            bool response = false;
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.targetId;
+                workflow.Comment = model.comment;
+                workflow.OperationId = (int)OperationsEnum.BulkLiquidation;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                try
+                {
+                    if (workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var batchLoans = GetProcessingBulkPrepaymentByBatch(model.targetId);
+
+                        if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                        {
+                            foreach (var batchLoan in batchLoans)
+                            {
+                                batchLoan.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+                        }
+
+                        if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+                        {
+                            foreach (var batchLoan in batchLoans)
+                            {
+                                batchLoan.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            }
+                        }
+                    }
+
+                    response = context.SaveChanges() > 0;
+                    transaction.Commit();
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
+        }
 
         public bool LogDeleteRequestStaff(int staffId, UserInfo user)
         {
