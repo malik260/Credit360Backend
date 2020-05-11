@@ -2768,6 +2768,11 @@ namespace FintrakBanking.Repositories.Credit
             detail.TENORFREQUENCYTYPEID = update.tenorModeId;
             detail.ISTAKEOVERAPPLICATION = update.isTakeOverApplication;
             detail.LOANDETAILREVIEWTYPEID = update.loanDetailReviewTypeId;
+            detail.ISMORATORIUM = update.isMoratorium;
+            detail.INTERESTREPAYMENT = update.interestRepayment;
+            detail.INTERESTREPAYMENTID = update.interestRepaymentId;
+            detail.MORATORIUM = update.moratorium;
+            detail.APPROVEDLINELIMIT = update.approvedLineLimit;
             detail.DATETIMEUPDATED = DateTime.Now;
             detail.LASTUPDATEDBY = loan.createdBy;
 
@@ -3138,8 +3143,8 @@ namespace FintrakBanking.Repositories.Credit
                 ISMORATORIUM = a.isMoratorium,
                 INTERESTREPAYMENT = a.interestRepayment,
                 INTERESTREPAYMENTID = a.interestRepaymentId,
-                MORATORIUM = a.moratorium
-                //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
+                MORATORIUM = a.moratorium,
+                APPROVEDLINELIMIT = a.approvedLineLimit
             };
 
             //var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
