@@ -84,5 +84,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<simpleStaffModel> GetSearchedStaff(string search);
 
         IEnumerable<simpleStaffModel> SearchApprovers(int levelId, string queryString, int getCompanyId);
+
+        IEnumerable<BatchPrepaymentViewModel> GetAllUnprocessedBulkPrepaymentBatch();
+        bool SubmitBatchPrepaymentForApproval(ApprovalViewModel model);
     }
 }

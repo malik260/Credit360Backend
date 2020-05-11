@@ -772,6 +772,50 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-unprocessed-bulk-prepayment-batch")]
+        public HttpResponseMessage GetAllUnprocessedBulkPrepaymentBatch()
+        {
+            try
+            {
+                var batch = repo.GetAllUnprocessedBulkPrepaymentBatch();
+
+                if (batch == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = batch, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = batch });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("submit-prepayment-batch-for-approval")]
+        public HttpResponseMessage SubmitBatchPrepaymentForApproval([FromBody] ApprovalViewModel model)
+        {
+            try
+            {
+                model.BranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = repo.SubmitBatchPrepaymentForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
+            }
+        }
 
 
         [HttpGet]
