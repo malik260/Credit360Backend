@@ -107,6 +107,13 @@ namespace FintrakBanking.ViewModels.Setups.General
         public DateTime? processedDate { get; set; }
         public int? customerId { get; set; }
 
+        public string toApprovalLevelName { get; set; }
+        public string fromApprovalLevelName { get; set; }
+        public string comment { get; set; }
+        public int approvalStatusId { get; set; }
+        public DateTime? dateCreated { get; set; }
+        public string approvalStatus { get; set; }
+        public int operationId { get; set; }
     }
 
 
