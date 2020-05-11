@@ -64,6 +64,7 @@ namespace FintrakBanking.Entities.Models
         public double? PREVIOUSEFFECTIVEINTERESTRATE { get; set; }
 
         public int CREATEDBY { get; set; }
+        public int? EXTERNALLOANID { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
 

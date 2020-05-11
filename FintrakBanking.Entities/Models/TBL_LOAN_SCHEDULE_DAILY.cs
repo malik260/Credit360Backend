@@ -112,5 +112,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public virtual TBL_LOAN TBL_LOAN { get; set; }
+        public int? EXTERNALLOANID { get; set; }
     }
 }

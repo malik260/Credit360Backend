@@ -1867,7 +1867,14 @@ namespace FintrakBanking.Repositories.Setups.General
                         throw new SecureException("Product Currency must be specified. Please select a principal GL with mapped currencies");
                 }
 
-                bool output = false;
+            var isProductCodeExist = context.TBL_TEMP_PRODUCT.Any(x => x.PRODUCTCODE == productModel.productCode);
+
+            if (isProductCodeExist)
+            {
+                throw new SecureException("Product code already exist");
+            }
+
+            bool output = false;
                 var existingTempProduct = context.TBL_TEMP_PRODUCT.FirstOrDefault(x => x.PRODUCTCODE.ToLower() == productModel.productCode.ToLower()
                                                                       && x.ISCURRENT == true && x.COMPANYID == productModel.companyId
                                                                       && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending);
@@ -1986,7 +1993,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     PRODUCTTYPEID = productModel.productTypeId,
                     PRODUCTCATEGORYID = productModel.productCategoryId,
                     PRODUCTCLASSID = (short)productModel.productClassId,
-                    PRODUCTCODE = GenerateProductCode(productModel.companyId),
+                    PRODUCTCODE = productModel.productCode,
+                    // PRODUCTCODE = GenerateProductCode(productModel.companyId),
                     PRODUCTNAME = productModel.productName,
                     PRODUCTDESCRIPTION = productModel.productDescription,
                     RISKRATINGID = productModel.riskRatingId,
