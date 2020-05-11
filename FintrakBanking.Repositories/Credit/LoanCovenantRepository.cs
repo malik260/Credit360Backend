@@ -349,8 +349,8 @@ namespace FintrakBanking.Repositories.Customer
                     TBL_EOD_OPERATION_LOG_DETAIL eod_operation_Detail = new TBL_EOD_OPERATION_LOG_DETAIL();
 
                     //var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.COVENANTDETAIL && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
-
-                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.LOANCOVENANTDETAILID.ToString() + '-' + loan.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+                    var refNumber = loan.LOANCOVENANTDETAILID.ToString() + '-' + loan.LOANAPPLICATIONDETAILID.ToString();
+                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == refNumber && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
 
                     if (checkExistence == null)
                     {
@@ -376,19 +376,17 @@ namespace FintrakBanking.Repositories.Customer
             transactionReferenceNo = "";
             foreach (var covenant in covenants)
             {
-
-                var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+                var refNumber = covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString();
+                var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == refNumber && c.EODDATE == date && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
 
                 if (checkExistence != null)
                 {
 
-                    var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
-
+                    var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == refNumber && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
                     eod_Operation_Log_Detail_Set_Value.STARTDATETIME = DateTime.Now;
                     eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
 
                     context.SaveChanges();
-
 
                     try
                     {
@@ -396,10 +394,8 @@ namespace FintrakBanking.Repositories.Customer
                         //transactionReferenceNo = covenant.COVENANTDETAIL.ToString();
 
                         transactionReferenceNo = covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString();
-
                         covenant.PREVIOUSCOVENANTDATE = (DateTime)covenant.NEXTCOVENANTDATE;
                         covenant.NEXTCOVENANTDATE = GetFrequencyDate((int)covenant.FREQUENCYTYPEID, (DateTime)covenant.NEXTCOVENANTDATE);
-
 
                         eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
                         eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
@@ -407,42 +403,45 @@ namespace FintrakBanking.Repositories.Customer
                         eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
                         context.SaveChanges();
 
-                        if((DateTime)covenant.PREVIOUSCOVENANTDATE.Value.Date == DateTime.Now.Date)
+                        if((DateTime)covenant.PREVIOUSCOVENANTDATE.Value.Date == DateTime.Now.Date && covenant.COVENANTTYPEID == (short)LoanCovenantTypeEnum.Cleanup)
                         {
                             AlertsViewModel alerts = new AlertsViewModel();
                             string emailList = "";
                             
                             var casaAccount = context.TBL_CASA.Find(covenant.CASAACCOUNTID);
                             var data = GetCustomerAccountBalance(casaAccount.PRODUCTACCOUNTNUMBER);
-                            var availableBalance = data.availableBalance;
-                            if (covenant.COVENANTAMOUNT > availableBalance)
+                            if (data != null)
                             {
-                                var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(covenant.LOANAPPLICATIONDETAILID);
-                                var appDetails = context.TBL_LOAN_APPLICATION.Find(loanDetails.LOANAPPLICATIONID);
-                                var staffMisCode = context.TBL_STAFF.Find(loanDetails.CREATEDBY).MISCODE;
-                                var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
-                                emailList = GetBusinessTeamsEmails(staffMisCode);
-                                alerts.receiverEmailList.Add(emailList);
-                                var subject = "OD clean-up violation notification";
-                                var message = "This is to inform you that an OD clean-up with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") condition has been violated by the customer.";
-                                LogEmailAlert(message, subject, alerts.receiverEmailList, "100456", 100456, "OdViolationNotification");
-                                var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
-                                
-                                var casaLienViewModel = new CasaLienViewModel
+                                var availableBalance = data.availableBalance;
+                                if (covenant.COVENANTAMOUNT > availableBalance)
                                 {
-                                    productAccountNumber = casaAccount.PRODUCTACCOUNTNUMBER,
-                                    sourceReferenceNumber = appDetails.APPLICATIONREFERENCENUMBER,
-                                    companyId = appDetails.COMPANYID,
-                                    branchId = appDetails.BRANCHID,
-                                    lienAmount = (loanDetails.APPROVEDAMOUNT-(decimal)covenant.COVENANTAMOUNT),
-                                    description = "Place lien on the account "+casaAccount.PRODUCTACCOUNTNUMBER + "with amount "+ (loanDetails.APPROVEDAMOUNT - (decimal)covenant.COVENANTAMOUNT),
-                                    lienTypeId = (short)LienTypeEnum.OverdraftCleanUp,
-                                    dateTimeCreated = DateTime.Now,
-                                    createdBy = loanDetails.CREATEDBY,
-                                    lienReferenceNumber = referenceNumber,
-                                };
+                                    var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(covenant.LOANAPPLICATIONDETAILID);
+                                    var appDetails = context.TBL_LOAN_APPLICATION.Find(loanDetails.LOANAPPLICATIONID);
+                                    var staffMisCode = context.TBL_STAFF.Find(loanDetails.CREATEDBY).MISCODE;
+                                    var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
+                                    emailList = GetBusinessTeamsEmails(staffMisCode);
+                                    alerts.receiverEmailList.Add(emailList);
+                                    var subject = "OD clean-up violation notification";
+                                    var message = "This is to inform you that an OD clean-up with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") condition has been violated by the customer.";
+                                    LogEmailAlert(message, subject, alerts.receiverEmailList, "100456", 100456, "OdViolationNotification");
+                                    var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
-                                PlaceLienSub(casaLienViewModel);
+                                    var casaLienViewModel = new CasaLienViewModel
+                                    {
+                                        productAccountNumber = casaAccount.PRODUCTACCOUNTNUMBER,
+                                        sourceReferenceNumber = appDetails.APPLICATIONREFERENCENUMBER,
+                                        companyId = appDetails.COMPANYID,
+                                        branchId = appDetails.BRANCHID,
+                                        lienAmount = (loanDetails.APPROVEDAMOUNT - (decimal)covenant.COVENANTAMOUNT),
+                                        description = "Place lien on the account " + casaAccount.PRODUCTACCOUNTNUMBER + "with amount " + (loanDetails.APPROVEDAMOUNT - (decimal)covenant.COVENANTAMOUNT),
+                                        lienTypeId = (short)LienTypeEnum.OverdraftCleanUp,
+                                        dateTimeCreated = DateTime.Now,
+                                        createdBy = loanDetails.CREATEDBY,
+                                        lienReferenceNumber = referenceNumber,
+                                    };
+
+                                    PlaceLienSub(casaLienViewModel);
+                                }
                             }
                         }
                         

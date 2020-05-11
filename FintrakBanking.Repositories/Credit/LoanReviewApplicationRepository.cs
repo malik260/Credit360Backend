@@ -1277,7 +1277,7 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .FirstOrDefault();
             }
-            if (loanSystemTypeId == (int)LoanSystemTypeEnum.ExternalFacility)
+            else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ExternalFacility)
             {
                 result = context.TBL_LOAN_EXTERNAL.Where(x => x.EXTERNALLOANID == loanId).Select(loan => new LoanViewModel
                 {

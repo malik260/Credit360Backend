@@ -25,5 +25,7 @@ namespace FintrakBanking.Entities.Models
         public int? LASTUPDATEDBY { get; set; }
         public DateTime? DATETIMECREATED { get; set; }
         public DateTime? DATETIMEUPDATED { get; set; }
+        public int? CUSTOMERID { get; set; }
+
     }
 }
