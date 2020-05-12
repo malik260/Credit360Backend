@@ -672,6 +672,100 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return exposures;
         }
 
+        public List<CurrentCustomerExposure> GetGlobalCustomerExposureByCurrency(List<string> customerCodes,int currencyId)
+        {
+            IEnumerable<CurrentCustomerExposure> exposure = null;
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+
+            foreach (var customerCode in customerCodes)
+            {
+                customerCode.Trim();
+
+                exposure = from a in context.TBL_GLOBAL_EXPOSURE
+                           where a.CUSTOMERID.Contains(customerCode)
+                           && a.CURRENCYNAME == currencyId.ToString()
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.ADJFACILITYTYPE,
+                               existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                               proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                               outstandings = a.TOTALEXPOSURE ?? 0,
+                               recommendedLimit = 0,
+                               //PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                               reviewDate = DateTime.Now,
+                               loanStatus = a.CBNCLASSIFICATION,
+                               referenceNumber = a.REFERENCENUMBER,
+                           };
+
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
+            }
+
+            return exposures;
+        }
+
+        public List<CurrentCustomerExposure> GetGlobalCustomerExposureByGroupFirstTwenty(List<string> customerCodes)
+        {
+            IEnumerable<CurrentCustomerExposure> exposure = null;
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+
+            foreach (var customerCode in customerCodes)
+            {
+                customerCode.Trim();
+
+                exposure = (from a in context.TBL_GLOBAL_EXPOSURE
+                           where a.CUSTOMERID.Contains(customerCode)
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.ADJFACILITYTYPE,
+                               existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                               proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                               outstandings = a.TOTALEXPOSURE ?? 0,
+                               recommendedLimit = 0,
+                               //PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                               reviewDate = DateTime.Now,
+                               loanStatus = a.CBNCLASSIFICATION,
+                               referenceNumber = a.REFERENCENUMBER,
+                           }).OrderByDescending(x => x.outstandings).ToList().Take(20);
+
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
+            }
+
+            return exposures;
+        }
+
+        public List<CurrentCustomerExposure> GetGlobalCustomerExposureByGroupFirstHundred(List<string> customerCodes)
+        {
+            IEnumerable<CurrentCustomerExposure> exposure = null;
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+
+            foreach (var customerCode in customerCodes)
+            {
+                customerCode.Trim();
+
+                exposure = (from a in context.TBL_GLOBAL_EXPOSURE
+                            where a.CUSTOMERID.Contains(customerCode)
+                            select new CurrentCustomerExposure
+                            {
+                                facilityType = a.ADJFACILITYTYPE,
+                                existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                                proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                                outstandings = a.TOTALEXPOSURE ?? 0,
+                                recommendedLimit = 0,
+                                //PastDueObligationsInterest = a.PASTDUEINTEREST,
+                                pastDueObligationsPrincipal = a.TOTALUNPAIDOBLIGATION ?? 0,
+                                reviewDate = DateTime.Now,
+                                loanStatus = a.CBNCLASSIFICATION,
+                                referenceNumber = a.REFERENCENUMBER,
+                            }).OrderByDescending(x => x.outstandings).ToList().Take(100);
+
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
+            }
+
+            return exposures;
+        }
+
         public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposure(int customerGroupId)
         {
             var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
@@ -689,6 +783,66 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                         }).ToList();
             var customerCodes = customerGroupMapping.Select(m => m.customerCode).ToList();
             var exposures = GetGlobalCustomerExposure(customerCodes);
+            return exposures;
+        }
+
+        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposureByCurrency(int customerGroupId, int currencyId)
+        {
+            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                        where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
+                                        select new CustomerGroupMappingViewModel
+                                        {
+                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                            customerGroupId = a.CUSTOMERGROUPID,
+                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                            relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                            customerId = a.CUSTOMERID,
+                                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                            customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                            customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                        }).ToList();
+            var customerCodes = customerGroupMapping.Select(m => m.customerCode).ToList();
+            var exposures = GetGlobalCustomerExposureByCurrency(customerCodes,currencyId);
+            return exposures;
+        }
+
+        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposureByGroupFirstTwenty(int customerGroupId)
+        {
+            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                        where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
+                                        select new CustomerGroupMappingViewModel
+                                        {
+                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                            customerGroupId = a.CUSTOMERGROUPID,
+                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                            relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                            customerId = a.CUSTOMERID,
+                                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                            customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                            customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                        }).ToList();
+            var customerCodes = customerGroupMapping.Select(m => m.customerCode).ToList();
+            var exposures = GetGlobalCustomerExposureByGroupFirstTwenty(customerCodes);
+            return exposures;
+        }
+
+        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposureByGroupFirstHundred(int customerGroupId)
+        {
+            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                        where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
+                                        select new CustomerGroupMappingViewModel
+                                        {
+                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                            customerGroupId = a.CUSTOMERGROUPID,
+                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                            relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                            customerId = a.CUSTOMERID,
+                                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                            customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                            customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                        }).ToList();
+            var customerCodes = customerGroupMapping.Select(m => m.customerCode).ToList();
+            var exposures = GetGlobalCustomerExposureByGroupFirstHundred(customerCodes);
             return exposures;
         }
 
@@ -737,6 +891,54 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel models = new CreditLimitValidationsModel();
             var companyCapital = context.TBL_COMPANY.FirstOrDefault().SHAREHOLDERSFUND;
             double maxLimit = (float)companyCapital * 0.01;
+            models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
+            models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
+            return models;
+        }
+
+        public CreditLimitValidationsModel ValidateNPLByCurrency(LoanApplicationViewModel application)
+        {
+            List<CurrentCustomerExposure> exposures;
+            if (application.loanTypeId == (int)LoanTypeEnum.Single)
+            {
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == application.customerId).CUSTOMERCODE;
+                var customerCodes = new List<string>();
+                customerCodes.Add(customerCode);
+                exposures = GetGlobalCustomerExposureByCurrency(customerCodes, (int)application.currencyId);
+            }
+            else
+            {
+                exposures = GetGroupCustomerGlobalExposureByCurrency((int)application.customerGroupId, (int)application.currencyId);
+            }
+            CreditLimitValidationsModel models = new CreditLimitValidationsModel();
+            var currencyLimit = context.TBL_CURRENCY_LIMIT.Where(x=>x.CURRENCYID == (int)application.currencyId && x.DELETED == false).FirstOrDefault();
+            double maxLimit = (float)currencyLimit.CURRENCYLIMITVALUE;
+            models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
+            models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
+            return models;
+        }
+
+        public CreditLimitValidationsModel ValidateNPLByGroupFirstTwenty(LoanApplicationViewModel application)
+        {
+            List<CurrentCustomerExposure> exposures;
+                exposures = GetGroupCustomerGlobalExposureByGroupFirstTwenty((int)application.customerGroupId);
+            
+            CreditLimitValidationsModel models = new CreditLimitValidationsModel();
+            var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false).FirstOrDefault();
+            double maxLimit = (float)groupLimit.GROUPLIMITVALUE;
+            models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
+            models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
+            return models;
+        }
+
+        public CreditLimitValidationsModel ValidateNPLByGroupFirstHundred(LoanApplicationViewModel application)
+        {
+            List<CurrentCustomerExposure> exposures;
+            exposures = GetGroupCustomerGlobalExposureByGroupFirstHundred((int)application.customerGroupId);
+
+            CreditLimitValidationsModel models = new CreditLimitValidationsModel();
+            var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false).FirstOrDefault();
+            double maxLimit = (float)groupLimit.GROUPLIMITVALUE;
             models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
             models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
             return models;
@@ -904,7 +1106,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             return risk;
         }
-     
+
         public bool AddUpdateRiskRating(ObligorLimitViewModel entity)
         {
             if (entity != null)
@@ -915,12 +1117,13 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                     if (entity.riskRatingId > 0)
                     {
                         riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(entity.riskRatingId);
-                        if (riskRating != null)
+                        if (entity != null)
                         {
                             riskRating.RISKRATING = entity.riskRating;
                             riskRating.DESCRIPTION = entity.description;
-                            riskRating.ISINVESTMENTGRADE = entity.isInvestmentGrade;
                             riskRating.MAX_SHAREHOLDER_FUND_PERCENTAG = entity.maxShareholderPercentage;
+                            riskRating.COMPANYID = entity.companyId;
+                            riskRating.ISINVESTMENTGRADE = entity.isInvestmentGrade;
                         }
 
                     }
@@ -930,11 +1133,93 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                         {
                             RISKRATING = entity.riskRating,
                             DESCRIPTION = entity.description,
-                            ISINVESTMENTGRADE = entity.isInvestmentGrade,
                             MAX_SHAREHOLDER_FUND_PERCENTAG = entity.maxShareholderPercentage,
-                            COMPANYID = entity.companyId
+                            COMPANYID = entity.companyId,
+                            ISINVESTMENTGRADE = entity.isInvestmentGrade
                         };
-                        context.TBL_CUSTOMER_RISK_RATING.Add(riskRating);
+                    }
+                    context.TBL_CUSTOMER_RISK_RATING.Add(riskRating);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+
+        public IEnumerable<CurrencyLimitViewModel> GetAllCurrencyLimit()
+        {
+            var currencyLimits = (from a in context.TBL_CURRENCY_LIMIT
+                                  where a.DELETED == false
+                                  select new CurrencyLimitViewModel
+                        {
+                            currencyLimitId = a.CURRENCYLIMITID,
+                            currencyId = a.CURRENCYID,
+                            currencyName = context.TBL_CURRENCY.Where(x=>x.CURRENCYID == a.CURRENCYID).Select(x=>x.CURRENCYNAME).FirstOrDefault() ?? "N/A",
+                            currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault() ?? "N/A",
+                            currencyLimitValue = a.CURRENCYLIMITVALUE,
+                            description = a.DESCRIPTION
+                        })?.ToList();
+
+            return currencyLimits;
+        }
+
+        public bool AddCurrencyLimits(CurrencyLimitViewModel entity)
+        {
+            if (entity != null)
+            {
+                var limitExist = context.TBL_CURRENCY_LIMIT.FirstOrDefault(x => x.CURRENCYID == entity.currencyId);
+                if (limitExist != null)
+                {
+                    throw new SecureException("Currency Limit setup already exist");
+                }
+                try
+                {
+                    TBL_CURRENCY_LIMIT currencyLimit;
+                    currencyLimit = new TBL_CURRENCY_LIMIT
+                    {
+                            CURRENCYID = entity.currencyId,
+                            DESCRIPTION = entity.description,
+                            CURRENCYLIMITVALUE = entity.currencyLimitValue,
+                            DELETED = false,
+                            CREATEDBY = entity.createdBy,
+                            DATETIMECREATED = DateTime.Now
+                        };
+                        context.TBL_CURRENCY_LIMIT.Add(currencyLimit);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateCurrencyLimits(CurrencyLimitViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CURRENCY_LIMIT currencyLimit;
+                    if (entity.currencyLimitId > 0)
+                    {
+                        currencyLimit = context.TBL_CURRENCY_LIMIT.Find(entity.currencyLimitId);
+                        if (currencyLimit != null)
+                        {
+                            currencyLimit.CURRENCYID = entity.currencyId;
+                            currencyLimit.DESCRIPTION = entity.description;
+                            currencyLimit.CURRENCYLIMITVALUE = entity.currencyLimitValue;
+                            currencyLimit.LASTUPDATEDBY = entity.createdBy;
+                            currencyLimit.DATETIMEUPDATED = DateTime.Now;
+                        }
+
                     }
 
                     var response = context.SaveChanges() != 0;
@@ -946,6 +1231,112 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 }
             }
             return false;
+        }
+
+        public bool DeleteCurrencyLimit(int id, UserInfo user)
+        {
+            var response = 0;
+            var currencyLimit = context.TBL_CURRENCY_LIMIT.Find(id);
+
+            if (currencyLimit != null)
+            {
+                currencyLimit.DELETED = true;
+                currencyLimit.DELETEDBY = user.staffId;
+                currencyLimit.DATETIMEDELETED = DateTime.Now;
+                response = context.SaveChanges();
+            }
+
+            return response != 0;
+        }
+
+        public IEnumerable<GroupLimitViewModel> GetAllGroupLimit()
+        {
+            var groupLimits = (from a in context.TBL_GROUP_LIMIT where a.DELETED == false
+                                  select new GroupLimitViewModel
+                                  {
+                                      groupLimitId = a.GROUPLIMITID,
+                                      groupLimitValue = a.GROUPLIMITVALUE,
+                                      groupName = a.GROUPNAME,
+                                      description = a.DESCRIPTION
+                                  }).ToList();
+
+            return groupLimits;
+        }
+
+        public bool AddGroupLimits(GroupLimitViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_GROUP_LIMIT groupLimit;
+                    groupLimit = new TBL_GROUP_LIMIT
+                    {
+                        GROUPNAME = entity.groupName,
+                        DESCRIPTION = entity.description,
+                        GROUPLIMITVALUE = entity.groupLimitValue,
+                        DELETED = false,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now
+                    };
+                    context.TBL_GROUP_LIMIT.Add(groupLimit);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateGroupLimits(GroupLimitViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_GROUP_LIMIT groupLimit;
+                    if (entity.groupLimitId > 0)
+                    {
+                        groupLimit = context.TBL_GROUP_LIMIT.Find(entity.groupLimitId);
+                        if (groupLimit != null)
+                        {
+                            groupLimit.GROUPLIMITVALUE = entity.groupLimitValue;
+                            groupLimit.DESCRIPTION = entity.description;
+                            groupLimit.GROUPNAME = entity.groupName;
+                            groupLimit.LASTUPDATEDBY = entity.createdBy;
+                            groupLimit.DATETIMEUPDATED = DateTime.Now;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool DeleteGroupLimit(int id, UserInfo user)
+        {
+            var response = 0;
+            var groupLimit = context.TBL_GROUP_LIMIT.Find(id);
+
+            if (groupLimit != null)
+            {
+                groupLimit.DELETED = true;
+                groupLimit.DELETEDBY = user.staffId;
+                groupLimit.DATETIMEDELETED = DateTime.Now;
+                response = context.SaveChanges();
+            }
+
+            return response != 0;
         }
 
         public bool DeleteRiskRating(int id, UserInfo user)
