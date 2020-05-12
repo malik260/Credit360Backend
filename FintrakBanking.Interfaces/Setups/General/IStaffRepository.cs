@@ -17,7 +17,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool AddBulkPrepaymentData(StaffInfoViewModel staffModel, int batchCode, DateTime applicationDate);
         bool UpdateStaff(int staffid, StaffInfoViewModel staffModel);
 
-        IEnumerable<StaffInfoViewModel> GetAllUnprocessedBulkPrepayment();
+        IEnumerable<BatchPrepaymentViewModel> GetAllUnprocessedBulkPrepayment();
 
         bool AddTempStaff(StaffInfoViewModel staffModel);
 
@@ -85,7 +85,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<simpleStaffModel> SearchApprovers(int levelId, string queryString, int getCompanyId);
 
-        IEnumerable<BatchPrepaymentViewModel> GetAllUnprocessedBulkPrepaymentBatch();
+        IEnumerable<BatchPrepaymentViewModel> GetAllUnprocessedBulkPrepaymentBatch(int staffId);
         bool SubmitPrepaymentBatchForApproval(ApprovalViewModel model);
         IEnumerable<BatchPrepaymentViewModel> GetBulkPrepaymentsAwaitingApprovalBatch(int staffId, int companyId);
         bool SubmitPrepaymentBatchForWorkflowApproval(ApprovalViewModel model);

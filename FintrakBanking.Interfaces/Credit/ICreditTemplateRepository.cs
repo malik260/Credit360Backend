@@ -47,5 +47,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoadedDocumentSectionViewModel> GetSavedDocumentation(int operationId, int targetId);
         LoadedDocumentSectionViewModel GetDocumentSectionBulkLiquidation(int staffId, int operationId, int targetId, int sectionId);
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentBulkLiquidation(int staffId, int operationId, int targetId, UserInfo user);
+        List<LoadedDocumentSectionViewModel> GetLoadedDocumentationBulkLiquidation(int staffId, int operationId, int targetId, UserInfo user);
     }
 }

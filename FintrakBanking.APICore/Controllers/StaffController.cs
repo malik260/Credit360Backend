@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using FintrakBanking.Common.CustomException;
 using System.Text;
+using FintrakBanking.ViewModels.Setups.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -779,7 +780,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var batch = repo.GetAllUnprocessedBulkPrepaymentBatch();
+                var batch = repo.GetAllUnprocessedBulkPrepaymentBatch(token.GetStaffId);
 
                 if (batch == null)
                 {
@@ -859,6 +860,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
             }
         }
+
 
         [HttpGet]
         [ClaimsAuthorization]
