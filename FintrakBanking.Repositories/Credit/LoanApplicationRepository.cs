@@ -7138,6 +7138,29 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Single Obligor Limit Exceeded");
             }
+
+            /*
+            var currencyLimits = limitValidation.ValidateNPLByCurrency(application);
+            var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)applicationAmount;
+            if (proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+            {
+                throw new SecureException("Curreny Limit Exceeded");
+            }
+
+            var groupLimitsTwenty = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+            var proposedGroupLimit = groupLimitsTwenty.outstandingBalance + (double)applicationAmount;
+            if (proposedGroupLimit >= (double)groupLimitsTwenty.maximumAllowedLimit)
+            {
+                throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+            }
+
+            var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+            var proposedGroupLimitHundred = groupLimitHundred.outstandingBalance + (double)applicationAmount;
+            if (proposedGroupLimitHundred >= (double)groupLimitHundred.maximumAllowedLimit)
+            {
+                throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+            }*/
+
         }
 
         public CurrentCustomerExposure GetTotalBankExposure()

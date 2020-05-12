@@ -601,6 +601,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = data, message = "Record Saved Successfully" });
                 }
+            else
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Saved Record not Successfull" });
         }
@@ -615,13 +616,14 @@ namespace FintrakBanking.APICore.Controllers
             entity.companyId = (short)token.GetCompanyId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
             entity.createdBy = token.GetStaffId;
+            entity.currencyLimitId = currencyLimitId;
 
             var data = repo.UpdateCurrencyLimits(entity);
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, message = "Record Saved Successfully" });
-            }
+            }else
             return Request.CreateResponse(HttpStatusCode.OK,
                new { success = false, message = $"Saved Record not Successfull" });
         }
@@ -641,7 +643,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = data, message = "Record deleted Successfully" });
-                }
+                }else
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"deleted Record not Successfull" });
         }
@@ -678,7 +680,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, message = "Record Saved Successfully" });
             }
-            return Request.CreateResponse(HttpStatusCode.OK,
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
                new { success = false, message = $"Saved Record not Successfull" });
         }
 
@@ -692,6 +695,7 @@ namespace FintrakBanking.APICore.Controllers
             entity.companyId = (short)token.GetCompanyId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
             entity.createdBy = token.GetStaffId;
+            entity.groupLimitId = groupLimitId;
 
             var data = repo.UpdateGroupLimits(entity);
             if (data)
@@ -699,7 +703,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, message = "Record Saved Successfully" });
             }
-            return Request.CreateResponse(HttpStatusCode.OK,
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
                new { success = false, message = $"Saved Record not Successfull" });
         }
 
@@ -719,7 +724,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, message = "Record deleted Successfully" });
             }
-            return Request.CreateResponse(HttpStatusCode.OK,
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
                new { success = false, message = $"deleted Record not Successfull" });
         }
         #endregion

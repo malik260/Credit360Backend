@@ -10,7 +10,9 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
 {
     public interface ICreditLimitValidationsRepository
     {
-
+        CreditLimitValidationsModel ValidateNPLByGroupFirstTwenty(LoanApplicationViewModel application);
+        CreditLimitValidationsModel ValidateNPLByGroupFirstHundred(LoanApplicationViewModel application);
+        CreditLimitValidationsModel ValidateNPLByCurrency(LoanApplicationViewModel application);
         IEnumerable<CurrencyLimitViewModel> GetAllCurrencyLimit();
         bool AddCurrencyLimits(CurrencyLimitViewModel entity);
         bool UpdateCurrencyLimits(CurrencyLimitViewModel entity);
