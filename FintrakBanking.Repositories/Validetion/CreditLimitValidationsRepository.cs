@@ -904,7 +904,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             return risk;
         }
-     
+
         public bool AddUpdateRiskRating(ObligorLimitViewModel entity)
         {
             if (entity != null)
@@ -915,12 +915,13 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                     if (entity.riskRatingId > 0)
                     {
                         riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(entity.riskRatingId);
-                        if (riskRating != null)
+                        if (entity != null)
                         {
                             riskRating.RISKRATING = entity.riskRating;
                             riskRating.DESCRIPTION = entity.description;
-                            riskRating.ISINVESTMENTGRADE = entity.isInvestmentGrade;
                             riskRating.MAX_SHAREHOLDER_FUND_PERCENTAG = entity.maxShareholderPercentage;
+                            riskRating.COMPANYID = entity.companyId;
+                            riskRating.ISINVESTMENTGRADE = entity.isInvestmentGrade;
                         }
 
                     }
@@ -930,11 +931,92 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                         {
                             RISKRATING = entity.riskRating,
                             DESCRIPTION = entity.description,
-                            ISINVESTMENTGRADE = entity.isInvestmentGrade,
                             MAX_SHAREHOLDER_FUND_PERCENTAG = entity.maxShareholderPercentage,
-                            COMPANYID = entity.companyId
+                            COMPANYID = entity.companyId,
+                            ISINVESTMENTGRADE = entity.isInvestmentGrade
                         };
-                        context.TBL_CUSTOMER_RISK_RATING.Add(riskRating);
+                    }
+                    context.TBL_CUSTOMER_RISK_RATING.Add(riskRating);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+
+        public IEnumerable<CurrencyLimitViewModel> GetAllCurrencyLimit()
+        {
+            var currencyLimits = (from a in context.TBL_CURRENCY_LIMIT
+                        select new CurrencyLimitViewModel
+                        {
+                            currencyLimitId = a.CURRENCYLIMITID,
+                            currencyId = a.CURRENCYID,
+                            currencyName = context.TBL_CURRENCY.Where(x=>x.CURRENCYID == a.CURRENCYID).Select(x=>x.CURRENCYNAME).FirstOrDefault() ?? "N/A",
+                            currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault() ?? "N/A",
+                            currencyLimitValue = a.CURRENCYLIMITVALUE,
+                            description = a.DESCRIPTION
+                        })?.ToList();
+
+            return currencyLimits;
+        }
+
+        public bool AddCurrencyLimits(CurrencyLimitViewModel entity)
+        {
+            if (entity != null)
+            {
+                var limitExist = context.TBL_CURRENCY_LIMIT.FirstOrDefault(x => x.CURRENCYID == entity.currencyId);
+                if (limitExist != null)
+                {
+                    throw new SecureException("Currency Limit setup already exist");
+                }
+                try
+                {
+                    TBL_CURRENCY_LIMIT currencyLimit;
+                    currencyLimit = new TBL_CURRENCY_LIMIT
+                    {
+                            CURRENCYID = entity.currencyId,
+                            DESCRIPTION = entity.description,
+                            CURRENCYLIMITVALUE = entity.currencyLimitValue,
+                            DELETED = false,
+                            CREATEDBY = entity.createdBy,
+                            DATETIMECREATED = DateTime.Now
+                        };
+                        context.TBL_CURRENCY_LIMIT.Add(currencyLimit);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateCurrencyLimits(CurrencyLimitViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CURRENCY_LIMIT currencyLimit;
+                    if (entity.currencyLimitId > 0)
+                    {
+                        currencyLimit = context.TBL_CURRENCY_LIMIT.Find(entity.currencyLimitId);
+                        if (currencyLimit != null)
+                        {
+                            currencyLimit.CURRENCYID = entity.currencyId;
+                            currencyLimit.DESCRIPTION = entity.description;
+                            currencyLimit.CURRENCYLIMITVALUE = entity.currencyLimitValue;
+                            currencyLimit.LASTUPDATEDBY = entity.createdBy;
+                            currencyLimit.DATETIMEUPDATED = DateTime.Now;
+                        }
+
                     }
 
                     var response = context.SaveChanges() != 0;
@@ -946,6 +1028,112 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 }
             }
             return false;
+        }
+
+        public bool DeleteCurrencyLimit(int id, UserInfo user)
+        {
+            var response = 0;
+            var currencyLimit = context.TBL_CURRENCY_LIMIT.Find(id);
+
+            if (currencyLimit != null)
+            {
+                currencyLimit.DELETED = true;
+                currencyLimit.DELETEDBY = user.staffId;
+                currencyLimit.DATETIMEDELETED = DateTime.Now;
+                response = context.SaveChanges();
+            }
+
+            return response != 0;
+        }
+
+        public IEnumerable<GroupLimitViewModel> GetAllGroupLimit()
+        {
+            var groupLimits = (from a in context.TBL_GROUP_LIMIT
+                                  select new GroupLimitViewModel
+                                  {
+                                      groupLimitId = a.GROUPLIMITID,
+                                      groupLimitValue = a.GROUPLIMITVALUE,
+                                      groupName = a.GROUPNAME,
+                                      description = a.DESCRIPTION
+                                  }).ToList();
+
+            return groupLimits;
+        }
+
+        public bool AddGroupLimits(GroupLimitViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_GROUP_LIMIT groupLimit;
+                    groupLimit = new TBL_GROUP_LIMIT
+                    {
+                        GROUPNAME = entity.groupName,
+                        DESCRIPTION = entity.description,
+                        GROUPLIMITVALUE = entity.groupLimitValue,
+                        DELETED = false,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now
+                    };
+                    context.TBL_GROUP_LIMIT.Add(groupLimit);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateGroupLimits(GroupLimitViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_GROUP_LIMIT groupLimit;
+                    if (entity.groupLimitId > 0)
+                    {
+                        groupLimit = context.TBL_GROUP_LIMIT.Find(entity.groupLimitId);
+                        if (groupLimit != null)
+                        {
+                            groupLimit.GROUPLIMITVALUE = entity.groupLimitValue;
+                            groupLimit.DESCRIPTION = entity.description;
+                            groupLimit.GROUPNAME = entity.groupName;
+                            groupLimit.LASTUPDATEDBY = entity.createdBy;
+                            groupLimit.DATETIMEUPDATED = DateTime.Now;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool DeleteGroupLimit(int id, UserInfo user)
+        {
+            var response = 0;
+            var groupLimit = context.TBL_GROUP_LIMIT.Find(id);
+
+            if (groupLimit != null)
+            {
+                groupLimit.DELETED = true;
+                groupLimit.DELETEDBY = user.staffId;
+                groupLimit.DATETIMEDELETED = DateTime.Now;
+                response = context.SaveChanges();
+            }
+
+            return response != 0;
         }
 
         public bool DeleteRiskRating(int id, UserInfo user)
