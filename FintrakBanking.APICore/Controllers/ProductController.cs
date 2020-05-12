@@ -600,9 +600,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-by-productclass/{id}/customerType/{cid}")]
         public HttpResponseMessage GetAllProduct(int id, int cid)
         {
-            try
-            {
-
+            
                 var data = repo.GetAllProductByProductClass(id, cid).ToList();
                 if (data == null)
                 {
@@ -612,11 +610,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data.ToList() });  //Ok(accounts);
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            
         }
 
 
@@ -625,9 +619,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product/product-class/{productclassId}/customer-type/{customerTypeId}")]
         public HttpResponseMessage GetAllProductByProductClassAndCustomerType(int productclassId, int customerTypeId)
         {
-            try
-            {
-
                 var data = repo.GetAllProductByProductClassAndCustomerType(productclassId, customerTypeId).ToList();
                 if (data == null)
                 {
@@ -637,11 +628,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data.ToList() });  //Ok(accounts);
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
         }
 
 
@@ -650,8 +636,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product/productclass/{productclassId}/customerType/{customerTypeId}")]
         public HttpResponseMessage GetAllProductsByProductClassIdAndCustomerTypeId(int productclassId, int customerTypeId)
         {
-            try
-            {
+           
 
                 var data = repo.GetAllProductsByProductClassIdAndCustomerTypeId(productclassId, customerTypeId).ToList();
                 if (data == null)
@@ -662,11 +647,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data.ToList() });  //Ok(accounts);
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
         }
 
         [HttpGet] [ClaimsAuthorization]  
