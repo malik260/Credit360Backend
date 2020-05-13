@@ -3244,7 +3244,14 @@ namespace FintrakBanking.Repositories.Credit
                 operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
                 loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
                 tenorModeId = d.TENORFREQUENCYTYPEID,
-                flowChangeId = d.TBL_LOAN_APPLICATION.FLOWCHANGEID
+                flowChangeId = d.TBL_LOAN_APPLICATION.FLOWCHANGEID,
+                isLineFacility = d.ISLINEFACILITY,
+                approvedLineLimit = d.APPROVEDLINELIMIT,
+                interestRepaymentId = d.INTERESTREPAYMENTID,
+                interestRepayment = d.INTERESTREPAYMENT,
+                isMoratorium = d.ISMORATORIUM,
+                moratorium = d.MORATORIUM,
+
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
@@ -4541,7 +4548,6 @@ namespace FintrakBanking.Repositories.Credit
                                              relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                              applicationDate = x.APPLICATIONDATE,
                                              applicationAmount = x.APPLICATIONAMOUNT,
-                                             //applicationAmount = x.APPLICATIONAMOUNT,
                                              approvedAmount = x.APPROVEDAMOUNT,
                                              interestRate = x.INTERESTRATE,
                                              applicationTenor = x.APPLICATIONTENOR,
@@ -4589,7 +4595,7 @@ namespace FintrakBanking.Repositories.Credit
                                              apiRequestId = x.APIREQUESTID
                                          }).ToList();
 
-                var allRecord = applications.Union(groupApplications).ToList();
+                var allRecord = applications.Union(groupApplications).GroupBy(a => a.loanApplicationId).Select(a => a.FirstOrDefault()).ToList();
                 //int[] bookedLoanOperations = { (int) OperationsEnum.RevolvingLoanBooking, (int) OperationsEnum.TermLoanBooking, (int) OperationsEnum.ContigentLoanBooking };
 
                 foreach (var x in allRecord)

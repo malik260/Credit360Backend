@@ -131,6 +131,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public WorkflowResponse Response { get { return response; } set { response = value; } }
         public bool isCrossOperationProcess { get; private set; }
         public bool? IsFromPc { set { isFromPc = value; } }
+        public bool SkipLimitsCheck { set { skipLimitsCheck = value; } }
         public string Flow_log { set { flow_log = value; } }
 
 
