@@ -84,6 +84,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class GroupLimitViewModel : GeneralEntity
     {
         public int groupLimitId { get; set; }
+        public int? limitNumber { get; set; }
         public string groupName { get; set; }
         public decimal groupLimitValue { get; set; }
         public string description { get; set; }
