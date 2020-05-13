@@ -113,7 +113,13 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int approvalStatusId { get; set; }
         public DateTime? dateCreated { get; set; }
         public string approvalStatus { get; set; }
+        
         public int operationId { get; set; }
+
+        public int prepaymentId { get; set; }
+        public decimal amount { get; set; }
+        public string loanReferenceNumber { get; set; }
+
     }
 
 

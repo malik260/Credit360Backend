@@ -190,7 +190,7 @@
 
 
     ReversalOfPrepayment = 249,
-    BulkLiquidation = 250,
+    BulkLiquidation = 258,
     
 }
 
