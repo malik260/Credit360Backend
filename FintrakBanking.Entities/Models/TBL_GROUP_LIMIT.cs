@@ -18,6 +18,7 @@ namespace FintrakBanking.Entities.Models
         public string DESCRIPTION { get; set; }
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
+        public int? LIMITNUMBER { get; set; }
         public int CREATEDBY { get; set; }
         public int? LASTUPDATEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
