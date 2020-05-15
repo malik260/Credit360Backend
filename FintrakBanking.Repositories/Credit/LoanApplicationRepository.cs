@@ -7141,8 +7141,8 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal incomingAmount = details.Sum(x => x.exchangeAmount);
             var currencyLimits = limitValidation.ValidateNPLByCurrency(application);
-            var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount; // applicationAmount;
-            if (proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+            var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount; 
+            if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
             {
                 throw new SecureException("Curreny Limit Exceeded");
             }
@@ -7150,8 +7150,8 @@ namespace FintrakBanking.Repositories.Credit
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
                 var groupLimitsTwenty = limitValidation.ValidateNPLByGroupFirstTwenty(application);
-                var proposedGroupLimit = groupLimitsTwenty.outstandingBalance + (double)incomingAmount; // applicationAmount;
-                if (proposedGroupLimit >= (double)groupLimitsTwenty.maximumAllowedLimit)
+                var proposedGroupLimit = groupLimitsTwenty.outstandingBalance + (double)incomingAmount; 
+                if ((double)groupLimitsTwenty.maximumAllowedLimit != 0 && proposedGroupLimit >= (double)groupLimitsTwenty.maximumAllowedLimit)
                 {
                     throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
                 }
@@ -7160,8 +7160,8 @@ namespace FintrakBanking.Repositories.Credit
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
                 var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstTwenty(application);
-                var proposedGroupLimitHundred = groupLimitHundred.outstandingBalance + (double)incomingAmount; // applicationAmount;
-                if (proposedGroupLimitHundred >= (double)groupLimitHundred.maximumAllowedLimit)
+                var proposedGroupLimitHundred = groupLimitHundred.outstandingBalance + (double)incomingAmount; 
+                if ((double)groupLimitHundred.maximumAllowedLimit != 0 && proposedGroupLimitHundred >= (double)groupLimitHundred.maximumAllowedLimit)
                 {
                     throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
                 }
