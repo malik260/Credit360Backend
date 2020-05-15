@@ -490,6 +490,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? interestRepaymentId { get; set; }
         public string moratorium { get; set; }
         public bool? isMoratorium { get; set; }
+        public decimal? approvedLineLimit { get; set; }
 
 
         public string priceIndexName { get; set; }

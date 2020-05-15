@@ -442,6 +442,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = model.isFromPc;
                 workflow.IsFlowTest = model.isFlowTest;
+                workflow.SkipLimitsCheck = appl.ISRELATEDPARTY;
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
                     Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
@@ -2171,9 +2172,6 @@ namespace FintrakBanking.Repositories.Credit
             var creditOperationIds = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(f => f.OPERATIONID).ToList();
             var allstaff = this.GetAllStaffNames();
 
-            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            // List<TBL_APPROVAL_TRAIL> trail = new List<TBL_APPROVAL_TRAIL>();
-
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
 
             if (getAll)
@@ -2209,11 +2207,20 @@ namespace FintrakBanking.Repositories.Credit
                 currentLevelId = data.LastOrDefault()?.toApprovalLevelId ?? 0;
             }
 
-            if (data.Count > 0 && currentLevelId > 0)
+            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended))//get only un-ended trail incase of workflow ending&/change
+            {
+                var firstTrail = data.FirstOrDefault(t => t.approvalStateId == (int)ApprovalState.Ended);
+                data = data.Where(t => t.approvalTrailId > firstTrail.approvalTrailId).ToList();
+            }
+
+            if (data.Count > 0 && currentLevelId > 0)//get only from the current level downwards
             {
                 var firstTrail = data.FirstOrDefault(t => t.toApprovalLevelId == currentLevelId);
+                if (firstTrail != null)
+                {
                     data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId).ToList();
                     //data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId && t.fromApprovalLevelId > 0).ToList();
+                }
             }
 
             if (data.Count == 0)
@@ -2245,7 +2252,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data2 = data.ToList();
             var testData = data.ToList();
-            foreach (var t in testData)
+            foreach (var t in testData)//filter repeated levels as result of refer backs
             {
                 var firstTrailForLevel = testData.OrderBy(x => x.approvalTrailId).FirstOrDefault(x => x.fromApprovalLevelId == t.fromApprovalLevelId);
                 var multipleTrails = testData.Where(d => d.fromApprovalLevelId == firstTrailForLevel.fromApprovalLevelId && d.approvalTrailId != firstTrailForLevel.approvalTrailId).ToList();

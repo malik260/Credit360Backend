@@ -131,6 +131,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public WorkflowResponse Response { get { return response; } set { response = value; } }
         public bool isCrossOperationProcess { get; private set; }
         public bool? IsFromPc { set { isFromPc = value; } }
+        public bool SkipLimitsCheck { set { skipLimitsCheck = value; } }
         public string Flow_log { set { flow_log = value; } }
 
 
@@ -164,9 +165,9 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             lastRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
-            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && lastRequest != null) //if it is not initiation
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute && lastRequest != null) //if it is not initiation
             {
-                throw new SecureException("An error occured, Next Level can't be preset unless on refer back. Kindly refresh your browser and try again.");
+                throw new SecureException("An error occured, Next Level can't be preset unless on refer back or re-routing. Kindly refresh your browser and try again.");
             }
 
             this.referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
