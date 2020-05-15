@@ -899,24 +899,29 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public CreditLimitValidationsModel ValidateNPLByCurrency(LoanApplicationViewModel application)
         {
             var a = application.LoanApplicationDetail.FirstOrDefault();
-            var currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.currencyId).Select(x => x.CURRENCYCODE).FirstOrDefault();
-            List<CurrentCustomerExposure> exposures;
-            if (application.loanTypeId == (int)LoanTypeEnum.Single)
-            {
-                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == application.customerId).CUSTOMERCODE;
-                var customerCodes = new List<string>();
-                customerCodes.Add(customerCode);
-                exposures = GetGlobalCustomerExposureByCurrency(customerCodes, currencyCode);
-            }
-            else
-            {
-                exposures = GetGroupCustomerGlobalExposureByCurrency((int)application.customerGroupId, currencyCode);
-            }
             CreditLimitValidationsModel models = new CreditLimitValidationsModel();
-            var currencyLimit = context.TBL_CURRENCY_LIMIT.Where(x=>x.CURRENCYID == (int)a.currencyId && x.DELETED == false).FirstOrDefault();
-            double maxLimit = (float)currencyLimit.CURRENCYLIMITVALUE;
-            models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
-            models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
+            if (a != null)
+            {
+                var currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.currencyId).Select(x => x.CURRENCYCODE).FirstOrDefault();
+                List<CurrentCustomerExposure> exposures;
+                if (application.loanTypeId == (int)LoanTypeEnum.Single)
+                {
+                    var customerCode = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == application.customerId).CUSTOMERCODE;
+                    var customerCodes = new List<string>();
+                    customerCodes.Add(customerCode);
+                    exposures = GetGlobalCustomerExposureByCurrency(customerCodes, currencyCode);
+                }
+                else
+                {
+                    exposures = GetGroupCustomerGlobalExposureByCurrency((int)application.customerGroupId, currencyCode);
+                }
+                
+                var currencyLimit = context.TBL_CURRENCY_LIMIT.Where(x => x.CURRENCYID == (int)a.currencyId && x.DELETED == false).FirstOrDefault();
+                double maxLimit = (float)currencyLimit.CURRENCYLIMITVALUE * a.exchangeRate;
+                models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
+                models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
+               
+            }
             return models;
         }
 
@@ -927,7 +932,6 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
                 exposures = GetGroupCustomerGlobalExposureByGroupFirstTwenty((int)application.customerGroupId);
-
                 var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false && x.LIMITNUMBER == 20).FirstOrDefault();
                 double maxLimit = (float)groupLimit.GROUPLIMITVALUE;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
@@ -943,7 +947,6 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
                 exposures = GetGroupCustomerGlobalExposureByGroupFirstHundred((int)application.customerGroupId);
-
                 var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false && x.LIMITNUMBER == 100).FirstOrDefault();
                 double maxLimit = (float)groupLimit.GROUPLIMITVALUE;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
