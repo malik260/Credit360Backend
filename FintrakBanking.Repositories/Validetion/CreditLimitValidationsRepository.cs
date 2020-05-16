@@ -1167,14 +1167,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var currencyLimits = (from a in context.TBL_CURRENCY_LIMIT
                                   where a.DELETED == false
                                   select new CurrencyLimitViewModel
-                        {
-                            currencyLimitId = a.CURRENCYLIMITID,
-                            currencyId = a.CURRENCYID,
-                            currencyName = context.TBL_CURRENCY.Where(x=>x.CURRENCYID == a.CURRENCYID).Select(x=>x.CURRENCYNAME).FirstOrDefault() ?? "N/A",
-                            currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault() ?? "N/A",
-                            currencyLimitValue = a.CURRENCYLIMITVALUE,
-                            description = a.DESCRIPTION
-                        })?.ToList();
+                                  {
+                                    currencyLimitId = a.CURRENCYLIMITID,
+                                    currencyId = a.CURRENCYID,
+                                    currencyName = context.TBL_CURRENCY.Where(x=>x.CURRENCYID == a.CURRENCYID).Select(x=>x.CURRENCYNAME).FirstOrDefault() ?? "N/A",
+                                    currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault() ?? "N/A",
+                                    currencyLimitValue = a.CURRENCYLIMITVALUE,
+                                    description = a.DESCRIPTION
+                                  })?.ToList();
 
             return currencyLimits;
         }
@@ -1200,7 +1200,8 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                             CREATEDBY = entity.createdBy,
                             DATETIMECREATED = DateTime.Now
                         };
-                        context.TBL_CURRENCY_LIMIT.Add(currencyLimit);
+
+                    context.TBL_CURRENCY_LIMIT.Add(currencyLimit);
                     var response = context.SaveChanges() != 0;
                     return response;
                 }
