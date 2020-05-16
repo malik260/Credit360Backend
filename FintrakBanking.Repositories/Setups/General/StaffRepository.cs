@@ -923,7 +923,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                             numberOfLoans = s.Count(),
                                             totalAmount = s.Sum(t => t.amount),
 
-                                            approvalStatus = s.FirstOrDefault().approvalStatus,
+                                            approvalStatus = s.FirstOrDefault().approvalStatus.ToUpper(),
                                             //dateCreated = atrail.SYSTEMARRIVALDATETIME,
                                             comment = s.FirstOrDefault().comment,
                                             //operationId = atrail.OPERATIONID,
@@ -1033,7 +1033,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                processedDate = a.processedDate,
                                customerId = a.customerId,
 
-                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME.ToUpper(),
                                dateCreated = atrail.SYSTEMARRIVALDATETIME,
                                comment = atrail.COMMENT,
                                operationId = atrail.OPERATIONID,
