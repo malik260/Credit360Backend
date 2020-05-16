@@ -16,8 +16,8 @@ namespace FintrakBanking.Entities.Models
        // //[StringLength(1000)]
         public string COMMENTS { get; set; }
 
-        public string CUSTOMERRATING { get; set; }
-        public string PROJECTRISKRATING { get; set; }
+        //public string CUSTOMERRATING { get; set; }
+        //public string PROJECTRISKRATING { get; set; }
 
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
