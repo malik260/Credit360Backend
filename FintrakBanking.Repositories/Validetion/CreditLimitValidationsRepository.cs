@@ -672,7 +672,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return exposures;
         }
 
-        public List<CurrentCustomerExposure> GetGlobalCustomerExposureByCurrency(List<string> customerCodes,string currencyCode)
+        public List<CurrentCustomerExposure> GetGlobalCustomerExposureByCurrency(List<string> customerCodes)
         {
             IEnumerable<CurrentCustomerExposure> exposure = null;
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
@@ -683,7 +683,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
                 exposure = from a in context.TBL_GLOBAL_EXPOSURE
                            where a.CUSTOMERID.Contains(customerCode)
-                           && a.ALPHACODE == currencyCode
+                           && a.ALPHACODE.ToUpper().Trim() != "NGN"
                            select new CurrentCustomerExposure
                            {
                                facilityType = a.ADJFACILITYTYPE,
@@ -786,7 +786,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return exposures;
         }
 
-        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposureByCurrency(int customerGroupId, string currencyCode)
+        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposureByCurrency(int customerGroupId)
         {
             var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
                                         where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
@@ -802,7 +802,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                             customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                                         }).ToList();
             var customerCodes = customerGroupMapping.Select(m => m.customerCode).ToList();
-            var exposures = GetGlobalCustomerExposureByCurrency(customerCodes,currencyCode);
+            var exposures = GetGlobalCustomerExposureByCurrency(customerCodes);
             return exposures;
         }
 
@@ -902,21 +902,21 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel models = new CreditLimitValidationsModel();
             if (a != null)
             {
-                var currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.currencyId).Select(x => x.CURRENCYCODE).FirstOrDefault();
+                //var currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.currencyId).Select(x => x.CURRENCYCODE).FirstOrDefault();
                 List<CurrentCustomerExposure> exposures;
                 if (application.loanTypeId == (int)LoanTypeEnum.Single)
                 {
                     var customerCode = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == application.customerId).CUSTOMERCODE;
                     var customerCodes = new List<string>();
                     customerCodes.Add(customerCode);
-                    exposures = GetGlobalCustomerExposureByCurrency(customerCodes, currencyCode);
+                    exposures = GetGlobalCustomerExposureByCurrency(customerCodes);
                 }
                 else
                 {
-                    exposures = GetGroupCustomerGlobalExposureByCurrency((int)application.customerGroupId, currencyCode);
+                    exposures = GetGroupCustomerGlobalExposureByCurrency((int)application.customerGroupId);
                 }
                 
-                var currencyLimit = context.TBL_CURRENCY_LIMIT.Where(x => x.CURRENCYID == (int)a.currencyId && x.DELETED == false).FirstOrDefault();
+                var currencyLimit = context.TBL_CURRENCY_LIMIT.Where(x=>x.DELETED == false).FirstOrDefault();
                 double maxLimit = (float)currencyLimit.CURRENCYLIMITVALUE * a.exchangeRate;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
                 models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
@@ -1169,9 +1169,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                   select new CurrencyLimitViewModel
                                   {
                                     currencyLimitId = a.CURRENCYLIMITID,
-                                    currencyId = a.CURRENCYID,
-                                    currencyName = context.TBL_CURRENCY.Where(x=>x.CURRENCYID == a.CURRENCYID).Select(x=>x.CURRENCYNAME).FirstOrDefault() ?? "N/A",
-                                    currencyCode = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault() ?? "N/A",
+                                    currencyLimitName = a.CURRENCYLIMITNAME,
                                     currencyLimitValue = a.CURRENCYLIMITVALUE,
                                     description = a.DESCRIPTION
                                   })?.ToList();
@@ -1183,17 +1181,17 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         {
             if (entity != null)
             {
-                var limitExist = context.TBL_CURRENCY_LIMIT.FirstOrDefault(x => x.CURRENCYID == entity.currencyId);
-                if (limitExist != null)
-                {
-                    throw new SecureException("Currency Limit setup already exist");
-                }
+                //var limitExist = context.TBL_CURRENCY_LIMIT.FirstOrDefault(x => x.CURRENCYID == entity.currencyId);
+                //if (limitExist != null)
+                //{
+                //    throw new SecureException("Currency Limit setup already exist");
+                //}
                 try
                 {
                     TBL_CURRENCY_LIMIT currencyLimit;
                     currencyLimit = new TBL_CURRENCY_LIMIT
                     {
-                            CURRENCYID = entity.currencyId,
+                            CURRENCYLIMITNAME = entity.currencyLimitName,
                             DESCRIPTION = entity.description,
                             CURRENCYLIMITVALUE = entity.currencyLimitValue,
                             DELETED = false,
@@ -1225,7 +1223,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                         currencyLimit = context.TBL_CURRENCY_LIMIT.Find(entity.currencyLimitId);
                         if (currencyLimit != null)
                         {
-                            currencyLimit.CURRENCYID = entity.currencyId;
+                            currencyLimit.CURRENCYLIMITNAME = entity.currencyLimitName;
                             currencyLimit.DESCRIPTION = entity.description;
                             currencyLimit.CURRENCYLIMITVALUE = entity.currencyLimitValue;
                             currencyLimit.LASTUPDATEDBY = entity.createdBy;

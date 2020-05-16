@@ -7151,24 +7151,32 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Single Obligor Limit Exceeded");
             }
 
+            
+            var applications = application.LoanApplicationDetail.FirstOrDefault();
             decimal incomingAmount = details.Sum(x => x.exchangeAmount);
-            var currencyLimits = limitValidation.ValidateNPLByCurrency(application);
-            var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount; 
-            if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+            if (applications != null)
             {
-                throw new SecureException("Curreny Limit Exceeded");
-            }
-
-            if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
-            {
-                var groupLimitsTwenty = limitValidation.ValidateNPLByGroupFirstTwenty(application);
-                var proposedGroupLimit = groupLimitsTwenty.outstandingBalance + (double)incomingAmount; 
-                if ((double)groupLimitsTwenty.maximumAllowedLimit != 0 && proposedGroupLimit >= (double)groupLimitsTwenty.maximumAllowedLimit)
+                var currency = context.TBL_CURRENCY.Find(applications.currencyId);
+                if (currency.CURRENCYCODE.Trim() != "NGN")
                 {
-                    throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+                    var currencyLimits = limitValidation.ValidateNPLByCurrency(application);
+                    var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
+                    if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+                    {
+                        throw new SecureException("Curreny Limit Exceeded");
+                    }
+                }
+
+                if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+                {
+                    var groupLimitsTwenty = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+                    var proposedGroupLimit = groupLimitsTwenty.outstandingBalance + (double)incomingAmount;
+                    if ((double)groupLimitsTwenty.maximumAllowedLimit != 0 && proposedGroupLimit >= (double)groupLimitsTwenty.maximumAllowedLimit)
+                    {
+                        throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+                    }
                 }
             }
-
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
                 var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstTwenty(application);
