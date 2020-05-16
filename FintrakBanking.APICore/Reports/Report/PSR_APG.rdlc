@@ -759,7 +759,7 @@
         <Top>15.32166in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
-        <Width>3.65in</Width>
+        <Width>3.67083in</Width>
         <ZIndex>6</ZIndex>
         <Style>
           <Border>
@@ -2670,7 +2670,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Customer's Tiering :</Value>
+                              <Value>Customer's Tier :</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -2867,7 +2867,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>PICTURES</Value>
+                <Value>SUPPORTING PICTURES</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -2880,7 +2880,7 @@
         <Top>16.04042in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
-        <Width>3.65in</Width>
+        <Width>6.79918in</Width>
         <ZIndex>19</ZIndex>
         <Style>
           <Border>
@@ -2896,47 +2896,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>4.18778in</Width>
+              <Width>6.92418in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.4375in</Height>
-              <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="imageCaption">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!imageCaption.Value</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>imageCaption</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-              </TablixCells>
-            </TablixRow>
-            <TablixRow>
-              <Height>2.80417in</Height>
+              <Height>3.57501in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2951,6 +2916,44 @@
                         </Border>
                       </Style>
                     </Image>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox7">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Label>CAPTION</Label>
+                              <Value>=Fields!imageCaption.Value</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox7</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -2974,10 +2977,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>supportImages</DataSetName>
-        <Top>16.35292in</Top>
-        <Left>0.155in</Left>
-        <Height>3.24167in</Height>
-        <Width>4.18778in</Width>
+        <Top>16.47792in</Top>
+        <Left>0.21333in</Left>
+        <Height>3.82501in</Height>
+        <Width>6.92418in</Width>
         <ZIndex>20</ZIndex>
         <Style>
           <Border>
@@ -3057,8 +3060,12 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>19.73626in</Height>
-    <Style />
+    <Height>20.51126in</Height>
+    <Style>
+      <Border>
+        <Style>None</Style>
+      </Border>
+    </Style>
   </Body>
   <Width>7.27083in</Width>
   <Page>

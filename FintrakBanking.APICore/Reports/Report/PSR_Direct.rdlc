@@ -2472,7 +2472,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Customer's Tiering :</Value>
+                              <Value>Customer's Tier :</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -2671,7 +2671,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>PICTURES</Value>
+                <Value>SUPPORTING PICTURES</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -2684,7 +2684,7 @@
         <Top>13.48833in</Top>
         <Left>0.21292in</Left>
         <Height>0.25in</Height>
-        <Width>3.60208in</Width>
+        <Width>8.0104in</Width>
         <ZIndex>19</ZIndex>
         <Style>
           <Border>
@@ -2700,12 +2700,32 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>4.02581in</Width>
+              <Width>8.01832in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.45001in</Height>
+              <Height>4.13221in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Image Name="fileData">
+                      <Source>Database</Source>
+                      <Value>=Fields!fileData.Value</Value>
+                      <MIMEType>image/png</MIMEType>
+                      <Sizing>FitProportional</Sizing>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </Image>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2716,8 +2736,11 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
+                              <Label>CAPTION</Label>
                               <Value>=Fields!imageCaption.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2726,8 +2749,7 @@
                       <rd:DefaultName>imageCaption</rd:DefaultName>
                       <Style>
                         <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
+                          <Style>None</Style>
                         </Border>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
@@ -2735,26 +2757,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                  </CellContents>
-                </TablixCell>
-              </TablixCells>
-            </TablixRow>
-            <TablixRow>
-              <Height>2.58638in</Height>
-              <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Image Name="fileData">
-                      <Source>Database</Source>
-                      <Value>=Fields!fileData.Value</Value>
-                      <MIMEType>image/png</MIMEType>
-                      <Sizing>Fit</Sizing>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                      </Style>
-                    </Image>
                     <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
@@ -2779,10 +2781,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>supportImages</DataSetName>
-        <Top>13.79389in</Top>
-        <Left>0.26333in</Left>
-        <Height>3.03639in</Height>
-        <Width>4.02581in</Width>
+        <Top>13.91889in</Top>
+        <Left>0.205in</Left>
+        <Height>4.38221in</Height>
+        <Width>8.01832in</Width>
         <ZIndex>20</ZIndex>
         <Style>
           <Border>
@@ -2861,8 +2863,12 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>17.03583in</Height>
-    <Style />
+    <Height>18.46361in</Height>
+    <Style>
+      <Border>
+        <Style>None</Style>
+      </Border>
+    </Style>
   </Body>
   <Width>11.09833in</Width>
   <Page>
