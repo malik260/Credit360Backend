@@ -74,7 +74,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CurrencyLimitViewModel : GeneralEntity
     {
         public int currencyLimitId { get; set; }
-        public int currencyId { get; set; }
+        public string currencyLimitName { get; set; }
         public decimal currencyLimitValue { get; set; }
         public string description { get; set; }
         public string currencyName { get; set; }

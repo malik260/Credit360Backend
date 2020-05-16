@@ -11,7 +11,7 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int CURRENCYLIMITID { get; set; }
-        public int CURRENCYID { get; set; }
+        public string CURRENCYLIMITNAME { get; set; }
         public decimal CURRENCYLIMITVALUE { get; set; }
         public string DESCRIPTION { get; set; }
         public bool DELETED { get; set; }
