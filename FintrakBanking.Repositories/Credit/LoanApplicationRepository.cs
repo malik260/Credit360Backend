@@ -7166,17 +7166,18 @@ namespace FintrakBanking.Repositories.Credit
                         throw new SecureException("Curreny Limit Exceeded");
                     }
                 }
+            }
 
-                if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            {
+                var groupLimitsTwenty = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+                var proposedGroupLimit = groupLimitsTwenty.outstandingBalance + (double)incomingAmount;
+                if ((double)groupLimitsTwenty.maximumAllowedLimit != 0 && proposedGroupLimit >= (double)groupLimitsTwenty.maximumAllowedLimit)
                 {
-                    var groupLimitsTwenty = limitValidation.ValidateNPLByGroupFirstTwenty(application);
-                    var proposedGroupLimit = groupLimitsTwenty.outstandingBalance + (double)incomingAmount;
-                    if ((double)groupLimitsTwenty.maximumAllowedLimit != 0 && proposedGroupLimit >= (double)groupLimitsTwenty.maximumAllowedLimit)
-                    {
-                        throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
-                    }
+                    throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
                 }
             }
+            
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
                 var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstTwenty(application);
