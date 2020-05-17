@@ -427,7 +427,7 @@ namespace FintrakBanking.APICore.Controllers
                 .Skip(page)
                 .Take(itemsPerPage)
                 .ToList();
-
+            repo.CalculateSLA(data);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
