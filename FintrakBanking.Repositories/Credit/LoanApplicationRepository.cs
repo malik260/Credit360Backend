@@ -3626,6 +3626,7 @@ namespace FintrakBanking.Repositories.Credit
             addLoanApplDetailsArchive.INTERESTREPAYMENTID = detailRow.INTERESTREPAYMENTID;
             addLoanApplDetailsArchive.MORATORIUM = detailRow.MORATORIUM;
             addLoanApplDetailsArchive.ISMORATORIUM = detailRow.ISMORATORIUM;
+            addLoanApplDetailsArchive.APPROVEDLINELIMIT = detailRow.APPROVEDLINELIMIT;
             this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
             //}
             //return context.SaveChanges() != 0;
