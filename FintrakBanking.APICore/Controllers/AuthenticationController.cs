@@ -377,7 +377,7 @@ namespace FintrakBanking.APICore.Controllers
             _repo.ClearLoginToken(token.GetUsername);
             var staffDetails = _repo.GetSingleUserByUserName(token.GetUsername);
 
-            if (staffDetails == null)
+            if (staffDetails == null || staffDetails.username == "")
             {
                 return this.Ok(new { success = false, message = "User Not Found" });
             }

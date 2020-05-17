@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.Entity.Spatial;
 
 namespace FintrakBanking.Entities.Models
 {
@@ -13,7 +11,7 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int CURRENCYLIMITID { get; set; }
-        public int CURRENCYID { get; set; }
+        public string CURRENCYLIMITNAME { get; set; }
         public decimal CURRENCYLIMITVALUE { get; set; }
         public string DESCRIPTION { get; set; }
         public bool DELETED { get; set; }
