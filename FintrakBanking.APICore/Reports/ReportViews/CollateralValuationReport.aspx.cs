@@ -28,9 +28,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     string inputHashValue = Request.QueryString["key2"];
 
                     HashHelper hash = new HashHelper();
-
                     DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
-
                     var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
                     if (inputHashValue != incomingDateHash)
@@ -41,15 +39,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     }
 
                     var currentDate = DateTime.Now;
-
                     var dateDifference = currentDate - incomingDate;
 
-                    if (dateDifference.Seconds > 30)
-                    {
-                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                        this.ReportViewer.LocalReport.Refresh();
-                        return;
-                    }
+                    //if (dateDifference.Seconds > 30)
+                    //{
+                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    //    this.ReportViewer.LocalReport.Refresh();
+                    //    return;
+                    //}
 
                     LoanReportObjects collateralValuationReport = new LoanReportObjects();
                     var data = collateralValuationReport.CollateralValuationReport(startDate, endDate, companyId);
@@ -59,7 +56,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     reportDataSource.Value = data;
                     reportDataSource.Name = "CollateralValuationReport";
 
-                    //   ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    //  ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     //  ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
