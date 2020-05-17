@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using FintrakBanking.Common.CustomException;
-
+using System.Data;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.CASA;
@@ -717,7 +717,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                reviewDate = DateTime.Now,
                                loanStatus = a.CBNCLASSIFICATION,
                                referenceNumber = a.REFERENCENUMBER,
-                           }).OrderByDescending(x => x.outstandings).ToList().Take(20);
+                           }).OrderByDescending(x => x.outstandings).ToList();
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
             }
@@ -748,7 +748,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                 reviewDate = DateTime.Now,
                                 loanStatus = a.CBNCLASSIFICATION,
                                 referenceNumber = a.REFERENCENUMBER,
-                            }).OrderByDescending(x => x.outstandings).ToList().Take(100);
+                            }).OrderByDescending(x => x.outstandings).ToList();
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
             }
@@ -782,41 +782,29 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return exposures;
         }
 
-        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposureByGroupFirstTwenty(int customerGroupId)
+        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposureByGroupFirstTwenty()
         {
-            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
-                                        where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
+            var customerGroupMapping = (from a in context.TBL_GLOBAL_EXPOSURE
+                                        where a.CUSTOMERTYPE.Trim() == "C"
+                                        orderby a.TOTALEXPOSURE descending
                                         select new CustomerGroupMappingViewModel
                                         {
-                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
-                                            customerGroupId = a.CUSTOMERGROUPID,
-                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
-                                            relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
-                                            customerId = a.CUSTOMERID,
-                                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                                            customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
-                                            customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                                        }).ToList();
+                                            customerCode = a.CUSTOMERID,
+                                        }).Distinct().ToList().Take(20);
             var customerCodes = customerGroupMapping.Select(m => m.customerCode).ToList();
             var exposures = GetGlobalCustomerExposureByGroupFirstTwenty(customerCodes);
             return exposures;
         }
 
-        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposureByGroupFirstHundred(int customerGroupId)
+        public List<CurrentCustomerExposure> GetGroupCustomerGlobalExposureByGroupFirstHundred()
         {
-            var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
-                                        where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
+            var customerGroupMapping = (from a in context.TBL_GLOBAL_EXPOSURE
+                                        where a.CUSTOMERTYPE.Trim() == "C"
+                                        orderby a.TOTALEXPOSURE descending
                                         select new CustomerGroupMappingViewModel
                                         {
-                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
-                                            customerGroupId = a.CUSTOMERGROUPID,
-                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
-                                            relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
-                                            customerId = a.CUSTOMERID,
-                                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                                            customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
-                                            customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                                        }).ToList();
+                                            customerCode = a.CUSTOMERID,
+                                        }).Distinct().ToList().Take(100);
             var customerCodes = customerGroupMapping.Select(m => m.customerCode).ToList();
             var exposures = GetGlobalCustomerExposureByGroupFirstHundred(customerCodes);
             return exposures;
@@ -891,7 +879,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel models = new CreditLimitValidationsModel();
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
-                exposures = GetGroupCustomerGlobalExposureByGroupFirstTwenty((int)application.customerGroupId);
+                exposures = GetGroupCustomerGlobalExposureByGroupFirstTwenty();
                 var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false && x.LIMITNUMBER == 20).FirstOrDefault();
                 double maxLimit = (float)groupLimit.GROUPLIMITVALUE;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
@@ -906,7 +894,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel models = new CreditLimitValidationsModel();
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
-                exposures = GetGroupCustomerGlobalExposureByGroupFirstHundred((int)application.customerGroupId);
+                exposures = GetGroupCustomerGlobalExposureByGroupFirstHundred();
                 var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false && x.LIMITNUMBER == 100).FirstOrDefault();
                 double maxLimit = (float)groupLimit.GROUPLIMITVALUE;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
