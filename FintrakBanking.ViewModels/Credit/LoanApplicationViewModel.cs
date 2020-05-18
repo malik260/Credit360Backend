@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.ViewModels.Credit
@@ -211,28 +212,12 @@ namespace FintrakBanking.ViewModels.Credit
         public bool editMode { get; set; }
         public short? requireCollateralTypeId { get; set; }
         public RacInformationViewModel rac { get; set; }
+        public List<DateTimeAndTimeOfDayViewModel> dateTimeAndTimeOfDay { get; set; }
 
-        
 
-        public string slaGlobalStatus
-        {
-            get
-            {
-                float sla = globalsla;
-                int? elapse = (DateTime.Now - dateTimeCreated).Hours;
-                return SlaStatus(sla, elapse);
-            }
-        }
+        public string slaGlobalStatus { get; set; }
 
-        public string slaInduvidualStatus
-        {
-            get
-            {
-                float sla = currentApprovalLevelSlaInterval;
-                int? elapse = (DateTime.Now - timeIn)?.Hours;
-                return SlaStatus(sla, elapse);
-            }
-        }
+        public string slaInduvidualStatus { get; set; }
 
         public string customerType { get; set; }
         public string isProjectRelated { get; set; }
@@ -242,19 +227,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string referenceNumber { get; set; }
         public DateTime systemDateTime { get; set; }
         public int? bookingOperationId { get; set; }
-
-        private string SlaStatus(float sla, int? elapse)
-        {
-            if (sla == 0) return "success";
-            if (elapse == 0 || elapse == null) return "success";
-            float factor = (float)(elapse / sla) * 100;
-            if (factor <= 30) return "success";
-            if (factor <= 70) return "warning";
-            if (factor <= 100) return "danger";
-            return "danger";
-        }
-
-  
     }
 
     public class LoanApplicationUpdateMessage
@@ -490,6 +462,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? interestRepaymentId { get; set; }
         public string moratorium { get; set; }
         public bool? isMoratorium { get; set; }
+        public decimal? approvedLineLimit { get; set; }
 
 
         public string priceIndexName { get; set; }
@@ -1065,6 +1038,12 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanDetailReviewTypeId { get; set; }
         public decimal approvedAmount { get; set; }
         public List<ProductFeesViewModel> fees { get; set; }
+    }
+
+    public class DateTimeAndTimeOfDayViewModel
+    {
+        public DateTime dateTime { get; set; }
+        public TimeSpan timeOfDay { get; set; }
     }
 
 }

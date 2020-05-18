@@ -1483,6 +1483,16 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("This facility already has a running tranche disbursement request currently undergoing approval.");
             }
 
+            if (loanApplicationDetails.ISLINEFACILITY.Value)
+            {
+                var bookingRequestsForCustomer = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && x.DELETED == false).ToList();
+                var totalAmountRequested = bookingRequestsForCustomer.Sum(r => r.AMOUNT_REQUESTED);
+                if ((entity.amount_Requested + totalAmountRequested) > loanApplicationDetails.APPROVEDLINELIMIT.Value)
+                {
+                    throw new ConditionNotMetException("Requested Amount(s) cannot be greater than the approved line limit");
+                }
+            }
+
             //if (entity.tenor > loanApplicationDetails.APPROVEDTENOR)
             //{
             //    throw new ConditionNotMetException("Requested Tenor cannot be greater than the approved tenor");
@@ -1667,23 +1677,24 @@ namespace FintrakBanking.Repositories.Credit
                 TBL_CASA casa = new TBL_CASA();
                 if (item.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
                 {
-                    casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == item.TBL_COLLATERAL_CASA.FirstOrDefault().COLLATERALCASAID).FirstOrDefault();
+                    var accountNumber = item.TBL_COLLATERAL_CASA.FirstOrDefault().ACCOUNTNUMBER;
+                    casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber).FirstOrDefault();
                 }
 
-                var casaBalance = integration.GetCustomerAccountBalance(casa.PRODUCTACCOUNTNUMBER);
+                var casaBalance = integration.GetCustomerAccountBalance(casa?.PRODUCTACCOUNTNUMBER);
 
                 var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == createdBy).FirstOrDefault().STAFFCODE;
 
                 var lienModel = new FlexcubeLienViewModel
                 {
-                    account_no = casa.PRODUCTACCOUNTNUMBER,
+                    account_no = casa?.PRODUCTACCOUNTNUMBER,
                     collateral_code = item.COLLATERALCODE,
                     collateral_value = item.COLLATERALVALUE.ToString(),
                     start_date = app.EFFECTIVEDATE.Value.ToString("ddMMMyyyy"),
                     end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToString("ddMMMyyyy"),
                     collateral_id = item.COLLATERALCUSTOMERID.ToString(),
                     contract_ref_no = app.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                    collateral_contribution = casaBalance.availableBalance.ToString(),
+                    collateral_contribution = casaBalance?.availableBalance.ToString(),
                     branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
                     channel_code = "FINTRAK",
                     maker_id = staffCode,

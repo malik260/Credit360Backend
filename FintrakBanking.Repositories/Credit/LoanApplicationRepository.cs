@@ -2768,6 +2768,11 @@ namespace FintrakBanking.Repositories.Credit
             detail.TENORFREQUENCYTYPEID = update.tenorModeId;
             detail.ISTAKEOVERAPPLICATION = update.isTakeOverApplication;
             detail.LOANDETAILREVIEWTYPEID = update.loanDetailReviewTypeId;
+            detail.ISMORATORIUM = update.isMoratorium;
+            detail.INTERESTREPAYMENT = update.interestRepayment;
+            detail.INTERESTREPAYMENTID = update.interestRepaymentId;
+            detail.MORATORIUM = update.moratorium;
+            detail.APPROVEDLINELIMIT = update.approvedLineLimit;
             detail.DATETIMEUPDATED = DateTime.Now;
             detail.LASTUPDATEDBY = loan.createdBy;
 
@@ -3138,8 +3143,8 @@ namespace FintrakBanking.Repositories.Credit
                 ISMORATORIUM = a.isMoratorium,
                 INTERESTREPAYMENT = a.interestRepayment,
                 INTERESTREPAYMENTID = a.interestRepaymentId,
-                MORATORIUM = a.moratorium
-                //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
+                MORATORIUM = a.moratorium,
+                APPROVEDLINELIMIT = a.approvedLineLimit
             };
 
             //var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
@@ -3239,7 +3244,14 @@ namespace FintrakBanking.Repositories.Credit
                 operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
                 loanDetailReviewTypeId = d.LOANDETAILREVIEWTYPEID,
                 tenorModeId = d.TENORFREQUENCYTYPEID,
-                flowChangeId = d.TBL_LOAN_APPLICATION.FLOWCHANGEID
+                flowChangeId = d.TBL_LOAN_APPLICATION.FLOWCHANGEID,
+                isLineFacility = d.ISLINEFACILITY,
+                approvedLineLimit = d.APPROVEDLINELIMIT,
+                interestRepaymentId = d.INTERESTREPAYMENTID,
+                interestRepayment = d.INTERESTREPAYMENT,
+                isMoratorium = d.ISMORATORIUM,
+                moratorium = d.MORATORIUM,
+
             };
 
             var proposedTenor = ConvertTenorDaysToTenor(fields.proposedTenor, fields.tenorModeId);
@@ -3614,6 +3626,7 @@ namespace FintrakBanking.Repositories.Credit
             addLoanApplDetailsArchive.INTERESTREPAYMENTID = detailRow.INTERESTREPAYMENTID;
             addLoanApplDetailsArchive.MORATORIUM = detailRow.MORATORIUM;
             addLoanApplDetailsArchive.ISMORATORIUM = detailRow.ISMORATORIUM;
+            addLoanApplDetailsArchive.APPROVEDLINELIMIT = detailRow.APPROVEDLINELIMIT;
             this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
             //}
             //return context.SaveChanges() != 0;
@@ -4536,7 +4549,6 @@ namespace FintrakBanking.Repositories.Credit
                                              relationshipManagerId = x.RELATIONSHIPMANAGERID,
                                              applicationDate = x.APPLICATIONDATE,
                                              applicationAmount = x.APPLICATIONAMOUNT,
-                                             //applicationAmount = x.APPLICATIONAMOUNT,
                                              approvedAmount = x.APPROVEDAMOUNT,
                                              interestRate = x.INTERESTRATE,
                                              applicationTenor = x.APPLICATIONTENOR,
@@ -4584,7 +4596,7 @@ namespace FintrakBanking.Repositories.Credit
                                              apiRequestId = x.APIREQUESTID
                                          }).ToList();
 
-                var allRecord = applications.Union(groupApplications).ToList();
+                var allRecord = applications.Union(groupApplications).GroupBy(a => a.loanApplicationId).Select(a => a.FirstOrDefault()).ToList();
                 //int[] bookedLoanOperations = { (int) OperationsEnum.RevolvingLoanBooking, (int) OperationsEnum.TermLoanBooking, (int) OperationsEnum.ContigentLoanBooking };
 
                 foreach (var x in allRecord)
@@ -4599,6 +4611,7 @@ namespace FintrakBanking.Repositories.Credit
                         x.approvalTrailId = singleRec.APPROVALTRAILID;//y.APPROVALTRAILID,
                         //x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a" : singleRec.TBL_STAFF1.STAFFCODE + " - " + singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                         x.responsiblePerson = singleRec.TOSTAFFID == null ? (singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : (x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : (x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : "CLICK VIEW FOR DRAWDOWN DETAILS"))) : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                        x.toStaffId = singleRec.TOSTAFFID;
                         x.currentOperationId = singleRec.OPERATIONID;
                     }
                     else
@@ -6218,10 +6231,10 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = model.operationId;
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = model.productClassId;
-            workflow.ProductId = model.productId;
+            workflow.ProductClassId = model.productClassId > 0 ? model.productClassId : null;
+            workflow.ProductId = model.productId > 0 ? model.productId : null;
             workflow.NextLevelId = model.receiverLevelId;
-            workflow.ToStaffId = model.receiverStaffId;
+            workflow.ToStaffId = model.receiverStaffId > 0 ? model.receiverStaffId : null;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             workflow.LogActivity();
@@ -7037,7 +7050,7 @@ namespace FintrakBanking.Repositories.Credit
             int branchId = (int)application.branchId;
             int customerId = (int)application.customerId;
             int productId = details.SingleOrDefault()?.proposedProductId ?? 0;
-            decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
+            decimal applicationAmount = details.Sum(x => x.proposedAmount * (decimal)x.exchangeRate); // proposedAmount should be approvedAmount after application
 
             var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
                 .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
@@ -7138,6 +7151,44 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Single Obligor Limit Exceeded");
             }
+
+            
+            var applications = application.LoanApplicationDetail.FirstOrDefault();
+            decimal incomingAmount = details.Sum(x => x.exchangeAmount);
+            if (applications != null)
+            {
+                var currency = context.TBL_CURRENCY.Find(applications.currencyId);
+                if (currency.CURRENCYCODE.Trim() != "NGN")
+                {
+                    var currencyLimits = limitValidation.ValidateNPLByCurrency(application);
+                    var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
+                    if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+                    {
+                        throw new SecureException("Curreny Limit Exceeded");
+                    }
+                }
+            }
+
+            if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            {
+                var groupLimitsTwenty = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+                var proposedGroupLimit = groupLimitsTwenty.outstandingBalance + (double)incomingAmount;
+                if ((double)groupLimitsTwenty.maximumAllowedLimit != 0 && proposedGroupLimit >= (double)groupLimitsTwenty.maximumAllowedLimit)
+                {
+                    throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+                }
+            }
+            
+            if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            {
+                var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+                var proposedGroupLimitHundred = groupLimitHundred.outstandingBalance + (double)incomingAmount; 
+                if ((double)groupLimitHundred.maximumAllowedLimit != 0 && proposedGroupLimitHundred >= (double)groupLimitHundred.maximumAllowedLimit)
+                {
+                    throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+                }
+            }
+
         }
 
         public CurrentCustomerExposure GetTotalBankExposure()

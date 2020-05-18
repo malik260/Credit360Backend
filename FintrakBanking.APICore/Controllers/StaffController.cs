@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using FintrakBanking.Common.CustomException;
 using System.Text;
+using FintrakBanking.ViewModels.Setups.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -772,6 +773,93 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-unprocessed-bulk-prepayment-batch")]
+        public HttpResponseMessage GetAllUnprocessedBulkPrepaymentBatch()
+        {
+            try
+            {
+                var batch = repo.GetAllUnprocessedBulkPrepaymentBatch(token.GetStaffId);
+
+                if (batch == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = batch, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = batch });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("submit-prepayment-batch-for-approval")]
+        public HttpResponseMessage SubmitBatchPrepaymentForApproval([FromBody] ApprovalViewModel model)
+        {
+            try
+            {
+                model.BranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = repo.SubmitPrepaymentBatchForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-bulk-prepayments-awaiting-approval-batch")]
+        public HttpResponseMessage GetBulkPrepaymentsAwaitingApprovalBatch()
+        {
+            try
+            {
+                var data = repo.GetBulkPrepaymentsAwaitingApprovalBatch(token.GetStaffId, token.GetCompanyId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("submit-prepayment-batch-for-workflow-approval")]
+        public HttpResponseMessage SubmitPrepaymentBatchForWorkflowApproval([FromBody] ApprovalViewModel model)
+        {
+            try
+            {
+                model.BranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = repo.SubmitPrepaymentBatchForWorkflowApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
+            }
+        }
 
 
         [HttpGet]

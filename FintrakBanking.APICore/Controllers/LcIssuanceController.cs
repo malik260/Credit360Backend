@@ -703,6 +703,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lc-issuance/releases/{lcIssuanceId}")]
+        public HttpResponseMessage GetReleasesForLcIssuance(int lcIssuanceId)
+        {
+            try
+            {
+                IEnumerable<LcReleaseAmountViewModel> response = repo.GetReleasesForLcIssuance(lcIssuanceId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lc-issuance/release-approval")]
         public HttpResponseMessage GetLcIssuancesForReleaseApproval()
         {
@@ -767,12 +784,12 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("lc-ussance-lcIssuanceId/{lcIssuanceId}")]
-        public HttpResponseMessage GetLcUssanceByLCIssuanceId(int lcIssuanceId)
+        public HttpResponseMessage GetLcUssancesByLCIssuanceId(int lcIssuanceId)
         {
             try
             {
-                LcUssanceViewModel response = ussanceRepo.GetLcUssanceByLCIssuanceId(lcIssuanceId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+                List<LcUssanceViewModel> response = ussanceRepo.GetLcUssanceByLCIssuanceId(lcIssuanceId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count });
             }
             catch (SecureException ex)
             {

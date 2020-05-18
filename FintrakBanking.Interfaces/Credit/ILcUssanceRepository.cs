@@ -11,7 +11,7 @@ namespace FintrakBanking.Interfaces.credit
 {
     public interface ILcUssanceRepository
     {
-        LcUssanceViewModel GetLcUssanceByLCIssuanceId(int lcIssuanceId);
+        List<LcUssanceViewModel> GetLcUssanceByLCIssuanceId(int lcIssuanceId);
 
         LcUssanceViewModel GetLcUssanceByLCUsanceId(int lcUsanceId);
 

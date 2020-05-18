@@ -78,13 +78,10 @@ namespace FintrakBanking.Repositories.credit
             return null;
         }
 
-        public LcUssanceViewModel GetLcUssanceByLCIssuanceId(int lcIssuanceId)
+        public List<LcUssanceViewModel> GetLcUssanceByLCIssuanceId(int lcIssuanceId)
         {
-            var entity = context.TBL_LC_USSANCE.FirstOrDefault(x => x.LCISSUANCEID == lcIssuanceId && x.DELETED == false);
-
-            if (entity != null)
-            {
-                return new LcUssanceViewModel
+            return context.TBL_LC_USSANCE.Where(x => x.LCISSUANCEID == lcIssuanceId && x.DELETED == false)
+                .Select(entity => new LcUssanceViewModel
                 {
                     lcIssuanceId = entity.LCISSUANCEID,
                     lcUssanceId = entity.LCUSSANCEID,
@@ -94,10 +91,7 @@ namespace FintrakBanking.Repositories.credit
                     lcEffectiveDate = entity.LCUSSANCEEFFECTIVEDATE,
                     lcMaturityDate = entity.LCUSSANCEMATURITYDATE,
                     usanceAmountCurrencyId = entity.USANCEAMOUNTCURRENCYID
-                };
-            }
-
-            return null;
+                }).ToList();
         }
 
         public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForUssance(int staffId)

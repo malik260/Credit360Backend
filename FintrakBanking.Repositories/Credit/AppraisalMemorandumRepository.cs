@@ -442,6 +442,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = model.isFromPc;
                 workflow.IsFlowTest = model.isFlowTest;
+                workflow.SkipLimitsCheck = appl.ISRELATEDPARTY;
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
                     Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
@@ -2171,15 +2172,13 @@ namespace FintrakBanking.Repositories.Credit
             var creditOperationIds = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(f => f.OPERATIONID).ToList();
             var allstaff = this.GetAllStaffNames();
 
-            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            // List<TBL_APPROVAL_TRAIL> trail = new List<TBL_APPROVAL_TRAIL>();
-
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
-
             if (getAll)
             {
                 trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
             }
+
+            trail = trail.Where(t => !(t.FROMAPPROVALLEVELID == t.TOAPPROVALLEVELID && t.LOOPEDSTAFFID > 0)).ToList();
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {
@@ -2209,11 +2208,20 @@ namespace FintrakBanking.Repositories.Credit
                 currentLevelId = data.LastOrDefault()?.toApprovalLevelId ?? 0;
             }
 
-            if (data.Count > 0 && currentLevelId > 0)
+            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended))//get only un-ended trail incase of workflow ending&/change
+            {
+                var firstTrail = data.FirstOrDefault(t => t.approvalStateId == (int)ApprovalState.Ended);
+                data = data.Where(t => t.approvalTrailId > firstTrail.approvalTrailId).ToList();
+            }
+
+            if (data.Count > 0 && currentLevelId > 0)//get only from the current level downwards
             {
                 var firstTrail = data.FirstOrDefault(t => t.toApprovalLevelId == currentLevelId);
+                if (firstTrail != null)
+                {
                     data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId).ToList();
                     //data = data.Where(t => t.approvalTrailId <= firstTrail?.approvalTrailId && t.fromApprovalLevelId > 0).ToList();
+                }
             }
 
             if (data.Count == 0)
@@ -2245,7 +2253,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data2 = data.ToList();
             var testData = data.ToList();
-            foreach (var t in testData)
+            foreach (var t in testData)//filter repeated levels as result of refer backs
             {
                 var firstTrailForLevel = testData.OrderBy(x => x.approvalTrailId).FirstOrDefault(x => x.fromApprovalLevelId == t.fromApprovalLevelId);
                 var multipleTrails = testData.Where(d => d.fromApprovalLevelId == firstTrailForLevel.fromApprovalLevelId && d.approvalTrailId != firstTrailForLevel.approvalTrailId).ToList();
@@ -3053,7 +3061,8 @@ namespace FintrakBanking.Repositories.Credit
             requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
             operationId = x.a.OPERATIONID,
             productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
-            tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,           
+            tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
+            countryId = context.TBL_COUNTRY.FirstOrDefault().COUNTRYID,
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA)
@@ -3067,9 +3076,106 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+            //var test = applications.ToList();
+            //applications = test.AsQueryable();
             return applications;
-
             //.Where(x=>x.originatorBusinessUnitId == loggedOnStaff.BUSINESSUNITID);//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
+        }
+
+        public List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps)
+        {
+            foreach(var app in apps)
+            {
+                app.slaGlobalStatus = GetSlaGlobalStatus(app);
+                app.slaInduvidualStatus = GetSlaInduvidualStatus(app);
+            }
+            return apps;
+        }
+
+        private string GetSlaInduvidualStatus(LoanApplicationViewModel app)
+        {
+                float sla = app.currentApprovalLevelSlaInterval;
+                //int? elapse = (DateTime.Now - timeIn)?.Hours;
+                int? elapse = (int)GetTimeIntervalHours(app.timeIn.Value, DateTime.Now);
+                return SlaStatus(sla, elapse);
+        }
+
+        public string GetSlaGlobalStatus(LoanApplicationViewModel app)
+        {
+                float sla = app.globalsla;
+                //int? elapse = (DateTime.Now - dateTimeCreated).Hours;
+                int? elapse = (int)GetTimeIntervalHours(app.dateTimeCreated, DateTime.Now);
+                return SlaStatus(sla, elapse);
+        }
+
+        private string SlaStatus(float sla, int? elapse)
+        {
+            if (sla == 0) return "success";
+            if (elapse == 0 || elapse == null) return "success";
+            float factor = (float)(elapse / sla) * 100;
+            if (factor <= 30) return "success";
+            if (factor <= 70) return "warning";
+            if (factor <= 100) return "danger";
+            return "danger";
+        }
+
+        public IEnumerable<DateTime> GetDateRange(DateTime startDate, DateTime endDate)
+        {
+            if (endDate < startDate)
+                throw new ArgumentException("endDate must be greater than or equal to startDate");
+            yield return startDate;
+
+            while (startDate.Date < endDate.Date && startDate.AddDays(1).Date < endDate.Date)
+            {
+                yield return new DateTime(startDate.AddDays(1).Year, startDate.AddDays(1).Month, startDate.AddDays(1).Day, 23, 59, 59);
+                startDate = startDate.AddDays(1);
+            }
+            yield return endDate;
+        }
+
+        public bool IsInHolidays(DateTime date, int countryId)
+        {
+            List<TBL_PUBLIC_HOLIDAY> holidays;
+            holidays = context.TBL_PUBLIC_HOLIDAY.ToList();
+            var output = holidays.Any(x => x.DATE == date.Date);
+            return output;
+        }
+
+        public IEnumerable<DateTime> FilterHolidaysFromDateIntervals(IEnumerable<DateTime> dateTimes)
+        {
+            var list = dateTimes.ToList();
+            var countryId = context.TBL_COUNTRY.FirstOrDefault().COUNTRYID;
+            list = list.FindAll(l => !IsInHolidays(l, countryId));
+            return list;
+        }
+
+        public double GetTimeIntervalHours(DateTime startDate, DateTime endDate)
+        {
+            double hours = 0;
+            var second = new TimeSpan(0, 0, 1);
+            var range = GetDateRange(startDate, endDate);
+            var test = range.ToList();
+            range = FilterHolidaysFromDateIntervals(range);
+            var intervals = range.Select(r => new DateTimeAndTimeOfDayViewModel
+            {
+                dateTime = r
+            });
+            var list = intervals.ToList();
+            //dateTimeAndTimeOfDay = list;
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                var elapsed = list[i + 1].dateTime.Subtract(list[i].dateTime);
+                if(elapsed.Days <= 1)
+                {
+                    list[i + 1].timeOfDay = elapsed;
+                }
+                else
+                {
+                    list[i + 1].timeOfDay = list[i + 1].dateTime.TimeOfDay + second;
+                }
+            }
+            hours = list.Sum(l => l.timeOfDay.TotalHours);
+            return hours;
         }
 
         public IQueryable<LoanApplicationViewModel> GetPoolApplications(int operationId, int companyId, int branchId, int staffId, int? classId)
@@ -3262,27 +3368,44 @@ namespace FintrakBanking.Repositories.Credit
                     var systemDateNow = DateTime.Now;
                     var trail = context.TBL_APPROVAL_TRAIL.Find(approvalTrailId);
                     var trailForAudit = context.TBL_APPROVAL_TRAIL.Find(approvalTrailId);
+                    var trails = new List<TBL_APPROVAL_TRAIL>();
+                    var trailsForAudit = new List<TBL_APPROVAL_TRAIL>();
                     var level = context.TBL_APPROVAL_LEVEL.Find(trail.TOAPPROVALLEVELID);
                     if (trail != null)
                     {
                         if (trail.FROMAPPROVALLEVELID == trail.TOAPPROVALLEVELID && trail.LOOPEDSTAFFID > 0)
                         {
+                            trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
+                            trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
+                            foreach(var t in trails)
+                            {
+                                t.REQUESTSTAFFID = staffId;
+                            }
                             trail.LOOPEDSTAFFID = staffId;
                             trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                         else
                         {
+                            trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
+                            trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
+                            foreach (var t in trails)
+                            {
+                                t.REQUESTSTAFFID = staffId;
+                            }
                             trail.TOSTAFFID = staffId;
                             trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                     }
+
+                    trailsForAudit.Add(trailForAudit);
+                    trailsForAudit.OrderByDescending(t => t.APPROVALTRAILID);
 
                     var audit = new TBL_AUDIT
                     {
                         AUDITTYPEID = (short)AuditTypeEnum.ApplicationReassigned,
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
-                        DETAIL = $"Reassigning of Request to staff with staffId: '{ staffId }'. Trail before reassigning '{trailForAudit.ToString()}'",
+                        DETAIL = $"Reassigning of Request to staff with staffId: '{ staffId }'. Trails before reassigning '{trailsForAudit.ToString()}'",
                         IPADDRESS = CommonHelpers.GetLocalIpAddress(), // model.userIPAddress,
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),

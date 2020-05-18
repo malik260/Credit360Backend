@@ -568,12 +568,28 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("document-section-bulk-liquidation/operation/{operationId}/target/{targetId}/section/{sectionId}")]
+        public HttpResponseMessage GetDocumentSectionBulkLiquidation(int operationId, int targetId, int sectionId)
+        {
+            try
+            {
+                LoadedDocumentSectionViewModel response = repo.GetDocumentSectionBulkLiquidation(token.GetStaffId,operationId,targetId,sectionId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("document-section/operation/{operationId}/target/{targetId}/section/{sectionId}")]
         public HttpResponseMessage GetDocumentSection(int operationId, int targetId, int sectionId)
         {
             try
             {
-                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId,operationId,targetId,sectionId);
+                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId, operationId, targetId, sectionId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
@@ -600,6 +616,26 @@ namespace FintrakBanking.APICore.Controllers
         
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("preview-document-bulk-liquidation/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetLoadedDocumentBulkLiquidation(int operationId, int targetId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentBulkLiquidation(token.GetStaffId,operationId, targetId,user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("documentation/operation/{operationId}/target/{targetId}")]
         public HttpResponseMessage GetLoadedDocumentation(int operationId, int targetId)
         {
@@ -609,7 +645,27 @@ namespace FintrakBanking.APICore.Controllers
                 user.BranchId = token.GetBranchId;
                 user.staffId = token.GetStaffId;
                 user.companyId = token.GetCompanyId;
-                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId,operationId, targetId,user);
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId, operationId, targetId, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("documentation-bulk-liquidation/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetLoadedDocumentationBulkLiquidation(int operationId, int targetId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentationBulkLiquidation(token.GetStaffId, operationId, targetId, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
