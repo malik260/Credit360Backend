@@ -2330,7 +2330,6 @@ namespace FintrakBanking.ReportObjects
 
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
-
                     var collateralValuation = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
                                                join l in context.TBL_LOAN on a.LOANID equals l.TERMLOANID
                                                join ccu in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals ccu.COLLATERALCUSTOMERID
@@ -2380,14 +2379,6 @@ namespace FintrakBanking.ReportObjects
                                                    collateralValue = ccu.COLLATERALVALUE,
                                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
                                                    //tenor = (l.EFFECTIVEDATE.Date - l.MATURITYDATE.Date).Days,
-
-
-
-
-
-
-
-
                                                }).ToList().Select(x =>
                                                {
                                                    var checkForGroupHead = stagMis.Where(f => f.staffCode == x.inspectingStaffNo).Select(f => f.subHead).FirstOrDefault();
@@ -2402,8 +2393,6 @@ namespace FintrakBanking.ReportObjects
 
                                                    return x;
                                                }).ToList();
-
-
 
                     return collateralValuation;
                 }
