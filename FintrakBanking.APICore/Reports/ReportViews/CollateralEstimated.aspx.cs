@@ -39,14 +39,15 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     }
 
                     var currentDate = DateTime.Now;
+
                     var dateDifference = currentDate - incomingDate;
 
-                    //if (dateDifference.Seconds > 10)
-                    //{
-                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    //    this.ReportViewer.LocalReport.Refresh();
-                    //    return;
-                    //}
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
 
                     string logo = Server.MapPath("~/Content/icons/firstbank.png");
 
