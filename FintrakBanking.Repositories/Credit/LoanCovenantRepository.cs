@@ -465,28 +465,7 @@ namespace FintrakBanking.Repositories.Customer
                                     }
                                 }
                             }
-                                var interestRateChanges = context.TBL_LOAN_REVIEW_OPERATION.Where(r => r.OPERATIONTYPEID == (int)OperationsEnum.OverdraftInterestRate || r.OPERATIONTYPEID == (int)OperationsEnum.ContractualInterestRateChange).ToList();
-                                if (interestRateChanges.Count() > 0)
-                                {
-                                    AlertsViewModel alerts = new AlertsViewModel();
-                                    string emailList = "";
-
-                                    foreach (var interestRateChange in interestRateChanges)
-                                    {
-                                        if (interestRateChange.EFFECTIVEDATE.Date == DateTime.Now.Date)
-                                        {
-                                            var loanDetails = context.TBL_LMSR_APPLICATION_DETAIL.Find(interestRateChange.LOANREVIEWAPPLICATIONID);
-                                            var appDetails = context.TBL_LMSR_APPLICATION.Find(loanDetails.LOANAPPLICATIONID);
-                                            var staffMisCode = context.TBL_STAFF.Find(interestRateChange.CREATEDBY).MISCODE;
-                                            var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
-                                            emailList = GetBusinessTeamsEmails(staffMisCode);
-                                            alerts.receiverEmailList.Add(emailList);
-                                            var subject = "Postdated Period of Rate Change notification";
-                                            var message = "This is to inform you that Postdated Period of Rate Change of effective date " + interestRateChange.EFFECTIVEDATE + "  on a loan with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") is due today.";
-                                            LogEmailAlert(message, subject, alerts.receiverEmailList, "100433", 100433, "PostdatedRateChangeNotification");
-                                        }
-                                    }
-                                }
+                                
                          
                         }
                         catch (Exception ex)
@@ -505,7 +484,29 @@ namespace FintrakBanking.Repositories.Customer
                     }
 
                 }
-           return context.SaveChanges() != 0;
+                    var interestRateChanges = context.TBL_LOAN_REVIEW_OPERATION.Where(r => r.OPERATIONTYPEID == (int)OperationsEnum.OverdraftInterestRate || r.OPERATIONTYPEID == (int)OperationsEnum.ContractualInterestRateChange).ToList();
+                    if (interestRateChanges.Count() > 0)
+                    {
+                        AlertsViewModel alerts = new AlertsViewModel();
+                        string emailList = "";
+
+                        foreach (var interestRateChange in interestRateChanges)
+                        {
+                            if (interestRateChange.EFFECTIVEDATE.Date == DateTime.Now.Date)
+                            {
+                                var loanDetails = context.TBL_LMSR_APPLICATION_DETAIL.Find(interestRateChange.LOANREVIEWAPPLICATIONID);
+                                var appDetails = context.TBL_LMSR_APPLICATION.Find(loanDetails.LOANAPPLICATIONID);
+                                var staffMisCode = context.TBL_STAFF.Find(interestRateChange.CREATEDBY).MISCODE;
+                                var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
+                                emailList = GetBusinessTeamsEmails(staffMisCode);
+                                alerts.receiverEmailList.Add(emailList);
+                                var subject = "Postdated Period of Rate Change notification";
+                                var message = "This is to inform you that Postdated Period of Rate Change of effective date " + interestRateChange.EFFECTIVEDATE + "  on a loan with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") is due today.";
+                                LogEmailAlert(message, subject, alerts.receiverEmailList, "100433", 100433, "PostdatedRateChangeNotification");
+                            }
+                        }
+                    }
+            return context.SaveChanges() != 0;
         }
 
         //public bool UpdateLoanApplicationCovenant(DateTime date)
