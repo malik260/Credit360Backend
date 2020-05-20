@@ -7050,7 +7050,7 @@ namespace FintrakBanking.Repositories.Credit
             int branchId = (int)application.branchId;
             int customerId = (int)application.customerId;
             int productId = details.SingleOrDefault()?.proposedProductId ?? 0;
-            decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
+            decimal applicationAmount = details.Sum(x => x.proposedAmount * (decimal)x.exchangeRate); // proposedAmount should be approvedAmount after application
 
             var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
                 .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
@@ -7151,6 +7151,44 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Single Obligor Limit Exceeded");
             }
+
+            
+            var applications = application.LoanApplicationDetail.FirstOrDefault();
+            decimal incomingAmount = details.Sum(x => x.exchangeAmount);
+            if (applications != null)
+            {
+                var currency = context.TBL_CURRENCY.Find(applications.currencyId);
+                if (currency.CURRENCYCODE.Trim() != "NGN")
+                {
+                    var currencyLimits = limitValidation.ValidateNPLByCurrency(application);
+                    var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
+                    if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+                    {
+                        throw new SecureException("Curreny Limit Exceeded");
+                    }
+                }
+            }
+
+            if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            {
+                var groupLimitsTwenty = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+                var proposedGroupLimit = groupLimitsTwenty.outstandingBalance + (double)incomingAmount;
+                if ((double)groupLimitsTwenty.maximumAllowedLimit != 0 && proposedGroupLimit >= (double)groupLimitsTwenty.maximumAllowedLimit)
+                {
+                    throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+                }
+            }
+            
+            if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
+            {
+                var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+                var proposedGroupLimitHundred = groupLimitHundred.outstandingBalance + (double)incomingAmount; 
+                if ((double)groupLimitHundred.maximumAllowedLimit != 0 && proposedGroupLimitHundred >= (double)groupLimitHundred.maximumAllowedLimit)
+                {
+                    throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+                }
+            }
+
         }
 
         public CurrentCustomerExposure GetTotalBankExposure()

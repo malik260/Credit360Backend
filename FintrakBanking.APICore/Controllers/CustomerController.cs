@@ -359,23 +359,15 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetCustomerRating(int id)
         {
 
-            try
-            {
                 var data = repo.GetCustomerRating(id);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
-                }
+                }else
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = true, result = data });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
-            }
         }
 
         [HttpGet]
@@ -383,22 +375,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("customer-casa-information/")]
         public HttpResponseMessage GetCustomerCASAInformation(int customerId)
         {
-            try
-            {
                 var data = repo.GetCustomerCASAInformation(customerId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
-                }
+                }else
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = true, result = data });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
-            }
         }
 
         [HttpGet]
@@ -406,22 +390,15 @@ namespace FintrakBanking.APICore.Controllers
         [Route("customer-casa-information/{customerCode}")]
         public HttpResponseMessage GetCustomerCASAInformationByCustomerCode(string customerCode)
         {
-            try
-            {
+            
                 var data = repo.GetCustomerCASAInformation(customerCode);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
-                }
+                }else
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = true, result = data });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
-            }
         }
 
 
@@ -431,48 +408,35 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetCustomerByLoanapplicationId(int loanApplicationId)
         {
 
-            try
-            {
                 var data = repo.GetCustomerGeneralInfoByLoanId(loanApplicationId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
-                }
+                }else
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = true, result = data });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
-            }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("customer-by-lms-loanapplication/")]
         public HttpResponseMessage GetCustomerByLMSLoanapplicationId(int loanApplicationId)
         {
 
-            try
-            {
                 var data = repo.GetCustomerGeneralInfoByLMSLoanId(loanApplicationId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
-                }
+                }else
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = true, result = data });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
-            }
         }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("customerbyid/")]

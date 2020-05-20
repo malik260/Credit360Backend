@@ -45,7 +45,7 @@ namespace FintrakBanking.Repositories.credit
             return (from x in context.TBL_LOAN_APPLICATION
                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                     join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID               
-                    where x.ISPROJECTRELATED == true && (x.APPLICATIONREFERENCENUMBER == searchString
+                    where x.ISPROJECTRELATED == true && (x.APPLICATIONREFERENCENUMBER == searchString.Trim()
                     || c.FIRSTNAME.ToLower().Contains(searchString.Trim())
                     || c.LASTNAME.ToLower().Contains(searchString.Trim())
                     || c.MIDDLENAME.ToLower().Contains(searchString.Trim()))
@@ -122,7 +122,7 @@ namespace FintrakBanking.Repositories.credit
                             inspectionDate = x.INSPECTIONDATE,
                             commencementDate = x.COMMENCEMENTDATE,
                             completionDate = x.COMPLETIONDATE,
-                            nextVisitationDate = x.NEXTVISITATIONDATE,
+                           // nextVisitationDate = x.NEXTVISITATIONDATE,
                             loanApplicationId = x.LOANAPPLICATIONID,
                             projectLocation = x.PROJECTLOCATION,
                             approvalStatusId = x.APPROVALSTATUSID,                          
@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.credit
                             projectDescription = x.PROJECTDESCRIPTION,
                             commencementDate = x.COMMENCEMENTDATE,
                             completionDate = x.COMPLETIONDATE,
-                            nextVisitationDate = x.NEXTVISITATIONDATE,
+                            //nextVisitationDate = x.NEXTVISITATIONDATE,
                             loanApplicationId = x.LOANAPPLICATIONID,
                             projectLocation = x.PROJECTLOCATION,
                             approvalStatusId = trail.APPROVALSTATUSID,
@@ -179,7 +179,7 @@ namespace FintrakBanking.Repositories.credit
                 projectDescription = x.PROJECTDESCRIPTION,
                 commencementDate = x.COMMENCEMENTDATE,
                 completionDate = x.COMPLETIONDATE,
-                nextVisitationDate = x.NEXTVISITATIONDATE,
+                //nextVisitationDate = x.NEXTVISITATIONDATE,
                 loanApplicationId = x.LOANAPPLICATIONID,
                 projectLocation = x.PROJECTLOCATION,
                 approvalStatusId = x.APPROVALSTATUSID,
@@ -268,7 +268,7 @@ namespace FintrakBanking.Repositories.credit
                        projectDescription = x.PROJECTDESCRIPTION,
                        commencementDate = x.COMMENCEMENTDATE,
                        completionDate = x.COMPLETIONDATE,
-                       nextVisitationDate = x.NEXTVISITATIONDATE,
+                       //nextVisitationDate = x.NEXTVISITATIONDATE,
                        loanApplicationId = x.LOANAPPLICATIONID,
                        projectLocation = x.PROJECTLOCATION,
                        approvalStatusId = x.APPROVALSTATUSID,
@@ -327,6 +327,7 @@ namespace FintrakBanking.Repositories.credit
             }
             else
             {
+                var p = model.loanApplicationViewModel.FirstOrDefault();
                 var entity = new TBL_PSR_PROJECT_SITE_REPORT
                 {
                     PSRREPORTTYPEID = model.psrReportTypeId,
@@ -337,11 +338,11 @@ namespace FintrakBanking.Repositories.credit
                     PROJECTDESCRIPTION = model.projectDescription,
                     COMMENCEMENTDATE = model.commencementDate,
                     COMPLETIONDATE = model.completionDate,
-                    NEXTVISITATIONDATE = model.nextVisitationDate,
+                    //NEXTVISITATIONDATE = model.nextVisitationDate,
                     // COMPANYID = model.companyId,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = general.GetApplicationDate(),
-                    LOANAPPLICATIONID = model.loanApplicationId,
+                    LOANAPPLICATIONID = p.loanApplicationId,
                     PROJECTLOCATION = model.projectLocation,
                     CURRENCYID = model.currencyId,
                     INSPECTIONDATE = model.inspectionDate,
@@ -425,7 +426,7 @@ namespace FintrakBanking.Repositories.credit
             entity.PROJECTDESCRIPTION = model.projectDescription;
             entity.COMMENCEMENTDATE = model.commencementDate;
             entity.COMPLETIONDATE = model.completionDate;
-            entity.NEXTVISITATIONDATE = model.nextVisitationDate;
+            //entity.NEXTVISITATIONDATE = model.nextVisitationDate;
             entity.PROJECTLOCATION = model.projectLocation;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.INSPECTIONDATE = model.inspectionDate;
@@ -509,8 +510,8 @@ namespace FintrakBanking.Repositories.credit
                 .Select(x => new PsrRecommendationViewModel
                 {
                     psrRecommendationId = x.PSRRECOMMENDATIONID,
-                    customerRating = x.CUSTOMERRATING,
-                    projectRiskRating = x.PROJECTRISKRATING,
+                    //customerRating = x.CUSTOMERRATING,
+                    //projectRiskRating = x.PROJECTRISKRATING,
                     projectSiteReportId = x.PROJECTSITEREPORTID,
                     comment = x.COMMENTS,
                 })
@@ -521,8 +522,8 @@ namespace FintrakBanking.Repositories.credit
         {
             var entity = this.context.TBL_PSR_RECOMMENDATION.Find(id);
             entity.COMMENTS = model.comment;
-            entity.CUSTOMERRATING = model.customerRating;
-            entity.PROJECTRISKRATING = model.projectRiskRating;
+            //entity.CUSTOMERRATING = model.customerRating;
+            //entity.PROJECTRISKRATING = model.projectRiskRating;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
@@ -548,11 +549,17 @@ namespace FintrakBanking.Repositories.credit
         }
         public bool AddPsrRecommendation(PsrRecommendationViewModel model)
         {
+            var validate = context.TBL_PSR_RECOMMENDATION.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p => p.PROJECTSITEREPORTID).ToList();
+            if (validate.Any())
+            {
+                throw new SecureException("Recommendation has already been captured");
+            }
+
             var entity = new TBL_PSR_RECOMMENDATION
             {
                 COMMENTS = model.comment,
-                CUSTOMERRATING = model.customerRating,
-                PROJECTRISKRATING = model.projectRiskRating,
+                //CUSTOMERRATING = model.customerRating,
+                //PROJECTRISKRATING = model.projectRiskRating,
                 PROJECTSITEREPORTID = model.projectSiteReportId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -683,6 +690,12 @@ namespace FintrakBanking.Repositories.credit
 
         public bool AddPsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model)
         {
+            var validate = context.TBL_PSR_PERFORMANCE_EVALUATION.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p => p.PROJECTSITEREPORTID).ToList();
+            if (validate.Any())
+            {
+                throw new SecureException("Performance Evaluation has already been captured");
+            }
+
             var entity = new TBL_PSR_PERFORMANCE_EVALUATION
             {
                 APGISSUED = model.apgIssued,
@@ -801,6 +814,12 @@ namespace FintrakBanking.Repositories.credit
 
         public bool AddPsrObservation(PsrObservationViewModel model)
         {
+            var validate = context.TBL_PSR_OBSERVATION.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p => p.PROJECTSITEREPORTID).ToList();
+            if (validate.Any())
+            {
+                throw new SecureException("Observation has already been captured");
+            }
+
             var entity = new TBL_PSR_OBSERVATION
             {
                 COMMENTS = model.comment,
@@ -908,6 +927,12 @@ namespace FintrakBanking.Repositories.credit
         }
         public bool AddPsrNextInspectionTask(PsrNextInspectionTaskViewModel model)
         {
+            var validate = context.TBL_PSR_NEXT_INSPECTION_TASK.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p => p.PROJECTSITEREPORTID).ToList();
+            if (validate.Any())
+            {
+                throw new SecureException("Next Inspection Task has already been captured");
+            }
+
             var entity = new TBL_PSR_NEXT_INSPECTION_TASK
             {
                 COMMENTS = model.comment,
@@ -1013,6 +1038,12 @@ namespace FintrakBanking.Repositories.credit
         }
         public bool AddPsrComment(PsrCommentViewModel model)
         {
+            var validate = context.TBL_PSR_COMMENT.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p => p.PROJECTSITEREPORTID).ToList();
+            if (validate.Any())
+            {
+                throw new SecureException("Comment has already been captured");
+            }
+
             var entity = new TBL_PSR_COMMENT
             {
                 COMMENTS = model.comment,
@@ -1140,6 +1171,12 @@ namespace FintrakBanking.Repositories.credit
 
         public bool AddPsrPerformanceAnalysis(PsrPerformanceAnalysisViewModel model)
         {
+            var validate = context.TBL_PSR_ANALYSIS.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p=>p.PROJECTSITEREPORTID).ToList();
+            if(validate.Any())
+            {
+                throw new SecureException("Performance analysis has already been captured");
+            }
+
             var entity = new TBL_PSR_ANALYSIS
             {
                 VALUEOFCOLLATERAL = model.valueOfCollateral,
@@ -1234,7 +1271,7 @@ namespace FintrakBanking.Repositories.credit
 
         public int AddPsrImage(PsrImagesViewModel model, byte[] buffer)
         {
-            var existing = context.TBL_PSR_IMAGES.Where(x => x.FILENAME == model.fileName)
+            var existing = context.TBL_PSR_IMAGES.Where(x => x.FILENAME == model.fileName && x.PROJECTSITEREPORTID == model.projectSiteReportId)
             .Select(x => new PsrImagesViewModel
             {
                 psrImageId = x.PSRIMAGEID,

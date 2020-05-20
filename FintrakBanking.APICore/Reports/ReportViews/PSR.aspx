@@ -7,30 +7,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
-  
 </head>
 <body>
      <form id="form1" runat="server">
         <div>
          <asp:ScriptManager ID="ScriptManager1" runat="server"> </asp:ScriptManager>
-        <rsweb:ReportViewer ID="ReportViewer" runat="server" AsyncRendering="false" ShowParameterPrompts="false" Font-Names="Verdana" Font-Size="8pt" Height="800px" WaitMessageFont-Names="Verdana" 
+        <rsweb:ReportViewer ID="ReportViewer" runat="server" AsyncRendering="true" ShowParameterPrompts="false" Font-Names="Verdana" Font-Size="8pt" Height="800px" WaitMessageFont-Names="Verdana" 
             WaitMessageFont-Size="14pt" Width="100%" ClientIDMode="AutoID" InternalBorderColor="204, 204, 204" InternalBorderStyle="Solid" ToolBarItemBorderStyle="Solid" ToolBarItemBorderWidth="1px" ToolBarItemPressedBorderColor="51, 102, 153" ToolBarItemPressedBorderStyle="Solid" ToolBarItemPressedBorderWidth="1px" ToolBarItemPressedHoverBackColor="153, 187, 226">
         </rsweb:ReportViewer>
         </div>
     </form>
-  <script type="text/javascript">
-      var col = document.getElementsByTagName("tr");
-    for (i = 0; i < col.length; i++)
-    {
-    col[ i ].innerHTML = decode(col[ i ].innerHTML);
-      }
-
-    function decode(string) {
-    string = string.replace(/</g, "<");
-    string = string.replace(/&/g, "&");
-    string = string.replace(/>/g, ">");
-   return string;
-    }
-</script>
+  
 </body>
 </html>
