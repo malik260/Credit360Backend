@@ -89,5 +89,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool SubmitPrepaymentBatchForApproval(ApprovalViewModel model);
         IEnumerable<BatchPrepaymentViewModel> GetBulkPrepaymentsAwaitingApprovalBatch(int staffId, int companyId);
         bool SubmitPrepaymentBatchForWorkflowApproval(ApprovalViewModel model);
+        IEnumerable<BatchPrepaymentViewModel> GetProcessingBulkPrepaymentByBatchId(int batchId);
     }
 }

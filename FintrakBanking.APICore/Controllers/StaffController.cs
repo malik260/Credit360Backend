@@ -861,6 +861,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-processing-bulk-prepayment-by-batch/batchId/{batchId}")]
+        public HttpResponseMessage GetProcessingBulkPrepaymentByBatch(int batchId)
+        {
+            try
+            {
+                var batch = repo.GetProcessingBulkPrepaymentByBatchId(batchId);
+
+                if (batch == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = batch, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = batch });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
