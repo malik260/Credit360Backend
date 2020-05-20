@@ -104,10 +104,19 @@ namespace FintrakBanking.APICore.Controllers
             entity.staffId = token.GetStaffId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
 
-            WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
-          
+            try
+            {
+                WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error acting on this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error acting on this record {ex.Message}" });
+            }
         }
 
         [HttpPost]
