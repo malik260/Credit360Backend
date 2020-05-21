@@ -102,6 +102,17 @@ namespace FintrakBanking.Repositories.CASA
             return new CasaBalanceViewModel();
         }
 
+        public IEnumerable<CasaLienTypeViewModel> GetAllCasaLienTypes(int companyId)
+        {
+            var result = context.TBL_CASA_LIEN_TYPE.Select(O => new CasaLienTypeViewModel()
+            {
+                lienTypeId = O.LIENTYPEID,
+                lienTypeName = O.LIENTYPENAME
+            }).ToList();
+
+            return result;
+        }
+
         /// TODO: Implement server side filtering due to large number of records that may be returned
         public IEnumerable<CasaViewModel> FindAccount(string accountNumberOrName, int companyId)
         {
