@@ -7164,7 +7164,7 @@ namespace FintrakBanking.Repositories.Credit
                     var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
                     if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
                     {
-                        throw new SecureException("Curreny Limit Exceeded");
+                        throw new SecureException("Currency Limit Exceeded");
                     }
                 }
             }
