@@ -4567,17 +4567,17 @@ namespace FintrakBanking.Repositories.Credit
                             if (entity.operationId == (short)OperationsEnum.RevolvingLoanBooking)
                             {
                                 dynamicMessage = "Overdraft facility grant successfully committed " + loanBrief;
-                                LogEmailAlert(dynamicMessage, "Loan Disbursement, Overdraft facility grant successfully", alert.receiverEmailList, "10023", 10023, "OverDraftLoanDisbursement");
+                                LogEmailAlert(dynamicMessage, "LOAN DISBURSEMENT, OVERDRAFT FACILITY GRANT SUCCESSFULLY", alert.receiverEmailList, "10023", 10023, "OverDraftLoanDisbursement");
                             }
                             if (entity.operationId == (short)OperationsEnum.ContigentLoanBooking)
                             {
                                 dynamicMessage = "Contingent Liability has been committed successfully " + loanBrief;
-                                LogEmailAlert(dynamicMessage, "Loan Disbursement, Contingent Liability has been committed successfully", alert.receiverEmailList, "10023", 10023, "ContingentLiabilityDisbursement");
+                                LogEmailAlert(dynamicMessage, "LOAN DISBURSEMENT, CONTINGENT LIABILITY HAS BEEN COMMITTED SUCCESSFULLY", alert.receiverEmailList, "10023", 10023, "ContingentLiabilityDisbursement");
                             }
                             if (entity.operationId == (short)OperationsEnum.TermLoanBooking)
                             {
                                 dynamicMessage = "Loan has been successfully disbursed " + loanBrief;
-                                LogEmailAlert(dynamicMessage, "Loan Disbursement,  Term Loan has been successfully disbursed", alert.receiverEmailList, "10023", 10023, "TermLoanDisbursement");
+                                LogEmailAlert(dynamicMessage, "LOAN DISBURSEMENT, TERM LOAN HAS BEEN SUCCESSFULLY DISBURSED", alert.receiverEmailList, "10023", 10023, "TermLoanDisbursement");
                             }
                             
                             return 2;

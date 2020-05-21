@@ -18535,12 +18535,12 @@ namespace FintrakBanking.Repositories.Credit
                     if (entity.operationId == (int)OperationsEnum.OverdraftInterestRate)
                     {
                         dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
-                        LogEmailAlert(dynamicMessage, "Overdraft Interest Rate Change Notification ", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
+                        LogEmailAlert(dynamicMessage, "OVERDRAFT INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
                     }
                     if (entity.operationId == (int)OperationsEnum.ContractualInterestRateChange)
                     {
                         dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Disapproved";
-                        LogEmailAlert(dynamicMessage, "Contractual Interest Rate Change Notification ", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
+                        LogEmailAlert(dynamicMessage, "CONTRACTUAL INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
                     }
 
                     //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
@@ -18613,12 +18613,12 @@ namespace FintrakBanking.Repositories.Credit
                         if (entity.operationId == (int)OperationsEnum.OverdraftInterestRate)
                         {
                             dynamicMessage = "Overdraft Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Approved";
-                            LogEmailAlert(dynamicMessage, "Overdraft Interest Rate Change Notification ", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
+                            LogEmailAlert(dynamicMessage, "OVERDRAFT INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10020", 10020, "OverdraftInterestRate");
                         }
                         if (entity.operationId == (int)OperationsEnum.ContractualInterestRateChange)
                         {
                             dynamicMessage = "Contractual Interest Rate Change with review details request: " + lmsApplicationDetail.REVIEWDETAILS + " with Application reference number: " + lmsApplication.APPLICATIONREFERENCENUMBER + " concerning customer: (" + customer.CUSTOMERCODE + " " + customer.FIRSTNAME + " " + customer.LASTNAME + " " + customer.MIDDLENAME + " ) has been Approved";
-                            LogEmailAlert(dynamicMessage, "Contractual Interest Rate Change Notification ", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
+                            LogEmailAlert(dynamicMessage, "CONTRACTUAL INTEREST RATE CHANGE NOTIFICATION", alert.receiverEmailList, "10025", 10025, "ContractualInterestRateChange");
                         }
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         output = context.SaveChanges() > 0;
@@ -28812,8 +28812,8 @@ namespace FintrakBanking.Repositories.Credit
                             !loansId.Contains(ln.TERMLOANID)
                             && pr.EXCLUDEFROMLITIGATION == false
                             && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            //&& ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            //&& op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
@@ -28971,8 +28971,8 @@ namespace FintrakBanking.Repositories.Credit
                                      !loansId.Contains(ln.REVOLVINGLOANID)
                                      && pr.EXCLUDEFROMLITIGATION == false
                                      && ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                     && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     //&& ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     //&& op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
