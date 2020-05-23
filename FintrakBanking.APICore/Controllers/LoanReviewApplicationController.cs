@@ -340,6 +340,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("loan-lien-application-detail-search")]
+        public HttpResponseMessage LoanLienApplicationSearch([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.SearchLien(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("appraisal-review-referback")]
         public HttpResponseMessage AppraisalReviewReferBack([FromBody] ForwardViewModel entity)
         {
