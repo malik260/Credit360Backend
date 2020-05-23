@@ -1478,6 +1478,18 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
             }
 
+            if (entity.customerId == null)
+            {
+                if (loanApplicationDetails.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
+                {
+                    throw new SecureException("Please select a Group Member");
+                }
+                else
+                {
+                    entity.customerId = loanApplicationDetails.CUSTOMERID;
+                }
+            }
+
             if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved && x.DELETED == false).Any())
             {
                 throw new ConditionNotMetException("This facility already has a tranche disbursement request for this customer currently undergoing approval.");
@@ -1489,7 +1501,7 @@ namespace FintrakBanking.Repositories.Credit
                 var totalAmountRequested = bookingRequestsForCustomer.Sum(r => r.AMOUNT_REQUESTED);
                 if ((entity.amount_Requested + totalAmountRequested) > loanApplicationDetails.APPROVEDLINELIMIT.Value)
                 {
-                    throw new ConditionNotMetException("Requested Amount(s) cannot be greater than the approved line limit");
+                    throw new ConditionNotMetException("Requested Amount(s) for this customer cannot be greater than the approved line limit");
                 }
             }
 
@@ -1525,17 +1537,8 @@ namespace FintrakBanking.Repositories.Credit
 
             bool cleared = OfferLetterChecklistValidation(loanApplicationDetails.LOANAPPLICATIONID, 1);
             if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
-            if (entity.customerId == null)
-            {
-                if (loanApplicationDetails.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
-                {
-                    throw new SecureException("Pleae select a Group Member");
-                }
-                else
-                {
-                    entity.customerId = loanApplicationDetails.CUSTOMERID;
-                }
-            }
+            
+            throw new SecureException("");
             if (entity.casaAccountId2 == 0) entity.casaAccountId2 = null;
             if (entity.casaAccountId == 0) entity.casaAccountId = null;
             var request = new TBL_LOAN_BOOKING_REQUEST
