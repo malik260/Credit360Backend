@@ -1478,9 +1478,9 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
             }
 
-            if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved && x.DELETED == false).Any())
+            if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved && x.DELETED == false).Any())
             {
-                throw new ConditionNotMetException("This facility already has a running tranche disbursement request currently undergoing approval.");
+                throw new ConditionNotMetException("This facility already has a tranche disbursement request for this customer currently undergoing approval.");
             }
 
             if (loanApplicationDetails.ISLINEFACILITY.Value)
@@ -1525,8 +1525,17 @@ namespace FintrakBanking.Repositories.Credit
 
             bool cleared = OfferLetterChecklistValidation(loanApplicationDetails.LOANAPPLICATIONID, 1);
             if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
-
-
+            if (entity.customerId == null)
+            {
+                if (loanApplicationDetails.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
+                {
+                    throw new SecureException("Pleae select a Group Member");
+                }
+                else
+                {
+                    entity.customerId = loanApplicationDetails.CUSTOMERID;
+                }
+            }
             if (entity.casaAccountId2 == 0) entity.casaAccountId2 = null;
             if (entity.casaAccountId == 0) entity.casaAccountId = null;
             var request = new TBL_LOAN_BOOKING_REQUEST

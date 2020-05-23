@@ -944,6 +944,21 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
+        public IEnumerable<BatchPrepaymentViewModel> GetProcessingBulkPrepaymentByBatchId(int batchId)
+        {
+            var result = GetProcessingBulkPrepaymentByBatch(batchId).ToList();
+
+            return result.Select(b => new BatchPrepaymentViewModel()
+            {
+                prepaymentId = b.BULK_PREPAYMENTID,
+                batchCode = Math.Abs(b.BATCHID),
+                loanReferenceNumber = b.LOANREFERENCENUMBER,
+                processedDate = b.PROCESSDATE,
+                amount = b.AMOUNT,
+                dateCreated = b.DATETIMECREATED
+            }).ToList();
+        }
+
         private IEnumerable<TBL_BULK_PREPAYMENT> GetProcessingBulkPrepaymentByBatch(int batchId)
         {
             var data = (from a in context.TBL_BULK_PREPAYMENT
