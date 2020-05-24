@@ -11,6 +11,11 @@ namespace FintrakBanking.ViewModels.Setups.General
        
         public IEnumerable <DepartmentViewModel> departmentUnits;
         public string supervisorStaffName { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public decimal amount { get; set; }
+        public DateTime? processedDate { get; set; }
+        public int prepaymentId { get; set; }
+        public int? batchCode { get; set; }
         public string message { get; set; }
         public string staffRoleCode { get; set; }
         public string branchCode { get; set; }
@@ -74,6 +79,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public AppUserViewModel user { get; set; }
         public string businessUnitName { get; set; }
         public string misCode { get; set; }
+        public int? customerId { get; set; }
+
     }
 
     public class staffBulkFeedbackViewModel
@@ -90,6 +97,29 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
         public int StaffId { get; set; }
         public string StaffName { get; set; }
+    }
+
+    public class BatchPrepaymentViewModel
+    {
+        public int? batchCode { get; set; }
+        public int? numberOfLoans { get; set; }
+        public decimal totalAmount { get; set; }
+        public DateTime? processedDate { get; set; }
+        public int? customerId { get; set; }
+
+        public string toApprovalLevelName { get; set; }
+        public string fromApprovalLevelName { get; set; }
+        public string comment { get; set; }
+        public int approvalStatusId { get; set; }
+        public DateTime? dateCreated { get; set; }
+        public string approvalStatus { get; set; }
+        
+        public int operationId { get; set; }
+
+        public int prepaymentId { get; set; }
+        public decimal amount { get; set; }
+        public string loanReferenceNumber { get; set; }
+
     }
 
 

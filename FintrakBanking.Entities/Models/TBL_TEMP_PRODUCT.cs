@@ -30,6 +30,7 @@ namespace FintrakBanking.Entities.Models
         public short PRODUCTCATEGORYID { get; set; }
 
         public bool ISMULTIPLECURENCY { get; set; }
+        public bool EXCLUDEFROMLITIGATION { get; set; }
 
         public short PRODUCTCLASSID { get; set; }
 

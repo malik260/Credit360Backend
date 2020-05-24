@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 
@@ -6,6 +7,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IStaffRoleRepository
     {
+
+        bool DeleteBulkPrepayment(int bulkPrepaymentId, UserInfo user);
+
         IEnumerable<StaffRoleViewModel> GetStaffRole();
         StaffRoleViewModel GetStaffRoleByStaffId(int staffId);
 

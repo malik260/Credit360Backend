@@ -91,6 +91,30 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
         }
 
+        [HttpGet, Route("accredited-consultant")]
+        public HttpResponseMessage GetAccreditedConsultants()
+        {
+            var response = repo.GetAccreditedConsultants(token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("agent-search")]
+        public HttpResponseMessage SearchForAgent(string searchQuery)
+        {
+
+            var data = repo.GetSearchedAgent(searchQuery);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+
+        }
+
         [HttpPost, Route("consultant-type-add")]
         public HttpResponseMessage AddConsultantType([FromBody] AccreditedConsultantTypeViewModel entity)
         {

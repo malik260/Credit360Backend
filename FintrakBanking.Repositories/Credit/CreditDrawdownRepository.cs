@@ -225,6 +225,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.ExternalInitialization = false;
                 workflow.Amount = request.AMOUNT_REQUESTED;
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
+                workflow.IsFromPc = entity.isFromPc;
                 //if(request.AMOUNT_REQUESTED > 100000000)
                 //workflow.FinalLevel = application.TRANCHEAPPROVAL_LEVELID;
 
@@ -244,6 +245,7 @@ namespace FintrakBanking.Repositories.Credit
                     InterventionFunds = application.ISINTERVENTIONFUNDS,
                     OrrBasedApproval = application.ISORRBASEDAPPROVAL,
                     DomiciliationNotInPlace = application.DOMICILIATIONNOTINPLACE,
+                    isContingentFacility = request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
                 };
 
                 workflow.LogActivity();
@@ -423,7 +425,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvedDate = m.APPROVEDDATE,
                         groupApprovedAmount = m.APPROVEDAMOUNT,
                         approvedTenor = d.APPROVEDTENOR,
-                        createdBy = m.CREATEDBY,
+                        createdBy = m.OWNEDBY,
                         newApplicationDate = m.APPLICATIONDATE,
                         dateTimeCreated = d.DATETIMECREATED,
                         availmentDate = m.AVAILMENTDATE,
@@ -528,7 +530,7 @@ namespace FintrakBanking.Repositories.Credit
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                          where a.COMPANYID == companyId && d.DELETED == false
-                         && a.CREATEDBY == staffId
+                         && a.OWNEDBY == staffId
                          && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -600,7 +602,7 @@ namespace FintrakBanking.Repositories.Credit
                              approvedDate = a.APPROVEDDATE,
                              groupApprovedAmount = a.APPROVEDAMOUNT,
                              approvedTenor = d.APPROVEDTENOR,
-                             createdBy = a.CREATEDBY,
+                             createdBy = a.OWNEDBY,
                              newApplicationDate = a.APPLICATIONDATE,
                              dateTimeCreated = d.DATETIMECREATED,
                              availmentDate = a.AVAILMENTDATE,
@@ -701,7 +703,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedDate = m.APPROVEDDATE,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
                             approvedTenor = d.APPROVEDTENOR,
-                            createdBy = m.CREATEDBY,
+                            createdBy = m.OWNEDBY,
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
@@ -791,7 +793,7 @@ namespace FintrakBanking.Repositories.Credit
                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                          join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                          where a.COMPANYID == companyId && d.DELETED == false
-                         && staffIds.Contains(a.CREATEDBY)
+                         && staffIds.Contains(a.OWNEDBY)
                          && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -862,7 +864,7 @@ namespace FintrakBanking.Repositories.Credit
                              approvedDate = a.APPROVEDDATE,
                              groupApprovedAmount = a.APPROVEDAMOUNT,
                              approvedTenor = d.APPROVEDTENOR,
-                             createdBy = a.CREATEDBY,
+                             createdBy = a.OWNEDBY,
                              newApplicationDate = a.APPLICATIONDATE,
                              dateTimeCreated = d.DATETIMECREATED,
                              availmentDate = a.AVAILMENTDATE,
@@ -883,7 +885,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
-                var approvedLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.APPLICATIONSTATUSID != null && t.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceInProgress).Select(t => t.LCISSUANCEID).ToList();
+                var approvedLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted).Select(t => t.LCISSUANCEID).ToList();
                 var lcIFFRequests = context.TBL_LC_ISSUANCE.Where(l => l.DELETED == false && l.FUNDSOURCEID == (int)LCFundSource.IFF);
                 var lcapprovedLCIFFs = lcIFFRequests.Where(i => approvedLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT });
                 var lcapprovedLCIFFsRecords = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId);
@@ -961,7 +963,7 @@ namespace FintrakBanking.Repositories.Credit
             var data2 = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                          where a.COMPANYID == companyId && d.DELETED == false
-                         && a.CREATEDBY == staffId
+                         && a.OWNEDBY == staffId
                          && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -1032,7 +1034,7 @@ namespace FintrakBanking.Repositories.Credit
                              approvedDate = a.APPROVEDDATE,
                              groupApprovedAmount = a.APPROVEDAMOUNT,
                              approvedTenor = d.APPROVEDTENOR,
-                             createdBy = a.CREATEDBY,
+                             createdBy = a.OWNEDBY,
                              newApplicationDate = a.APPLICATIONDATE,
                              dateTimeCreated = d.DATETIMECREATED,
                              availmentDate = a.AVAILMENTDATE,
@@ -1476,9 +1478,31 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
             }
 
-            if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved && x.DELETED == false).Any())
+            if (entity.customerId == null)
             {
-                throw new ConditionNotMetException("This facility already has a running tranche disbursement request currently undergoing approval.");
+                if (loanApplicationDetails.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
+                {
+                    throw new SecureException("Please select a Group Member");
+                }
+                else
+                {
+                    entity.customerId = loanApplicationDetails.CUSTOMERID;
+                }
+            }
+
+            if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved && x.DELETED == false).Any())
+            {
+                throw new ConditionNotMetException("This facility already has a tranche disbursement request for this customer currently undergoing approval.");
+            }
+
+            if (loanApplicationDetails.ISLINEFACILITY.Value)
+            {
+                var bookingRequestsForCustomer = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && x.DELETED == false).ToList();
+                var totalAmountRequested = bookingRequestsForCustomer.Sum(r => r.AMOUNT_REQUESTED);
+                if ((entity.amount_Requested + totalAmountRequested) > loanApplicationDetails.APPROVEDLINELIMIT.Value)
+                {
+                    throw new ConditionNotMetException("Requested Amount(s) for this customer cannot be greater than the approved line limit");
+                }
             }
 
             //if (entity.tenor > loanApplicationDetails.APPROVEDTENOR)
@@ -1513,8 +1537,8 @@ namespace FintrakBanking.Repositories.Credit
 
             bool cleared = OfferLetterChecklistValidation(loanApplicationDetails.LOANAPPLICATIONID, 1);
             if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
-
-
+            
+            throw new SecureException("");
             if (entity.casaAccountId2 == 0) entity.casaAccountId2 = null;
             if (entity.casaAccountId == 0) entity.casaAccountId = null;
             var request = new TBL_LOAN_BOOKING_REQUEST
@@ -1665,23 +1689,24 @@ namespace FintrakBanking.Repositories.Credit
                 TBL_CASA casa = new TBL_CASA();
                 if (item.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
                 {
-                    casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == item.TBL_COLLATERAL_CASA.FirstOrDefault().COLLATERALCASAID).FirstOrDefault();
+                    var accountNumber = item.TBL_COLLATERAL_CASA.FirstOrDefault().ACCOUNTNUMBER;
+                    casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber).FirstOrDefault();
                 }
 
-                var casaBalance = integration.GetCustomerAccountBalance(casa.PRODUCTACCOUNTNUMBER);
+                var casaBalance = integration.GetCustomerAccountBalance(casa?.PRODUCTACCOUNTNUMBER);
 
                 var staffCode = context.TBL_STAFF.Where(O => O.STAFFID == createdBy).FirstOrDefault().STAFFCODE;
 
                 var lienModel = new FlexcubeLienViewModel
                 {
-                    account_no = casa.PRODUCTACCOUNTNUMBER,
+                    account_no = casa?.PRODUCTACCOUNTNUMBER,
                     collateral_code = item.COLLATERALCODE,
                     collateral_value = item.COLLATERALVALUE.ToString(),
                     start_date = app.EFFECTIVEDATE.Value.ToString("ddMMMyyyy"),
                     end_date = app.EFFECTIVEDATE.Value.AddDays(app.APPROVEDTENOR).ToString("ddMMMyyyy"),
                     collateral_id = item.COLLATERALCUSTOMERID.ToString(),
                     contract_ref_no = app.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                    collateral_contribution = casaBalance.availableBalance.ToString(),
+                    collateral_contribution = casaBalance?.availableBalance.ToString(),
                     branch_code = app.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHCODE,
                     channel_code = "FINTRAK",
                     maker_id = staffCode,

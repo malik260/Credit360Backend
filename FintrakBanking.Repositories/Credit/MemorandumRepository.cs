@@ -5538,7 +5538,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanApplicationId = g.LOANAPPLICATIONDETAILID,
                                    grade = (ys) ? y.GRADE : n.GRADE,
                                    score = (ys) ? y.CHECKLISTSCORESID : n.CHECKLISTSCORESID,
-                                   
+                                   ratingId = g.CHECKLISTSTATUSID
                                }).ToList();
             return greenDetails;
         }
@@ -5570,7 +5570,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGreenRatingDetailMarkup()
         {
             var result = String.Empty;
-            var greenDetails = GetGreenLoanIdentificationDetails();
+            var greenDetails = GetGreenLoanIdentificationDetails().Where(g => g.ratingId != 6);
             var greenSummary = greenDetails.GroupBy(d => d.score).Select(d => d.FirstOrDefault()).ToList();
             result += $@"
                         <ul>
@@ -8996,7 +8996,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string TodHeaderHtml()
         {
-            var staff = context.TBL_STAFF.Where(s => s.STAFFID == this.loanApplication.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
+            var staff = context.TBL_STAFF.Where(s => s.STAFFID == this.loanApplication.OWNEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault();
             var branch = context.TBL_BRANCH.Where(s => s.BRANCHID == this.loanApplication.BRANCHID).Select(s => s.BRANCHNAME).FirstOrDefault();
             var result = String.Empty;
             result = result + $@"

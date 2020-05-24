@@ -24,8 +24,9 @@ namespace FintrakBanking.APICore.JWTAuth
             var tokenIdentity = new ClaimsIdentity(HttpContext.Current.User.Identity);
             var decryptedToken = tokenIdentity.Claims;
 
-            if (tokenIdentity.Name == null) { return String.Empty; }
-            
+            //if (tokenIdentity.Name == null) { return String.Empty; }
+            if (tokenIdentity.Name == null) { return " "; }
+
             switch (tokenType)
             {
                 case 1: return decryptedToken.FirstOrDefault(st => st.Type == "staffId").Value.ToString();

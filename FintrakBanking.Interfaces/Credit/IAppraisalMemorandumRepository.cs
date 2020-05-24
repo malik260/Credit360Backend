@@ -16,6 +16,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface IAppraisalMemorandumRepository
     {
         //IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId);
+        IEnumerable<ApprovalTrailViewModel> GetGlobalInterestRateChangeTrail(int applicationId, int operationid);
         IEnumerable<ApprovalTrailViewModel> GetCallmemoApprovalTrail(int applicationId, int operationId);
         AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId);
 
@@ -59,6 +60,12 @@ namespace FintrakBanking.Interfaces.Credit
         //bool Confirmation(int type, int applicationId);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
+        List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps);
+        IQueryable<LoanApplicationViewModel> GetPoolApplications(int operationId, int companyId, int branchId, int staffId, int? classId);
+        bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity entity);
+        bool ChangeApplicationOwner(int loanApplicationId, int staffId, GeneralEntity entity);
+
+        bool SelfAssignMultpleApplication(List<ForwardViewModel> models, GeneralEntity userEntity);
 
         IQueryable<LoanApplicationViewModel> GetPendingAdhocApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
 

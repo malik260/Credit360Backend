@@ -96,6 +96,7 @@
     <Compile Include="Credit\ILcShippingRepository.cs" />
     <Compile Include="Credit\ILcUssanceRepository.cs" />
     <Compile Include="Credit\ILetterGenerationRequestRepository.cs" />
+    <Compile Include="Credit\ILoanArchiveRepository.cs" />
     <Compile Include="Credit\IOriginalDocumentReleaseRepository.cs" />
     <Compile Include="Credit\IProjectSiteReportRepository.cs" />
     <Compile Include="Credit\ITestCollateralRepository.cs" />

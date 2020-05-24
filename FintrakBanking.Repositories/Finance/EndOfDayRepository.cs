@@ -432,13 +432,10 @@ namespace FintrakBanking.Repositories.Finance
                 endOfDay.CREATEDBY = staffId;
                 endOfDay.STARTDATETIME = DateTime.Now;
                 endOfDay.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
-            }
 
-
-            if (endOfDay.COMPANYID != 0)
-            {
                 context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
                 context.SaveChanges();
+                
             }
 
             using (TransactionScope transactionScope = new TransactionScope())
@@ -1086,7 +1083,7 @@ namespace FintrakBanking.Repositories.Finance
                                          }).ToList();
 
 
-            if (eodOperationProcesses != null)
+            if (eodOperationProcesses.Count() > 0)
             {
 
 

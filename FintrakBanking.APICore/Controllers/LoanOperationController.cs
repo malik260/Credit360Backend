@@ -41,12 +41,44 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
+        [Route("getrunningloan/")]
+        public HttpResponseMessage GetRunningLoans()
+        {
+            try
+            {
+                var data = repo.GetCurrentPrepayment(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
         [ClaimsAuthorization]
         [Route("getrunningloan/{refNo}")]
         public HttpResponseMessage GetRunningLoans(string refNo)
         {
             var data = repo.GetRunningLoans(token.GetCompanyId, refNo);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("getrunningloanreversal/{loanId}")]
+        public HttpResponseMessage GetRunningLoanCurrentReversal(int loanId)
+        {
+            try
+            {
+                var data = repo.GetRunningPrepaymentLoans(token.GetCompanyId, loanId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpGet]
@@ -604,6 +636,23 @@ namespace FintrakBanking.APICore.Controllers
             var data = repo.GetRepaymentDate(loanId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("flag-printed")]
+        public HttpResponseMessage FlagPrintedCreditDocumentation([FromBody] CreditDocumentationViewModel entity)
+        {
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            entity.userBranchId = (short)token.GetBranchId;
+            var data = repo.CreditDocumentationFilling(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Credit Documentation completed Successfully " });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error in Credit Documentation" });
         }
 
     }

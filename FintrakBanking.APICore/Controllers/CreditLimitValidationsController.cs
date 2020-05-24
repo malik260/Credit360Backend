@@ -424,17 +424,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("obligor-limit")]
         public HttpResponseMessage GetAllObligorLimit()
         {
-            try
-            {
-                var response = repo.GetAllObligorLimit();
-
+            
+            var response = repo.GetAllObligorLimit();
+            if (response != null) { 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            }else
+            
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
         }
+
+
         [HttpPost]
         [Route("obligor-limit")]
         public HttpResponseMessage AddUpdateObligorLimit([FromBody] ObligorLimitViewModel entity)
@@ -567,5 +566,168 @@ namespace FintrakBanking.APICore.Controllers
             TotalExposureLimit data = repo.GetTotalExposureLimitReference(reference, token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
+
+
+        #region currency & group limits
+        [HttpGet]
+        [Route("currency-limit")]
+        public HttpResponseMessage GetAllCurrencyLimit()
+        {
+            var response = repo.GetAllCurrencyLimit();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+
+        [HttpPost]
+        [Route("currency-limit")]
+        public HttpResponseMessage AddCurrencyLimit([FromBody] CurrencyLimitViewModel entity)
+        {
+            
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddCurrencyLimits(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Record Saved Successfully" });
+                }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPut]
+        [Route("currency-limit/{currencyLimitId}")]
+        public HttpResponseMessage UpdateCurrencyLimit(int currencyLimitId, [FromBody] CurrencyLimitViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.currencyLimitId = currencyLimitId;
+
+            var data = repo.UpdateCurrencyLimits(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }else
+            return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpDelete]
+        [Route("currency-limit/{currencyLimitId}")]
+        public HttpResponseMessage DeleteCurrencyLimit(int currencyLimitId)
+        {
+                UserInfo user = new UserInfo();
+                user.BranchId = (short)token.GetBranchId;
+                user.companyId = (short)token.GetCompanyId;
+                user.applicationUrl = HttpContext.Current.Request.Path;
+                user.staffId = token.GetStaffId;
+
+                var data = repo.DeleteCurrencyLimit(currencyLimitId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Record deleted Successfully" });
+                }else
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"deleted Record not Successfull" });
+        }
+
+        [HttpGet]
+        [Route("group-limit")]
+        public HttpResponseMessage GetAllGroupLimit()
+        {
+            var response = repo.GetAllGroupLimit();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+
+        [HttpPost]
+        [Route("group-limit")]
+        public HttpResponseMessage AddGroupLimit([FromBody] GroupLimitViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.AddGroupLimits(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPut]
+        [Route("group-limit/{groupLimitId}")]
+        public HttpResponseMessage UpdateGroupLimit(int groupLimitId, [FromBody] GroupLimitViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.groupLimitId = groupLimitId;
+
+            var data = repo.UpdateGroupLimits(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpDelete]
+        [Route("group-limit/{groupLimitId}")]
+        public HttpResponseMessage DeleteGroupLimit(int groupLimitId)
+        {
+            UserInfo user = new UserInfo();
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = (short)token.GetCompanyId;
+            user.applicationUrl = HttpContext.Current.Request.Path;
+            user.staffId = token.GetStaffId;
+
+            var data = repo.DeleteGroupLimit(groupLimitId, user);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record deleted Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"deleted Record not Successfull" });
+        }
+        #endregion
     }
 } 

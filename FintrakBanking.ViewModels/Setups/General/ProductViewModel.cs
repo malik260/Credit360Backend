@@ -128,6 +128,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short productClassProcessId { get; set; }
         public short customerTypeId { get; set; }
         public decimal? penalChargeRate { get; set; }
+        public bool excludeFromLitigation { get; set; }
 
     }
 
@@ -175,14 +176,15 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short productPriceIndexGlobalId { get; set; }
         public short productPriceIndexId { get; set; }
         public string productPriceIndexName { get; set; }
+        public string comment { get; set; }
         public double oldRate { get; set; }
         public double newRate { get; set; }
         public short approvalStatusId { get; set; }
         public bool hasBeenApplied { get; set; }
         public DateTime effectiveDate { get; set; }
         public bool isMarketInduced { get; set; }
-
-
+        public int operationId { get; set; }
+        public int? currentApprovalLevelId { get; set; }
     }
     public class ProductPriceIndexDailyViewModel : GeneralEntity
     {

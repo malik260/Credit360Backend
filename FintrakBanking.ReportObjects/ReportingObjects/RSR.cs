@@ -28,7 +28,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 projectDescription = x.PROJECTDESCRIPTION,
                 commencementDate = x.COMMENCEMENTDATE,
                 completionDate = x.COMPLETIONDATE,
-                nextVisitationDate = x.NEXTVISITATIONDATE,
+                //nextVisitationDate = x.NEXTVISITATIONDATE,
                 loanApplicationId = x.LOANAPPLICATIONID,
                 projectLocation = x.PROJECTLOCATION,
                 approvalStatusId = x.APPROVALSTATUSID,
@@ -133,14 +133,17 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<PsrRecommendationViewModel> Getrecomendations(int id)
         {
-
+            var psr = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
+            var loanApplication = context.TBL_LOAN_APPLICATION.Find(psr.LOANAPPLICATIONID);
+            var customer = context.TBL_CUSTOMER.Find(loanApplication.CUSTOMERID);
+            var facilityRating = context.TBL_FACILITY_RATING.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE).Select(c => c.PROBABILITYOFDEFAULT).FirstOrDefault();
             return context.TBL_PSR_RECOMMENDATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
                 .Select(x => new PsrRecommendationViewModel
                 {
                     psrRecommendationId = x.PSRRECOMMENDATIONID,
                     projectSiteReportId = x.PROJECTSITEREPORTID,
-                    projectRiskRating = x.PROJECTRISKRATING,
-                    customerRating = x.CUSTOMERRATING,
+                    projectRiskRating = facilityRating,
+                    customerRating = customer.CUSTOMERRATING,
                     comment = x.COMMENTS,
                 })
                 .ToList();
@@ -182,8 +185,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     projectSiteReportId = x.PROJECTSITEREPORTID,
                     imageCaption = x.IMAGECAPTION,
                     fileData = x.FILEDATA,
-                })
-                .ToList();
+                }).ToList();
         }
 
         public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)

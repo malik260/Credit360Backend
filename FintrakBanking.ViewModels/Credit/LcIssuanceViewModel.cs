@@ -145,6 +145,8 @@ namespace FintrakBanking.ViewModels.credit
 
         public bool isSatisfied { get; set; }
 
+        public bool isTransactionDynamics { get; set; }
+
     }
     #endregion LCCONDITIONS
 
@@ -257,6 +259,8 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? releaseAmount { get; set; }
         public decimal releasedAmount { get; set; }
         public int? loopedStaffId { get; set; }
+        public List<LcReleaseAmountViewModel> lcReleases { get; set; }
+        public List<LcUssanceViewModel> lcUsances { get; set; }
 
 
         //ussance
@@ -286,6 +290,10 @@ namespace FintrakBanking.ViewModels.credit
         public int? usanceAmountCurrencyId { get; set; }
         public int? usanceApplicationStatusId { get; set; }
         public int? usanceApprovalStatusId { get; set; }
+        public string UsanceCurrentApprovalLevel { get; set; }
+        public string usanceApprovalStatus { get; set; }
+        public decimal? totalUsanceAmount { get; set; }
+        public string usanceStatus { get; set; }
     }
 
     public class LcReleaseAmountViewModel : GeneralEntity
@@ -295,5 +303,8 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? releaseAmount { get; set; }
         public int? releaseApplicationStatusId { get; set; }
         public int? releaseApprovalStatusId { get; set; }
+        public string releaseApplicationStatus { get; set; }
+        public string releaseApprovalStatus { get; set; }
+        public string releaseCurrentApprovalLevel { get; set; }
     }
 }

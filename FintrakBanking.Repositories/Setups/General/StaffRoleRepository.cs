@@ -53,6 +53,25 @@ namespace FintrakBanking.Repositories.Setups.General
                         }).SingleOrDefault();
             return role;
         }
+
+
+
+        public bool DeleteBulkPrepayment(int bulkPrepaymentId, UserInfo user)
+        {
+
+            bool result = false;
+
+            var targetRecord = context.TBL_BULK_PREPAYMENT.Where(x => x.BULK_PREPAYMENTID == bulkPrepaymentId).FirstOrDefault();
+
+            context.TBL_BULK_PREPAYMENT.Remove(targetRecord);
+
+            result = context.SaveChanges() > 0;
+
+            return result;
+
+        }
+
+
         public IEnumerable<StaffRoleViewModel> GetStaffRoleByCompanyId(int companyId)
         {
            
@@ -97,6 +116,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleCode = b.STAFFROLECODE.Trim(),
                             workEndDuration = a.WORKENDDURATION,
                             workStartDuration = a.WORKSTARTDURATION,
+                            allocationTypeId = b.APPROVALFLOWTYPEID,
+                            staffId = staffId,
                         }).FirstOrDefault();
             return role;
         }
@@ -165,7 +186,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 });
             }
 
-            foreach (var item in entity.userGroupIds)
+            foreach (var item in entity?.userGroupIds)
             {
                 tempGroups.Add(new TBL_TEMP_PROFILE_STAFF_ROL_GRP()
                 {
@@ -230,6 +251,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
             });
+
+            var test = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == entity.companyId
+                                && x.OPERATIONID == (int)OperationsEnum.StaffRoleCreation
+                                && x.TARGETID == staffRole.STAFFROLEID
+                                && x.RESPONSESTAFFID == null
+                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).ToList();
 
             if (context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == entity.companyId

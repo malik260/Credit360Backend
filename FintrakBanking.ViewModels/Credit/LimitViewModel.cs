@@ -71,6 +71,25 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal amount { get; set; }
     }
 
+    public class CurrencyLimitViewModel : GeneralEntity
+    {
+        public int currencyLimitId { get; set; }
+        public string currencyLimitName { get; set; }
+        public decimal currencyLimitValue { get; set; }
+        public string description { get; set; }
+        public string currencyName { get; set; }
+        public string currencyCode { get; set; }
+    }
+
+    public class GroupLimitViewModel : GeneralEntity
+    {
+        public int groupLimitId { get; set; }
+        public int? limitNumber { get; set; }
+        public string groupName { get; set; }
+        public decimal groupLimitValue { get; set; }
+        public string description { get; set; }
+    }
+
     public class ObligorLimitViewModel : GeneralEntity
     {
         public int scenerio { get; set; } // 1 appl, 2 lmsa

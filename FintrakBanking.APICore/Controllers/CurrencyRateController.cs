@@ -27,14 +27,15 @@ namespace FintrakBanking.APICore.Controllers
       [HttpGet] [ClaimsAuthorization]  [Route("currency")]
         public HttpResponseMessage GetCurrency()
         {
-            try
-            { 
+            
                 var data = repo.GetCurrency();
-                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
-            }
-            catch (SecureException ex)
+            if (data != null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No data found" });
             }
         }
 

@@ -12,6 +12,12 @@ using FintrakBanking.ViewModels.Credit;
 using System.ComponentModel.Composition;
 using FintrakBanking.ViewModels.Setups;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.CASA;
+using System.Configuration;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Finance;
+using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -22,16 +28,20 @@ namespace FintrakBanking.Repositories.Customer
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
-        //private int customerId;
-        //int status = 0;
+        
+        private CustomerDetails customer;
+        bool USE_TWO_FACTOR_AUTHENTICATION = false;
+        bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public LoanCovenantRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository _genSetup,
+                                    CustomerDetails customer,
                                     FinTrakBankingContext _context)
         {
             this.context = _context;
             auditTrail = _auditTrail;
             this.genSetup = _genSetup;
+            this.customer = customer;
         }
 
         #region LoanCovenantDetail
@@ -329,7 +339,7 @@ namespace FintrakBanking.Repositories.Customer
 
             List<TBL_EOD_OPERATION_LOG_DETAIL> eod_operation_Detail_List = new List<TBL_EOD_OPERATION_LOG_DETAIL>();
 
-            if (covenants.Count() != 0)
+            if (covenants.Count() > 0)
             {
                 var eodOperations = context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION).ToList();
 
@@ -339,8 +349,8 @@ namespace FintrakBanking.Repositories.Customer
                     TBL_EOD_OPERATION_LOG_DETAIL eod_operation_Detail = new TBL_EOD_OPERATION_LOG_DETAIL();
 
                     //var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.COVENANTDETAIL && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
-
-                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.LOANCOVENANTDETAILID.ToString() + '-' + loan.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+                    var refNumber = loan.LOANCOVENANTDETAILID.ToString() + '-' + loan.LOANAPPLICATIONDETAILID.ToString();
+                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == refNumber && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
 
                     if (checkExistence == null)
                     {
@@ -363,59 +373,139 @@ namespace FintrakBanking.Repositories.Customer
             }
 
 
-            transactionReferenceNo = "";
-            foreach (var covenant in covenants)
-            {
-
-                var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
-
-                if (checkExistence != null)
+                transactionReferenceNo = "";
+                foreach (var covenant in covenants)
                 {
+                    var refNumber = covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString();
+                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == refNumber && c.EODDATE == date && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
 
-                    var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
-
-                    eod_Operation_Log_Detail_Set_Value.STARTDATETIME = DateTime.Now;
-                    eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-
-                    context.SaveChanges();
-
-
-                    try
+                    if (checkExistence != null)
                     {
 
-                        //transactionReferenceNo = covenant.COVENANTDETAIL.ToString();
-
-                        transactionReferenceNo = covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString();
-
-                        covenant.PREVIOUSCOVENANTDATE = (DateTime)covenant.NEXTCOVENANTDATE;
-                        covenant.NEXTCOVENANTDATE = GetFrequencyDate((int)covenant.FREQUENCYTYPEID, (DateTime)covenant.NEXTCOVENANTDATE);
-
-
-                        eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
-                        eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                        var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == refNumber && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+                        eod_Operation_Log_Detail_Set_Value.STARTDATETIME = DateTime.Now;
                         eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
+
                         context.SaveChanges();
 
+                        try
+                        {
+                            //transactionReferenceNo = covenant.COVENANTDETAIL.ToString();
+                            transactionReferenceNo = covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString();
+                            covenant.PREVIOUSCOVENANTDATE = (DateTime)covenant.NEXTCOVENANTDATE;
+                            covenant.NEXTCOVENANTDATE = GetFrequencyDate((int)covenant.FREQUENCYTYPEID, (DateTime)covenant.NEXTCOVENANTDATE);
+
+                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
+                            context.SaveChanges();
+
+                            if (covenants.Count() > 0)
+                            {
+                                AlertsViewModel alerts = new AlertsViewModel();
+                                string emailList = "";
+                                var casaAccount = context.TBL_CASA.Find(covenant.CASAACCOUNTID);
+                                var data = GetCustomerAccountBalance(casaAccount.PRODUCTACCOUNTNUMBER);
+
+                                if ((DateTime)covenant.PREVIOUSCOVENANTDATE.Value.Date == DateTime.Now.Date && covenant.COVENANTTYPEID == (short)LoanCovenantTypeEnum.Cleanup)
+                                {
+                                    if (data != null)
+                                    {
+                                        var availableBalance = data.availableBalance;
+                                        if (covenant.COVENANTAMOUNT > availableBalance)
+                                        {
+                                            var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(covenant.LOANAPPLICATIONDETAILID);
+                                            var appDetails = context.TBL_LOAN_APPLICATION.Find(loanDetails.LOANAPPLICATIONID);
+                                            var staffMisCode = context.TBL_STAFF.Find(loanDetails.CREATEDBY).MISCODE;
+                                            var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
+                                            emailList = GetBusinessTeamsEmails(staffMisCode);
+                                            alerts.receiverEmailList.Add(emailList);
+                                            var subject = "OD CLEAN-UP VIOLATION NOTIFICATION";
+                                            var message = "This is to inform you that an OD clean-up with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") condition has been violated by the customer.";
+                                            LogEmailAlert(message, subject, alerts.receiverEmailList, "100456", 100456, "OdViolationNotification");
+                                            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+                                            var casaLienViewModel = new CasaLienViewModel
+                                            {
+                                                productAccountNumber = casaAccount.PRODUCTACCOUNTNUMBER,
+                                                sourceReferenceNumber = appDetails.APPLICATIONREFERENCENUMBER,
+                                                companyId = appDetails.COMPANYID,
+                                                branchId = appDetails.BRANCHID,
+                                                lienAmount = (loanDetails.APPROVEDAMOUNT - (decimal)covenant.COVENANTAMOUNT),
+                                                description = "Place lien on the account " + casaAccount.PRODUCTACCOUNTNUMBER + "with amount " + (loanDetails.APPROVEDAMOUNT - (decimal)covenant.COVENANTAMOUNT),
+                                                lienTypeId = (short)LienTypeEnum.OverdraftCleanUp,
+                                                dateTimeCreated = DateTime.Now,
+                                                createdBy = loanDetails.CREATEDBY,
+                                                lienReferenceNumber = referenceNumber,
+                                            };
+
+                                            PlaceLienSub(casaLienViewModel);
+                                        }
+                                    }
+                                }
+                                else
+                                if ((DateTime)covenant.PREVIOUSCOVENANTDATE.Value.Date == DateTime.Now.Date && covenant.COVENANTTYPEID != (short)LoanCovenantTypeEnum.Cleanup)
+                                {
+                                    if (data != null)
+                                    {
+                                        var availableBalance = data.availableBalance;
+                                        if (covenant.COVENANTAMOUNT > availableBalance)
+                                        {
+                                            var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(covenant.LOANAPPLICATIONDETAILID);
+                                            var appDetails = context.TBL_LOAN_APPLICATION.Find(loanDetails.LOANAPPLICATIONID);
+                                            var staffMisCode = context.TBL_STAFF.Find(loanDetails.CREATEDBY).MISCODE;
+                                            var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
+                                            emailList = GetBusinessTeamsEmails(staffMisCode);
+                                            alerts.receiverEmailList.Add(emailList);
+                                            var subject = "COVENANT VIOLATION NOTIFICATION";
+                                            var message = "This is to inform you that a loan with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") condition has been violated by the customer.";
+                                            LogEmailAlert(message, subject, alerts.receiverEmailList, "100455", 100455, "CovenantViolationNotification");
+                                        }
+                                    }
+                                }
+                            }
+                                
+                         
+                        }
+                        catch (Exception ex)
+                        {
+
+                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
+                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                            //eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {covenant.COVENANTDETAIL} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString()} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                            context.SaveChanges();
+                        }
+
+
+
                     }
-                    catch (Exception ex)
-                    {
-
-                        eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
-                        eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
-                        eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                        //eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {covenant.COVENANTDETAIL} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
-                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString()} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
-                        context.SaveChanges();
-                    }
-
-
 
                 }
+                    var interestRateChanges = context.TBL_LOAN_REVIEW_OPERATION.Where(r => r.OPERATIONTYPEID == (int)OperationsEnum.OverdraftInterestRate || r.OPERATIONTYPEID == (int)OperationsEnum.ContractualInterestRateChange).ToList();
+                    if (interestRateChanges.Count() > 0)
+                    {
+                        AlertsViewModel alerts = new AlertsViewModel();
+                        string emailList = "";
 
-
-            }
-
+                        foreach (var interestRateChange in interestRateChanges)
+                        {
+                            if (interestRateChange.EFFECTIVEDATE.Date == DateTime.Now.Date)
+                            {
+                                var loanDetails = context.TBL_LMSR_APPLICATION_DETAIL.Find(interestRateChange.LOANREVIEWAPPLICATIONID);
+                                var appDetails = context.TBL_LMSR_APPLICATION.Find(loanDetails.LOANAPPLICATIONID);
+                                var staffMisCode = context.TBL_STAFF.Find(interestRateChange.CREATEDBY).MISCODE;
+                                var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
+                                emailList = GetBusinessTeamsEmails(staffMisCode);
+                                alerts.receiverEmailList.Add(emailList);
+                                var subject = "POSTDATED PERIOD OF RATE CHANGE NOTIFICATION";
+                                var message = "This is to inform you that Postdated Period of Rate Change of effective date " + interestRateChange.EFFECTIVEDATE + "  on a loan with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") is due today.";
+                                LogEmailAlert(message, subject, alerts.receiverEmailList, "100433", 100433, "PostdatedRateChangeNotification");
+                            }
+                        }
+                    }
             return context.SaveChanges() != 0;
         }
 
@@ -651,6 +741,205 @@ namespace FintrakBanking.Repositories.Customer
         }
 
         #endregion LMS APPROVAL
+
+        private string GetBusinessTeamsEmails(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
+
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
+        {
+            try
+            {
+                string recipient = string.Join("", recipients.ToArray());
+                string messageSubject = alertSubject + " ALERT";
+                string messageContent = messageBody;
+                //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
+                //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = messageContent,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = referenceCode,
+                    targetId = targetId,
+                    operationMethod = operationMehtod,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                new SecureException(ex.ToString());
+            }
+        }
+
+        private void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
+
+        }
+
+        //public string PlaceLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
+        //{
+        //    var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+        //    model.lienReferenceNumber = referenceNumber;
+
+        //    //call     
+        //    if (USE_TWO_FACTOR_AUTHENTICATION)
+        //    {
+        //        if (twoFADetails == null)
+        //            throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+        //        if (twoFADetails.skipAuthentication == false)
+        //        {
+        //            var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+        //            if (authenticated.authenticated == false)
+        //                throw new TwoFactorAuthenticationException(authenticated.message);
+        //        }
+        //    }
+
+        //    if (USE_THIRD_PARTY_INTEGRATION)
+        //    {
+
+        //        ResponseMessage result = null;
+
+        //        Task.Run(async () => { result = await tran.APIProcessLien(model, "PLACE"); }).GetAwaiter().GetResult();
+
+        //        if (result.APIResponse != null)
+        //        {
+        //            if (result.APIResponse.responseCode == "0")
+        //            {
+        //                PlaceLienSub(model);
+        //            }
+        //            else
+        //            {
+        //                throw new ConditionNotMetException("Core Banking API Error - " + result.APIResponse.webRequestStatus);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
+        //        }
+
+        //    }
+
+        //    else
+        //    {
+        //        PlaceLienSub(model);
+        //    }
+
+        //    return referenceNumber;
+        //}
+
+        private void PlaceLienSub(CasaLienViewModel model)
+        {
+            var data = new TBL_CASA_LIEN
+            {
+                PRODUCTACCOUNTNUMBER = model.productAccountNumber,
+                LIENREFERENCENUMBER = model.lienReferenceNumber,
+                SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
+                BRANCHID = model.branchId,
+                COMPANYID = model.companyId,
+                LIENAMOUNT = model.lienAmount,
+                DESCRIPTION = model.description,
+                LIENTYPEID = model.lienTypeId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now
+
+            };
+
+            context.TBL_CASA_LIEN.Add(data);
+
+            // Audit Section ---------------------------            
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LienPlaced,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Applied lien with reference number: {model.lienReferenceNumber}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+
+
+            };
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+
+            context.SaveChanges();
+
+        }
+
+        public CasaBalanceViewModel GetCustomerAccountBalance(string customerAccount)
+        {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
+            CasaBalanceViewModel accountOutput = null;
+            Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
+                .GetResult();
+            return accountOutput;
+
+        }
 
     }
 }

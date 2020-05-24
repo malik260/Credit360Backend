@@ -37,6 +37,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         private AccountDetail accountDetail;
         private ITwoFactorAuthIntegrationService twoFactorAuth;
         bool USE_TWO_FACTOR_AUTHENTICATION = false;
+        bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public IntegrationWithFlexcube(FinTrakBankingContext context, TransactionPosting transaction,
             CustomerDetails customer, StaffDetails staff, OverDraft overDraft, ForeignCurrencyAccount account, AccountDetail accountDetail, BaselIntegration _basel,
@@ -54,6 +55,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_TWO_FACTOR_AUTHENTICATION = globalSetting.USE_TWO_FACTOR_AUTHENTICATION;
+            USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
         }
 
 
@@ -61,6 +63,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public ResponseMessageViewModel OverDraftExtend(OverDraftExtendViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return new ResponseMessageViewModel();
             if (USE_TWO_FACTOR_AUTHENTICATION)
             {
                 if (twoFADetails == null)
@@ -98,6 +101,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return new ResponseMessageViewModel();
             if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
             {
                 if (twoFADetails == null)
@@ -140,6 +144,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public ResponseMessageViewModel FlexcubeOverDraft(FlexcubeCreateOverdraftViewModel model, short loanSystemTypeId, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return new ResponseMessageViewModel();
             if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
             {
                 if (twoFADetails == null)
@@ -193,6 +198,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public ResponseMessageViewModel FlexcubeCasaLien(FlexcubeLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return new ResponseMessageViewModel();
             if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
             {
                 if (twoFADetails == null)
@@ -235,6 +241,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return new ResponseMessageViewModel();
             if (USE_TWO_FACTOR_AUTHENTICATION)
             {
                 if (twoFADetails == null)
@@ -276,6 +283,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public ResponseMessageViewModel OverDraftRenew(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return new ResponseMessageViewModel();
             if (USE_TWO_FACTOR_AUTHENTICATION)
             {
                 if (twoFADetails == null)
@@ -318,6 +326,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public ResponseMessageViewModel TemporaryOverDraftNormal(TemporaryOverDraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
 
+            if (!USE_THIRD_PARTY_INTEGRATION) return new ResponseMessageViewModel();
             if (USE_TWO_FACTOR_AUTHENTICATION)
             {
                 if (twoFADetails == null)
@@ -359,6 +368,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public ResponseMessageViewModel TemporaryOverDraftRunning(TemporaryOverDraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return new ResponseMessageViewModel();
             if (USE_TWO_FACTOR_AUTHENTICATION)
             {
                 if (twoFADetails == null)
@@ -406,6 +416,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public ResponseMessageViewModel TemporaryOverDraftSingle(TemporaryOverDraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return new ResponseMessageViewModel();
             if (USE_TWO_FACTOR_AUTHENTICATION)
             {
                 if (twoFADetails == null)
@@ -448,6 +459,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             if (string.IsNullOrEmpty(fromCurrencyCode))
             {
                 return new CurrencyExchangeRateViewModel();
@@ -470,6 +482,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public bool GetExposePersonStatus(string customerCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return false;
             bool result = false;
             string data = string.Empty;
 
@@ -486,6 +499,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public BVNCustomerDetailsViewModel BVNCustomerDetails(string customerCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             BVNCustomerDetailsViewModel data = null;
             Task.Run(async () => data = await customer.BVNCustomerDetails(customerCode)).GetAwaiter().GetResult();
             if (data != null)
@@ -991,23 +1005,27 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public CasaBalanceViewModel GetCustomerAccountBalance(string customerAccount)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             CasaBalanceViewModel accountOutput = null;
-
-            try
-            {
-                Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
+            Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
                 .GetResult();
-                return accountOutput;
-            }
-            catch (APIErrorException ex)
-            {
-                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
-            }
+            return accountOutput;
+            //try
+            //{
+            //    Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
+            //    .GetResult();
+            //    return accountOutput;
+            //}
+            //catch (APIErrorException ex)
+            //{
+            //    throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+            //}
 
         }
 
         public List<CasaViewModel> GetCustomerAccountsBalanceByCustomerCode(string customerCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             List<CasaViewModel> casa = new List<CasaViewModel>();
 
             try
@@ -1024,6 +1042,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public List<SubGroupRatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             List<SubGroupRatingAndRatioViewModel> customerRatio = new List<SubGroupRatingAndRatioViewModel>();
 
             try {
@@ -1039,6 +1058,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public List<MainGroupRatingAndRatioViewModel> GetCustomerGroupRatioByCustomerCode(string customerCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             List<MainGroupRatingAndRatioViewModel> customerGroupRatio = new List<MainGroupRatingAndRatioViewModel>();
             Task.Run(async () => customerGroupRatio = await basel.GetAllCustomerRatios(customerCode))
                 .GetAwaiter().GetResult();
@@ -1047,6 +1067,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public CutomerRatingViewModel GetCorporateCustomerRatingByCustomerCode(string customerCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
 
             try {
@@ -1061,6 +1082,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public FacilityRatingViewModel GetAutoLoanRetailByCustomerCode(string customerCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
 
             try {
@@ -1077,6 +1099,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public FacilityRatingViewModel GetPersonalLoanRetailByCustomerCode(string customerCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
 
             try {
@@ -1092,6 +1115,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public FacilityRatingViewModel GetCreditCardRetailByCustomerCode(string customerCode)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
 
             try {
@@ -1117,6 +1141,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string accountNumber, int durationInMonths)
         {
+            if (!USE_THIRD_PARTY_INTEGRATION) return null;
             List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
             try {

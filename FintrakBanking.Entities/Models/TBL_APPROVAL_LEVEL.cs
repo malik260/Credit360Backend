@@ -84,6 +84,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ROUTEVIASTAFFORGANOGRAM { get; set; }
 
+        public int? ROLEIDTOROUTE { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

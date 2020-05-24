@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanReviewApplicationRepository
     {
+        IEnumerable<LoanReviewOperationApprovalViewModel> SearchLien(string searchString);
         IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
         IQueryable<LoanReviewApplicationViewModel> GetLoanReviewAvailmentAwaitingApproval(UserInfo user, int operationId, int? classId);
         SelectListViewModel GetAllSelectList();
