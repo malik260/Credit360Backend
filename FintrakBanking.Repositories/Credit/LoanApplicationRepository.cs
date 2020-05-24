@@ -7234,6 +7234,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     var difference = model.approvedAmount - facility.APPROVEDAMOUNT;
                     ArchiveLoanApplication(facility.LOANAPPLICATIONID, (int)OperationsEnum.CreditAppraisal, 0, model.createdBy);
+                    model.approvedTenor = ConvertTenorToDays(model.approvedTenor, model.tenorModeId);
                     facility.APPROVEDPRODUCTID = model.approvedProductId;
                     facility.PROPOSEDPRODUCTID = model.approvedProductId;
                     facility.APPROVEDINTERESTRATE = model.approvedInterestRate;
