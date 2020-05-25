@@ -678,7 +678,37 @@ var qry = Foo.GroupJoin(
             var section = context.TBL_DOC_TEMPLATE_SECTION.FirstOrDefault(s => s.TEMPLATESECTIONID == doc.TEMPLATESECTIONID);
             if (doc == null) return new LoadedDocumentSectionViewModel();
 
-            memo.Init(operationId, targetId); //content = memo.Replace(content);
+            memo.Init(operationId, targetId,false); //content = memo.Replace(content);
+            return new LoadedDocumentSectionViewModel
+            {
+                sectionId = doc.DOCUMENTDETAILID,
+                title = doc.TITLE,
+                description = doc.DESCRIPTION,
+                templateDocument = memo.Replace(doc.TEMPLATEDOCUMENT),
+                canEdit = section.CANEDIT,
+                editable = section.CANEDIT && sectionIds.Contains(doc.TEMPLATESECTIONID),
+            };
+        }
+
+        public LoadedDocumentSectionViewModel GetThirdPartyLoanDocumentSection(int staffId, int operationId, int targetId, int sectionId)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+            List<int> sectionIds = new List<int>();
+
+            if (staff != null)
+            {
+                sectionIds = context.TBL_DOC_TEMPLATE_SECTION_ROLE
+                    .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
+                    .Select(x => x.TEMPLATESECTIONID)
+                    .ToList();
+            }
+
+
+            var doc = context.TBL_DOC_TEMPLATE_DETAIL.FirstOrDefault(x => x.OPERATIONID == operationId && x.DOCUMENTDETAILID == sectionId);
+            var section = context.TBL_DOC_TEMPLATE_SECTION.FirstOrDefault(s => s.TEMPLATESECTIONID == doc.TEMPLATESECTIONID);
+            if (doc == null) return new LoadedDocumentSectionViewModel();
+
+            memo.InitForThirdpartyLoans(operationId, targetId); //content = memo.Replace(content);
             return new LoadedDocumentSectionViewModel
             {
                 sectionId = doc.DOCUMENTDETAILID,
