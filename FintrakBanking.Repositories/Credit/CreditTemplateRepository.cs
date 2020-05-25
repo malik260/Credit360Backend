@@ -210,6 +210,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return sections;
         }
+
         /*
          
 accepted

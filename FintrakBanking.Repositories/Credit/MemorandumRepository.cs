@@ -871,7 +871,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             this.targetId = targetId;
             this.operationId = operationId;
-
+            this.isThirdPartyFacility = true;
             if (lmsCamOperationIds.Contains(operationId)) // LMS
             {
                 if (lmsrApplication == null)
@@ -910,8 +910,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.ownership = GetOwnershipMarkup();
                 this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
-                this.conditionsPrecedentToDrawdown = FussCustomerConditionSubsequentHtml();
-                this.transactionsDynamics = FussCustomerConditionDynamicsHtml(); 
+                //this.conditionsPrecedentToDrawdown = FussCustomerConditionSubsequentHtml();
+                //this.transactionsDynamics = FussCustomerConditionDynamicsHtml(); 
 
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
                 // out ducument properties definition
@@ -966,8 +966,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.todBackgroungInformationData = TodBackgroungInformationHtml();
                 this.currentLMSFlowData = CurrentLMSFlowHtml();
 
-                this.originalDocumentNonCreditProgramData = NoncreditProgramCustomerInformationHtml();
-                this.originalDocumentCreditProgramData = CreditProgramCustomerInformationHtml();
+               // this.originalDocumentNonCreditProgramData = NoncreditProgramCustomerInformationHtml();
+                //this.originalDocumentCreditProgramData = CreditProgramCustomerInformationHtml();
 
 
                 // cam
@@ -2202,7 +2202,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanExposures = directExposures.Where(e => e.adjFacilityTypeId != (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
                 overdraftExposures = directExposures.Where(e => e.adjFacilityTypeId == (int)AdjustedFacilityTypeEnum.OVERDRAFT).ToList();
 
-                if(this.isThirdPartyFacility ==false)details = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN &&
+                if(this.isThirdPartyFacility == false)details = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN &&
                                                                                      d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability &&
                                                                                      d.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             }
@@ -8389,17 +8389,18 @@ namespace FintrakBanking.Repositories.Credit
 
         public string NoncreditProgramCustomerInformationHtml()
         {
-            var currentApplicationId = this.loanApplication.LOANAPPLICATIONID;
+            var currentApplicationId = this.loanApplication?.LOANAPPLICATIONID;
             if (this.loanApplication == null)
             {
                 var d = context.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID && a.DELETED == false).FirstOrDefault();
                 currentApplicationId = (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility) ? (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
+                    (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ExternalFacility) ? (from p in context.TBL_LOAN_EXTERNAL join c in context.TBL_LMSR_APPLICATION_DETAIL on p.EXTERNALLOANID equals c.LOANID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select c.LOANID).FirstOrDefault() :
                                      (d.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability) ? (from p in context.TBL_LOAN_CONTINGENT join c in context.TBL_LMSR_APPLICATION_DETAIL on p.CONTINGENTLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault() :
                                      (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
 
             }
             var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == currentApplicationId).FirstOrDefault();
-            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID || a.CUSTOMERID == this.customerRecord.CUSTOMERID).FirstOrDefault();
             var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
             var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
             var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
