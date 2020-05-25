@@ -42,6 +42,7 @@ namespace FintrakBanking.Interfaces.CASA
         IEnumerable<CustomerCasaAcountsViewModel> GetAllCustomerAccount(int customerId, int applicationTypeId, int companyId);
         void AddCustomerAccounts(string customerCode);
 
-
+        IEnumerable<CasaLienTypeViewModel> GetAllCasaLienTypes(int companyId);
+        bool AddCasaLien(CasaViewModel model);
     }
 }

@@ -351,6 +351,12 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string collateralCode { get; set; }
         public string collectionMode { get; set; }
         public int createdBy { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public string lienReferenceNumber { get; set; }
+        public decimal lienAmount { get; set; }
+        public DateTime lienDateTimeCreated { get; set; }
+        public DateTime applicationDate { get; set; }
+        public string lmsReferenceNumber { get; set; }
     }
 
 

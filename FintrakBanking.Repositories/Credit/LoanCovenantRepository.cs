@@ -421,7 +421,7 @@ namespace FintrakBanking.Repositories.Customer
                                             var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
                                             emailList = GetBusinessTeamsEmails(staffMisCode);
                                             alerts.receiverEmailList.Add(emailList);
-                                            var subject = "OD clean-up violation notification";
+                                            var subject = "OD CLEAN-UP VIOLATION NOTIFICATION";
                                             var message = "This is to inform you that an OD clean-up with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") condition has been violated by the customer.";
                                             LogEmailAlert(message, subject, alerts.receiverEmailList, "100456", 100456, "OdViolationNotification");
                                             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -458,7 +458,7 @@ namespace FintrakBanking.Repositories.Customer
                                             var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
                                             emailList = GetBusinessTeamsEmails(staffMisCode);
                                             alerts.receiverEmailList.Add(emailList);
-                                            var subject = "Covenant violation notification";
+                                            var subject = "COVENANT VIOLATION NOTIFICATION";
                                             var message = "This is to inform you that a loan with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") condition has been violated by the customer.";
                                             LogEmailAlert(message, subject, alerts.receiverEmailList, "100455", 100455, "CovenantViolationNotification");
                                         }
@@ -500,7 +500,7 @@ namespace FintrakBanking.Repositories.Customer
                                 var customerDetail = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
                                 emailList = GetBusinessTeamsEmails(staffMisCode);
                                 alerts.receiverEmailList.Add(emailList);
-                                var subject = "Postdated Period of Rate Change notification";
+                                var subject = "POSTDATED PERIOD OF RATE CHANGE NOTIFICATION";
                                 var message = "This is to inform you that Postdated Period of Rate Change of effective date " + interestRateChange.EFFECTIVEDATE + "  on a loan with reference number: " + appDetails.APPLICATIONREFERENCENUMBER + " with customer detail: ( " + customerDetail.CUSTOMERCODE + "," + customerDetail.FIRSTNAME + " " + customerDetail.MIDDLENAME + " " + customerDetail.LASTNAME + ") is due today.";
                                 LogEmailAlert(message, subject, alerts.receiverEmailList, "100433", 100433, "PostdatedRateChangeNotification");
                             }

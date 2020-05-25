@@ -5691,7 +5691,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanApplicationId = g.LOANAPPLICATIONDETAILID,
                                    grade = (ys) ? y.GRADE : n.GRADE,
                                    score = (ys) ? y.CHECKLISTSCORESID : n.CHECKLISTSCORESID,
-                                   
+                                   ratingId = g.CHECKLISTSTATUSID
                                }).ToList();
             return greenDetails;
         }
@@ -5723,7 +5723,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGreenRatingDetailMarkup()
         {
             var result = String.Empty;
-            var greenDetails = GetGreenLoanIdentificationDetails().Where(g => g.score != 6);
+            var greenDetails = GetGreenLoanIdentificationDetails().Where(g => g.ratingId != 6);
             var greenSummary = greenDetails.GroupBy(d => d.score).Select(d => d.FirstOrDefault()).ToList();
             result += $@"
                         <ul>
