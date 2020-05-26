@@ -101,23 +101,20 @@ namespace FintrakBanking.Repositories.CASA
 
         private void PlaceLienSub(CasaLienViewModel model)
         {
-            var validate = context.TBL_CASA_LIEN.Where(x => x.SOURCEREFERENCENUMBER == model.sourceReferenceNumber).FirstOrDefault();
-            if (validate == null)
+            var data = new TBL_CASA_LIEN
             {
-                var data = new TBL_CASA_LIEN
-                {
-                    PRODUCTACCOUNTNUMBER = model.productAccountNumber,
-                    LIENREFERENCENUMBER = model.lienReferenceNumber,
-                    SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
-                    BRANCHID = model.branchId,
-                    COMPANYID = model.companyId,
-                    LIENAMOUNT = model.lienAmount,
-                    DESCRIPTION = model.description,
-                    LIENTYPEID = model.lienTypeId,
-                    CREATEDBY = model.createdBy,
-                    DATETIMECREATED = DateTime.Now
-
-                };
+                PRODUCTACCOUNTNUMBER = model.productAccountNumber,
+                LIENREFERENCENUMBER = model.lienReferenceNumber,
+                SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
+                BRANCHID = model.branchId,
+                COMPANYID = model.companyId,
+                LIENAMOUNT = model.lienAmount,
+                DESCRIPTION = model.description,
+                LIENTYPEID = model.lienTypeId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                ISLIENREMOVED = false
+            };
 
                 context.TBL_CASA_LIEN.Add(data);
 
@@ -220,6 +217,7 @@ namespace FintrakBanking.Repositories.CASA
 
             };
 
+            existingLien.ISLIENREMOVED = true;
             context.TBL_CASA_LIEN.Add(data);
 
             // Audit Section ---------------------------            
