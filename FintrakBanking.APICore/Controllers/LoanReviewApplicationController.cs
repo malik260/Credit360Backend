@@ -254,7 +254,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
-
+        
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-review-application/forward-appraisal")]
@@ -355,6 +355,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-lien-applications")]
+        public HttpResponseMessage LoanLienApplications()
+        {
+
+            var data = repo.GetAllLienRemovalApplications(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("appraisal-review-referback")]
@@ -408,7 +425,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
-                }
+                }else
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
         }

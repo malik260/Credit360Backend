@@ -1756,6 +1756,19 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lien-document-download/{lienRemovalId}")]
+        public HttpResponseMessage GetLienReovalLetter(int lienRemovalId)
+        {
+            CollateralLiquidationRecoveryViewModel data = repo.GetLiquidationReceipt(lienRemovalId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }else
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("saved-multiple-disbursement")]
         public HttpResponseMessage GetpendingMultipleDisbursement()
         {

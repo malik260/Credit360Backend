@@ -468,6 +468,7 @@ namespace FintrakBanking.Common.Enum
         LcEnhancementDeleted = 561,
         CreditDocumentationPrinted = 562,
         ApplicationReassigned = 563,
+        RemoveLien = 564,
 
 
     };
