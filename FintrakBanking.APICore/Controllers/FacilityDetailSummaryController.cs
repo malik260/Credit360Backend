@@ -100,10 +100,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("third-party-facilty-details/{loanReferenceNumber}")]
-        public HttpResponseMessage ThirdPartyFacilityDetails(string loanReferenceNumber)
+        [Route("third-party-facilty-details/{loanId}")]
+        public HttpResponseMessage ThirdPartyFacilityDetails(int loanId)
         {
-            var data = repo.ThirdPartyFacilityDetails(loanReferenceNumber);
+            var data = repo.ThirdPartyFacilityDetails(loanId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
