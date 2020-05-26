@@ -102,6 +102,23 @@ namespace FintrakBanking.Repositories.CASA
             return new CasaBalanceViewModel();
         }
 
+        public IEnumerable<CasaAccountLienViewModel> GetAllCasaLiens(string accountNumber)
+        {
+            var result = context.TBL_CASA_LIEN.Where(O => O.PRODUCTACCOUNTNUMBER == accountNumber && O.ISLIENREMOVED == false).Select(O => new CasaAccountLienViewModel()
+            {
+                lienId = O.LIENID,
+                description = O.DESCRIPTION,
+                lienAmount = O.LIENAMOUNT,
+                lienReferenceNumber = O.LIENREFERENCENUMBER,
+                productAccountNumber = O.PRODUCTACCOUNTNUMBER,
+                sourceReferenceNumber = O.SOURCEREFERENCENUMBER,
+                lienTypeId = O.LIENTYPEID,
+                dateCreated = O.DATETIMECREATED
+            }).ToList();
+
+            return result;
+        }
+
         public IEnumerable<CasaLienTypeViewModel> GetAllCasaLienTypes(int companyId)
         {
             var result = context.TBL_CASA_LIEN_TYPE.Select(O => new CasaLienTypeViewModel()
@@ -111,6 +128,29 @@ namespace FintrakBanking.Repositories.CASA
             }).ToList();
 
             return result;
+        }
+
+        public IEnumerable<CasaLoanViewModel> GetAllCasaLoans(int companyId, int casaAccountId)
+        {
+            var result = context.TBL_LOAN.Where(O => O.CASAACCOUNTID == casaAccountId && O.LOANSTATUSID != (int) LoanStatusEnum.Cancelled && O.LOANSTATUSID != (int)LoanStatusEnum.Terminated && O.LOANSTATUSID != (int)LoanStatusEnum.Completed).Select(O => new CasaLoanViewModel()
+            {
+                loanId = O.TERMLOANID,
+                loanReferenceNumber = O.LOANREFERENCENUMBER
+            }).ToList();
+
+            var result1 = context.TBL_LOAN_CONTINGENT.Where(O => O.CASAACCOUNTID == casaAccountId && O.LOANSTATUSID != (int)LoanStatusEnum.Cancelled && O.LOANSTATUSID != (int)LoanStatusEnum.Terminated && O.LOANSTATUSID != (int)LoanStatusEnum.Completed).Select(O => new CasaLoanViewModel()
+            {
+                loanId = O.CONTINGENTLOANID,
+                loanReferenceNumber = O.LOANREFERENCENUMBER
+            }).ToList();
+
+            var result2 = context.TBL_LOAN_REVOLVING.Where(O => O.CASAACCOUNTID == casaAccountId && O.LOANSTATUSID != (int)LoanStatusEnum.Cancelled && O.LOANSTATUSID != (int)LoanStatusEnum.Terminated && O.LOANSTATUSID != (int)LoanStatusEnum.Completed).Select(O => new CasaLoanViewModel()
+            {
+                loanId = O.REVOLVINGLOANID,
+                loanReferenceNumber = O.LOANREFERENCENUMBER
+            }).ToList();
+
+            return result.Union(result1).Union(result2);
         }
 
         public bool AddCasaLien(CasaViewModel model)
@@ -132,56 +172,260 @@ namespace FintrakBanking.Repositories.CASA
             return context.SaveChanges() > 0;
         }
 
+        public IEnumerable<CasaViewModel> FindCustomerCasaLien(string accountNumberOrName, int companyId)
+        {
+            var data1 = (from data in context.TBL_CASA
+                         join cust in context.TBL_CUSTOMER on data.CUSTOMERID equals cust.CUSTOMERID
+                         where data.COMPANYID == companyId && (data.PRODUCTACCOUNTNUMBER.Contains(accountNumberOrName) ||
+                         cust.CUSTOMERCODE.Contains(accountNumberOrName) || cust.FIRSTNAME.Contains(accountNumberOrName) ||
+                         cust.LASTNAME.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
+                         select new CasaViewModel()
+                         {
+                             casaAccountId = data.CASAACCOUNTID,
+                             productAccountNumber = data.PRODUCTACCOUNTNUMBER,
+                             productAccountName = data.PRODUCTACCOUNTNAME,
+                             customerId = data.CUSTOMERID,
+                             customerCode = data.TBL_CUSTOMER.CUSTOMERCODE,
+                             customerName = data.TBL_CUSTOMER.FIRSTNAME + " " + data.TBL_CUSTOMER.LASTNAME,
+                             productId = data.PRODUCTID,
+                             productCode = data.TBL_PRODUCT.PRODUCTCODE,
+                             productName = data.TBL_PRODUCT.PRODUCTNAME,
+                             companyId = data.COMPANYID,
+                             branchId = data.BRANCHID,
+                             currency = data.TBL_CURRENCY.CURRENCYNAME,
+                             branchCode = data.TBL_BRANCH.BRANCHCODE,
+                             branchName = data.TBL_BRANCH.BRANCHNAME,
+                             isCurrentAccount = data.ISCURRENTACCOUNT,
+                             tenor = data.TENOR ?? 0,
+                             interestRate = data.INTERESTRATE ?? 0,
+                             effectiveDate = data.EFFECTIVEDATE ?? General.DefaultDate,
+                             terminalDate = data.TERMINALDATE ?? General.DefaultDate,
+                             actionBy = data.ACTIONBY ?? 0,
+                             actionDate = data.ACTIONDATE ?? General.DefaultDate,
+                             accountStatusId = data.ACCOUNTSTATUSID,
+                             operationId = data.OPERATIONID ?? 0,
+                             availableBalance = data.AVAILABLEBALANCE,
+                             ledgerBalance = data.LEDGERBALANCE,
+                             relationshipOfficerId = data.RELATIONSHIPOFFICERID ?? 0,
+                             misCode = data.MISCODE,
+                             overdraftAmount = data.OVERDRAFTAMOUNT ?? 0,
+                             overdraftInterestRate = data.OVERDRAFTINTERESTRATE ?? 0,
+                             overdraftExpiryDate = data.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                             hasOverdraft = data.HASOVERDRAFT.HasValue == true ? data.HASOVERDRAFT.Value : false,
+                             lienAmount = data.LIENAMOUNT,
+                             hasLien = data.HASLIEN,
+                             postNoStatusId = data.POSTNOSTATUSID,
+                             oldProductAccountNumber1 = data.OLDPRODUCTACCOUNTNUMBER1,
+                             oldProductAccountNumber2 = data.OLDPRODUCTACCOUNTNUMBER2,
+                             oldProductAccountNumber3 = data.OLDPRODUCTACCOUNTNUMBER3,
+                             //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0 
+                             aprovalStatusId = data.APROVALSTATUSID,
+                             sourceReferenceNumber = null,
+                         });
+
+            var data2 = (from l in context.TBL_LOAN
+                         join c in context.TBL_CASA on l.CASAACCOUNTID equals c.CASAACCOUNTID
+                         join cu in context.TBL_CUSTOMER on c.CUSTOMERID equals cu.CUSTOMERID
+                         where l.LOANREFERENCENUMBER == accountNumberOrName && l.COMPANYID == companyId &&
+                         l.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && l.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                         select new CasaViewModel()
+                         {
+                             casaAccountId = c.CASAACCOUNTID,
+                             productAccountNumber = c.PRODUCTACCOUNTNUMBER,
+                             productAccountName = c.PRODUCTACCOUNTNAME,
+                             customerId = c.CUSTOMERID,
+                             customerCode = c.TBL_CUSTOMER.CUSTOMERCODE,
+                             customerName = c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.LASTNAME,
+                             productId = c.PRODUCTID,
+                             productCode = c.TBL_PRODUCT.PRODUCTCODE,
+                             productName = c.TBL_PRODUCT.PRODUCTNAME,
+                             companyId = c.COMPANYID,
+                             branchId = c.BRANCHID,
+                             currency = c.TBL_CURRENCY.CURRENCYNAME,
+                             branchCode = c.TBL_BRANCH.BRANCHCODE,
+                             branchName = c.TBL_BRANCH.BRANCHNAME,
+                             isCurrentAccount = c.ISCURRENTACCOUNT,
+                             tenor = c.TENOR ?? 0,
+                             interestRate = c.INTERESTRATE ?? 0,
+                             effectiveDate = c.EFFECTIVEDATE ?? General.DefaultDate,
+                             terminalDate = c.TERMINALDATE ?? General.DefaultDate,
+                             actionBy = c.ACTIONBY ?? 0,
+                             actionDate = c.ACTIONDATE ?? General.DefaultDate,
+                             accountStatusId = c.ACCOUNTSTATUSID,
+                             operationId = c.OPERATIONID ?? 0,
+                             availableBalance = c.AVAILABLEBALANCE,
+                             ledgerBalance = c.LEDGERBALANCE,
+                             relationshipOfficerId = c.RELATIONSHIPOFFICERID ?? 0,
+                             misCode = c.MISCODE,
+                             overdraftAmount = c.OVERDRAFTAMOUNT ?? 0,
+                             overdraftInterestRate = c.OVERDRAFTINTERESTRATE ?? 0,
+                             overdraftExpiryDate = c.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                             hasOverdraft = c.HASOVERDRAFT.HasValue == true ? c.HASOVERDRAFT.Value : false,
+                             lienAmount = c.LIENAMOUNT,
+                             hasLien = c.HASLIEN,
+                             postNoStatusId = c.POSTNOSTATUSID,
+                             oldProductAccountNumber1 = c.OLDPRODUCTACCOUNTNUMBER1,
+                             oldProductAccountNumber2 = c.OLDPRODUCTACCOUNTNUMBER2,
+                             oldProductAccountNumber3 = c.OLDPRODUCTACCOUNTNUMBER3,
+                             //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
+                             aprovalStatusId = c.APROVALSTATUSID,
+                             sourceReferenceNumber = l.LOANREFERENCENUMBER,
+                         });
+
+            var data3 = (from l in context.TBL_LOAN_CONTINGENT
+                         join c in context.TBL_CASA on l.CASAACCOUNTID equals c.CASAACCOUNTID
+                         join cu in context.TBL_CUSTOMER on c.CUSTOMERID equals cu.CUSTOMERID
+                         where l.LOANREFERENCENUMBER == accountNumberOrName && l.COMPANYID == companyId &&
+                         l.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && l.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                         select new CasaViewModel()
+                         {
+                             casaAccountId = c.CASAACCOUNTID,
+                             productAccountNumber = c.PRODUCTACCOUNTNUMBER,
+                             productAccountName = c.PRODUCTACCOUNTNAME,
+                             customerId = c.CUSTOMERID,
+                             customerCode = c.TBL_CUSTOMER.CUSTOMERCODE,
+                             customerName = c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.LASTNAME,
+                             productId = c.PRODUCTID,
+                             productCode = c.TBL_PRODUCT.PRODUCTCODE,
+                             productName = c.TBL_PRODUCT.PRODUCTNAME,
+                             companyId = c.COMPANYID,
+                             branchId = c.BRANCHID,
+                             currency = c.TBL_CURRENCY.CURRENCYNAME,
+                             branchCode = c.TBL_BRANCH.BRANCHCODE,
+                             branchName = c.TBL_BRANCH.BRANCHNAME,
+                             isCurrentAccount = c.ISCURRENTACCOUNT,
+                             tenor = c.TENOR ?? 0,
+                             interestRate = c.INTERESTRATE ?? 0,
+                             effectiveDate = c.EFFECTIVEDATE ?? General.DefaultDate,
+                             terminalDate = c.TERMINALDATE ?? General.DefaultDate,
+                             actionBy = c.ACTIONBY ?? 0,
+                             actionDate = c.ACTIONDATE ?? General.DefaultDate,
+                             accountStatusId = c.ACCOUNTSTATUSID,
+                             operationId = c.OPERATIONID ?? 0,
+                             availableBalance = c.AVAILABLEBALANCE,
+                             ledgerBalance = c.LEDGERBALANCE,
+                             relationshipOfficerId = c.RELATIONSHIPOFFICERID ?? 0,
+                             misCode = c.MISCODE,
+                             overdraftAmount = c.OVERDRAFTAMOUNT ?? 0,
+                             overdraftInterestRate = c.OVERDRAFTINTERESTRATE ?? 0,
+                             overdraftExpiryDate = c.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                             hasOverdraft = c.HASOVERDRAFT.HasValue == true ? c.HASOVERDRAFT.Value : false,
+                             lienAmount = c.LIENAMOUNT,
+                             hasLien = c.HASLIEN,
+                             postNoStatusId = c.POSTNOSTATUSID,
+                             oldProductAccountNumber1 = c.OLDPRODUCTACCOUNTNUMBER1,
+                             oldProductAccountNumber2 = c.OLDPRODUCTACCOUNTNUMBER2,
+                             oldProductAccountNumber3 = c.OLDPRODUCTACCOUNTNUMBER3,
+                             //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
+                             aprovalStatusId = c.APROVALSTATUSID,
+                             sourceReferenceNumber = l.LOANREFERENCENUMBER
+                         });
+
+            var data4 = (from l in context.TBL_LOAN_REVOLVING
+                         join c in context.TBL_CASA on l.CASAACCOUNTID equals c.CASAACCOUNTID
+                         join cu in context.TBL_CUSTOMER on c.CUSTOMERID equals cu.CUSTOMERID
+                         where l.LOANREFERENCENUMBER == accountNumberOrName && l.COMPANYID == companyId &&
+                         l.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && l.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                         select new CasaViewModel()
+                         {
+                             casaAccountId = c.CASAACCOUNTID,
+                             productAccountNumber = c.PRODUCTACCOUNTNUMBER,
+                             productAccountName = c.PRODUCTACCOUNTNAME,
+                             customerId = c.CUSTOMERID,
+                             customerCode = c.TBL_CUSTOMER.CUSTOMERCODE,
+                             customerName = c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.LASTNAME,
+                             productId = c.PRODUCTID,
+                             productCode = c.TBL_PRODUCT.PRODUCTCODE,
+                             productName = c.TBL_PRODUCT.PRODUCTNAME,
+                             companyId = c.COMPANYID,
+                             branchId = c.BRANCHID,
+                             currency = c.TBL_CURRENCY.CURRENCYNAME,
+                             branchCode = c.TBL_BRANCH.BRANCHCODE,
+                             branchName = c.TBL_BRANCH.BRANCHNAME,
+                             isCurrentAccount = c.ISCURRENTACCOUNT,
+                             tenor = c.TENOR ?? 0,
+                             interestRate = c.INTERESTRATE ?? 0,
+                             effectiveDate = c.EFFECTIVEDATE ?? General.DefaultDate,
+                             terminalDate = c.TERMINALDATE ?? General.DefaultDate,
+                             actionBy = c.ACTIONBY ?? 0,
+                             actionDate = c.ACTIONDATE ?? General.DefaultDate,
+                             accountStatusId = c.ACCOUNTSTATUSID,
+                             operationId = c.OPERATIONID ?? 0,
+                             availableBalance = c.AVAILABLEBALANCE,
+                             ledgerBalance = c.LEDGERBALANCE,
+                             relationshipOfficerId = c.RELATIONSHIPOFFICERID ?? 0,
+                             misCode = c.MISCODE,
+                             overdraftAmount = c.OVERDRAFTAMOUNT ?? 0,
+                             overdraftInterestRate = c.OVERDRAFTINTERESTRATE ?? 0,
+                             overdraftExpiryDate = c.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                             hasOverdraft = c.HASOVERDRAFT.HasValue == true ? c.HASOVERDRAFT.Value : false,
+                             lienAmount = c.LIENAMOUNT,
+                             hasLien = c.HASLIEN,
+                             postNoStatusId = c.POSTNOSTATUSID,
+                             oldProductAccountNumber1 = c.OLDPRODUCTACCOUNTNUMBER1,
+                             oldProductAccountNumber2 = c.OLDPRODUCTACCOUNTNUMBER2,
+                             oldProductAccountNumber3 = c.OLDPRODUCTACCOUNTNUMBER3,
+                             //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
+                             aprovalStatusId = c.APROVALSTATUSID,
+                             sourceReferenceNumber = l.LOANREFERENCENUMBER
+                         });
+
+            return data1.Union(data2).Union(data3).Union(data4);
+        }
+
         /// TODO: Implement server side filtering due to large number of records that may be returned
         public IEnumerable<CasaViewModel> FindAccount(string accountNumberOrName, int companyId)
         {
-            return (from data in context.TBL_CASA
-                    join cust in context.TBL_CUSTOMER on data.CUSTOMERID equals cust.CUSTOMERID
-                    where data.COMPANYID == companyId && (data.PRODUCTACCOUNTNUMBER.Contains(accountNumberOrName) ||
-                    cust.CUSTOMERCODE.Contains(accountNumberOrName) || cust.FIRSTNAME.Contains(accountNumberOrName) ||
-                 cust.LASTNAME.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
-                    select new CasaViewModel()
-                    {
-                        casaAccountId = data.CASAACCOUNTID,
-                        productAccountNumber = data.PRODUCTACCOUNTNUMBER,
-                        productAccountName = data.PRODUCTACCOUNTNAME,
-                        customerId = data.CUSTOMERID,
-                        customerCode = data.TBL_CUSTOMER.CUSTOMERCODE,
-                        customerName = data.TBL_CUSTOMER.FIRSTNAME + " " + data.TBL_CUSTOMER.LASTNAME,
-                        productId = data.PRODUCTID,
-                        productCode = data.TBL_PRODUCT.PRODUCTCODE,
-                        productName = data.TBL_PRODUCT.PRODUCTNAME,
-                        companyId = data.COMPANYID,
-                        branchId = data.BRANCHID,
-                        currency = data.TBL_CURRENCY.CURRENCYNAME,
-                        branchCode = data.TBL_BRANCH.BRANCHCODE,
-                        branchName = data.TBL_BRANCH.BRANCHNAME,
-                        isCurrentAccount = data.ISCURRENTACCOUNT,
-                        tenor = data.TENOR ?? 0,
-                        interestRate = data.INTERESTRATE ?? 0,
-                        effectiveDate = data.EFFECTIVEDATE ?? General.DefaultDate,
-                        terminalDate = data.TERMINALDATE ?? General.DefaultDate,
-                        actionBy = data.ACTIONBY ?? 0,
-                        actionDate = data.ACTIONDATE ?? General.DefaultDate,
-                        accountStatusId = data.ACCOUNTSTATUSID,
-                        operationId = data.OPERATIONID ?? 0,
-                        availableBalance = data.AVAILABLEBALANCE,
-                        ledgerBalance = data.LEDGERBALANCE,
-                        relationshipOfficerId = data.RELATIONSHIPOFFICERID ?? 0,
-                        misCode = data.MISCODE,
-                        overdraftAmount = data.OVERDRAFTAMOUNT ?? 0,
-                        overdraftInterestRate = data.OVERDRAFTINTERESTRATE ?? 0,
-                        overdraftExpiryDate = data.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
-                        hasOverdraft = data.HASOVERDRAFT.HasValue == true ? data.HASOVERDRAFT.Value : false,
-                        lienAmount = data.LIENAMOUNT,
-                        hasLien = data.HASLIEN,
-                        postNoStatusId = data.POSTNOSTATUSID,
-                        oldProductAccountNumber1 = data.OLDPRODUCTACCOUNTNUMBER1,
-                        oldProductAccountNumber2 = data.OLDPRODUCTACCOUNTNUMBER2,
-                        oldProductAccountNumber3 = data.OLDPRODUCTACCOUNTNUMBER3,
-                        //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
-                        aprovalStatusId = data.APROVALSTATUSID,
-                    });
+            var result = (from data in context.TBL_CASA
+                        join cust in context.TBL_CUSTOMER on data.CUSTOMERID equals cust.CUSTOMERID
+                        where data.COMPANYID == companyId && (data.PRODUCTACCOUNTNUMBER.Contains(accountNumberOrName) ||
+                        cust.CUSTOMERCODE.Contains(accountNumberOrName) || cust.FIRSTNAME.Contains(accountNumberOrName) ||
+                        cust.LASTNAME.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
+                        select new CasaViewModel()
+                        {
+                            casaAccountId = data.CASAACCOUNTID,
+                            productAccountNumber = data.PRODUCTACCOUNTNUMBER,
+                            productAccountName = data.PRODUCTACCOUNTNAME,
+                            customerId = data.CUSTOMERID,
+                            customerCode = data.TBL_CUSTOMER.CUSTOMERCODE,
+                            customerName = data.TBL_CUSTOMER.FIRSTNAME + " " + data.TBL_CUSTOMER.LASTNAME,
+                            productId = data.PRODUCTID,
+                            productCode = data.TBL_PRODUCT.PRODUCTCODE,
+                            productName = data.TBL_PRODUCT.PRODUCTNAME,
+                            companyId = data.COMPANYID,
+                            branchId = data.BRANCHID,
+                            currency = data.TBL_CURRENCY.CURRENCYNAME,
+                            branchCode = data.TBL_BRANCH.BRANCHCODE,
+                            branchName = data.TBL_BRANCH.BRANCHNAME,
+                            isCurrentAccount = data.ISCURRENTACCOUNT,
+                            tenor = data.TENOR ?? 0,
+                            interestRate = data.INTERESTRATE ?? 0,
+                            effectiveDate = data.EFFECTIVEDATE ?? General.DefaultDate,
+                            terminalDate = data.TERMINALDATE ?? General.DefaultDate,
+                            actionBy = data.ACTIONBY ?? 0,
+                            actionDate = data.ACTIONDATE ?? General.DefaultDate,
+                            accountStatusId = data.ACCOUNTSTATUSID,
+                            operationId = data.OPERATIONID ?? 0,
+                            availableBalance = data.AVAILABLEBALANCE,
+                            ledgerBalance = data.LEDGERBALANCE,
+                            relationshipOfficerId = data.RELATIONSHIPOFFICERID ?? 0,
+                            misCode = data.MISCODE,
+                            overdraftAmount = data.OVERDRAFTAMOUNT ?? 0,
+                            overdraftInterestRate = data.OVERDRAFTINTERESTRATE ?? 0,
+                            overdraftExpiryDate = data.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                            hasOverdraft = data.HASOVERDRAFT.HasValue == true ? data.HASOVERDRAFT.Value : false,
+                            lienAmount = data.LIENAMOUNT,
+                            hasLien = data.HASLIEN,
+                            postNoStatusId = data.POSTNOSTATUSID,
+                            oldProductAccountNumber1 = data.OLDPRODUCTACCOUNTNUMBER1,
+                            oldProductAccountNumber2 = data.OLDPRODUCTACCOUNTNUMBER2,
+                            oldProductAccountNumber3 = data.OLDPRODUCTACCOUNTNUMBER3,
+                            //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0 
+                            aprovalStatusId = data.APROVALSTATUSID,
+                        });
+
+         
+            return result;
         }
 
         public IEnumerable<CasaViewModel> GetGroupAccountNumberWithCustomerId(string accountNumberOrName, int customerId, int companyId)

@@ -251,6 +251,29 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-all-casa-liens/accountNumber/{accountNumber}")]
+        public HttpResponseMessage GetAllCasaLiens(string accountNumber) 
+        {
+            try
+            {
+                var data = repo.GetAllCasaLiens(accountNumber);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-all-casa-lien-types")]
         public HttpResponseMessage GetAllCasaLienTypes()
         {
@@ -261,6 +284,29 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-all-casa-loans/casaAccountId/{casaAccountId}")]
+        public HttpResponseMessage GetAllCasaLoans(int casaAccountId)
+        {
+            try
+            {
+                var data = repo.GetAllCasaLoans(token.GetCompanyId, casaAccountId);
+                if (data.Count() < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "There's no Loan Attached to this Account Number" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
@@ -331,6 +377,29 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("find-customer-casa-lien/accountNumberOrName/{accountNumberOrName}")]
+        public HttpResponseMessage FindCustomerCasaLien(string accountNumberOrName)
+        {
+            try
+            {
+                var data = repo.FindCustomerCasaLien(accountNumberOrName, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("account-number-name/")]
         public HttpResponseMessage FindAccount(string accountNumberOrName)
         {
@@ -351,8 +420,9 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+        
 
-        [HttpGet]
+       [HttpGet]
         [ClaimsAuthorization]
         [Route("group-account-number/")]
         public HttpResponseMessage GetGroupAccountNumberWithCustomerId(string accountNumberOrName,int customerId)
