@@ -46,5 +46,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CASA_LIEN_TYPE TBL_CASA_LIEN_TYPE { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+
+        public int? LIENSTATUS { get; set; }
+        
     }
 }

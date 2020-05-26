@@ -16777,6 +16777,19 @@ namespace FintrakBanking.Repositories.Credit
             return 2;
         }
 
+        public RemoveLienViewModel GetLienRemovalLetter(int lienRemovalId)
+        {
+            return (from x in context.TBL_LIEN_REMOVAL
+                    where x.UNFREEZELIENACCOUNTID == lienRemovalId
+                    select new RemoveLienViewModel
+                    {
+                        unfreezeLienAccountId = x.UNFREEZELIENACCOUNTID,
+                        fileData = x.FILEDATA,
+                        fileName = x.FILENAME,
+                        fileExtension = x.FILEEXTENSION,
+                    }).FirstOrDefault();
+        }
+
         public CollateralLiquidationRecoveryViewModel GetLiquidationReceipt(int liquidationRecoveryReceiptId)
         {
             return (from x in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY
@@ -16789,6 +16802,7 @@ namespace FintrakBanking.Repositories.Credit
                         fileExtension = x.FILEEXTENSION,
                     }).FirstOrDefault();
         }
+
         private TBL_LOAN_BOOKING_REQUEST addBookingRequest(multipleDisbursementOutputViewModel entity, short? approvalStatusid, UserInfo user)
         {
             var request = new TBL_LOAN_BOOKING_REQUEST
