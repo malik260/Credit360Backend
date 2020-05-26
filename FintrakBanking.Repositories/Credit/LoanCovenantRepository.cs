@@ -889,45 +889,49 @@ namespace FintrakBanking.Repositories.Customer
 
         private void PlaceLienSub(CasaLienViewModel model)
         {
-            var data = new TBL_CASA_LIEN
+            var validate = context.TBL_CASA_LIEN.Where(x => x.SOURCEREFERENCENUMBER == model.sourceReferenceNumber).FirstOrDefault();
+            if (validate == null)
             {
-                PRODUCTACCOUNTNUMBER = model.productAccountNumber,
-                LIENREFERENCENUMBER = model.lienReferenceNumber,
-                SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
-                BRANCHID = model.branchId,
-                COMPANYID = model.companyId,
-                LIENAMOUNT = model.lienAmount,
-                DESCRIPTION = model.description,
-                LIENTYPEID = model.lienTypeId,
-                CREATEDBY = model.createdBy,
-                DATETIMECREATED = DateTime.Now
+                var data = new TBL_CASA_LIEN
+                {
+                    PRODUCTACCOUNTNUMBER = model.productAccountNumber,
+                    LIENREFERENCENUMBER = model.lienReferenceNumber,
+                    SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
+                    BRANCHID = model.branchId,
+                    COMPANYID = model.companyId,
+                    LIENAMOUNT = model.lienAmount,
+                    DESCRIPTION = model.description,
+                    LIENTYPEID = model.lienTypeId,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = DateTime.Now
 
-            };
+                };
 
-            context.TBL_CASA_LIEN.Add(data);
+                context.TBL_CASA_LIEN.Add(data);
 
-            // Audit Section ---------------------------            
+                // Audit Section ---------------------------            
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LienPlaced,
-                STAFFID = model.createdBy,
-                BRANCHID = model.branchId,
-                DETAIL = $"Applied lien with reference number: {model.lienReferenceNumber}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName()
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LienPlaced,
+                    STAFFID = model.createdBy,
+                    BRANCHID = model.branchId,
+                    DETAIL = $"Applied lien with reference number: {model.lienReferenceNumber}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
 
 
-            };
-            this.auditTrail.AddAuditTrail(audit);
+                };
+                this.auditTrail.AddAuditTrail(audit);
 
-            //end of Audit section -------------------------------
+                //end of Audit section -------------------------------
 
-            context.SaveChanges();
+                context.SaveChanges();
+            }
 
         }
 
