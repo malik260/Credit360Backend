@@ -41,6 +41,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool LoadDocumentTemplate(DocumentTemplateViewModel entity);
         bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity);
         LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId);
+        LoadedDocumentSectionViewModel GetThirdPartyLoanDocumentSection(int staffId, int operationId, int targetId, int sectionId);
+
+
         List<DocumentTemplateViewModel> GetDocumentTemplates(int staffId, int operationId, int companyId);
         dynamic GetIsLLLVilated(int operationId, int targetId);
         bool SaveApprovedDocumentation(int staffId, int operationId, int targetId);
