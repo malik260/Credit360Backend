@@ -216,7 +216,8 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)
         {
             var searchString = search.searchString.Trim();
-            var data = loanRepo.SearchForLoanAndRevolvingLoan(searchString);
+            //var data = loanRepo.SearchForLoanAndRevolvingLoan(searchString);
+            var data = loanRepo.SearchForLoanAndRevolvingLoan(searchString, search.statusId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,

@@ -556,6 +556,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class SearchViewModel
     {
         public int performanceTypeId { get; set; }
+        public int statusId { get; set; }
         public int productTypeId { get; set; }
         public string searchString { get; set; }
         public short loanSystemTypeId { get; set; }
