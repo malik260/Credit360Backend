@@ -227,6 +227,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string referenceNumber { get; set; }
         public DateTime systemDateTime { get; set; }
         public int? bookingOperationId { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public string lienReferenceNumber { get; set; }
+        public decimal lienAmount { get; set; }
+        public DateTime lienDateTimeCreated { get; set; }
     }
 
     public class LoanApplicationUpdateMessage

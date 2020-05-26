@@ -126,6 +126,38 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? expCompletionDate { get; set; }
     }
 
+    public class RemoveLienViewModel
+    {
+        public int unfreezeLienAccountId { get; set; }
+        public int casaLienAccountId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public int fileSize { get; set; }
+        public string fileSizeUnit { get; set; }
+        public byte[] fileData { get; set; }
+        public int createdBy { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public int approvalStatusId { get; set; }
+        public bool operationCompleted { get; set; }
+        public int operationId { get; set; }
+        public short userBranchId { get; set; }
+        public string applicationUrl { get; set; }
+        public int companyId { get; set; }
+        public string userIPAddress { get; set; }
+        public string comment { get; set; }
+        public bool overwrite { get; set; }
+        public int lastUpdatedBy { get; set; }
+        public int forwardAction { get; set; }
+        public int? receiverStaffId { get; set; }
+        public int? receiverLevelId { get; set; }
+        public short? vote { get; set; }
+        public bool isFlowTest { get; set; }
+        public bool? isFromPc { get; set; }
+        public DateTime? requestDate { get; set; }
+    }
+
+
     public class CollateralLiquidationRecoveryViewModel : GeneralEntity
     {
         public int collateralLiquidationRecoveryId { get; set; }
@@ -351,6 +383,16 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string collateralCode { get; set; }
         public string collectionMode { get; set; }
         public int createdBy { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public string lienReferenceNumber { get; set; }
+        public decimal lienAmount { get; set; }
+        public DateTime lienDateTimeCreated { get; set; }
+        public DateTime applicationDate { get; set; }
+        public string lmsReferenceNumber { get; set; }
+        public int loanApplicationId { get; set; }
+        public int casaLienAccountId { get; set; }
+        public int lienRemovalId { get; set; }
+        public int lienRemovalOperationId { get; set; }
     }
 
 

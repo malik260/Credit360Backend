@@ -254,7 +254,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
-
+        
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-review-application/forward-appraisal")]
@@ -340,6 +340,40 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("loan-lien-application-detail-search")]
+        public HttpResponseMessage LoanLienApplicationSearch([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.SearchLien(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-lien-applications")]
+        public HttpResponseMessage LoanLienApplications()
+        {
+
+            var data = repo.GetAllLienRemovalApplications(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("appraisal-review-referback")]
         public HttpResponseMessage AppraisalReviewReferBack([FromBody] ForwardViewModel entity)
         {
@@ -391,7 +425,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
-                }
+                }else
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
         }

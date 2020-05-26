@@ -401,7 +401,12 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetLoanDetailChangeLog(int loanApplicationId)
         {
             var data = repo.GetLoanDetailChangeLog(loanApplicationId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = "No records found" });
         }
 
         [HttpGet, Route("loan-application-approval-process")]

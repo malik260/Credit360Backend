@@ -3365,13 +3365,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var summaryExist = (from s in context.TBL_ESG_CHECKLIST_SUMMARY
                                 where s.LOANAPPLICATIONDETAILID == models.loanApplicationDetailId
-                                && s.CREATEDBY == (int)models.createdBy
+                                //&& s.CREATEDBY == (int)models.createdBy
                                 && s.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist
                                 select s).FirstOrDefault();
             if (summaryExist != null)
             {
                 summaryExist.COMMENT_ = models.comment;
                 summaryExist.RATINGID = models.ratingId;
+                summaryExist.LASTUPDATEDBY = (int)models.createdBy;
+                summaryExist.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             }
             else
             {
@@ -3615,13 +3617,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var summaryExist = (from s in context.TBL_ESG_CHECKLIST_SUMMARY
                                 where s.LOANAPPLICATIONDETAILID == models.loanApplicationDetailId
-                                && s.CREATEDBY == (int)models.createdBy
+                                //&& s.CREATEDBY == (int)models.createdBy
                                 && s.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating
                                 select s).FirstOrDefault();
             if (summaryExist != null)
             {
                 summaryExist.COMMENT_ = models.comment;
                 summaryExist.RATINGID = models.ratingId;
+                summaryExist.LASTUPDATEDBY = (int)models.createdBy;
+                summaryExist.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             }
             else
             {

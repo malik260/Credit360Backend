@@ -1902,25 +1902,38 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        public IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId)
+        public IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId, bool isLMS)
         {
             var typeIds = new List<int>();
             var company = context.TBL_COMPANY.Find(companyId);
             var baseCurrencyId = company.TBL_CURRENCY.CURRENCYID;
             bool disAllowCollateral = false;
             bool isForiegnCurrencyFacility = false;
+            var productIds = new List<short>();
             if (applicationId != null)
             {
-                var productIds = context.TBL_LOAN_APPLICATION_DETAIL
+                if (isLMS)
+                {
+                    productIds = context.TBL_LMSR_APPLICATION_DETAIL
+                    .Where(x => x.LOANAPPLICATIONID == applicationId)
+                    .Select(x => x.PRODUCTID)
+                    .Distinct().ToList();
+
+                    isForiegnCurrencyFacility = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.CURRENCYID != company.CURRENCYID).Any();
+                }
+                else
+                {
+                    productIds = context.TBL_LOAN_APPLICATION_DETAIL
                     .Where(x => x.LOANAPPLICATIONID == applicationId)
                     .Select(x => x.PROPOSEDPRODUCTID)
-                    .Distinct();
+                    .Distinct().ToList();
+                    isForiegnCurrencyFacility = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CURRENCYID != company.CURRENCYID).Any();
+                }
 
                 typeIds = context.TBL_PRODUCT_COLLATERALTYPE.Where(x => productIds.Contains(x.PRODUCTID))
                    .Select(x => x.COLLATERALTYPEID)
                    .Distinct().ToList();
 
-                isForiegnCurrencyFacility = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CURRENCYID != company.CURRENCYID).Any();
             }
 
             var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId)

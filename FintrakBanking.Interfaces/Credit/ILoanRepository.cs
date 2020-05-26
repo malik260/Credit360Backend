@@ -20,7 +20,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
-
+        RemoveLienViewModel GetLienRemovalLetter(int lienRemovalId);
         CollateralLiquidationRecoveryViewModel GetLiquidationReceipt(int liquidationRecoveryReceiptId);
         int AddCollateralLiquidationRecovery(CollateralLiquidationRecoveryViewModel model, byte[] buffer);
         bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, UserInfo user);

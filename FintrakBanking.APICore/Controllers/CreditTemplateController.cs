@@ -600,6 +600,24 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("third-party-loan-document-section/operation/{operationId}/target/{targetId}/section/{sectionId}")]
+        public HttpResponseMessage GetThirdpartLoanDocumentSection(int operationId, int targetId, int sectionId)
+        {
+            try
+            {
+                LoadedDocumentSectionViewModel response = repo.GetThirdPartyLoanDocumentSection(token.GetStaffId, operationId, targetId, sectionId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("document-template/operation/{operationId}")]
         public HttpResponseMessage GetDocumentTemplates(int operationId)
         {
@@ -636,8 +654,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("documentation/operation/{operationId}/target/{targetId}")]
-        public HttpResponseMessage GetLoadedDocumentation(int operationId, int targetId)
+        [Route("documentation/operation/{operationId}/target/{targetId}/{isThirdPartyFacility}")]
+        public HttpResponseMessage GetLoadedDocumentation(int operationId, int targetId, bool isThirdPartyFacility)
         {
             try
             {
@@ -645,7 +663,7 @@ namespace FintrakBanking.APICore.Controllers
                 user.BranchId = token.GetBranchId;
                 user.staffId = token.GetStaffId;
                 user.companyId = token.GetCompanyId;
-                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId, operationId, targetId, user);
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId, operationId, targetId, user, isThirdPartyFacility);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
