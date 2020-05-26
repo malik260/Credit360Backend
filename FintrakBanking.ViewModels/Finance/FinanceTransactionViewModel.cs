@@ -125,10 +125,29 @@ namespace FintrakBanking.ViewModels.Finance
         public object errorMessage { get; set; }
     }
 
+    public class CasaAccountLienViewModel
+    {
+        public int lienId { get; set; }
+        public string lienReferenceNumber { get; set; }
+        public string productAccountNumber { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public decimal lienAmount { get; set; }
+        public string description { get; set; }
+        public short lienTypeId { get; set; }
+        public DateTime dateCreated { get; set; }
+
+    }
+
     public class CasaLienTypeViewModel
     {
         public int lienTypeId { get; set; }
         public string lienTypeName { get; set; }
+    }
+
+    public class CasaLoanViewModel
+    {
+        public int loanId { get; set; }
+        public string loanReferenceNumber { get; set; }
     }
 
     public class BasicTrasactionSourceInputModel : GeneralEntity

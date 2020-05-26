@@ -112,8 +112,8 @@ namespace FintrakBanking.Repositories.CASA
                 DESCRIPTION = model.description,
                 LIENTYPEID = model.lienTypeId,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = DateTime.Now
-
+                DATETIMECREATED = DateTime.Now,
+                ISLIENREMOVED = false
             };
 
             context.TBL_CASA_LIEN.Add(data);
@@ -216,6 +216,7 @@ namespace FintrakBanking.Repositories.CASA
 
             };
 
+            existingLien.ISLIENREMOVED = true;
             context.TBL_CASA_LIEN.Add(data);
 
             // Audit Section ---------------------------            
