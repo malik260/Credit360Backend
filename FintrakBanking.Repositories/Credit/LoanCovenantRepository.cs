@@ -903,8 +903,9 @@ namespace FintrakBanking.Repositories.Customer
                     DESCRIPTION = model.description,
                     LIENTYPEID = model.lienTypeId,
                     CREATEDBY = model.createdBy,
-                    DATETIMECREATED = DateTime.Now
-
+                    LIENSTATUS = (int)LienStatusEnum.Active,
+                    DATETIMECREATED = DateTime.Now,
+                    ISLIENREMOVED = false
                 };
 
                 context.TBL_CASA_LIEN.Add(data);

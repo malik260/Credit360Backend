@@ -101,20 +101,24 @@ namespace FintrakBanking.Repositories.CASA
 
         private void PlaceLienSub(CasaLienViewModel model)
         {
-            var data = new TBL_CASA_LIEN
+            var validate = context.TBL_CASA_LIEN.Where(x => x.SOURCEREFERENCENUMBER == model.sourceReferenceNumber).FirstOrDefault();
+            if (validate == null)
             {
-                PRODUCTACCOUNTNUMBER = model.productAccountNumber,
-                LIENREFERENCENUMBER = model.lienReferenceNumber,
-                SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
-                BRANCHID = model.branchId,
-                COMPANYID = model.companyId,
-                LIENAMOUNT = model.lienAmount,
-                DESCRIPTION = model.description,
-                LIENTYPEID = model.lienTypeId,
-                CREATEDBY = model.createdBy,
-                DATETIMECREATED = DateTime.Now,
-                ISLIENREMOVED = false
-            };
+                var data = new TBL_CASA_LIEN
+                {
+                    PRODUCTACCOUNTNUMBER = model.productAccountNumber,
+                    LIENREFERENCENUMBER = model.lienReferenceNumber,
+                    SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
+                    BRANCHID = model.branchId,
+                    COMPANYID = model.companyId,
+                    LIENAMOUNT = model.lienAmount,
+                    DESCRIPTION = model.description,
+                    LIENTYPEID = model.lienTypeId,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                    LIENSTATUS = (int)LienStatusEnum.Active,
+                    ISLIENREMOVED = false
+                };
 
                 context.TBL_CASA_LIEN.Add(data);
 
@@ -141,7 +145,6 @@ namespace FintrakBanking.Repositories.CASA
 
                 context.SaveChanges();
             }
-
         }
 
         public bool ReleaseLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null, bool require2FA = true)
