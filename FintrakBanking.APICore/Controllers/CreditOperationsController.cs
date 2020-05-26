@@ -517,6 +517,59 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-remove-lien")]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddRequestUnLienODAccount()
+        {
+                   
+
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+            try
+            {
+                var entity = new RemoveLienViewModel();
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.comment = provider.FormData["comment"];
+                entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.fileSizeUnit = provider.FormData["fileSizeUnit"];
+                entity.casaLienAccountId = Convert.ToInt32(provider.FormData["casaLienAccountId"]);
+                entity.loanReferenceNumber = provider.FormData["loanReferenceNumber"];
+                entity.overwrite = provider.FormData["overwrite"] == "true";
+                entity.requestDate = Convert.ToDateTime(provider.FormData["requestDate"]);
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                entity.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var response = repo.AddRequestUnLienODAccount(entity, buffer);
+
+
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and waiting for approval" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating request:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating request" });
+
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -917,6 +970,36 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lien-removal-operation/awaiting-approval")]
+        public HttpResponseMessage GetLienRemovalAwaitingApproval()
+        {
+            var data = repo.GetLienRemovalAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }else
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lien-removal-operation/documents/{lienRemovalId}")]
+        public HttpResponseMessage GetLienRemovalDocuments(int lienRemovalId)
+        {
+            var data = repo.GetLienRemovalDocuments(lienRemovalId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }else
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/awaiting-documentation")]
         public HttpResponseMessage GetLoanOperationAwaitingDocumentation()
         {
@@ -925,7 +1008,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "No record found" });
-            }
+            }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
@@ -939,7 +1022,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "No record found" });
-            }
+            }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
@@ -954,7 +1037,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "No record found" });
-            }
+            }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
@@ -969,7 +1052,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "No record found" });
-            }
+            }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
@@ -984,7 +1067,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "No record found" });
-            }
+            }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
@@ -1000,7 +1083,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "No record found" });
-                }
+                }else
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
            
         }
@@ -1139,6 +1222,46 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = true, message = "Operation has been approved successfully, With New Reference Number " + newRef });
                 }
 
+            }
+            else if (data == 2)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation has been disapproved successfully." });
+            }
+            else if (data == 3)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            else if (data == 4)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Operation Has Been Refered Back" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lien-removal-approval")]
+        public HttpResponseMessage GoForLienRemovalApproval([FromBody]ApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.GoForLienRemovalApproval(entity);
+
+            if (data == 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation has been approved successfully." });
             }
             else if (data == 2)
             {

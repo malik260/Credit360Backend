@@ -15678,7 +15678,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                    && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                    && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
-                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  //&& a.LOANREFERENCENUMBER == "406-0056-0000036"                                                                                                                                   //orderby b.DATECREATED descending
+                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  
                                    select new LoanViewModel
                                    {
                                        //creditAppraisalOperationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.OPERATIONID).FirstOrDefault(),
@@ -16777,6 +16777,19 @@ namespace FintrakBanking.Repositories.Credit
             return 2;
         }
 
+        public RemoveLienViewModel GetLienRemovalLetter(int lienRemovalId)
+        {
+            return (from x in context.TBL_LIEN_REMOVAL
+                    where x.UNFREEZELIENACCOUNTID == lienRemovalId
+                    select new RemoveLienViewModel
+                    {
+                        unfreezeLienAccountId = x.UNFREEZELIENACCOUNTID,
+                        fileData = x.FILEDATA,
+                        fileName = x.FILENAME,
+                        fileExtension = x.FILEEXTENSION,
+                    }).FirstOrDefault();
+        }
+
         public CollateralLiquidationRecoveryViewModel GetLiquidationReceipt(int liquidationRecoveryReceiptId)
         {
             return (from x in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY
@@ -16789,6 +16802,7 @@ namespace FintrakBanking.Repositories.Credit
                         fileExtension = x.FILEEXTENSION,
                     }).FirstOrDefault();
         }
+
         private TBL_LOAN_BOOKING_REQUEST addBookingRequest(multipleDisbursementOutputViewModel entity, short? approvalStatusid, UserInfo user)
         {
             var request = new TBL_LOAN_BOOKING_REQUEST

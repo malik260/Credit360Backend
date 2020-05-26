@@ -37,7 +37,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         // form CAM impl
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentSections(int staffId, int operationId, int targetId);
-        List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user);
+        List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user,bool isThirdPartyFacility = false);
         bool LoadDocumentTemplate(DocumentTemplateViewModel entity);
         bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity);
         LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId);

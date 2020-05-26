@@ -415,7 +415,7 @@ var qry = Foo.GroupJoin(
             return replacedSections;
         }
 
-        public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user)
+        public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user, bool isThirdPartyFacility)
         {
             // int staffId, is REDUNDANT!
             var printedDoc = "";
@@ -436,19 +436,37 @@ var qry = Foo.GroupJoin(
                 .ToList();
 
             List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
-
-            memo.Init(operationId, targetId); //content = memo.Replace(content);
-            foreach (var raw in rawSections)
+            if (isThirdPartyFacility)
             {
-                var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
-                raw.templateDocument = memo.Replace(raw.templateDocument);
-                if (templateId == 1)
+                memo.InitForThirdpartyLoans(operationId, targetId);
+                foreach (var raw in rawSections)
                 {
-                    raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
-                    raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
+                    var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
+                    raw.templateDocument = memo.Replace(raw.templateDocument);
+                    //if (templateId == 1)
+                    //{
+                    //    raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
+                    //    raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
+                    //}
+                    replacedSections.Add(raw);
+                    printedDoc = raw.title;
                 }
-                replacedSections.Add(raw);
-                printedDoc = raw.title;
+            }
+            else
+            {
+                memo.Init(operationId, targetId); //content = memo.Replace(content);
+                foreach (var raw in rawSections)
+                {
+                    var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
+                    raw.templateDocument = memo.Replace(raw.templateDocument);
+                    if (templateId == 1)
+                    {
+                        raw.templateDocument = memo.UpdateEsg(raw.templateDocument);
+                        raw.templateDocument = memo.UpdateGreenRating(raw.templateDocument);
+                    }
+                    replacedSections.Add(raw);
+                    printedDoc = raw.title;
+                }
             }
 
             var staff = context.TBL_STAFF.Find(staffId);
