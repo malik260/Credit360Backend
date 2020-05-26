@@ -17628,7 +17628,8 @@ namespace FintrakBanking.Repositories.Credit
                  dateTimeCreated = x.DATETIMECREATED,
                  approvalStatusId = x.APPROVALSTATUSID,
                  operationCompleted = x.OPERATIONCOMPLETED,
-                 operationId = x.OPERATIONID
+                 operationId = x.OPERATIONID,
+                 requestDate = x.REQUESTDATE
              }).FirstOrDefault();
 
             if (existing != null && model.overwrite == false) return 3;
@@ -17646,6 +17647,7 @@ namespace FintrakBanking.Repositories.Credit
                         CASALIENACCOUNTID = model.casaLienAccountId,
                         LOANREFERENCENUMBER = model.loanReferenceNumber,
                         FILENAME = model.fileName,
+                        REQUESTDATE = model.requestDate,
                         FILEEXTENSION = model.fileExtension,
                         FILESIZE = model.fileSize,
                         FILESIZEUNIT = model.fileSizeUnit,
@@ -17699,6 +17701,7 @@ namespace FintrakBanking.Repositories.Credit
                     removeLienOperation.FILESIZE = model.fileSize;
                     removeLienOperation.FILESIZEUNIT = model.fileSizeUnit;
                     removeLienOperation.FILEDATA = buffer;
+                    removeLienOperation.REQUESTDATE = model.requestDate;
                     removeLienOperation.CREATEDBY = model.createdBy;
                     removeLienOperation.DATETIMECREATED = DateTime.Now;
                     removeLienOperation.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;

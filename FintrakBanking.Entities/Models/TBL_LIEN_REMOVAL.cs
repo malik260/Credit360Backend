@@ -24,6 +24,7 @@ namespace FintrakBanking.Entities.Models
         public byte[] FILEDATA { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
+        public DateTime? REQUESTDATE { get; set; }
         public int APPROVALSTATUSID { get; set; }
         public bool OPERATIONCOMPLETED { get; set; }
         public int OPERATIONID { get; set; }

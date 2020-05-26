@@ -547,6 +547,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.casaLienAccountId = Convert.ToInt32(provider.FormData["casaLienAccountId"]);
                 entity.loanReferenceNumber = provider.FormData["loanReferenceNumber"];
                 entity.overwrite = provider.FormData["overwrite"] == "true";
+                entity.requestDate = Convert.ToDateTime(provider.FormData["requestDate"]);
 
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;

@@ -154,6 +154,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? vote { get; set; }
         public bool isFlowTest { get; set; }
         public bool? isFromPc { get; set; }
+        public DateTime? requestDate { get; set; }
     }
 
 
