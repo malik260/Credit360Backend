@@ -13475,7 +13475,7 @@ namespace FintrakBanking.Repositories.Credit
         //    return allFilteredLoan;
         //}
 
-        private IEnumerable<LoanViewModel> SearchTermLoan(string searchQuery)
+        private IEnumerable<LoanViewModel> SearchTermLoan(string searchQuery, int statusId = 0)
         {
             DateTime applicationDate = getApplicationDate();
 
@@ -13484,10 +13484,25 @@ namespace FintrakBanking.Repositories.Credit
                 searchQuery = searchQuery.ToUpper().Trim();
             }
             List<short> loanStatus = new List<short>();
-            loanStatus.Add((short)LoanStatusEnum.Cancelled);
-            loanStatus.Add((short)LoanStatusEnum.Terminated);
-            loanStatus.Add((short)LoanStatusEnum.Inactive);
-            loanStatus.Add((short)LoanStatusEnum.Completed);
+            if (statusId == (short)LoanStatusEnum.WriteOff)
+            {
+                loanStatus.Add((short)LoanStatusEnum.Cancelled);
+                loanStatus.Add((short)LoanStatusEnum.Terminated);
+                loanStatus.Add((short)LoanStatusEnum.Inactive);
+                loanStatus.Add((short)LoanStatusEnum.Completed);
+                loanStatus.Add((short)LoanStatusEnum.Active);
+                loanStatus.Add((short)LoanStatusEnum.Suspended);
+                loanStatus.Add((short)LoanStatusEnum.FullAndFinalWriteOff);
+            }
+            else
+            {
+                loanStatus.Add((short)LoanStatusEnum.Cancelled);
+                loanStatus.Add((short)LoanStatusEnum.Terminated);
+                loanStatus.Add((short)LoanStatusEnum.Inactive);
+                loanStatus.Add((short)LoanStatusEnum.Completed);
+                loanStatus.Add((short)LoanStatusEnum.WriteOff);
+            }
+            
 
             List<LoanViewModel> allFilteredLoan = new List<LoanViewModel>();
 
@@ -13539,22 +13554,22 @@ namespace FintrakBanking.Repositories.Credit
             {
                 allFilteredLoan.AddRange(searchResult2);
             }
-            var revolving = SearchRevolvingLoan(searchQuery).ToList();
+            var revolving = SearchRevolvingLoan(searchQuery, statusId).ToList();
             if (revolving.Count > 0)
             {
                 allFilteredLoan.AddRange(revolving);
             }
-            var contingent = SearchContigentLoan(searchQuery).ToList();
+            var contingent = SearchContigentLoan(searchQuery, statusId).ToList();
             if (contingent.Count > 0)
             {
                 allFilteredLoan.AddRange(contingent);
             }
-            var line = SearchLoanLine(searchQuery).ToList();
+            var line = SearchLoanLine(searchQuery, statusId).ToList();
             if (line.Count > 0)
             {
                 allFilteredLoan.AddRange(line);
             }
-            allFilteredLoan.AddRange(SearchSavedExternalFacility(searchQuery).ToList());
+            allFilteredLoan.AddRange(SearchSavedExternalFacility(searchQuery, statusId).ToList());
             //if (searchResult == null || searchResult.Count() < 1)
             //{
             //    searchRevolvingLoan = SearchRevolvingLoan(searchQuery).ToList();
@@ -13631,7 +13646,7 @@ namespace FintrakBanking.Repositories.Credit
         //    return allFilteredLoan;
         //}
 
-        private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery)
+        private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery, int statusId = 0)
         {
             DateTime applicationDate = getApplicationDate();
 
@@ -13640,8 +13655,20 @@ namespace FintrakBanking.Repositories.Credit
                 searchQuery = searchQuery.ToLower();
             }
             List<short> loanStatus = new List<short>();
-            loanStatus.Add((short)LoanStatusEnum.Cancelled);
-            loanStatus.Add((short)LoanStatusEnum.Terminated);
+            if (statusId == (short)LoanStatusEnum.WriteOff)
+            {
+                loanStatus.Add((short)LoanStatusEnum.Cancelled);
+                loanStatus.Add((short)LoanStatusEnum.Terminated);
+                loanStatus.Add((short)LoanStatusEnum.Active);
+                loanStatus.Add((short)LoanStatusEnum.Suspended);
+                loanStatus.Add((short)LoanStatusEnum.FullAndFinalWriteOff);
+            }
+            else
+            {
+                loanStatus.Add((short)LoanStatusEnum.Cancelled);
+                loanStatus.Add((short)LoanStatusEnum.Terminated);
+                loanStatus.Add((short)LoanStatusEnum.WriteOff);
+            }
 
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -13689,7 +13716,7 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
-        private IQueryable<LoanViewModel> SearchSavedExternalFacility(string searchQuery)
+        private IQueryable<LoanViewModel> SearchSavedExternalFacility(string searchQuery, int statusId = 0)
         {
             DateTime applicationDate = getApplicationDate();
 
@@ -14125,7 +14152,7 @@ namespace FintrakBanking.Repositories.Credit
         //    return allFilteredLoan;
         //}
 
-        private IQueryable<LoanViewModel> SearchContigentLoan(string searchQuery)
+        private IQueryable<LoanViewModel> SearchContigentLoan(string searchQuery, int statusId = 0)
         {
             DateTime applicationDate = getApplicationDate();
 
@@ -14134,8 +14161,20 @@ namespace FintrakBanking.Repositories.Credit
                 searchQuery = searchQuery.ToLower();
             }
             List<short> loanStatus = new List<short>();
-            loanStatus.Add((short)LoanStatusEnum.Cancelled);
-            loanStatus.Add((short)LoanStatusEnum.Terminated);
+            if (statusId == (short)LoanStatusEnum.WriteOff)
+            {
+                loanStatus.Add((short)LoanStatusEnum.Cancelled);
+                loanStatus.Add((short)LoanStatusEnum.Terminated);
+                loanStatus.Add((short)LoanStatusEnum.Active);
+                loanStatus.Add((short)LoanStatusEnum.Suspended);
+                loanStatus.Add((short)LoanStatusEnum.FullAndFinalWriteOff);
+            }
+            else
+            {
+                loanStatus.Add((short)LoanStatusEnum.Cancelled);
+                loanStatus.Add((short)LoanStatusEnum.Terminated);
+                loanStatus.Add((short)LoanStatusEnum.WriteOff);
+            }
 
 
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
@@ -14229,7 +14268,7 @@ namespace FintrakBanking.Repositories.Credit
         //    return allFilteredLoan;
         //}
 
-        private IQueryable<LoanViewModel> SearchLoanLine(string searchQuery)
+        private IQueryable<LoanViewModel> SearchLoanLine(string searchQuery, int statusId = 0)
         {
             if (!string.IsNullOrWhiteSpace(searchQuery)) searchQuery = searchQuery.ToUpper();
 
@@ -14594,8 +14633,8 @@ namespace FintrakBanking.Repositories.Credit
         //    return allFilteredLoan;
         //}
 
-        //public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery)
-        public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(string searchQuery)
+        public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(string searchQuery, int statusId)
+        //public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(string searchQuery)
         {
             var applicationDate = generalSetup.GetApplicationDate();
 
@@ -14607,7 +14646,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
-                allFilteredLoan = SearchTermLoan(searchQuery).ToList();
+                allFilteredLoan = SearchTermLoan(searchQuery, statusId).ToList();
               }
             else
             {
