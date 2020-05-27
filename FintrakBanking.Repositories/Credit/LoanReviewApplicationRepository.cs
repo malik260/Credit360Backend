@@ -1821,6 +1821,8 @@ namespace FintrakBanking.Repositories.Credit
                             || cu.LASTNAME.ToLower().Contains(searchString)
                             || cu.MIDDLENAME.ToLower().Contains(searchString)
                             || ca.SOURCEREFERENCENUMBER == searchString
+                            || ca.PRODUCTACCOUNTNUMBER == searchString
+                            || lp.APPLICATIONREFERENCENUMBER == searchString
                             || st.STAFFCODE == searchString)
                             && ca.LIENSTATUS == (int)LienStatusEnum.Active
 
@@ -1994,6 +1996,8 @@ namespace FintrakBanking.Repositories.Credit
                                         || cu.LASTNAME.ToLower().Contains(searchString)
                                         || cu.MIDDLENAME.ToLower().Contains(searchString)
                                         || ca.SOURCEREFERENCENUMBER == searchString
+                                        || ca.PRODUCTACCOUNTNUMBER == searchString
+                                        || lp.APPLICATIONREFERENCENUMBER == searchString
                                         || st.STAFFCODE == searchString)
                                         && ca.LIENTYPEID == (int)LienStatusEnum.Active
 
