@@ -851,7 +851,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 List<CurrentCustomerExposure> exposures;
                 exposures = GetGlobalCustomerExposureByCurrency();
                 var currencyLimit = context.TBL_CURRENCY_LIMIT.Where(x=>x.DELETED == false).FirstOrDefault();
-                double maxLimit = (float)currencyLimit.CURRENCYLIMITVALUE;
+                double maxLimit = (float?)currencyLimit.CURRENCYLIMITVALUE ?? 0;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
                 models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
                
@@ -866,7 +866,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             {
                 exposures = GetGroupCustomerGlobalExposureByGroupFirstTwenty();
                 var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false && x.LIMITNUMBER == 20).FirstOrDefault();
-                double maxLimit = (float)groupLimit.GROUPLIMITVALUE;
+                double maxLimit = (float?)groupLimit.GROUPLIMITVALUE ?? 0;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
                 models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
             }
@@ -881,7 +881,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             {
                 exposures = GetGroupCustomerGlobalExposureByGroupFirstHundred();
                 var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false && x.LIMITNUMBER == 100).FirstOrDefault();
-                double maxLimit = (float)groupLimit.GROUPLIMITVALUE;
+                double maxLimit = (float?)groupLimit.GROUPLIMITVALUE ?? 0;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
                 models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
             }
