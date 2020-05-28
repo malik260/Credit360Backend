@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
 using FintrakBanking.Interfaces.Setups.General;
+using System.Globalization;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -547,8 +548,9 @@ namespace FintrakBanking.APICore.Controllers
                 entity.casaLienAccountId = Convert.ToInt32(provider.FormData["casaLienAccountId"]);
                 entity.loanReferenceNumber = provider.FormData["loanReferenceNumber"];
                 entity.overwrite = provider.FormData["overwrite"] == "true";
-                entity.requestDate = Convert.ToDateTime(provider.FormData["requestDate"]);
-
+                var requestDate = provider.FormData["requestDate"];
+                var actualrequestDate = requestDate.Substring(0, 15);
+                entity.requestDate = DateTime.ParseExact(actualrequestDate, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;

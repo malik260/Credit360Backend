@@ -17634,6 +17634,14 @@ namespace FintrakBanking.Repositories.Credit
 
             if (existing != null && model.overwrite == false) return 3;
 
+            var validate = context.TBL_LIEN_REMOVAL.Where(x => x.LOANREFERENCENUMBER == model.loanReferenceNumber 
+                                                          && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending 
+                                                          || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)).FirstOrDefault();
+            if(validate != null)
+            {
+                throw new SecureException("Request already exist and under going approval");
+            }
+
             using (TransactionScope transactionScope = new TransactionScope())
             {
 
