@@ -1559,13 +1559,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     reciever = context.TBL_STAFF.Find(this.toStaffId);
                     recipientName = reciever.FIRSTNAME;
-                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.DELETED == false).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
+                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
                 }
                 else if (this.loopedStaffId != null)
                 {
                     reciever = context.TBL_STAFF.Find(this.loopedStaffId);
                     recipientName = reciever.FIRSTNAME;
-                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && DateTime.Now <= x.ENDDATE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
+                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                 }
                 else
                 {
