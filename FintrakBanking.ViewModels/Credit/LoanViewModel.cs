@@ -721,6 +721,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public CamProcessedLoanViewModel()
+        {
+            bookedLoanData = new LoanViewModel();
+            bookedRevolvingFacilityData = new RevolvingLoanViewModel();
+        }
+
         public bool isLineMaintained { get; set; }
 
         public bool? isLineFacility { get; set; }
