@@ -1538,7 +1538,6 @@ namespace FintrakBanking.Repositories.Credit
             bool cleared = OfferLetterChecklistValidation(loanApplicationDetails.LOANAPPLICATIONID, 1);
             if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
             
-            throw new SecureException("");
             if (entity.casaAccountId2 == 0) entity.casaAccountId2 = null;
             if (entity.casaAccountId == 0) entity.casaAccountId = null;
             var request = new TBL_LOAN_BOOKING_REQUEST
