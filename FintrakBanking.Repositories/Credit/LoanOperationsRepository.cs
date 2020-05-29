@@ -16288,53 +16288,53 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel GetRunningLoans(int companyId, string refNo)
         {
             var applicationDate = generalSetup.GetApplicationDate();
+           
+                var data = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId);
+                DateTime maturityDate = data.MATURITYDATE;
+                DateTime effectiveDate = data.EFFECTIVEDATE;
+                //decimal outStandingBalance = data.OUTSTANDINGPRINCIPAL;
+                TimeSpan difference = maturityDate - applicationDate;
+                int days = (int)difference.TotalDays;
+                //decimal accruedInterest = 0;
+                //var accInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY
+                //                   where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.DATE == applicationDate
+                //                   select a).FirstOrDefault();
+                //if (accInterest != null)
+                //{
+                //    accruedInterest = accInterest.ACCRUEDINTEREST;
+                //}
+                //else
+                //{
+                //    //throw new SecureException("Application Date not found in Payment Schedule");
+                //    //accruedInterest = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select();
+                //}
 
-            var data = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId);
-            DateTime maturityDate = data.MATURITYDATE;
-            DateTime effectiveDate = data.EFFECTIVEDATE;
-            //decimal outStandingBalance = data.OUTSTANDINGPRINCIPAL;
-            TimeSpan difference = maturityDate - applicationDate;
-            int days = (int)difference.TotalDays;
-            //decimal accruedInterest = 0;
-            //var accInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY
-            //                   where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.DATE == applicationDate
-            //                   select a).FirstOrDefault();
-            //if (accInterest != null)
-            //{
-            //    accruedInterest = accInterest.ACCRUEDINTEREST;
-            //}
-            //else
-            //{
-            //    //throw new SecureException("Application Date not found in Payment Schedule");
-            //    //accruedInterest = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select();
-            //}
+                //accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
+                //DateTime nextPaymentDate = DateTime.Now;
+                //var paymentDate = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
+                //                   where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.PAYMENTDATE >= applicationDate
+                //                   select a).FirstOrDefault();
 
-            //accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
-            //DateTime nextPaymentDate = DateTime.Now;
-            //var paymentDate = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
-            //                   where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.PAYMENTDATE >= applicationDate
-            //                   select a).FirstOrDefault();
-
-            //if (paymentDate != null)
-            //{
-            //    nextPaymentDate = paymentDate.PAYMENTDATE;
-            //}
-            //else
-            //{
-            //    throw new SecureException("Application Date not found in Payment Schedule");
-            //}
+                //if (paymentDate != null)
+                //{
+                //    nextPaymentDate = paymentDate.PAYMENTDATE;
+                //}
+                //else
+                //{
+                //    throw new SecureException("Application Date not found in Payment Schedule");
+                //}
 
 
-            //outStandingBalance = decimal.Round(outStandingBalance, 2, MidpointRounding.AwayFromZero);
+                //outStandingBalance = decimal.Round(outStandingBalance, 2, MidpointRounding.AwayFromZero);
 
-            //decimal pastDue = decimal.Round((data.PASTDUEINTEREST + data.INTERESTONPASTDUEINTEREST + data.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
-            //decimal pastDuePrincipal = decimal.Round((data.PASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
+                //decimal pastDue = decimal.Round((data.PASTDUEINTEREST + data.INTERESTONPASTDUEINTEREST + data.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
+                //decimal pastDuePrincipal = decimal.Round((data.PASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
 
-            //decimal totalamount = (accruedInterest + outStandingBalance + pastDue + pastDuePrincipal);
-            decimal totalamount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.BALANCE).FirstOrDefault();
-            decimal? writtenOffAccruedAmount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.WRITTENOFFACCRUALAMOUNT).FirstOrDefault();
+                //decimal totalamount = (accruedInterest + outStandingBalance + pastDue + pastDuePrincipal);
+                decimal totalamount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.BALANCE).FirstOrDefault();
+                decimal? writtenOffAccruedAmount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.WRITTENOFFACCRUALAMOUNT).FirstOrDefault();
 
-            var runningLoan = (from l in context.TBL_LOAN
+                var runningLoan = (from l in context.TBL_LOAN
                                where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo //&& l.LOANSTATUSID == (short)LoanStatusEnum.Active
                                select new LoanViewModel()
                                {
@@ -16383,14 +16383,15 @@ namespace FintrakBanking.Repositories.Credit
                                }).FirstOrDefault();
 
 
-            //var validate = GetRepaymentDate(runningLoan.loanId);
+                //var validate = GetRepaymentDate(runningLoan.loanId);
 
-            //if (validate == true)
-            //{
-            //    runningLoan.previousEffectiveDate = runningLoan.previousEffectiveDate.AddDays(1);
-            //}
-
+                //if (validate == true)
+                //{
+                //    runningLoan.previousEffectiveDate = runningLoan.previousEffectiveDate.AddDays(1);
+                //}
+            
             return runningLoan;
+          
         }
         public List<LoanPaymentSchedulePeriodicViewModel> GeneratePrepaymentSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
@@ -17491,8 +17492,8 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                     result = false;
-
-                    if (model.fees.Count() > 0)
+                    
+                    if (model.fees != null && model.fees.Count() > 0)
                     {
                         LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17565,7 +17566,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     result = false;
 
-                    if (model.fees.Count() > 0)
+                    if (model.fees != null && model.fees.Count() > 0)
                     {
                         LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 

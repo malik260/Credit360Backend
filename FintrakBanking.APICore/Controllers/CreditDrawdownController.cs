@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Common.Extensions;
 using FintrakBanking.ViewModels.Credit;
 using System.Collections.Generic;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -109,15 +110,20 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
             }
 
-
-            var response = repo.AddLoanBookingRequest(applicationId, models);
-            if (response != null)
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = response.responseMessage });
+                var response = repo.AddLoanBookingRequest(applicationId, models);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = response.responseMessage });
+                }
+            }
+            catch(SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,  new { success = false, message = ex.Message });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
-
                 new { success = false, message = "Initiating Drawdown Request was unsuccessful!" });
 
         }

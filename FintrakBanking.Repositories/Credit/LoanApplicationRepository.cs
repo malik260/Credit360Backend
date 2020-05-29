@@ -7094,19 +7094,18 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach(var facility in details)
                 {
-                    // sector limits
-                    // sectorId here is actually the subsectorId
-                    //List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
-                    //foreach (var sectorId in sectorIds)
-                    //{
-                    var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
-                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                    //decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                    //decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
-                    //if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
-                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
+                    if (facility != null)
+                    {
+                        var sectorId = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
+                        var setcorName = context.TBL_SECTOR.Find(sectorId.SECTORID).NAME ?? "N/A";
+                        var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
+                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                        decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                        decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
+                        if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + setcorName + " exceeded!");
+                        //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
 
-                    //}
+                    } 
                 }
 
             }

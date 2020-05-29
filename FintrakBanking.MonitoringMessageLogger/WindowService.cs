@@ -67,7 +67,7 @@ namespace FintrakBanking.MonitoringMessageLogger
                     kernel.Load(Assembly.GetExecutingAssembly());
                     var alert = kernel.Get<IAlertRepository>();
                     bool response = alert.validateAlertCheck();
-                    
+
                     if (response == true)
                         {
                             _log.Info("");
