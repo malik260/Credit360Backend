@@ -4581,7 +4581,14 @@ namespace FintrakBanking.Repositories.Credit
                                 dynamicMessage = "Loan has been successfully disbursed " + loanBrief;
                                 LogEmailAlert(dynamicMessage, "LOAN DISBURSEMENT, TERM LOAN HAS BEEN SUCCESSFULLY DISBURSED", alert.receiverEmailList, "10023", 10023, "TermLoanDisbursement");
                             }
-                            
+
+                            if (CustomerIsDirector(appDetail.CUSTOMERID))
+                            {
+                                var alertDetail = context.TBL_ALERT_TITLE.Where(x=>x.BINDINGMETHOD == "GetEnhancedDisbursementToDirectorsNotification").FirstOrDefault();
+                                alert.receiverEmailList.Add(alertDetail.DEFAULTEMAIL);
+                                LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetEnhancedDisbursementToDirectorsNotification");
+                            }
+
                             return 2;
                         }
                         else return 3;
@@ -4595,6 +4602,18 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        private bool CustomerIsDirector(int? customerId)
+        {
+            if (customerId == null || customerId == 0)
+            {
+                return false;
+            }
+            var bvn = context.TBL_CUSTOMER.Find(customerId).CUSTOMERBVN;
+            if (String.IsNullOrEmpty(bvn) || String.IsNullOrEmpty(bvn)) return false;
+            var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
+            if (isDirector) return isDirector;
+            return false;
+        }
 
         private bool ApproveLoanBooking(int loanId, int loanBookingRequestId, short approvalStatusId, ApprovalViewModel user, bool isManual)
         {

@@ -27,7 +27,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
-        private ILoanArchiveRepository loanArchive;
+        //private ILoanArchiveRepository loanArchive;
 
         private string onePercent = "1%";
         private string onePointFivePercent = "1.5%";
@@ -51,15 +51,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
 
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
-                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository,
-                                ILoanArchiveRepository _loanArchive)
+                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository
+                                )
         {
             this.context = _context;
             this.context2 = _context2;
             this.audit = _audit;
             this.general = _general;
             this.externalAlertRepository = _externalAlertRepository;
-            this.loanArchive = _loanArchive;
+            //this.loanArchive = _loanArchive;
+            //ILoanArchiveRepository _loanArchive
         }
 
         #region other code logic
@@ -914,49 +915,49 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool validateAlertCheck()
         {
             bool state = false;
+            GetEnhancedDisbursementToDirectorsNotification();
+            //GetDigitalLoanExceptionNPLIncrease();
+            //GetDigitalLoanExceptionNPLDecrease();
+            //GetDigitalLoanExceptionNPLModuleIncrease();
+            //GetDigitalLoanExceptionNPLModuleDecrease();
+            //GetDigitalLoanDisbursementIncrease();
+            //GetDigitalLoanDisbursementDecrease();
+            //GetDigitalLoanDisbursementModuleIncrease();
+            //GetDigitalLoanDisbursementModuleDecrease();
+            //GetDigitalLoanDPDIncrease();
+            //GetDigitalLoanDPDDecrease();
+            //GetDigitalLoanDPDModuleIncrease();
+            //GetDigitalLoanDPDModuleDecrease();
+            //GetDigitalLoanLiquidationIncrease();
+            //GetDigitalLoanLiquidationModuleIncrease();
+            state = true;
+            //if (CompareDate() == true)
+            //{
+            //    TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
+            //    TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
+
+
+            //    TimeSpan now = DateTime.Now.TimeOfDay;
+
+            //    if ((now >= start) && (now <= end))
+            //    {
+            //        GroupImminentMaturitiesByGroupHeads();
+            //        GetImminentMaturities();
+            //        GetPastDueObligationsReminder();
+            //        GetPastDueObligationsReminderByGroupHeads();
+            //        state = true;
+            //    }
+            /*TimeSpan archiveStart = new TimeSpan(20, 0, 0); //8 o'pm
+             TimeSpan archiveEnd = new TimeSpan(21, 0, 0); //11 o'pm
+             else if ((now >= archiveStart) && (now <= archiveEnd))
+             {
+                ProcessLoanArchive();
+             } */
+            //}
+
+
             /*
-            GetDigitalLoanExceptionNPLIncrease();
-            GetDigitalLoanExceptionNPLDecrease();
-            GetDigitalLoanExceptionNPLModuleIncrease();
-            GetDigitalLoanExceptionNPLModuleDecrease();
-            GetDigitalLoanDisbursementIncrease();
-            GetDigitalLoanDisbursementDecrease();
-            GetDigitalLoanDisbursementModuleIncrease();
-            GetDigitalLoanDisbursementModuleDecrease();
-            GetDigitalLoanDPDIncrease();
-            GetDigitalLoanDPDDecrease();
-            GetDigitalLoanDPDModuleIncrease();
-            GetDigitalLoanDPDModuleDecrease();
-            GetDigitalLoanLiquidationIncrease();
-            GetDigitalLoanLiquidationModuleIncrease();
-            */
-            if (CompareDate() == true)
-            {
-                TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
-                TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
-
-                 
-                TimeSpan now = DateTime.Now.TimeOfDay;
-
-                if ((now >= start) && (now <= end))
-                {
-                    GroupImminentMaturitiesByGroupHeads();
-                    GetImminentMaturities();
-                    GetPastDueObligationsReminder();
-                    GetPastDueObligationsReminderByGroupHeads();
-                    state = true;
-                }
-                /*TimeSpan archiveStart = new TimeSpan(20, 0, 0); //8 o'pm
-                 TimeSpan archiveEnd = new TimeSpan(21, 0, 0); //11 o'pm
-                 else if ((now >= archiveStart) && (now <= archiveEnd))
-                 {
-                    ProcessLoanArchive();
-                 } */
-            }
-
-            return state;
-
-            /*GetLoanExpirationReminder(); 
+            GetLoanExpirationReminder(); 
             GetUnpaidObligationReminder();
             GetLoanRepaymentReminder();
             GetImminentMaturitiesAlertEmail();
@@ -980,7 +981,7 @@ namespace FintrakBanking.Repositories.Setups.General
             GetImminentObligationMaturityFacilityNotification();
             GetNplOnCreditPortfolio();
             GetLoanExpirationReminderAccountOfficer();*/
-            
+            return state;
         }
 
         private bool CompareDate()
@@ -2840,6 +2841,14 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
+        public void GetEnhancedDisbursementToDirectorsNotification()
+        {
+            AlertsViewModel alert = new AlertsViewModel();
+            var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetEnhancedDisbursementToDirectorsNotification").FirstOrDefault();
+            alert.receiverEmailList.Add(alertDetail.DEFAULTEMAIL);
+            LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetEnhancedDisbursementToDirectorsNotification");
+        }
+
         #region other code logic
         //public void validateAlertCheck()
         //{
@@ -3006,7 +3015,7 @@ namespace FintrakBanking.Repositories.Setups.General
             try
             {
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject +" ALERT";
+                string messageSubject = alertSubject +" TEST ALERT";
                 string messageContent = messageBody;
                 //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
                 //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 
