@@ -4006,34 +4006,36 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in bookedDataRecord)
             {
-
                 var applicationRecord = data.Where(x => x.staffId == staffId && x.companyId == companyId && x.loanApplicationDetailId == item.loanApplicationDetailId && x.loanBookingRequestId == item.loanBookingRequestId).FirstOrDefault();
-                if (!applicationRecord.customerAvailableAmount.HasValue)
-                    applicationRecord.customerAvailableAmount = item.approvedAmount;
 
                 if (applicationRecord != null)
-                    {
-                        applicationRecord.bookedLoanData = item;
-                        applicationRecord.applicationReferenceNumber = item.applicationReferenceNumber;
-                        applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
-                        data.Add(applicationRecord);
+                {
+                    if (!applicationRecord.customerAvailableAmount.HasValue) { 
+                        applicationRecord.customerAvailableAmount = item.approvedAmount;
                     }
+
+                    applicationRecord.bookedLoanData = item;
+                    applicationRecord.applicationReferenceNumber = item.applicationReferenceNumber;
+                    applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
+                    data.Add(applicationRecord);
+                }
             }
 
             foreach (var item in revolvingFacilityRecord)
             {
                 var applicationRecord = data.Where(x => x.staffId == staffId && x.companyId == companyId && x.loanApplicationDetailId == item.loanApplicationDetailId && x.loanBookingRequestId == item.loanBookingRequestId).FirstOrDefault();
 
-                if (!applicationRecord.customerAvailableAmount.HasValue)
-                    applicationRecord.customerAvailableAmount = item.approvedAmount;
-
                 if (applicationRecord != null)
-                    {
-                        applicationRecord.bookedRevolvingFacilityData = item;
-                        applicationRecord.applicationReferenceNumber = item.applicationReferenceNumber;
-                        applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
-                        data.Add(applicationRecord);
+                {
+                    if (!applicationRecord.customerAvailableAmount.HasValue) { 
+                        applicationRecord.customerAvailableAmount = item.approvedAmount;
                     }
+
+                    applicationRecord.bookedRevolvingFacilityData = item;
+                    applicationRecord.applicationReferenceNumber = item.applicationReferenceNumber;
+                    applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
+                    data.Add(applicationRecord);
+                }
             }
 
             return data;
