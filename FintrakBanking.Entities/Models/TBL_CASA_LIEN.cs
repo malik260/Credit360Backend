@@ -49,7 +49,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public int? LIENSTATUS { get; set; }
+        public int LIENSTATUS { get; set; }
         
     }
 }
