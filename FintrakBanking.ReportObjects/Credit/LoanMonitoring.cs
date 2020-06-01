@@ -246,6 +246,29 @@ namespace FintrakBanking.ReportObjects.Credit
                                                      userPrudentialGuidelineStatusId = b.USER_PRUDENTIAL_GUIDE_STATUSID,
                                                  }).ToList();
 
+                List<LoanViewModel> externalLoans = (from x in context.TBL_LOAN_EXTERNAL
+                                                        join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on x.USER_PRUDENTIAL_GUIDE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID //b.EXT_PRUDENT_GUIDELINE_STATUSID
+                                                        join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                                        join t in context.TBL_CUSTOMER_TYPE on c.CUSTOMERTYPEID equals t.CUSTOMERTYPEID
+                                                        join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
+                                                        select new LoanViewModel
+                                                        {
+                                                            applicationReferenceNumber = x.RELATED_LOAN_REFERENCE_NUMBER,
+                                                            loanReferenceNumber = x.LOANREFERENCENUMBER,
+                                                            // bookingDate = b.BOOKINGDATE,
+                                                            //disburseDate = b.DISBURSEDATE,
+                                                            //nplDate = (DateTime?)b.NPLDATE,
+                                                            loanTypeName = t.NAME,
+                                                            externalPrudentialGuidelineStatus = e.STATUSNAME,
+                                                            productName = p.PRODUCTNAME,
+                                                            effectiveDate = x.EFFECTIVEDATE,
+                                                            maturityDate = x.MATURITYDATE,
+                                                            outstandingPrincipal = x.OUTSTANDINGPRINCIPAL,
+                                                            pastDueTotal = x.PASTDUEINTEREST + x.PASTDUEPRINCIPAL + x.INTERESTONPASTDUEINTEREST + x.INTERESTONPASTDUEPRINCIPAL,
+                                                            userPrudentialGuidelineStatusId = x.USER_PRUDENTIAL_GUIDE_STATUSID,
+                                                    }).ToList();
+
+
                 //List<LoanViewModel> overdraft = (from a in context.TBL_LOAN_APPLICATION
                 //                              join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                 //                                 //join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
@@ -296,10 +319,12 @@ namespace FintrakBanking.ReportObjects.Credit
 
                 if (classification == -1)
                 {
+                    termloanstwo.AddRange(externalLoans);
                     return termloanstwo;
                 }
                 else
                 {
+                    termloans.AddRange(externalLoans);
                     return termloans;
                 }
             }

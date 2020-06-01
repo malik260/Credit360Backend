@@ -1019,8 +1019,8 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
                 }
+                
                 context.SaveChanges();
-
 
                 int lastStatusId = workflow.StatusId;
                 if (currentOperationType == (short)OperationsEnum.LoanReviewApprovalAvailment) appl.APPROVALSTATUSID = (short)lastStatusId;
@@ -1032,7 +1032,10 @@ namespace FintrakBanking.Repositories.Credit
                         short nextOperatioId = 0;
                         var flowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == model.operationId).FirstOrDefault();
                         var defaultFlowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == 0).FirstOrDefault();
-                        if (model.operationId == (short)OperationsEnum.LoanReviewApprovalAvailment) appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                        if (model.operationId == (short)OperationsEnum.LoanReviewApprovalAvailment)
+                        {
+                            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                        }
 
                         if (flowOrder == null)
                         {
@@ -1699,7 +1702,7 @@ namespace FintrakBanking.Repositories.Credit
                                         customerCode = c.GROUPCODE,
                                         referenceNumber = a.APPLICATIONREFERENCENUMBER,
                                         applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                        loanApplicationIdForOperation = l != null ? l.TERMLOANID : r != null ? r.REVOLVINGLOANID : c != null ? cg.CONTINGENTLOANID : 0,
+                                        loanApplicationIdForOperation = d.LOANID,
                                         loanApplicationId = a.LOANAPPLICATIONID,
                                         
                                         customerId = a.CUSTOMERID,
@@ -1737,7 +1740,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (x.approvalStatusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    var operationRec = context.TBL_LOAN_REVIEW_OPERATION.Where(op => op.LOANID == x.loanApplicationIdForOperation && x.loanApplicationIdForOperation != 0).FirstOrDefault();
+                    var operationRec = context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(op => op.LOANID == x.loanApplicationIdForOperation);
                     if(operationRec != null)
                     {
                         var appRecord2 = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == operationRec.LOANREVIEWOPERATIONID && operations2.Contains(o.OPERATIONID)).OrderByDescending(r => r.APPROVALTRAILID).FirstOrDefault();
