@@ -1088,7 +1088,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
-            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (this.fromLevelId == null && !businessRoleIds.Contains(fromStaff.STAFFROLEID)))
+            //if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (this.fromLevelId == null && !businessRoleIds.Contains(fromStaff.STAFFROLEID)))
+            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (!businessRoleIds.Contains(fromStaff.STAFFROLEID)))
             {
                 return null;
             }
@@ -1213,9 +1214,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool IsLastApprover(TBL_APPROVAL_LEVEL level)
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId).ToList();
-            if (IsLastLevel(approvalLevels, level) && (level.CANAPPROVE))
-            //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
-            {
+            if (IsLastLevel(approvalLevels, level))
+            //if (IsLastLevel(approvalLevels, level) && (level.CANAPPROVE))
+                //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
+                {
                 return true;
             }
                 return false;

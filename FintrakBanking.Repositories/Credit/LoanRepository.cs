@@ -8442,6 +8442,8 @@ namespace FintrakBanking.Repositories.Credit
                                        loanApplicationId = m.LOANAPPLICATIONID,
                                        operationId = m.OPERATIONID,
                                        loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                       isLineFacility = d.ISLINEFACILITY,
+                                       isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
                                        applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                        applicationStatusId = m.APPLICATIONSTATUSID,
                                        customerId = d.CUSTOMERID,
@@ -8773,7 +8775,8 @@ namespace FintrakBanking.Repositories.Credit
                                        bookingAmountRequested = s.AMOUNT_REQUESTED,
                                        loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                                        bookingRequestStatusId = s.APPROVALSTATUSID,
-                                       isLineFacility = context.TBL_PRODUCT.Where(x => x.PRODUCTID == d.APPROVEDPRODUCTID && x.ISFACILITYLINE == true).Any(),
+                                       isLineFacility = d.ISLINEFACILITY,
+                                       isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
                                        isLineMaintained = m.APPROVEDLINESTATUSID != null,
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
@@ -9103,7 +9106,7 @@ namespace FintrakBanking.Repositories.Credit
                         orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
-                            isLineFacility =  context.TBL_PRODUCT.Where(x=>x.PRODUCTID == d.APPROVEDPRODUCTID && x.ISFACILITYLINE == true).Any(),
+                            isLineFacility = d.ISLINEFACILITY,
                             isLineMaintained = m.APPROVEDLINESTATUSID != null,
                             bookingAmountRequested = s.AMOUNT_REQUESTED,
                             loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
@@ -9116,6 +9119,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatusId = (short)m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                            isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                             applicationStatusId = m.APPLICATIONSTATUSID,
                             casaAccountId = s.CASAACCOUNTID,
@@ -12778,6 +12782,7 @@ namespace FintrakBanking.Repositories.Credit
                                        branchName = br.BRANCHNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       isLineFacility = ld.ISLINEFACILITY,
                                        loanApplicationId = lp.LOANAPPLICATIONID,
                                        productTypeId = pr.PRODUCTTYPEID,
                                        productName = pr.PRODUCTNAME,
