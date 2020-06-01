@@ -42,6 +42,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isNewApplication { get; set; }
         public bool closeApplication { get; set; }        
         public int loanApplicationId { get; set; }
+        public int? loanApplicationIdForOperation { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
