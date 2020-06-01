@@ -2957,7 +2957,181 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/getSignatory/{referenceNumber}")]
+        public HttpResponseMessage GetSignatory([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanApplicationSignatory(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/generate-offerletter/{referenceNumber}")]
+        public HttpResponseMessage GenerateOfferLetter([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GenerateOfferLetter(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-loan-collateral/{referenceNumber}")]
+        public HttpResponseMessage GetLoanCollateral([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanCollateral(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-application-fee/{referenceNumber}")]
+        public HttpResponseMessage GetLoanApplicationFee([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanApplicationFee(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-application-detail/{referenceNumber}")]
+        public HttpResponseMessage GetLoanApplicationDetail([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanApplicationDetail(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-application-condition-precedent/{referenceNumber}")]
+        public HttpResponseMessage GetLoanApplicationConditionPrecident([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanApplicationConditionPrecident(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-application-condition-subsequent/{referenceNumber}")]
+        public HttpResponseMessage GetLoanApplicationConditionSubsequent([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanApplicationConditionSubsequent(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/prepare-offerletter-template/{referenceNumber}")]
+        public HttpResponseMessage PrepareOfferLetterTemplate([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.PrepareOfferLetterTemplate(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/offerletter-placeholders/{referenceNumber}")]
+        public HttpResponseMessage PopulateOfferLetterPlaceholders([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.PrepareOfferLetterTemplate(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-lease-facility/{referenceNumber}")]
+        public HttpResponseMessage GetLeaseFacility([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLeaseFacility(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/los-condition-dynamics/{referenceNumber}")]
+        public HttpResponseMessage Los_ConditionDynamics([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.Los_ConditionDynamics(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-deferralwaiver-memo-pdf/{operationId}/{targetId}/{loanApplicationDetailId}")]
