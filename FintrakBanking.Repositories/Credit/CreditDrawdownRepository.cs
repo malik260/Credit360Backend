@@ -345,8 +345,11 @@ namespace FintrakBanking.Repositories.Credit
                     join coy in context.TBL_COMPANY on m.COMPANYID equals coy.COMPANYID
                     join p in context.TBL_PRODUCT on req.PRODUCTID equals p.PRODUCTID
                     join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                    join cust2 in context.TBL_CUSTOMER on req.CUSTOMERID equals cust2.CUSTOMERID into reqCust
                     join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                     join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+                    from cust2 in reqCust.DefaultIfEmpty()
+                    let customer = cust2 != null ? cust2 : cust
                     where operationIds.Contains(atrail.OPERATIONID)
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                             && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
@@ -370,22 +373,24 @@ namespace FintrakBanking.Repositories.Credit
                         approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                         loanApplicationId = m.LOANAPPLICATIONID,
                         loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                        isLineFacility = d.ISLINEFACILITY,
+                        isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
                         applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                         applicationStatusId = m.APPLICATIONSTATUSID,
                         appraisalOperationId = m.OPERATIONID,
                         operationId = atrail.OPERATIONID,
                         requestedAmount = req.AMOUNT_REQUESTED,
-                        customerId = d.CUSTOMERID,
-                        customerCode = cust.CUSTOMERCODE,
+                        customerId = customer.CUSTOMERID,
+                        customerCode = customer.CUSTOMERCODE,
                         systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
-                        customerName = cust.FIRSTNAME + " " + cust.MIDDLENAME + " " + cust.LASTNAME,
+                        customerName = customer.FIRSTNAME + " " + customer.MIDDLENAME + " " + customer.LASTNAME,
                         customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                         customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                         customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
                         isRelatedParty = m.ISRELATEDPARTY,
-                        customerSensitivityLevelId = cust.CUSTOMERSENSITIVITYLEVELID,
-                        customerOccupation = cust.OCCUPATION,
-                        customerType = cust.TBL_CUSTOMER_TYPE.NAME,
+                        customerSensitivityLevelId = customer.CUSTOMERSENSITIVITYLEVELID,
+                        customerOccupation = customer.OCCUPATION,
+                        customerType = customer.TBL_CUSTOMER_TYPE.NAME,
                         isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                         isInvestmentGrade = m.ISINVESTMENTGRADE,
                         companyId = m.COMPANYID,
@@ -805,6 +810,7 @@ namespace FintrakBanking.Repositories.Credit
                              loanBookingRequestId = 0,
                              approvalTrailId = 0,
                              isLineFacility = d.ISLINEFACILITY,
+                             isLineFacilityString = d.ISLINEFACILITY.HasValue ? d.ISLINEFACILITY.Value ? "Yes" : "No" : "No",
                              isLineMaintained = a.APPROVEDLINESTATUSID != null,
                              customerTypeId = (int)context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == d.CUSTOMERID).Select(s=>s.CUSTOMERTYPEID).FirstOrDefault(),
                              appraisalOperationId = a.OPERATIONID,
