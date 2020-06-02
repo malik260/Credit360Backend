@@ -393,6 +393,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int casaLienAccountId { get; set; }
         public int lienRemovalId { get; set; }
         public int lienRemovalOperationId { get; set; }
+        public int unfreezeLienAccountId { get; set; }
     }
 
 
