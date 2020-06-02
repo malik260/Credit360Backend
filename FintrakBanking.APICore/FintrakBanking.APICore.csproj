@@ -345,6 +345,7 @@
     <Compile Include="Controllers\CashBackController.cs" />
     <Compile Include="Controllers\CashFlowLendingController.cs" />
     <Compile Include="Controllers\CollateralValuationController.cs" />
+    <Compile Include="Controllers\CreditDrawdownController.cs" />
     <Compile Include="Controllers\DeferredFeeController.cs" />
     <Compile Include="Controllers\DocumentCategoryController.cs" />
     <Compile Include="Controllers\DocumentCategoryTypeController.cs" />
@@ -503,6 +504,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ReportDataSet.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportDataset\TransactionDataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TransactionDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.cs">
       <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
@@ -1421,7 +1427,6 @@
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Power Report - 2019-05-08.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Telecommunications Report - 2019-03-13.pdf" />
     <Content Include="libman.json" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -1451,6 +1456,7 @@
     <Content Include="Reports\Credit\OfferLetterGeneration\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Reports\Credit\OfferLetterGeneration\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit.Designer.cs</LastGenOutput>
@@ -1753,6 +1759,7 @@
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="CFLAuthentication\App_Data\" />
+    <Folder Include="Views\Testing\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">

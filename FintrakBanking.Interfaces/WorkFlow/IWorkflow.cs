@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.Interfaces.WorkFlow
 {
     public interface IWorkflow
     {
         int OperationId { set; }
+        TBL_APPROVAL_TRAIL ApprovalTrail { get; set; }
+        int? BusinessUnitId { get; set; }
         int? DestinationOperationId { get; set; }
         bool IsFlowTest { get; set; }
         int? ExclusiveFlowChangeId { get; set; }
@@ -40,6 +43,9 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool Saved { get; }
         float? InterestRateConcession { set; }
         float? FeeRateConcession { set; }
+        bool? IsFromPc { set; }
+        string Flow_log { set; }
+        bool SkipLimitsCheck { set; }
 
         AlertPlaceholders Placeholders { set; }
         WorkflowResponse Response { get; set; }
@@ -56,7 +62,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
                 bool external,
                 bool deferred,
                 bool sameDesk = false,
-                bool isFlowTest = false
+                bool isFlowTest = false,
+                int? businessUnitId = null
             );
    
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
@@ -75,9 +82,11 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public string nextPersonName { get; set; }
 
         public string nextOperationName { get; set; }
+        public string responseMessage { get; set; }
         public bool success { get; set; }
         public int? fromLevelId { get; set; }
         public bool isFinal { get; set; }
+        public int? businessUnitId { get; set; }
     }
 
     public class AlertPlaceholders

@@ -432,13 +432,10 @@ namespace FintrakBanking.Repositories.Finance
                 endOfDay.CREATEDBY = staffId;
                 endOfDay.STARTDATETIME = DateTime.Now;
                 endOfDay.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
-            }
 
-
-            if (endOfDay.COMPANYID != 0)
-            {
                 context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
                 context.SaveChanges();
+                
             }
 
             using (TransactionScope transactionScope = new TransactionScope())
@@ -1069,8 +1066,13 @@ namespace FintrakBanking.Repositories.Finance
 
             var eodOperationProcesses = (from e in context.TBL_EOD_OPERATION_LOG
                                          join f in context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION) on e.EODOPERATIONID equals f.EODOPERATIONID
-                                         where e.COMPANYID == companyId && e.EODDATE == dateChange && (e.EODSTATUSID == (int)EodOperationStatusEnum.Processing
-                                         && e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingForceDebit || e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue || e.EODOPERATIONID == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover)
+                                         where e.COMPANYID == companyId && e.EODDATE == dateChange
+                                         && 
+                                         (e.EODSTATUSID == (int)EodOperationStatusEnum.Processing
+                                         && 
+                                         (e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingForceDebit 
+                                         || e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue 
+                                         || e.EODOPERATIONID == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover))
                                          select new FinanceEndofdayViewModel()
                                          {
                                              eodOperationLogId = e.EODOPERATIONLOGID,
@@ -1081,7 +1083,7 @@ namespace FintrakBanking.Repositories.Finance
                                          }).ToList();
 
 
-            if (eodOperationProcesses != null)
+            if (eodOperationProcesses.Count() > 0)
             {
 
 

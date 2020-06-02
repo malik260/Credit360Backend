@@ -58,9 +58,23 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public bool isAvailmentChecklist { get; set; }
     }
 
+    public class CheckListScores : GeneralEntity
+    {
+        public int checkListStatusId { get; set; }
+        public int checklistScoresId { get; set; }
+        public int? esgChecklistDefinitionId { get; set; }
+        public string grade { get; set; }
+        public int gradeScore { get; set; }
+        public int checkListTypeId { get; set; }
+        public string scoreWeight { get; set; }
+        public string colourCode { get; set; }
+        public string checklistStatusName { get; set; }
+    }
+
     public class ChecklistItemViewModel : GeneralEntity
     {
         public int checkListItemId { get; set; }
+        public int checkListTypeId { get; set; }
         public string checkListItemName { get; set; }
         public short responseTypeId { get; set; }
         public string responseTypeName { get; set; }
@@ -70,6 +84,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
     public class CheckListStatusViewModel
     {
         public short responseTypeId { get; set; }
+        public int checkListScoresId { get; set; }
         public short checklistStatusId { get; set; }
         public string checklistStatusName { get; set; }
         public string grade { get; set; }

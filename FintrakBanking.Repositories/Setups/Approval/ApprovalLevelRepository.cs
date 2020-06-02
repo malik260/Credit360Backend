@@ -91,6 +91,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             roleId = x.STAFFROLEID,
                             levelTypeId = x.LEVELTYPEID,
                             levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
+                            roleIdToRoute = x.ROLEIDTOROUTE,
                         }).OrderBy(x => x.position).ToList();
 
             return data;
@@ -259,7 +260,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
                     LEVELTYPEID = model.levelTypeId,
-                    APPROVALBUSINESSRULEID = model.levelBusinessRuleId
+                    APPROVALBUSINESSRULEID = model.levelBusinessRuleId,
+                    ROLEIDTOROUTE = model.roleIdToRoute
                 };
 
                 context.TBL_APPROVAL_LEVEL.Add(data);
@@ -319,7 +321,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                    OPERATION = "create"
+                    OPERATION = "create",
+                    ROLEIDTOROUTE = model.roleIdToRoute
                 };
 
                 context.TBL_TEMP_APPROVAL_LEVEL.Add(data);
@@ -421,6 +424,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 data.LEVELTYPEID = model.levelTypeId;
                 data.APPROVALBUSINESSRULEID = model.levelBusinessRuleId;
                 data.LASTUPDATEDBY = model.lastUpdatedBy;
+                data.ROLEIDTOROUTE = model.roleIdToRoute;
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -476,7 +480,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     CREATEDBY = model.createdBy,
-                    OPERATION = "update"
+                    OPERATION = "update",
+                    ROLEIDTOROUTE = model.roleIdToRoute
+                    
                 };
                 context.TBL_TEMP_APPROVAL_LEVEL.Add(values);
 
@@ -1100,7 +1106,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             }
 
             workflow.NextLevelId = model.nextApprovalLevelId;
-            workflow.NextProcess(model.companyId, model.createdBy, model.nextOperationId, null, model.targetId, null, "NIL", true, true, true);
+            workflow.NextProcess(model.companyId, model.createdBy, model.nextOperationId, null, model.targetId, null, "NIL", true, true, true, false, null);
 
             UpdateTarget(model.operationId,model.targetId, model.nextOperationId);
 

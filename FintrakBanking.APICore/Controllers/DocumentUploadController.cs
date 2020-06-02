@@ -55,6 +55,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("document-uploadlms/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetDocumentUploadsLmss([FromUri] int operationId, [FromUri] int targetId)
+        {
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploadsLmss(token.GetStaffId, operationId, targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("document-deleted/operation/{operationId}/target/{targetId}")]
         public HttpResponseMessage GetDocumentDeleted(int operationId, int targetId)
         {
@@ -168,8 +177,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("document-upload/{id}")]
-        public HttpResponseMessage DeleteDocumentUpload(int id)
+        [Route("document-upload/{id}/{documentTypeName}")]
+        public HttpResponseMessage DeleteDocumentUpload(int id, string documentTypeName)
         {
             UserInfo user = new UserInfo()
             {
@@ -179,13 +188,13 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.DeleteDocumentUpload(id,user);
+            bool response = repo.DeleteDocumentUpload(id, documentTypeName, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
 
         //[HttpPost]
-        //[ClaimsAuthorization]
+        //[ClaimsAuthorization], string documentTypeName
         //[Route("document-download")]
         //public HttpResponseMessage GetUploadedDocument(DocumentUploadViewModel model)
         //{

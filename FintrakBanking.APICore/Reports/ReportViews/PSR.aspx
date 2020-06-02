@@ -7,7 +7,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
-  
 </head>
 <body>
      <form id="form1" runat="server">
@@ -18,19 +17,6 @@
         </rsweb:ReportViewer>
         </div>
     </form>
-  <script type="text/javascript">
-      var col = document.getElementsByTagName("tr");
-    for (i = 0; i < col.length; i++)
-    {
-    col[ i ].innerHTML = decode(col[ i ].innerHTML);
-      }
-
-    function decode(string) {
-    string = string.replace(/</g, "<");
-    string = string.replace(/&/g, "&");
-    string = string.replace(/>/g, ">");
-   return string;
-    }
-</script>
+  
 </body>
 </html>

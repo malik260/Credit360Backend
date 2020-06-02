@@ -290,16 +290,11 @@ namespace FintrakBanking.ReportObjects
                            join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                            join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
                            join br in context.TBL_STAFF on a.CREATEDBY equals br.STAFFID
-                           where (a.ISDISBURSED
-                             && a.DISBURSEDATE >= startDate && a.DISBURSEDATE <= endDate)
-                         && a.COMPANYID == companyId
+                           where (a.ISDISBURSED && DbFunctions.TruncateTime(a.DISBURSEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DISBURSEDATE) <= DbFunctions.TruncateTime(endDate))
+                           && a.COMPANYID == companyId
                            orderby a.DISBURSEDATE descending
 
-
-
-
                            //  && a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID <= approvedCustomerSentivityLevelId
-
                            select new DisburstLoanViewModel
                            {
                                bookingRef = a.LOANREFERENCENUMBER,
@@ -904,11 +899,57 @@ namespace FintrakBanking.ReportObjects
                                collateralValue = d.COLLATERALVALUE,
                                hairCut = d.HAIRCUT,
                                loanRefrenceNumber = l.LOANREFERENCENUMBER,
-
-
                            };
 
-                return data.ToList();
+                var data1 = from a in context.TBL_LOAN_COLLATERAL_MAPPING
+                           join l in context.TBL_LOAN_CONTINGENT on a.LOANID equals l.CONTINGENTLOANID
+                           join b in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                           join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                           join d in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals d.COLLATERALCUSTOMERID
+                           where d.COLLATERALCODE == collateralCode
+                           orderby a.DATETIMECREATED descending
+                           select new CollateralEstimatedViewModel()
+                           {
+                               firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                               lastName = b.TBL_CUSTOMER.LASTNAME,
+                               middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                               facilityAmount = b.APPROVEDAMOUNT,
+                               companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME,
+                               customerId = b.CUSTOMERID,
+                               facilityName = b.TBL_PRODUCT.PRODUCTNAME,
+                               collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                               collateralDetail = d.TBL_COLLATERAL_TYPE.DETAILS,
+                               collateralCode = d.COLLATERALCODE,
+                               collateralValue = d.COLLATERALVALUE,
+                               hairCut = d.HAIRCUT,
+                               loanRefrenceNumber = l.LOANREFERENCENUMBER,
+                           };
+
+                var data2 = from a in context.TBL_LOAN_COLLATERAL_MAPPING
+                            join l in context.TBL_LOAN_REVOLVING on a.LOANID equals l.REVOLVINGLOANID
+                            join b in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                            join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                            join d in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals d.COLLATERALCUSTOMERID
+                            where d.COLLATERALCODE == collateralCode
+                            orderby a.DATETIMECREATED descending
+                            select new CollateralEstimatedViewModel()
+                            {
+                                firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                                lastName = b.TBL_CUSTOMER.LASTNAME,
+                                middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                                facilityAmount = b.APPROVEDAMOUNT,
+                                companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME,
+                                customerId = b.CUSTOMERID,
+                                facilityName = b.TBL_PRODUCT.PRODUCTNAME,
+                                collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                collateralDetail = d.TBL_COLLATERAL_TYPE.DETAILS,
+                                collateralCode = d.COLLATERALCODE,
+                                collateralValue = d.COLLATERALVALUE,
+                                hairCut = d.HAIRCUT,
+                                loanRefrenceNumber = l.LOANREFERENCENUMBER,
+                            };
+
+                return data.Union(data1).Union(data2).ToList();
             }
         }
 
@@ -2289,7 +2330,6 @@ namespace FintrakBanking.ReportObjects
 
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
-
                     var collateralValuation = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
                                                join l in context.TBL_LOAN on a.LOANID equals l.TERMLOANID
                                                join ccu in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals ccu.COLLATERALCUSTOMERID
@@ -2339,14 +2379,6 @@ namespace FintrakBanking.ReportObjects
                                                    collateralValue = ccu.COLLATERALVALUE,
                                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
                                                    //tenor = (l.EFFECTIVEDATE.Date - l.MATURITYDATE.Date).Days,
-
-
-
-
-
-
-
-
                                                }).ToList().Select(x =>
                                                {
                                                    var checkForGroupHead = stagMis.Where(f => f.staffCode == x.inspectingStaffNo).Select(f => f.subHead).FirstOrDefault();
@@ -2361,8 +2393,6 @@ namespace FintrakBanking.ReportObjects
 
                                                    return x;
                                                }).ToList();
-
-
 
                     return collateralValuation;
                 }

@@ -20,11 +20,48 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int approvalStatusId { get; set; }
         public List<UserGroup> userGroup { get; set; }
         public List<UserActivities> activities { get; set; }
+        public short? allocationTypeId { get; set; }
+
+
+
 
 
         public List<int> userGroupIds { get; set; }
         public List<int> activitieIds { get; set; }
         public string staffRoleShortCode { get; set; }
+        public bool useRoundRublin { get; set; }
+
+
+
     }
-    
+
+    public class ApprovalSetUpViewModel: GeneralEntity
+    {
+        
+        public int approvalsetupId { get; set; }
+        public bool useRoundRublin { get; set; }
+        public bool isRetailOnlyRoundRobin { get; set; }
+
+    }
+
+    public class OperationPageOrderViewModel: GeneralEntity
+    {
+        public int operationId { get; set; }
+        public short floworderId { get; set; }
+        public string operationName { get; set; }
+        public string tag { get; set; }
+        public bool requiredAppraisal { get; set; }
+        public bool requiredAvailment { get; set; }
+        public bool requiredOfferLetter { get; set; }
+    }
+
+    public class StaffGroupEmailViewModel
+    {
+        public int groupEmailId { get; set; }
+        public string groupCode { get; set; }
+        public string groupName { get; set; }
+        public string groupEmail { get; set; }
+
+    }
+
 }

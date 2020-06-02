@@ -69,29 +69,89 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultants(int companyId)
         {
-            var data =   (from m in context.TBL_ACCREDITEDCONSULTANT
-                    join c in context.TBL_ACCREDITEDCONSULTANT_STATE on m.ACCREDITEDCONSULTANTID equals c.ACCREDITEDCONSULTANTID
-                    where m.COMPANYID == companyId //&& c.STATEID == stateId 
-                    select new AccreditedConsultantsViewModel
-                    {
-                        accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
-                        registrationNumber = m.REGISTRATIONNUMBER,
-                        name = m.NAME,
-                        firmName = m.FIRMNAME,
-                        accreditedConsultantTypeId = m.ACCREDITEDCONSULTANTTYPEID,
-                        cityId = (short) m.CITYID,
-                        accountNumber = m.ACCOUNTNUMBER,
-                        solicitorBVN = m.SOLICITORBVN,
-                        countryId = m.COUNTRYID,
-                        emailAddress = m.EMAILADDRESS,
-                        phoneNumber = m.PHONENUMBER,
-                        address = m.ADDRESS,
-                        coreCompetence = m.CORECOMPETENCE,
-                    }).Distinct();
+            var data = (from m in context.TBL_ACCREDITEDCONSULTANT
+                        join c in context.TBL_ACCREDITEDCONSULTANT_STATE on m.ACCREDITEDCONSULTANTID equals c.ACCREDITEDCONSULTANTID
+                        where m.COMPANYID == companyId
+                        && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent
+                        select new AccreditedConsultantsViewModel
+                        {
+                            accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
+                            registrationNumber = m.REGISTRATIONNUMBER,
+                            name = m.NAME,
+                            firmName = m.FIRMNAME,
+                            accreditedConsultantTypeId = m.ACCREDITEDCONSULTANTTYPEID,
+                            cityId = (short)m.CITYID,
+                            accountNumber = m.ACCOUNTNUMBER,
+                            solicitorBVN = m.SOLICITORBVN,
+                            countryId = m.COUNTRYID,
+                            emailAddress = m.EMAILADDRESS,
+                            phoneNumber = m.PHONENUMBER,
+                            address = m.ADDRESS,
+                            consultantType = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(t => t.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTTYPEID).Select(t => t.NAME).FirstOrDefault(),
+                            coreCompetence = m.CORECOMPETENCE,
+                            stateName = context.TBL_STATE.FirstOrDefault(x => x.STATEID == c.STATEID).STATENAME,
+                        }).Distinct();
 
             return data;
         }
 
+
+        public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId)
+        {
+            var data = (from m in context.TBL_ACCREDITEDCONSULTANT
+                        where m.COMPANYID == companyId
+                        && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent
+                        select new AccreditedConsultantsViewModel
+                        {
+                            accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
+                            registrationNumber = m.REGISTRATIONNUMBER,
+                            name = m.NAME,
+                            firmName = m.FIRMNAME,
+                            accreditedConsultantTypeId = m.ACCREDITEDCONSULTANTTYPEID,
+                            cityId = (short)m.CITYID,
+                            accountNumber = m.ACCOUNTNUMBER,
+                            solicitorBVN = m.SOLICITORBVN,
+                            countryId = m.COUNTRYID,
+                            emailAddress = m.EMAILADDRESS,
+                            phoneNumber = m.PHONENUMBER,
+                            address = m.ADDRESS,
+                            consultantType = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(t => t.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTTYPEID).Select(t => t.NAME).FirstOrDefault(),
+                            coreCompetence = m.CORECOMPETENCE,
+                            stateName = (from s in context.TBL_STATE join c in context.TBL_ACCREDITEDCONSULTANT_STATE on s.STATEID equals c.STATEID where c.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID select s.STATENAME).FirstOrDefault(),
+                        }).ToList();
+
+            return data;
+        }
+
+        public IEnumerable<AccreditedConsultantsViewModel> GetSearchedAgent(string search)
+        {
+
+            var agencies = from m in context.TBL_ACCREDITEDCONSULTANT
+                           where m.DELETED == false
+                           && m.NAME.Contains(search.ToUpper())
+                           || m.FIRMNAME.Contains(search.ToUpper())
+                           || m.PHONENUMBER.Contains(search)
+                           || m.ADDRESS.Contains(search.ToUpper())
+                           && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent
+                           select new AccreditedConsultantsViewModel
+                           {
+                               accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
+                               registrationNumber = m.REGISTRATIONNUMBER,
+                               name = m.NAME,
+                               firmName = m.FIRMNAME,
+                               accreditedConsultantTypeId = m.ACCREDITEDCONSULTANTTYPEID,
+                               cityId = (short)m.CITYID,
+                               accountNumber = m.ACCOUNTNUMBER,
+                               solicitorBVN = m.SOLICITORBVN,
+                               countryId = m.COUNTRYID,
+                               emailAddress = m.EMAILADDRESS,
+                               phoneNumber = m.PHONENUMBER,
+                               address = m.ADDRESS,
+                               stateName = (from s in context.TBL_STATE join c in context.TBL_ACCREDITEDCONSULTANT_STATE on s.STATEID equals c.STATEID where c.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID select s.STATENAME).FirstOrDefault(),
+                           };
+
+            return agencies.ToList();
+        }
 
         public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId)
         {

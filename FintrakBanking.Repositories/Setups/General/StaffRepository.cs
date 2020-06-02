@@ -111,6 +111,303 @@ namespace FintrakBanking.Repositories.Setups.General
         //    return this.SaveAll();
         //}
 
+        public staffBulkFeedbackViewModel UploadBulkPrepaymentData(StaffDocumentViewModel model, byte[] file)
+        {
+            var applicationDate = genSetup.GetApplicationDate();
+
+            var staffInfo = new List<StaffInfoViewModel>();
+
+            var failedStaffInfo = new List<StaffInfoViewModel>();
+
+            var staffBulkFeedbackViewModel = new staffBulkFeedbackViewModel();
+            var setupGlobal = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+
+            // Loads a spreadsheet from a file with the specified path
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
+
+            MemoryStream ms = new MemoryStream(file);
+
+            ExcelFile ef = new ExcelFile();
+
+            try
+            {
+                ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+
+            //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
+
+            CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+            var jobTitle = context.TBL_STAFF_JOBTITLE.FirstOrDefault();
+            for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            {
+                var rowSuccess = true;
+                int excelRowPosition = 1;
+                StaffInfoViewModel staffRowData = new StaffInfoViewModel();
+                Users getADDetails = new Users();
+
+                for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
+                {
+                    ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+
+
+                    string cellName = CellRange.RowColumnToPosition(j, i);
+                    string cellRow = ExcelRowCollection.RowIndexToName(j);
+                    string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
+                    excelRowPosition = Convert.ToInt32(cellRow);
+                    if (Convert.ToInt32(cellRow) == 1) continue;
+
+                    switch (cellColumn)
+                    {
+                        case "A":
+                            staffRowData.loanReferenceNumber = cell.Value.ToString();
+
+                            var exist = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber).FirstOrDefault();
+
+                            if (exist == null)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Loan Reference Number Does Not Exist. ";
+                            }
+
+                            staffRowData.customerId = exist.CUSTOMERID;
+
+                            var existence = (from a in context.TBL_LOAN
+                                             where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                             select (a)).ToList();
+
+                            if (existence.Count == 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Transaction Reference Number Does Not Exist Today. ";
+                            }
+
+
+                            var pastDueExistence = (from a in context.TBL_LOAN
+                                                    where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && a.LOANSTATUSID == (int)LoanStatusEnum.Active && (a.PASTDUEPRINCIPAL > 0 || a.PASTDUEINTEREST > 0)
+                                                    select (a)).ToList();
+
+                            if (pastDueExistence.Count > 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Transaction Reference Number Does Has Past Due Abligation. ";
+                            }
+
+
+                            var irregularScheduleTypeExistence = (from a in context.TBL_LOAN
+                                                                  where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && a.LOANSTATUSID == (int)LoanStatusEnum.Active && a.SCHEDULETYPEID == (int)LoanScheduleTypeEnum.IrregularSchedule
+                                                                  select (a)).ToList();
+
+                            if (pastDueExistence.Count > 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Irregular Schedule Cannot Form Part Of Bulk Irregular Schedule. ";
+                            }
+
+
+                            break;
+
+                        case "B":
+
+                            staffRowData.amount = Convert.ToDecimal(cell.Value.ToString());
+
+                            var existAmount = (from a in context.TBL_LOAN
+                                               join b in context.TBL_LOAN_REVIEW_OPERATION on a.TERMLOANID equals b.LOANID
+                                               where a.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && b.OPERATIONTYPEID == (int)OperationsEnum.Prepayment && b.OPERATIONDATE == DbFunctions.TruncateTime(applicationDate) && b.PREPAYMENT == staffRowData.amount && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                               select (b)).ToList();
+
+                            if (existAmount.Count > 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Prepayment Amount Does Exist Against This Transaction Reference Number Today. ";
+                            }
+
+
+                            var reversal = context.TBL_BULK_PREPAYMENT.Where(x => x.LOANREFERENCENUMBER == staffRowData.loanReferenceNumber && x.AMOUNT == staffRowData.amount && x.PROCESSDATE == DbFunctions.TruncateTime(applicationDate)).ToList();
+
+                            if (reversal.Count != 0)
+                            {
+                                rowSuccess = false;
+                                staffRowData.message = staffRowData.message + "Prepayment Amount Transaction Reference Number Already Exist. ";
+                            }
+
+
+
+                            break;
+
+                    }
+                }
+
+                if (rowSuccess && excelRowPosition > 1)
+                {
+                    staffRowData.message = "Success";
+                    staffInfo.Add(staffRowData);
+                }
+                else if (!rowSuccess && excelRowPosition > 1) failedStaffInfo.Add(staffRowData);
+
+            };
+            if (staffInfo.Count() < 1)
+            {
+                staffBulkFeedbackViewModel.commitedRows = staffInfo;
+                staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
+            }
+            else
+            {
+                //staffBulkFeedbackViewModel.commitedRows = staffInfo;
+                //staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
+
+                var batchCode = CommonHelpers.GenerateRandomDigitCodeNew(10);
+
+                long batchCodeInt = Convert.ToInt64(batchCode);
+
+                batchCodeInt = Math.Abs(batchCodeInt);
+
+                foreach (var staffInfoRow in staffInfo)
+                {
+                    staffInfoRow.createdBy = model.createdBy;
+                    staffInfoRow.companyId = model.companyId;
+                    staffInfoRow.BranchId = model.userBranchId;
+                    staffInfoRow.applicationUrl = model.applicationUrl;
+                    staffInfoRow.userIPAddress = model.userIPAddress;
+                    staffInfoRow.applicationUrl = model.applicationUrl;
+
+                    staffBulkFeedbackViewModel.commitedRows = staffInfo;
+                    staffBulkFeedbackViewModel.discardedRows = failedStaffInfo;
+
+                    //var response = AddBulkPrepaymentData(staffInfoRow, batchCode, applicationDate);
+
+                    var response = AddBulkPrepaymentData(staffInfoRow, (int)batchCodeInt, applicationDate);
+
+
+                    if (!response)
+                    {
+                        staffBulkFeedbackViewModel.discardedRows.Add(staffInfoRow);
+                        staffBulkFeedbackViewModel.commitedRows.Remove(staffInfoRow);
+                        staffBulkFeedbackViewModel.failureCount = staffBulkFeedbackViewModel.failureCount + 1;
+                        staffBulkFeedbackViewModel.successCount = staffBulkFeedbackViewModel.successCount - 1;
+                    }
+
+                };
+
+
+                //var rec = context.TBL_BULK_PREPAYMENT.Where(x => x.BATCHID == batchCode).FirstOrDefault();
+
+                var rec = context.TBL_BULK_PREPAYMENT.Where(x => x.BATCHID == (int)batchCodeInt).FirstOrDefault();
+
+
+                if (rec != null)
+                {
+
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CreateBulkPrepayment,
+                        STAFFID = model.createdBy,
+                        BRANCHID = model.userBranchId,
+                        DETAIL = $"Initiated Bulk Prepayment with code '{batchCodeInt}'",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
+                    };
+
+                    auditTrail.AddAuditTrail(audit);
+
+                    var output = context.SaveChanges() > 0;
+
+                    //workflow.StaffId = model.createdBy;
+                    //workflow.CompanyId = model.companyId;
+                    //workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    ////workflow.TargetId = batchCode;
+                    //workflow.TargetId = (int)batchCodeInt;
+                    //workflow.Comment = "Bulk Prepayment Initiated";
+                    //workflow.OperationId = (int)OperationsEnum.BulkLiquidation;
+                    //workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    //workflow.ExternalInitialization = true;
+                    //workflow.LogActivity();
+
+                }
+
+                context.SaveChanges();
+
+            }
+
+            return staffBulkFeedbackViewModel;
+        }
+
+
+        public bool AddBulkPrepaymentData(StaffInfoViewModel staffModel, int batchCode, DateTime applicationDate)
+        {
+            if (batchCode < 0) { batchCode = batchCode * -1; }
+
+            var bulkPrepaymentInfo = new TBL_BULK_PREPAYMENT()
+            {
+                BATCHID = batchCode,
+                LOANREFERENCENUMBER = staffModel.loanReferenceNumber,
+                AMOUNT = staffModel.amount,
+                CREATEDBY = staffModel.createdBy,
+                LASTUPDATEDBY = staffModel.createdBy,
+                PROCESSDATE = applicationDate,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                CUSTOMERID = staffModel.customerId
+            };
+
+            context.TBL_BULK_PREPAYMENT.Add(bulkPrepaymentInfo);
+
+            var output = context.SaveChanges() > 0;
+
+            return output;
+        }
+
+        public bool UpdatePrepayment(int staffid, StaffInfoViewModel staffModel)
+        {
+            bool isUpdate = false;
+
+            var data = context.TBL_BULK_PREPAYMENT.Where(x => x.BULK_PREPAYMENTID == staffModel.prepaymentId).FirstOrDefault();
+
+            if (data != null)
+            {
+                data.AMOUNT = staffModel.amount;
+            }
+
+            var output = context.SaveChanges();
+
+            if (output > 0)
+            {
+                isUpdate = true;
+            }
+
+            return isUpdate;
+        }
+
+
+        public bool DeleteBulkPrepayment(int bulkPrepaymentId, UserInfo user)
+        {
+
+            bool result = false;
+
+            var targetRecord = context.TBL_BULK_PREPAYMENT.Where(x => x.BULK_PREPAYMENTID == bulkPrepaymentId).FirstOrDefault();
+
+            context.TBL_BULK_PREPAYMENT.Remove(targetRecord);
+
+            result = context.SaveChanges() > 0;
+
+            return result;
+
+        }
+
+
         public IEnumerable<StaffInfoViewModel> GetAllStaff()
         {
             var staff = (from c in context.TBL_STAFF
@@ -300,7 +597,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (existingTempUser != null)
                 {
 
-                    existingTempUser.USERNAME = staffModel.user.username;
+                    existingTempUser.USERNAME = staffModel.user.username.ToLower().Trim();
                     existingTempUser.ISFIRSTLOGINATTEMPT = false;
                     existingTempUser.ISACTIVE = false;
                     existingTempUser.ISLOCKED = true;
@@ -343,7 +640,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 user = new TBL_TEMP_PROFILE_USER()
                     {
                         TEMPSTAFFID = staffModel.staffId,
-                        USERNAME = staffModel.user.username,
+                        USERNAME = staffModel.user.username.ToLower().Trim(),
                         PASSWORD = tempStaffForPassword != null ? tempStaffForPassword.PASSWORD : StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
                         ISFIRSTLOGINATTEMPT = false,
                         ISACTIVE = false,
@@ -380,7 +677,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.FIRSTNAME = staffModel.FirstName;
                 tempStaffToUpdate.MIDDLENAME = staffModel.MiddleName;
                 tempStaffToUpdate.LASTNAME = staffModel.LastName;
-                tempStaffToUpdate.STAFFCODE = staffModel.StaffCode;
+                tempStaffToUpdate.STAFFCODE = staffModel.StaffCode.ToLower().Trim();
                 //tempStaffToUpdate.JOBTITLEID = staffModel.JobTitleId;
                 tempStaffToUpdate.COMPANYID = staffModel.companyId;
                 tempStaffToUpdate.STAFFROLEID = staffModel.staffRoleId;
@@ -426,7 +723,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         FIRSTNAME = staffModel.FirstName,
                         MIDDLENAME = staffModel.MiddleName,
                         LASTNAME = staffModel.LastName,
-                        STAFFCODE = staffModel.StaffCode,
+                        STAFFCODE = staffModel.StaffCode.ToLower().Trim(),
                         //JOBTITLEID = staffModel.JobTitleId,
                         COMPANYID = staffModel.companyId,
                         STAFFROLEID = staffModel.staffRoleId,
@@ -539,6 +836,277 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     trans.Rollback();
                     throw new SecureException(ex.Message);
+                }
+            }
+        }
+
+
+        public IEnumerable<BatchPrepaymentViewModel> GetAllUnprocessedBulkPrepayment()
+        {
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
+                        select new BatchPrepaymentViewModel()
+                        {
+                            prepaymentId = a.BULK_PREPAYMENTID,
+                            batchCode = Math.Abs(a.BATCHID),
+                            loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            processedDate = a.PROCESSDATE,
+                            amount = a.AMOUNT,
+                            dateCreated = a.DATETIMECREATED
+                        }).OrderByDescending(x => x.dateCreated).ToList();
+
+            return data;
+        }
+
+        public IEnumerable<BatchPrepaymentViewModel> GetAllUnprocessedBulkPrepaymentBatch(int staffId)
+        {
+            var staffIds = genSetup.GetStaffRlieved(staffId);
+            var staff = from s in context.TBL_STAFF select s;
+
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
+                        select new BatchPrepaymentViewModel()
+                        {
+                            prepaymentId = a.BULK_PREPAYMENTID,
+                            batchCode = Math.Abs(a.BATCHID),
+                            //loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            processedDate = a.PROCESSDATE,
+                            amount = a.AMOUNT,
+                            customerId = a.CUSTOMERID,
+                            dateCreated = a.DATETIMECREATED
+                        }).ToList();
+
+            var result = data.GroupBy(b => b.batchCode).Select(b => new BatchPrepaymentViewModel()
+                            {
+                                batchCode = b.First().batchCode,
+                                numberOfLoans = b.Count(),
+                                totalAmount = b.Sum(a => a.amount),
+                                processedDate = b.First().processedDate,
+                                customerId = b.First().customerId,
+                                dateCreated = b.First().dateCreated
+            }).OrderByDescending(x => x.dateCreated).ToList();
+
+
+            var processedBatch = (from a in context.TBL_BULK_PREPAYMENT
+                                  join atrail in context.TBL_APPROVAL_TRAIL on a.BATCHID equals atrail.TARGETID
+                                  where a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing && ((atrail.OPERATIONID == (int)OperationsEnum.BulkLiquidation))
+                                  && staffIds.Contains((int)atrail.LOOPEDSTAFFID) && atrail.RESPONSESTAFFID == null
+                                    select new BatchPrepaymentViewModel()
+                                    {
+                                        prepaymentId = a.BULK_PREPAYMENTID,
+                                        batchCode = Math.Abs(a.BATCHID),
+                                        processedDate = a.PROCESSDATE,
+                                        amount = a.AMOUNT,
+                                        customerId = a.CUSTOMERID,
+                                        dateCreated = a.DATETIMECREATED,
+                                        numberOfLoans = 0,
+                                        totalAmount = 0,
+
+                                        approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                        //dateCreated = atrail.SYSTEMARRIVALDATETIME,
+                                        comment = atrail.COMMENT,
+                                        //operationId = atrail.OPERATIONID,
+                                        //approvalStatusId = atrail.APPROVALSTATUSID,
+                                        //toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                        fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                    }).GroupBy(b => b.batchCode).Select(s => 
+                                        new BatchPrepaymentViewModel()
+                                        {
+                                            prepaymentId = s.FirstOrDefault().prepaymentId,
+                                            batchCode = s.FirstOrDefault().batchCode,
+                                            processedDate = s.FirstOrDefault().processedDate,
+                                            amount = 0,
+                                            customerId = s.FirstOrDefault().customerId,
+                                            dateCreated = s.FirstOrDefault().dateCreated,
+                                            numberOfLoans = s.Count(),
+                                            totalAmount = s.Sum(t => t.amount),
+
+                                            approvalStatus = s.FirstOrDefault().approvalStatus.ToUpper(),
+                                            //dateCreated = atrail.SYSTEMARRIVALDATETIME,
+                                            comment = s.FirstOrDefault().comment,
+                                            //operationId = atrail.OPERATIONID,
+                                            //approvalStatusId = atrail.APPROVALSTATUSID,
+                                            //toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                                            fromApprovalLevelName = s.FirstOrDefault().fromApprovalLevelName,
+                                        }).OrderByDescending(x => x.dateCreated).ToList();
+
+            return result.Union(processedBatch);
+      }
+
+        private IEnumerable<TBL_BULK_PREPAYMENT> GetPendingBulkPrepaymentByBatch(int batchId)
+        {
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.BATCHID == batchId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending 
+                        select a).ToList();
+
+            return data;
+        }
+
+        public IEnumerable<BatchPrepaymentViewModel> GetProcessingBulkPrepaymentByBatchId(int batchId)
+        {
+            var result = GetProcessingBulkPrepaymentByBatch(batchId).ToList();
+
+            return result.Select(b => new BatchPrepaymentViewModel()
+            {
+                prepaymentId = b.BULK_PREPAYMENTID,
+                batchCode = Math.Abs(b.BATCHID),
+                loanReferenceNumber = b.LOANREFERENCENUMBER,
+                processedDate = b.PROCESSDATE,
+                amount = b.AMOUNT,
+                dateCreated = b.DATETIMECREATED
+            }).ToList();
+        }
+
+        private IEnumerable<TBL_BULK_PREPAYMENT> GetProcessingBulkPrepaymentByBatch(int batchId)
+        {
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.BATCHID == batchId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        select a).ToList();
+
+            return data;
+        }
+
+        public bool SubmitPrepaymentBatchForApproval(ApprovalViewModel model)
+        {
+            bool response = false;
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.targetId;
+                workflow.Comment = model.comment; // "Bulk Prepayment Initiated";
+                workflow.OperationId = (int)OperationsEnum.BulkLiquidation;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                var batchLoans = GetPendingBulkPrepaymentByBatch(model.targetId);
+
+                foreach (var batchLoan in batchLoans)
+                {
+                    batchLoan.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                }
+
+                try
+                {
+                    response = context.SaveChanges() > 0;
+                    transaction.Commit();
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
+            }
+        }
+
+        public IEnumerable<BatchPrepaymentViewModel> GetBulkPrepaymentsAwaitingApprovalBatch(int staffId, int companyId)
+        {
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.BulkLiquidation).ToList();
+            var staff = from s in context.TBL_STAFF select s;
+
+            var data = (from a in context.TBL_BULK_PREPAYMENT
+                        where a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        select new BatchPrepaymentViewModel()
+                        {
+                            prepaymentId = a.BULK_PREPAYMENTID,
+                            batchCode = Math.Abs(a.BATCHID),
+                            //loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            processedDate = a.PROCESSDATE,
+                            amount = a.AMOUNT,
+                            customerId = a.CUSTOMERID,
+                            dateCreated = a.DATETIMECREATED
+                        }).ToList();
+
+            var batch = data.GroupBy(b => b.batchCode).Select(b => new BatchPrepaymentViewModel()
+            {
+                batchCode = b.First().batchCode,
+                numberOfLoans = b.Count(),
+                totalAmount = b.Sum(a => a.amount),
+                processedDate = b.First().processedDate,
+                customerId = b.First().customerId,
+                dateCreated = b.First().dateCreated
+            }).ToList();
+
+            var result = (from a in batch
+                           join atrail in context.TBL_APPROVAL_TRAIL on a.batchCode equals atrail.TARGETID
+                           where ((atrail.OPERATIONID == (int)OperationsEnum.BulkLiquidation))
+                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                               && atrail.RESPONSESTAFFID == null
+                               && atrail.LOOPEDSTAFFID == null
+                           orderby a.dateCreated descending
+                           select new BatchPrepaymentViewModel()
+                           {
+                               batchCode = a.batchCode,
+                               numberOfLoans = a.numberOfLoans,
+                               totalAmount = a.totalAmount,
+                               processedDate = a.processedDate,
+                               customerId = a.customerId,
+
+                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME.ToUpper(),
+                               dateCreated = atrail.SYSTEMARRIVALDATETIME,
+                               comment = atrail.COMMENT,
+                               operationId = atrail.OPERATIONID,
+                               approvalStatusId = atrail.APPROVALSTATUSID,
+                               toApprovalLevelName = atrail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                               fromApprovalLevelName = atrail.FROMAPPROVALLEVELID == null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                           }).ToList();
+
+            return result;
+        }
+
+        public bool SubmitPrepaymentBatchForWorkflowApproval(ApprovalViewModel model)
+        {
+            bool response = false;
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.targetId;
+                workflow.Comment = model.comment;
+                workflow.OperationId = (int)OperationsEnum.BulkLiquidation;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                try
+                {
+                    if (workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var batchLoans = GetProcessingBulkPrepaymentByBatch(model.targetId);
+
+                        if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                        {
+                            foreach (var batchLoan in batchLoans)
+                            {
+                                batchLoan.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+                        }
+
+                        if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+                        {
+                            foreach (var batchLoan in batchLoans)
+                            {
+                                batchLoan.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            }
+                        }
+                    }
+
+                    response = context.SaveChanges() > 0;
+                    transaction.Commit();
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
                 }
             }
         }
@@ -1608,7 +2176,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 user = new TBL_TEMP_PROFILE_USER()
                 {
                     TEMPSTAFFID = staffModel.staffId,
-                    USERNAME = staffModel.user.username.ToLower(),
+                    USERNAME = staffModel.user.username.ToLower().Trim(),
                     PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
                     ISFIRSTLOGINATTEMPT = false,
                     ISACTIVE = false,
@@ -1636,7 +2204,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 MIDDLENAME = staffModel.MiddleName,
                 COMPANYID = staffModel.companyId,
                 LASTNAME = staffModel.LastName,
-                STAFFCODE = staffModel.StaffCode.ToLower(),
+                STAFFCODE = staffModel.StaffCode.ToLower().Trim(),
                 //JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
                 SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
@@ -2035,51 +2603,103 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-
-        public IQueryable<simpleStaffModel> SearchApprovers(int operationId, int roleId, int groupId, string searchQuery ="", int companyId=0)
+        public IEnumerable<simpleStaffModel> SearchApprovers(int levelId, string searchQuery ="", int companyId=0)
         {
-            var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId, groupId);
+            var level = context.TBL_APPROVAL_LEVEL.Find(levelId);
+            //var allLevelStaffs = level.TBL_APPROVAL_LEVEL_STAFF.Select(l => l.TBL_STAFF).ToList();
+            
+
+            //var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId, level.GROUPID);
+            var approvalLvlRoleId = level.STAFFROLEID;
             IQueryable<simpleStaffModel> staff = null;
+            IQueryable<simpleStaffModel> levelStaffs = null;
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                
                 searchQuery = searchQuery.Trim().ToLower();
+                levelStaffs = (from l in context.TBL_APPROVAL_LEVEL
+                                      join ls in context.TBL_APPROVAL_LEVEL_STAFF on l.APPROVALLEVELID equals ls.APPROVALLEVELID
+                                      join s in context.TBL_STAFF on ls.STAFFID equals s.STAFFID
+                                      where l.DELETED == false && ls.DELETED == false && s.DELETED == false
+                                      && l.APPROVALLEVELID == level.APPROVALLEVELID
+                                      && (s.FIRSTNAME.ToLower().Contains(searchQuery)
+                                        || s.MIDDLENAME.ToLower().Contains(searchQuery)
+                                        || s.LASTNAME.ToLower().Contains(searchQuery)
+                                        || s.STAFFCODE.ToLower().Contains(searchQuery))
+                                      select new simpleStaffModel
+                                      {
+                                          staffId = s.STAFFID,
+                                          firstName = s.FIRSTNAME,
+                                          middleName = s.MIDDLENAME,
+                                          lastName = s.LASTNAME,
+                                          staffCode = s.STAFFCODE,
+                                          staffRoleName = s.TBL_STAFF_ROLE.STAFFROLENAME,
+                                          staffRoleId = s.STAFFROLEID,
+                                      }).Distinct();
 
-                staff =
-                    context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId)
-                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                    .Join(context.TBL_APPROVAL_LEVEL, mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-                    .Join(context.TBL_STAFF.Where(x => x.DELETED == false
-                         && x.STAFFROLEID == nextApprovalLvlRoleId)
-                        .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
-                        || x.MIDDLENAME.ToLower().Contains(searchQuery)
-                        || x.LASTNAME.ToLower().Contains(searchQuery)
-                        || x.STAFFCODE.ToLower().Contains(searchQuery))
-                    , mgl => mgl.l.STAFFROLEID, s => s.STAFFROLEID, (mgl, s) => new { mgl, s })
-                    .Select(o => new simpleStaffModel
-                    {
-                        staffId = o.s.STAFFID,
-                        firstName = o.s.FIRSTNAME,
-                        middleName = o.s.MIDDLENAME,
-                        lastName = o.s.LASTNAME,
-                        staffCode = o.s.STAFFCODE,
-                        staffRoleName = o.s.TBL_STAFF_ROLE.STAFFROLENAME,
-                        staffRoleId = o.s.STAFFROLEID,
-                    }).Distinct();
+                //staff =
+                //    context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId)
+                //    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                //    .Join(context.TBL_APPROVAL_LEVEL, mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+                //    .Join(context.TBL_STAFF.Where(x => x.DELETED == false
+                //         && x.STAFFROLEID == nextApprovalLvlRoleId)
+                //        .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
+                //        || x.MIDDLENAME.ToLower().Contains(searchQuery)
+                //        || x.LASTNAME.ToLower().Contains(searchQuery)
+                //        || x.STAFFCODE.ToLower().Contains(searchQuery))
+                //    , mgl => mgl.l.STAFFROLEID, s => s.STAFFROLEID, (mgl, s) => new { mgl, s })
+                //    .Select(o => new simpleStaffModel
+                //    {
+                //        staffId = o.s.STAFFID,
+                //        firstName = o.s.FIRSTNAME,
+                //        middleName = o.s.MIDDLENAME,
+                //        lastName = o.s.LASTNAME,
+                //        staffCode = o.s.STAFFCODE,
+                //        staffRoleName = o.s.TBL_STAFF_ROLE.STAFFROLENAME,
+                //        staffRoleId = o.s.STAFFROLEID,
+                //    }).Distinct();
+
+                staff = (from l in context.TBL_APPROVAL_LEVEL
+                         join s in context.TBL_STAFF on l.STAFFROLEID equals s.STAFFROLEID
+                         where l.DELETED == false && s.DELETED == false
+                         && l.APPROVALLEVELID == level.APPROVALLEVELID
+                         && (s.FIRSTNAME.ToLower().Contains(searchQuery)
+                           || s.MIDDLENAME.ToLower().Contains(searchQuery)
+                           || s.LASTNAME.ToLower().Contains(searchQuery)
+                           || s.STAFFCODE.ToLower().Contains(searchQuery))
+                         select new simpleStaffModel
+                         {
+                             staffId = s.STAFFID,
+                             firstName = s.FIRSTNAME,
+                             middleName = s.MIDDLENAME,
+                             lastName = s.LASTNAME,
+                             staffCode = s.STAFFCODE,
+                             staffRoleName = s.TBL_STAFF_ROLE.STAFFROLENAME,
+                             staffRoleId = s.STAFFROLEID,
+                         }).Distinct();
             }
-            return staff;
+            if (levelStaffs == null)
+            {
+                return staff;
+            }
+            if (staff == null)
+            {
+                return levelStaffs;
+            }
+            staff = staff.Union(levelStaffs);
+            var staffs = staff.AsEnumerable().ToList();
+            return staffs;
         }
 
         public int GetNextApprovalLvlRoleId(int roleId, int groupId)
         {
-            if (groupId == 0) groupId = 261; //ApprovalGroupEnum.Business
+            //if (groupId == 0) groupId = 261; //ApprovalGroupEnum.Business
             var levels = context.TBL_APPROVAL_LEVEL.Where(l => l.GROUPID == groupId).ToList();
 
-            if (levels.Count == 0) {
-                groupId = 844;
-                levels = context.TBL_APPROVAL_LEVEL.Where(l => l.GROUPID == groupId).ToList();
-            }
+            //if (levels.Count == 0) {
+            //    groupId = 844;
+            //    levels = context.TBL_APPROVAL_LEVEL.Where(l => l.GROUPID == groupId).ToList();
+            //}
 
             var currentPosition = levels.Find(l => l.STAFFROLEID == roleId)?.POSITION ?? 0;
             var nextRoleId = levels.Find(l => l.POSITION == currentPosition + 1)?.STAFFROLEID ?? 0;
@@ -2177,23 +2797,24 @@ namespace FintrakBanking.Repositories.Setups.General
                                 rowSuccess = false;
                                 staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
                             }
-                            if (setupGlobal.USE_ACTIVE_DIRECTORY)
-                            {
-                                getADDetails = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
-                                if (getADDetails == null)
-                                {
-                                    rowSuccess = false;
-                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
-                                }
-                                else
-                                {
-                                    if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
-                                    {
-                                        rowSuccess = false;
-                                        staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
-                                    }
-                                }
-                            }
+                            //if (setupGlobal.USE_ACTIVE_DIRECTORY)
+                            //{
+                            //    getADDetails = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                            //    if (getADDetails == null)
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                            //    }
+                            //    else
+                            //    {
+                            //        if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
+                            //        {
+                            //            rowSuccess = false;
+                            //            staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
+                            //        }
+                            //    }
+                            //}
+
                             // staffRowData.user.username = cell.Value.ToString();
                             // staffRowData.user.password = cell.Value.ToString();
                            
@@ -2233,71 +2854,71 @@ namespace FintrakBanking.Repositories.Setups.General
                             }
                             break;
                         case "E":
-                            if(setupGlobal.USE_ACTIVE_DIRECTORY)
-                            {
-                                var firstName = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
-                                if (firstName == null)
+                            //if(setupGlobal.USE_ACTIVE_DIRECTORY)
+                            //{
+                            //    var firstName = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                            //    if (firstName == null)
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                            //    }
+                            //    else
+                            //    {
+                            //        staffRowData.FirstName = firstName.firstName;
+                            //    }
+                            //}
+                            //else
+                            //{
+                                staffRowData.FirstName = cell.Value.ToString();
+                                if (staffRowData.FirstName == null)
                                 {
                                     rowSuccess = false;
-                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                                    staffRowData.message = staffRowData.message + $"Firstname cannot be null. ";
                                 }
-                                else
-                                {
-                                    staffRowData.FirstName = firstName.firstName;
-                                }
-                            }
-                            else
-                            {
-                            staffRowData.FirstName = cell.Value.ToString();
-                            if (staffRowData.FirstName == null)
-                            {
-                                rowSuccess = false;
-                                staffRowData.message = staffRowData.message + $"Firstname cannot be null. ";
-                            }
-                            }                           
+                            //}                           
                             break;
                         case "F":
-                            if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
-                            {
-                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
-                                if (record == null)
-                                {
-                                    rowSuccess = false;
-                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
-                                }
-                                else
-                                {
-                                    staffRowData.LastName = record.lastName;
-                                }
-                            }
-                            else
-                            {
+                            //if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
+                            //{
+                            //    var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                            //    if (record == null)
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                            //    }
+                            //    else
+                            //    {
+                            //        staffRowData.LastName = record.lastName;
+                            //    }
+                            //}
+                            //else
+                            //{
                                 staffRowData.LastName = cell.Value.ToString();
                                 if (staffRowData.LastName == null)
                                 {
                                     rowSuccess = false;
                                     staffRowData.message = staffRowData.message + $"LastName cannot be null. ";
                                 }
-                            }                           
+                            //}                           
                             break;
                         case "G":
-                            if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
-                            {
-                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
-                                if (record != null)
-                                {
-                                    staffRowData.MiddleName = record.middleName;
-                                }
-                                else
-                                {
-                                    rowSuccess = false;
-                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
-                                }
-                            }
-                            else
-                            {
+                            //if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
+                            //{
+                            //    var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                            //    if (record != null)
+                            //    {
+                            //        staffRowData.MiddleName = record.middleName;
+                            //    }
+                            //    else
+                            //    {
+                            //        rowSuccess = false;
+                            //        staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                            //    }
+                            //}
+                            //else
+                            //{
                                 staffRowData.MiddleName = cell.Value.ToString();
-                            }
+                            //}
                             break;
                         case "H":
                             staffRowData.Email = cell.Value.ToString();
@@ -2406,7 +3027,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 TEMPSTAFFID = staffModel.staffId,
                 //USERNAME = staffCode,
-                USERNAME = staffModel.StaffCode.ToLower(),
+                USERNAME = staffModel.StaffCode.ToLower().Trim(),
                 PASSWORD = StaticHelpers.EncryptSha512("password", StaticHelpers.EncryptionKey),
                 ISFIRSTLOGINATTEMPT = false,
                 ISACTIVE = false,
@@ -2431,7 +3052,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 COMPANYID = staffModel.companyId,
                 LASTNAME = staffModel.LastName,
                 //STAFFCODE = staffCode,
-                STAFFCODE = staffModel.StaffCode.ToLower(),
+                STAFFCODE = staffModel.StaffCode.ToLower().Trim(),
                 JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
                 SUPERVISOR_STAFFID = staffModel.supervisorStaffId,

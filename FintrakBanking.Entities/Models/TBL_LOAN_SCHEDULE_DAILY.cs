@@ -9,6 +9,11 @@ namespace FintrakBanking.Entities.Models
     [Table("TBL_LOAN_SCHEDULE_DAILY")]
     public partial class TBL_LOAN_SCHEDULE_DAILY
     {
+        //public TBL_LOAN_SCHEDULE_DAILY()
+        //{
+        //    TBL_LOAN_EXTERNAL = new TBL_LOAN_EXTERNAL();
+        //}
+
         [Key]
         public int DAILYSCHEDULEID { get; set; }
 
@@ -112,5 +117,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public virtual TBL_LOAN TBL_LOAN { get; set; }
+        public int? EXTERNALLOANID { get; set; }
     }
 }

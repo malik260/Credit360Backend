@@ -117,34 +117,46 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
             ESBCRCService.LiveRequestInvokerSoapClient crc = new ESBCRCService.LiveRequestInvokerSoapClient();
             string dataPacket = crc.PostRequest(xml.ToString(),  userName,  password);
 
-            if (dataPacket.Contains(DATA_PACKET))
-            {
-                if (!dataPacket.Contains(ERROR)) {
-                    
-                    xdoc.LoadXml(dataPacket);
-                    result = new CRCSearchResult
-                     {
-                        SearchCompleted = (int)SearchCompletedStatusEnum.SearchIncomplete,
-                        SearchResult = new CreditBureauHelp().ConvertXmlToJson(xdoc)
-                    };
+            if (dataPacket != null) {
+                if (dataPacket.Contains(DATA_PACKET))
+                {
+                    if (!dataPacket.Contains(ERROR))
+                    {
+
+                        xdoc.LoadXml(dataPacket);
+                        result = new CRCSearchResult
+                        {
+                            SearchCompleted = (int)SearchCompletedStatusEnum.SearchIncomplete,
+                            SearchResult = new CreditBureauHelp().ConvertXmlToJson(xdoc)
+                        };
+                    }
+                    else
+                    {
+                        result = new CRCSearchResult
+                        {
+                            SearchCompleted = (int)SearchCompletedStatusEnum.SearchError,
+                            SearchResult = dataPacket
+                        };
+                    }
                 }
                 else
                 {
                     result = new CRCSearchResult
                     {
-                        SearchCompleted = (int)SearchCompletedStatusEnum.SearchError,
+                        SearchCompleted = (int)SearchCompletedStatusEnum.SearchCompleted,
                         SearchResult = dataPacket
                     };
-                }
+                };
             }
-            else
-            {
+            else {
                 result = new CRCSearchResult
                 {
-                    SearchCompleted = (int)SearchCompletedStatusEnum.SearchCompleted,
+                    SearchCompleted = (int)SearchCompletedStatusEnum.SearchIncomplete,
                     SearchResult = dataPacket
                 };
-            };
+            }
+
+            
             return result;
         }
 

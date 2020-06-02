@@ -16,7 +16,7 @@
     LoanPreliminaryEvaluation = 9,
     CollateralSearchInitiation = 12,
     RevolvingLoanBooking = 13,
-    ContigentLoanBooking = 14,
+    ContigentLoanBooking = 14, 
     DailyInterestAccural = 15,
     InterestLoanRepayment = 16,
     LoanReversal = 17,
@@ -120,7 +120,7 @@
     LmsOperations = 116,
     EarnUnEarnedFee = 117,
     CRMSApproval = 118,
-
+    
     //
     AdhocApproval = 133,
     OriginalDocumentApproval = 134,
@@ -131,6 +131,7 @@
     ProjectSiteReportApproval = 139,
     lcUssance = 140,
     CreditCardDrawdownRequest = 141,
+    RevolvingTranchDisbursement = 154,
     LetterGenerationRequest = 142,
     CollateralValuationRequest = 144,
     CreditCardsSalaryBacked = 145,
@@ -142,7 +143,6 @@
     CallMemo = 150,
     CashCollaterizedRequest = 153,
     //New Id's for existing Enumn that were edited
-
     AnnualReview = 200, //formerly id= 114
     IndictiveTermsheet = 201,   //formerly id = 115
     CreditCardsCashBacked = 202,    //formerly 116
@@ -173,7 +173,7 @@
     ContingentLiabilityRenewalApproval = 235,
     ContingentLiabilityUsageApproval = 236,
     ExpiredContigentLiabilityApproval = 237,
-    LCAmountModificationApproval = 238,
+    LCEnhancementApproval = 238,
     LCTerminationApproval = 239,
     GlobalInterestRateChangeApproval = 240,
     LoanReversalRepaymentApproval = 241,
@@ -184,8 +184,15 @@
     FacilityLineLimitChangeApproval = 246,
     FacilityLineTenorChangeApproval = 247,
     LoanRecoveryApproval = 248,
- 
 
+    ProvisionOfDeferredDocument = 259,
+    DeferralExtension = 260,
+    LienRemoval = 261,
+
+    ReversalOfPrepayment = 249,
+    BulkLiquidation = 258,
+
+    
 }
 
 

@@ -62,6 +62,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
       <Private>True</Private>
@@ -76,9 +77,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentModels\TBL_DOCUMENT_USAGE_FINAL_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_BULK_PREPAYMENT.cs" />
+    <Compile Include="Models\TBL_BULK_PREPAYMENTREVERSAL.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_LIQUIDATION_RECOVERY.cs" />
+    <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
+    <Compile Include="Models\TBL_GROUP_LIMIT.cs" />
+    <Compile Include="Models\TBL_LC_ISSUANCE_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LIEN_REMOVAL.cs" />
+    <Compile Include="Models\TBL_LINE_FACILITY_STATUS.cs" />
+    <Compile Include="Models\TBL_LMSR_FLOW_ORDER.cs" />
     <Compile Include="Models\SqlDatabaseConfiguration.cs" />
     <Compile Include="Models\TBL_ALERT_DAILYREPORT.cs" />
     <Compile Include="Models\TBL_ALERT_GENERAL_TEMPLATE.cs" />
+    <Compile Include="Models\TBL_ALERT_GROUP_EMAIL.cs" />
+    <Compile Include="Models\TBL_APPROVAL_SETUP.cs" />
     <Compile Include="Models\TBL_GLOBAL_EXPOSURE_MANUAL.cs" />
     <Compile Include="Models\TBL_ALERT_USER_SECURITY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_RATIO_CATEGORY.cs" />
@@ -119,10 +132,14 @@
     <Compile Include="Models\TBL_EOD_OPERATION_LOG_DETAIL.cs" />
     <Compile Include="Models\TBL_FACILITY_RATING.cs" />
     <Compile Include="Models\TBL_INTERNAL_EXPOSURE.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_FINAL_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_FINAL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_CAMSOL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_MAPPING_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_DETAIL_REVIEW_TYPE.cs" />
+    <Compile Include="Models\TBL_LOAN_EXTERNAL.cs" />
     <Compile Include="Models\TBL_LOAN_FULLANDFINAL_STATUS.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_ASSIGNMENT.cs" />
     <Compile Include="Models\TBL_OPERATION_CAMSOL_LIST.cs" />
     <Compile Include="Models\TBL_OPERATION_SIGNATORY.cs" />
     <Compile Include="Models\TBL_AUTHORISED_SIGNATORY.cs" />
@@ -195,6 +212,7 @@
     <Compile Include="Models\TBL_RAC_OPTION_ITEM.cs" />
     <Compile Include="Models\TBL_CORR_RISK_MATRIX.cs" />
     <Compile Include="Models\TBL_REPAYMENT_TERM.cs" />
+    <Compile Include="Models\TBL_SECTOR_GLOBAL_LIMIT.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_ISPO.cs" />
@@ -244,6 +262,7 @@
     <Compile Include="Models\TBL_TEMP_CUSTOMER_COMP_BENEFIC.cs" />
     <Compile Include="Models\TBL_ENDOFDAY_MONITORING.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_DOC_INVOICE.cs" />
+    <Compile Include="Models\TBL_TEMP_LC_ISSUANCE.cs" />
     <Compile Include="Models\TBL_TEMP_LOAN_APPLTN_CANCELTN.cs" />
     <Compile Include="Models\TBL_TEMP_LOAN_CAMSOL.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
@@ -1086,6 +1105,8 @@
     <Compile Include="StagingModels\STG_USER_MIS.cs" />
     <Compile Include="StagingModels\TBL_FINANCE_TRANSACTION_STAGING.cs" />
     <Compile Include="StagingModels\TBL_CUSTOMER_SIGNATORY.cs" />
+    <Compile Include="StagingModels\TBL_TRIGGER_MEASURESMODULE.cs" />
+    <Compile Include="StagingModels\TBL_TRIGGER_MEASURESPRODUCTNAME.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

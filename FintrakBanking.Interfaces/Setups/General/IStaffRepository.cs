@@ -11,7 +11,13 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IStaffRepository
     {
+        staffBulkFeedbackViewModel UploadBulkPrepaymentData(StaffDocumentViewModel model, byte[] file);
+        bool DeleteBulkPrepayment(int bulkPrepaymentId, UserInfo user);
+        bool UpdatePrepayment(int staffid, StaffInfoViewModel staffModel);
+        bool AddBulkPrepaymentData(StaffInfoViewModel staffModel, int batchCode, DateTime applicationDate);
         bool UpdateStaff(int staffid, StaffInfoViewModel staffModel);
+
+        IEnumerable<BatchPrepaymentViewModel> GetAllUnprocessedBulkPrepayment();
 
         bool AddTempStaff(StaffInfoViewModel staffModel);
 
@@ -77,6 +83,12 @@ namespace FintrakBanking.Interfaces.Setups.General
         StaffMISDetailsModel StaffMIS(int staffId, string staffCode);
         IEnumerable<simpleStaffModel> GetSearchedStaff(string search);
 
-        IQueryable<simpleStaffModel> SearchApprovers(int operationId, int GetRoleId, int groupId, string queryString, int getCompanyId);
+        IEnumerable<simpleStaffModel> SearchApprovers(int levelId, string queryString, int getCompanyId);
+
+        IEnumerable<BatchPrepaymentViewModel> GetAllUnprocessedBulkPrepaymentBatch(int staffId);
+        bool SubmitPrepaymentBatchForApproval(ApprovalViewModel model);
+        IEnumerable<BatchPrepaymentViewModel> GetBulkPrepaymentsAwaitingApprovalBatch(int staffId, int companyId);
+        bool SubmitPrepaymentBatchForWorkflowApproval(ApprovalViewModel model);
+        IEnumerable<BatchPrepaymentViewModel> GetProcessingBulkPrepaymentByBatchId(int batchId);
     }
 }

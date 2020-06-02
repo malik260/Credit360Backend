@@ -11,8 +11,10 @@ namespace FintrakBanking.Interfaces.Credit
 {
    public interface IFacilityDetailSummary
    {
+        List<CollateralViewModel> CollateralByLoanId(int loanId);
         List<LoanViewModel> SearchGetotherInformation(int loanId);
         LoanViewModel FacilityDetail(int loanId);
+        LoanViewModel ThirdPartyFacilityDetails(int loanId);
         LoanViewModel LMSFacilityDetail(int loanId);
         LoanViewModel ContingentLMSFacilityDetail(int loanId);
         LoanViewModel RelatedFacilityDetail(int loanId);

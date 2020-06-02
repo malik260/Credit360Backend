@@ -98,7 +98,7 @@ namespace FintrakBanking.ViewModels.Customer
         public short customerSensitivityLevelId { get; set; }
         public short? subSectorId { get; set; }
         public string subSectorName { get; set; }
-        public short sectorId { get; set; }
+        public short? sectorId { get; set; }
         public string sectorName { get; set; }
         public string taxNumber { get; set; }
         public string businessTaxIdNumber { get; set; }
@@ -259,7 +259,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string relationshipOfficerName { get; set; }
         public int? branchId { get; set; }
         public string branchName { get; set; }
-        public int customerSectorId { get; set; }
+        public int? customerSectorId { get; set; }
         public string customerSectorName { get; set; }
         public short? subSectorId { get; set; }
         public string subSectorName { get; set; }
@@ -325,6 +325,8 @@ namespace FintrakBanking.ViewModels.Customer
     //=================================================================================================================================================================
     public class IncomingCustomerViewModels
     {
+        public short? sectorId { get; set; }
+        public short? subsectorId { get; set; }
         public int? createdBy { get; set; }
         public int? staffId { get; set; }
         public int? companyId { get; set; }
@@ -338,6 +340,8 @@ namespace FintrakBanking.ViewModels.Customer
         public ApiIndividualCustomerDetails individualCustomerInformation { get; set; }
         public List<ApiAddressesViewModel> customerAddresses { get; set; }
         public List<ApicontactViewModel> contacts { get; set; }
+        public List<ApicontactViewModel> customerContacts { get; set; }
+
         public List<ApiDirectorViewModel> companyDirectors { get; set; }
         public List<ApiCompanySignatoriesViewModel> companySignatories { get; set; }
         public List<ApiIndividualSupplierViewModel> individualSuppliers { get; set; }
@@ -365,6 +369,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string emailAddress { get; set; }
         public string tin { get; set; }
         public string businessUnit { get; set; }
+        public int businessUnitId { get; set; }
+
         public string relationshipTypeWithBank { get; set; }
         public string teamLdr { get; set; }
         public string teamNpl { get; set; }
@@ -418,6 +424,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string companyStructure { get; set; }
         public string businessSector { get; set; }
         public string shareholdersFund { get; set; }
+        public int businessUnitId { get; set; }
 
         public string relationshipManagerCode { get; set; }
         public string title { get; set; }

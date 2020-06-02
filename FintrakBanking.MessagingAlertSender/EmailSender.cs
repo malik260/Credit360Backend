@@ -110,7 +110,7 @@ namespace FintrakBanking.MessagingAlertSender
                 {
                     if (emailAddy != null && emailAddy != string.Empty)
                     {
-                        mail.To.Add(new MailAddress(emailAddy));
+                        mail.To.Add(new MailAddress(emailAddy.Trim()));
                     }
                 }
                 mail.IsBodyHtml = true;
@@ -171,9 +171,10 @@ namespace FintrakBanking.MessagingAlertSender
 
                     }
 
-                    var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending 
-                    || o.MESSAGESTATUSID == (short)MessageStatusEnum.Attempted).ToList();
+                    var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending).ToList();
 
+                    //var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending
+                    //|| o.MESSAGESTATUSID == (short)MessageStatusEnum.Attempted).ToList();
 
                     if (listOfMails !=null)
                     {
@@ -195,12 +196,12 @@ namespace FintrakBanking.MessagingAlertSender
                                     }
                                     else
                                     {
-                                        Addy = newMail.TOADDRESS.Split(seperators);
+                                        Addy = newMail.TOADDRESS.Trim().Split(seperators);
                                     }
                                 }
                                 else
                                 {
-                                    Addy = newMail.TOADDRESS.Split(seperators);
+                                    Addy = newMail.TOADDRESS.Trim().Split(seperators);
                                 }
 
                                 foreach (var emailAddy in Addy)
@@ -215,13 +216,12 @@ namespace FintrakBanking.MessagingAlertSender
 
                                     if (emailAddy != null && emailAddy != string.Empty)
                                     {
-                                        mail.To.Add(new MailAddress(emailAddy));
+                                        var finalEmail = emailAddy.Trim();
+                                        mail.To.Add(new MailAddress(finalEmail));
                                     }
                                 }
                                 
                             }
-                                //mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
-                                //mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
                                 mail.IsBodyHtml = true;
                                 mail.Subject = newMail.MESSAGESUBJECT;
                                 mail.Body = newMail.MESSAGEBODY;

@@ -70,6 +70,85 @@ namespace FintrakBanking.Repositories.Credit
             return staffList;
         }
 
+
+        public IEnumerable<StaffInfoViewModel> GetImminentMaturitiesGroupHeads() 
+        {
+            List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+            var groupHeadsEmails = context.TBL_GLOBAL_EXPOSURE.Where(d =>
+            days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value))
+            .Select(d => d.GROUPCODE).ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where groupHeadsEmails.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).Distinct().ToList();
+
+            return staffList;
+        }
+
+        
+        public IEnumerable<StaffInfoViewModel> GetAccountOfficersByGroupHeads(string groupHeadCode)
+        {
+            List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+            var accountOfficers = context.TBL_GLOBAL_EXPOSURE.Where(d =>
+            days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.GROUPCODE == groupHeadCode)
+            .Select(d => d.ACCOUNTOFFICERCODE).Distinct().ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where accountOfficers.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).Distinct().ToList();
+
+            return staffList;
+        }
+
+        public IEnumerable<StaffInfoViewModel> GetPasDueObligationsAccountOfficersByGroupHeads(string groupHeadCode)
+        {
+            var accountOfficers = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.GROUPCODE == groupHeadCode)
+            .Select(d => d.ACCOUNTOFFICERCODE).Distinct().ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where accountOfficers.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).Distinct().ToList();
+
+            return staffList;
+        }
+
+        public IEnumerable<StaffInfoViewModel> GetDivisionalOfficersByGroupHeads(string groupHeadCode)
+        {
+            var regionOfficers = context.TBL_GLOBAL_EXPOSURE.Where(d =>d.GROUPCODE == groupHeadCode)
+            .Select(d => d.DIVISIONCODE).ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where regionOfficers.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).Distinct().ToList();
+
+            return staffList;
+        }
+
+
         public IEnumerable<StaffInfoViewModel> GetCreditCardMaturingObligations() //done
         {
             List<int> days = new List<int> { 60, 89 };
@@ -203,7 +282,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<StaffInfoViewModel> GetPastDueObligationsReminder()
         {
             var query = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
-               .Select(d => d.ACCOUNTOFFICERCODE).ToList();
+               .Select(d => d.ACCOUNTOFFICERCODE).Distinct().ToList();
 
             var staffList = (from s in context.TBL_STAFF
                              where query.Contains(s.MISCODE)
@@ -213,7 +292,25 @@ namespace FintrakBanking.Repositories.Credit
                                  supervisorStaffId = s.SUPERVISOR_STAFFID,
                                  Email = s.EMAIL,
                                  misCode = s.MISCODE,
-                             }).ToList();
+                             }).Distinct().ToList();
+
+            return staffList;
+        }
+
+        public IEnumerable<StaffInfoViewModel> GetPastDueObligationsReminderByGroupHeads()
+        {
+            var query = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
+               .Select(d => d.GROUPCODE).Distinct().ToList();
+
+            var staffList = (from s in context.TBL_STAFF
+                             where query.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).Distinct().ToList();
 
             return staffList;
         }

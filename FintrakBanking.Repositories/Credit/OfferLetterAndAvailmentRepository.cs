@@ -159,25 +159,27 @@ namespace FintrakBanking.Repositories.Credit
                     customerCode = x.c.a.TBL_CUSTOMER.CUSTOMERCODE,
                     //customerName = x.c.a.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME : x.c.a.TBL_CUSTOMER.FIRSTNAME + " " + x.c.a.TBL_CUSTOMER.MIDDLENAME + " " + x.c.a.TBL_CUSTOMER.LASTNAME,
                     customerName = x.c.b.TBL_CUSTOMER.FIRSTNAME + " " + x.c.b.TBL_CUSTOMER.MIDDLENAME + " " + x.c.b.TBL_CUSTOMER.LASTNAME,
-                    customerId = x.c.a.CUSTOMERID,
+                    customerId = x.c.a.CUSTOMERID != null ? x.c.a.CUSTOMERID : x.c.b.CUSTOMERID,
                     customerGroupName = x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME,
                     customerGroupCode = x.c.a.TBL_CUSTOMER_GROUP.GROUPCODE,
+                    customerGroupId = x.c.a.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID,
                     relationshipOfficerId = x.c.a.RELATIONSHIPOFFICERID,
                     relationshipManagerId = x.c.a.RELATIONSHIPMANAGERID,
                     appraisalOperationId = x.c.a.OPERATIONID,
                     applicationDate = x.c.a.APPLICATIONDATE,
                     newApplicationDate = x.c.a.APPLICATIONDATE,
                     applicationAmount = x.c.a.APPLICATIONAMOUNT,
-                    approvedAmount = x.c.b.APPROVEDAMOUNT,
+                    approvedAmount = x.c.a.APPLICATIONAMOUNT, //x.c.b.APPROVEDAMOUNT,
                     interestRate = x.c.a.INTERESTRATE,
                     applicationTenor = x.c.a.APPLICATIONTENOR,
                     relationshipOfficerName = x.c.a.TBL_STAFF.FIRSTNAME + " " + x.c.a.TBL_STAFF.MIDDLENAME + " " + x.c.a.TBL_STAFF.LASTNAME,
                     relationshipManagerName = x.c.a.TBL_STAFF1.FIRSTNAME + " " + x.c.a.TBL_STAFF1.MIDDLENAME + " " + x.c.a.TBL_STAFF1.LASTNAME,
-
+                    currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
                     loanTypeId = x.c.a.LOANAPPLICATIONTYPEID,
                     productTypeId = x.c.b.TBL_PRODUCT.PRODUCTTYPEID,
                     productTypeName = x.c.b.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                     productName = x.c.b.TBL_PRODUCT.PRODUCTNAME,
+                    productId = x.c.b.TBL_PRODUCT.PRODUCTID,
                     loanTypeName = x.c.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                     //camReference = c.CAMREF != null ? c.CAMREF : "N/A",
                     //camDocumentation = d.CAMDOCUMENTATION,
@@ -191,6 +193,7 @@ namespace FintrakBanking.Repositories.Credit
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
                     undergoingConcession = exceptIds.Contains(x.c.a.LOANAPPLICATIONID),
+                    apiRequestId = x.c.a.APIREQUESTID,
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
 
                 });
@@ -265,7 +268,7 @@ namespace FintrakBanking.Repositories.Credit
                     applicationDate = x.c.a.APPLICATIONDATE,
                     newApplicationDate = x.c.a.APPLICATIONDATE,
                     applicationAmount = x.c.a.APPLICATIONAMOUNT,
-                    approvedAmount = x.c.b.APPROVEDAMOUNT,
+                    approvedAmount = x.c.a.APPLICATIONAMOUNT, //x.c.b.APPROVEDAMOUNT,
                     interestRate = x.c.a.INTERESTRATE,
                     applicationTenor = x.c.a.APPLICATIONTENOR,
                     relationshipOfficerName = x.c.a.TBL_STAFF.FIRSTNAME + " " + x.c.a.TBL_STAFF.MIDDLENAME + " " + x.c.a.TBL_STAFF.LASTNAME,
@@ -391,7 +394,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
-                    atInitiator = x.c.a.CREATEDBY == staffId,
+                    atInitiator = x.c.a.OWNEDBY == staffId,
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                     loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID)
                                                  select new LoanApplicationCollateralViewModel
@@ -497,7 +500,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
-                    atInitiator = x.c.a.CREATEDBY == staffId,
+                    atInitiator = x.c.a.OWNEDBY == staffId,
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                     loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID)
                                                  select new LoanApplicationCollateralViewModel
@@ -2011,6 +2014,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw ex;
                 }
+                return true;
             }
 
             return false;
@@ -2094,7 +2098,41 @@ namespace FintrakBanking.Repositories.Credit
                     //    UpdateLoanApplicationStatus(model.applicationReferenceNumber, (short)LoanApplicationStatusEnum.ApplicationUnderReview);
                     //}
                 }
-                
+                else
+                {
+                    if (model.isFinal) {
+                        var detail = (from a in context.TBL_LOAN_APPLICATION
+                                      join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                      where a.LOANAPPLICATIONID == loanApplicationId
+                                      select new OfferLetterViewModel
+                                      {
+                                          //customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                          offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                          offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                          customerId = b.CUSTOMERID,
+                                          customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.ADDRESS).FirstOrDefault(),
+                                          title = b.TITLE,
+                                      }).FirstOrDefault();
+
+                        var document = new TBL_LOAN_OFFER_LETTER
+                        {
+                            LOANAPPLICATIONID = loanApplicationId,
+                            ISLMS = false,
+                            OFFERLETTERCLAUSES = detail.offerLetterClauses,
+                            OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
+                            CREATEDBY = model.staffId,
+                            DATETIMECREATED = DateTime.Now,
+                            DELETED = false,
+                            ISFINAL = model.isFinal,
+                            ISACCEPTED = model.isAccepted
+                        };
+
+                        context.TBL_LOAN_OFFER_LETTER.Add(document);
+
+                    }
+
+                }
+
 
                 if (model.isAccepted == false && model.saveOnly != true)
                 {
@@ -2114,8 +2152,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 context.SaveChanges();
-
-
 
             }
             catch (Exception ex)
@@ -2521,7 +2557,7 @@ namespace FintrakBanking.Repositories.Credit
                 int nextOperationId = (int)OperationsEnum.LoanAvailment;
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
                 workflow.NextLevelId = GetFirstReceiverLevel(model.createdBy, nextOperationId, null, true);
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, nextOperationId, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New application", true, true, false, model.isFlowTest); // model.operationId must be used here!
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, nextOperationId, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New application", true, true, false, model.isFlowTest, appl.TBL_CUSTOMER?.BUSINESSUNTID); // model.operationId must be used here!
                 // PassApplicationToOperation(model.companyId, model.createdBy, (int)OperationsEnum.LoanAvailment, model.applicationId, "B&G application for availment...");
             }
 
@@ -2531,51 +2567,52 @@ namespace FintrakBanking.Repositories.Credit
         #endregion Bonds and Guarantees
 
 
-        public bool OfferLetterRejectionOld(ForwardViewModel model)
-        {
-            var operationId = model.operationId;
-            var o = context.TBL_APPROVAL_TRAIL.Find(model.trailId); // here we try to get the staffid on the trail row
-            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+        //public bool OfferLetterRejectionOld(ForwardViewModel model)
+        //{
+        //    var operationId = model.operationId;
+        //    var o = context.TBL_APPROVAL_TRAIL.Find(model.trailId); // here we try to get the staffid on the trail row
+        //    var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
 
-            var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                x.OPERATIONID == operationId
-                && x.TARGETID == appl.LOANAPPLICATIONID
-                && x.REQUESTSTAFFID == o.REQUESTSTAFFID
-            );
+        //    var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+        //        x.OPERATIONID == operationId
+        //        && x.TARGETID == appl.LOANAPPLICATIONID
+        //        && x.REQUESTSTAFFID == o.REQUESTSTAFFID
+        //    );
 
-            workflow.StaffId = model.createdBy;
-            workflow.OperationId = operationId;
-            workflow.TargetId = model.applicationId;
-            workflow.CompanyId = appl.COMPANYID;
-            workflow.ProductClassId = appl.PRODUCTCLASSID;
-            workflow.ProductId = model.productId;
-            workflow.NextLevelId = trail.FROMAPPROVALLEVELID;//
-            workflow.ToStaffId = o.REQUESTSTAFFID;
-            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
-            workflow.Comment = model.comment;
-            workflow.DeferredExecution = true;
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
+        //    workflow.StaffId = model.createdBy;
+        //    workflow.OperationId = operationId;
+        //    workflow.TargetId = model.applicationId;
+        //    workflow.CompanyId = appl.COMPANYID;
+        //    workflow.ProductClassId = appl.PRODUCTCLASSID;
+        //    workflow.ProductId = model.productId;
+        //    workflow.NextLevelId = trail.FROMAPPROVALLEVELID;//
+        //    workflow.ToStaffId = o.REQUESTSTAFFID;
+        //    workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+        //    workflow.Comment = model.comment;
+        //    workflow.DeferredExecution = true;
+        //    workflow.ExternalInitialization = true;
+        //    workflow.BusinessUnitId = appl.TBL_CUSTOMER?.BUSINESSUNTID;
+        //    workflow.LogActivity();
 
-            // Take out of offer letter screen
-            var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
-                && x.RESPONSESTAFFID == null
-                && x.TARGETID == appl.LOANAPPLICATIONID
-            );
-            if (currentTrail != null)
-            {
-                currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
-                currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                currentTrail.COMMENT = model.comment;
-                currentTrail.TOAPPROVALLEVELID = null;
-                currentTrail.TOSTAFFID = null;
-            }
-            appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
-            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
+        //    // Take out of offer letter screen
+        //    var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+        //        x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
+        //        && x.RESPONSESTAFFID == null
+        //        && x.TARGETID == appl.LOANAPPLICATIONID
+        //    );
+        //    if (currentTrail != null)
+        //    {
+        //        currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+        //        currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+        //        currentTrail.COMMENT = model.comment;
+        //        currentTrail.TOAPPROVALLEVELID = null;
+        //        currentTrail.TOSTAFFID = null;
+        //    }
+        //    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+        //    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
 
-            return context.SaveChanges() > 0;
-        }
+        //    return context.SaveChanges() > 0;
+        //}
 
         public bool OfferLetterRejection(ForwardViewModel model)
         {
@@ -2819,7 +2856,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var appla = context.TBL_LOAN_APPLICATION.Find(model.targetId);
                 productClassId = appla.PRODUCTCLASSID;
-                staffId = appla.CREATEDBY;
+                staffId = appla.OWNEDBY;
             }
             if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
             {
@@ -3050,7 +3087,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID3 == false || c.CHECKLISTSTATUSID3 == null); //c.CHECKLISTSTATUSID2 == false ||
 
-                    if (item.CHECKLIST_TYPEID == (short)(int)CheckTypeEnum.CAPChecklist) return;
+                    if (item.CHECKLIST_TYPEID == (short)(int)CheckListTypeEnum.CAPChecklist) return;
 
                     if (omission.Any()) throw new SecureException($"One or more {item.CHECKLIST_TYPE_NAME} item(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
 
@@ -3384,8 +3421,7 @@ namespace FintrakBanking.Repositories.Credit
             this.auditTrail.AddAuditTrail(audit);
 
 
-            if (context.SaveChanges() > 0)
-                return true;
+            if (context.SaveChanges() > 0) return true;
 
             return false;
         }
@@ -3454,16 +3490,18 @@ namespace FintrakBanking.Repositories.Credit
                 else
                 {
                     detail = (from a in context.TBL_LOAN_APPLICATION
+                              join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                               join b in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals b.CUSTOMERGROUPID
                               where a.LOANAPPLICATIONID == applicationId
                               select new OfferLetterViewModel
                               {
                                   customerName = context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  customerName2 = context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPCONTACTPERSON).FirstOrDefault(),
                                   offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   // offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   offerLetterClauses = clause,
-                                  customerId = b.CUSTOMERGROUPID,
-                                  customerAddress = "",
+                                  customerId = c.CUSTOMERID,
+                                  customerAddress = context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPADDRESS).FirstOrDefault(),
                                   title = "",
 
                               }).FirstOrDefault();
@@ -3474,7 +3512,7 @@ namespace FintrakBanking.Repositories.Credit
             var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
             if (offerLetterDoc != null)
             {
-                offerLetterDoc.OFFERLETTERSALUTATION = "The Managing Director, <br /><br /> " + detail.customerName + "<br /><br />" + detail.customerAddress + "<br /><br /> Attention: " + detail.title + " " + detail.customerName;
+                offerLetterDoc.OFFERLETTERSALUTATION = "The Managing Director, <br /><br /> " + detail.customerName + "<br /><br />" + detail.customerAddress + "<br /><br /> Attention: " + detail.title + " " + detail.customerName2;
                 // offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
 
                 if (!context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Any())

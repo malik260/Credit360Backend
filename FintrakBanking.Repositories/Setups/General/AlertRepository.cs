@@ -20,26 +20,50 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    public class AlertRepository : IAlertRepository
+    public class AlertRepository : IAlertRepository 
     {
         private IExternalAlertRepository externalAlertRepository;
         private FinTrakBankingContext context;
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
+        //private ILoanArchiveRepository loanArchive;
+
+        private string onePercent = "1%";
+        private string onePointFivePercent = "1.5%";
+        private string twoPercent = "2%";
+        private string fivePercent = "5%";
+        private string tenPercent = "10%";
+        private string fifteenPercent = "15%";
+        private string twentyFivePercent = "25%";
+        private string fiftyPercent = "50%";
+
+        private double onePercentValue = 0.01;
+        private double onePointFivePercentValue = 0.015;
+        private double twoPercentValue = 0.02;
+        private double fivePercentValue = 0.05;
+        private double tenPercentValue = 0.1;
+        private double fifteenPercentValue = 0.15;
+        private double twentyFivePercentValue = 0.25;
+        private double fiftyPercentValue = 0.5;
+
+
+
+
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
-                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository)
+                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository
+                                )
         {
             this.context = _context;
             this.context2 = _context2;
             this.audit = _audit;
             this.general = _general;
-            this.externalAlertRepository = _externalAlertRepository; 
+            this.externalAlertRepository = _externalAlertRepository;
+            //this.loanArchive = _loanArchive;
+            //ILoanArchiveRepository _loanArchive
         }
 
         #region other code logic
-        public AlertRepository() {}
-
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE                  
@@ -57,7 +81,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               lastSentDate = a.LASTSENTDATE,
                               actionStatus = a.ACTIONSTATUS,
                               bindingMethod = a.BINDINGMETHOD,
-                          });
+                          }).ToList();
             return alerts;
         }
 
@@ -69,7 +93,20 @@ namespace FintrakBanking.Repositories.Setups.General
                               staffRoleId = a.STAFFROLEID,
                               staffRoleCode = a.STAFFROLECODE,
                               staffRoleName = a.STAFFROLENAME,
-                          });
+                          }).ToList(); 
+            return staffRoles;
+        }
+
+        public IEnumerable<StaffGroupEmailViewModel> GetAllStaffGroupEmail()
+        {
+            var staffRoles = (from a in context.TBL_ALERT_GROUP_EMAIL
+                              select new StaffGroupEmailViewModel
+                              {
+                                  groupEmailId = a.GROUPEMAILID,
+                                  groupCode = a.GROUPCODE,
+                                  groupName = a.GROUPNAME,
+                                  groupEmail = a.GROUPEMAIL
+                              }).ToList();
             return staffRoles;
         }
 
@@ -90,7 +127,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               lastSentDate = a.LASTSENTDATE,
                               actionStatus = a.ACTIONSTATUS,
                               bindingMethod = a.BINDINGMETHOD,
-                          });
+                          }).ToList();
             return alerts;
         }
 
@@ -230,7 +267,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               formular = x.FORMULAR,
                               title = context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault(),
                               levelGroupName = context.TBL_ALERT_ROLE_GROUP.Where(g => g.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(at => at.LEVELGROUPNAME).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_ROLE_GROUP.Where(g => g.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(at => at.LEVELGROUPNAME).FirstOrDefault()
-                          });
+                          }).ToList();
             return alerts;
         }
 
@@ -344,7 +381,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               levelGroupId = a.LEVELGROUPID,
                               levelCode = a.LEVELCODE,
                               levelGroupName = context.TBL_ALERT_ROLE_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_ROLE_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault()
-                          });
+                          }).ToList();
             return alerts;
         }
 
@@ -451,7 +488,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               alertLevelGroupId = a.ALERTLEVELGROUPID,
                               levelGroupName = a.LEVELGROUPNAME,
                               description = a.DESCRIPTION
-                          });
+                          }).ToList();
             return alerts;
         }
 
@@ -563,7 +600,24 @@ namespace FintrakBanking.Repositories.Setups.General
                               title = c.TITLE == null ? "N/A" : c.TITLE,
                               staffRoleCode = b.STAFFROLECODE == null ? "N/A" : b.STAFFROLECODE,
                               staffRoleName = b.STAFFROLENAME == null ? "N/A" : b.STAFFROLENAME,
-                          });
+                          }).ToList();
+            return alerts;
+        }
+
+        public IEnumerable<AlertLevelViewModel> GetAllAlertGroupEmail()
+        {
+            var alerts = (from a in context.TBL_ALERT_STAFF_ROLE
+                          join b in context.TBL_ALERT_GROUP_EMAIL on a.STAFFROLEID equals b.GROUPEMAILID
+                          join c in context.TBL_ALERT_TITLE on a.ALERTTITLEID equals c.ALERTTITLEID
+                          select new AlertLevelViewModel
+                          {
+                              groupEmailId = b.GROUPEMAILID,
+                              groupCode = b.GROUPCODE,
+                              groupName = b.GROUPNAME,
+                              groupEmail = b.GROUPEMAIL,
+                              staffRoleId = a.STAFFROLEID,
+                              title = c.TITLE == null ? "N/A" : c.TITLE,
+                          }).ToList();
             return alerts;
         }
 
@@ -585,6 +639,37 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddAlertGroupEmail(AlertLevelViewModel model)
+        {
+            var entity = new TBL_ALERT_GROUP_EMAIL
+            {
+                GROUPCODE = model.groupCode,
+                GROUPNAME = model.groupName,
+                GROUPEMAIL = model.groupEmail
+            };
+
+            context.TBL_ALERT_GROUP_EMAIL.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertGroupEmailAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_GROUP_EMAIL '{entity.ToString()}' created by {auditStaff}",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
@@ -692,7 +777,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                  title = a.TITLE,
                                  actionForTrigger = a.ACTIONFORTRIGGER,
                                  titleName = context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()
-                             });
+                             }).ToList();
             return condition;
         }
 
@@ -821,44 +906,112 @@ namespace FintrakBanking.Repositories.Setups.General
                              {
                                  operationId = a.OPERATIONID,
                                  operationName = a.OPERATIONNAME,
-                             });
+                             }).ToList();
             return opeartion;
         }
 
         #endregion end of code logic
 
-        public void validateAlertCheck()
+        public bool validateAlertCheck()
         {
-            /*GetLoanExpirationReminder(); 
+            bool state = false;
+            GetEnhancedDisbursementToDirectorsNotification();
+            //GetDigitalLoanExceptionNPLIncrease();
+            //GetDigitalLoanExceptionNPLDecrease();
+            //GetDigitalLoanExceptionNPLModuleIncrease();
+            //GetDigitalLoanExceptionNPLModuleDecrease();
+            //GetDigitalLoanDisbursementIncrease();
+            //GetDigitalLoanDisbursementDecrease();
+            //GetDigitalLoanDisbursementModuleIncrease();
+            //GetDigitalLoanDisbursementModuleDecrease();
+            //GetDigitalLoanDPDIncrease();
+            //GetDigitalLoanDPDDecrease();
+            //GetDigitalLoanDPDModuleIncrease();
+            //GetDigitalLoanDPDModuleDecrease();
+            //GetDigitalLoanLiquidationIncrease();
+            //GetDigitalLoanLiquidationModuleIncrease();
+            state = true;
+            //if (CompareDate() == true)
+            //{
+            //    TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
+            //    TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
+
+
+            //    TimeSpan now = DateTime.Now.TimeOfDay;
+
+            //    if ((now >= start) && (now <= end))
+            //    {
+            //        GroupImminentMaturitiesByGroupHeads();
+            //        GetImminentMaturities();
+            //        GetPastDueObligationsReminder();
+            //        GetPastDueObligationsReminderByGroupHeads();
+            //        state = true;
+            //    }
+            /*TimeSpan archiveStart = new TimeSpan(20, 0, 0); //8 o'pm
+             TimeSpan archiveEnd = new TimeSpan(21, 0, 0); //11 o'pm
+             else if ((now >= archiveStart) && (now <= archiveEnd))
+             {
+                ProcessLoanArchive();
+             } */
+            //}
+
+
+            /*
+            GetLoanExpirationReminder(); 
             GetUnpaidObligationReminder();
             GetLoanRepaymentReminder();
-            GetImminentMaturitiesAlertEmail();*/
-
-            GetImminentMaturities();
-            //GetCreditCardMaturingObligations();
-            //GetExpiringFacilityReport();
-            //GetUnAuthorizedOverdraftReport();
-            //GetOverlineMonitoringReport();
-            //GetCreditCardDelinquencyMonitoringReport();
-            //GetPastDueObligationsReminder();
-            //GetRiskAssetsReportNotification();
-            //GetDashboardReportNotification();
-            //GetCACReport();
-            //GetOverlineCreditCardPosition();
-            //GetPastDueFacilitiesNotification();
-            //GetExpiredFacilityNotification();
-            //GetLoanExpirationReminderAccountOfficer();
-            //GetLoanRepaymentReminderAccountOfficer();
-            //GetUnpaidObligationReminderAccountOfficer();
-            //GetOverlineReminder();
-            //GetMaturingObligationsReport();
-            //GetOverlineFacilityNotification();
-            //GetImminentObligationMaturityFacilityNotification();
-            //GetNplOnCreditPortfolio();
-            //GetLoanExpirationReminderAccountOfficer();
-
+            GetImminentMaturitiesAlertEmail();
+            GetCreditCardMaturingObligations();
+            GetExpiringFacilityReport();
+            GetUnAuthorizedOverdraftReport();
+            GetOverlineMonitoringReport();
+            GetCreditCardDelinquencyMonitoringReport();
+            GetRiskAssetsReportNotification();
+            GetDashboardReportNotification();
+            GetCACReport();
+            GetOverlineCreditCardPosition();
+            GetPastDueFacilitiesNotification();
+            GetExpiredFacilityNotification();
+            GetLoanExpirationReminderAccountOfficer();
+            GetLoanRepaymentReminderAccountOfficer();
+            GetUnpaidObligationReminderAccountOfficer();
+            GetOverlineReminder();
+            GetMaturingObligationsReport();
+            GetOverlineFacilityNotification();
+            GetImminentObligationMaturityFacilityNotification();
+            GetNplOnCreditPortfolio();
+            GetLoanExpirationReminderAccountOfficer();*/
+            return state;
         }
 
+        private bool CompareDate()
+        {
+            DateTime currentDate = DateTime.Now;
+           var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate) 
+                        && (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" 
+                        || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminder"
+                        /*|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDisbursementModuleDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanDPDModuleDecrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanLiquidationModuleIncrease"*/
+                        )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }else
+            return false;
+        }
         private string GetBusinessUsersEmails(string accountOfficerMIsCode)
         {
             string emailList = "";
@@ -880,12 +1033,12 @@ namespace FintrakBanking.Repositories.Setups.General
                             {
                                 emailList = emailList + ";" + zonalHead.EMAIL;
 
-                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+                               /* var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
 
                                 if (groupHead != null)
                                 {
                                     emailList = emailList + ";" + groupHead.EMAIL;
-                                }
+                                }*/
                             }
                         }
                     }
@@ -895,6 +1048,255 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return emailList;
         }
+
+        public string GetBusinessTeamEmails(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                 var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                 if (groupHead != null)
+                                 {
+                                     emailList = emailList + ";" + groupHead.EMAIL;
+                                 }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
+
+        public void GroupImminentMaturitiesByGroupHeads()
+        {
+            // Maturing Obligations/GetImminentMaturities method by group heads
+            var groupHeadsList = externalAlertRepository.GetImminentMaturitiesGroupHeads();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetImminentMaturities").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (groupHeadsList != null && groupHeadsList.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var groupHead in groupHeadsList)
+                {
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                        string emailList = "";
+                        var groupHeadDetail = context.TBL_STAFF.Where(b => b.MISCODE == groupHead.misCode).FirstOrDefault();
+                        var accountOfficers = externalAlertRepository.GetAccountOfficersByGroupHeads(groupHead.misCode).ToList();
+                        var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
+
+
+                        var result = string.Empty;
+                        var tempResult = string.Empty;
+                   foreach (var accountOfficer in accountOfficers)
+                   {
+                        var accountOfficerFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == accountOfficer.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
+                        if (accountOfficerFullName.ToLower() == "vacant" || accountOfficerFullName == "")
+                        {
+                            accountOfficerFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == accountOfficer.misCode).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+                        }if(accountOfficerFullName == null)
+                        {
+                            accountOfficerFullName = "UNKNOWN ACCOUNT OFFICER";
+                        }
+
+                        List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
+                        var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == accountOfficer.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
+
+                        var n = 0;
+                         
+
+                        if (loanInformation != null && loanInformation.Count() > 0)
+                        {
+                            tempResult = $@"
+                             <h3><b>{accountOfficerFullName.ToUpper()} RECORDS</b></h3>
+                             <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                                <tr>
+                                    <td><b>S/N</b></td>
+                                    <td><b>Customer Name</b></td>
+                                    <td><b>Reference Number</b></td>
+                                    <td><b>Amount</b></td>
+                                    <td><b>Maturity Date</b></td>
+                                    <td><b>Number Of Days</b></td>
+                                </tr>
+                             ";
+
+                            foreach (var t in loanInformation)
+                            {
+                                n++;
+
+                                var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+                                var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
+                                int numberOfDays = (t.MATURITYDATE.Value - DateTime.Now).Days;
+
+                                tempResult = tempResult + $@"
+                                <tr>
+                                    <td>{n}</td>
+                                    <td>{t.CUSTOMERNAME}</td>
+                                    <td>{t.REFERENCENUMBER}</td>
+                                    <td>{$"{amount}"}</td>
+                                    <td>{$"{maturityDate}"}</td>
+                                    <td>{numberOfDays}</td>
+                                </tr>
+                                ";
+                            }
+
+                        }
+                         tempResult = tempResult + $"</table><br/>";
+                        result = result + tempResult;
+                    }
+
+                    if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                    {
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
+                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+
+                        emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
+
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+
+        public void GetPastDueObligationsReminderByGroupHeads()
+        {
+            // GetPastDueObligationsReminder method by group heads
+            var groupHeadsList = externalAlertRepository.GetPastDueObligationsReminderByGroupHeads();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetPastDueObligationsReminder").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (groupHeadsList != null && groupHeadsList.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var groupHead in groupHeadsList)
+                {
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                        string emailList = "";
+                        var groupHeadDetail = context.TBL_STAFF.Where(b => b.MISCODE == groupHead.misCode).FirstOrDefault();
+                        var accountOfficers = externalAlertRepository.GetPasDueObligationsAccountOfficersByGroupHeads(groupHeadDetail.MISCODE).ToList();
+                        var groupHeadName = groupHeadDetail.FIRSTNAME + " " + groupHeadDetail?.MIDDLENAME + " " + groupHeadDetail?.LASTNAME;
+
+                    var result = string.Empty;
+                    var tempResult = string.Empty;
+
+                    foreach (var accountOfficer in accountOfficers)
+                    {
+                            var accountOfficerFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == accountOfficer.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
+                            if (accountOfficerFullName.ToLower() == "vacant" || accountOfficerFullName == "")
+                            {
+                                accountOfficerFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == accountOfficer.misCode).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+                            }
+                            if (accountOfficerFullName == null)
+                            {
+                                accountOfficerFullName = "UNKNOWN ACCOUNT OFFICER";
+                            }
+
+                            var n = 0;
+                           
+
+                        var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == accountOfficer.misCode && d.TOTALUNPAIDOBLIGATION > 0).ToList();
+                        if (loanInformation != null && loanInformation.Count() > 0)
+                        {
+                            tempResult = $@"
+                                 <h3><b>{accountOfficerFullName.ToUpper()} RECORDS</b></h3>
+                                 <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                                    <tr>
+                                        <td><b>S/N</b></td>
+                                        <td><b>Customer Name</b></td>
+                                        <td><b>Reference Number</b></td>
+                                        <td><b>Amount</b></td>
+                                        <td><b>Number Of Days</b></td>
+                                    </tr>
+                                 ";
+
+                            foreach (var t in loanInformation)
+                            {
+                                    n++;
+
+                                    var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.TOTALUNPAIDOBLIGATION));
+                                    tempResult = tempResult + $@"
+                                    <tr>
+                                        <td>{n}</td>
+                                        <td>{t.CUSTOMERNAME}</td>
+                                        <td>{t.REFERENCENUMBER}</td>
+                                        <td>{amount}</td>
+                                        <td>{t.UNPODAYSOVERDUE}</td>
+                                    </tr>
+                                    ";
+                            }
+
+                                
+                        }
+                        tempResult = tempResult + $"</table><br/>";
+                        result = result + tempResult;
+                    }
+
+                    if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                    {
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", groupHeadName);
+                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+
+                        emailList = groupHeadDetail.EMAIL + ";" + GetAllDivisionHeadsEmails(groupHeadDetail.MISCODE) + ";" + defaultEmail + ";jobomeg@accessbankplc.com";
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
         public void GetImminentMaturities()
         {
                 // Maturing Obligations/GetImminentMaturities method
@@ -917,13 +1319,16 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTemplate = alertTitleInfo.TEMPLATE;
                     string emailList = "";
                     var staffFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == staff.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
-
+                    if(staffFullName == "vacant" || staffFullName == "")
+                    {
+                        staffFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == staff.misCode).Select(b => b.FIRSTNAME +""+b.MIDDLENAME+ ""+b.LASTNAME).FirstOrDefault();
+                    }
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
                     List<int> days = new List<int> { 60, 90, 30, 21, 14, 7, 3, 1 };
                     var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY>0).ToList();
 
-                    if (loanInformation != null && loanInformation.Count() > 7)
+                    if (loanInformation != null && loanInformation.Count() > 0)
                     {
                         var n = 0;
                         var result = $@"
@@ -944,11 +1349,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
                             var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
                             var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
-
                             int numberOfDays = (t.MATURITYDATE.Value - DateTime.Now).Days;
 
-                            //Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}
-                            // var amount =  Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY).ToString();
                             result = result + $@"
                         <tr>
                             <td>{n}</td>
@@ -963,23 +1365,36 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         result = result + $"</table>";
 
-                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
-                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+                        if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
+                            alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                        emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                        var em = "benjamin.gbaaikye@fintraksoftware.com";
-                        alert.receiverEmailList.Add(em);
-                        alert.template = alertTemplate;
-                        alert.alertTitle = alertTitle;
-                        alert.canFire = true;
+                            emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
-                        alerts.Add(alert);
+                            alerts.Add(alert);
+                        }
                     }
                 }
 
-                SendAlertNotification(alerts);
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
             }
         }
+
+        //public bool ProcessLoanArchive()
+        //{
+        //    return loanArchive.ProcessLoanArchieving();
+
+        //}
+
         public void GetCreditCardMaturingObligations()
         {
             // GetCreditCardMaturingObligations method
@@ -1465,10 +1880,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     var alertTemplate = alertTitleInfo.TEMPLATE;
                     string emailList = "";
                     var staffFullName = context.TBL_GLOBAL_EXPOSURE.Where(b => b.ACCOUNTOFFICERCODE == staff.misCode).Select(b => b.ACCOUNTOFFICERNAME).FirstOrDefault();
-
+                    if (staffFullName == "vacant" || staffFullName == "")
+                    {
+                        staffFullName = context.TBL_STAFF.Where(b => b.STAFFCODE == staff.misCode).Select(b => b.FIRSTNAME + "" + b.MIDDLENAME + "" + b.LASTNAME).FirstOrDefault();
+                    }
                     emailList = GetBusinessUsersEmails(staff.misCode);
 
-                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode && d.AMOUNTDUE > 0).ToList();
+                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0 && d.ACCOUNTOFFICERCODE == staff.misCode && d.TOTALUNPAIDOBLIGATION > 0).ToList();
                     if (loanInformation != null && loanInformation.Count() > 0)
                     {
                         var n = 0;
@@ -1487,7 +1905,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             n++;
 
-                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.AMOUNTDUE));
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.TOTALUNPAIDOBLIGATION));
                             //var amount = Convert.ToDecimal(t.AMOUNTDUE).ToString(); 
                             result = result + $@"
                             <tr>
@@ -1502,20 +1920,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         result = result + $"</table>";
 
-                        alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
-                        alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
+                        if (result.Count() > 0 && alertTemplate.Replace("@{{accountNumbers}}", result).Count() > 0)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", staffFullName);
+                            alertTemplate = alertTemplate.Replace("@{{accountNumbers}}", result);
 
-                        emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
-                        
-                        alert.receiverEmailList.Add(emailList);
-                        alert.template = alertTemplate;
-                        alert.alertTitle = alertTitle;
-                        alert.canFire = true;
+                            emailList = emailList + GetAllStaffRoleEmails(alertTitleInfo.ALERTTITLEID) + defaultEmail;
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
 
-                        alerts.Add(alert);
+                            alerts.Add(alert);
+                        }
                     }
                 }
-                SendAlertNotification(alerts);
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
             }
         }
         public void GetRiskAssetsReportNotification()
@@ -2417,6 +2841,14 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
+        public void GetEnhancedDisbursementToDirectorsNotification()
+        {
+            AlertsViewModel alert = new AlertsViewModel();
+            var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetEnhancedDisbursementToDirectorsNotification").FirstOrDefault();
+            alert.receiverEmailList.Add(alertDetail.DEFAULTEMAIL);
+            LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetEnhancedDisbursementToDirectorsNotification");
+        }
+
         #region other code logic
         //public void validateAlertCheck()
         //{
@@ -2457,7 +2889,7 @@ namespace FintrakBanking.Repositories.Setups.General
            
                 foreach (var alert in alerts)
                 {
-                    if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0);
+                    if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList, "100442", 0,alert.operationMethod);
                 }
             
         }
@@ -2544,15 +2976,14 @@ namespace FintrakBanking.Repositories.Setups.General
         public string GetAllStaffRoleEmails(int alerttitleId)
         {
             var list = "";
-            var roleEmail = (from r in context.TBL_STAFF_ROLE
-                            join s in context.TBL_STAFF on r.STAFFROLEID equals s.STAFFROLEID
-                            join t in context.TBL_ALERT_STAFF_ROLE on r.STAFFROLEID equals t.STAFFROLEID
+            var roleEmail = (from r in context.TBL_ALERT_GROUP_EMAIL
+                            join t in context.TBL_ALERT_STAFF_ROLE on r.GROUPEMAILID equals t.STAFFROLEID
                             where t.ALERTTITLEID == alerttitleId
                               select new simpleStaffModel
                               {
-                                   staffCode= s.STAFFCODE,
-                                   staffRoleId = s.STAFFROLEID,
-                                   email = s.EMAIL,
+                                   staffCode= r.GROUPCODE,
+                                   staffRoleId = r.GROUPEMAILID,
+                                   email = r.GROUPEMAIL,
                               }).ToList();
 
             foreach (var t in roleEmail)
@@ -2562,12 +2993,29 @@ namespace FintrakBanking.Repositories.Setups.General
             return list;
         }
 
-        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId)
+
+        public string GetAllDivisionHeadsEmails(string regionCode)
+        {
+            var list = "";
+            var regionEmails = externalAlertRepository.GetDivisionalOfficersByGroupHeads(regionCode);
+           
+            foreach (var t in regionEmails)
+            {
+                list = list + ";" + t.Email;
+                if(t.misCode == "IBG800")
+                {
+                    list = list + ";ogbonnar@accessbankplc.com;Soji-OkusanyaI@accessbankplc.com";
+                }
+            }
+            return list;
+        }
+
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
         {
             try
             {
                 string recipient = string.Join("", recipients.ToArray());
-                string messageSubject = alertSubject +" ALERT";
+                string messageSubject = alertSubject +" TEST ALERT";
                 string messageContent = messageBody;
                 //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
                 //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 
@@ -2583,6 +3031,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     SendOnDateTime = DateTime.Now,
                     ReferenceCode = referenceCode,
                     targetId = targetId,
+                    operationMethod = operationMehtod,
                 };
                 SaveMessageDetails(messageModel);
             }
@@ -2607,7 +3056,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 SENDONDATETIME = model.SendOnDateTime,
                 ATTACHMENTCODE = model.ReferenceCode,
                 ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
-                TARGETID = (int)model.targetId
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
             };
 
             context.TBL_MESSAGE_LOG.Add(message);
@@ -2615,7 +3065,820 @@ namespace FintrakBanking.Repositories.Setups.General
 
         }
 
-# endregion logic codes
+        #endregion logic codes
+
+       // trigger alerts methods
+        public void GetDigitalLoanExceptionNPLIncrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-NPL";
+            //var em = "benjamin.gbaaikye@fintraksoftware.com";
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.PRODUCTNAME + " Digital Loan NPL product has increased by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,"+
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,"+
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", onePercent);
+                    }
+
+                    if (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com"+
+                                    "Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,"+
+                                    "Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,"+
+                                    "Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", onePointFivePercent);
+                    }
+                    if (exceptionNPL.NPL >= (decimal)twoPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,"+
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,"+
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,"+
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", twoPercent);
+                    }
+                    if ((exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
+                       || (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue) || (exceptionNPL.NPL >= (decimal)twoPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanExceptionNPLIncrease";
+                        alerts.Add(alert);
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanExceptionNPLDecrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-NPL";
+            //var em = "benjamin.gbaaikye@fintraksoftware.com";
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.PRODUCTNAME + " Digital Loan NPL product has decreased by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", onePercent);
+                    }
+
+                    if (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com" +
+                                    "Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com," +
+                                    "Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com," +
+                                    "Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", onePointFivePercent);
+                    }
+                    if (exceptionNPL.NPL <= -(decimal)twoPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", twoPercent);
+                    }
+
+                    if ((exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
+                       || (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue) || (exceptionNPL.NPL <= -(decimal)twoPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanExceptionNPLDecrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanExceptionNPLModuleIncrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-NPL";
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.MODULE + " module has increased in NPL by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", onePercent);
+                    }
+
+                    if (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com" +
+                                    "Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com," +
+                                    "Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com," +
+                                    "Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", onePointFivePercent);
+                    }
+                    if (exceptionNPL.NPL >= (decimal)twoPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", twoPercent);
+                    }
+                    if ((exceptionNPL.NPL >= (decimal)onePercentValue && exceptionNPL.NPL < (decimal)onePointFivePercentValue)
+                       || (exceptionNPL.NPL >= (decimal)onePointFivePercentValue && exceptionNPL.NPL < (decimal)twoPercentValue) || (exceptionNPL.NPL >= (decimal)twoPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanExceptionNPLModuleIncrease";
+                        alerts.Add(alert);
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanExceptionNPLModuleDecrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-NPL";
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.MODULE + " module has decreased in NPL by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", onePercent);
+                    }
+
+                    if (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com" +
+                                    "Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com," +
+                                    "Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com," +
+                                    "Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", onePointFivePercent);
+                    }
+                    if (exceptionNPL.NPL <= -(decimal)twoPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", twoPercent);
+                    }
+
+                    if ((exceptionNPL.NPL <= -(decimal)onePercentValue && exceptionNPL.NPL > -(decimal)onePointFivePercentValue)
+                       || (exceptionNPL.NPL <= -(decimal)onePointFivePercentValue && exceptionNPL.NPL > -(decimal)twoPercentValue) || (exceptionNPL.NPL <= -(decimal)twoPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanExceptionNPLModuleDecrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+        //Disbursement
+        public void GetDigitalLoanDisbursementIncrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-Disbursement";
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.PRODUCTNAME + " Digital Loan Disbursement has increased by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.DISBURSEMENT >= (decimal)fivePercentValue && exceptionNPL.DISBURSEMENT < (decimal)tenPercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com,"+
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,"+
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fivePercent);
+                    }
+
+                    if (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,"+
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,"+
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,"+
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+                    if (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,"+
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,"+
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,"+
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fifteenPercent);
+                    }
+
+                    if ((exceptionNPL.DISBURSEMENT >= (decimal)fivePercentValue && exceptionNPL.DISBURSEMENT < (decimal)tenPercentValue)
+                       || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue) 
+                       || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanDisbursementNPLIncrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanDisbursementDecrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-Disbursement";
+
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.PRODUCTNAME + " Digital Loan Disbursement has decreased by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.DISBURSEMENT <= -(decimal)fivePercentValue && exceptionNPL.DISBURSEMENT > -(decimal)tenPercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fivePercent);
+                    }
+
+                    if (exceptionNPL.DISBURSEMENT <= -(decimal)tenPercentValue && exceptionNPL.DISBURSEMENT > -(decimal)fifteenPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com," +
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com," +
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com," +
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+                    if (exceptionNPL.DISBURSEMENT <= -(decimal)fifteenPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fifteenPercent);
+                    }
+
+                    if ((exceptionNPL.DISBURSEMENT <= -(decimal)fivePercentValue && exceptionNPL.DISBURSEMENT > -(decimal)tenPercentValue)
+                       || (exceptionNPL.DISBURSEMENT <= -(decimal)tenPercentValue && exceptionNPL.DISBURSEMENT > -(decimal)fifteenPercentValue)
+                       || (exceptionNPL.DISBURSEMENT <= -(decimal)fifteenPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanDisbursementNPLDecrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanDisbursementModuleIncrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-Disbursement";
+
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.MODULE + " has increased in Disbursement by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.DISBURSEMENT >= (decimal)fivePercentValue && exceptionNPL.DISBURSEMENT < (decimal)tenPercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fivePercent);
+                    }
+
+                    if (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com," +
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com," +
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com," +
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+                    if (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fifteenPercent);
+                    }
+
+                    if ((exceptionNPL.DISBURSEMENT >= (decimal)fivePercentValue && exceptionNPL.DISBURSEMENT < (decimal)tenPercentValue)
+                       || (exceptionNPL.DISBURSEMENT >= (decimal)tenPercentValue && exceptionNPL.DISBURSEMENT < (decimal)fifteenPercentValue)
+                       || (exceptionNPL.DISBURSEMENT >= (decimal)fifteenPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanDisbursementNPLModuleIncrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanDisbursementModuleDecrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-Disbursement";
+
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.MODULE + " has decreased in Disbursement by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.NPL <= -(decimal)fivePercentValue && exceptionNPL.NPL > -(decimal)tenPercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fivePercent);
+                    }
+
+                    if (exceptionNPL.NPL <= -(decimal)tenPercentValue && exceptionNPL.NPL > -(decimal)fifteenPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com," +
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com," +
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com," +
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+                    if (exceptionNPL.NPL <= -(decimal)fifteenPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fifteenPercent);
+                    }
+
+                    if ((exceptionNPL.NPL <= -(decimal)fivePercentValue && exceptionNPL.NPL > -(decimal)tenPercentValue)
+                       || (exceptionNPL.NPL <= -(decimal)tenPercentValue && exceptionNPL.NPL > -(decimal)fifteenPercentValue)
+                       || (exceptionNPL.NPL <= -(decimal)fifteenPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanDisbursementNPLModuleDecrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+        //DPD
+        public void GetDigitalLoanDPDIncrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-DPD Category";
+
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.PRODUCTNAME + " has increased in Volume/Count by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.DPD >= (decimal)tenPercentValue && exceptionNPL.DPD < (decimal)twentyFivePercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com,"+
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,"+
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+
+                    if (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,"+
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,"+
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,"+
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", twentyFivePercent);
+                    }
+                    if (exceptionNPL.DPD >= (decimal)fiftyPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,"+
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,"+
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,"+
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fiftyPercent);
+                    }
+
+                    if ((exceptionNPL.DPD >= (decimal)tenPercentValue && exceptionNPL.DPD < (decimal)twentyFivePercentValue)
+                       || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
+                       || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanDPDIncrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanDPDDecrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-DPD Category";
+
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.PRODUCTNAME + " has decreased in Volume/Count by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.DPD >= -(decimal)tenPercentValue && exceptionNPL.DPD > -(decimal)twentyFivePercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+
+                    if (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com," +
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com," +
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com," +
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", twentyFivePercent);
+                    }
+                    if (exceptionNPL.DPD <= -(decimal)fiftyPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fiftyPercent);
+                    }
+
+                    if ((exceptionNPL.DPD <= -(decimal)tenPercentValue && exceptionNPL.DPD > -(decimal)twentyFivePercentValue)
+                       || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
+                       || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanDPDDecrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanDPDModuleIncrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-DPD Category";
+
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.MODULE + " Module has increased in Volume/Count by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.DPD >= (decimal)tenPercentValue && exceptionNPL.DPD < (decimal)twentyFivePercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+
+                    if (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com," +
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com," +
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com," +
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", twentyFivePercent);
+                    }
+                    if (exceptionNPL.DPD >= (decimal)fiftyPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fiftyPercent);
+                    }
+
+                    if ((exceptionNPL.DPD >= (decimal)tenPercentValue && exceptionNPL.DPD < (decimal)twentyFivePercentValue)
+                       || (exceptionNPL.DPD >= (decimal)twentyFivePercentValue && exceptionNPL.DPD < (decimal)fiftyPercentValue)
+                       || (exceptionNPL.DPD >= (decimal)fiftyPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanDPDIncrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanDPDModuleDecrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-DPD Category";
+
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that " + exceptionNPL.PRODUCTNAME + " Module has decreased in Volume/Count by @{{percentage}}. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.DPD >= -(decimal)tenPercentValue && exceptionNPL.DPD > -(decimal)twentyFivePercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+
+                    if (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com," +
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com," +
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com," +
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", twentyFivePercent);
+                    }
+                    if (exceptionNPL.DPD <= -(decimal)fiftyPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fiftyPercent);
+                    }
+
+                    if ((exceptionNPL.DPD <= -(decimal)tenPercentValue && exceptionNPL.DPD > -(decimal)twentyFivePercentValue)
+                       || (exceptionNPL.DPD <= -(decimal)twentyFivePercentValue && exceptionNPL.DPD > -(decimal)fiftyPercentValue)
+                       || (exceptionNPL.DPD <= -(decimal)fiftyPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanDPDModuleDecrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+        public void GetDigitalLoanLiquidationIncrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-Liquidation";
+
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that @{{percentage}} of expected Liquidation on " + exceptionNPL.PRODUCTNAME + " digital loans did not occur. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.LIQUIDATION >= (decimal)fivePercentValue && exceptionNPL.LIQUIDATION < (decimal)tenPercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fivePercent);
+                    }
+
+                    if (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com," +
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com," +
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com," +
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+                    if (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fifteenPercent);
+                    }
+
+                    if ((exceptionNPL.LIQUIDATION >= (decimal)fivePercentValue && exceptionNPL.LIQUIDATION < (decimal)tenPercentValue)
+                       || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
+                       || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanLiquidationIncrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetDigitalLoanLiquidationModuleIncrease()
+        {
+            var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESMODULE select a).ToList();
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+            string emailList = "";
+            var alertTitle = "DIGITAL LOAN EXCEPTION-Liquidation";
+
+
+            if (exceptionNPLs != null && exceptionNPLs.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                foreach (var exceptionNPL in exceptionNPLs)
+                {
+                    var alertTemplate = "This is to inform you that @{{percentage}} of expected Liquidation on " + exceptionNPL.MODULE + " module did not occur. Please <a href='https://app.powerbi.com/groups/7fda5ecd-439b-4395-97b4-6a9bd06cd399/list/reports'>click here</a> for details of this report";
+
+                    if (exceptionNPL.LIQUIDATION >= (decimal)fivePercentValue && exceptionNPL.LIQUIDATION < (decimal)tenPercentValue)
+                    {
+                        emailList = "Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com,Oluwabusayo.Elujoba@ACCESSBANKPLC.com,Glory.Ogbeka@ACCESSBANKPLC.com,Raphael.Nweke@ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fivePercent);
+                    }
+
+                    if (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
+                    {
+                        emailList = "Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com,Chibuike.Mbanefo@ACCESSBANKPLC.com,Omasirim.Ovunda-Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA@ACCESSBANKPLC.com," +
+                                    "Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com,Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com," +
+                                    "Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com,Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com," +
+                                    "Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", tenPercent);
+                    }
+                    if (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue)
+                    {
+                        emailList = "Gregory.Jobome@ACCESSBANKPLC.com,Victor.Etuokwu@ACCESSBANKPLC.com,Robert.Giles@ACCESSBANKPLC.com,Edmund.Otaigbe@accessbankplc.com,Esther.Obiekwe@ACCESSBANKPLC.com,TOYIN.BABAJAMU@accessbankplc.com," +
+                                    "Chibuike.Mbanefo @ACCESSBANKPLC.com,Omasirim.Ovunda - Nsirim@ACCESSBANKPLC.com,Ikenna.NWAKA @ACCESSBANKPLC.com,Oluwabusayo.Elujoba @ACCESSBANKPLC.com,Glory.Ogbeka @ACCESSBANKPLC.com,Raphael.Nweke @ACCESSBANKPLC.com," +
+                                    "Chiazokam.Orji @ACCESSBANKPLC.com,Zainab.Abdulsalam @ACCESSBANKPLC.com,Emeka.Okemadu @ACCESSBANKPLC.com,Prosper.Dim @ACCESSBANKPLC.com,Damisi.Mahmood @ACCESSBANKPLC.com,Queeneth.Duru @ACCESSBANKPLC.com," +
+                                    "Omotayo.Dare @ACCESSBANKPLC.com,Efe.Obaigbena @ACCESSBANKPLC.com,Iyayi.Oludapo @ACCESSBANKPLC.com,Miles.Oladimeji @ACCESSBANKPLC.com,Moses.Edet @ACCESSBANKPLC.com";
+                        alertTemplate = alertTemplate.Replace("@{{percentage}}", fifteenPercent);
+                    }
+
+                    if ((exceptionNPL.LIQUIDATION >= (decimal)fivePercentValue && exceptionNPL.LIQUIDATION < (decimal)tenPercentValue)
+                       || (exceptionNPL.LIQUIDATION >= (decimal)tenPercentValue && exceptionNPL.LIQUIDATION < (decimal)fifteenPercentValue)
+                       || (exceptionNPL.LIQUIDATION >= (decimal)fifteenPercentValue))
+                    {
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = "GetDigitalLoanLiquidationModuleIncrease";
+                        alerts.Add(alert);
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
 
     }
 }

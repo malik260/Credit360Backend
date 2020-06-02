@@ -8,9 +8,9 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
     public class AlertTitleViewModel : GeneralEntity
     {
-        public string levelGroupName;
-        public string levelCode;
-        public string templateTypeName;
+        public string levelGroupName { get; set; }
+        public string levelCode { get; set; }
+        public string templateTypeName { get; set; }
 
         public int alertTitleId { get; set; }
         public string title { get; set; }
@@ -29,11 +29,11 @@ namespace FintrakBanking.ViewModels.Setups.General
     }
     public class AlertSetupViewModel : GeneralEntity
     {
-        public string title;
-        public string levelGroupName;
-        public string levelCode;
-        public string operationName;
-        public string formular;
+        public string title { get; set; }
+        public string levelGroupName { get; set; }
+        public string levelCode { get; set; }
+        public string operationName { get; set; }
+        public string formular { get; set; }
 
         public int alertSetupId { get; set; }
         public int titleId { get; set; }
@@ -67,6 +67,11 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string title { get; set; }
         public string staffRoleCode { get; set; }
         public string staffRoleName { get; set; }
+
+        public int groupEmailId { get; set; }
+        public string groupCode { get; set; }
+        public string groupName { get; set; }
+        public string groupEmail { get; set; }
     }
 
     public class AlertsViewModel : GeneralEntity
@@ -83,6 +88,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool canFire { get; set; }
         public int alertTitleId { get; set; }
         public string accountOfficerEmail { get; set; }
+        public string operationMethod { get; set; }
     }
 
     public class AlertMisViewModel : GeneralEntity

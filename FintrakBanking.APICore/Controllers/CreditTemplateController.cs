@@ -487,12 +487,12 @@ namespace FintrakBanking.APICore.Controllers
         // added by Ade for drawdown memo
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-drawdown-memo-html/{operationId}/operationId/{targetId}/targetId")]
-        public HttpResponseMessage GetDrawdownMemoHtml(int operationId, int targetId)
+        [Route("get-drawdown-memo-html/{targetId}/targetId")]
+        public HttpResponseMessage GetDrawdownMemoHtml(int targetId)
         {
             try
             {
-                var response = _memoRepo.GetDrawdownMemoHtml(token.GetStaffId, operationId, targetId);
+                var response = _memoRepo.GetDrawdownMemoHtml(token.GetStaffId, targetId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
@@ -568,12 +568,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("document-section/operation/{operationId}/target/{targetId}/section/{sectionId}")]
-        public HttpResponseMessage GetDocumentSection(int operationId, int targetId, int sectionId)
+        [Route("document-section-bulk-liquidation/operation/{operationId}/target/{targetId}/section/{sectionId}")]
+        public HttpResponseMessage GetDocumentSectionBulkLiquidation(int operationId, int targetId, int sectionId)
         {
             try
             {
-                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId,operationId,targetId,sectionId);
+                LoadedDocumentSectionViewModel response = repo.GetDocumentSectionBulkLiquidation(token.GetStaffId,operationId,targetId,sectionId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
@@ -581,6 +581,40 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-section/operation/{operationId}/target/{targetId}/section/{sectionId}")]
+        public HttpResponseMessage GetDocumentSection(int operationId, int targetId, int sectionId)
+        {
+            try
+            {
+                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId, operationId, targetId, sectionId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("third-party-loan-document-section/operation/{operationId}/target/{targetId}/section/{sectionId}")]
+        public HttpResponseMessage GetThirdpartLoanDocumentSection(int operationId, int targetId, int sectionId)
+        {
+            try
+            {
+                LoadedDocumentSectionViewModel response = repo.GetThirdPartyLoanDocumentSection(token.GetStaffId, operationId, targetId, sectionId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -600,8 +634,8 @@ namespace FintrakBanking.APICore.Controllers
         
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("documentation/operation/{operationId}/target/{targetId}")]
-        public HttpResponseMessage GetLoadedDocumentation(int operationId, int targetId)
+        [Route("preview-document-bulk-liquidation/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetLoadedDocumentBulkLiquidation(int operationId, int targetId)
         {
             try
             {
@@ -609,7 +643,47 @@ namespace FintrakBanking.APICore.Controllers
                 user.BranchId = token.GetBranchId;
                 user.staffId = token.GetStaffId;
                 user.companyId = token.GetCompanyId;
-                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId,operationId, targetId,user);
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentBulkLiquidation(token.GetStaffId,operationId, targetId,user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("documentation/operation/{operationId}/target/{targetId}/{isThirdPartyFacility}")]
+        public HttpResponseMessage GetLoadedDocumentation(int operationId, int targetId, bool isThirdPartyFacility)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentation(token.GetStaffId, operationId, targetId, user, isThirdPartyFacility);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("documentation-bulk-liquidation/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetLoadedDocumentationBulkLiquidation(int operationId, int targetId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                List<LoadedDocumentSectionViewModel> response = repo.GetLoadedDocumentationBulkLiquidation(token.GetStaffId, operationId, targetId, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
@@ -630,6 +704,26 @@ namespace FintrakBanking.APICore.Controllers
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 bool response = repo.LoadDocumentTemplate(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("document-template-lms/load")]
+        public HttpResponseMessage LoadDocumentTemplateLms([FromBody] DocumentTemplateViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                bool response = repo.LoadDocumentTemplateLMS(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
@@ -665,7 +759,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                bool response = repo.GetIsLLLVilated(operationId, targetId);
+                dynamic response = repo.GetIsLLLVilated(operationId, targetId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)

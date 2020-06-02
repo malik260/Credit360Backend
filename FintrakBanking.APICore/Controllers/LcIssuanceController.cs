@@ -65,6 +65,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lc-enhancement")]
+        public HttpResponseMessage GetLcIssuancesForEnhancement()
+        {
+            try
+            {
+                IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForEnhancement(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lc-search/{searchString}")]
         public HttpResponseMessage SearchLc(string searchString)
         {
@@ -88,6 +105,38 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-enhancement/approval")]
+        public HttpResponseMessage GetLcIssuancesForEnhancementApproval()
+        {
+            try
+            {
+                IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForEnhancementApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-cancelation/approval")]
+        public HttpResponseMessage GetLcIssuancesForCancelationApproval()
+        {
+            try
+            {
+                IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForCancelationApproval(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException ex)
@@ -144,6 +193,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lc-enhancement")]
+        public HttpResponseMessage AddLcEnhanceMent([FromBody] LcIssuanceViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            try
+            {
+                var response = repo.AddLcEnhanceMent(model);
+                if (response.tempLcIssuanceId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPut]
         [ClaimsAuthorization]
         [Route("lc-issuance/{id}")]
@@ -168,6 +239,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("lc-enhancement/{id}")]
+        public HttpResponseMessage UpdateLcEnhancement([FromBody] LcIssuanceViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            try
+            {
+                bool response = repo.UpdateLcEnhancement(model, id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been updated successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("lc-issuance/{id}")]
@@ -184,6 +279,30 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 bool response = repo.DeleteLcIssuance(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been deleted successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("lc-enhancement/{id}")]
+        public HttpResponseMessage DeleteLcEnhancement(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            try
+            {
+                bool response = repo.DeleteLcEnhancement(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been deleted successfully" });
             }
             catch (SecureException ex)
@@ -584,6 +703,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lc-issuance/releases/{lcIssuanceId}")]
+        public HttpResponseMessage GetReleasesForLcIssuance(int lcIssuanceId)
+        {
+            try
+            {
+                IEnumerable<LcReleaseAmountViewModel> response = repo.GetReleasesForLcIssuance(lcIssuanceId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lc-issuance/release-approval")]
         public HttpResponseMessage GetLcIssuancesForReleaseApproval()
         {
@@ -648,12 +784,12 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("lc-ussance-lcIssuanceId/{lcIssuanceId}")]
-        public HttpResponseMessage GetLcUssanceByLCIssuanceId(int lcIssuanceId)
+        public HttpResponseMessage GetLcUssancesByLCIssuanceId(int lcIssuanceId)
         {
             try
             {
-                LcUssanceViewModel response = ussanceRepo.GetLcUssanceByLCIssuanceId(lcIssuanceId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+                List<LcUssanceViewModel> response = ussanceRepo.GetLcUssanceByLCIssuanceId(lcIssuanceId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count });
             }
             catch (SecureException ex)
             {

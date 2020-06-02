@@ -40,6 +40,11 @@ namespace FintrakBanking.Entities.Models
 
         public decimal? WORKENDDURATION { get; set; }
 
+        public bool USEROUNDROBIN { get; set; }
+        public bool USESBUROUTING { get; set; }
+
+        public short? APPROVALFLOWTYPEID { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
 

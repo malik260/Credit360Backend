@@ -36,8 +36,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string principalBalanceGl2Code { get; set; }
         public bool? requireCasaAccount { get; set; }
         public bool usedByLos { get; set; }
-
+        public bool isFacilityLine { get; set; }
         public string operation { get; set; }
+        
 
         public int productId { get; set; }
         public short productTypeId { get; set; }
@@ -109,6 +110,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public double? collateralFCYLimit { get; set; }
         public decimal? customerLimit { get; set; }
         public double? productLimit { get; set; }
+        public double? invoiceLimit { get; set; }
         public bool? invoiceBased { get; set; }
         public bool? allowFundUsage { get; set; }
         public List<ProductCurrencyViewModel> currencies { get; set; }
@@ -126,6 +128,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short productClassProcessId { get; set; }
         public short customerTypeId { get; set; }
         public decimal? penalChargeRate { get; set; }
+        public bool excludeFromLitigation { get; set; }
 
     }
 
@@ -173,14 +176,15 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short productPriceIndexGlobalId { get; set; }
         public short productPriceIndexId { get; set; }
         public string productPriceIndexName { get; set; }
+        public string comment { get; set; }
         public double oldRate { get; set; }
         public double newRate { get; set; }
         public short approvalStatusId { get; set; }
         public bool hasBeenApplied { get; set; }
         public DateTime effectiveDate { get; set; }
         public bool isMarketInduced { get; set; }
-
-
+        public int operationId { get; set; }
+        public int? currentApprovalLevelId { get; set; }
     }
     public class ProductPriceIndexDailyViewModel : GeneralEntity
     {
@@ -203,6 +207,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public double? fcyLimit { get; set; }
         public decimal? customerLimit { get; set; }
         public double? productLimit { get; set; }
+        public double? invoiceLimit { get; set; }
         public bool? isInvoiceBased { get; set; }
 
         public short tempProductBehaviourId { get; set; }

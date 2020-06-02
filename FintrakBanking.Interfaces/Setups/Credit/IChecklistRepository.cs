@@ -14,6 +14,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<CheckListResponseTypeViewModel> GetAllChecklistResponseType();
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType();
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();
+        bool DeleteChecklistTypeMapping(int checklistTypeMappingId, UserInfo user);
         IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId, int productClassProcessId);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId);
         List<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId);
@@ -47,6 +48,7 @@ namespace FintrakBanking.Interfaces.Setups
 
         #region CheckList Items
         IEnumerable<ChecklistItemViewModel> GetAllChecklistItem();
+        IEnumerable<ChecklistItemViewModel> GetAllChecklistItemBycheckListTypeId(int checkListTypeId);
         List<ChecklistItemViewModel> GetAllChecklistItemById(int CheckListItemId);
         bool AddChecklistItem(ChecklistItemViewModel model);
         bool AddMultipleChecklistItem(List<ChecklistItemViewModel> model);
@@ -75,6 +77,13 @@ namespace FintrakBanking.Interfaces.Setups
         bool ExtendChecklistDeferralDate(ConditionPrecedentViewModel model);
         bool UpdateProvidedChecklist(ConditionPrecedentViewModel model);
         bool ValidateDeferralDateExpiration(int conditionId);
+        IEnumerable<ChecklistApprovalViewModel> GetDeferralDocumentsAwaitingApproval(int staffId, int companyId);
+        IEnumerable<ChecklistApprovalViewModel> GetDeferralExtensionsAwaitingApproval(int staffId, int companyId);
+
+        bool SubmitDeferralDocumentForApproval(ConditionPrecedentViewModel model);
+        bool SubmitDeferralExtensionForApproval(ConditionPrecedentViewModel model);
+
+
         IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int companyId);
         IEnumerable<DeferredChecklistViewModel> GetAllDeferralChecklist();
         IEnumerable<DeferredChecklistViewModel> GetDeferralChecklistByConditionId(int conditionId);
@@ -91,9 +100,21 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ESGTypeViewModel> GetESGType();
         IEnumerable<ESGCategoryViewModel> GetESGCategory();
         IEnumerable<ESGSubCategoryViewModel> GetESGSubCategory(int categoryId);
-        IEnumerable<ESGChecklistDefinitionViewModel> GetESGChecklistDefinition();
+         IEnumerable<ESGChecklistDefinitionViewModel> GetESGChecklistDefinition();
         IEnumerable<ESGChecklistDetailViewModel> GetESGChecklistDetail(int loanApplicationDetailId);
         IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetESGChecklistStatus(int loanApplicationDetailId);
+
+        IEnumerable<CheckListScores> GetCheckListScores(int checkListTypeId);
+        IEnumerable<ESGChecklistDefinitionViewModel> GetGreenRatingDefinition();
+        IEnumerable<ESGChecklistDetailViewModel> GetGreenRatingDetail(int loanApplicationDetailId);
+        IEnumerable<ESGChecklistDefinitionAndDetailViewModel> GetGreenRatingStatus(int loanApplicationDetailId);
+        ESGChecklistSummaryViewModel CalculateGreenRatingSummary(List<ESGChecklistDetailViewModel> models);
+        bool AddGreenRatingDetail(List<ESGChecklistDetailViewModel> models);
+        bool AddGreenRatingSummary(ESGChecklistSummaryViewModel models);
+        bool AddGreenRatingDefinition(List<ESGChecklistDefinitionViewModel> models);
+        bool DeleteGreenRatingDefinition(int esgChecklistDefinitionId, int staffId);
+
+
         ESGChecklistSummaryViewModel CalculateESGChecklistSummary(List<ESGChecklistDetailViewModel> models);
         IEnumerable<LoanApplicationDetailViewModel> GetAllFacilityDetails(int loanApplicationId, int companyId);
         bool AddESGCategory(ESGChecklistDefinitionViewModel model);
@@ -106,7 +127,7 @@ namespace FintrakBanking.Interfaces.Setups
         bool AddESGChecklistDetail(List<ESGChecklistDetailViewModel> models);
         bool AddESGChecklistSummary(ESGChecklistSummaryViewModel models);
 
-        bool DeleteESGChecklistDefinition(int esgChecklistDefinitionId);
+        bool DeleteESGChecklistDefinition(int esgChecklistDefinitionId, int staffId);
 
         #endregion
 
@@ -121,5 +142,7 @@ namespace FintrakBanking.Interfaces.Setups
         #endregion
         IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistItemSimulationDetails(int productId);
         bool PopulateLoanApplicationChecklist(int loanApplicationId, int staffId, int companyId, int productClassProcessId);
+
+        IEnumerable<ApprovalTrailViewModel> GetDeferralApprovalTrail(int targetId, int operationId);
     }
 }

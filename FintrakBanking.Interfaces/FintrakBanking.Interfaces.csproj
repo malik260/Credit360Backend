@@ -87,6 +87,7 @@
     <Compile Include="Credit\ICashBackRepository.cs" />
     <Compile Include="Credit\ICashFlowLendingRepository.cs" />
     <Compile Include="Credit\ICollateralValuationRepository.cs" />
+    <Compile Include="Credit\ICreditDrawdownRepository.cs" />
     <Compile Include="Credit\IDeferredFeeRepository.cs" />
     <Compile Include="Credit\IExternalAlertRepository.cs" />
     <Compile Include="Credit\ILcConditionRepository.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Credit\ILcShippingRepository.cs" />
     <Compile Include="Credit\ILcUssanceRepository.cs" />
     <Compile Include="Credit\ILetterGenerationRequestRepository.cs" />
+    <Compile Include="Credit\ILoanArchiveRepository.cs" />
     <Compile Include="Credit\IOriginalDocumentReleaseRepository.cs" />
     <Compile Include="Credit\IProjectSiteReportRepository.cs" />
     <Compile Include="Credit\ITestCollateralRepository.cs" />

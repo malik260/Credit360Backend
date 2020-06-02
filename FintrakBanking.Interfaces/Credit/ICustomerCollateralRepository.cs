@@ -17,6 +17,8 @@ namespace FintrakBanking.Interfaces.Credit
         #region Collateral
 
         //int AddCollateral(CollateralViewModel entity, byte[] file);
+        IEnumerable<CollateralCoverageViewModel> CalculateCoverateOfCollateralLMS(CollateralCoverageViewModel model);
+        bool DeleteDuplicatedCollateral(CollateralViewModel model);
         int AddCollateral(CollateralViewModel entity);
         int AddReleaseDocument(CollateralViewModel model, byte[] file);
         IEnumerable<CollateralViewModel> GetCollateralReleaseDocument(int releaseId);
@@ -31,7 +33,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<CollateralViewModel> GetCollateralReleaseAwaitingJobRequest(int companyId, int branchId);
 
         bool UpdateCollateral(CollateralViewModel entity, int collateralId);
-        IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
+        IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId, bool isLMS = false);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral( int? applicationDetailId, int currencyId, int companyId);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId, bool getAll);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByLoanApplicationDetailId(int loanApplicationDetailId);

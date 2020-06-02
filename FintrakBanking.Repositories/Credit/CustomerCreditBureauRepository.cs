@@ -296,6 +296,14 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
 
+            var existing = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.CUSTOMERID == entity.customerId && O.CREDITBUREAUID == entity.creditBureauId 
+                                                                                && O.COMPANYDIRECTORID == entity.companyDirectorId && O.DELETED == false 
+                                                                                && (DbFunctions.DiffDays(O.DATETIMECREATED, DateTime.Now).Value <= 90));
+
+            if (existing != null) {
+                return existing.CUSTOMERCREDITBUREAUID;
+            }
+
             var data = new Entities.Models.TBL_CUSTOMER_CREDIT_BUREAU()
             {
                 COMPANYDIRECTORID = entity.companyDirectorId,
@@ -439,6 +447,32 @@ namespace FintrakBanking.Repositories.Credit
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                 where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
                                                  && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 90)
+                                                select new LoanCreditBureauViewModel
+                                                {
+                                                    customerCreditBureauId = a.CUSTOMERCREDITBUREAUID,
+                                                    companyDirectorId = a.COMPANYDIRECTORID,
+                                                    companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
+                                                    chargeAmount = a.CHARGEAMOUNT,
+                                                    customerId = a.CUSTOMERID,
+                                                    creditBureauId = a.CREDITBUREAUID,
+                                                    isReportOkay = a.ISREPORTOKAY,
+                                                    usedIntegration = a.USEDINTEGRATION,
+                                                    dateCompleted = (DateTime)a.DATECOMPLETED,
+                                                    dateTimeCreated = a.DATETIMECREATED,
+                                                    searchCount = 0,
+                                                    uploadCount = 0,
+                                                    createdBy = a.CREATEDBY,
+                                                    debitBusiness = a.DEBITBUSINESS,
+                                                    dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
+                                                }).ToList();
+            return customerLoanCreditBureauData;
+        }
+
+        public List<LoanCreditBureauViewModel> GetCustomerCreditBureauReportLogDeleted(int customerId, int? companyDirectorId)
+        {
+            var directorId = companyDirectorId > 0 ? companyDirectorId : null;
+            var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
+                                                where a.CUSTOMERID == customerId && a.DELETED == true && a.COMPANYDIRECTORID == directorId
                                                 select new LoanCreditBureauViewModel
                                                 {
                                                     customerCreditBureauId = a.CUSTOMERCREDITBUREAUID,
@@ -769,7 +803,15 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     var errorCode = searchResponse.SearchResult.Split(new string[] { "<ERROR-CODE>" }, StringSplitOptions.None)[1].Split('<')[0];
-                    var errorDescription = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(O => O.ERRORCODE == errorCode).FirstOrDefault().DESCRIPTION;
+                    var errorDescription = string.Empty;
+
+                    if (errorCode.ToLower().Contains("password")) {
+                        errorDescription = errorCode;
+                        errorCode = "0";
+                    }
+                    else {
+                        errorDescription = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(O => O.ERRORCODE == errorCode).FirstOrDefault().DESCRIPTION;
+                    }
 
                     throw new ConditionNotMetException($"Search Response - ERRORCODE: {errorCode} ERRORMESSAGE: {errorDescription}");
                 }

@@ -9,11 +9,14 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IMemorandumRepository
     {
+        decimal getTotalLLLImpact();
+        decimal GetApprovalAmount();
         string GetCallMemoMarkup(int id);
         bool Init(int operationId, int targetId, bool isDrawdwon = false);
+        bool InitForThirdpartyLoans(int operationId, int targetId);
         string Replace(string content);
         string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId);
-        string GetDrawdownMemoHtml(int staffId, int operationId, int targetId);
+        string GetDrawdownMemoHtml(int staffId, int targetId);
         //output document function
         string MemoMarkupHtml();
         string FacilityUpgradeSupportSchemeHtml();
@@ -25,6 +28,8 @@ namespace FintrakBanking.Interfaces.Credit
         string StaffPersonalLoanAGMHtml();
         string StaffPersonalLoanHtml();
         string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId);
-                
+        string UpdateEsg(string body);
+        string UpdateGreenRating(string body);
+
     }
 }

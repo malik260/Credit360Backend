@@ -41,7 +41,7 @@
                 var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
                 if (apiConfig != null && !String.IsNullOrEmpty(apiConfig.URL))
                 {
-                    API_URL = apiConfig.URL;
+                    API_URL = apiConfig.URL.Trim();
                     API_KEY = apiConfig.APIKEY;
                 }
                 if (apiConfig == null || String.IsNullOrEmpty(apiConfig.URL))
@@ -49,7 +49,7 @@
                     apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
 
                     if (apiConfig != null) {
-                        API_URL = apiConfig.URL;
+                        API_URL = apiConfig.URL.Trim();
                         API_KEY = apiConfig.APIKEY;
                     }
                 }
@@ -65,7 +65,7 @@
                 HttpResponseMessage response = null;
                // ResponseMessageViewModel res = null;
                 string responseMessage = "";
-                string responseData = "";
+                //string responseData = "";
                 getAPIURLSettings("Customer");
 
                 try
@@ -93,34 +93,40 @@
                     if (response.IsSuccessStatusCode)
                     {
                         //var customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
+                        responseMessage = await response.Content.ReadAsStringAsync();
+                        JObject jsonString = JObject.Parse(responseMessage);
 
-                        responseData = await response.Content.ReadAsStringAsync();
-                        JObject jsonString = JObject.Parse(responseData);
-                        var data = jsonString["data"].ToString();
-
-                        var objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(data);
-
-                        foreach (var customerModel in objData)
+                        if (responseMessage.Contains("data"))
                         {
-                            if (customerModel.customerType == "C") { customerModel.customerTypeId = 2; }
-                            else { customerModel.customerTypeId = 1; }
+                            var data = jsonString["data"].ToString();
+                            var objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(data);
 
-                            if (customerModel.gender == "M") { customerModel.gender = "Male"; }
-                            if (customerModel.gender == "F") { customerModel.gender = "Female"; }
-
-                            if (customerModel.customerTypeId == (short)CustomerTypeEnum.Corporate || customerModel.customerType == "C")
+                            foreach (var customerModel in objData)
                             {
-                                customerModel.firstName = customerModel.companyName == null ? customerModel.company_name : customerModel.companyName;
-                                customerModel.companyName = customerModel.company_name;
-                            }
-                            customerModel.isPoliticallyExposed = customerModel.politicallyExposedPerson > 0;
+                                if (customerModel.customerType == "C") { customerModel.customerTypeId = 2; }
+                                else { customerModel.customerTypeId = 1; }
 
-                            customers.Add(customerModel);
+                                if (customerModel.gender == "M") { customerModel.gender = "Male"; }
+                                if (customerModel.gender == "F") { customerModel.gender = "Female"; }
+
+                                if (customerModel.customerTypeId == (short)CustomerTypeEnum.Corporate || customerModel.customerType == "C")
+                                {
+                                    customerModel.firstName = customerModel.companyName == null ? customerModel.company_name : customerModel.companyName;
+                                    customerModel.companyName = customerModel.company_name;
+                                }
+
+                                customerModel.isPoliticallyExposed = customerModel.politicallyExposedPerson > 0;
+                                customers.Add(customerModel);
+                            }
+                        }
+                        else if (responseMessage.Contains("33"))
+                        {
+                            throw new APIErrorException($"Core Banking API Error - {responseMessage}");
                         }
 
-
                     }
-                    responseMessage = await response.Content.ReadAsStringAsync();
+
+                    //responseMessage = await response.Content.ReadAsStringAsync();
                     handler.Dispose();
                     client.Dispose();
 
@@ -136,19 +142,23 @@
                     //};
                     //FinTrakBankingContext logContext = new FinTrakBankingContext();
 
-                   // logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    // logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                     //logContext.SaveChanges();
 
                     return customers;
                 }
-                catch(Exception ex)
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message}");
+                }
+                catch (Exception ex)
                 {
                     var innerExceptionMessage = "";
                     if (ex.InnerException != null)
                         innerExceptionMessage = ex.InnerException.Message;
 
-                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                    throw new Exception($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
                 }
                 finally
                 {
@@ -162,10 +172,9 @@
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
+
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
-
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
                     logContext.SaveChanges();
                 }
 
@@ -284,7 +293,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"{API_URL}/GetCustomerAccountBalance/{customerAccount}",
+                        APIURL = $"{API_URL}GetCustomerAccountBalance/{customerAccount}",
                         LOGTYPEID = 1,
                         REFERENCENUMBER = customerAccount,
                         REQUESTDATETIME = requestDatetime,
@@ -379,7 +388,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"{API_URL}GetCustomerAccountsBalance/{customerCode}",
+                        APIURL = $"{API_URL}GetCustomerAccountBalances/{customerCode}",
                         LOGTYPEID = 5,
                         REFERENCENUMBER = customerCode,
                         REQUESTDATETIME = requestDatetime,
@@ -768,17 +777,9 @@
 
             public async Task<List<CustomerTurnoverViewModel>> GetCustomerTransactions(string accountNumber, int durationInMonths)
             {
-                //month = 48;
-                //cifid = "483008974";
-
                 var currentDate = DateTime.Now;
                 var startDate = DateTime.Now.AddMonths(-durationInMonths);
-
-                var month = DateTime.Now.Month - 1;
-                var year = DateTime.Now.Year;
-                var searchDate = "0" + month + "-" + year;
                 getAPIURLSettings("CustomerTransactions");
-
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
@@ -793,13 +794,8 @@
                 else
                     endpointUrl = $"GetCustomerTransactions/{accountNumber}/0{startDate.Month}/0{currentDate.Month}/{startDate.Year}/{currentDate.Year}";
 
-                //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
-                //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
-                //var endpointUrl = $"GetCustomerTransactions/{accountNumber}/{searchDate}";
-
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                //
                 handler.UseDefaultCredentials = true;
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
@@ -864,29 +860,30 @@
                                 decimal sms_Alert = 0;
                                 Decimal.TryParse(item.Account[i].sms_Alert.Replace(",", ""), out lc_Commission);
 
-                                accounts.Add(new CustomerTurnoverViewModel
-                                {
-                                    accountNumber = item.Account[i].foracid,
-                                    customerCode = item.Account[i].cust_Id,
-                                    period = item.Account[i].period,
-                                    productName = item.Account[i].schm_Type,
-                                    max_Credit_Balance = item.Account[i].max_Credit_Balance,
-                                    max_Debit_Balance = item.Account[i].max_Debit_Balance,
-                                    min_Credit_Balance = item.Account[i].min_Credit_Balance,
-                                    min_Debit_Balance = item.Account[i].min_Debit_Balance,
-                                    credit_Turnover = item.Account[i].credit_Turnover,
-                                    debit_Turnover = item.Account[i].debit_Turnover,
-                                    amc = amc,
-                                    vat = vat,
-                                    management_Fee = management_Fee,
-                                    commitment_Fees = commitment_Fees,
-                                    com_Contigent_Liab = com_Contigent_Liab,
-                                    lc_Commission = lc_Commission,
-                                    sms_Alert = sms_Alert,
-                                    month = item.Account[i].month,
-                                    year = item.Account[i].year,
-
-                                });
+                                if (item.Account[i].max_Credit_Balance != null || item.Account[i].max_Debit_Balance != null || item.Account[i].min_Credit_Balance != null || item.Account[i].min_Debit_Balance != null || item.Account[i].credit_Turnover != null || item.Account[i].debit_Turnover != null) {
+                                    accounts.Add(new CustomerTurnoverViewModel
+                                    {
+                                        accountNumber = item.Account[i].foracid,
+                                        customerCode = item.Account[i].cust_Id,
+                                        period = item.Account[i].period,
+                                        productName = item.Account[i].schm_Type,
+                                        max_Credit_Balance = item.Account[i].max_Credit_Balance,
+                                        max_Debit_Balance = item.Account[i].max_Debit_Balance,
+                                        min_Credit_Balance = item.Account[i].min_Credit_Balance,
+                                        min_Debit_Balance = item.Account[i].min_Debit_Balance,
+                                        credit_Turnover = item.Account[i].credit_Turnover,
+                                        debit_Turnover = item.Account[i].debit_Turnover,
+                                        amc = amc,
+                                        vat = vat,
+                                        management_Fee = management_Fee,
+                                        commitment_Fees = commitment_Fees,
+                                        com_Contigent_Liab = com_Contigent_Liab,
+                                        lc_Commission = lc_Commission,
+                                        sms_Alert = sms_Alert,
+                                        month = item.Account[i].month,
+                                        year = item.Account[i].year,
+                                    });
+                                }
 
                             }
 
@@ -896,11 +893,10 @@
 
                 }
 
-
                 handler.Dispose();
                 client.Dispose();
 
-                FintrakBankingDatabaseCustomerTurnoverOperations(
+                FintrakBankingDatabaseCustomerTurnoverOperations(API_URL,
                     endpointUrl,
                     accountNumber,
                     requestTime,
@@ -914,23 +910,25 @@
 
             public async Task<List<CustomerTurnoverViewModel>> GetCustomerInterestTransactions(string customerCode, int durationInMonths)
             {
-                //month = 48;
-                //cifid = "483008974";
-
-                var month = DateTime.Now.Month - 1;
-                var year = DateTime.Now.Year;
-                var searchDate = "0" + month + "-" + year;
-                getAPIURLSettings("CustomerLoanInterestDetails");
                 //API_URL = "http://10.111.13.47:7002/fintrakapi/v1/";
+                var currentDate = DateTime.Now;
+                var startDate = DateTime.Now.AddMonths(-durationInMonths);
+
+                getAPIURLSettings("CustomerLoanInterestDetails");
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
+                var endpointUrl = "";
 
                 //var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails/{customerCode}/{durationInMonths}";
-                var endpointUrl = $"GetCustomerLoanInterestDetails/{customerCode}/{searchDate}";
+                //  endpointUrl = $"GetCustomerLoanInterestDetails/{customerCode}/{durationInMonths}-{startDate.Year}";
+
+                if (durationInMonths > 9)
+                    endpointUrl = $"GetCustomerLoanInterestDetails/{customerCode}/{durationInMonths}";
+                else
+                    endpointUrl = $"GetCustomerLoanInterestDetails/{customerCode}/0{durationInMonths}";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                //
                 handler.UseDefaultCredentials = true;
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
@@ -951,16 +949,12 @@
                 response = await client.GetAsync(endpointUrl);
                 responseTime = DateTime.Now;
 
-                //List<CustomerTurnoverViewModelAPI> result = null;
-
                 List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
                 var responseMessage = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
                     var responseData = await response.Content.ReadAsStringAsync();
                     JObject responseDataJsonString = JObject.Parse(responseData);
 
@@ -982,8 +976,10 @@
                             productName = item.schm_Type,
                             interest = interest,
                             float_Charge = float_Charge,
-                            month = month,
-                            year = year,
+                            //month = month,
+                            //year = year,
+                            month = startDate.Month,
+                            year = startDate.Year,
                         });
                     }
 
@@ -993,7 +989,7 @@
                 handler.Dispose();
                 client.Dispose();
 
-                FintrakBankingDatabaseCustomerTurnoverOperations(
+                FintrakBankingDatabaseCustomerTurnoverOperations(API_URL,
                     endpointUrl,
                     customerCode,
                     requestTime,
@@ -1005,7 +1001,7 @@
                 return accounts;
             }
 
-            private void FintrakBankingDatabaseCustomerTurnoverOperations(
+            private void FintrakBankingDatabaseCustomerTurnoverOperations(string baseUrl,
                 string endpointUrl,
                 string cifid,
                 DateTime requestTime,
@@ -1018,7 +1014,7 @@
 
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
-                    APIURL = endpointUrl,
+                    APIURL = baseUrl + endpointUrl,
                     LOGTYPEID = 4,
                     REFERENCENUMBER = cifid,
                     REQUESTDATETIME = requestTime,

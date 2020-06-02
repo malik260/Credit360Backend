@@ -49,8 +49,7 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
 
-            try
-            {
+            
                 IQueryable<LoanReviewApplicationViewModel> items;
                 items = repo.GetApplications(user, operationId, classId);
 
@@ -64,59 +63,102 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.loanReviewApplicationId) // OrderBy() must be called for Skip() to work!
-                    .Skip(page).Take(itemsPerPage);//.ToList();
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
-            }
-            catch (SecureException ex)
+                    .OrderByDescending(x => x.loanReviewApplicationId) 
+                    .Skip(page).Take(itemsPerPage);
+            if (data == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            
+        }
+
+        [HttpGet, Route("review-availment")]
+        public HttpResponseMessage GetLoanReviewAvailmentAwaitingApproval(
+         [FromUri] int page,
+         [FromUri] int itemsPerPage,
+         [FromUri] int operationId,
+         [FromUri] int? classId,
+         [FromUri] string searchString
+         )
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+
+            
+                IQueryable<LoanReviewApplicationViewModel> items;
+                items = repo.GetLoanReviewAvailmentAwaitingApproval(user, operationId, classId);
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    searchString = searchString.Trim().ToLower();
+                    items = items.Where(x =>
+                        x.referenceNumber.Contains(searchString)
+                        || x.customerName.Contains(searchString)
+                        ).Take(itemsPerPage);
+                }
+
+                var data = items
+                    .OrderByDescending(x => x.loanReviewApplicationId) 
+                    .Skip(page).Take(itemsPerPage);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            
         }
 
         [HttpGet, Route("loan-review-application/select-list")]
         public HttpResponseMessage GetAllSelectList()
         {
-            try
+            
+            var data = repo.GetAllSelectList();
+            if (data == null)
             {
-                var data = repo.GetAllSelectList();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
             }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+           
         }
 
 
         [HttpGet, Route("loan-review-application-approval/select-list")]
         public HttpResponseMessage GetAllLMSApprovalOperationList()
         {
-            try
-            {
+           
                 var data = repo.GetAllLMSApprovalOperationList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            
         }
 
 
         [HttpGet, Route("loan-review-application/chargefeeid/{id}")]
         public HttpResponseMessage GetChargeFeeById(int id)
         {
-            try
+           
+            var data = repo.GetChargeFeeDetails(id);
+            if (data == null)
             {
-                var data = repo.GetChargeFeeDetails(id);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
             }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            
         }
 
         [HttpPost] [ClaimsAuthorization]
@@ -133,7 +175,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message});
             }
         }
 
@@ -143,16 +185,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-review-application/validatecustomer/{loanApplicationDetailId}/{customerId}")]
         public HttpResponseMessage validateCustomer(int loanApplicationDetailId,int customerId)
         {
-            try
-            {
-                
                 bool response = repo.ValidateSubAllocationOperation(loanApplicationDetailId, customerId);
+                if (response == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
-            }
+            
         }
 
 
@@ -161,17 +201,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-review-application/validatesuballocation/{loanApplicationDetailId}/{customerId}/{loanSystemTypeId}")]
         public HttpResponseMessage validatesuballocation(int loanApplicationDetailId, int customerId, int loanSystemTypeId)
         {
-            try
-            {
 
-                bool response = repo.ValidateNewSubAllocationOperation(loanApplicationDetailId, customerId, loanSystemTypeId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
-            }
-            catch (SecureException ex)
+            bool response = repo.ValidateNewSubAllocationOperation(loanApplicationDetailId, customerId, loanSystemTypeId);
+            if (response == false)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
             }
-
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
         }
 
         [HttpPost] [ClaimsAuthorization]
@@ -179,63 +216,85 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)
         {
             var searchString = search.searchString.Trim();
-            //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
-            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString);//.Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
+            //var data = loanRepo.SearchForLoanAndRevolvingLoan(searchString);
+            var data = loanRepo.SearchForLoanAndRevolvingLoan(searchString, search.statusId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-review-application/loan-search-fee")]
         public HttpResponseMessage LoanSearchFee([FromBody] SearchViewModel search)
         {
             var searchString = search.searchString.Trim();
-            //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
-            var data = loanRepo.SearchForLoanAndRevolvingLoanFeeCharge(search.loanSystemTypeId, searchString);//.Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
+            var data = loanRepo.SearchForLoanAndRevolvingLoanFeeCharge(search.loanSystemTypeId, searchString);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
+
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/forward-application")]
         public HttpResponseMessage ForwardApplication([FromBody] ForwardReviewViewModel model)
         {
-            try
-            {
+            model.userBranchId = (short)token.GetBranchId;
+            model.companyId = token.GetCompanyId;
+            model.lastUpdatedBy = token.GetStaffId;
+            model.createdBy = token.GetStaffId;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.ForwardApplication(model);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
+
+        
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-review-application/forward-appraisal")]
+        public HttpResponseMessage ForwardApplicationAppraisal([FromBody] ForwardReviewViewModel model)
+        {
+           
                 model.userBranchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
                 model.lastUpdatedBy = token.GetStaffId;
                 model.createdBy = token.GetStaffId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.ForwardApplication(model);
+                WorkflowResponse response = repo.ForwardApplicationAppraisal(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            
         }
+
 
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application-detail/loan/{loanId}/loan-type/{loanTypeId}")]
         public HttpResponseMessage GetLoanApplicationDetail(int loanId, int loanTypeId)
         {
-            try
+            
+            var data = repo.GetLoanApplicationDetail(loanId,loanTypeId);
+            if (data == null)
             {
-                var data = repo.GetLoanApplicationDetail(loanId,loanTypeId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
             }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            
         }
 
 
         [HttpGet, Route("lms-regional-loan-application")]
         public HttpResponseMessage GetRegionalLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] string searchString)
         {
-            try
-            {
+           
                 IQueryable<LoanReviewApplicationViewModel> items = repo.GetRegionalLoanApplications(token.GetStaffId);
 
                 if (!String.IsNullOrEmpty(searchString))
@@ -253,13 +312,13 @@ namespace FintrakBanking.APICore.Controllers
                     .Skip(page)
                     .Take(itemsPerPage)
                     .ToList();
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            
         }
 
 
@@ -276,8 +335,42 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
             }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-lien-application-detail-search")]
+        public HttpResponseMessage LoanLienApplicationSearch([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.SearchLien(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-lien-applications")]
+        public HttpResponseMessage LoanLienApplications()
+        {
+
+            var data = repo.GetAllLienRemovalApplications(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
         }
 
         [HttpPost]
@@ -327,22 +420,15 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lms-operation/loanId/{loanId}/loanSystemTypeId/{loanSystemTypeId}")]
         public HttpResponseMessage GetLmsOperation(int loanId, short loanSystemTypeId)
         {
-            try
-            {
+            
                 var data = repo.GetLMSOperation(loanId, loanSystemTypeId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
-                }
+                }else
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
         }
 
         [HttpGet]
@@ -350,8 +436,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("maturityinstruction-operation/loanId/{loanId}/loanSystemTypeId/{loanSystemTypeId}")]
         public HttpResponseMessage GetMaturityInstruction(int loanId, short loanSystemTypeId)
         {
-            try
-            {
+           
                 var data = repo.GetMaturityInstruction(loanId, loanSystemTypeId);
                 if (data == null)
                 {
@@ -360,12 +445,6 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
         }
 
         [HttpGet]

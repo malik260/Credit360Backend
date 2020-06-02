@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.ViewModels.Credit
@@ -12,8 +13,10 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int? customerBusinessUnitId { get; set; }
         public string divisionShortCode { get; set; }
+        public int bookingRequestId { get; set; }
 
         public string divisionCode { get; set; }
+        
 
         public string approvedProductName { get; set; }
         public decimal? equityControl { get; set; }
@@ -39,6 +42,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isNewApplication { get; set; }
         public bool closeApplication { get; set; }        
         public int loanApplicationId { get; set; }
+        public int? loanApplicationIdForOperation { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
@@ -61,7 +65,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short loanStatusId { get; set; }
         public string loanStatus { get; set; }
         public int relationshipOfficerId { get; set; }
-        public int relationshipManagerId { get; set; }
+        public int? relationshipManagerId { get; set; }
         public DateTime applicationDate { get; set; }
         public DateTime? applicationDateArch { get; set; }
         public decimal applicationAmount { get; set; }
@@ -76,8 +80,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string misCode { get; set; }
         public string teamMisCode { get; set; }
         public bool submittedForAppraisal { get; set; }
+        public string operationName { get; set; }
         public bool isRelatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
+        public bool isInvestmentGrade { set; get; }
+        public bool isProjectRelatedLoan { set; get; }
+        public bool isOnLending { set; get; }
+        public bool isInterventionFunds { set; get; }
+        public bool isORRBasedApproval { set; get; }
         public short approvalStatusId { get; set; }
 
         public decimal proposedAmount { get; set; }
@@ -87,7 +97,6 @@ namespace FintrakBanking.ViewModels.Credit
         public short subSectorId { get; set; }
         public int sectorId { get; set; }
         public string sectorName { get; set; }
-        public bool isInvestmentGrade { set; get; }
         public int? loantermSheetId { get; set; }
         public string customerName { get; set; }
         public int customerTypeId { get; set; }
@@ -115,6 +124,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public string lastComment { get; set; }
         public int approvalTrailId { get; set; }
+        public int? responseStaffId { get; set; }
         // public decimal? approvedAmount { get; set; }
         public short applicationStatusId { get; set; }
 
@@ -138,6 +148,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int proposedProductId { get; set; }
         public string repaymentTerm { get; set; }
         public bool? isTakeOverApplication { get; set; }
+       
         public int? repaymentScheduleId { get; set; }
         public double proposedInterestRate { get; set; }
         public string proposedProductName { get; set; }
@@ -159,6 +170,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
         public bool isadhocapplication { get; set; }
+        public bool isSkipAppraisalEnabled { get; set; }
+        public bool isAtDrawDown { get; set; }
         public int? exclusiveOperationId { get; set; }
         public int? flowchangeId { get; set; }
         public int? loanApprovedLimitId { get; set; }
@@ -191,6 +204,7 @@ namespace FintrakBanking.ViewModels.Credit
         
         public int tempApplicationCancellationId { get; set; }
         public IQueryable<string> staffName { get; set; }
+        public string creatorName { get; set; }
         public string comment { get; set; }
         public bool isOfferLetterAvailable { get; set; }
         public int? currentApprovalLevelTypeId { get; set; }
@@ -199,45 +213,25 @@ namespace FintrakBanking.ViewModels.Credit
         public bool editMode { get; set; }
         public short? requireCollateralTypeId { get; set; }
         public RacInformationViewModel rac { get; set; }
+        public List<DateTimeAndTimeOfDayViewModel> dateTimeAndTimeOfDay { get; set; }
 
-        
 
-        public string slaGlobalStatus
-        {
-            get
-            {
-                float sla = globalsla;
-                int? elapse = (DateTime.Now - dateTimeCreated).Hours;
-                return SlaStatus(sla, elapse);
-            }
-        }
+        public string slaGlobalStatus { get; set; }
 
-        public string slaInduvidualStatus
-        {
-            get
-            {
-                float sla = currentApprovalLevelSlaInterval;
-                int? elapse = (DateTime.Now - timeIn)?.Hours;
-                return SlaStatus(sla, elapse);
-            }
-        }
+        public string slaInduvidualStatus { get; set; }
 
         public string customerType { get; set; }
         public string isProjectRelated { get; set; }
         public decimal facilityAmount { get; set; }
-
-        private string SlaStatus(float sla, int? elapse)
-        {
-            if (sla == 0) return "success";
-            if (elapse == 0 || elapse == null) return "success";
-            float factor = (float)(elapse / sla) * 100;
-            if (factor <= 30) return "success";
-            if (factor <= 70) return "warning";
-            if (factor <= 100) return "danger";
-            return "danger";
-        }
-
-  
+        public object operationTypeName { get; set; }
+        public string reviewLoanDetaile { get; set; }
+        public string referenceNumber { get; set; }
+        public DateTime systemDateTime { get; set; }
+        public int? bookingOperationId { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public string lienReferenceNumber { get; set; }
+        public decimal lienAmount { get; set; }
+        public DateTime lienDateTimeCreated { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -327,6 +321,7 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string approvedProductName { get; set; }
+        public bool? isLineFacility { get; set; }
 
         public int applicationStatusPosition { get; set; }
 
@@ -374,6 +369,8 @@ namespace FintrakBanking.ViewModels.Credit
         public double? proposedInterestRate { get; set; }
 
         public decimal proposedAmount { get; set; }
+
+        public int? flowChangeId { get; set; }
 
         public short approvedProductId { get; set; }
 
@@ -466,6 +463,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string sectorName { get; set; }
         public string productClass { get; set; }
 
+        public string interestRepayment { get; set; }
+        public int? interestRepaymentId { get; set; }
+        public string moratorium { get; set; }
+        public bool? isMoratorium { get; set; }
+        public decimal? approvedLineLimit { get; set; }
+
 
         public string priceIndexName { get; set; }
         public int? priceIndexId { get; set; }
@@ -554,6 +557,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class SearchViewModel
     {
         public int performanceTypeId { get; set; }
+        public int statusId { get; set; }
         public int productTypeId { get; set; }
         public string searchString { get; set; }
         public short loanSystemTypeId { get; set; }
@@ -848,6 +852,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ForwardReviewViewModel : GeneralEntity
     {
+        public bool isFlowTest { get; set; }
+        public bool isFromPc { get; set; }
         public int forwardAction { get; set; } // statusId
         public int applicationId { get; set; } // targetId
         public int appraisalMemorandumId { get; set; }
@@ -945,13 +951,22 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationTagsViewModel : GeneralEntity
     {
-        public bool withoutInstruction;
+        public bool withInstruction { get; set; }
         public bool domiciliationNotInPlace;
-
         public bool isProjectRelated { get; set; }
         public bool isOnLending { get; set; }
         public bool isInterventionFunds { get; set; }
     }
+
+    public class LoanApplicationTagsLMSViewModel : GeneralEntity
+    {
+        public bool? withInstruction { get; set; }
+        public bool? domiciliationNotInPlace;
+        public bool? isProjectRelated { get; set; }
+        public bool? isOnLending { get; set; }
+        public bool? isInterventionFunds { get; set; }
+    }
+
 
     public class ApprovalLevelDetailsModel : GeneralEntity
     {
@@ -1014,6 +1029,27 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationDetailId { get; set; }
         public int collateralId { get; set; }
         public decimal amount { get; set; }
+    }
+
+    public class FacilityModificationViewModel : GeneralEntity
+    {
+        public int loanApplicationDetailId { get; set; }
+        public short approvedProductId { get; set; }
+        public double approvedInterestRate { get; set; }
+        public int approvedTenor { get; set; }
+        public int tenorModeId { get; set; }
+        public int sectorId { get; set; }
+        public short subSectorId { get; set; }
+        public int productClassId { get; set; }
+        public int loanDetailReviewTypeId { get; set; }
+        public decimal approvedAmount { get; set; }
+        public List<ProductFeesViewModel> fees { get; set; }
+    }
+
+    public class DateTimeAndTimeOfDayViewModel
+    {
+        public DateTime dateTime { get; set; }
+        public TimeSpan timeOfDay { get; set; }
     }
 
 }

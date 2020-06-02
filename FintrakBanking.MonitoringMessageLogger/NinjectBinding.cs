@@ -135,7 +135,6 @@ namespace FintrakBanking.MonitoringMessageLogger
             Bind<ICollateralDocumentRepository>().To<CollateralDocumentRepository>();
             Bind<IJobRequestRepository>().To<JobRequestRepository>();
             Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
-            //Bind<ILimitRepository>().To<LimitRepository>();
             Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();
             Bind<ILoanOperationsRepository>().To<LoanOperationsRepository>();
             Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
@@ -217,6 +216,7 @@ namespace FintrakBanking.MonitoringMessageLogger
             Bind<IAuthourisedSignatoryRepository>().To<AuthourisedSignatoryRepository>();
             Bind<IAlertRepository>().To<AlertRepository>();
             Bind<ICashFlowLendingRepository>().To<CashFlowLendingRepository>();
+            //Bind<ILoanArchiveRepository>().To<LoanArchiveRepository>();
 
 
         }

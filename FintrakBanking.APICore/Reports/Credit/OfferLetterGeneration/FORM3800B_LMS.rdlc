@@ -9,7 +9,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>F3800B - ADVICE OF CREDIT DECISION (APPROVAL) </Value>
+                <Value>FAM - ADVICE OF CREDIT DECISION (APPROVAL) </Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontSize>11pt</FontSize>
@@ -1035,7 +1035,7 @@ Remarks: ................................................</Value>
         <rd:DefaultName>Textbox117</rd:DefaultName>
         <Top>21.37655in</Top>
         <Left>0.00895in</Left>
-        <Height>1.89584in</Height>
+        <Height>2.41806in</Height>
         <Width>7.41277in</Width>
         <ZIndex>18</ZIndex>
         <Style>
@@ -4310,7 +4310,7 @@ Remarks: ................................................</Value>
         </Style>
       </Image>
     </ReportItems>
-    <Height>23.35572in</Height>
+    <Height>23.86405in</Height>
     <Style />
   </Body>
   <Width>7.57583in</Width>
@@ -4337,8 +4337,8 @@ Remarks: ................................................</Value>
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox1</rd:DefaultName>
-          <Top>0.05556in</Top>
-          <Left>5.78736in</Left>
+          <Top>0.06944in</Top>
+          <Left>5.77003in</Left>
           <Height>0.25in</Height>
           <Width>1.68943in</Width>
           <Style>

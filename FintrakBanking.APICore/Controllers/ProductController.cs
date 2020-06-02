@@ -600,9 +600,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-by-productclass/{id}/customerType/{cid}")]
         public HttpResponseMessage GetAllProduct(int id, int cid)
         {
-            try
-            {
-
+            
                 var data = repo.GetAllProductByProductClass(id, cid).ToList();
                 if (data == null)
                 {
@@ -612,11 +610,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data.ToList() });  //Ok(accounts);
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            
         }
 
 
@@ -625,9 +619,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product/product-class/{productclassId}/customer-type/{customerTypeId}")]
         public HttpResponseMessage GetAllProductByProductClassAndCustomerType(int productclassId, int customerTypeId)
         {
-            try
-            {
-
                 var data = repo.GetAllProductByProductClassAndCustomerType(productclassId, customerTypeId).ToList();
                 if (data == null)
                 {
@@ -637,11 +628,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data.ToList() });  //Ok(accounts);
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
         }
 
 
@@ -650,8 +636,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product/productclass/{productclassId}/customerType/{customerTypeId}")]
         public HttpResponseMessage GetAllProductsByProductClassIdAndCustomerTypeId(int productclassId, int customerTypeId)
         {
-            try
-            {
+           
 
                 var data = repo.GetAllProductsByProductClassIdAndCustomerTypeId(productclassId, customerTypeId).ToList();
                 if (data == null)
@@ -662,11 +647,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data.ToList() });  //Ok(accounts);
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
         }
 
         [HttpGet] [ClaimsAuthorization]  
@@ -681,6 +661,26 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product/productClassProcessId/{productClassProcessId}")]
+        public HttpResponseMessage GetAllProduct(int productClassProcessId)
+        {
+            try
+            {
+                var data = repo.GetProductsByProductClassProcess(productClassProcessId).OrderBy(p => p.productName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
             }
             catch (SecureException ex)
             {
@@ -1063,19 +1063,28 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                foreach (var item in model.currencies)
+                if (model.currencies.Count() > 0)
                 {
-                    item.createdBy = token.GetStaffId;
+                    foreach (var item in model.currencies)
+                    {
+                        item.createdBy = token.GetStaffId;
+                    }
                 }
 
-                foreach (var item in model.fees)
+                if (model.fees.Count() > 0)
                 {
-                    item.createdBy = token.GetStaffId;
+                    foreach (var item in model.fees)
+                    {
+                        item.createdBy = token.GetStaffId;
+                    }
                 }
 
-                foreach (var item in model.collaterals)
+                if (model.collaterals.Count() > 0)
                 {
-                    item.createdBy = token.GetStaffId;
+                    foreach (var item in model.collaterals)
+                    {
+                        item.createdBy = token.GetStaffId;
+                    }
                 }
 
                 var staff = await repo.UpdateProduct(productId, model);
@@ -1377,8 +1386,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-price-index-global-approval")]
         public HttpResponseMessage GoForApprovalGlobalPriceIndex([FromBody]ApprovalViewModel entity)
         {
-            try
-            {
+            
                 entity.BranchId = token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.staffId = token.GetStaffId;
@@ -1407,27 +1415,15 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
                 }
-            }
-            catch (ConditionNotMetException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
-            }
-            catch (System.Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
-            }
+            
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("product-price-index-global-approval")]
         public HttpResponseMessage GetAllProductPriceIndexGlobalAwaitingApproval()
         {
-            try
-            {
+            
                 var token = new TokenDecryptionHelper();
                 var data = repo.GetProductPriceIndexGlobalAwaitingApproval(token.GetStaffId).ToList();
                 if (data == null)
@@ -1438,19 +1434,14 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("product-price-index-global")]
         public HttpResponseMessage GetAllProductPriceIndexGlobal()
         {
-            try
-            {
+            
                 var token = new TokenDecryptionHelper();
                 var data = repo.GetProductPriceIndexGlobal().ToList();
                 if (data == null)
@@ -1461,19 +1452,14 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
         }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("product-price-index-global")]
         public HttpResponseMessage AddProductPriceIndexGlobal([FromBody] ProductPriceIndexGlobalViewModel model)
         {
-            try
-            {
+           
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -1489,16 +1475,8 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 else
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Global Interest Rate not created" });
-            }
-            catch (ConditionNotMetException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+                        new { success = false, message = "Error creating Global Interest Rate" });
+            
         }
 
         [HttpPut]
@@ -1511,8 +1489,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "product price index not found" });
             }
 
-            try
-            {
+            
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -1520,15 +1497,14 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                repo.UpdateProductPriceIndexGlobal(productPriceIndexGlobalId, model);
+               if( repo.UpdateProductPriceIndexGlobal(productPriceIndexGlobalId, model)) { 
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = productPriceIndexGlobalId, message = "global interest rate change has been updated successfully and sent for Approval" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            }else
+            
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error updating global interest rate change" });
+            
         }
 
         [HttpGet]

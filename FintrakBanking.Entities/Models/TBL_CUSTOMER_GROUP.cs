@@ -41,6 +41,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime DATETIMECREATED { get; set; }
 
+        public string GROUPADDRESS { get; set; }
+        public string GROUPCONTACTPERSON { get; set; }
+
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public bool DELETED { get; set; }

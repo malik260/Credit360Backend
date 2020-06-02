@@ -10,6 +10,7 @@ namespace FintrakBanking.Interfaces.Customer
     {
         #region FS Ratio Caption
         IEnumerable<CustomerFSRatioCaptionViewModel> GetFSRatioCaption(int companyId);
+        IEnumerable<CustomerFSRatioCaptionViewModel> GetFSRatioCaptionByFSCaptionGroupId(int companyId, int fSCaptionGroupId);
         List<CustomerFSRatioCaptionViewModel> GetFSRatioCaptionById(short ratioCaptionId);
         bool AddFSRatioCaption(CustomerFSRatioCaptionViewModel model);
         bool UpdateFSRatioCaption(short fsCaptionId, CustomerFSRatioCaptionViewModel model);
@@ -29,5 +30,7 @@ namespace FintrakBanking.Interfaces.Customer
         #endregion
 
         List<CustomerFSRatioCaptionReportViewModel> GetCustomerFSRatioValues(int customerId);
+
+        decimal CalculateFSRatioValueForDerived(CustomerFSCaptionDetailViewModel entity);
     }
 }

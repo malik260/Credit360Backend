@@ -177,6 +177,10 @@
           <DataField>approvedTenorString</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="fees">
+          <DataField>fees</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
@@ -391,6 +395,34 @@
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
+    <DataSet Name="OfferLetterTransactionDynamics">
+      <Query>
+        <DataSourceName>Credit</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="sn">
+          <DataField>sn</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="dynamics">
+          <DataField>dynamics</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="productName">
+          <DataField>productName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Credit</rd:DataSetName>
+        <rd:SchemaPath>C:\AccessCredit360Project\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:TableName>OfferLetterTransactionDynamics</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -517,11 +549,11 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=CDate(Today()).ToString("MM/dd/yyyy")</Value>
+                    <Value>=Parameters!currentDate.Value</Value>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
-                      <Format>d</Format>
+                      <Format>d MMM yyyy</Format>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -569,7 +601,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>CONDITIONS PRECEDENT TO THE ISSUANCE OF THE GUARANTEE</Value>
+                                  <Value>CONDITIONS PRECEDENT</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontSize>12pt</FontSize>
@@ -902,7 +934,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail") &amp; Format(Fields!loanAmount.Value,"#,#.00")</Value>
+                                  <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail") &amp; Format(Fields!baseCurrencyLoanAmount.Value,"#,#.00")</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -1097,6 +1129,82 @@
                     <TablixCell />
                   </TablixCells>
                 </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Fees:</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="fees">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!fees.Value</Value>
+                                  <Style>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>fees</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
@@ -1116,6 +1224,7 @@
                     <TablixMember />
                     <TablixMember />
                     <TablixMember />
+                    <TablixMember />
                   </TablixMembers>
                 </TablixMember>
               </TablixMembers>
@@ -1123,137 +1232,9 @@
             <DataSetName>OfferLetterLoanDetail</DataSetName>
             <Top>4.56107in</Top>
             <Left>0.20361in</Left>
-            <Height>1in</Height>
+            <Height>1.25in</Height>
             <Width>6.58872in</Width>
             <ZIndex>4</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Tablix>
-          <Tablix Name="Tablix5">
-            <TablixBody>
-              <TablixColumns>
-                <TablixColumn>
-                  <Width>2.70052in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>3.88821in</Width>
-                </TablixColumn>
-              </TablixColumns>
-              <TablixRows>
-                <TablixRow>
-                  <Height>0.25in</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="feeName">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!feeName.Value</Value>
-                                  <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>:</Value>
-                                  <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>feeName</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="rateValue">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!rateValue.Value</Value>
-                                  <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <Format>0.00;(0.00)</Format>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>% flat of facility amount</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style>
-                                <TextAlign>Left</TextAlign>
-                              </Style>
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>rateValue</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-              </TablixRows>
-            </TablixBody>
-            <TablixColumnHierarchy>
-              <TablixMembers>
-                <TablixMember />
-                <TablixMember />
-              </TablixMembers>
-            </TablixColumnHierarchy>
-            <TablixRowHierarchy>
-              <TablixMembers>
-                <TablixMember>
-                  <Group Name="Details4" />
-                </TablixMember>
-              </TablixMembers>
-            </TablixRowHierarchy>
-            <DataSetName>OfferLetterFee</DataSetName>
-            <Top>5.60274in</Top>
-            <Left>0.20361in</Left>
-            <Height>0.25in</Height>
-            <Width>6.58873in</Width>
-            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1451,7 +1432,7 @@
             <Left>0.22935in</Left>
             <Height>0.5in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>6</ZIndex>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1466,7 +1447,7 @@
                 <TextRuns>
                   <TextRun>
                     <Label>Offer Letter Salutation</Label>
-                    <Value>=First(Fields!offerLetterSalutation.Value, "OfferLetterDetails")</Value>
+                    <Value>=StrConv(First(Fields!offerLetterSalutation.Value, "OfferLetterDetails"), vbProperCase)</Value>
                     <MarkupType>HTML</MarkupType>
                     <Style>
                       <FontSize>11pt</FontSize>
@@ -1481,7 +1462,7 @@
             <Left>0.18628in</Left>
             <Height>1.25248in</Height>
             <Width>6.60606in</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1497,11 +1478,11 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>8.21198in</Top>
-            <Left>0.57892in</Left>
+            <Top>8.70365in</Top>
+            <Left>0.66101in</Left>
             <Height>0.07292in</Height>
             <Width>5.72917in</Width>
-            <ZIndex>8</ZIndex>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1528,11 +1509,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox33</rd:DefaultName>
-            <Top>7.69097in</Top>
-            <Left>0.22935in</Left>
+            <Top>8.30659in</Top>
+            <Left>0.21237in</Left>
             <Height>0.25in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>9</ZIndex>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1563,11 +1544,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox34</rd:DefaultName>
-            <Top>8.54306in</Top>
-            <Left>0.24068in</Left>
+            <Top>8.90695in</Top>
+            <Left>0.17717in</Left>
             <Height>0.25in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>10</ZIndex>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1586,7 +1567,7 @@
             <Left>4.87736in</Left>
             <Height>0.48959in</Height>
             <Width>1.88464in</Width>
-            <ZIndex>11</ZIndex>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1618,7 +1599,7 @@
             <Left>0.20361in</Left>
             <Height>0.25in</Height>
             <Width>6.57175in</Width>
-            <ZIndex>12</ZIndex>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1810,7 +1791,7 @@
             <Left>0.17717in</Left>
             <Height>0.25in</Height>
             <Width>6.59819in</Width>
-            <ZIndex>13</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1843,7 +1824,7 @@
             <Left>0.18628in</Left>
             <Height>0.25in</Height>
             <Width>6.58908in</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1954,6 +1935,160 @@
             <Left>0.17717in</Left>
             <Height>0.25in</Height>
             <Width>6.59819in</Width>
+            <ZIndex>14</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Tablix Name="Tablix4">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.4631in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>6.09529in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.26562in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox15">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>CONDITIONS SUBSEQUENT</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.26562in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox16">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=RowNumber(nothing)</Value>
+                                  <Style>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="conditionPrecident3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!conditionPrecident.Value, "OfferLetterConditionSubsequent")</Value>
+                                  <Style>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>conditionPrecident</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details3" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>OfferLetterConditionPrecident</DataSetName>
+            <Top>7.70591in</Top>
+            <Left>0.20361in</Left>
+            <Height>0.53124in</Height>
+            <Width>6.55839in</Width>
             <ZIndex>15</ZIndex>
             <Style>
               <Border>
@@ -1962,7 +2097,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>22.33437cm</Height>
+        <Height>9.19306in</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1975,10 +2110,10 @@
           </BackgroundImage>
         </Style>
       </Body>
-      <Width>17.28132cm</Width>
+      <Width>6.80367in</Width>
       <Page>
         <PageHeader>
-          <Height>2.89842cm</Height>
+          <Height>1.14111in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <Style>
@@ -1988,7 +2123,7 @@
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>1.65268cm</Height>
+          <Height>0.31944in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -2012,8 +2147,8 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
-              <Top>0.23158in</Top>
-              <Left>4.49966in</Left>
+              <Top>0.06944in</Top>
+              <Left>4.47135in</Left>
               <Height>0.25in</Height>
               <Width>2.30401in</Width>
               <Style>
@@ -2033,13 +2168,12 @@
             </Border>
           </Style>
         </PageFooter>
-        <PageHeight>29.7cm</PageHeight>
-        <PageWidth>21cm</PageWidth>
-        <LeftMargin>1.3cm</LeftMargin>
-        <RightMargin>1.3cm</RightMargin>
-        <TopMargin>1.5cm</TopMargin>
-        <BottomMargin>1.5cm</BottomMargin>
-        <ColumnSpacing>1.27cm</ColumnSpacing>
+        <PageHeight>10.7in</PageHeight>
+        <PageWidth>9in</PageWidth>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
         <Style />
       </Page>
     </ReportSection>
@@ -2506,6 +2640,6 @@ RRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAB
 ZsncJRpULHaUNwUaZFy1qRWXO+cj9EUdw4gdqTCp4c77T1T2gynLsnyNAVBdXe46GEANddXRAnx/nf0lLoEGhX20s+eDNi3QH2Uss+Atd7g9pL1fkCk/HOEEuLgu6ZpcxaFL2AJmeVytwqR6+g7zsYhgJ1usGm8a00KiAP0R7BHmHugWRrtraoQmbiLGLzzxa3Kt6RKmK2Ph/eZVjd/YZspeSza8ExmtHyMyUHWbqH6fYgPLJhKqL1hXIzRC2mxkcQYLA/yv7amaYo1aKquzIyp7cNGcPRQxX3PUxOagBydtxHbT42k+sgtLiheKwbsQCgaGHg1U3g5nhgKhnRdvWAK4Vae54HxNvAwvGDCUfSuUyextt9W6V9rrAUcmH/SynVgWsZoTazRnhCyDdEX2JeR67xZdmLSwFCQESkYmXRGY38gcDmgEyjAlxDhhE5QuhXfvE3RjBSfgZ3YZ4ldavkSYnFuauW6HfSot80uQ1oGGw8kP5peNJzvQ2bhRpwtC69rtTMbO2OpI9yZ8IKJzz3iGWXqnkKAv0lHz3s5Ow9F01izCWCiFTLDhWLpROjaA64KO18OPtrYphURlZ8dx03Iz6ano4VKoEgxXFSsfmZpszjcqiaYsyBJzlnPhnxG/H/aHyWAw9PkZyZ51Nun/G01WW08Mqwn6gt8Zr8ki6A/FLCEHoEcUc2MS6BLJU9AD/gJW+BE006z6uQAAAABJRU5ErkJggg==</ImageData>
     </EmbeddedImage>
   </EmbeddedImages>
-  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
   <rd:ReportID>3b115608-9b46-41ac-851f-86c7cdcdbe3c</rd:ReportID>
 </Report>

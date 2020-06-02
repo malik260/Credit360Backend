@@ -11,7 +11,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanReviewOperationsId { get; set; }
         public string legalContingentCode { get; set; }
 
-
+        public List<LoanViewModel> dataCollection { get; set; }
         public int loanId { get; set; }
 
         public short productTypeId { get; set; }
@@ -106,20 +106,86 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanReviewIrregularScheduleViewModel
     {
         public int IrregularScheduleInputId { get; set; }
-
         public int LoanReviewOperationId { get; set; }
-
         public DateTime PaymentDate { get; set; }
-
         public decimal PaymentAmount { get; set; }
-
         public int CreatedBy { get; set; }
-
         public DateTime DateTimeCreated { get; set; }
+    }
+
+    public class LoanRecoveryAssignmentViewModel
+    {
+        public int loanAssignId { get; set; }
+        public int loanId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public DateTime dateAssigned { get; set; }
+        public int createdBy { get; set; }
+        public bool isFullyRecovered { get; set; }
+        public DateTime? expCompletionDate { get; set; }
+    }
+
+    public class RemoveLienViewModel
+    {
+        public int unfreezeLienAccountId { get; set; }
+        public int casaLienAccountId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public int fileSize { get; set; }
+        public string fileSizeUnit { get; set; }
+        public byte[] fileData { get; set; }
+        public int createdBy { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public int approvalStatusId { get; set; }
+        public bool operationCompleted { get; set; }
+        public int operationId { get; set; }
+        public short userBranchId { get; set; }
+        public string applicationUrl { get; set; }
+        public int companyId { get; set; }
+        public string userIPAddress { get; set; }
+        public string comment { get; set; }
+        public bool overwrite { get; set; }
+        public int lastUpdatedBy { get; set; }
+        public int forwardAction { get; set; }
+        public int? receiverStaffId { get; set; }
+        public int? receiverLevelId { get; set; }
+        public short? vote { get; set; }
+        public bool isFlowTest { get; set; }
+        public bool? isFromPc { get; set; }
+        public DateTime? requestDate { get; set; }
+    }
+
+
+    public class CollateralLiquidationRecoveryViewModel : GeneralEntity
+    {
+        public int collateralLiquidationRecoveryId { get; set; }
+        public int loanId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public int loanAssignId { get; set; }
+        public bool isFullyRecovered { get; set; }
+        public bool overwrite { get; set; }
+        public byte[] fileData { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public int fileSize { get; set; }
+        public string fileSizeUnit { get; set; }
+        public DateTime receiptDate { get; set; }
+        public decimal totalRecoveryAmount { get; set; }
+        public decimal recoveredAmount { get; set; }
+        public decimal? outstandingAmount { get; set; }
+        public string collateralCode { get; set; }
+        public string collectionMode { get; set; }
     }
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public decimal? prepaymentAmount;
+        public DateTime? expCompletionDate { get; set; }
+        public int loanAssignId { get; set; }
         public int loanChargeFeeId { get; set; }
         public string chargeFeeName { get; set; }
         public decimal feeAmount { get; set; }
@@ -129,6 +195,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string legalContingentCode { get; set; }
 
         public int? loanReviewApplicationId { get; set; }
+        public int? appraisalOperationId { get; set; }
         public string currencyCode { get; set; }
         public bool isBankFormat { get; set; }
         public int companyId { get; set; }
@@ -146,7 +213,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string casaAccount { get; set; }
 
         public string casaAccountName { get; set; }
- public int loanApplicationDetailId { get; set; }
+        public int loanApplicationDetailId { get; set; }
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
@@ -291,11 +358,91 @@ public int? newInterestFrequencyTypeId { get; set; }
                 return pastDueInterest + pastDuePrincipal
 + interestOnPastDueInterest + interestOnPastDuePrincipal + outstandingPrincipal + accruedInterest; } }
         public List<feeDetails> fees { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
+        public int lmsLoanApplicationId { get; set; }
+        public int lmsOperationId { get; set; }
+        
+        public int creditAppraisalOperationId { get; set; }
+        public string lmsrApplicationReferenceNumber { get; set; }
+        public decimal amount { get; set; }
+
+
+        public int collateralLiquidationRecoveryId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public bool isFullyRecovered { get; set; }
+        public bool overwrite { get; set; }
+        public byte[] fileData { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public int fileSize { get; set; }
+        public string fileSizeUnit { get; set; }
+        public DateTime receiptDate { get; set; }
+        public decimal totalRecoveryAmount { get; set; }
+        public decimal recoveredAmount { get; set; }
+        public decimal? outstandingAmount { get; set; }
+        public string collateralCode { get; set; }
+        public string collectionMode { get; set; }
+        public int createdBy { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public string lienReferenceNumber { get; set; }
+        public decimal lienAmount { get; set; }
+        public DateTime lienDateTimeCreated { get; set; }
+        public DateTime applicationDate { get; set; }
+        public string lmsReferenceNumber { get; set; }
+        public int loanApplicationId { get; set; }
+        public int casaLienAccountId { get; set; }
+        public int lienRemovalId { get; set; }
+        public int lienRemovalOperationId { get; set; }
     }
 
 
     public class LoanReviewApplicationViewModel : GeneralEntity
     {
+        public string slaGlobalStatus
+        {
+            get
+            {
+                float sla = globalsla;
+                int? elapse = (DateTime.Now - dateTimeCreated).Hours;
+                return SlaStatus(sla, elapse);
+            }
+        }
+
+        public string slaInduvidualStatus
+        {
+            get
+            {
+                float sla = currentApprovalLevelSlaInterval;
+                int? elapse = (DateTime.Now - timeIn)?.Hours;
+                return SlaStatus(sla, elapse);
+            }
+        }
+
+        private string SlaStatus(float sla, int? elapse)
+        {
+            if (sla == 0) return "success";
+            if (elapse == 0 || elapse == null) return "success";
+            float factor = (float)(elapse / sla) * 100;
+            if (factor <= 30) return "success";
+            if (factor <= 70) return "warning";
+            if (factor <= 100) return "danger";
+            return "danger";
+        }
+        public string currentApprovalStatus { get; set; }
+        public DateTime? slaTime { get; set; }
+        public int currentApprovalLevelSlaInterval { get; set; }
+
+        public string loanTypeName { get; set; }
+        public string facility { get; set; }
+        public string customerGroupName { get; set; }
+        public decimal? approvedAmount { get; set; }
+        public short? productClassProcessId { get; set; }
+
+        public short? productClassId { get; set; }
+        public int? productId { get; set; }
+        public short? loanApplicationTypeId { get; set; }
+
+
         public int loanReviewApplicationId { get; set; }
         public int loanId { get; set; }
         public short productTypeId { get; set; }
@@ -357,6 +504,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int? toApprovalLevelId { get; set; }
         public bool atInitiator { get; set; }
         public int? regionId { get; set; }
+        public int proposedTenor { get; set; }
+        public int proposedInterest { get; set; }
         public string timeLapse
         {
             get
@@ -368,6 +517,16 @@ public int? newInterestFrequencyTypeId { get; set; }
                 return count.ToString() + units;
             }
         }
+
+        public string divisionShortCode { get; set; }
+        public int globalsla { get; set; }
+        public string operationTypeName { get; set; }
+        public string createdByName { get; set; }
+        public DateTime systemArrivalDate { get; set; }
+
+        public string staffRoleCode { get; set; }
+
+        public string loanReferenceNumber { get; set; }
     }
 
     public class applicationDetails
@@ -376,25 +535,29 @@ public int? newInterestFrequencyTypeId { get; set; }
 
         public int operationTypeId { get; set; } // remove after refactor
         public string reviewDetails { get; set; }
-        //public string operationType { get; set; } // not relevant
+        public int duration { get; set; }
+        //public string operationType { get; set; } // not relevant 
         public int loanId { get; set; }
         public int customerId { get; set; }
         public int detailId { get; set; }
+        public int loanApplicationId { get; set; }
+
         public short loanSystemTypeId { get; set; }
         public int operationId { get; set; }
         //public string loanSystemType { get; set; }
         public string loanSystemTypeName { get; set; }
         public string operationName { get; set; }
-        public short productId { get; set; }
+        public short productId { get; set; } 
 
         public string obligorName { get; set; }
-        public int proposedTenor { get; set; }
+        public decimal? proposedTenor { get; set; }
         public double proposedRate { get; set; }
         public decimal proposedAmount { get; set; }
         public int approvedTenor { get; set; }
         public double approvedRate { get; set; }
         public decimal approvedAmount { get; set; }
         public decimal? customerProposedAmount { get; set; }
+        public decimal? proposedInterest { get; set; }
 
         public string proposedTenorString
         {
@@ -402,7 +565,8 @@ public int? newInterestFrequencyTypeId { get; set; }
             {
                 var units = proposedTenor == 1 ? " day" : " days";
                 if (proposedTenor < 15) return proposedTenor.ToString() + units;
-                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                if(proposedTenor == null) { proposedTenor = 1; }
+                var months = Math.Ceiling((Math.Floor((int)proposedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
                 return months.ToString() + " " + units;
             }
@@ -413,6 +577,7 @@ public int? newInterestFrequencyTypeId { get; set; }
             {
                 var units = approvedTenor == 1 ? " day" : " days";
                 if (approvedTenor < 15) return approvedTenor.ToString() + units;
+                if (proposedTenor == null) { proposedTenor = 1; }
                 var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
                 return months.ToString() + " " + units;
@@ -425,6 +590,13 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int repaymentScheduleId { get; set; }
         public string schedule { get; set; }
         public int loanApplicationDetailId { get; set; }
+
+        public string accountName { get; set; }
+        public string accountNumber { get; set; }
+        public int creditAppraisalLoanApplicationId { get; set; }
+        public int creditAppraisalOperationId { get; set; }
+        public short? currencyId { get; set; }
+
     }
 
     public class LMSOperationListViewModel

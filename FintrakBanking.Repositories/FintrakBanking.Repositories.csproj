@@ -98,6 +98,7 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.6\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
@@ -111,7 +112,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\Users\FintrakCredit360\Desktop\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +138,7 @@
     <Compile Include="Credit\CashFlowLendingRepository.cs" />
     <Compile Include="Credit\CollateralValuationRepository.cs" />
     <Compile Include="Credit\CreditCommonRepository.cs" />
+    <Compile Include="Credit\CreditDrawdownRepository.cs" />
     <Compile Include="Credit\DashboardRepository.cs" />
     <Compile Include="Credit\DeferredFeeRepository.cs" />
     <Compile Include="Credit\ExternalAlertRepository.cs" />
@@ -146,6 +148,7 @@
     <Compile Include="Credit\LcShippingRepository.cs" />
     <Compile Include="Credit\LcUssanceRepository.cs" />
     <Compile Include="Credit\LetterGenerationRequestRepository.cs" />
+    <Compile Include="Credit\LoanArchiveRepository.cs" />
     <Compile Include="Credit\OriginalDocumentReleaseRepository.cs" />
     <Compile Include="Credit\ProjectSiteReportRepository.cs" />
     <Compile Include="Credit\TestCollateralRepository.cs" />

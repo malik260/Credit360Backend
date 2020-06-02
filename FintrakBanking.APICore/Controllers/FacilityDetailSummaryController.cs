@@ -88,23 +88,31 @@ namespace FintrakBanking.APICore.Controllers
         [Route("facilty-details/{loanId}")]
         public HttpResponseMessage GetFacilityDetail(int loanId)
         {
-            try
-            {
-                var data = repo.FacilityDetail(loanId);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data });
-            }
-            catch (SecureException ex)
+            var data = repo.FacilityDetail(loanId);
+            if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
+                   new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("third-party-facilty-details/{loanId}")]
+        public HttpResponseMessage ThirdPartyFacilityDetails(int loanId)
+        {
+            var data = repo.ThirdPartyFacilityDetails(loanId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -552,6 +560,23 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-collateral-loan/{loanId}")]
+        public HttpResponseMessage GetCollateralDetailLMS([FromUri]int loanId)
+        {
+
+            List<CollateralViewModel> data = repo.CollateralByLoanId(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-search")]

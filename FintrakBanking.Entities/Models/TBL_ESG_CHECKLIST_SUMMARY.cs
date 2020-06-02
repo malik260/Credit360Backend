@@ -13,7 +13,8 @@
         public int ESGCHECKLISTSUMMARYID { get; set; }
 
         public int LOANAPPLICATIONDETAILID { get; set; }
-       
+        public int CHECKLIST_TYPEID { get; set; }
+
         public string COMMENT_ { get; set; }
 
         public int RATINGID { get; set; }
@@ -21,6 +22,15 @@
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
-	
+        public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public bool DELETED { get; set; }
+
+        public int? DELETEDBY { get; set; }
+
+        public DateTime? DATETIMEDELETED { get; set; }
+
     }
 }

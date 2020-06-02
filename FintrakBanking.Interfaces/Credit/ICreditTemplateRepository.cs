@@ -6,6 +6,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICreditTemplateRepository
     {
+        bool LoadDocumentTemplateLMS(DocumentTemplateViewModel entity);
         CreditTemplateViewModel GetCreditTemplate(int creditTemplateId);
 
         IEnumerable<CreditTemplateViewModel> GetAllCreditTemplate();
@@ -36,13 +37,19 @@ namespace FintrakBanking.Interfaces.Credit
 
         // form CAM impl
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentSections(int staffId, int operationId, int targetId);
-        List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user);
+        List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId, UserInfo user,bool isThirdPartyFacility = false);
         bool LoadDocumentTemplate(DocumentTemplateViewModel entity);
         bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity);
         LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId);
+        LoadedDocumentSectionViewModel GetThirdPartyLoanDocumentSection(int staffId, int operationId, int targetId, int sectionId);
+
+
         List<DocumentTemplateViewModel> GetDocumentTemplates(int staffId, int operationId, int companyId);
-        bool GetIsLLLVilated(int operationId, int targetId);
+        dynamic GetIsLLLVilated(int operationId, int targetId);
         bool SaveApprovedDocumentation(int staffId, int operationId, int targetId);
         List<LoadedDocumentSectionViewModel> GetSavedDocumentation(int operationId, int targetId);
+        LoadedDocumentSectionViewModel GetDocumentSectionBulkLiquidation(int staffId, int operationId, int targetId, int sectionId);
+        List<LoadedDocumentSectionViewModel> GetLoadedDocumentBulkLiquidation(int staffId, int operationId, int targetId, UserInfo user);
+        List<LoadedDocumentSectionViewModel> GetLoadedDocumentationBulkLiquidation(int staffId, int operationId, int targetId, UserInfo user);
     }
 }

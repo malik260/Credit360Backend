@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
 
         [Key]
         public int REVOLVINGLOANID { get; set; }
-
+        public bool ISPRINTED { get; set; }
         public short LOANSYSTEMTYPEID { get; set; }
 
         public int CUSTOMERID { get; set; }
@@ -169,6 +169,9 @@ namespace FintrakBanking.Entities.Models
         //public DateTime? CRMSDATE { get; set; }
 
         public int? LOAN_BOOKING_REQUESTID { get; set; }
+
+        public string COREBANKINGREF { get; set; }
+        public bool? ISMANUALBOOKING { get; set; }
 
         //public short? CRMSREPAYMENTAGREEMENTID { get; set; }
 

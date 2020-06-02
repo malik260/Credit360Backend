@@ -53,50 +53,55 @@ namespace FintrakBanking.APICore.Filters
 
         private void LogUnhandledException(HttpActionExecutedContext httpContext)
         {
-            var ex = httpContext.Exception;
-            var endPoint = httpContext.Request.RequestUri;
-            var userName = httpContext.ActionContext.RequestContext.Principal.Identity.Name;
+            //using(var trans = context.Database.BeginTransaction())
+            //{
+                var ex = httpContext.Exception;
+                var endPoint = httpContext.Request.RequestUri;
+                var userName = httpContext.ActionContext.RequestContext.Principal.Identity.Name;
 
-            var errorMessage = ex.Message;
-            if (innerException != null) errorMessage = errorMessage + ", INNER_EXCETION: " + innerException;
-            var time = DateTime.Now;
-            if (String.IsNullOrEmpty(ex.Data["validation_error_message"].ToString())) errorMessage = errorMessage + ", ENTITY_VALIDATION_ERROR: " + ex.Data["validation_error_message"];
+                var errorMessage = ex.Message;
+                if (innerException != null) errorMessage = errorMessage + ", INNER_EXCETION: " + innerException;
+                var time = DateTime.Now;
+                if (String.IsNullOrEmpty(ex.Data["validation_error_message"].ToString())) errorMessage = errorMessage + ", ENTITY_VALIDATION_ERROR: " + ex.Data["validation_error_message"];
 
-            var log = new TBL_ERRORLOG()
-            {
-                USERNAME = userName == null ? "SYSTEM" : userName,
-                APIENDPOINT = endPoint.ToString(),
-                ERRORPATH = ex.TargetSite.ToString(),
-                ERRORSOURCE = ex.Source,
-                ERRORMESSAGE = errorMessage,
-                ERRORTYPE = ex.GetType().Name,
-                STATUSCODE = 500,
-                ALLXML = errorMessage + " " + ex.StackTrace,
-                TIMEUTC = time,
-            };
+                var log = new TBL_ERRORLOG()
+                {
+                    USERNAME = userName == null ? "SYSTEM" : userName,
+                    APIENDPOINT = endPoint.ToString(),
+                    ERRORPATH = ex.TargetSite.ToString(),
+                    ERRORSOURCE = ex.Source,
+                    ERRORMESSAGE = errorMessage,
+                    ERRORTYPE = ex.GetType().Name,
+                    STATUSCODE = 500,
+                    ALLXML = errorMessage + " " + ex.StackTrace,
+                    TIMEUTC = time,
+                };
 
-            context.TBL_ERRORLOG.Add(log);
+                context.TBL_ERRORLOG.Add(log);
+                context.SaveChanges();
 
-            string recipients = "augustine.nwaka@fintraksoftware.com;ifeanyi.ikemefuna@fintraksoftware.com;" +
-                "kingsley.ozoemena@fintraksoftware.com;adeyemi.olaopa@fintraksoftware.com;anu.omotayo@fintraksoftware.com";
+                string recipients = "augustine.nwaka@fintraksoftware.com;ifeanyi.ikemefuna@fintraksoftware.com;" +
+                                    "anu.omotayo@fintraksoftware.com";
 
-            var message = new TBL_MESSAGE_LOG
-            {
-                FROMADDRESS = support,
-                TOADDRESS = recipients,
-                MESSAGESUBJECT = "UNHANDLED EXCEPTION",
-                MESSAGEBODY = "<p><b>TIME:</b> " + time + "</p>< p><b>USERNAME:</b> " + userName + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p><b>STACKTRACE:</b> " + ex.StackTrace + "</p> ", // MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
-                MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                DATETIMERECEIVED = time,
-                SENDONDATETIME = time,
-                TARGETID = null,
-                OPERATIONID = null,
-                MESSAGESTATUSID = 1
-            };
+                var message = new TBL_MESSAGE_LOG
+                {
+                    FROMADDRESS = support,
+                    TOADDRESS = recipients,
+                    MESSAGESUBJECT = "UNHANDLED EXCEPTION",
+                    MESSAGEBODY = "<p><b>TIME:</b> " + time + "</p>< p><b>USERNAME:</b> " + (userName == null ? "SYSTEM" : userName) + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p><b>STACKTRACE:</b> " + ex.StackTrace + "</p> ", // MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                    MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                    DATETIMERECEIVED = time,
+                    SENDONDATETIME = time,
+                    TARGETID = null,
+                    OPERATIONID = null,
+                    MESSAGESTATUSID = 1
+                };
 
-            context.TBL_MESSAGE_LOG.Add(message);
+                context.TBL_MESSAGE_LOG.Add(message);
 
-           context.SaveChanges();
+                context.SaveChanges();
+            //    trans.Commit();
+            //}
         }
 
         private async Task LogUnhandledExceptionAsyncOld(HttpActionExecutedContext httpContext)
@@ -123,8 +128,7 @@ namespace FintrakBanking.APICore.Filters
             };
             context.TBL_ERRORLOG.Add(log);
 
-            string recipients = "augustine.nwaka@fintraksoftware.com;ifeanyi.ikemefuna@fintraksoftware.com;" +
-                " kingsley.ozoemena@fintraksoftware.com;adeyemi.olaopa@fintraksoftware.com";
+            string recipients = "augustine.nwaka@fintraksoftware.com;ifeanyi.ikemefuna@fintraksoftware.com;";
 
             var message = new TBL_MESSAGE_LOG
             {

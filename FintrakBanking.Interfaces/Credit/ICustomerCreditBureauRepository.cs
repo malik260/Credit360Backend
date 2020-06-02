@@ -31,6 +31,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanCreditBureauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId);
 
+        List<LoanCreditBureauViewModel> GetCustomerCreditBureauReportLogDeleted(int customerId, int? companyDirectorId);
+
         List<CreditBureauDocument> GetCreditBureauDocument(int customerCreditBureauId);
 
         CompanySetupViewModel GetLoanThirdPartyServiceChargeStatusDetails(int companyId);

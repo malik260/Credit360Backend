@@ -20,10 +20,17 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        RemoveLienViewModel GetLienRemovalLetter(int lienRemovalId);
+        CollateralLiquidationRecoveryViewModel GetLiquidationReceipt(int liquidationRecoveryReceiptId);
+        int AddCollateralLiquidationRecovery(CollateralLiquidationRecoveryViewModel model, byte[] buffer);
+        bool saveBulkLoanAssignmentToAgent(List<LoanRecoveryAssignmentViewModel> models, int accreditedConsultant, DateTime? expCompletionDate, UserInfo user);
+        void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod);
+        IQueryable<LoanViewModel> LoanPrepaymentApprovalList();
         CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId);
+        IQueryable<LoanViewModel> SearchForLoanPrepaymentReversal(string searchQuery);
         List<OverrideItemVeiwModel> getBookingOverride(string customerCode);
         LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model);
-        bool ReferBackBooking(ApprovalViewModel model);
+        WorkflowResponse ReferBackBooking(ApprovalViewModel model);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
         decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);
@@ -56,7 +63,8 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanViewModel> SearchForFullAndFinalLoan(string searchQuery);
 
         bool CancelFullAndFinal(int loanId);
-
+        bool AddExistingLoan(LoanViewModel entity);
+        
         List<LoanViewModel> getDisbursedCommercialLoanTrancheDetailsById(int loanId);
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
@@ -70,6 +78,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<ApprovalLevelStaffViewModel> GetLoanOperationApprovers(int operation, int companyId);
 
         string AddLoanBooking(LoanViewModel entity);
+
+        bool UpdateFacilityLineStatus(LoanViewModel entity);
 
         //  bool AddLoanGuarantor(LoanGuarantorViewModel guarantorModel, short productTypeId, int loanApplicationId);
 
@@ -92,7 +102,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int staffId, int companyId, int applicationDetailId, int loanBookingRequestId);
 
-        bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> entity);
 
         IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId);
 
@@ -118,7 +127,7 @@ namespace FintrakBanking.Interfaces.Credit
         //IEnumerable<LoanChargeFeeViewModel> GetDeferredRevolvingLoanFeeAwaitingApproval(int staffId, int companyId);
         //IEnumerable<LoanChargeFeeViewModel> GetDeferredContingentLoanFeeAwaitingApproval(int staffId, int companyId);
 
-        int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, bool isManual = false);
 
         bool GoForFeeOverrideApproval(ApprovalViewModel entity);
 
@@ -160,7 +169,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         //void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
-        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery);
+        //IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(string searchQuery);
+        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(string searchQuery, int statusId = 0);
         //IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanReviewFeeCharge(int loanSystemTypeId, string searchQuery);
         IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanFeeCharge(int loanSystemTypeId, string searchQuery);
 

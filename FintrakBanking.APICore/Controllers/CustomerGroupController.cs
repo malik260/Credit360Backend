@@ -18,7 +18,7 @@ using FintrakBanking.Common.CustomException;
 namespace FintrakBanking.APICore.Controllers
 {
     // [EnableCors("AllDomain")]
-    [RoutePrefix("api/v1/customers")]
+    [RoutePrefix("api/v1/customers")] 
     public class CustomerGroupController : ApiControllerBase
     {
         private ICustomerGroupRepository repo;

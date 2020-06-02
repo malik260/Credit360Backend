@@ -48,7 +48,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                int[] operations = { (int)OperationsEnum.APS_RelaseChecklist, (int)OperationsEnum.APS_ReleaseCAP, (int)OperationsEnum.APS_ReleasePrincipaRequest };
+                int[] operations = {
+                    (int)OperationsEnum.APS_RelaseChecklist,
+                    (int)OperationsEnum.APS_ReleaseCAP,
+                    (int)OperationsEnum.APS_ReleasePrincipaRequest,
+                    (int)OperationsEnum.APSReleaseApproval
+                };
 
 
                 List<ContingentLoansViewModel> contingentData = new List<ContingentLoansViewModel>();
@@ -88,7 +93,8 @@ namespace FintrakBanking.Repositories.Credit
                                 amountRequested = r.CUSTOMERPROPOSEDAMOUNT,
                                 loanReviewApplicationId = r.LOANREVIEWAPPLICATIONID,
                                 operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == l.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
-                                loanApplicationNumber=l.APPLICATIONREFERENCENUMBER
+                                loanApplicationNumber=l.APPLICATIONREFERENCENUMBER,
+
 
                             }).ToList();
 

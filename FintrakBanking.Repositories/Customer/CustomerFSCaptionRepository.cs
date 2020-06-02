@@ -137,7 +137,7 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerFSCaptionViewModel> GetCustomerFSCaptions()
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION
-                        where a.DELETED == false && a.ISRATIO == false 
+                        where a.DELETED == false //&& a.ISRATIO == false 
                         orderby a.FSCAPTIONGROUPID, a.POSITION
                         select new CustomerFSCaptionViewModel
                         {

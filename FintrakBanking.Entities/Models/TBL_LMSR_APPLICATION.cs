@@ -71,6 +71,10 @@
 
         public int? CAPREGIONID { get; set; }
 
+        //public int? PROPOSEDTENOR { get; set; }
+
+        //public int? PROPOSEDINTEREST { get; set; }
+
         // public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
@@ -96,5 +100,17 @@
         public virtual ICollection<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
         public int OPERATIONID { get; set; }
         public short? RISKRATINGID { get; set; }
+        public short? PRODUCTCLASSID { get; set; }
+        public int? PRODUCTID { get; set; }
+        public short? LOANAPPLICATIONTYPEID { get; set; }
+        public short? PRODUCT_CLASS_PROCESSID { get; set; }
+        public decimal? APPROVEDAMOUNT { get; set; }
+
+        public bool? ISPROJECTRELATED { get; set; }
+        public bool? ISONLENDING { get; set; }
+        public bool? ISINTERVENTIONFUNDS { get; set; }
+        public bool? WITHINSTRUCTION { get; set; }
+        public bool? DOMICILIATIONNOTINPLACE { get; set; }
+
     }
 }

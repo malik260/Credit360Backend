@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 
@@ -6,6 +7,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IStaffRoleRepository
     {
+
+        bool DeleteBulkPrepayment(int bulkPrepaymentId, UserInfo user);
+
         IEnumerable<StaffRoleViewModel> GetStaffRole();
         StaffRoleViewModel GetStaffRoleByStaffId(int staffId);
 
@@ -21,8 +25,16 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool ValidateStaffRoleUpdate(int staffRoleId);
 
-        bool GoForApproval(ApprovalViewModel entity);
+        bool GoForApproval(ApprovalViewModel entity); 
 
         IEnumerable<StaffRoleViewModel> GetStaffRoleAwaitingApproval(int staffId, int companyId);
+
+        bool AddApprovalSetUp(ApprovalSetUpViewModel entity);
+        IEnumerable<ApprovalSetUpViewModel> GetApprovalSetup();
+        bool UpdateApprovalSetUp(ApprovalSetUpViewModel entity);
+        IEnumerable<OperationPageOrderViewModel> GetAllOperationOrder();
+        IEnumerable<OperationPageOrderViewModel> GetAllOperations();
+        bool UpdateFlowOrder(OperationPageOrderViewModel entity);
+        bool AddFlowOrder(OperationPageOrderViewModel entity);
     }
 }

@@ -46,7 +46,7 @@ namespace FintrakBanking.Entities.Models
         public int APPROVALSTATUSID { get; set; }
 
         public DateTime CALLTIME { get; set; }
-        public DateTime NEXTCALLTIME { get; set; }
+        public DateTime? NEXTCALLTIME { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF { get; set; }
     }
