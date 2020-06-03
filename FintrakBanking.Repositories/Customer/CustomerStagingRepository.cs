@@ -71,8 +71,8 @@ namespace FintrakBanking.Repositories.Customer
                                      select new CustomerViewModels
                                      {
                                         customerCode = b.CUSTOMERCODE,
-
                                      }).ToList();
+
                 //var casa = mainContext.TBL_CASA.Where(a => a.PRODUCTACCOUNTNUMBER == searchTerm);
                 //var existingCustomer = mainContext.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).;
 
