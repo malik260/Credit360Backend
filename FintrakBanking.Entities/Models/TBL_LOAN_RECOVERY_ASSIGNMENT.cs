@@ -19,6 +19,10 @@ namespace FintrakBanking.Entities.Models
         public int ACCREDITEDCONSULTANT { get; set; }
         public DateTime DATEASSIGNED { get; set; }
         public int CREATEDBY { get; set; }
+        public int? OPERATIONID { get; set; }
+        public bool OPERATIONCOMPLETED { get; set; }
+        public int? APPROVALSTATUSID { get; set; }
+        public int? REFERENCEID { get; set; }
         public bool ISFULLYRECOVERED { get; set; }
         public DateTime? EXPCOMPLETIONDATE { get; set; }
     }

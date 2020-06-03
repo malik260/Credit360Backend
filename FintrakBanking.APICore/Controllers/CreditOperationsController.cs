@@ -987,6 +987,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("bulk-recovery-assignment-to-agent/awaiting-approval")]
+        public HttpResponseMessage GetBulkRecoveryToAgentAwaitingApproval()
+        {
+            var data = repo.GetBulkRecoveryToAgentAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lien-removal-operation/documents/{lienRemovalId}")]
         public HttpResponseMessage GetLienRemovalDocuments(int lienRemovalId)
         {
@@ -1286,6 +1302,45 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("assign-nplloans-to-agent-approval")]
+        public HttpResponseMessage GoForAssignLoansToAgentApproval([FromBody]ApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.GoForAssignLoansToAgentApproval(entity);
+
+            if (data == 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation has been approved successfully." });
+            }
+            else if (data == 2)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation has been disapproved successfully." });
+            }
+            else if (data == 3)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            else if (data == 4)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Operation Has Been Refered Back" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

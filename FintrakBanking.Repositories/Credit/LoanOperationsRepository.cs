@@ -18402,7 +18402,7 @@ namespace FintrakBanking.Repositories.Credit
                             || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                             && atrail.OPERATIONID == lr.OPERATIONID
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                            && ca.LIENSTATUS == (int)LienStatusEnum.Active
+                            && (ca.LIENSTATUS == (int)LienStatusEnum.Active || ca.LIENSTATUS == null)
                             && lr.OPERATIONCOMPLETED == false
                             && atrail.RESPONSESTAFFID == null && lr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
@@ -18507,7 +18507,7 @@ namespace FintrakBanking.Repositories.Credit
                                         || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                                         && atrail.OPERATIONID == lr.OPERATIONID
                                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                                        && ca.LIENSTATUS == (int)LienStatusEnum.Active
+                                        && (ca.LIENSTATUS == (int)LienStatusEnum.Active || ca.LIENSTATUS == null)
                                         && lr.OPERATIONCOMPLETED == false
                                         && atrail.RESPONSESTAFFID == null && lr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                         && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
@@ -18588,7 +18588,7 @@ namespace FintrakBanking.Repositories.Credit
                                     || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                                     && atrail.OPERATIONID == lr.OPERATIONID
                                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                                    && ca.LIENSTATUS == (int)LienStatusEnum.Active
+                                    && (ca.LIENSTATUS == (int)LienStatusEnum.Active || ca.LIENSTATUS == null)
                                     && lr.OPERATIONCOMPLETED == false
                                     && atrail.RESPONSESTAFFID == null && lr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                     && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
@@ -18648,6 +18648,47 @@ namespace FintrakBanking.Repositories.Credit
 
             var unionAll = dataLoan.Union(dataRevolvingLoan).Union(dataContingent);
             return unionAll;
+        }
+
+        public IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApproval(int staffId, int companyId)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
+
+            var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
+            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication).Select(c => c.OPERATIONID).ToList();
+            List<int> ids = new List<int>();
+
+            foreach (var operationId in operationIds)
+            {
+                ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
+            }
+
+            var dataLoan = (from ln in context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
+                            join atrail in context.TBL_APPROVAL_TRAIL on ln.BULKRECOVERYAPPROVALID equals atrail.TARGETID
+                            where
+                            (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised
+                            || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            && atrail.OPERATIONID == ln.OPERATIONID
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && atrail.RESPONSESTAFFID == null && ln.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null)
+
+                            select new LoanReviewOperationApprovalViewModel
+                            {
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                referenceId = ln.REFERENCEBATCHID,
+                                accreditedConsultant = ln.ACCREDITEDCONSULTANTID,
+                                accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Find(ln.ACCREDITEDCONSULTANTID).NAME,
+                                accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Find(ln.ACCREDITEDCONSULTANTID).FIRMNAME,
+                                approvalStatusId = (int)ln.APPROVALSTATUSID,
+                                approverComment = atrail.COMMENT,
+                                requestDate = ln.REQUESTDATE
+                            }).ToList();
+
+            return dataLoan;
         }
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetApprovedLoanOperationReview()
@@ -19158,6 +19199,119 @@ namespace FintrakBanking.Repositories.Credit
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         reviewRecord.OPERATIONCOMPLETED = true;
                         output = context.SaveChanges() > 0;
+                    }
+                    if (output == true)
+                    {
+                        trans.Commit();
+                        data = 1;
+                    }
+
+                }
+                return data;
+
+            }
+
+        }
+
+        public int GoForAssignLoansToAgentApproval(ApprovalViewModel entity)
+        {
+
+            entity.applicationDate = generalSetup.GetApplicationDate();
+            using (var trans = context.Database.BeginTransaction())
+            {
+                var reviewRecord = (from s in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                    where s.REFERENCEID == entity.targetId && s.OPERATIONID == entity.operationId
+                                    && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                    && s.OPERATIONCOMPLETED == false
+                                    select s).FirstOrDefault();
+
+                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Referred)
+                {
+
+                    int staffId = entity.staffId;
+
+
+                    var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+                    var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == entity.operationId)
+                         .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                         .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                             mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                             {
+                                 groupPosition = mg.m.POSITION,
+                                 levelPosition = l.POSITION,
+                                 levelId = l.APPROVALLEVELID,
+                                 levelName = l.LEVELNAME,
+                                 staffRoleId = l.STAFFROLEID,
+                             })
+                             .OrderBy(x => x.groupPosition)
+                             .ThenBy(x => x.levelPosition)
+                             .ToList();
+
+                    var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+                    var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+                    var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+                    workFlow.StaffId = entity.createdBy;
+                    workFlow.OperationId = entity.operationId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.ProductClassId = null;
+                    workFlow.ProductId = null;
+                    workFlow.NextLevelId = entity.approvalLevelId;
+                    workFlow.ToStaffId = staffId;
+                    workFlow.StatusId = (int)ApprovalStatusEnum.Referred;
+                    workFlow.Comment = entity.comment;
+                    workFlow.DeferredExecution = true;
+
+                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                    reviewRecord.OPERATIONCOMPLETED = false;
+                    context.SaveChanges();
+                    trans.Commit();
+                    return 4;
+                }
+
+                workFlow.StaffId = entity.staffId;
+                workFlow.CompanyId = entity.companyId;
+                workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                workFlow.TargetId = entity.targetId;
+                workFlow.Comment = entity.comment;
+                workFlow.OperationId = entity.operationId;
+                workFlow.DeferredExecution = true;
+                workFlow.LogActivity();
+
+
+                bool output = false;
+                int data = 0;
+
+                if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                {
+                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    reviewRecord.OPERATIONCOMPLETED = true;
+                    context.SaveChanges();
+                    trans.Commit();
+                    return 2;
+                }
+
+                if (workFlow.NewState != (int)ApprovalState.Ended)
+                {
+                    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    output = context.SaveChanges() > 0;
+                    trans.Commit();
+                    data = 3;
+                }
+                else if (workFlow.NewState == (int)ApprovalState.Ended)
+                {
+                    if (workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    {
+                        var loanAssigns = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x=>x.REFERENCEID == reviewRecord.REFERENCEID).ToList();
+                        foreach (var loanAssign in loanAssigns)
+                        {
+                            var record = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(loanAssign.LOANASSIGNID);
+                            record.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            record.OPERATIONCOMPLETED = true;
+                            output = context.SaveChanges() > 0;
+                        }
                     }
                     if (output == true)
                     {
@@ -29348,9 +29502,9 @@ namespace FintrakBanking.Repositories.Credit
                             where
                             !loansId.Contains(ln.TERMLOANID)
                             && pr.EXCLUDEFROMLITIGATION == false
-                            && op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecoveryApproval
-                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            //&& op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecoveryApproval
+                            //&& ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            //&& op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
@@ -29509,9 +29663,9 @@ namespace FintrakBanking.Repositories.Credit
                                      where
                                      !loansId.Contains(ln.REVOLVINGLOANID)
                                      && pr.EXCLUDEFROMLITIGATION == false
-                                     && op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecoveryApproval
-                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                     && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     //&& op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecoveryApproval
+                                     //&& ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     //&& op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
