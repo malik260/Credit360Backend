@@ -2475,12 +2475,13 @@ namespace FintrakBanking.Repositories.Credit
         }
         private IQueryable<DeferredChecklistViewModel> GetDeferralChecklist()
         {
+            var staff = context.TBL_STAFF;
+
             var data = (from a in context.TBL_LOAN_CONDITION_PRECEDENT
-                        join b in context.TBL_LOAN_CONDITION_DEFERRAL
-                        on a.LOANCONDITIONID equals b.LOANCONDITIONID
-                        join c in context.TBL_LOAN_APPLICATION
-                        on a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                        where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)
+                        join b in context.TBL_LOAN_CONDITION_DEFERRAL on a.LOANCONDITIONID equals b.LOANCONDITIONID
+                        join c in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                        join atrail in context.TBL_APPROVAL_TRAIL on a.LOANCONDITIONID equals atrail.TARGETID
+                        where (a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || a.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived) && (atrail.OPERATIONID == (int)OperationsEnum.DeferralExtension)
                         select new DeferredChecklistViewModel()
                         {
                             checklistDeferralId = b.CHECKLISTDEFERRALID,
@@ -2495,7 +2496,10 @@ namespace FintrakBanking.Repositories.Credit
                             dateCreated = b.DATETIMECREATED,
                             customerName = c.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? c.TBL_CUSTOMER_GROUP.GROUPNAME : c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_CUSTOMER.LASTNAME,
                             applicationRefNo = c.APPLICATIONREFERENCENUMBER,
-                            loanApplicationId = c.LOANAPPLICATIONID
+                            loanApplicationId = c.LOANAPPLICATIONID,
+                            toApprovalLevelName = atrail.TOSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.TOSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                            fromApprovalLevelName = atrail.REQUESTSTAFFID != null ? staff.FirstOrDefault(r => r.STAFFID == atrail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == atrail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+
                         });
             return data;
         }
