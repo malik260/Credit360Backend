@@ -257,6 +257,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     loanApplicationId = x.c.a.LOANAPPLICATIONID,
                     applicationReferenceNumber = x.c.a.APPLICATIONREFERENCENUMBER,
+                    appraisalOperationId = x.c.a.OPERATIONID,
                     customerCode = x.c.a.TBL_CUSTOMER.CUSTOMERCODE,
                     customerName = x.c.a.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME : x.c.a.TBL_CUSTOMER.FIRSTNAME + " " + x.c.a.TBL_CUSTOMER.MIDDLENAME + " " + x.c.a.TBL_CUSTOMER.LASTNAME,
                     customerId = x.c.a.CUSTOMERID,
