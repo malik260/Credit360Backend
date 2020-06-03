@@ -645,7 +645,7 @@ namespace FintrakBanking.Repositories.Finance
                         try
                         {
 
-                            loanOperation.ProcessDailyTermLoansInterestAccrual(date, companyId, staffId);
+                            loanOperation.ProcessDailyTermLoansInterestAccrual(date, companyId, staffId, context);
 
                             //transactionScope.Complete();
 
