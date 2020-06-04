@@ -116,7 +116,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanRecoveryAssignmentViewModel
     {
         public int loanAssignId { get; set; }
-        public int? referenceId { get; set; }
+        public string referenceId { get; set; }
         public int? approvalStatusId { get; set; }
         public int? operationId { get; set; }
         public int loanId { get; set; }
@@ -128,6 +128,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isFullyRecovered { get; set; }
         public bool operationCompleted { get; set; }
         public DateTime? expCompletionDate { get; set; }
+        public string comment { get; set; }
     }
 
     public class RemoveLienViewModel
@@ -400,8 +401,10 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int unfreezeLienAccountId { get; set; }
         public string accreditedConsultantName { get; set; }
         public string accreditedConsultantCompany { get; set; }
-        public int? referenceId { get; set; }
+        public string referenceId { get; set; }
         public DateTime requestDate { get; set; }
+        public int numberOfLoans { get; set; }
+        public int bulkRecoveryApprovalId { get; set; }
     }
 
 

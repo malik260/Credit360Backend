@@ -987,10 +987,42 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("bulk-recovery-assignment-to-agent/awaiting-approval-list")]
+        public HttpResponseMessage GetLienRemovalAwaitingApprovalList()
+        {
+            var data = repo.GetBulkRecoveryToAgentAwaitingApprovalList(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("bulk-recovery-assignment-to-agent/awaiting-approval")]
         public HttpResponseMessage GetBulkRecoveryToAgentAwaitingApproval()
         {
             var data = repo.GetBulkRecoveryToAgentAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("bulk-recovery-assignment-to-agent/application-list")]
+        public HttpResponseMessage BulkRecoveryToAgentAwaitingApprovalList()
+        {
+            var data = repo.BulkRecoveryToAgentAwaitingApprovalList(token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1087,6 +1119,22 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "No record found" });
             }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/bulk-recovery-approval/{accreditedConsultantId}")]
+        public HttpResponseMessage GetAllBulkLoansRecoveredByAgent(int accreditedConsultantId)
+        {
+            var data = repo.getAllLoansRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
 

@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int BULKRECOVERYAPPROVALID { get; set; }
         public int ACCREDITEDCONSULTANTID { get; set; }
-        public int  REFERENCEBATCHID { get; set; }
+        public string  REFERENCEBATCHID { get; set; }
         public int APPROVALSTATUSID { get; set; }
         public int OPERATIONID { get; set; }
         public DateTime REQUESTDATE { get; set; }

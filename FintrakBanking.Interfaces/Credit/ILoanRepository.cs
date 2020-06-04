@@ -20,6 +20,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        bool bulkLoanAssignmentToAgentGoForApproval(LoanRecoveryAssignmentViewModel models, UserInfo user);
         RemoveLienViewModel GetLienRemovalLetter(int lienRemovalId);
         CollateralLiquidationRecoveryViewModel GetLiquidationReceipt(int liquidationRecoveryReceiptId);
         int AddCollateralLiquidationRecovery(CollateralLiquidationRecoveryViewModel model, byte[] buffer);

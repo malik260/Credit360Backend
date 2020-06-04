@@ -1683,11 +1683,34 @@ namespace FintrakBanking.APICore.Controllers
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Loan(s) Recovery Successfully assigned to the Agent" });
+                    new { success = true, data = data, message = "Bulk Recovery Successfully assigned to the Agent" });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
                 new { success = false, message = "saving loan recovery assignment unsuccessfully" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-loan-recovery-assignment-initiate-approval")]
+        public HttpResponseMessage bulkLoanAssignmentToAgentGoForApproval([FromBody] LoanRecoveryAssignmentViewModel models)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            var data = repo.bulkLoanAssignmentToAgentGoForApproval(models, user);
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Bulk Recovery Successfully forwarded for approval" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "Error occur forwarding for approval" });
         }
 
 

@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         public int? OPERATIONID { get; set; }
         public bool OPERATIONCOMPLETED { get; set; }
         public int? APPROVALSTATUSID { get; set; }
-        public int? REFERENCEID { get; set; }
+        public string REFERENCEID { get; set; }
         public bool ISFULLYRECOVERED { get; set; }
         public DateTime? EXPCOMPLETIONDATE { get; set; }
     }
