@@ -304,7 +304,6 @@ namespace FintrakBanking.Repositories.Credit
         public bool GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)
         {
             var record = entity.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.FirstOrDefault()).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Pending); 
-
             var recordReferred = entity.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.FirstOrDefault()).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Referred );
 
             if (recordReferred != null)
@@ -328,10 +327,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         catch (Exception ex)
                         {
-
                             transaction.Rollback();
-
-
                             throw ex;
                         }
                     }
@@ -343,8 +339,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var x in record)
                 {
                     var data = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.ORIGINALDOCUMENTAPPROVALID == x.originalDocumentApprovalId 
-                                                                                && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
-                                                                     .ToList();
+                                                                                && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
                     _workflow.StaffId = x.createdBy;
                     _workflow.CompanyId = x.companyId;
                     _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
