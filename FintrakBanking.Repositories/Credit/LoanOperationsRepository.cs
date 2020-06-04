@@ -29577,9 +29577,10 @@ namespace FintrakBanking.Repositories.Credit
                             where
                             !loansId.Contains(ln.TERMLOANID)
                             && pr.EXCLUDEFROMLITIGATION == false
-                            //&& op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecoveryApproval
-                            //&& ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            //&& op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && (op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecoveryApproval
+                            || ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing)
 
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
@@ -29738,9 +29739,10 @@ namespace FintrakBanking.Repositories.Credit
                                      where
                                      !loansId.Contains(ln.REVOLVINGLOANID)
                                      && pr.EXCLUDEFROMLITIGATION == false
-                                     //&& op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecoveryApproval
-                                     //&& ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                     //&& op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && (op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecoveryApproval
+                                     || ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing)
 
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
@@ -29853,8 +29855,8 @@ namespace FintrakBanking.Repositories.Credit
                                          }).ToList(),
                                      }).ToList();
 
-            var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
-            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var termLoanData = dataLoan.GroupBy(x => x.applicationReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber);
+            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.applicationReferenceNumber).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.applicationReferenceNumber);
             var unionAll = termLoanData.Union(revolvingLoanData);
 
             var data = unionAll;

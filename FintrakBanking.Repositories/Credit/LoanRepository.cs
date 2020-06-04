@@ -16747,6 +16747,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool result = false;
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
             List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
             if (models == null || accreditedConsultant == 0 || expCompletionDate == null)
             {
@@ -16771,11 +16772,23 @@ namespace FintrakBanking.Repositories.Credit
                         customerRequest.referenceId = referenceNumber;
                         customerRequest.approvalStatusId = (int)ApprovalStatusEnum.Pending;
                         customerRequest.operationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
+                        customerRequest.operationCompleted = false;
                         var loanData = addBulkLoanAssignmentToAgent(customerRequest);
                         bulkLoanTable.Add(loanData);
                     }
                         context.TBL_LOAN_RECOVERY_ASSIGNMENT.AddRange(bulkLoanTable);
                         if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+                    TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL removeLienOperation = new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL();
+                    removeLienOperation = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
+                    {
+                        ACCREDITEDCONSULTANTID = accreditedConsultant,
+                        REFERENCEBATCHID = referenceNumber,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                        OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
+                        REQUESTDATE = DateTime.Now
+                    });
+                    if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
 
                     auditTrail.AddAuditTrail(new TBL_AUDIT
                     {
@@ -16810,7 +16823,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var validate = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Where(x => x.REFERENCEBATCHID == models.referenceId
-                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
+                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Pending
                                                           || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
             if (validate != null)
             {
@@ -16823,24 +16836,17 @@ namespace FintrakBanking.Repositories.Credit
                 if (validate == null)
                 {
                     var data = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.REFERENCEID == models.referenceId).FirstOrDefault();
-                    data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                    data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
-                    
-                    TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL removeLienOperation = new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL();
-                    removeLienOperation = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Add(new TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL
-                    {
-                        ACCREDITEDCONSULTANTID = models.accreditedConsultant,
-                        REFERENCEBATCHID = models.referenceId,
-                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                        OPERATIONID = (int)OperationsEnum.AssignRecoveryLoansToAgent,
-                        REQUESTDATE = DateTime.Now
-                    });
+
+                    var data2 = context.TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.Where(x => x.REFERENCEBATCHID == models.referenceId).FirstOrDefault();
+                    data2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
 
                     workflow.StaffId = user.createdBy;
                     workflow.CompanyId = user.companyId;
                     workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                    workflow.TargetId = removeLienOperation.BULKRECOVERYAPPROVALID;
+                    workflow.TargetId = data2.BULKRECOVERYAPPROVALID;
                     workflow.Comment = "Kindly help approve the loan recovery assign to agent";
                     workflow.OperationId = (int)OperationsEnum.AssignRecoveryLoansToAgent;
                     workflow.DeferredExecution = true;
@@ -17341,7 +17347,9 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 EXPCOMPLETIONDATE = entity.expCompletionDate,
                 REFERENCEID = entity.referenceId,
-                OPERATIONID = entity.operationId
+                OPERATIONID = entity.operationId,
+                APPROVALSTATUSID = entity.approvalStatusId,
+                OPERATIONCOMPLETED = entity.operationCompleted
             };
             return data;
         }
