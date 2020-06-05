@@ -188,6 +188,32 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }).ToList();
         }
 
+        public IEnumerable<PsrCommentImagesViewModel> GetPsrCommentsImages(int id)
+        {
+            return context.TBL_PSR_COMMENT_IMAGES.Where(x => x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrCommentImagesViewModel
+                {
+                    psrCommentImageId = x.PSRCOMMENTIMAGEID,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    imageCaption = x.IMAGECAPTION,
+                    fileData = x.FILEDATA,
+                }).ToList();
+        }
+
+        public IEnumerable<ProjectSiteReportViewModel> GetPsrSignatories(int id)
+        {
+            var projectSite = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
+            var staffName = context.TBL_STAFF.Find(projectSite.CREATEDBY);
+            var groupHead = context.TBL_STAFF.Find(staffName.SUPERVISOR_STAFFID);
+
+            return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x => x.PROJECTSITEREPORTID == id).Select(x => new ProjectSiteReportViewModel
+            {
+                projectOfficer = staffName.FIRSTNAME+ "" + staffName.MIDDLENAME +"" + staffName.LASTNAME,
+                groupHead = groupHead.FIRSTNAME + "" + groupHead.MIDDLENAME + "" + groupHead.LASTNAME,
+            }).OrderByDescending(o => o.projectSiteReportId)
+                .ToList();
+        }
+
         public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)
         {
             return (from p in context.TBL_PSR_PROJECT_FACILITIES

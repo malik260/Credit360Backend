@@ -676,7 +676,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>4.8525in</Top>
+        <Top>4.7275in</Top>
         <Left>0.26333in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -746,7 +746,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>COMMENTS FROM INSPECTION</Value>
+                <Value>4. COMMENTS FROM INSPECTION</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -756,10 +756,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>15.32166in</Top>
+        <Top>11.57166in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
-        <Width>3.67083in</Width>
+        <Width>3.7075in</Width>
         <ZIndex>6</ZIndex>
         <Style>
           <Border>
@@ -778,7 +778,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>4. OBSERVATIONS AND IMPACT:</Value>
+                <Value>5. OBSERVATIONS AND IMPACT:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -789,7 +789,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>11.52166in</Top>
+        <Top>15.14666in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
         <Width>3.65in</Width>
@@ -811,7 +811,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>5. RECOMMENDATIONS:</Value>
+                <Value>6. RECOMMENDATIONS:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -822,7 +822,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>12.31306in</Top>
+        <Top>15.93806in</Top>
         <Left>0.205in</Left>
         <Height>0.25in</Height>
         <Width>3.65833in</Width>
@@ -844,7 +844,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>6. TASK FOR NEXT INSPECTION:</Value>
+                <Value>7. TASK FOR NEXT INSPECTION:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -855,7 +855,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>13.61625in</Top>
+        <Top>17.24125in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
         <Width>3.67083in</Width>
@@ -877,15 +877,24 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Project Officer, PMU _________________________________________________________</Value>
-                <Style />
+                <Value>Project Officer, PMU:   </Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Label>projectOfficer</Label>
+                <Value>=First(Fields!projectOffer.Value, "signatories")</Value>
+                <Style>
+                  <FontWeight>Normal</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox91</rd:DefaultName>
-        <Top>14.65917in</Top>
+        <Top>18.65917in</Top>
         <Left>0.205in</Left>
         <Height>0.25in</Height>
         <Width>6.79083in</Width>
@@ -907,16 +916,25 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Group Head, PMU ___________________________________________________________</Value>
-                <Style />
+                <Value>Group Head, PMU:      </Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Label>groupHead</Label>
+                <Value>=First(Fields!groupHead.Value, "signatories")</Value>
+                <Style>
+                  <FontWeight>Normal</FontWeight>
+                </Style>
               </TextRun>
             </TextRuns>
             <Style />
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox92</rd:DefaultName>
-        <Top>14.9425in</Top>
-        <Left>0.205in</Left>
+        <Top>18.9425in</Top>
+        <Left>0.21333in</Left>
         <Height>0.25in</Height>
         <Width>6.79083in</Width>
         <ZIndex>11</ZIndex>
@@ -989,7 +1007,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>observation</DataSetName>
-        <Top>11.85375in</Top>
+        <Top>15.47875in</Top>
         <Left>0.205in</Left>
         <Height>0.25in</Height>
         <Width>6.80751in</Width>
@@ -1059,7 +1077,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>12.6325in</Top>
+        <Top>16.2575in</Top>
         <Left>0.205in</Left>
         <Height>0.25in</Height>
         <Width>6.80751in</Width>
@@ -1129,7 +1147,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>nextInspection</DataSetName>
-        <Top>13.85931in</Top>
+        <Top>17.60931in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
         <Width>6.79917in</Width>
@@ -2570,7 +2588,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>analysis</DataSetName>
-        <Top>5.13in</Top>
+        <Top>5.005in</Top>
         <Left>0.28in</Left>
         <Height>2.6452in</Height>
         <Width>6.67833in</Width>
@@ -2741,7 +2759,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>13.09931in</Top>
+        <Top>16.72431in</Top>
         <Left>0.205in</Left>
         <Height>0.25in</Height>
         <Width>6.80751in</Width>
@@ -2877,7 +2895,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox16</rd:DefaultName>
-        <Top>16.04042in</Top>
+        <Top>19.41542in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
         <Width>6.79918in</Width>
@@ -2976,7 +2994,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>supportImages</DataSetName>
-        <Top>16.47792in</Top>
+        <Top>19.72792in</Top>
         <Left>0.21333in</Left>
         <Height>3.82501in</Height>
         <Width>6.92418in</Width>
@@ -3047,7 +3065,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>comment</DataSetName>
-        <Top>15.62722in</Top>
+        <Top>11.87722in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
         <Width>6.79918in</Width>
@@ -3065,7 +3083,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>7. NEXT INSPECTION DATE:</Value>
+                <Value>8. NEXT INSPECTION DATE:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -3076,7 +3094,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>14.25563in</Top>
+        <Top>18.00563in</Top>
         <Left>0.205in</Left>
         <Height>0.25in</Height>
         <Width>2.3075in</Width>
@@ -3152,7 +3170,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>nextInspection</DataSetName>
-        <Top>14.25563in</Top>
+        <Top>18.00563in</Top>
         <Left>2.54028in</Left>
         <Height>0.25in</Height>
         <Width>4.45555in</Width>
@@ -3163,8 +3181,24 @@
           </Border>
         </Style>
       </Tablix>
+      <Image Name="CommentImage2">
+        <Source>Database</Source>
+        <Value>=First(Fields!fileData.Value, "commentimages")</Value>
+        <MIMEType>image/png</MIMEType>
+        <Sizing>FitProportional</Sizing>
+        <Top>12.19666in</Top>
+        <Left>0.205in</Left>
+        <Height>2.78334in</Height>
+        <Width>6.75333in</Width>
+        <ZIndex>24</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Image>
     </ReportItems>
-    <Height>20.51126in</Height>
+    <Height>23.77793in</Height>
     <Style>
       <Border>
         <Style>None</Style>
@@ -3463,7 +3497,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\AccessCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\AccessCredit360Project\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>COMMENT</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -3512,10 +3546,22 @@
           <DataField>timeVariation</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="progressPayment">
+          <DataField>progressPayment</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="amountDisbursedPercent">
+          <DataField>amountDisbursedPercent</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="pmuPercentage">
+          <DataField>pmuPercentage</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\AccessCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\AccessCredit360Project\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>EVALUATION</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -3653,6 +3699,54 @@
         <rd:DataSetName>PSR</rd:DataSetName>
         <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>SUPPORTIMAGES</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="signatories">
+      <Query>
+        <DataSourceName>PSR</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="projectOffer">
+          <DataField>projectOffer</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="groupHead">
+          <DataField>groupHead</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>PSR</rd:DataSetName>
+        <rd:SchemaPath>C:\AccessCredit360Project\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:TableName>SIGNATORIES</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="commentimages">
+      <Query>
+        <DataSourceName>PSR</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="imageCaption">
+          <DataField>imageCaption</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="fileData">
+          <DataField>fileData</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>PSR</rd:DataSetName>
+        <rd:SchemaPath>C:\AccessCredit360Project\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:TableName>COMMENTIMAGES</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
