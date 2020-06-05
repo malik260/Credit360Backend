@@ -15,6 +15,11 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
+        IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApproval(int staffId, int companyId);
+        int GoForAssignLoansToAgentApproval(ApprovalViewModel entity);
         int GoForLienRemovalApproval(ApprovalViewModel entity);
         IEnumerable<RemoveLienViewModel> GetLienRemovalDocuments(int lienRemovalId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLienRemovalAwaitingApproval(int staffId, int companyId);
@@ -29,8 +34,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddBulkPrepaymentReversalData(LoanViewModel data, int batchCode, DateTime applicationDate);
         string GetTransactionReferenceNo();
      
-        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId, int accreditedConsultantId);
-        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId);
         bool CreditDocumentationFilling(CreditDocumentationViewModel model);
