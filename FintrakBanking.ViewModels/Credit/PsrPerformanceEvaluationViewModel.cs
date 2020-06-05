@@ -15,7 +15,7 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? disbursedTodate { get; set; }
         public decimal? initialProjectSum { get; set; }
         public decimal? vowdToDate { get; set; }
-        public string pmuAssessed { get; set; }
+        public decimal? pmuAssessed { get; set; }
         public decimal? consoltantVowd { get; set; }
         public decimal? amortisedApg { get; set; }
         public decimal? apgReceived { get; set; }
@@ -32,5 +32,7 @@ namespace FintrakBanking.ViewModels.credit
         public short BranchId { get; set; }
         public int approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
+        public decimal? amountDisbursedPercent { get; set; }
+        public decimal? pmuPercentage { get; set; }
     }
 }

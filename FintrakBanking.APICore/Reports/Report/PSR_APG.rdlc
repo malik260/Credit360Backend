@@ -1101,7 +1101,7 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="comment2">
+                    <Textbox Name="taskforinspection">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1117,7 +1117,6 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>comment2</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1280,7 +1279,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!apgReceived.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1347,7 +1348,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!amortisedApg.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1414,7 +1417,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!certifiedVowd.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1481,7 +1486,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!pmuAssessed.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1615,7 +1622,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!disbursedTodate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1681,8 +1690,10 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!vowdToDate.Value</Value>
-                              <Style />
+                              <Value>=First(Fields!consoltantVowd.Value, "evaluation")</Value>
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1749,7 +1760,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!costVariation.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1768,6 +1781,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -3129,7 +3143,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!nextInspectionDate.Value</Value>
+                              <Value>=First(Fields!nextInspectionDate.Value, "nextInspection")</Value>
                               <Style>
                                 <Format>d</Format>
                               </Style>

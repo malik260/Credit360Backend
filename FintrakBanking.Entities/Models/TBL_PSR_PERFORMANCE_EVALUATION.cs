@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
         public decimal? DISBURSEDTODATE { get; set; }
         public decimal? INITIALPROJECTSUM { get; set; }
         public decimal? VOWDTODATE { get; set; }
-        public string PMUASSESSED { get; set; }
+        public decimal? PMUASSESSED { get; set; }
         public decimal? CONSULTANTVOWD { get; set; }
         public decimal? COSTVARIATION { get; set; }
         public string TIMEVARIATION { get; set; }

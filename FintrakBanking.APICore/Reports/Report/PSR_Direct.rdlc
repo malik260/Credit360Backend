@@ -1644,7 +1644,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox92</rd:DefaultName>
-        <Top>15.14in</Top>
+        <Top>15.13098in</Top>
         <Left>0.22583in</Left>
         <Height>0.23958in</Height>
         <Width>6.85583in</Width>
@@ -1873,7 +1873,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>5.21339in</Width>
+              <Width>6.07174in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.74659in</Width>
@@ -1929,7 +1929,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>projectSum</rd:DefaultName>
@@ -1966,11 +1968,10 @@
                             </TextRun>
                             <TextRun>
                               <Label>amountdisbursed</Label>
-                              <Value>=</Value>
+                              <Value>=First(Fields!disbursedTodate.Value, "evaluation")</Value>
                               <Style>
-                                <FontWeight>Bold</FontWeight>
-                                <Format>'$'#,0.00;('$'#,0.00)</Format>
-                                <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
+                                <FontWeight>Normal</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                             <TextRun>
@@ -2011,7 +2012,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>amountDisbursedPercent</rd:DefaultName>
@@ -2050,9 +2053,8 @@
                               <Label>pmuvowd</Label>
                               <Value>=First(Fields!pmuAssessed.Value, "evaluation")</Value>
                               <Style>
-                                <FontWeight>Bold</FontWeight>
-                                <Format>'$'#,0.00;('$'#,0.00)</Format>
-                                <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
+                                <FontWeight>Normal</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                             <TextRun>
@@ -2093,7 +2095,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>pmuPercentage</rd:DefaultName>
@@ -2155,10 +2159,14 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!consoltantVowd.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>consoltantVowd1</rd:DefaultName>
@@ -2225,7 +2233,9 @@
                               </Style>
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>costVariation</rd:DefaultName>
@@ -2290,7 +2300,9 @@
                               <Style />
                             </TextRun>
                           </TextRuns>
-                          <Style />
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>timeVariation</rd:DefaultName>
@@ -2335,7 +2347,7 @@
         <Top>6.15944in</Top>
         <Left>0.26333in</Left>
         <Height>1.44334in</Height>
-        <Width>7.95998in</Width>
+        <Width>8.81833in</Width>
         <ZIndex>16</ZIndex>
         <Style>
           <Border>
@@ -3232,9 +3244,23 @@
         <DataSourceName>PSR</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
+      <Fields>
+        <Field Name="comment">
+          <DataField>comment</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="nextInspectionDate">
+          <DataField>nextInspectionDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="inspectionDate">
+          <DataField>inspectionDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\AccessCredit360Project\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>NEXTINSPECTION</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />

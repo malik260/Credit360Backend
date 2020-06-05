@@ -73,10 +73,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<PsrPerformanceEvaluationViewModel> GetPsrPerformanceEvaluations(int id)
         {
-
+            var projectSite = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
+            var loanApprovedAmount = context.TBL_LOAN_APPLICATION.Find(projectSite.LOANAPPLICATIONID);
             return context.TBL_PSR_PERFORMANCE_EVALUATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
                 .Select(x => new PsrPerformanceEvaluationViewModel
                 {
+                    amountDisbursedPercent = (x.DISBURSEDTODATE/x.PROJECTSUM)*100,
+                    pmuPercentage = (x.PMUASSESSED / x.PROJECTSUM) * 100,
                     psrPerformanceEvaluationId = x.PSRPERFORMANCEEVALUATIONID,
                     apgIssued = x.APGISSUED,
                     disbursedTodate = x.DISBURSEDTODATE,
@@ -204,14 +207,27 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         {
             var projectSite = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
             var staffName = context.TBL_STAFF.Find(projectSite.CREATEDBY);
+
+            var officerName = "";
+            var groupHeadName = "";
+
             var groupHead = context.TBL_STAFF.Find(staffName.SUPERVISOR_STAFFID);
+            officerName = staffName.FIRSTNAME + "" + staffName.MIDDLENAME + "" + staffName.LASTNAME;
+
+            if (groupHead == null)
+            {
+                groupHeadName = "";
+            }
+            else
+            {
+                groupHeadName = groupHead.FIRSTNAME + "" + groupHead.MIDDLENAME + "" + groupHead.LASTNAME;
+            }
 
             return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x => x.PROJECTSITEREPORTID == id).Select(x => new ProjectSiteReportViewModel
             {
-                projectOfficer = staffName.FIRSTNAME+ "" + staffName.MIDDLENAME +"" + staffName.LASTNAME,
-                groupHead = groupHead.FIRSTNAME + "" + groupHead.MIDDLENAME + "" + groupHead.LASTNAME,
-            }).OrderByDescending(o => o.projectSiteReportId)
-                .ToList();
+                projectOffer = officerName,
+                groupHead = groupHeadName,
+            }).ToList();
         }
 
         public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)

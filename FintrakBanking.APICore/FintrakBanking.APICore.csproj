@@ -495,6 +495,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\PSR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PSR.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\ReportDataSet1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1520,6 +1525,17 @@
     <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
       <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\PSR.xsc">
+      <DependentUpon>PSR.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\PSR.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>PSR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\PSR.xss">
+      <DependentUpon>PSR.xsd</DependentUpon>
+    </Content>
     <None Include="Reports\ReportDataset\ReportDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>ReportDataSet1.Designer.cs</LastGenOutput>
@@ -1710,6 +1726,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\PSR_APG.rdlc" />
+    <EmbeddedResource Include="Reports\Report\PSR_Direct.rdlc" />
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningLoanReport.rdlc" />
