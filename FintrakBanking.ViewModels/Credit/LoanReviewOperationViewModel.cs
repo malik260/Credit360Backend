@@ -176,7 +176,7 @@ namespace FintrakBanking.ViewModels.Credit
         public byte[] fileData { get; set; }
         public string fileName { get; set; }
         public string fileExtension { get; set; }
-        public int fileSize { get; set; }
+        public int? fileSize { get; set; }
         public string fileSizeUnit { get; set; }
         public DateTime receiptDate { get; set; }
         public decimal totalRecoveryAmount { get; set; }
@@ -184,6 +184,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? outstandingAmount { get; set; }
         public string collateralCode { get; set; }
         public string collectionMode { get; set; }
+        public decimal? percentageCommission { get; set; }
     }
 
     public class LoanReviewOperationApprovalViewModel
@@ -376,10 +377,10 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int accreditedConsultant { get; set; }
         public bool isFullyRecovered { get; set; }
         public bool overwrite { get; set; }
-        public byte[] fileData { get; set; }
+        public byte?[] fileData { get; set; }
         public string fileName { get; set; }
         public string fileExtension { get; set; }
-        public int fileSize { get; set; }
+        public int? fileSize { get; set; }
         public string fileSizeUnit { get; set; }
         public DateTime receiptDate { get; set; }
         public decimal totalRecoveryAmount { get; set; }
@@ -405,6 +406,9 @@ public int? newInterestFrequencyTypeId { get; set; }
         public DateTime requestDate { get; set; }
         public int numberOfLoans { get; set; }
         public int bulkRecoveryApprovalId { get; set; }
+        public int accreditedConsultantId { get; set; }
+        public decimal? agentCommission { get; set; }
+        public decimal? percentageCommission { get; set; }
     }
 
 

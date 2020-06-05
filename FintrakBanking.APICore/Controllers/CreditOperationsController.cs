@@ -1094,10 +1094,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-analysis/{accreditedConsultantId}")]
-        public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent(int accreditedConsultantId)
+        [Route("loan-operation/recovery-analysis-agents")]
+        public HttpResponseMessage getAllLoansOperationRecoveryAnalysisByAgent()
         {
-            var data = repo.getAllLoansOperationRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId);
+            var data = repo.getAllLoansOperationRecoveryAnalysisByAgent(token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1109,10 +1109,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-operation/recovery-report/{accreditedConsultantId}")]
-        public HttpResponseMessage GetAllLoansRecoveredByAgent(int accreditedConsultantId)
+        [Route("loan-operation/recovery-report-all-agents")]
+        public HttpResponseMessage GetAllLoansRecoveredByAgent()
         {
-            var data = repo.GetAllLoansRecoveredByAgent(token.GetStaffId, token.GetCompanyId, accreditedConsultantId);
+            var data = repo.GetAllLoansRecoveredByAgent(token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,

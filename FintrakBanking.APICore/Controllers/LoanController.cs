@@ -1716,6 +1716,27 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("collateral-liquidation-recovery-without-file")]
+        public HttpResponseMessage AddCollateralLiquidationRecovery([FromBody] CollateralLiquidationRecoveryViewModel models)
+        {
+            try { 
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+            models.createdBy = token.GetStaffId;
+                var response = repo.AddCollateralLiquidationRecoveryWithoutFile(models);
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt has been uploaded successfully" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt already exist" });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt" });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("collateral-liquidation-recovery")]
         public async System.Threading.Tasks.Task<HttpResponseMessage> AddCollateralLiquidationRecovery()
         {
@@ -1748,7 +1769,10 @@ namespace FintrakBanking.APICore.Controllers
                 entity.recoveredAmount = Convert.ToDecimal(provider.FormData["recoveredAmount"]);
                 entity.collateralCode = provider.FormData["collateralCode"];
                 entity.collectionMode = provider.FormData["collectionMode"];
-                entity.receiptDate = Convert.ToDateTime(provider.FormData["receiptDate"]).Date;
+                var receiptDate = provider.FormData["receiptDate"];
+                var receiptDateSub = receiptDate.Substring(0, 15);
+                entity.receiptDate = DateTime.ParseExact(receiptDateSub, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
+                entity.percentageCommission = Convert.ToDecimal(provider.FormData["percentageCommission"]);
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;

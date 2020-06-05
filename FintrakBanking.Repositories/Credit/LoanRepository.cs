@@ -16871,6 +16871,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool isFullyRecovered = false;
             decimal outstandingAmount = 0;
+            if (model.recoveredAmount > model.totalRecoveryAmount)
+            {
+                throw new SecureException("Sorry, the recovered amount cannot be greater then the total amount recovery");
+            }
+
             if (model.totalRecoveryAmount == model.recoveredAmount)
             {
                 outstandingAmount = 0;
@@ -16907,7 +16912,8 @@ namespace FintrakBanking.Repositories.Credit
                collectionMode = x.COLLECTIONMODE,
                createdBy = x.CREATEDBY,
                dateTimeCreated = x.DATETIMECREATED,
-               loanAssignId = x.LOANASSIGNID
+               loanAssignId = x.LOANASSIGNID,
+               percentageCommission = x.PERCENTAGECOMMISSION
             }).FirstOrDefault();
 
             if (existing != null && model.overwrite == false) return 3;
@@ -16932,7 +16938,84 @@ namespace FintrakBanking.Repositories.Credit
                 OUTSTANDINGAMOUNT = outstandingAmount,
                 COLLATERALCODE = model.collateralCode,
                 COLLECTIONMODE = model.collectionMode,
-                LOANASSIGNID = model.loanAssignId
+                LOANASSIGNID = model.loanAssignId,
+                PERCENTAGECOMMISSION = model.percentageCommission
+            };
+
+            context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Add(entity);
+            context.SaveChanges();
+            return 2;
+        }
+
+        public int AddCollateralLiquidationRecoveryWithoutFile(CollateralLiquidationRecoveryViewModel model)
+        {
+            bool isFullyRecovered = false;
+            decimal outstandingAmount = 0;
+
+            if (model.recoveredAmount > model.totalRecoveryAmount)
+            {
+                throw new SecureException("Sorry, the recovered amount cannot be greater then the total amount recovery");
+            }
+
+            if (model.totalRecoveryAmount == model.recoveredAmount)
+            {
+                outstandingAmount = 0;
+                isFullyRecovered = true;
+                var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+                update.ISFULLYRECOVERED = true;
+                context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(update);
+                context.SaveChanges();
+            }
+            else
+            {
+                outstandingAmount = (model.totalRecoveryAmount - model.recoveredAmount);
+                isFullyRecovered = false;
+            }
+            var existing = context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Where(x => x.FILENAME == model.fileName && x.FILEDATA != null)
+            .Select(x => new CollateralLiquidationRecoveryViewModel
+            {
+                collateralLiquidationRecoveryId = x.COLLATERALLIQUIDATIONRECOVERYID,
+                loanId = x.LOANID,
+                applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                customerId = x.CUSTOMERID,
+                accreditedConsultant = x.ACCREDITEDCONSULTANT,
+                isFullyRecovered = x.ISFULLYRECOVERED,
+                fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                fileSize = x.FILESIZE,
+                fileSizeUnit = x.FILESIZEUNIT,
+                receiptDate = x.RECEIPTDATE,
+                totalRecoveryAmount = x.TOTALRECOVERYAMOUNT,
+                recoveredAmount = x.RECOVEREDAMOUNT,
+                outstandingAmount = x.OUTSTANDINGAMOUNT,
+                collateralCode = x.COLLATERALCODE,
+                collectionMode = x.COLLECTIONMODE,
+                createdBy = x.CREATEDBY,
+                dateTimeCreated = x.DATETIMECREATED,
+                loanAssignId = x.LOANASSIGNID,
+                percentageCommission = x.PERCENTAGECOMMISSION
+            }).FirstOrDefault();
+
+            if (existing != null && model.overwrite == false) return 3;
+
+            var entity = new TBL_COLLATERAL_LIQUIDATION_RECOVERY
+            {
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                LOANID = model.loanId,
+                APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
+                CUSTOMERID = model.customerId,
+                ACCREDITEDCONSULTANT = model.accreditedConsultant,
+                ISFULLYRECOVERED = isFullyRecovered,
+                RECEIPTDATE = model.receiptDate,
+                TOTALRECOVERYAMOUNT = model.totalRecoveryAmount,
+                RECOVEREDAMOUNT = model.recoveredAmount,
+                OUTSTANDINGAMOUNT = outstandingAmount,
+                COLLATERALCODE = model.collateralCode,
+                COLLECTIONMODE = model.collectionMode,
+                LOANASSIGNID = model.loanAssignId,
+                PERCENTAGECOMMISSION = model.percentageCommission
             };
 
             context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Add(entity);
