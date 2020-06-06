@@ -3101,6 +3101,19 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/los-condition-dynamics/{referenceNumber}")]
+        public List<TransactionDynamicsViewModel> Los_ConditionDynamics([FromUri] string referenceNumber)
+        {
+
+            var response = offerLetterRepo.Los_ConditionDynamics(referenceNumber);
+            return response;
+
+
+        }
+
+
     }
 }
 

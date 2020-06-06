@@ -61,6 +61,8 @@
           <xs:complexType>
             <xs:sequence>
               <xs:element name="comment" msprop:Generator_ColumnVarNameInTable="columncomment" msprop:Generator_ColumnPropNameInRow="comment" msprop:Generator_ColumnPropNameInTable="commentColumn" msprop:Generator_UserColumnName="comment" type="xs:string" minOccurs="0" />
+              <xs:element name="fileDate" msprop:Generator_ColumnVarNameInTable="columnfileDate" msprop:Generator_ColumnPropNameInRow="fileDate" msprop:Generator_ColumnPropNameInTable="fileDateColumn" msprop:Generator_UserColumnName="fileDate" type="xs:string" minOccurs="0" />
+              <xs:element name="imageCaption" msprop:Generator_ColumnVarNameInTable="columnimageCaption" msprop:Generator_ColumnPropNameInRow="imageCaption" msprop:Generator_ColumnPropNameInTable="imageCaptionColumn" msprop:Generator_UserColumnName="imageCaption" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -120,6 +122,8 @@
               <xs:element name="costVariation" msprop:Generator_ColumnVarNameInTable="columncostVariation" msprop:Generator_ColumnPropNameInRow="costVariation" msprop:Generator_ColumnPropNameInTable="costVariationColumn" msprop:Generator_UserColumnName="costVariation" type="xs:string" minOccurs="0" />
               <xs:element name="timeVariation" msprop:Generator_ColumnVarNameInTable="columntimeVariation" msprop:Generator_ColumnPropNameInRow="timeVariation" msprop:Generator_ColumnPropNameInTable="timeVariationColumn" msprop:Generator_UserColumnName="timeVariation" type="xs:string" minOccurs="0" />
               <xs:element name="progressPayment" msprop:Generator_ColumnVarNameInTable="columnprogressPayment" msprop:Generator_ColumnPropNameInRow="progressPayment" msprop:Generator_ColumnPropNameInTable="progressPaymentColumn" msprop:Generator_UserColumnName="progressPayment" type="xs:string" minOccurs="0" />
+              <xs:element name="amountDisbursedPercent" msprop:Generator_ColumnVarNameInTable="columnamountDisbursedPercent" msprop:Generator_ColumnPropNameInRow="amountDisbursedPercent" msprop:Generator_ColumnPropNameInTable="amountDisbursedPercentColumn" msprop:Generator_UserColumnName="amountDisbursedPercent" type="xs:string" minOccurs="0" />
+              <xs:element name="pmuPercentage" msprop:Generator_ColumnVarNameInTable="columnpmuPercentage" msprop:Generator_ColumnPropNameInRow="pmuPercentage" msprop:Generator_ColumnPropNameInTable="pmuPercentageColumn" msprop:Generator_UserColumnName="pmuPercentage" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -167,6 +171,22 @@
               <xs:element name="imageCaption" msprop:Generator_ColumnVarNameInTable="columnimageCaption" msprop:Generator_ColumnPropNameInRow="imageCaption" msprop:Generator_ColumnPropNameInTable="imageCaptionColumn" msprop:Generator_UserColumnName="imageCaption" type="xs:string" minOccurs="0" />
               <xs:element name="fileData" msprop:Generator_ColumnVarNameInTable="columnfileData" msprop:Generator_ColumnPropNameInRow="fileData" msprop:Generator_ColumnPropNameInTable="fileDataColumn" msprop:Generator_UserColumnName="fileData" type="xs:string" minOccurs="0" />
               <xs:element name="fileName" msprop:Generator_ColumnVarNameInTable="columnfileName" msprop:Generator_ColumnPropNameInRow="fileName" msprop:Generator_ColumnPropNameInTable="fileNameColumn" msprop:Generator_UserColumnName="fileName" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="SIGNATORIES" msprop:Generator_TableClassName="SIGNATORIESDataTable" msprop:Generator_TableVarName="tableSIGNATORIES" msprop:Generator_RowChangedName="SIGNATORIESRowChanged" msprop:Generator_TablePropName="SIGNATORIES" msprop:Generator_RowDeletingName="SIGNATORIESRowDeleting" msprop:Generator_RowChangingName="SIGNATORIESRowChanging" msprop:Generator_RowEvHandlerName="SIGNATORIESRowChangeEventHandler" msprop:Generator_RowDeletedName="SIGNATORIESRowDeleted" msprop:Generator_RowClassName="SIGNATORIESRow" msprop:Generator_UserTableName="SIGNATORIES" msprop:Generator_RowEvArgName="SIGNATORIESRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="projectOffer" msprop:Generator_ColumnVarNameInTable="columnprojectOffer" msprop:Generator_ColumnPropNameInRow="projectOffer" msprop:Generator_ColumnPropNameInTable="projectOfferColumn" msprop:Generator_UserColumnName="projectOffer" type="xs:string" minOccurs="0" />
+              <xs:element name="groupHead" msprop:Generator_ColumnVarNameInTable="columngroupHead" msprop:Generator_ColumnPropNameInRow="groupHead" msprop:Generator_ColumnPropNameInTable="groupHeadColumn" msprop:Generator_UserColumnName="groupHead" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="COMMENTIMAGES" msprop:Generator_TableClassName="COMMENTIMAGESDataTable" msprop:Generator_TableVarName="tableCOMMENTIMAGES" msprop:Generator_TablePropName="COMMENTIMAGES" msprop:Generator_RowDeletingName="COMMENTIMAGESRowDeleting" msprop:Generator_RowChangingName="COMMENTIMAGESRowChanging" msprop:Generator_RowEvHandlerName="COMMENTIMAGESRowChangeEventHandler" msprop:Generator_RowDeletedName="COMMENTIMAGESRowDeleted" msprop:Generator_UserTableName="COMMENTIMAGES" msprop:Generator_RowChangedName="COMMENTIMAGESRowChanged" msprop:Generator_RowEvArgName="COMMENTIMAGESRowChangeEvent" msprop:Generator_RowClassName="COMMENTIMAGESRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="imageCaption" msprop:Generator_ColumnVarNameInTable="columnimageCaption" msprop:Generator_ColumnPropNameInRow="imageCaption" msprop:Generator_ColumnPropNameInTable="imageCaptionColumn" msprop:Generator_UserColumnName="imageCaption" type="xs:string" minOccurs="0" />
+              <xs:element name="fileData" msprop:Generator_ColumnVarNameInTable="columnfileData" msprop:Generator_ColumnPropNameInRow="fileData" msprop:Generator_ColumnPropNameInTable="fileDataColumn" msprop:Generator_UserColumnName="fileData" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
