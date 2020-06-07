@@ -13858,7 +13858,7 @@ namespace FintrakBanking.Repositories.Credit
             var company = context.TBL_COMPANY.Find(entity.companyId);
 
 
-            var localGlobalReference = context.TBL_GLOBAL_EXPOSURE.Where(x=>x.ID == entity.loanId).FirstOrDefault();
+            var localGlobalReference = context.TBL_GLOBAL_EXPOSURE.FirstOrDefault(x=>x.ID == entity.loanId);
 
             var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == localGlobalReference.PRODUCTCODE).FirstOrDefault();
             if(product == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360"); }
@@ -15897,9 +15897,9 @@ namespace FintrakBanking.Repositories.Credit
                                   && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                   && b.OPERATIONPERFORMED == false
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ExternalFacility
-                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
-                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ContingentLiability
-                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.RevolvingLoan
+                                  //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
+                                  //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ContingentLiability
+                                  //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.RevolvingLoan
                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)
                                    select new LoanViewModel
                                    {
