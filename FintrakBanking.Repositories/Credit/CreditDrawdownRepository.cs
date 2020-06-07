@@ -1501,11 +1501,11 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("This facility already has a tranche disbursement request for this customer currently undergoing approval.");
             }
 
-            if (loanApplicationDetails.ISLINEFACILITY.Value)
+            if ((loanApplicationDetails.ISLINEFACILITY ?? false))
             {
                 var bookingRequestsForCustomer = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && x.DELETED == false).ToList();
                 var totalAmountRequested = bookingRequestsForCustomer.Sum(r => r.AMOUNT_REQUESTED);
-                if ((entity.amount_Requested + totalAmountRequested) > loanApplicationDetails.APPROVEDLINELIMIT.Value)
+                if ((entity.amount_Requested + totalAmountRequested) > (loanApplicationDetails.APPROVEDLINELIMIT ?? 0))
                 {
                     throw new ConditionNotMetException("Requested Amount(s) for this customer cannot be greater than the approved line limit");
                 }

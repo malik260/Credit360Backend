@@ -469,6 +469,7 @@ namespace FintrakBanking.Common.Enum
         CreditDocumentationPrinted = 562,
         ApplicationReassigned = 563,
         RemoveLien = 564,
+        BulkLoanRecoveryAssignment = 565,
 
 
     };
