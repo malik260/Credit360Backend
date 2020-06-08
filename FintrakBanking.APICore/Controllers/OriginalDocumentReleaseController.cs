@@ -172,6 +172,8 @@ namespace FintrakBanking.APICore.Controllers
             {
                 model.userBranchId = (short)token.GetBranchId;
                 model.createdBy = token.GetStaffId;
+                model.staffId = token.GetStaffId;
+                model.userId = token.GetUserId;
                 model.companyId = token.GetCompanyId;
 
                 WorkflowResponse response = _repo.SubmitApproval(model);
