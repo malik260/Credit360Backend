@@ -1302,7 +1302,70 @@ namespace FintrakBanking.Repositories.credit
             return 2;
         }
 
-        
+        public int AddPsrCommentImage(PsrCommentImagesViewModel model, byte[] buffer)
+        {
+            var existing = context.TBL_PSR_COMMENT_IMAGES.Where(x => x.FILENAME == model.fileName && x.PROJECTSITEREPORTID == model.projectSiteReportId)
+            .Select(x => new PsrCommentImagesViewModel
+            {
+                psrCommentImageId = x.PSRCOMMENTIMAGEID,
+                fileData = x.FILEDATA,
+                fileExtension = x.FILEEXTENSION,
+                fileName = x.FILENAME,
+                imageCaption = x.IMAGECAPTION,
+                projectSiteReportId = x.PROJECTSITEREPORTID,
+            }).FirstOrDefault();
+
+            if (existing != null && model.overwrite == false) return 3;
+
+            var entity = new TBL_PSR_COMMENT_IMAGES
+            {
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension.ToLower(),
+                FILESIZE = model.fileSize,
+                FILESIZEUNIT = model.fileSizeUnit,
+                FILEDATA = buffer,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                IMAGECAPTION = model.imageCaption,
+                PROJECTSITEREPORTID = model.projectSiteReportId,
+            };
+
+            context.TBL_PSR_COMMENT_IMAGES.Add(entity);
+            context.SaveChanges();
+            return 2;
+        }
+
+        public IEnumerable<PsrCommentImagesViewModel> GetPsrCommentImages(int id)
+        {
+            return context.TBL_PSR_COMMENT_IMAGES.Where(x => x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrCommentImagesViewModel
+                {
+                    psrCommentImageId = x.PSRCOMMENTIMAGEID,
+                    fileData = x.FILEDATA,
+                    fileExtension = x.FILEEXTENSION,
+                    fileName = x.FILENAME,
+                    imageCaption = x.IMAGECAPTION,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o => o.PSRREPORTTYPEID == x.PROJECTSITEREPORTID).Select(o => o.REPORTTYPENAME).FirstOrDefault(),
+                }).OrderByDescending(o => o.psrCommentImageId)
+                .ToList();
+        }
+
+        public PsrCommentImagesViewModel GetPsrCommentImage(int id)
+        {
+            return context.TBL_PSR_COMMENT_IMAGES.Where(x => x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrCommentImagesViewModel
+                {
+                    psrCommentImageId = x.PSRCOMMENTIMAGEID,
+                    fileData = x.FILEDATA,
+                    fileExtension = x.FILEEXTENSION,
+                    fileName = x.FILENAME,
+                    imageCaption = x.IMAGECAPTION,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o => o.PSRREPORTTYPEID == x.PROJECTSITEREPORTID).Select(o => o.REPORTTYPENAME).FirstOrDefault(),
+                }).FirstOrDefault();
+        }
+
         #endregion
 
     }

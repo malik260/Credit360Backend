@@ -19,6 +19,10 @@ using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ReportObjects;
 using System.Diagnostics;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ReportObjects.Credit;
+using FintrakBanking.ViewModels.Setups.General;
+using System.Collections.Generic;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -32,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
         ILoanOperationsRepository flow;
         ILoanRepository loanRepo;
         ICreditTemplateRepository creditTemplateRepo;
-
+        OfferLetterInfo offerLetterRepo;
         public ReportsController(IReportRoutes _repo, IFinanceTransactionsReport reportRepo, IErrorLogRepository _errorLogger,
             ILoanOperationsRepository _flow, ILoanRepository _loanRepo, ICreditTemplateRepository _creditTemplateRepo) {
 
@@ -42,6 +46,7 @@ namespace FintrakBanking.APICore.Controllers
             flow = _flow;
             loanRepo = _loanRepo;
             creditTemplateRepo = _creditTemplateRepo;
+            offerLetterRepo = new OfferLetterInfo();
         }
 
       [HttpGet] [ClaimsAuthorization]  
@@ -2991,7 +2996,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
         [ClaimsAuthorization]
         [Route("get-deferralwaiver-memo-pdf/{operationId}/{targetId}/{loanApplicationDetailId}")]
         public HttpResponseMessage GetDeferralWaiverMemoPdf([FromUri] int operationId, [FromUri] int targetId, [FromUri] int loanApplicationDetailId)
@@ -3006,6 +3010,109 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/getSignatory/{referenceNumber}")]
+        public List<SignatoryViewModel> GetSignatory([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanApplicationSignatory(referenceNumber);
+                return response;
+            }
+            catch (SecureException ex)
+            {
+                return new List<SignatoryViewModel>();
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/generate-offerletter/{referenceNumber}")]
+        public IEnumerable<OfferLetterViewModel> GenerateOfferLetter([FromUri] string referenceNumber)
+        {
+
+            var response = offerLetterRepo.GenerateOfferLetter(referenceNumber);
+            return response;
+
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-loan-collateral/{referenceNumber}")]
+        public List<LoanApplicationCollateralViewModel> GetLoanCollateral([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanCollateral(referenceNumber);
+                return response;
+            }
+            catch (SecureException ex)
+            {
+                return new List<LoanApplicationCollateralViewModel>();
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-application-fee/{referenceNumber}")]
+        public List<ProductFeeViewModel> GetLoanApplicationFee([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanApplicationFee(referenceNumber);
+                return response;
+            }
+            catch (SecureException ex)
+            {
+                return new List<ProductFeeViewModel>();
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-application-detail/{referenceNumber}")]
+        public List<OfferLetterDetailViewModel> GetLoanApplicationDetail([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = offerLetterRepo.GetLoanApplicationDetail(referenceNumber);
+                return response;
+            }
+            catch (SecureException ex)
+            {
+                return new List<OfferLetterDetailViewModel>();
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/get-application-condition-precedent/{referenceNumber}")]
+        public IEnumerable<OfferLetterConditionPrecidentViewModel> GetLoanApplicationConditionPrecident([FromUri] string referenceNumber)
+        {
+
+            var response = offerLetterRepo.GetLoanApplicationConditionPrecident(referenceNumber);
+            return response;
+
+
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offerletter/los-condition-dynamics/{referenceNumber}")]
+        public List<TransactionDynamicsViewModel> Los_ConditionDynamics([FromUri] string referenceNumber)
+        {
+
+            var response = offerLetterRepo.Los_ConditionDynamics(referenceNumber);
+            return response;
+
+
+        }
+
 
     }
 }

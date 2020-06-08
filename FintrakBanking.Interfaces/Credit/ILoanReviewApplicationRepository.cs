@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;

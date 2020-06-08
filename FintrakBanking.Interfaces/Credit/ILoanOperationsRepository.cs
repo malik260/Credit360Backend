@@ -15,6 +15,11 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
+        IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApproval(int staffId, int companyId);
+        int GoForAssignLoansToAgentApproval(ApprovalViewModel entity);
         int GoForLienRemovalApproval(ApprovalViewModel entity);
         IEnumerable<RemoveLienViewModel> GetLienRemovalDocuments(int lienRemovalId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLienRemovalAwaitingApproval(int staffId, int companyId);
@@ -29,8 +34,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddBulkPrepaymentReversalData(LoanViewModel data, int batchCode, DateTime applicationDate);
         string GetTransactionReferenceNo();
      
-        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId, int accreditedConsultantId);
-        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgent(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansOperationRecoveryAnalysisByAgent(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationRecoveryAnalysis(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentation(int staffId, int companyId);
         bool CreditDocumentationFilling(CreditDocumentationViewModel model);
@@ -76,7 +81,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool LoanRecoveryPayment(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId);
 
         List<LoanPaymentSchedulePeriodicViewModel> GeneratePrepaymentSchedule(LoanPaymentScheduleInputViewModel loanInput);
-        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTermLoansInterestAccrual(DateTime applicationDate, int companyId, int staffId);
+
+        List<DailyInterestAccrualViewModel> ProcessDailyTermLoansInterestAccrual(DateTime applicationDate, int companyId, int staffId, FinTrakBankingContext context);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyUnauthorisedOverdraftInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyInterestOnPastDueInterestAccrual(DateTime applicationDate, int companyId, int staffId);
