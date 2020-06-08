@@ -28,9 +28,6 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string staffRoleShortCode { get; set; }
         public bool useRoundRublin { get; set; }
 
-        public int approvalLevelId { get; set; }
-        public string approvalLevelName { get; set; }
-
     }
 
     public class ApprovalSetUpViewModel: GeneralEntity
