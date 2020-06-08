@@ -1486,7 +1486,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.customerId == null)
             {
-                if (loanApplicationDetails.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
+                if (loanApplicationDetails.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup && (loanApplicationDetails.ISLINEFACILITY ?? false))
                 {
                     throw new SecureException("Please select a Group Member");
                 }
