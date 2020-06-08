@@ -107,6 +107,8 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var role = (from a in context.TBL_STAFF
                         join b in context.TBL_STAFF_ROLE on a.STAFFROLEID equals b.STAFFROLEID 
+                        //join c in context.TBL_APPROVAL_LEVEL on a.STAFFROLEID equals c.STAFFROLEID
+
                         where a.STAFFID == staffId
                         select new StaffRoleViewModel
                         {
@@ -118,6 +120,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             workStartDuration = a.WORKSTARTDURATION,
                             allocationTypeId = b.APPROVALFLOWTYPEID,
                             staffId = staffId,
+                            //approvalLevelId = c.APPROVALLEVELID,
+                            //approvalLevelName = c.LEVELNAME
                         }).FirstOrDefault();
             return role;
         }

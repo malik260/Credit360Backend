@@ -23,15 +23,13 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short? allocationTypeId { get; set; }
 
 
-
-
-
         public List<int> userGroupIds { get; set; }
         public List<int> activitieIds { get; set; }
         public string staffRoleShortCode { get; set; }
         public bool useRoundRublin { get; set; }
 
-
+        public int approvalLevelId { get; set; }
+        public string approvalLevelName { get; set; }
 
     }
 

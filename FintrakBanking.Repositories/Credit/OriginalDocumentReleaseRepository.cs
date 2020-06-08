@@ -22,17 +22,21 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow _workflow;
         private IGeneralSetupRepository _general;
         private FinTrakBankingDocumentsContext _docContext;
+        private IStaffRoleRepository _staffRepo;
+
         public OriginalDocumentReleaseRepository(
                                                     FinTrakBankingContext context, 
                                                    IWorkflow workflow, 
                                                    IGeneralSetupRepository general,
-                                                   FinTrakBankingDocumentsContext docContext
+                                                   FinTrakBankingDocumentsContext docContext,
+                                                   IStaffRoleRepository staffRepo
                                                  )
         {
             _context = context;
             _workflow = workflow;
             _general = general;
             _docContext = docContext;
+            _staffRepo = staffRepo;
         }
 
         public bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
@@ -161,12 +165,15 @@ namespace FintrakBanking.Repositories.Credit
                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                              documentDescription = oda.DESCRIPTION,
                              originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
-                            originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
-                            docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
+                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
+                             docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
                              approvalDate = dr.APPROVALDATE,
                              collateralCode = cc.COLLATERALCODE,
                              collateralCustomerId = cc.COLLATERALCUSTOMERID,
-                             operationId = (int)OperationsEnum.SecurityRelease
+                             operationId = (int)OperationsEnum.SecurityRelease,
+                             perfectionStatusId = dr.PERFECTIONSTATUSID,
+                             litigationStatusId = dr.LITIGATIONSTATUSID,
+                             isOnAmconList = dr.ISONAMCONLIST
                          };
 
             var result = record.GroupBy(r => r.originalDocumentApprovalId)
@@ -377,21 +384,43 @@ namespace FintrakBanking.Repositories.Credit
                _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
                _workflow.DeferredExecution = true;
                _workflow.LogActivity();
+
                 try
                 {
+                    var documents = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == model.originalDocumentApprovalId
+                                                                                    && o.DELETED == false
+                                                                                    && o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).ToList();
+
+                    var staffRole = _staffRepo.GetStaffRoleByStaffId(model.staffId);
+
+                    if (staffRole.staffRoleCode == "POL") {
+                        foreach (var item in documents) {
+                            item.PERFECTIONSTATUSID = model.perfectionStatusId;
+                        }
+                    }
+
+                    if (staffRole.staffRoleCode == "LOL") {
+                        foreach (var item in documents) {
+                            item.LITIGATIONSTATUSID = model.litigationStatusId;
+                        }
+                    }
+
+                    if (staffRole.staffRoleCode == "AOL") {
+                        foreach (var item in documents) {
+                            item.ISONAMCONLIST = model.isOnAmconList;
+                        }
+                    }
+
                     if (_workflow.NewState == (int)ApprovalState.Ended)
                     {
 
-                        var documents = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == model.originalDocumentApprovalId
-                                                                                        && o.DELETED == false
-                                                                                        && o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
-                                                                              .ToList();
                         if (documents != null)
                         {
                             foreach (var x in documents)
                             {
                                 x.APPROVALSTATUSID = model.approvalStatusId;
                                 x.APPROVALDATE = _general.GetApplicationDate();
+
                                 if(model.approvalStatusId == (short)ApprovalStatusEnum.Approved)
                                 {
                                     x.DELETED = true;
