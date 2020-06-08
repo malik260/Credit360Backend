@@ -41,5 +41,6 @@ namespace FintrakBanking.ViewModels.Credit
         public short? perfectionStatusId { get; set; }
         public short? litigationStatusId { get; set; }
         public bool? isOnAmconList { get; set; }
+        public int userId { get; set; }
     }
 }

@@ -23,13 +23,15 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository _general;
         private FinTrakBankingDocumentsContext _docContext;
         private IStaffRoleRepository _staffRepo;
+        private readonly IAuthenticationRepository _authRepo;
 
         public OriginalDocumentReleaseRepository(
                                                     FinTrakBankingContext context, 
                                                    IWorkflow workflow, 
                                                    IGeneralSetupRepository general,
                                                    FinTrakBankingDocumentsContext docContext,
-                                                   IStaffRoleRepository staffRepo
+                                                   IStaffRoleRepository staffRepo,
+                                                   IAuthenticationRepository authRepo
                                                  )
         {
             _context = context;
@@ -37,6 +39,7 @@ namespace FintrakBanking.Repositories.Credit
             _general = general;
             _docContext = docContext;
             _staffRepo = staffRepo;
+            _authRepo = authRepo;
         }
 
         public bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
@@ -392,20 +395,21 @@ namespace FintrakBanking.Repositories.Credit
                                                                                     && o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).ToList();
 
                     var staffRole = _staffRepo.GetStaffRoleByStaffId(model.staffId);
+                    var userActivities = _authRepo.GetUserActivitiesByUser(model.userId);
 
-                    if (staffRole.staffRoleCode == "POL") {
+                    if (userActivities.IndexOf("perfection approval") > -1) {
                         foreach (var item in documents) {
                             item.PERFECTIONSTATUSID = model.perfectionStatusId;
                         }
                     }
 
-                    if (staffRole.staffRoleCode == "LOL") {
+                    if (userActivities.IndexOf("litigation approval") > -1) {
                         foreach (var item in documents) {
                             item.LITIGATIONSTATUSID = model.litigationStatusId;
                         }
                     }
 
-                    if (staffRole.staffRoleCode == "AOL") {
+                    if (staffRole.staffRoleCode == "AMCON OFFICER") {
                         foreach (var item in documents) {
                             item.ISONAMCONLIST = model.isOnAmconList;
                         }
