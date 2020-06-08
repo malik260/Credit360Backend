@@ -1537,6 +1537,8 @@ namespace FintrakBanking.Repositories.Credit
                                 join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID into dl
                                 join r in context.TBL_LOAN_REVOLVING on d.LOANID equals r.REVOLVINGLOANID into lr
                                 join c in context.TBL_LOAN_CONTINGENT on d.LOANID equals c.CONTINGENTLOANID into dc
+                                join ex in context.TBL_LOAN_EXTERNAL on d.LOANID equals ex.EXTERNALLOANID into dex
+                                from ex in dex.DefaultIfEmpty()
                                 from l in dl.DefaultIfEmpty()
                                 join ldl in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ldl.LOANAPPLICATIONDETAILID into x
                                 from r in lr.DefaultIfEmpty()
@@ -1563,7 +1565,7 @@ namespace FintrakBanking.Repositories.Credit
                                || d.CREATEDBY == staffId)
                                 select new LoanApplicationViewModel
                                 {
-                                    relatedReferenceNumber = x1 != null ? x1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (y1 != null ? y1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (z1 != null ? z1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "N/A")),
+                                    relatedReferenceNumber = x1 != null ? x1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (y1 != null ? y1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (z1 != null ? z1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (ex != null ? ex.LOANREFERENCENUMBER : "N/A"))),
                                     firstName = g.FIRSTNAME,
                                     referenceNumber = a.APPLICATIONREFERENCENUMBER,
                                     middleName = g.MIDDLENAME,
@@ -1571,7 +1573,7 @@ namespace FintrakBanking.Repositories.Credit
                                     customerCode = g.CUSTOMERCODE,
                                     applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                     loanApplicationId = a.LOANAPPLICATIONID,
-                                    loanApplicationIdForOperation = l != null ? l.TERMLOANID : r != null ? r.REVOLVINGLOANID : c != null ? c.CONTINGENTLOANID : 0,
+                                    loanApplicationIdForOperation = d.LOANID,
                                    customerId = a.CUSTOMERID,
                                    branchId = a.BRANCHID,
                                    customerGroupId = a.CUSTOMERGROUPID,
@@ -1608,6 +1610,8 @@ namespace FintrakBanking.Repositories.Credit
                                 join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID into dl
                                 join r in context.TBL_LOAN_REVOLVING on d.LOANID equals r.REVOLVINGLOANID into lr
                                 join c in context.TBL_LOAN_CONTINGENT on d.LOANID equals c.CONTINGENTLOANID into dc
+                                join ex in context.TBL_LOAN_EXTERNAL on d.LOANID equals ex.EXTERNALLOANID into dex
+                                from ex in dex.DefaultIfEmpty()
                                 from l in dl.DefaultIfEmpty()
                                 join ldl in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ldl.LOANAPPLICATIONDETAILID into x
                                 from r in lr.DefaultIfEmpty()
@@ -1623,7 +1627,7 @@ namespace FintrakBanking.Repositories.Credit
                                || (c.LOANREFERENCENUMBER == searchString && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISPRINTED == true))
                                 select new LoanApplicationViewModel
                                 {
-                                    relatedReferenceNumber = x1 != null ? x1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (y1 != null ? y1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (z1 != null ? z1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "N/A")),
+                                    relatedReferenceNumber = x1 != null ? x1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (y1 != null ? y1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (z1 != null ? z1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (ex != null ? ex.LOANREFERENCENUMBER : "N/A"))),
                                     firstName = g.FIRSTNAME,
                                     referenceNumber = a.APPLICATIONREFERENCENUMBER,
                                     middleName = g.MIDDLENAME,
@@ -1631,7 +1635,7 @@ namespace FintrakBanking.Repositories.Credit
                                     customerCode = g.CUSTOMERCODE,
                                     applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                     loanApplicationId = a.LOANAPPLICATIONID,
-                                    loanApplicationIdForOperation = l != null ? l.TERMLOANID : r != null ? r.REVOLVINGLOANID : c != null ? c.CONTINGENTLOANID : 0,
+                                    loanApplicationIdForOperation = d.LOANID,
                                     customerId = a.CUSTOMERID,
                                     branchId = a.BRANCHID,
                                     customerGroupId = a.CUSTOMERGROUPID,
@@ -1669,6 +1673,8 @@ namespace FintrakBanking.Repositories.Credit
                                      join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID into dl
                                      join r in context.TBL_LOAN_REVOLVING on d.LOANID equals r.REVOLVINGLOANID into lr
                                      join cg in context.TBL_LOAN_CONTINGENT on d.LOANID equals cg.CONTINGENTLOANID into dc
+                                     join ex in context.TBL_LOAN_EXTERNAL on d.LOANID equals ex.EXTERNALLOANID into dex
+                                     from ex in dex.DefaultIfEmpty()
                                      from l in dl.DefaultIfEmpty()
                                      join ldl in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ldl.LOANAPPLICATIONDETAILID into x
                                      from r in lr.DefaultIfEmpty()
@@ -1697,7 +1703,7 @@ namespace FintrakBanking.Repositories.Credit
                                         //firstName = c.FIRSTNAME,
                                         //middleName = c.MIDDLENAME,
                                         //lastName = c.LASTNAME,
-                                        relatedReferenceNumber = x1 != null ? x1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (y1 != null ? y1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (z1 != null ? z1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "N/A")),
+                                        relatedReferenceNumber = x1 != null ? x1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (y1 != null ? y1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (z1 != null ? z1.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : (ex != null ? ex.LOANREFERENCENUMBER : "N/A"))),
                                         customerName = c.GROUPNAME,
                                         customerCode = c.GROUPCODE,
                                         referenceNumber = a.APPLICATIONREFERENCENUMBER,
