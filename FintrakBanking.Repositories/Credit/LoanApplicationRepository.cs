@@ -7096,15 +7096,17 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (facility != null)
                     {
-                        var sectorId = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
-                        var setcorName = context.TBL_SECTOR.Find(sectorId.SECTORID).NAME ?? "N/A";
+                        var sector = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
+                        var sectorName = context.TBL_SECTOR.Find(sector.SECTORID).NAME ?? "N/A";
                         var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
-                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                        decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                        decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
-                        if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + setcorName + " exceeded!");
-                        //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
-
+                        if (sectorValidation != null)
+                        {
+                            decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                            decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                            decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
+                            if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + sectorName + " exceeded!");
+                            //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
+                        }
                     } 
                 }
 
@@ -7160,10 +7162,13 @@ namespace FintrakBanking.Repositories.Credit
                 if (currency.CURRENCYCODE.Trim() != "NGN")
                 {
                     var currencyLimits = limitValidation.ValidateNPLByCurrency(application);
-                    var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
-                    if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+                    if (currencyLimits != null)
                     {
-                        throw new SecureException("Currency Limit Exceeded");
+                        var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
+                        if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+                        {
+                            throw new SecureException("Currency Limit Exceeded");
+                        }
                     }
                 }
             }

@@ -852,6 +852,7 @@ namespace FintrakBanking.Repositories.Credit
                 WithInstruction = appl.WITHINSTRUCTION ?? false,
                 //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                 DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+                tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR),
             };
 
 
@@ -980,6 +981,7 @@ namespace FintrakBanking.Repositories.Credit
                     WithInstruction = appl.WITHINSTRUCTION ?? false,
                     //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+                    tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR),
                 };
 
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;

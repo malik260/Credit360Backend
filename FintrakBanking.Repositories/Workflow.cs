@@ -1485,6 +1485,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             decimal pepAmount = rule.PEPAMOUNT ?? 0;
             decimal minimumAmount = rule.MINIMUMAMOUNT ?? 0;
             decimal maximumAmount = rule.MAXIMUMAMOUNT ?? 0;
+            int tenor = rule.TENOR ?? 0;
 
             if ((minimumAmount > 0 && maximumAmount == 0) && (minimumAmount < levelBusinessRule.Amount)) limitChecked = true;
             if ((minimumAmount == 0 && maximumAmount > 0) && (levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
@@ -1492,7 +1493,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if ((rule.PEP && pepAmount > 0) && (levelBusinessRule.Pep && pepAmount <= levelBusinessRule.PepAmount)) limitChecked = flagChecked = true;
 
-            //if ((rule.TENOR >= levelBusinessRule.tenor) && (rule.TENOR > 0 && levelBusinessRule.tenor > 0)) limitChecked = true;//by ify to be used later
+            if ((tenor > 0) && (tenor >= levelBusinessRule.tenor)) limitChecked = true;//by ify to be used later
 
             //if (rule.PEP && levelBusinessRule.Pep == true) flagChecked = true;
             if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == true) flagChecked = true;

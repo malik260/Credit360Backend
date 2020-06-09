@@ -188,9 +188,9 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("work-flow-tracker/operation/{operationId}/target/{targetId}")]
-        public async Task<HttpResponseMessage> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId)
+        public HttpResponseMessage GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId)
         {
-               var data = await repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId);
+               var data =  repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId);
 
                 if (data == null)
                 {
