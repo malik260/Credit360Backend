@@ -13880,6 +13880,7 @@ namespace FintrakBanking.Repositories.Credit
                             item.companyId = entity.companyId;
                             item.createdBy = entity.createdBy;
                             item.customerSensitivityLevelId = entity.customerSensitivityLevelId;
+                            item.relationshipOfficerId = entity.createdBy;
                             customers.AddCustomer(item);
                         }
                         customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == localGlobalReference.CUSTOMERID).FirstOrDefault();
@@ -13900,7 +13901,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFID ==  customer.RELATIONSHIPOFFICERID).FirstOrDefault();
-            //if (accountOfficer == null) { throw new ConditionNotMetException("Account Officer does not exist on Credit360!"); }
+            if (accountOfficer == null) { throw new ConditionNotMetException("Account Officer does not exist on Credit360!"); }
 
             double interestRate = Convert.ToDouble(localGlobalReference.INTERESTRATE);
 
