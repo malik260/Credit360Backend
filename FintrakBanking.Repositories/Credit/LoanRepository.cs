@@ -13871,7 +13871,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     List<CustomerViewModels> cust = new List<CustomerViewModels>();
                     CustomerDetails customerAPI = new CustomerDetails(context);
-                    Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(localGlobalReference.ACCOUNTNUMBER)).GetAwaiter().GetResult();
+                    Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(localGlobalReference.REFERENCENUMBER)).GetAwaiter().GetResult();
                     if (cust.Count() > 0)
                     {
                         foreach (var item in cust)

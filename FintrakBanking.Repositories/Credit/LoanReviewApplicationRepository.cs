@@ -840,6 +840,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
             workflow.IsFlowTest = model.isFlowTest;
             workflow.IsFromPc = model.isFromPc;
+            workflow.Tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR);
             workflow.LevelBusinessRule = new LevelBusinessRule
             {
                 Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
@@ -852,6 +853,7 @@ namespace FintrakBanking.Repositories.Credit
                 WithInstruction = appl.WITHINSTRUCTION ?? false,
                 //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                 DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+                tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR),
             };
 
 
@@ -968,6 +970,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.DeferredExecution = true;
                 workflow.IsFlowTest = model.isFlowTest;
                 workflow.IsFromPc = model.isFromPc;
+                workflow.Tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR);
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
                     Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
@@ -980,6 +983,7 @@ namespace FintrakBanking.Repositories.Credit
                     WithInstruction = appl.WITHINSTRUCTION ?? false,
                     //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+                    tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR),
                 };
 
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
