@@ -878,7 +878,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             foreach (var item in data)
             {
-                var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency).CURRENCYID;
+                var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency)?.CURRENCYID;
+                if (currencyId == null) { continue; }
+
                 var accountStatusId = context.TBL_CASA_ACCOUNTSTATUS
                     .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower())?
                     .ACCOUNTSTATUSID;
@@ -903,7 +905,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; //(short)(item.productCode != "" ? 8 : 8);
                 addCustomerAcct.COMPANYID = 1;
                 addCustomerAcct.BRANCHID = (short)(item.branchCode != "" || item.branchCode != null ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode)?.BRANCHID ?? 94 : 94);
-                addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
+                addCustomerAcct.CURRENCYID = currencyId.Value;//(short)(item.currency == "NGN" ? 1 : 0);
                 addCustomerAcct.ISCURRENTACCOUNT = true;
                 addCustomerAcct.ACCOUNTSTATUSID = (short)accountStatusId;//(short)(item.accountStatusName == "Active" ? 1 : 3);
                 addCustomerAcct.LIENAMOUNT = 0;

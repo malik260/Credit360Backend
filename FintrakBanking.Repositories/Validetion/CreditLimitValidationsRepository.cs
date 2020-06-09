@@ -1692,25 +1692,37 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public bool SectorLimitExceeded(int sectorId, decimal applicationAmount)
         {
-            var outstandingLoan = (from a in context.TBL_LOAN
+           
+            var subSector = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == sectorId).FirstOrDefault();
+            var sectorCode = context.TBL_SECTOR.Find(subSector.SECTORID);
+            var sectorsExposures = (from a in context.TBL_SECTOR_GLOBAL_LIMIT
+                                    select a.TOTALEXPOSURELCY).Sum() ?? 0;
+
+            var sectorExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(a => a.CBNSECTORID == sectorCode.CODE).Select(a => a.TOTALEXPOSURELCY).FirstOrDefault() ?? 0;
+
+            var CurrentSectorsExposures = sectorsExposures + applicationAmount;
+            var currentsectorExposure = sectorExposure + applicationAmount;
+
+            var totalExposure = currentsectorExposure / CurrentSectorsExposures;
+            decimal percentageTotalExposure = decimal.Round((decimal)totalExposure, 5, MidpointRounding.AwayFromZero);
+            var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(s => s.CBNSECTORID == sectorCode.CODE).Select(s => s.SECTORLIMIT).FirstOrDefault();
+            return percentageTotalExposure > 0 && sectorLimit < percentageTotalExposure;
+
+            /* var outstandingLoan = (from a in context.TBL_LOAN
                                join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
                                where a.LOANSTATUSID == (short)LoanStatusEnum.Active && c.SUBSECTORID == sectorId
                                select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
-
             var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
                                     join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
                                     where a.LOANSTATUSID == (short)LoanStatusEnum.Active && c.SUBSECTORID == sectorId
                                     select (decimal?)a.OVERDRAFTLIMIT).Sum() ?? 0;
-
             var sectorExposure = outstandingLoan + outstandingRevolving;
-
             decimal? sectorMaximumExposure = 0;
             var sector = context.TBL_SUB_SECTOR.FirstOrDefault(a => a.SECTORID == sectorId);
             if (sector != null) sectorMaximumExposure = sector.TBL_SECTOR.LOAN_LIMIT ?? 0;
-
             var sectorLimit = sectorMaximumExposure - sectorExposure;
-
             return sectorMaximumExposure > 0 && sectorLimit < applicationAmount;
+            */
         }
 
         public bool ProductLimitExceeded(int productId, decimal applicationAmount)
