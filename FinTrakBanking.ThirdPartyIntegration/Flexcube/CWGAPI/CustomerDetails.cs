@@ -340,7 +340,6 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     response = await client.GetAsync($"GetCustomerAccountBalances/{customerCode}");
-                    //response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
 
                     List<CasaViewModel> casa = new List<CasaViewModel>();
                     responseDateTime = DateTime.Now;
@@ -403,6 +402,13 @@
                     
                 }
             }
+
+            //private string GetLatestEntryFromCustomApiLogs(string customerCode)
+            //{
+            //    FinTrakBankingContext logContext = new FinTrakBankingContext();
+            //    var result = logContext.TBL_CUSTOM_API_LOGS.Where(O => O.REFERENCENUMBER == customerCode).Select(O => O.RESPONSEMESSAGE).FirstOrDefault();
+            //    return result;
+            //}
 
             public async Task<string> CheckExposePerson(string customerCode)
             {
