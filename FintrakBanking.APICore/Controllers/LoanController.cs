@@ -313,6 +313,7 @@ namespace FintrakBanking.APICore.Controllers
             entity.companyId = token.GetCompanyId;
             entity.userBranchId = (short)token.GetBranchId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.customerSensitivityLevelId = 1;
 
             var data = repo.AddExistingLoan(entity);
             if (data)

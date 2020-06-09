@@ -13876,6 +13876,10 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         foreach (var item in cust)
                         {
+                            item.userBranchId = entity.userBranchId;
+                            item.companyId = entity.companyId;
+                            item.createdBy = entity.createdBy;
+                            item.customerSensitivityLevelId = entity.customerSensitivityLevelId;
                             customers.AddCustomer(item);
                         }
                         customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == localGlobalReference.CUSTOMERID).FirstOrDefault();
