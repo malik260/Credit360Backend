@@ -132,7 +132,7 @@ namespace FintrakBanking.Repositories.Customer
                 ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed,
                 ISINVESTMENTGRADE = entity.isInvestmentGrade,
                 ISREALATEDPARTY = entity.isRealatedParty,
-                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
+                RELATIONSHIPOFFICERID = int.Parse(entity.relationshipOfficerCode),
                 SPOUSE = entity.spouse,
                 SUBSECTORID = entity.subSectorId,
                 TAXNUMBER = entity.taxNumber,
