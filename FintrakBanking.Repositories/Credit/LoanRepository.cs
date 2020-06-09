@@ -13880,9 +13880,11 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == localGlobalReference.CUSTOMERID).FirstOrDefault();
                     }
+
+                    if (customer == null) { throw new ConditionNotMetException("Third-party API call returned empty."); }
                 }
 
-                if(customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360 and could not be imported."); }
+                if (customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360."); }
             }
 
             var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.ACCOUNTNUMBER).FirstOrDefault();
@@ -13896,7 +13898,9 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFID ==  customer.RELATIONSHIPOFFICERID).FirstOrDefault();
-            if (accountOfficer == null) { throw new ConditionNotMetException("Account Officer does not exist on Credit360!"); }
+            //if (accountOfficer == null) { throw new ConditionNotMetException("Account Officer does not exist on Credit360!"); }
+
+
 
             double interestRate = Convert.ToDouble(localGlobalReference.INTERESTRATE);
 
@@ -13945,14 +13949,14 @@ namespace FintrakBanking.Repositories.Credit
                 SCHEDULETYPEID = entity.scheduleTypeId < 1 ? (short) 1 : entity.scheduleTypeId, // CHECK THIS VALUE
                 CASAACCOUNTID = 4019, //entity.casaAccountId, // CHECK THIS VALUE
                 CASAACCOUNTID2 = entity.casaAccountId2,
-                BRANCHID = accountOfficer.BRANCHID ?? 1,
+                BRANCHID = accountOfficer.BRANCHID ?? customer.BRANCHID,
                 SHOULD_DISBURSE = false, //entity.loanScheduleInput.shouldDisburse,
 
                 //PRINCIPALFREQUENCYTYPEID = entity.loanScheduleInput.principalFrequency,
                 //INTERESTFREQUENCYTYPEID = entity.loanScheduleInput.interestFrequency,
 
                 RELATIONSHIPOFFICERID = (int)customer.RELATIONSHIPOFFICERID,
-                RELATIONSHIPMANAGERID = accountOfficer.SUPERVISOR_STAFFID ?? accountOfficer.STAFFID,
+                RELATIONSHIPMANAGERID = accountOfficer?.SUPERVISOR_STAFFID ?? (int)customer.RELATIONSHIPOFFICERID,
                 //MISCODE = localGlobalReference.MISCODE,
                 //TEAMMISCODE = application.TEAMMISCODE,
                 INTERESTRATE = interestRate,
