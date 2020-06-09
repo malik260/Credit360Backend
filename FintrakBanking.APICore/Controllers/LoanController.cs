@@ -1683,7 +1683,7 @@ namespace FintrakBanking.APICore.Controllers
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Bulk Recovery Successfully assigned to the Agent" });
+                    new { success = true, data = data, message = "Bulk Recovery Successfully Saved" });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 

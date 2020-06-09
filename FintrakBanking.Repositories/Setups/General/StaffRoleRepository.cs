@@ -107,6 +107,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var role = (from a in context.TBL_STAFF
                         join b in context.TBL_STAFF_ROLE on a.STAFFROLEID equals b.STAFFROLEID 
+
                         where a.STAFFID == staffId
                         select new StaffRoleViewModel
                         {
