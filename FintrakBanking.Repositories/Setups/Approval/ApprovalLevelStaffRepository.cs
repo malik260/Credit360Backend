@@ -791,13 +791,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               operationName = e.OPERATIONNAME,
                               approvalStatus = k.APPROVALSTATUSNAME
                           });
-            var vr = result.Distinct().ToList();
+            var vr = result.Distinct();
+            var vr2 = vr.ToList();
             return result;
         }
 
-        public async Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
+        public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
-            var result = await GetApprovalTrail(companyId).Where(c=>c.TargetId==targetId && c.operationId==operationId).OrderByDescending(c => c.systemArrivalDate).ToListAsync();
+            var result = GetApprovalTrail(companyId).Where(c=>c.TargetId==targetId && c.operationId==operationId).OrderByDescending(c => c.systemArrivalDate).ToList();
             return result;
         }
 
