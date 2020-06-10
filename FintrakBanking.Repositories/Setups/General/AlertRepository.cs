@@ -915,73 +915,25 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool validateAlertCheck()
         {
             bool state = false;
-            GetEnhancedDisbursementToDirectorsNotification();
-            //GetDigitalLoanExceptionNPLIncrease();
-            //GetDigitalLoanExceptionNPLDecrease();
-            //GetDigitalLoanExceptionNPLModuleIncrease();
-            //GetDigitalLoanExceptionNPLModuleDecrease();
-            //GetDigitalLoanDisbursementIncrease();
-            //GetDigitalLoanDisbursementDecrease();
-            //GetDigitalLoanDisbursementModuleIncrease();
-            //GetDigitalLoanDisbursementModuleDecrease();
-            //GetDigitalLoanDPDIncrease();
-            //GetDigitalLoanDPDDecrease();
-            //GetDigitalLoanDPDModuleIncrease();
-            //GetDigitalLoanDPDModuleDecrease();
-            //GetDigitalLoanLiquidationIncrease();
-            //GetDigitalLoanLiquidationModuleIncrease();
-            state = true;
-            //if (CompareDate() == true)
-            //{
-            //    TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
-            //    TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
+
+            if (CompareDate() == true)
+            {
+                TimeSpan start = new TimeSpan(18, 0, 0); //8 o'clock
+                TimeSpan end = new TimeSpan(21, 0, 0); //11 o'clock
 
 
-            //    TimeSpan now = DateTime.Now.TimeOfDay;
+                TimeSpan now = DateTime.Now.TimeOfDay;
 
-            //    if ((now >= start) && (now <= end))
-            //    {
-            //        GroupImminentMaturitiesByGroupHeads();
-            //        GetImminentMaturities();
-            //        GetPastDueObligationsReminder();
-            //        GetPastDueObligationsReminderByGroupHeads();
-            //        state = true;
-            //    }
-            /*TimeSpan archiveStart = new TimeSpan(20, 0, 0); //8 o'pm
-             TimeSpan archiveEnd = new TimeSpan(21, 0, 0); //11 o'pm
-             else if ((now >= archiveStart) && (now <= archiveEnd))
-             {
-                ProcessLoanArchive();
-             } */
-            //}
-
-
-            /*
-            GetLoanExpirationReminder(); 
-            GetUnpaidObligationReminder();
-            GetLoanRepaymentReminder();
-            GetImminentMaturitiesAlertEmail();
-            GetCreditCardMaturingObligations();
-            GetExpiringFacilityReport();
-            GetUnAuthorizedOverdraftReport();
-            GetOverlineMonitoringReport();
-            GetCreditCardDelinquencyMonitoringReport();
-            GetRiskAssetsReportNotification();
-            GetDashboardReportNotification();
-            GetCACReport();
-            GetOverlineCreditCardPosition();
-            GetPastDueFacilitiesNotification();
-            GetExpiredFacilityNotification();
-            GetLoanExpirationReminderAccountOfficer();
-            GetLoanRepaymentReminderAccountOfficer();
-            GetUnpaidObligationReminderAccountOfficer();
-            GetOverlineReminder();
-            GetMaturingObligationsReport();
-            GetOverlineFacilityNotification();
-            GetImminentObligationMaturityFacilityNotification();
-            GetNplOnCreditPortfolio();
-            GetLoanExpirationReminderAccountOfficer();*/
-            return state;
+                if ((now >= start) && (now <= end))
+                {
+                    GroupImminentMaturitiesByGroupHeads();
+                    GetImminentMaturities();
+                    GetPastDueObligationsReminder();
+                    GetPastDueObligationsReminderByGroupHeads();
+                    state = true;
+                }
+            }
+                return state;
         }
 
         private bool CompareDate()
