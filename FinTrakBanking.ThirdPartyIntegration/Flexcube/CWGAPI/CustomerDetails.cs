@@ -85,14 +85,12 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
                     requestDatetime = DateTime.Now;
-                    //response = await client.GetAsync($"GetCustomerByAccountNumber/{customerAccount}");
+                    response = await client.GetAsync($"GetCustomerByAccountNumber/{customerAccount}");
                     responseDateTime = DateTime.Now;
 
-                    //if (response.IsSuccessStatusCode)
-                    if (true)
+                    if (response.IsSuccessStatusCode)
                     {
-                        //responseMessage = await response.Content.ReadAsStringAsync();
-                        responseMessage = GetLatestEntryFromCustomApiLogs(customerAccount, "GetCustomerByAccountNumber");
+                        responseMessage = await response.Content.ReadAsStringAsync();
                         JObject jsonString = JObject.Parse(responseMessage);
 
                         if (responseMessage.Contains("data"))
@@ -162,12 +160,12 @@
 
             }
 
-            private string GetLatestEntryFromCustomApiLogs(string customerCode, string apiUrl)
-            {
-                FinTrakBankingContext logContext = new FinTrakBankingContext();
-                var result = logContext.TBL_CUSTOM_API_LOGS.Where(O => O.REFERENCENUMBER == customerCode && O.APIURL.Contains(apiUrl)).OrderByDescending(O => O.APILOGID).Select(O => O.RESPONSEMESSAGE).FirstOrDefault();
-                return result;
-            }
+            //private string GetLatestEntryFromCustomApiLogs(string customerCode, string apiUrl)
+            //{
+            //    FinTrakBankingContext logContext = new FinTrakBankingContext();
+            //    var result = logContext.TBL_CUSTOM_API_LOGS.Where(O => O.REFERENCENUMBER == customerCode && O.APIURL.Contains(apiUrl)).OrderByDescending(O => O.APILOGID).Select(O => O.RESPONSEMESSAGE).FirstOrDefault();
+            //    return result;
+            //}
 
 
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
