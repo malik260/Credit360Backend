@@ -13880,6 +13880,7 @@ namespace FintrakBanking.Repositories.Credit
                             item.companyId = entity.companyId;
                             item.createdBy = entity.createdBy;
                             item.customerSensitivityLevelId = entity.customerSensitivityLevelId;
+                            item.relationshipOfficerId = entity.createdBy;
                             customers.AddCustomer(item);
                         }
                         customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == localGlobalReference.CUSTOMERID).FirstOrDefault();
@@ -13891,7 +13892,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360."); }
             }
 
-            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.ACCOUNTNUMBER).FirstOrDefault();
+            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.REFERENCENUMBER).FirstOrDefault();
             if(casa == null)
             {
                 //FETCH CUSTOMER ACCOUNT FROM FLEXCUBE
@@ -13927,6 +13928,8 @@ namespace FintrakBanking.Repositories.Credit
             if (localGlobalReference.CBNCLASSIFICATION.ToUpper() == "DOUBTFUL") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.Doubtful;
             if (localGlobalReference.CBNCLASSIFICATION.ToUpper() == "WATCHLIST") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.WatchList;
 
+             casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.REFERENCENUMBER).FirstOrDefault();
+
             var data = new TBL_LOAN_EXTERNAL()
             {
                 //LOAN_BOOKING_REQUESTID = entity.loanBookingRequestId,
@@ -13950,8 +13953,8 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = customer.CUSTOMERID,
                 PRODUCTID = product.PRODUCTID,
                 COMPANYID = entity.companyId,
-                SCHEDULETYPEID = entity.scheduleTypeId < 1 ? (short) 1 : entity.scheduleTypeId, // CHECK THIS VALUE
-                CASAACCOUNTID = 4019, //entity.casaAccountId, // CHECK THIS VALUE
+                SCHEDULETYPEID = entity.scheduleTypeId < 1 ? (short) LoanScheduleTypeEnum.Annuity :  entity.scheduleTypeId, // CHECK THIS VALUE
+                CASAACCOUNTID = casa.CASAACCOUNTID, //entity.casaAccountId, // CHECK THIS VALUE
                 CASAACCOUNTID2 = entity.casaAccountId2,
                 BRANCHID = accountOfficer.BRANCHID ?? customer.BRANCHID,
                 SHOULD_DISBURSE = false, //entity.loanScheduleInput.shouldDisburse,
