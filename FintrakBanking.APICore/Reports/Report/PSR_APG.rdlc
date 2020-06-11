@@ -885,7 +885,6 @@
               <TextRun>
                 <Label>projectOfficer</Label>
                 <Value>=First(Fields!projectOffer.Value, "signatories")</Value>
-                <MarkupType>HTML</MarkupType>
                 <Style>
                   <FontWeight>Normal</FontWeight>
                 </Style>
@@ -925,7 +924,6 @@
               <TextRun>
                 <Label>groupHead</Label>
                 <Value>=First(Fields!groupHead.Value, "signatories")</Value>
-                <MarkupType>HTML</MarkupType>
                 <Style>
                   <FontWeight>Normal</FontWeight>
                 </Style>

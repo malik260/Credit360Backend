@@ -208,8 +208,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             var projectSite = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
             var staffName = context.TBL_STAFF.Find(projectSite.CREATEDBY);
 
-            var officerName = "";
-            var groupHeadName = "";
+            var officerName = " ";
+            var groupHeadName = " ";
 
             var groupHead = context.TBL_STAFF.Find(staffName.SUPERVISOR_STAFFID);
             officerName = staffName.FIRSTNAME + " " + staffName.MIDDLENAME + " " + staffName.LASTNAME;
