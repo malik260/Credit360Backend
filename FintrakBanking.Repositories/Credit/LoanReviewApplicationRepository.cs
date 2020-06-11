@@ -825,7 +825,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
             }
-
+            var lmsrDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+            workflow.BusinessUnitId = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrDetail.FirstOrDefault().CUSTOMERID).BUSINESSUNTID;
             workflow.StaffId = model.lastUpdatedBy;
             workflow.CompanyId = appl.COMPANYID;
             workflow.OperationId = operationId;
@@ -840,11 +841,11 @@ namespace FintrakBanking.Repositories.Credit
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
             workflow.IsFlowTest = model.isFlowTest;
             workflow.IsFromPc = model.isFromPc;
-            workflow.Tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR);
+            workflow.Tenor = lmsrDetail.Max(d => d.APPROVEDTENOR);
             workflow.LevelBusinessRule = new LevelBusinessRule
             {
-                Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                PepAmount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
                 Pep = model.politicallyExposed,
                 //InsiderRelated = appl.ISRELATEDPARTY ?? false,
                 ProjectRelated = appl.ISPROJECTRELATED ?? false,
@@ -853,7 +854,7 @@ namespace FintrakBanking.Repositories.Credit
                 WithInstruction = appl.WITHINSTRUCTION ?? false,
                 //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                 DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
-                tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR),
+                tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
             };
 
 
@@ -957,6 +958,8 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
+                var lmsrDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                workflow.BusinessUnitId = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrDetail.FirstOrDefault().CUSTOMERID).BUSINESSUNTID;
                 workflow.StaffId = model.lastUpdatedBy;
                 workflow.CompanyId = appl.COMPANYID;
                 workflow.OperationId = model.operationId;
@@ -970,11 +973,11 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.DeferredExecution = true;
                 workflow.IsFlowTest = model.isFlowTest;
                 workflow.IsFromPc = model.isFromPc;
-                workflow.Tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR);
+                workflow.Tenor = lmsrDetail.Max(d => d.APPROVEDTENOR);
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
-                    Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                    PepAmount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                    Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                    PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
                     Pep = model.politicallyExposed,
                     //InsiderRelated = appl.ISRELATEDPARTY ?? false,
                     ProjectRelated = appl.ISPROJECTRELATED ?? false,
@@ -983,7 +986,7 @@ namespace FintrakBanking.Repositories.Credit
                     WithInstruction = appl.WITHINSTRUCTION ?? false,
                     //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
-                    tenor = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Max(d => d.APPROVEDTENOR),
+                    tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
                 };
 
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
