@@ -918,8 +918,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDate() == true)
             {
-                TimeSpan start = new TimeSpan(18, 0, 0); //8 o'clock
-                TimeSpan end = new TimeSpan(21, 0, 0); //11 o'clock
+                TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
+                TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
 
 
                 TimeSpan now = DateTime.Now.TimeOfDay;
@@ -933,7 +933,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     state = true;
                 }
             }
-                return state;
+            return state;
         }
 
         private bool CompareDate()
