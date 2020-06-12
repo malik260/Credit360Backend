@@ -779,21 +779,17 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public bool AddCustomerAccounts(int customerId, string customerCode)
         {
-            //var customerId = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).Select(b => b.CUSTOMERID).FirstOrDefault();
-            //var customerId = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERCODE == customerCode).CUSTOMERID;
             bool output = false;
             var data = new List<CasaViewModel>();
             List<TBL_CASA> customerAcct = new List<TBL_CASA>();
-
-            //Task.Run(async () => { data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode); })
-            //    .GetAwaiter().GetResult();
-
 
             Task.Run(async () => data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode)).GetAwaiter().GetResult();
 
             foreach (var item in data)
             {
-                var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency).CURRENCYID;
+                var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency)?.CURRENCYID;
+                if (currencyId == null) { continue; }
+
                 var accountRecord = context.TBL_CASA_ACCOUNTSTATUS
                     .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower());
 
@@ -806,7 +802,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; //(short)(item.productCode != "" ? 8 : 8);
                 addCustomerAcct.COMPANYID = 1;
                 addCustomerAcct.BRANCHID = (short)(item.branchCode != null && item.branchCode != string.Empty ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
-                addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
+                addCustomerAcct.CURRENCYID = currencyId.Value;//(short)(item.currency == "NGN" ? 1 : 0);
                 addCustomerAcct.ISCURRENTACCOUNT = true;
                 addCustomerAcct.ACCOUNTSTATUSID = accountRecord != null ? (short)accountRecord.ACCOUNTSTATUSID : (short)1;//(short)(item.accountStatusName == "Active" ? 1 : 3);
                 addCustomerAcct.LIENAMOUNT = 0;
@@ -817,7 +813,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 customerAcct.Add(addCustomerAcct);
             }
+
             var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
+
             if (customerExist == null)
             {
                 this.context.TBL_CASA.AddRange(customerAcct);
@@ -827,7 +825,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 foreach (var a in customerAcct)
                 {
-
                     TBL_CASA result = (from p in context.TBL_CASA
                                        where p.CUSTOMERID == a.CUSTOMERID && p.PRODUCTACCOUNTNUMBER == a.PRODUCTACCOUNTNUMBER
                                        select p).SingleOrDefault();
@@ -848,11 +845,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             }
 
-            //context.SaveChanges();
-            //context.SaveChangesAsync();
-
             output = true;
-
             return output;
         }
         public bool AddCustomerAccounts(string customerCode)
