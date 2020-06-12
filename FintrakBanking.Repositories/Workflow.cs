@@ -1168,6 +1168,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (amount == 0) { return true; }
             if (investmentGrade == true) { return true; }
             if (level.MAXIMUMAMOUNT >= amount) { return true; }
+            if (level.MAXIMUMAMOUNT == 0 && ActionIsApprovalDecision()) { return true; } //to pass access bnk only tenor setup as amt>0
             return false;
         }
 
