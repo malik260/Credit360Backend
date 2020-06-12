@@ -16767,7 +16767,7 @@ namespace FintrakBanking.Repositories.Credit
             List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
             if (models == null || accreditedConsultant == 0 || expCompletionDate == null)
             {
-                  throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
+                  throw new ConditionNotMetException("Kindly select an accredited consultant/expected completion date is empty.");
             }
 
             var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
@@ -16778,7 +16778,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Request already exist and undergoing approval");
             }
 
-             List<TBL_LOAN_RECOVERY_ASSIGNMENT> assignOperations = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
+             //List<TBL_LOAN_RECOVERY_ASSIGNMENT> assignOperations = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
                
                     foreach (var customerRequest in models)
                     {
@@ -16892,19 +16892,21 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Sorry, the recovered amount cannot be greater then the total amount recovery");
             }
 
+            var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+
             if (model.totalRecoveryAmount == model.recoveredAmount)
             {
                 outstandingAmount = 0;
                 isFullyRecovered = true;
-                var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
                 update.ISFULLYRECOVERED = true;
-                context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(update);
                 context.SaveChanges();
             }
             else
             {
                 outstandingAmount = (model.totalRecoveryAmount - model.recoveredAmount);
                 isFullyRecovered = false;
+                update.TOTALAMOUNTRECOVERY = outstandingAmount;
+                context.SaveChanges();
             }
             var existing = context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Where(x => x.FILENAME == model.fileName)
             .Select(x => new CollateralLiquidationRecoveryViewModel
@@ -16929,7 +16931,7 @@ namespace FintrakBanking.Repositories.Credit
                createdBy = x.CREATEDBY,
                dateTimeCreated = x.DATETIMECREATED,
                loanAssignId = x.LOANASSIGNID,
-               percentageCommission = x.PERCENTAGECOMMISSION
+               percentageCommission = x.PERCENTAGECOMMISSION,
             }).FirstOrDefault();
 
             if (existing != null && model.overwrite == false) return 3;
@@ -16973,19 +16975,22 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Sorry, the recovered amount cannot be greater then the total amount recovery");
             }
 
+            var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+
             if (model.totalRecoveryAmount == model.recoveredAmount)
             {
                 outstandingAmount = 0;
                 isFullyRecovered = true;
-                var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
                 update.ISFULLYRECOVERED = true;
-                context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(update);
+                update.TOTALAMOUNTRECOVERY = 0;
                 context.SaveChanges();
             }
             else
             {
                 outstandingAmount = (model.totalRecoveryAmount - model.recoveredAmount);
                 isFullyRecovered = false;
+                update.TOTALAMOUNTRECOVERY = outstandingAmount;
+                context.SaveChanges();
             }
             var existing = context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Where(x => x.FILENAME == model.fileName && x.FILEDATA != null)
             .Select(x => new CollateralLiquidationRecoveryViewModel
@@ -17448,7 +17453,8 @@ namespace FintrakBanking.Repositories.Credit
                 REFERENCEID = entity.referenceId,
                 OPERATIONID = entity.operationId,
                 APPROVALSTATUSID = entity.approvalStatusId,
-                OPERATIONCOMPLETED = entity.operationCompleted
+                OPERATIONCOMPLETED = entity.operationCompleted,
+                TOTALAMOUNTRECOVERY = entity.totalAmountRecovery
             };
             return data;
         }
