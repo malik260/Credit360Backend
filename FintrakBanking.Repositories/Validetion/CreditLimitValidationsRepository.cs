@@ -322,9 +322,9 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             var sector = context.TBL_SECTOR.Find(sectorId);
 
-            var totalExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.TOTALEXPOSURELCY).FirstOrDefault();
-            var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.SECTORLIMIT).FirstOrDefault();
-            var exposureLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.EXPOSURES).FirstOrDefault();
+            var totalExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE)?.Select(g => g.TOTALEXPOSURELCY).FirstOrDefault();
+            var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE)?.Select(g => g.SECTORLIMIT).FirstOrDefault();
+            var exposureLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE)?.Select(g => g.EXPOSURES).FirstOrDefault();
 
             model.outstandingBalance = (double?)totalExposure ?? 0;
             model.sectorLimit = (double?)sectorLimit ?? 0;
@@ -873,7 +873,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             {
                 exposures = GetGroupCustomerGlobalExposureByGroupFirstTwenty();
                 var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false && x.LIMITNUMBER == 20).FirstOrDefault();
-                double maxLimit = (float?)groupLimit.GROUPLIMITVALUE ?? 0;
+                double maxLimit = (float?)groupLimit?.GROUPLIMITVALUE ?? 0;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
                 models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
             }
@@ -888,7 +888,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             {
                 exposures = GetGroupCustomerGlobalExposureByGroupFirstHundred();
                 var groupLimit = context.TBL_GROUP_LIMIT.Where(x => x.DELETED == false && x.LIMITNUMBER == 100).FirstOrDefault();
-                double maxLimit = (float?)groupLimit.GROUPLIMITVALUE ?? 0;
+                double maxLimit = (float?)groupLimit?.GROUPLIMITVALUE ?? 0;
                 models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
                 models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
             }
