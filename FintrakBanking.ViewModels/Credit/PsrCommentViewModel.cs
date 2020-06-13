@@ -52,4 +52,21 @@ namespace FintrakBanking.ViewModels.credit
         public string fileSizeUnit { get; set; }
     }
 
+    public class PsrCommentImagesViewModel : GeneralEntity
+    {
+        public string psrReportType;
+        public bool overwrite;
+
+        public int psrCommentImageId { get; set; }
+        public byte[] fileData { get; set; }
+        public string fileName { get; set; }
+        public string imageCaption { get; set; }
+        public int createdBy { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public int projectSiteReportId { get; set; }
+        public string fileExtension { get; set; }
+        public int fileSize { get; set; }
+        public string fileSizeUnit { get; set; }
+    }
+
 }

@@ -2735,7 +2735,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             UpdateLoanApplication(loan); // update main
 
-            var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId && x.DELETED == false);
             var update = loan.LoanApplicationDetail.SingleOrDefault();
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
 
@@ -2885,7 +2885,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
         {
-            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
+            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED == false).ToList();
 
             //decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT * (decimal)a.EXCHANGERATE);
             var facility = application.FirstOrDefault();
@@ -7096,15 +7096,17 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (facility != null)
                     {
-                        var sectorId = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
-                        var setcorName = context.TBL_SECTOR.Find(sectorId.SECTORID).NAME ?? "N/A";
+                        var sector = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
+                        var sectorName = context.TBL_SECTOR.Find(sector.SECTORID).NAME ?? "N/A";
                         var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
-                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                        decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                        decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
-                        if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + setcorName + " exceeded!");
-                        //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
-
+                        if (sectorValidation != null)
+                        {
+                            decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                            decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                            decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
+                            if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + sectorName + " exceeded!");
+                            //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
+                        }
                     } 
                 }
 
@@ -7160,10 +7162,13 @@ namespace FintrakBanking.Repositories.Credit
                 if (currency.CURRENCYCODE.Trim() != "NGN")
                 {
                     var currencyLimits = limitValidation.ValidateNPLByCurrency(application);
-                    var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
-                    if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+                    if (currencyLimits != null)
                     {
-                        throw new SecureException("Currency Limit Exceeded");
+                        var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
+                        if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+                        {
+                            throw new SecureException("Currency Limit Exceeded");
+                        }
                     }
                 }
             }

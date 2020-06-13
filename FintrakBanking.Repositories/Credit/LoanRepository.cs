@@ -13858,7 +13858,7 @@ namespace FintrakBanking.Repositories.Credit
             var company = context.TBL_COMPANY.Find(entity.companyId);
 
 
-            var localGlobalReference = context.TBL_GLOBAL_EXPOSURE.Where(x=>x.ID == entity.loanId).FirstOrDefault();
+            var localGlobalReference = context.TBL_GLOBAL_EXPOSURE.FirstOrDefault(x=>x.ID == entity.loanId);
 
             var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == localGlobalReference.PRODUCTCODE).FirstOrDefault();
             if(product == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360"); }
@@ -13871,7 +13871,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     List<CustomerViewModels> cust = new List<CustomerViewModels>();
                     CustomerDetails customerAPI = new CustomerDetails(context);
-                    Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(localGlobalReference.ACCOUNTNUMBER)).GetAwaiter().GetResult();
+                    Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(localGlobalReference.REFERENCENUMBER)).GetAwaiter().GetResult();
                     if (cust.Count() > 0)
                     {
                         foreach (var item in cust)
@@ -13885,9 +13885,11 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == localGlobalReference.CUSTOMERID).FirstOrDefault();
                     }
+
+                    if (customer == null) { throw new ConditionNotMetException("Third-party API call returned empty."); }
                 }
 
-                if(customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360 and could not be imported."); }
+                if (customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360."); }
             }
 
             var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.REFERENCENUMBER).FirstOrDefault();
@@ -13902,7 +13904,9 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFID ==  customer.RELATIONSHIPOFFICERID).FirstOrDefault();
-            if (accountOfficer == null) { throw new ConditionNotMetException("Account Officer does not exist on Credit360!"); }
+            //if (accountOfficer == null) { throw new ConditionNotMetException("Account Officer does not exist on Credit360!"); }
+
+
 
             double interestRate = Convert.ToDouble(localGlobalReference.INTERESTRATE);
 
@@ -15906,9 +15910,9 @@ namespace FintrakBanking.Repositories.Credit
                                   && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                   && b.OPERATIONPERFORMED == false
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ExternalFacility
-                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
-                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ContingentLiability
-                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.RevolvingLoan
+                                  //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
+                                  //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ContingentLiability
+                                  //&& a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.RevolvingLoan
                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId)
                                    select new LoanViewModel
                                    {
@@ -16765,7 +16769,7 @@ namespace FintrakBanking.Repositories.Credit
             List<TBL_LOAN_RECOVERY_ASSIGNMENT> bulkLoanTable = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
             if (models == null || accreditedConsultant == 0 || expCompletionDate == null)
             {
-                  throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
+                  throw new ConditionNotMetException("Kindly select an accredited consultant/expected completion date is empty.");
             }
 
             var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
@@ -16776,7 +16780,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Request already exist and undergoing approval");
             }
 
-             List<TBL_LOAN_RECOVERY_ASSIGNMENT> assignOperations = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
+             //List<TBL_LOAN_RECOVERY_ASSIGNMENT> assignOperations = new List<TBL_LOAN_RECOVERY_ASSIGNMENT>();
                
                     foreach (var customerRequest in models)
                     {
@@ -16890,19 +16894,21 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Sorry, the recovered amount cannot be greater then the total amount recovery");
             }
 
+            var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+
             if (model.totalRecoveryAmount == model.recoveredAmount)
             {
                 outstandingAmount = 0;
                 isFullyRecovered = true;
-                var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
                 update.ISFULLYRECOVERED = true;
-                context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(update);
                 context.SaveChanges();
             }
             else
             {
                 outstandingAmount = (model.totalRecoveryAmount - model.recoveredAmount);
                 isFullyRecovered = false;
+                update.TOTALAMOUNTRECOVERY = outstandingAmount;
+                context.SaveChanges();
             }
             var existing = context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Where(x => x.FILENAME == model.fileName)
             .Select(x => new CollateralLiquidationRecoveryViewModel
@@ -16927,7 +16933,7 @@ namespace FintrakBanking.Repositories.Credit
                createdBy = x.CREATEDBY,
                dateTimeCreated = x.DATETIMECREATED,
                loanAssignId = x.LOANASSIGNID,
-               percentageCommission = x.PERCENTAGECOMMISSION
+               percentageCommission = x.PERCENTAGECOMMISSION,
             }).FirstOrDefault();
 
             if (existing != null && model.overwrite == false) return 3;
@@ -16971,19 +16977,22 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Sorry, the recovered amount cannot be greater then the total amount recovery");
             }
 
+            var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
+
             if (model.totalRecoveryAmount == model.recoveredAmount)
             {
                 outstandingAmount = 0;
                 isFullyRecovered = true;
-                var update = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Find(model.loanAssignId);
                 update.ISFULLYRECOVERED = true;
-                context.TBL_LOAN_RECOVERY_ASSIGNMENT.Add(update);
+                update.TOTALAMOUNTRECOVERY = 0;
                 context.SaveChanges();
             }
             else
             {
                 outstandingAmount = (model.totalRecoveryAmount - model.recoveredAmount);
                 isFullyRecovered = false;
+                update.TOTALAMOUNTRECOVERY = outstandingAmount;
+                context.SaveChanges();
             }
             var existing = context.TBL_COLLATERAL_LIQUIDATION_RECOVERY.Where(x => x.FILENAME == model.fileName && x.FILEDATA != null)
             .Select(x => new CollateralLiquidationRecoveryViewModel
@@ -17446,7 +17455,8 @@ namespace FintrakBanking.Repositories.Credit
                 REFERENCEID = entity.referenceId,
                 OPERATIONID = entity.operationId,
                 APPROVALSTATUSID = entity.approvalStatusId,
-                OPERATIONCOMPLETED = entity.operationCompleted
+                OPERATIONCOMPLETED = entity.operationCompleted,
+                TOTALAMOUNTRECOVERY = entity.totalAmountRecovery
             };
             return data;
         }

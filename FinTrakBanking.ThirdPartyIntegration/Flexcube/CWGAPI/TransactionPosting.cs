@@ -65,7 +65,7 @@
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageViewModel res = null;
+                //ResponseMessageViewModel res = null;
                 string responseMessage = "";
 
                 getAPIURLSettings("EXCHANGERATE");
@@ -394,6 +394,7 @@
 
                 getAPIURLSettings("PostTransactions");
                 string apiUrl = "api/Transactions/PostTransactions";
+
                 try
                 {
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -481,7 +482,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = apiUrl,
+                        APIURL = API_URL + apiUrl,
                         LOGTYPEID = model.FirstOrDefault().operationId,
                         REFERENCENUMBER =  model.FirstOrDefault().sourceReferenceNumber,
                         REQUESTDATETIME = requestDatetime,
