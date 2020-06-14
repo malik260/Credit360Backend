@@ -935,21 +935,76 @@ namespace FintrakBanking.Repositories.Credit
                 this.legalLendingLimit = (long)context.TBL_COMPANY.Find(lmsrApplication.COMPANYID).SINGLEOBLIGORLIMIT;
                 this.exchangeRate = GetAllExchangeRatesLMS();
 
-
                 this.groupExposure = GetGroupExposureMarkupLMS();
                 this.approvals = GetApprovalsMarkup();
                 this.currentDate = DateTime.Now.ToShortDateString();
                 this.annualReviewDate = this.lmsrApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.securityAnalysis = GetSecurityAnalysisMarkUP();
                 //this.collateralCoverage = GetCollateralCoverageMarkupLOS();
-
                 this.managementProfile = GetManagementProfileMarkup();
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
-
                 this.ownership = GetOwnershipMarkup();
                 this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
-
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
+
+                
+                this.conditionsPrecedentToDrawdown = FussCustomerConditionSubsequentHtml();
+                this.transactionsDynamics = FussCustomerConditionDynamicsHtml(); //GetTransactionsDynamicsMarkup();
+
+                // out ducument properties definition
+                this.memoData = MemoMarkupHtml();
+                this.facilityUpgradeSupportSchemeData = FacilityUpgradeSupportSchemeHtml();
+                this.invoiceDiscountingData = InvoiceDiscountingHtml();
+                this.cashCollaterizedData = CashCollaterizedHtml();
+                this.staffcarLoansData = StaffCarLoansHtml();
+                this.staffMortgageLoansData = StaffMortgageLoansHtml();
+                this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
+                this.staffPersonalLoanData = StaffPersonalLoanHtml();
+                this.temporaryOverdraftData = TemporaryOverdraftHtml();
+
+                //FUSS
+                this.fussCustomerInformationData = FussCustomerInformationHtml();
+                this.fussSchoolFeesInformationData = FussSchoolFeesInformationHtml();
+                this.fussCustomerFacilityData = FussCustomerFacilityHtml();
+                this.fussCustomerAccountActivityData = FussCustomerAccountActivityHtml();
+                this.fussCustomerAccountActivitySummaryData = FussCustomerAccountActivitySummaryHtml();
+                this.fussCashFlowAnalysisData = FussCashFlowAnalysisHtml();
+                this.fussSummaryNetCashFlowData = FussSummaryNetCashFlowHtml();
+                this.fussCurrentRequestData = FussCurrentRequestHtml();
+                this.fussBackgroungInformationData = FussBackgroungInformationHtml();
+                this.fussChecklistEligibilityData = FussChecklistEligibilityHtml();
+                this.fussCustomerConditionSubsequentData = FussCustomerConditionSubsequentHtml();
+                this.fussCustomerConditionDynamicsData = FussCustomerConditionDynamicsHtml();
+
+                //IDF
+                this.idfCustomerInformationData = IdfCustomerInformationHtml();
+                this.idfCustomerFacilityData = IdfCustomerFacilityHtml();
+                this.idfCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
+                this.idfCurrentRequestData = IdfCurrentRequestHtml();
+                this.idfBackgroungInformationData = IdfBackgroungInformationHtml();
+                this.idfChecklistEligibilityData = IdfChecklistEligibilityHtml();
+                this.idfDocumentationChecklistData = IdfDocumentationChecklistHtml();
+
+                //CASH COLLATERIZED
+                this.cashCollaterizedCustomerInformationData = IdfCustomerInformationHtml();
+                this.cashCollaterizedCustomerFacilityData = IdfCustomerFacilityHtml();
+                this.cashCollaterizedCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
+                this.cashCollaterizedCurrentRequestData = IdfCurrentRequestHtml();
+                this.cashCollaterizedBackgroungInformationData = IdfBackgroungInformationHtml();
+                this.cashCollaterizedChecklistEligibilityData = IdfChecklistEligibilityHtml();
+                this.cashCollaterizedDocumentationChecklistData = IdfDocumentationChecklistHtml();
+
+                //TOD 
+                this.todHeaderData = TodHeaderHtml();
+                this.todCustomerInformationData = TodCustomerInformationHtml();
+                this.todCustomerFacilityData = TodCustomerFacilityHtml();
+                this.todCustomerAccountActivityData = TodCustomerAccountActivityHtml();
+                this.todCurrentRequestData = TodCurrentRequestHtml();
+                this.todBackgroungInformationData = TodBackgroungInformationHtml();
+                this.currentLMSFlowData = CurrentLMSFlowHtml();
+
+                this.originalDocumentNonCreditProgramData = NoncreditProgramCustomerInformationHtml();
+                this.originalDocumentCreditProgramData = CreditProgramCustomerInformationHtml();
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
