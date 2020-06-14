@@ -77,17 +77,18 @@
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-
                     List<CustomerViewModels> customers = new List<CustomerViewModels>();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"GetCustomerByAccountNumber/{customerAccount}");
+                    //response = await client.GetAsync($"GetCustomerByAccountNumber/{customerAccount}");
                     responseDateTime = DateTime.Now;
 
-                    if (response.IsSuccessStatusCode)
+                    //if (response.IsSuccessStatusCode)
+                    if (true)
                     {
-                        responseMessage = await response.Content.ReadAsStringAsync();
+                        //responseMessage = await response.Content.ReadAsStringAsync();
+                        responseMessage = GetLatestEntryFromCustomApiLogs(customerAccount, "GetCustomerByAccountNumber");
                         JObject jsonString = JObject.Parse(responseMessage);
 
                         if (responseMessage.Contains("data"))
@@ -322,14 +323,17 @@
                     CasaViewModel casaViewModels = new CasaViewModel();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"GetCustomerAccountBalances/{customerCode}");
+                    //response = await client.GetAsync($"GetCustomerAccountBalances/{customerCode}");
 
                     List<CasaViewModel> casa = new List<CasaViewModel>();
                     responseDateTime = DateTime.Now;
 
-                    if (response.IsSuccessStatusCode)
+                    //if (response.IsSuccessStatusCode)
+                    if (true)
                     {
-                        var jsonString = await response.Content.ReadAsStringAsync();
+                        //var jsonString = await response.Content.ReadAsStringAsync();
+                        var jsonString = GetLatestEntryFromCustomApiLogs(customerCode, "GetCustomerAccountBalances");
+                        responseMessage = jsonString;
                         JObject responseDataJsonString = JObject.Parse(jsonString);
                         var jsonDataString = responseDataJsonString["data"].ToString();
                         var objData = JsonConvert.DeserializeObject<List<CasaIntegrationViewModel>>(jsonDataString);
@@ -354,7 +358,7 @@
 
                     handler.Dispose();
                     client.Dispose();
-                    responseMessage = await response.Content.ReadAsStringAsync();
+                    //responseMessage = await response.Content.ReadAsStringAsync();
                     return casa;
                 }
                 catch (APIErrorException ex)
@@ -384,12 +388,12 @@
                 }
             }
 
-            //private string GetLatestEntryFromCustomApiLogs(string customerCode, string apiUrl)
-            //{
-            //    FinTrakBankingContext logContext = new FinTrakBankingContext();
-            //    var result = logContext.TBL_CUSTOM_API_LOGS.Where(O => O.REFERENCENUMBER == customerCode && O.APIURL.Contains(apiUrl)).OrderByDescending(O => O.APILOGID).Select(O => O.RESPONSEMESSAGE).FirstOrDefault();
-            //    return result;
-            //}
+            private string GetLatestEntryFromCustomApiLogs(string customerCode, string apiUrl)
+            {
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+                var result = logContext.TBL_CUSTOM_API_LOGS.Where(O => O.REFERENCENUMBER == customerCode && O.APIURL.Contains(apiUrl)).OrderByDescending(O => O.APILOGID).Select(O => O.RESPONSEMESSAGE).FirstOrDefault();
+                return result;
+            }
 
             public async Task<string> CheckExposePerson(string customerCode)
             {
