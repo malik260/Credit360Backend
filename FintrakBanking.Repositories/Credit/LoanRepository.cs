@@ -13917,7 +13917,12 @@ namespace FintrakBanking.Repositories.Credit
                 if (customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360."); }
             }
 
+<<<<<<< HEAD
+            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.REFERENCENUMBER).FirstOrDefault();
+
+=======
             var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.ACCOUNTNUMBER).FirstOrDefault();
+>>>>>>> master
             if(casa == null)
             {
                 //FETCH CUSTOMER ACCOUNT FROM FLEXCUBE
@@ -13953,7 +13958,8 @@ namespace FintrakBanking.Repositories.Credit
             if (localGlobalReference.CBNCLASSIFICATION.ToUpper() == "DOUBTFUL") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.Doubtful;
             if (localGlobalReference.CBNCLASSIFICATION.ToUpper() == "WATCHLIST") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.WatchList;
 
-             casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.REFERENCENUMBER).FirstOrDefault();
+            casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.REFERENCENUMBER).FirstOrDefault();
+            if (casa == null) { throw new ConditionNotMetException($"Account Number {localGlobalReference.REFERENCENUMBER} associated with this Loan does not exist on Flexcube!"); }
 
             var data = new TBL_LOAN_EXTERNAL()
             {
