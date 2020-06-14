@@ -13774,6 +13774,7 @@ namespace FintrakBanking.Repositories.Credit
                                      customerId = a.CUSTOMERID,
                                      currencyId = a.CURRENCYID,
                                      casaAccountId = c.CASAACCOUNTID,
+                                     customerCode = b.CUSTOMERCODE,
                                      //applicationDetailId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID where p.TERMLOANID == a.EXTERNALLOANID select l.LOANAPPLICATIONDETAILID).FirstOrDefault(),
                                      customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                      loanReferenceNumber = a.LOANREFERENCENUMBER,
@@ -13820,6 +13821,7 @@ namespace FintrakBanking.Repositories.Credit
                                      //applicationDetailId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID where p.TERMLOANID == a.TERMLOANID select l.LOANAPPLICATIONDETAILID).FirstOrDefault(),
                                      customerName = a.CUSTOMERNAME, //FIRSTNAME + " " + b.LASTNAME,
                                      loanReferenceNumber = a.REFERENCENUMBER,
+                                     customerCode = a.CUSTOMERID,
                                      //loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                      applicationReferenceNumber = "NA", //a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                      loanApplicationId = 0,//a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
@@ -13864,14 +13866,32 @@ namespace FintrakBanking.Repositories.Credit
             if(product == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360"); }
 
             var customer = context.TBL_CUSTOMER.Where(x=>x.CUSTOMERCODE == localGlobalReference.CUSTOMERID).FirstOrDefault();
-            if(customer == null)
+            if(customer == null) 
             {
+                var casaData = new List<CasaViewModel>();
+
+                if (USE_THIRD_PARTY_INTEGRATION)
+                {
+                    casaData = integration.FetchCustomerAccountsByCustomerCode(localGlobalReference.CUSTOMERID);
+                }
+
                 //FETCH CUSTOMER FROM FLEXCUBE
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
+                    var customerSearchAccountNumber = string.Empty;
+                    if(casaData.Count > 0 )
+                    {
+                        customerSearchAccountNumber = casaData.FirstOrDefault()?.productAccountNumber;
+                    }
+
+                    if (casaData.Count <= 0)
+                    {
+                        customerSearchAccountNumber = localGlobalReference?.ACCOUNTNUMBER;
+                    }
+
                     List<CustomerViewModels> cust = new List<CustomerViewModels>();
                     CustomerDetails customerAPI = new CustomerDetails(context);
-                    Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(localGlobalReference.REFERENCENUMBER)).GetAwaiter().GetResult();
+                    Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(customerSearchAccountNumber)).GetAwaiter().GetResult();
                     if (cust.Count() > 0)
                     {
                         foreach (var item in cust)
@@ -13884,6 +13904,11 @@ namespace FintrakBanking.Repositories.Credit
                             customers.AddCustomer(item);
                         }
                         customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == localGlobalReference.CUSTOMERID).FirstOrDefault();
+
+                        if(casaData.Count > 0 && customer != null)
+                        {
+                            SaveCustomerAccounts(customer.CUSTOMERID, casaData);
+                        }
                     }
 
                     if (customer == null) { throw new ConditionNotMetException("Third-party API call returned empty."); }
@@ -13892,7 +13917,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360."); }
             }
 
-            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.REFERENCENUMBER).FirstOrDefault();
+            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.ACCOUNTNUMBER).FirstOrDefault();
             if(casa == null)
             {
                 //FETCH CUSTOMER ACCOUNT FROM FLEXCUBE
@@ -14031,6 +14056,68 @@ namespace FintrakBanking.Repositories.Credit
           
         }
 
+        private void SaveCustomerAccounts(int customerId, List<CasaViewModel> casaDataList)
+        {
+            List<TBL_CASA> customerAcct = new List<TBL_CASA>();
+            
+            foreach (var item in casaDataList)
+            {
+                var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency).CURRENCYID;
+                var accountRecord = context.TBL_CASA_ACCOUNTSTATUS
+                    .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower());
+
+                TBL_CASA addCustomerAcct = new TBL_CASA();
+                addCustomerAcct.CUSTOMERID = customerId;
+                addCustomerAcct.AVAILABLEBALANCE = item.availableBalance;
+                addCustomerAcct.LEDGERBALANCE = item.ledgerBalance;
+                addCustomerAcct.PRODUCTACCOUNTNAME = item.productName;
+                addCustomerAcct.PRODUCTACCOUNTNUMBER = item.productAccountNumber;
+                addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA;
+                addCustomerAcct.COMPANYID = 1;
+                addCustomerAcct.BRANCHID = (short)(item.branchCode != null && item.branchCode != string.Empty ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
+                addCustomerAcct.CURRENCYID = currencyId;
+                addCustomerAcct.ISCURRENTACCOUNT = true;
+                addCustomerAcct.ACCOUNTSTATUSID = accountRecord != null ? (short)accountRecord.ACCOUNTSTATUSID : (short)1;
+                addCustomerAcct.LIENAMOUNT = 0;
+                addCustomerAcct.HASLIEN = false;
+                addCustomerAcct.POSTNOSTATUSID = 1;
+                addCustomerAcct.DELETED = false;
+                addCustomerAcct.DATETIMECREATED = DateTime.Now;
+
+                customerAcct.Add(addCustomerAcct);
+            }
+            var customerExist = this.context.TBL_CASA.FirstOrDefault(a => a.CUSTOMERID == customerId);
+            if (customerExist == null)
+            {
+                this.context.TBL_CASA.AddRange(customerAcct);
+                context.SaveChanges();
+            }
+            else
+            {
+                foreach (var a in customerAcct)
+                {
+
+                    TBL_CASA result = (from p in context.TBL_CASA
+                                       where p.CUSTOMERID == a.CUSTOMERID && p.PRODUCTACCOUNTNUMBER == a.PRODUCTACCOUNTNUMBER
+                                       select p).SingleOrDefault();
+
+                    if (result == null)
+                    {
+                        this.context.TBL_CASA.Add(a);
+                        context.SaveChanges();
+                    }
+                    else
+                    {
+                        result.AVAILABLEBALANCE = a.AVAILABLEBALANCE;
+                        result.ACCOUNTSTATUSID = a.ACCOUNTSTATUSID;
+                        result.LEDGERBALANCE = a.LEDGERBALANCE;
+                        context.SaveChanges();
+                    }
+                }
+
+            }
+            context.SaveChanges();
+        }
 
 
         //public IQueryable<LoanViewModel> SearchAllOverdraft(string searchQuery)
@@ -15732,13 +15819,13 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
-            //var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement).Select(c => c.OPERATIONID).ToList();
-            //List<int> ids = new List<int>();
+            var operationIds = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanManagement).Select(c => c.OPERATIONID).ToList();
+            List<int> ids = new List<int>();
 
-            //foreach (var operationId in operationIds)
-            //{
-            //    ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
-            //}
+            foreach (var operationId in operationIds)
+            {
+                ids.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
+            }
 
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
