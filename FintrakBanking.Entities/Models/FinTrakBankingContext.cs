@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
             : base("name=FinTrakBankingContext")
         {
             Database.SetInitializer<FinTrakBankingContext>(null);
+            Database.CommandTimeout = 300;
         }
 
         

@@ -47,6 +47,9 @@ namespace FintrakBanking.Interfaces.Credit
         InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType);
         bool AddCustomerAccounts(string customerCode);
         bool AddCustomerAccounts(int customerId, string customerCode);
+
+        List<CasaViewModel> FetchCustomerAccountsByCustomerCode(string customerCode);
+
         Users GetUserRoleFinacle(string staffCode);
 
         List<SubGroupRatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode);

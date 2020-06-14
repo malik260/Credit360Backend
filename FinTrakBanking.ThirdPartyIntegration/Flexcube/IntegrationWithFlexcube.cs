@@ -776,6 +776,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
         //    //return result.APIStatus;
 
         //}
+        public List<CasaViewModel> FetchCustomerAccountsByCustomerCode(string customerCode)
+        {
+            var data = new List<CasaViewModel>();
+
+            Task.Run(async () => data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode)).GetAwaiter().GetResult();
+
+            return data;
+           
+        }
 
         public bool AddCustomerAccounts(int customerId, string customerCode)
         {
@@ -848,6 +857,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             output = true;
             return output;
         }
+
         public bool AddCustomerAccounts(string customerCode)
         {
             if (customerCode == null)
