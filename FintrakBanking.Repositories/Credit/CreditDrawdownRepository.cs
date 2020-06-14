@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
                               || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && staffs.Contains((int)atrail.LOOPEDSTAFFID)))
                           //|| (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
 
-                    orderby d.LOANAPPLICATIONDETAILID descending
+                    orderby atrail.SYSTEMARRIVALDATETIME descending
 
                     select new CamProcessedLoanViewModel
                     {
@@ -442,8 +442,7 @@ namespace FintrakBanking.Repositories.Credit
                     }).ToList();
 
             data = data.Where(x => x.applicationReferenceNumber != "-")
-              .GroupBy(p => p.loanBookingRequestId)
-              .Select(g => g.First())
+              .GroupBy(p => p.loanBookingRequestId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
                   .ToList();
 
             foreach (var item in data)
@@ -899,6 +898,7 @@ namespace FintrakBanking.Repositories.Credit
                 var product = context.TBL_PRODUCT.Find(item.productId);
 
                 var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && r.DELETED == false);
+                var test = requests.ToList();
                 var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
                 var disbursedOverdraft = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
                 var disbursedContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
@@ -912,10 +912,11 @@ namespace FintrakBanking.Repositories.Credit
                 //{ item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
                 { item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED); }
 
-                if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
+                if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending && n.APPROVEDLINESTATUSID == null).Count() > 0)
                 //{ item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
                 {
-                    item.allRequestAmount = requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED);
+                    var validRequests = requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).ToList();
+                    item.allRequestAmount = validRequests.Sum(s => s.AMOUNT_REQUESTED);
                     if(product.ISFACILITYLINE == true || item.isLineFacility == true)
                     {
                         if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)

@@ -8791,7 +8791,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && atrail.RESPONSESTAFFID == null
                                    && s.CRMSVALIDATED == true
 
-                                   orderby s.LOAN_BOOKING_REQUESTID descending
+                                   orderby atrail.SYSTEMARRIVALDATETIME descending
                                    select new CamProcessedLoanViewModel()
                                    {
                                        bookingAmountRequested = s.AMOUNT_REQUESTED,
