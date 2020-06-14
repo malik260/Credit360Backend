@@ -13917,12 +13917,8 @@ namespace FintrakBanking.Repositories.Credit
                 if (customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360."); }
             }
 
-<<<<<<< HEAD
-            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.REFERENCENUMBER).FirstOrDefault();
 
-=======
             var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.ACCOUNTNUMBER).FirstOrDefault();
->>>>>>> master
             if(casa == null)
             {
                 //FETCH CUSTOMER ACCOUNT FROM FLEXCUBE
