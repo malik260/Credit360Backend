@@ -1003,8 +1003,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.todBackgroungInformationData = TodBackgroungInformationHtml();
                 this.currentLMSFlowData = CurrentLMSFlowHtml();
 
-                this.originalDocumentNonCreditProgramData = NoncreditProgramCustomerInformationHtml();
-                this.originalDocumentCreditProgramData = CreditProgramCustomerInformationHtml();
+                //this.originalDocumentNonCreditProgramData = NoncreditProgramCustomerInformationHtml();
+                //this.originalDocumentCreditProgramData = CreditProgramCustomerInformationHtml();
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
@@ -8739,17 +8739,19 @@ namespace FintrakBanking.Repositories.Credit
                                      (from p in context.TBL_LOAN_REVOLVING join c in context.TBL_LMSR_APPLICATION_DETAIL on p.REVOLVINGLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where c.LOANREVIEWAPPLICATIONID == d.LOANREVIEWAPPLICATIONID select aa.LOANAPPLICATIONID).FirstOrDefault();
 
             }
-            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == currentApplicationId).FirstOrDefault();
-            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID).FirstOrDefault();
 
-            if (customer == null && this.customerRecord != null) {
-                customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == this.customerRecord.CUSTOMERID).FirstOrDefault();
-            }
+            var customerId = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == currentApplicationId)?.FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == customerId.CUSTOMERID)?.FirstOrDefault();
 
-            var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
-            var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
-            var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
+                if (customer == null && this.customerRecord != null)
+                {
+                    customer = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == this.customerRecord.CUSTOMERID).FirstOrDefault();
+                }
 
+                 var address = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == customer.CUSTOMERID).Select(a => a.ADDRESS).FirstOrDefault();
+                 var accountNumber = context.TBL_CASA.Where(c => c.CUSTOMERID == customer.CUSTOMERID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                 var riskRating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
+            
             var result = String.Empty;
             var n = 0;
             result = result + $@"
