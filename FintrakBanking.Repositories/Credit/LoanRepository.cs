@@ -13858,38 +13858,37 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             var company = context.TBL_COMPANY.Find(entity.companyId);
-
-
             var localGlobalReference = context.TBL_GLOBAL_EXPOSURE.FirstOrDefault(x=>x.ID == entity.loanId);
 
             var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == localGlobalReference.PRODUCTCODE).FirstOrDefault();
             if(product == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360"); }
 
             var customer = context.TBL_CUSTOMER.Where(x=>x.CUSTOMERCODE == localGlobalReference.CUSTOMERID).FirstOrDefault();
+
             var customerSearchAccountNumber = string.Empty;
+            var casaData = new List<CasaViewModel>();
+
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                casaData = integration.FetchCustomerAccountsByCustomerCode(localGlobalReference.CUSTOMERID);
+
+                if (casaData.Count > 0)
+                {
+                    customerSearchAccountNumber = casaData.FirstOrDefault()?.productAccountNumber;
+                }
+
+                if (casaData.Count <= 0)
+                {
+                    customerSearchAccountNumber = localGlobalReference?.ACCOUNTNUMBER;
+                }
+            }
+            else { customerSearchAccountNumber = localGlobalReference?.ACCOUNTNUMBER; }
 
             if (customer == null) 
             {
-                var casaData = new List<CasaViewModel>();
-
-                if (USE_THIRD_PARTY_INTEGRATION)
-                {
-                    casaData = integration.FetchCustomerAccountsByCustomerCode(localGlobalReference.CUSTOMERID);
-                }
-
                 //FETCH CUSTOMER FROM FLEXCUBE
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    if(casaData.Count > 0 )
-                    {
-                        customerSearchAccountNumber = casaData.FirstOrDefault()?.productAccountNumber;
-                    }
-
-                    if (casaData.Count <= 0)
-                    {
-                        customerSearchAccountNumber = localGlobalReference?.ACCOUNTNUMBER;
-                    }
-
                     List<CustomerViewModels> cust = new List<CustomerViewModels>();
                     CustomerDetails customerAPI = new CustomerDetails(context);
                     Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(customerSearchAccountNumber)).GetAwaiter().GetResult();
