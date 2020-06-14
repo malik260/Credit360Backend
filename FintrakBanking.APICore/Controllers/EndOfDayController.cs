@@ -197,10 +197,10 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
+        [HttpGet]
         [ClaimsAuthorization]
-        [Route("get_endofday_operation_log_monitoring")]
-        public HttpResponseMessage GetEndofdayOperationLogMonitoring([FromBody] FinanceEndofdayViewModel model)
+        [Route("get-endofday-operation-log-monitoring")]
+        public HttpResponseMessage GetEndofdayOperationLogMonitoring()
         {
             var data = repoEOD.GetEndofdayOperationLogMonitoring(token.GetCompanyId);
 

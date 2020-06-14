@@ -784,7 +784,7 @@ namespace FintrakBanking.Repositories.Credit
                 TARGETID = entity.targetId,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
-              
+
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -921,11 +921,11 @@ namespace FintrakBanking.Repositories.Credit
                              debit_Turnover = a.DEBITTURNOVER,
                              month = a.MONTH,
                              year = a.YEAR,
-                             productAccountName = context.TBL_CASA.Where(o=>o.CUSTOMERID==customerId).Select(o=>o.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                             productAccountName = context.TBL_CASA.Where(o => o.CUSTOMERID == customerId).Select(o => o.PRODUCTACCOUNTNAME).FirstOrDefault(),
 
                          }).GroupBy(O => new { O.accountNumber, O.credit_Turnover, O.debit_Turnover, O.min_Credit_Balance, O.min_Debit_Balance }).Select(O => O.FirstOrDefault()).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
 
-            
+
             var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
                           where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.ISLMS == isLms
                           select new CustomerTransactionsViewModels
@@ -1116,7 +1116,7 @@ namespace FintrakBanking.Repositories.Credit
             return fields;
         }
 
-        public CustomerApplicationTransactionsViewModels GetCustomerTransactionsByFilterLogic(int customerId, int applicationId,int froma,int to, int fYear,int tYear, bool isLms = false)
+        public CustomerApplicationTransactionsViewModels GetCustomerTransactionsByFilterLogic(int customerId, int applicationId, int froma, int to, int fYear, int tYear, bool isLms = false)
         {
             var fields = new CustomerApplicationTransactionsViewModels();
 
@@ -1182,7 +1182,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
         public List<RatingAndRatioViewModel> GetCustomerRatios(int customerId, int applicationId, bool isLms = false)
-        { 
+        {
 
             //var aa = context.TBL_CUSTOMER_RATIOS
             //    .Select(o=> new RatingAndRatioViewModel {
@@ -1191,13 +1191,13 @@ namespace FintrakBanking.Repositories.Credit
             //    }).ToList();
 
             var fields = (from a in context.TBL_CUSTOMER_RATIOS
-                         where a.CUSTOMERID == customerId && a.DELETED == false && a.LOANAPPLICATIONID == applicationId
+                          where a.CUSTOMERID == customerId && a.DELETED == false && a.LOANAPPLICATIONID == applicationId
                           select new RatingAndRatioViewModel
-                         {
-                             description = a.DESCRIPTION,
-                             value = a.VALUE,
+                          {
+                              description = a.DESCRIPTION,
+                              value = a.VALUE,
 
-                         }).ToList();
+                          }).ToList();
 
             return fields;
         }
@@ -1413,7 +1413,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException(ex.ToString());
             }
-        
+
             return new LoanApplicationUpdateMessage
             {
                 isdone = isCheckListDone,
@@ -1484,7 +1484,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId) 
+        public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId)
         {
             var facilityRating = context.TBL_FACILITY_RATING.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetailId)
                                         .OrderByDescending(O => O.FACILITYRATINGID).Select(O => new FacilityRatingViewModel
@@ -1513,7 +1513,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                workflow.NextProcess(appl.COMPANYID, appl.OWNEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false,false,false,null);
+                workflow.NextProcess(appl.COMPANYID, appl.OWNEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false, false, false, null);
                 context.SaveChanges();
                 return 1;
             }
@@ -2043,16 +2043,16 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
         {
             var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
-                                       where a.DELETED == false
-                                       select new CustomerGroupMappingViewModel
-                                       {
-                                           customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
-                                           customerGroupId = a.CUSTOMERGROUPID,
-                                           relationshipTypeId = a.RELATIONSHIPTYPEID,
-                                           //createdBy = a.CreatedBy,
-                                           customerId = a.CUSTOMERID,
-                                           //dateTimeCreated = a.DateTimeCreated
-                                       }).ToList();
+                                        where a.DELETED == false
+                                        select new CustomerGroupMappingViewModel
+                                        {
+                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                            customerGroupId = a.CUSTOMERGROUPID,
+                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                            //createdBy = a.CreatedBy,
+                                            customerId = a.CUSTOMERID,
+                                            //dateTimeCreated = a.DateTimeCreated
+                                        }).ToList();
 
             return customerGroupMapping;
         }
@@ -2083,94 +2083,94 @@ namespace FintrakBanking.Repositories.Credit
         {
             //using (var trans = context.Database.BeginTransaction())
             //{
-                ValidateLoanApplicationLimits(loan);
-                var additionalAmount = loan.LoanApplicationDetail.Where(x=>x.deleted == false).Sum(x => x.exchangeAmount);
-                var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED==false).ToList();
+            ValidateLoanApplicationLimits(loan);
+            var additionalAmount = loan.LoanApplicationDetail.Where(x => x.deleted == false).Sum(x => x.exchangeAmount);
+            var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED == false).ToList();
 
-                decimal cumulativeSum = 0;
-                foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
+            decimal cumulativeSum = 0;
+            foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
 
-                if (loan.relationshipOfficerId != 0)
+            if (loan.relationshipOfficerId != 0)
+            {
+                var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
+                if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
+            }
+
+            loan.applicationAmount = cumulativeSum + additionalAmount;
+
+            if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) { return loan; }
+
+            loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER.Trim().ToLower() == loan.applicationReferenceNumber.Trim().ToLower() && l.DELETED == false);
+
+            if (loan.productClassId == (short)ProductClassEnum.Creditcards)
+            {
+                validateNonComformingProduct(loan, loanData, savedDetails);
+            }
+
+            if (savedDetails.Count() == 0 || loan.isNewApplication)
+            {
+
+                if (loanData != null)
                 {
-                    var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
-                    if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
+                    loanData.APPLICATIONAMOUNT = loan.applicationAmount;
+                    loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
+                    //loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
+                    loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
+                    loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
+
                 }
 
-                loan.applicationAmount = cumulativeSum + additionalAmount;
-
-                if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) {  return loan; }
-
-                loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER.Trim().ToLower() == loan.applicationReferenceNumber.Trim().ToLower() && l.DELETED == false);
-
-                if (loan.productClassId == (short)ProductClassEnum.Creditcards)
+                if (loanData == null) // first time
                 {
-                    validateNonComformingProduct(loan, loanData, savedDetails);
+                    if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
+                    AddloanApplicationSub(loan);
                 }
 
-                if (savedDetails.Count() == 0 || loan.isNewApplication)
+                if (loan.LoanApplicationDetail.Count > 0)
                 {
 
-                    if (loanData != null)
+                    var racReponse = AddLoanApplicationDetail(loan);
+                    if (racReponse != null)
                     {
-                        loanData.APPLICATIONAMOUNT = loan.applicationAmount;
-                        loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + (GetExposures(loanData).Sum(e => e.outstandingsLcy));
-                        //loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
-                        loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
-                        loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
+                        LoanApplicationViewModel model = new LoanApplicationViewModel();
+                        model.loanApplicationId = (int)racReponse.loanApplicationId;
+                        model.failedRacStartCam = true;
+                        model.loanApplicationDetailId = (int)racReponse.loanApplicationDetailId;
 
+                        //  trans.Commit();
+                        return model;
                     }
 
-                    if (loanData == null) // first time
-                    {
-                        if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
-                        AddloanApplicationSub(loan);
-                    }
-
-                    if (loan.LoanApplicationDetail.Count > 0)
-                    {
-
-                        var racReponse = AddLoanApplicationDetail(loan);
-                        if (racReponse != null)
-                        {
-                            LoanApplicationViewModel model = new LoanApplicationViewModel();
-                            model.loanApplicationId = (int)racReponse.loanApplicationId;
-                            model.failedRacStartCam = true;
-                            model.loanApplicationDetailId = (int)racReponse.loanApplicationDetailId;
-
-                          //  trans.Commit();
-                            return model;
-                        }
-                        
-                    }
                 }
-                else
-                {
-                    var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                    if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
-                    UpdateLoanApplication(loan);
-                }
+            }
+            else
+            {
+                var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
+                UpdateLoanApplication(loan);
+            }
 
 
-                // if (response == 0)
-                response = context.SaveChanges();
+            // if (response == 0)
+            response = context.SaveChanges();
 
 
-                var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
+            var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
 
-                if (response > 0 && !loan.isNewApplication)
-                {
-                    //trans.Commit();
-                    returndate.closeApplication = true;
+            if (response > 0 && !loan.isNewApplication)
+            {
+                //trans.Commit();
+                returndate.closeApplication = true;
 
-                    //returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
-                }
+                //returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
+            }
 
 
-               // trans.Commit();
-                return returndate;
-          //  }
-           
+            // trans.Commit();
+            return returndate;
+            //  }
+
 
         }
 
@@ -2210,8 +2210,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (isRacRelated == true)
             {
-                defaultTierItems = allTierRacs.Where(x=>x.ISRACTIERCONTROLKEY == true).ToList();
-                if(defaultTierItems.Count() <= 0) { throw new ConditionNotMetException("Control keys have not been setup for the RAC Tiers"); }
+                defaultTierItems = allTierRacs.Where(x => x.ISRACTIERCONTROLKEY == true).ToList();
+                if (defaultTierItems.Count() <= 0) { throw new ConditionNotMetException("Control keys have not been setup for the RAC Tiers"); }
 
                 List<TBL_RAC_DEFINITION> matchedTierRac = new List<TBL_RAC_DEFINITION>();
 
@@ -2236,7 +2236,7 @@ namespace FintrakBanking.Repositories.Credit
                     return msg;
                 }
 
-                defaultDefinition.AddRange(allTierRacs.Where(x=>x.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList());
+                defaultDefinition.AddRange(allTierRacs.Where(x => x.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList());
 
                 racTiers = allTierRacs.Where(x => x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID)
                                                                                                                       .ThenByDescending(a => a.RACITEMID).ToList();
@@ -2245,9 +2245,9 @@ namespace FintrakBanking.Repositories.Credit
                 definitions = defaultDefinition;
             }
 
-            
+
             List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
-            
+
             int index; int ctr = 0;
             for (int i = 0; i < definitions.Count; i++)
             {
@@ -2258,22 +2258,22 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (isRacRelated)
                 {
-                    
+
                     List<int> definitionId = new List<int>();
-                    definitionId = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && x.RACCATEGORYID == definition.RACCATEGORYID && x.RACITEMID == definition.RACITEMID).Select(d=>d.RACDEFINITIONID).ToList();
+                    definitionId = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && x.RACCATEGORYID == definition.RACCATEGORYID && x.RACITEMID == definition.RACITEMID).Select(d => d.RACDEFINITIONID).ToList();
                     //definitionId.AddRange(allTierRacs.Select(x => x.RACDEFINITIONID));
 
                     submission = rac.form.FirstOrDefault(x => definitionId.Contains(x.criteriaId));
                 }
-                    
+
 
                 if (submission == null) continue;
 
-                bool validation = validation = ValidRacSubmission(definition, submission.value, operationId ?? 0, targetId); 
+                bool validation = validation = ValidRacSubmission(definition, submission.value, operationId ?? 0, targetId);
 
                 if (validation == false && ctr == 0)
                 {
-                    if(racTiers.Count() <= 0)
+                    if (racTiers.Count() <= 0)
                     {
                         saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
                         msg.loanApplicationDetailId = targetId;
@@ -2301,7 +2301,7 @@ namespace FintrakBanking.Repositories.Credit
                     ctr = ctr + 1;
                     continue;
                 }
-                else if(validation == true)
+                else if (validation == true)
                 {
                     details.Add(new TBL_RAC_DETAIL
                     {
@@ -2312,10 +2312,10 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
                     });
-                    
+
                     continue;
                 }
-               
+
                 break;
             }
 
@@ -2369,11 +2369,11 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private List<TBL_RAC_DETAIL> saveRacoptions(List<TBL_RAC_DEFINITION> definitions, RacInformationViewModel rac,int operationId, int targetId, int staffId)
+        private List<TBL_RAC_DETAIL> saveRacoptions(List<TBL_RAC_DEFINITION> definitions, RacInformationViewModel rac, int operationId, int targetId, int staffId)
         {
             //FinTrakBankingContext racContext = new FinTrakBankingContext();
-           List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
-            foreach(var definition in definitions)
+            List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
+            foreach (var definition in definitions)
             {
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 var detail = new TBL_RAC_DETAIL
@@ -2410,7 +2410,7 @@ namespace FintrakBanking.Repositories.Credit
             //    ).Any())
             //        return false;
             //}
-            
+
             int integerConversion;
             int? integerValue = null;
             decimal? decimalValue = null;
@@ -2420,7 +2420,7 @@ namespace FintrakBanking.Repositories.Credit
             // select
             // radio
             // textarea
-            
+
 
             switch (definition.RACINPUTTYPEID)
             {
@@ -2428,7 +2428,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (!String.IsNullOrEmpty(value)) { return true; }
                     break;
                 case 2:
-                    if(value != null) decimalValue = decimal.Parse(value);
+                    if (value != null) decimalValue = decimal.Parse(value);
                     else decimalValue = 0;
                     break;
                 case 3:
@@ -2554,7 +2554,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            return customer.ISREALATEDPARTY ;
+            return customer.ISREALATEDPARTY;
         }
 
         private bool GetCustomerIsPoliticallyExposed(int customerId)
@@ -2725,7 +2725,7 @@ namespace FintrakBanking.Repositories.Credit
                 TARGETID = loan.loanApplicationId,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
-               
+
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -2846,7 +2846,7 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0)
             {
                 var racDetail = context.TBL_RAC_DETAIL.Where(r => r.TARGETID == detail.LOANAPPLICATIONDETAILID).ToList();
-                if (loan.rac != null && racDetail.Count()<1)
+                if (loan.rac != null && racDetail.Count() < 1)
                 {
                     var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId, detail.LOANAPPLICATIONDETAILID, loan.createdBy, detail.LOANAPPLICATIONID);
                     if (recResponse != null) return true;
@@ -3060,7 +3060,7 @@ namespace FintrakBanking.Repositories.Credit
                 //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
             };
 
-            
+
             var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
                     && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
                     && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
@@ -3102,7 +3102,7 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVEDINTERESTRATE = (double)a.proposedInterestRate,
                 APPROVEDPRODUCTID = a.proposedProductId,
                 APPROVEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
-                
+
                 EXCHANGERATE = a.exchangeRate,
                 CURRENCYID = a.currencyId,
                 CUSTOMERID = a.customerId,
@@ -3357,7 +3357,7 @@ namespace FintrakBanking.Repositories.Credit
                     savedFee.RECOMMENDED_FEERATEVALUE = fee.rate;
                 }
             }
-           
+
             return context.SaveChanges() > 0;
         }
 
@@ -3442,14 +3442,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool ArchiveLoanApplication(int loanAppliactionId, int operationId, short applicationStatus, int archivedBy)
         {
-            short applicationStatusId = 0; 
+            short applicationStatusId = 0;
             var app = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.LOANAPPLICATIONID == loanAppliactionId);
             if (app == null)
             {
                 throw new SecureException("Loan Application doesn't exist!");
             }
 
-            if(applicationStatus == 0)
+            if (applicationStatus == 0)
             {
                 applicationStatusId = app.APPLICATIONSTATUSID;
             }
@@ -3539,7 +3539,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApplArchive.OWNEDBY = app.OWNEDBY;
             loanApplArchive.ARCHIVINGOPERATIONID = operationId;
             context.TBL_LOAN_APPLICATION_ARCHIVE.Add(loanApplArchive);
-            foreach(var f in details)
+            foreach (var f in details)
             {
                 ArchiveLoanApplicationDetails(f.LOANAPPLICATIONDETAILID);
             }
@@ -3861,7 +3861,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId)
         {
-            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == loanApplicatioinCollateralId && c.APPROVALSTATUSID==(int)ApprovalStatusEnum.Approved).Select(c => new LoanApplicationCollateralViewModel
+            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == loanApplicatioinCollateralId && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Select(c => new LoanApplicationCollateralViewModel
             {
                 loanAppCollateralId = c.LOANAPPCOLLATERALID,
                 applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -3921,7 +3921,7 @@ namespace FintrakBanking.Repositories.Credit
                 BRANCHID = (short)entity.FirstOrDefault().userBranchId,
                 DETAIL = $"Added collateral loan application with reference Number: {entity.FirstOrDefault().applicationReferenceNumber}",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-               // URL = entity.applicationUrl,
+                // URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
@@ -4060,7 +4060,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                             proposedProductId = b.PROPOSEDPRODUCTID,
-                            proposedProductName = (a.FLOWCHANGEID == null || a.FLOWCHANGEID <= 0 || a.FLOWCHANGEID == (short)FlowChangeEnum.FAM) ? b.TBL_PRODUCT.PRODUCTNAME : b.TBL_PRODUCT.PRODUCTNAME +"("+context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(x=>x.FLOWCHANGEID == a.FLOWCHANGEID).PLACEHOLDER +")" ,
+                            proposedProductName = (a.FLOWCHANGEID == null || a.FLOWCHANGEID <= 0 || a.FLOWCHANGEID == (short)FlowChangeEnum.FAM) ? b.TBL_PRODUCT.PRODUCTNAME : b.TBL_PRODUCT.PRODUCTNAME + "(" + context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(x => x.FLOWCHANGEID == a.FLOWCHANGEID).PLACEHOLDER + ")",
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedAmount = b.PROPOSEDAMOUNT,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
@@ -4480,7 +4480,7 @@ namespace FintrakBanking.Repositories.Credit
                                         isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
                                         isInvestmentGrade = x.ISINVESTMENTGRADE,
                                         isProjectRelatedLoan = x.ISPROJECTRELATED,
-                                        isOnLending= x.ISONLENDING,
+                                        isOnLending = x.ISONLENDING,
                                         isInterventionFunds = x.ISINTERVENTIONFUNDS,
                                         isORRBasedApproval = x.ISORRBASEDAPPROVAL,
                                         isadhocapplication = x.ISADHOCAPPLICATION,
@@ -4606,11 +4606,12 @@ namespace FintrakBanking.Repositories.Credit
                     if (appRecord != null)
                     {
                         var singleRec = appRecord;
-                        x.currentApprovalLevel = singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : "CLICK VIEW FOR DRAWDOWN DETAILS"; // y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                        var status = context.TBL_LOAN_APPLICATION_STATUS.FirstOrDefault(s => s.APPLICATIONSTATUSID == x.applicationStatusId).APPLICATIONSTATUSNAME;
+                        x.currentApprovalLevel = singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : status; // y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                         x.currentApprovalLevelId = singleRec.TOAPPROVALLEVELID > 0 ? singleRec.TOAPPROVALLEVELID : 0;
                         x.approvalTrailId = singleRec.APPROVALTRAILID;//y.APPROVALTRAILID,
                         //x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a" : singleRec.TBL_STAFF1.STAFFCODE + " - " + singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
-                        x.responsiblePerson = singleRec.TOSTAFFID == null ? (singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : (x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : (x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : "CLICK VIEW FOR DRAWDOWN DETAILS"))) : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                        x.responsiblePerson = singleRec.TOSTAFFID == null ? (singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : (x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : (x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : status))) : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                         x.toStaffId = singleRec.TOSTAFFID;
                         x.currentOperationId = singleRec.OPERATIONID;
                     }
@@ -4627,16 +4628,27 @@ namespace FintrakBanking.Repositories.Credit
                             x.responsiblePerson = x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : "WITH ACCOUNT OFFICER";
                         }
                     }
-                    x.isAtDrawDown = IsAtDrawDown(x.currentApprovalLevel, "CLICK VIEW FOR DRAWDOWN DETAILS");
+                    VerifyDrawDownStatus(x);
                 }
 
                 return allRecord;
             }
         }
 
-        private bool IsAtDrawDown(string currentApprovalLevel, string drawDownString)
+        private bool VerifyDrawDownStatus(LoanApplicationViewModel loan)
         {
-            return currentApprovalLevel.Trim().Contains(drawDownString);
+            var isAtDrawdown = (loan.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted
+                             || loan.applicationStatusId == (short)LoanApplicationStatusEnum.BookingRequestInitiated
+                             || loan.applicationStatusId == (short)LoanApplicationStatusEnum.BookingRequestCompleted
+                             || loan.applicationStatusId == (short)LoanApplicationStatusEnum.LoanBookingInProgress
+                             || loan.applicationStatusId == (short)LoanApplicationStatusEnum.LoanBookingCompleted
+                             || loan.currentApprovalLevel.Contains("CLICK VIEW FOR DRAWDOWN DETAILS")); 
+            if (isAtDrawdown)
+            {
+                loan.currentApprovalLevel = "CLICK VIEW FOR DRAWDOWN DETAILS";
+                loan.responsiblePerson = "CLICK VIEW FOR DRAWDOWN DETAILS";
+            }
+            return isAtDrawdown;
         }
 
         private string GetWorkFlowName(int operationId, int? productClassId, int? productId)
@@ -4887,9 +4899,6 @@ namespace FintrakBanking.Repositories.Credit
                               from d in context.TBL_LOAN_APPLICATION_DETAIL
                               join bo in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals bo.LOANAPPLICATIONDETAILID
                               join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
-                              //join current in context.TBL_APPROVAL_TRAIL on bo.LOAN_BOOKING_REQUESTID equals current.TARGETID
-                              //join b in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals b.APPROVALSTATUSID
-                              //join c in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals c.APPROVALSTATEID
                               let jumpsToDrawDown = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == e.FLOWCHANGEID)
                               let current = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == bo.LOAN_BOOKING_REQUESTID && operations.Contains(t.OPERATIONID)).
                                             OrderByDescending(t => t.APPROVALTRAILID).FirstOrDefault()
@@ -7096,15 +7105,17 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (facility != null)
                     {
-                        var sectorId = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
-                        var setcorName = context.TBL_SECTOR.Find(sectorId.SECTORID).NAME ?? "N/A";
+                        var sector = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
+                        var sectorName = context.TBL_SECTOR.Find(sector.SECTORID).NAME ?? "N/A";
                         var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
-                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                        decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                        decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 5, MidpointRounding.AwayFromZero);
-                        if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + setcorName + " exceeded!");
-                        //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
-
+                        if (sectorValidation != null)
+                        {
+                            decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                            decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
+                            decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
+                            if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + sectorName + " exceeded!");
+                            //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
+                        }
                     } 
                 }
 
@@ -7160,10 +7171,13 @@ namespace FintrakBanking.Repositories.Credit
                 if (currency.CURRENCYCODE.Trim() != "NGN")
                 {
                     var currencyLimits = limitValidation.ValidateNPLByCurrency(application);
-                    var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
-                    if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+                    if (currencyLimits != null)
                     {
-                        throw new SecureException("Currency Limit Exceeded");
+                        var proposedCurrencyLimit = currencyLimits.outstandingBalance + (double)incomingAmount;
+                        if ((double)currencyLimits.maximumAllowedLimit != 0 && proposedCurrencyLimit >= (double)currencyLimits.maximumAllowedLimit)
+                        {
+                            throw new SecureException("Currency Limit Exceeded");
+                        }
                     }
                 }
             }

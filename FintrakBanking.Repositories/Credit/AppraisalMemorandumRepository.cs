@@ -3322,9 +3322,10 @@ namespace FintrakBanking.Repositories.Credit
                     var applForAudit = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
                     if (appl != null)
                     {
-                            appl.OWNEDBY = staffId;
-                            appl.LASTUPDATEDBY = model.createdBy;
-                            appl.DATETIMEUPDATED = systemDateNow;
+                        appl.OWNEDBY = staffId;
+                        appl.RELATIONSHIPOFFICERID = staffId;
+                        appl.LASTUPDATEDBY = model.createdBy;
+                        appl.DATETIMEUPDATED = systemDateNow;
                     }
 
                     var audit = new TBL_AUDIT

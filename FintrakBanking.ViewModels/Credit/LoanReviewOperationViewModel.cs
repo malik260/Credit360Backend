@@ -125,6 +125,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int accreditedConsultant { get; set; }
         public DateTime dateAssigned { get; set; }
         public int createdBy { get; set; }
+        public decimal? totalAmountRecovery { get; set; }
         public bool isFullyRecovered { get; set; }
         public bool operationCompleted { get; set; }
         public DateTime? expCompletionDate { get; set; }
@@ -409,6 +410,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int accreditedConsultantId { get; set; }
         public decimal? agentCommission { get; set; }
         public decimal? percentageCommission { get; set; }
+        public decimal totalAmountRecovery { get; set; }
     }
 
 

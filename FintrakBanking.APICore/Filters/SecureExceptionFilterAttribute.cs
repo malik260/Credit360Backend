@@ -56,6 +56,7 @@ namespace FintrakBanking.APICore.Filters
             //using(var trans = context.Database.BeginTransaction())
             //{
                 var ex = httpContext.Exception;
+                var test = ex.ToString();
                 var endPoint = httpContext.Request.RequestUri;
                 var userName = httpContext.ActionContext.RequestContext.Principal.Identity.Name;
 
@@ -74,6 +75,7 @@ namespace FintrakBanking.APICore.Filters
                     ERRORTYPE = ex.GetType().Name,
                     STATUSCODE = 500,
                     ALLXML = errorMessage + " " + ex.StackTrace,
+                    //ALLXML = test,
                     TIMEUTC = time,
                 };
 
