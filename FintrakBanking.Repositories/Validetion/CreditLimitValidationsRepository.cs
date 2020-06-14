@@ -322,9 +322,9 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             var sector = context.TBL_SECTOR.Find(sectorId);
 
-            var totalExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.TOTALEXPOSURELCY).FirstOrDefault();
-            var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.SECTORLIMIT).FirstOrDefault();
-            var exposureLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE).Select(g => g.EXPOSURES).FirstOrDefault();
+            var totalExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE)?.Select(g => g.TOTALEXPOSURELCY).FirstOrDefault();
+            var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE)?.Select(g => g.SECTORLIMIT).FirstOrDefault();
+            var exposureLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE)?.Select(g => g.EXPOSURES).FirstOrDefault();
 
             model.outstandingBalance = (double?)totalExposure ?? 0;
             model.sectorLimit = (double?)sectorLimit ?? 0;
