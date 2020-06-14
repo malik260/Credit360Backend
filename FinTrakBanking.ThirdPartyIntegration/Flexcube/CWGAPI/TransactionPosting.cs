@@ -2,7 +2,6 @@
 {
     using FintrakBanking.Common.CustomException;
     using FintrakBanking.Entities.Models;
-    using FintrakBanking.Interfaces.Credit;
     using FintrakBanking.ViewModels.CASA;
     using FintrakBanking.ViewModels.Credit;
     using FintrakBanking.ViewModels.Customer;
@@ -10,7 +9,6 @@
     using FintrakBanking.ViewModels.Flexcube;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
     using System.IO;
