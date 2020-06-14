@@ -2596,6 +2596,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         middleName = o.MIDDLENAME,
                         lastName = o.LASTNAME,
                         staffCode = o.STAFFCODE,
+                        staffRoleName = o.TBL_STAFF_ROLE.STAFFROLENAME
                     })
                     .Take(12);
             }
