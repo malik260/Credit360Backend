@@ -76,6 +76,7 @@ namespace FintrakBanking.Repositories.Credit
         // place holders
         private readonly string customerNameHolder = "@{{CustomerName}}";
         private readonly string branchNameHolder = "@{{Branch}}";
+        private readonly string companyLogoHolder = "@{{companyLogo}}";
         private readonly string locationNameHolder = "@{{Location}}";
         private readonly string managementProfileHolder = "@{{ManagementProfile}}";
         private readonly string ownershipHolder = "@{{Ownership}}";
@@ -234,6 +235,7 @@ namespace FintrakBanking.Repositories.Credit
         private string exchangeRate;
         private string groupFacilitySummary;
         private string groupFacilitySummaryFcy;
+        private string companyLogo;
         //private string directFacilities;
         //private string totalDirectFacilities;
         //private string contingentFacilities;
@@ -460,6 +462,12 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
 
+                this.companyLogo = $@"
+                <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr></table>";
                 this.customerRecord = context.TBL_CUSTOMER.Find(this.customerId);
                 this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted && f.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected).ToList();
                 this.branchName = loanApplication.TBL_BRANCH?.BRANCHNAME;
@@ -592,6 +600,13 @@ namespace FintrakBanking.Repositories.Credit
                     this.customerIds = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     //this.customerExposure = CustomerExposureMarkup();
                 }
+
+                this.companyLogo = $@"
+                 <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr></table>";
                 this.interestRate = context.TBL_LMSR_APPLICATION_DETAIL.Where(i => i.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID).Select(i => i.APPROVEDINTERESTRATE).FirstOrDefault();
                 //string customerName = String.Empty;
                 this.customerRecord = context.TBL_CUSTOMER.Find(lmsrApplication.CUSTOMERID);
@@ -802,8 +817,14 @@ namespace FintrakBanking.Repositories.Credit
                     this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
                 }
                 var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;
-            
-                //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
+
+                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
+                 this.companyLogo = $@"
+                 <table style='font face: arial; size:12px' border=01 width=1100 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr></table>";
                 string customerName = String.Empty;
                 if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
@@ -845,7 +866,12 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             //var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f=>f.LOANAPPLICATIONDETAILID == targetId).Select(f=>f.CHARGEFEEID).ToList();
-
+            this.companyLogo = $@"
+                 <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr></table>";
             string customerName = String.Empty;
             if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
             if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
@@ -880,6 +906,13 @@ namespace FintrakBanking.Repositories.Credit
                     this.customerIds = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     //this.customerExposure = CustomerExposureMarkup();
                 }
+
+                this.companyLogo = $@"
+                 <table style='font face: arial; size:12px' border=0 width=1100 cellpadding=0 cellspacing=0>
+                    <tr>
+                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr></table>";
                 this.interestRate = context.TBL_LMSR_APPLICATION_DETAIL.Where(i => i.LOANAPPLICATIONID == this.lmsrApplication.LOANAPPLICATIONID).Select(i => i.APPROVEDINTERESTRATE).FirstOrDefault();
                 this.customerRecord = context.TBL_CUSTOMER.Find(lmsrApplication.CUSTOMERID);
                 // if (lmsrAppllication.CUSTOMERGROUPID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER_GROUP.GROUPNAME;
@@ -5639,6 +5672,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             content = content.Replace(customerNameHolder, customerName);
             content = content.Replace(branchNameHolder, branchName);
+            content = content.Replace(companyLogoHolder, companyLogo);
             content = content.Replace(customerExposureHolder, customerExposure);
             content = content.Replace(recommendedInterestRateHolder, recommendedInterestRate);
             content = content.Replace(isRelatedPartyHolder, isRelatedParty);
