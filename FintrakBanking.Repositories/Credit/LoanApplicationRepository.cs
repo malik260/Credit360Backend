@@ -4606,11 +4606,11 @@ namespace FintrakBanking.Repositories.Credit
                     if (appRecord != null)
                     {
                         var singleRec = appRecord;
-                        x.currentApprovalLevel = singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : "CLICK VIEW FOR DRAWDOWN DETAILS"; // y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                        x.currentApprovalLevel = singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : x.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationRejected ? "REJECTED APPLICATION" : "CLICK VIEW FOR DRAWDOWN DETAILS"; // y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                         x.currentApprovalLevelId = singleRec.TOAPPROVALLEVELID > 0 ? singleRec.TOAPPROVALLEVELID : 0;
                         x.approvalTrailId = singleRec.APPROVALTRAILID;//y.APPROVALTRAILID,
                         //x.responsiblePerson = singleRec.TOSTAFFID == null ? singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a" : singleRec.TBL_STAFF1.STAFFCODE + " - " + singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
-                        x.responsiblePerson = singleRec.TOSTAFFID == null ? (singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : (x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : (x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : "CLICK VIEW FOR DRAWDOWN DETAILS"))) : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                        x.responsiblePerson = singleRec.TOSTAFFID == null ? (singleRec.TOAPPROVALLEVELID != null ? singleRec.TBL_APPROVAL_LEVEL1.LEVELNAME : (x.isFacilityCreated == true ? "FIRST TRANCHE DISBURSEMENT HAS OCCURRED" : (x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentCompleted ? "CLICK VIEW FOR DRAWDOWN DETAILS" : x.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationRejected ? "REJECTED APPLICATION" : "CLICK VIEW FOR DRAWDOWN DETAILS"))) : singleRec.TBL_STAFF1.FIRSTNAME + " " + singleRec.TBL_STAFF1.MIDDLENAME + " " + singleRec.TBL_STAFF1.LASTNAME;// y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
                         x.toStaffId = singleRec.TOSTAFFID;
                         x.currentOperationId = singleRec.OPERATIONID;
                     }
@@ -5663,10 +5663,10 @@ namespace FintrakBanking.Repositories.Credit
         public IQueryable<LoanApplicationViewModel> GetRejectedLoanApplicationsArch(UserInfo user)
         {
             bool isHeadOffice = (user.BranchId == 1) ? true : false;
+            var reliefStaffIds = genSetup.GetStaffRlieved(user.staffId);
 
             var applications = context.TBL_LOAN_APPLICATION_ARCHIVE
-                .Where(x => (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected && x.CREATEDBY == user.staffId)
-                )
+                .Where(x => x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected && (x.CREATEDBY == user.staffId || reliefStaffIds.Contains(x.CREATEDBY)))
             .Select(x => new LoanApplicationViewModel
             {
                 loanApplicationId = x.LOANAPPLICATIONID,
