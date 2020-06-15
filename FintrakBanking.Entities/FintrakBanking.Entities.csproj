@@ -84,6 +84,7 @@
     <Compile Include="Models\TBL_COLLATERAL_LIQUIDATION_RECOVERY.cs" />
     <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
     <Compile Include="Models\TBL_GROUP_LIMIT.cs" />
+    <Compile Include="Models\TBL_INTEGRATION_CONTROL.cs" />
     <Compile Include="Models\TBL_LC_ISSUANCE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LIEN_REMOVAL.cs" />
     <Compile Include="Models\TBL_LINE_FACILITY_STATUS.cs" />

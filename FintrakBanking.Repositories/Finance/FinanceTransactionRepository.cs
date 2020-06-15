@@ -689,7 +689,7 @@ namespace FintrakBanking.Repositories.Finance
                     var fromCurrencyCode = this.context.TBL_CURRENCY.Where(x => x.CURRENCYID == currencyId).Select(f => f.CURRENCYCODE).FirstOrDefault();
                     var rateCode = "TT";
 
-                    // integration.
+                    
                     var rate = integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
                     if (rate.sellingRate <= 0)
                     {
