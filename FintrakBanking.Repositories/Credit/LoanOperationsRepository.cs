@@ -62,6 +62,7 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingDocumentsContext documentContext;
         private string _transactionReferenceNo = "";
         private ILoanCovenantRepository loanCovenant;
+        TBL_INTEGRATION_CONTROL globalIntegrationSetting = new TBL_INTEGRATION_CONTROL();
 
         public LoanOperationsRepository(
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
@@ -93,7 +94,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanCovenant = _loanCovenant;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            var globalIntegrationSetting = context.TBL_INTEGRATION_CONTROL.FirstOrDefault();
+            globalIntegrationSetting = context.TBL_INTEGRATION_CONTROL.FirstOrDefault();
 
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
         }
@@ -376,7 +377,7 @@ namespace FintrakBanking.Repositories.Credit
                 //}).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                if (setup.USE_THIRD_PARTY_INTEGRATION && globalIntegrationSetting.USE_THIRPARTY_POSTING)
                 {
                     using (var stagingContext = new FinTrakBankingStagingContext())
                     {
