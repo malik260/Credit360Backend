@@ -6050,18 +6050,18 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
-            {
-                //foreach (var item in model)
-                //{
-                BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
+            //if (setup.USE_THIRD_PARTY_INTEGRATION)
+            //{
+            //    //foreach (var item in model)
+            //    //{
+            //    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
-                result = bulkPosting.WriteBulkLoanRepaymentPostingPastDueToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate, companyId, staffId, out _transactionReferenceNo);
-                //}
+            //    result = bulkPosting.WriteBulkLoanRepaymentPostingPastDueToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate, companyId, staffId, out _transactionReferenceNo);
+            //    //}
 
-            }
-            else
-            {
+            //}
+            //else
+            //{
 
                 foreach (var item in model)
                 {
@@ -6126,7 +6126,7 @@ namespace FintrakBanking.Repositories.Credit
                         lien.createdBy = (int)SystemStaff.System;
                         lien.description = "lien placed due to Account not funded at Anniversary Date";
 
-                        casaLien.PlaceLien(lien);
+                        //casaLien.PlaceLien(lien);
                     }
                     else if (casabalance < item.periodInterestAmount && casabalance > 0)
                     {
@@ -6256,7 +6256,7 @@ namespace FintrakBanking.Repositories.Credit
                         lienReference = casaLien.PlaceLien(lienPrincipal);
                     }
                 }
-            }
+            //}
 
 
             this.context.TBL_LOAN_PAST_DUE.AddRange(transPastDue);
