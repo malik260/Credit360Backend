@@ -95,9 +95,9 @@ namespace FintrakBanking.Repositories.Credit
             return GetDisbursedLoanByLoan(loanId);
         }
 
-        public LoanViewModel ThirdPartyFacilityDetails(int loanId)
+        public LoanViewModel ThirdPartyFacilityDetails(string loanReferenceNumber)
         {
-            return GetThirdPartyLoansByReferenceNumber(loanId);
+            return GetThirdPartyLoansByReferenceNumber(loanReferenceNumber);
         }
 
         public LoanViewModel LMSFacilityDetail(int loanId)
@@ -781,7 +781,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private LoanViewModel GetThirdPartyLoansByReferenceNumber(int loanId)
+        private LoanViewModel GetThirdPartyLoansByReferenceNumber(string loanReferenceNumber)
         {
             var loanDetails = (from a in context.TBL_LOAN_EXTERNAL
                               // join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -797,7 +797,7 @@ namespace FintrakBanking.Repositories.Credit
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                join ro in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals ro.STAFFID
                                join rm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals rm.STAFFID
-                               where a.EXTERNALLOANID == loanId
+                               where a.LOANREFERENCENUMBER == loanReferenceNumber
                                //&& a.ISDISBURSED == true
                                select new LoanViewModel
                                {
