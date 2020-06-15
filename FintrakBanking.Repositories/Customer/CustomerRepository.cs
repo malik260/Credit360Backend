@@ -3327,15 +3327,15 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerViewModels> SearchRandomSingleCorporateCustomersBySearchQuery(string searchQuery)
         {
-            var customerGroup = (from m in context.TBL_CUSTOMER_GROUP_MAPPING
-                                 select m).ToList();
+            //var customerGroup = (from m in context.TBL_CUSTOMER_GROUP_MAPPING
+            //                     select m).ToList();
             var customers = (from x in GetCustomersLite()
                              where (x.firstName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.customerCode.StartsWith(searchQuery)
-                                   || x.branchName.StartsWith(searchQuery))
-                                   || x.customerId.ToString().StartsWith(searchQuery)
+                                   || x.branchName.StartsWith(searchQuery)
+                                   || x.customerId.ToString().StartsWith(searchQuery))
                                    && (x.customerTypeId == 2)
                              select x);
             //var customerInfo = new List<CustomerViewModels>();
