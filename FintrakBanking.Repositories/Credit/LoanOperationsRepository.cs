@@ -2131,7 +2131,7 @@ namespace FintrakBanking.Repositories.Credit
                 //}).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                if (setup.USE_THIRD_PARTY_INTEGRATION && globalIntegrationSetting.USE_THIRPARTY_POSTING)
                 {
                     BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
