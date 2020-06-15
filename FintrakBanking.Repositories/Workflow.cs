@@ -451,7 +451,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         if(currentLevel.GROUPID == destinationLevel.GROUPID && currentLevel.POSITION > destinationLevel.POSITION)
                         {
-                            throw new SecureException("You cannot move a transaction below the current level.");
+                            throw new SecureException("Network Error, Kindly reload the page.");
                         }
                     }
 

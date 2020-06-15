@@ -13858,37 +13858,37 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             var company = context.TBL_COMPANY.Find(entity.companyId);
-
-
             var localGlobalReference = context.TBL_GLOBAL_EXPOSURE.FirstOrDefault(x=>x.ID == entity.loanId);
 
             var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == localGlobalReference.PRODUCTCODE).FirstOrDefault();
             if(product == null) { throw new ConditionNotMetException("Loan facility or type does not exist on Credit360"); }
 
             var customer = context.TBL_CUSTOMER.Where(x=>x.CUSTOMERCODE == localGlobalReference.CUSTOMERID).FirstOrDefault();
-            if(customer == null) 
-            {
-                var casaData = new List<CasaViewModel>();
 
-                if (USE_THIRD_PARTY_INTEGRATION)
+            var customerSearchAccountNumber = string.Empty;
+            var casaData = new List<CasaViewModel>();
+
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                casaData = integration.FetchCustomerAccountsByCustomerCode(localGlobalReference.CUSTOMERID);
+
+                if (casaData.Count > 0)
                 {
-                    casaData = integration.FetchCustomerAccountsByCustomerCode(localGlobalReference.CUSTOMERID);
+                    customerSearchAccountNumber = casaData.FirstOrDefault()?.productAccountNumber;
                 }
 
+                if (casaData.Count <= 0)
+                {
+                    customerSearchAccountNumber = localGlobalReference?.ACCOUNTNUMBER;
+                }
+            }
+            else { customerSearchAccountNumber = localGlobalReference?.ACCOUNTNUMBER; }
+
+            if (customer == null) 
+            {
                 //FETCH CUSTOMER FROM FLEXCUBE
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    var customerSearchAccountNumber = string.Empty;
-                    if(casaData.Count > 0 )
-                    {
-                        customerSearchAccountNumber = casaData.FirstOrDefault()?.productAccountNumber;
-                    }
-
-                    if (casaData.Count <= 0)
-                    {
-                        customerSearchAccountNumber = localGlobalReference?.ACCOUNTNUMBER;
-                    }
-
                     List<CustomerViewModels> cust = new List<CustomerViewModels>();
                     CustomerDetails customerAPI = new CustomerDetails(context);
                     Task.Run(async () => cust = await customerAPI.GetCustomerByAccountsNumber(customerSearchAccountNumber)).GetAwaiter().GetResult();
@@ -13917,7 +13917,8 @@ namespace FintrakBanking.Repositories.Credit
                 if (customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360."); }
             }
 
-            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.ACCOUNTNUMBER).FirstOrDefault();
+            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == customerSearchAccountNumber).FirstOrDefault();
+
             if(casa == null)
             {
                 //FETCH CUSTOMER ACCOUNT FROM FLEXCUBE
@@ -13929,8 +13930,6 @@ namespace FintrakBanking.Repositories.Credit
 
             var accountOfficer = context.TBL_STAFF.Where(x => x.STAFFID ==  customer.RELATIONSHIPOFFICERID).FirstOrDefault();
             //if (accountOfficer == null) { throw new ConditionNotMetException("Account Officer does not exist on Credit360!"); }
-
-
 
             double interestRate = Convert.ToDouble(localGlobalReference.INTERESTRATE);
 
@@ -13953,7 +13952,8 @@ namespace FintrakBanking.Repositories.Credit
             if (localGlobalReference.CBNCLASSIFICATION.ToUpper() == "DOUBTFUL") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.Doubtful;
             if (localGlobalReference.CBNCLASSIFICATION.ToUpper() == "WATCHLIST") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.WatchList;
 
-             casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == localGlobalReference.REFERENCENUMBER).FirstOrDefault();
+            casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == customerSearchAccountNumber).FirstOrDefault();
+            if (casa == null) { throw new ConditionNotMetException($"Account Number {customerSearchAccountNumber} associated with this Loan does not exist on Flexcube!"); }
 
             var data = new TBL_LOAN_EXTERNAL()
             {
