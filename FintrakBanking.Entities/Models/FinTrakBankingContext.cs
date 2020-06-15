@@ -430,6 +430,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_SECTOR> TBL_SECTOR { get; set; }
         public virtual DbSet<TBL_SETUP_COMPANY> TBL_SETUP_COMPANY { get; set; }
         public virtual DbSet<TBL_SETUP_GLOBAL> TBL_SETUP_GLOBAL { get; set; }
+        public virtual DbSet<TBL_INTEGRATION_CONTROL> TBL_INTEGRATION_CONTROL { get; set; }
+        
         public virtual DbSet<TBL_SIGNATURE_DOCUMENT_STAFF> TBL_SIGNATURE_DOCUMENT_STAFF { get; set; }
         public virtual DbSet<TBL_SIGNATURE_DOCUMENT_TYPE> TBL_SIGNATURE_DOCUMENT_TYPE { get; set; }
         public virtual DbSet<TBL_SOURCE_APPLICATION> TBL_SOURCE_APPLICATION { get; set; }
