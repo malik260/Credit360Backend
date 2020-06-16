@@ -1053,6 +1053,7 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             else if (defaultFlowOrder.REQUIREAVAILMENT)
                             {
+                                if (workflow.Response.nextLevelName == null) workflow.Response.nextLevelName = "Credit Admin";
                                 nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
                                 LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
                                 //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;

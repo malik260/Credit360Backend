@@ -860,7 +860,7 @@ namespace FintrakBanking.Repositories.Finance
                             var innerException = "";
                             if (ex.InnerException != null)
                             {
-                                innerException = ex.InnerException.InnerException.Message;
+                                innerException = ex.InnerException?.Message;
                             }
 
                             //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
@@ -961,7 +961,7 @@ namespace FintrakBanking.Repositories.Finance
                             var innerException = "";
                             if (ex.InnerException != null)
                             {
-                                innerException = ex.InnerException.InnerException.Message;
+                                innerException = ex.InnerException?.InnerException?.Message;
                             }
 
                             //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";

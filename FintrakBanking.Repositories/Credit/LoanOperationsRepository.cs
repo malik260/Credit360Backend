@@ -1323,7 +1323,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         item.date = applicationDate;
 
-                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
+                       // result = financeTransaction.PostDailyLoansInterestAccrual(item);
                     }
                 }
                 if (result)
