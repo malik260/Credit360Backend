@@ -3247,7 +3247,8 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            var books2 = data.Where(d => d.loanBookingRequestId == 1380).ToList();
+
+            //var books2 = data.Where(d => d.loanBookingRequestId == 1380).ToList();
 
             return data.Where(x => x.loanReferenceNumber != null);//.Distinct().ToList();
         }
