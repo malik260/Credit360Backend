@@ -591,11 +591,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                         addStaging.CURRENCYID = item.currencyId;
 
 
-                        //addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
-                        //addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                        addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
+                        addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
-                        addStaging.CREDITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID2.Value;
-                        addStaging.DEBITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID1.Value;
+                        //addStaging.CREDITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID2.Value;
+                        //addStaging.DEBITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID1.Value;
 
 
                         addStaging.CREDITCASAACCOUNTID = null;
