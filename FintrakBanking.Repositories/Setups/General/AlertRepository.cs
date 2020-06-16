@@ -47,9 +47,6 @@ namespace FintrakBanking.Repositories.Setups.General
         private double twentyFivePercentValue = 0.25;
         private double fiftyPercentValue = 0.5;
 
-
-
-
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
                                 FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository
                                 )
@@ -916,12 +913,17 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             bool state = false;
 
-            if (CompareDate() == true)
+            GetEnhancedDisbursementToDirectorsNotification();
+            GetStaffLoanPortfolioReport();
+            GetFacilityRestructuredNotification();
+            GetLoanRepaymentReminder();
+            
+
+            state = true;
+            /*if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
                 TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
-
-
                 TimeSpan now = DateTime.Now.TimeOfDay;
 
                 if ((now >= start) && (now <= end))
@@ -932,7 +934,23 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetPastDueObligationsReminderByGroupHeads();
                     state = true;
                 }
-            }
+                
+                GetDigitalLoanExceptionNPLIncrease();
+                GetDigitalLoanExceptionNPLDecrease();
+                GetDigitalLoanExceptionNPLModuleIncrease();
+                GetDigitalLoanExceptionNPLModuleDecrease();
+                GetDigitalLoanDisbursementIncrease();
+                GetDigitalLoanDisbursementDecrease();
+                GetDigitalLoanDisbursementModuleIncrease();
+                GetDigitalLoanDisbursementModuleDecrease();
+                GetDigitalLoanDPDIncrease();
+                GetDigitalLoanDPDDecrease();
+                GetDigitalLoanDPDModuleIncrease();
+                GetDigitalLoanDPDModuleDecrease();
+                GetDigitalLoanLiquidationIncrease();
+                GetDigitalLoanLiquidationModuleIncrease(); 
+
+            }*/
             return state;
         }
 
@@ -1001,6 +1019,42 @@ namespace FintrakBanking.Repositories.Setups.General
             return emailList;
         }
 
+        private string GetBusinessUsersEmailsToGroupHead(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                 var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                 if (groupHead != null)
+                                 {
+                                     emailList = emailList + ";" + groupHead.EMAIL;
+                                 }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
         public string GetBusinessTeamEmails(string accountOfficerMIsCode)
         {
             string emailList = "";
@@ -1037,7 +1091,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return emailList;
         }
-
         public void GroupImminentMaturitiesByGroupHeads()
         {
             // Maturing Obligations/GetImminentMaturities method by group heads
@@ -1145,8 +1198,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
-
         public void GetPastDueObligationsReminderByGroupHeads()
         {
             // GetPastDueObligationsReminder method by group heads
@@ -1248,7 +1299,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         public void GetImminentMaturities()
         {
                 // Maturing Obligations/GetImminentMaturities method
@@ -1340,13 +1390,11 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         //public bool ProcessLoanArchive()
         //{
         //    return loanArchive.ProcessLoanArchieving();
 
         //}
-
         public void GetCreditCardMaturingObligations()
         {
             // GetCreditCardMaturingObligations method
@@ -2237,15 +2285,16 @@ namespace FintrakBanking.Repositories.Setups.General
                  List<AlertsViewModel> alerts = new List<AlertsViewModel>();
                  foreach (var i in loanRepaymentReminder)
                  {
-                     AlertsViewModel alert = new AlertsViewModel();
+                    int numberOfDays = (i.maturityDate.Value - DateTime.Now).Days;
+                    AlertsViewModel alert = new AlertsViewModel();
                      var alertTitle = alertTitleInfo.TITLE;
                      var alertTemplate = alertTitleInfo.TEMPLATE;
 
                      string emailList = "";
                      alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
-                     alertTemplate = alertTemplate.Replace("@{{maturityBand}}", i.customerName);
+                     alertTemplate = alertTemplate.Replace("@{{maturityBand}}", numberOfDays.ToString());
 
-                     emailList = i.customerName + defaultEmail;
+                     emailList = defaultEmail;
                      alert.receiverEmailList.Add(emailList);
                      alert.template = alertTemplate;
                      alert.alertTitle = alertTitle;
@@ -2793,13 +2842,131 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
+
         public void GetEnhancedDisbursementToDirectorsNotification()
         {
             AlertsViewModel alert = new AlertsViewModel();
             var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetEnhancedDisbursementToDirectorsNotification").FirstOrDefault();
-            alert.receiverEmailList.Add(alertDetail.DEFAULTEMAIL);
+            var emailList = alertDetail.DEFAULTEMAIL+ GetAllCreditPortfolioStaffEmails();
+            alert.receiverEmailList.Add(emailList);
             LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetEnhancedDisbursementToDirectorsNotification");
         }
+        public void GetStaffLoanPortfolioReport()
+        {
+            // GetStaffLoanPortfolioReport method
+            var staffList = externalAlertRepository.GetStaffLoanPortfolioReport();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetStaffLoanPortfolioReport").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (staffList != null && staffList.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var staff in staffList)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    string emailList = "";
+                    emailList = GetBusinessUsersEmailsToGroupHead(staff.misCode);
+
+                    List<int> days = new List<int> { 21, 14, 7, 3, 1 };
+                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
+
+                    if (loanInformation != null && loanInformation.Count() > 0)
+                    {
+
+                        foreach (var t in loanInformation)
+                        {
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+                            var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
+                            int numberOfDays = (t.MATURITYDATE.Value - DateTime.Now).Days;
+                            var customerName = t.CUSTOMERNAME;
+
+                            if (t.PRINCIPALOUTSTANDINGBALLCY > 0)
+                            {
+                                alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
+                                alertTemplate = alertTemplate.Replace("@{{days}}", numberOfDays.ToString());
+
+                                emailList = emailList + defaultEmail + GetAllCreditPortfolioStaffEmails();
+                                alert.receiverEmailList.Add(emailList);
+                                alert.template = alertTemplate;
+                                alert.alertTitle = alertTitle;
+                                alert.canFire = true;
+                                alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                                alerts.Add(alert);
+                            }
+                        }
+                      
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetFacilityRestructuredNotification() {
+            // GetFacilityRestructuredNotification method
+            var facilitiesRestructured = externalAlertRepository.GetFacilityRestructuredNotification();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetFacilityRestructuredNotification").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (facilitiesRestructured != null && facilitiesRestructured.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var facilityRestructured in facilitiesRestructured)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    string emailList = "";
+                    var staff = context.TBL_STAFF.Find(facilityRestructured.CREATEDBY);
+                    emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE);
+
+                    var loanInformation = context.TBL_LOAN_REVIEW_OPERATION.Where(d =>d.LOANID == facilityRestructured.LOANID && d.OPERATIONCOMPLETED == true && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).ToList();
+
+                    if (loanInformation != null && loanInformation.Count() > 1)
+                    {
+                        var staffFullName = staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME;
+                        var times = loanInformation.Count();
+                        var loanDtail = context.TBL_LMSR_APPLICATION_DETAIL.Find(facilityRestructured.LOANREVIEWAPPLICATIONID);
+                        var facility = context.TBL_PRODUCT.Find(loanDtail.PRODUCTID).PRODUCTNAME;
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", staffFullName);
+                        alertTemplate = alertTemplate.Replace("@{{facility}}", facility);
+                        alertTemplate = alertTemplate.Replace("@{{times}}", times.ToString());
+
+                        emailList = emailList + defaultEmail + GetAllCreditPortfolioStaffEmails();
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                        alerts.Add(alert);
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+
+
 
         #region other code logic
         //public void validateAlertCheck()
@@ -2845,7 +3012,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             
         }
-
         private bool validateConditionTrigger(short frequencyId, short conditionId)
         {
             if (ValidateFrequency(frequencyId, conditionId))
@@ -2854,7 +3020,6 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else { return false; }
         }
-
         private bool ValidateFrequency(short frequencyId, short conditionId)
         {
             var frequency = context.TBL_ALERT_FREQUENCY.Find(frequencyId);
@@ -2924,7 +3089,6 @@ namespace FintrakBanking.Repositories.Setups.General
         //    return levels;
         //}
 
-
         public string GetAllStaffRoleEmails(int alerttitleId)
         {
             var list = "";
@@ -2944,8 +3108,6 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             return list;
         }
-
-
         public string GetAllDivisionHeadsEmails(string regionCode)
         {
             var list = "";
@@ -2961,7 +3123,6 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             return list;
         }
-
         public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
         {
             try
@@ -2992,7 +3153,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 new SecureException(ex.ToString());
             }
         }
-
         private void SaveMessageDetails(MessageLogViewModel model)
         {
             var message = new TBL_MESSAGE_LOG()
@@ -3017,9 +3177,21 @@ namespace FintrakBanking.Repositories.Setups.General
 
         }
 
+        public string GetAllCreditPortfolioStaffEmails()
+        {
+            var list = "";
+            var role = context.TBL_STAFF_ROLE.Where(r => r.STAFFROLECODE == "CP").FirstOrDefault();
+            var roleEmail = context.TBL_STAFF.Where(s => s.STAFFROLEID == role.STAFFROLEID).ToList();
+
+            foreach (var t in roleEmail)
+            {
+                list = list + ";" + t.EMAIL;
+            }
+            return list;
+        }
         #endregion logic codes
 
-       // trigger alerts methods
+        // trigger alerts methods
         public void GetDigitalLoanExceptionNPLIncrease()
         {
             var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
@@ -3246,7 +3418,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         //Disbursement
         public void GetDigitalLoanDisbursementIncrease()
         {
@@ -3479,7 +3650,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         //DPD
         public void GetDigitalLoanDPDIncrease()
         {
@@ -3713,7 +3883,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         public void GetDigitalLoanLiquidationIncrease()
         {
             var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();

@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Credit;
+﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetInsuranceReminder();
         IEnumerable<GlobalExposureViewModel> GetExtendedFacilityNotification();
         IEnumerable<GlobalExposureViewModel> GetEnhancedDisbursementToDirectorsNotification();
-        IEnumerable<GlobalExposureViewModel> GetFacilityRestructuredNotification();
+        IEnumerable<TBL_LOAN_REVIEW_OPERATION> GetFacilityRestructuredNotification();
         IEnumerable<GlobalExposureViewModel> GetMccAndPpmcDeliverables();
         IEnumerable<GlobalExposureViewModel> GetMccAndPpmcDeliverablesReminder();
         IEnumerable<GlobalExposureViewModel> GetPastDueMccAndPpmcDeliverablesReminder();
@@ -110,7 +111,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<StaffInfoViewModel> GetMaturingObligationsReport();
         IEnumerable<GlobalExposureViewModel> GetLargeExposureMonitoring();
         IEnumerable<GlobalExposureViewModel> GetUnpaidObligationReminder();
-        IEnumerable<GlobalExposureViewModel> GetStaffLoanPortfolioReport();
+        IEnumerable<StaffInfoViewModel> GetStaffLoanPortfolioReport();
         IEnumerable<GlobalExposureViewModel> GetExStaffLoanPortfolioReport();
         IEnumerable<GlobalExposureViewModel> GetImminentMaturitiesAlertEmail();
         IEnumerable<GlobalExposureViewModel> GetDelinquentCustomersAlertEmail();
