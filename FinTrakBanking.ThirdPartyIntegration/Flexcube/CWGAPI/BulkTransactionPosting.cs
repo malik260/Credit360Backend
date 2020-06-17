@@ -527,10 +527,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             foreach (var item in model)
             {
-               if(model.IndexOf(item) == 100)
+               if(model.IndexOf(item) >= 540)
                 {
-
+                    var b = model.IndexOf(item);
                 }
+
                 var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == item.referenceNumber && c.EODDATE == applicationDate && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyFeeAccrual).FirstOrDefault();
 
                 if (checkExistence != null)
@@ -573,11 +574,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                         addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
 
 
-                        addStaging.CREDITACCOUNT = context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.DEBITACCOUNT =  context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                        //addStaging.CREDITACCOUNT = context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                        //addStaging.DEBITACCOUNT =  context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
 
-                        //addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID2.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        //addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID1.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID2.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID1.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
 
 
                         addStaging.DESCRIPTION = "Fee Daily Accrual Posting";
@@ -595,11 +596,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                         addStaging.CURRENCYID = item.currencyId;
 
 
-                        addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                        //addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
+                        //addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
-                        //addStaging.CREDITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID2.Value;
-                        //addStaging.DEBITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID1.Value;
+                        addStaging.CREDITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID2.Value;
+                        addStaging.DEBITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID1.Value;
 
 
                         addStaging.CREDITCASAACCOUNTID = null;
@@ -643,6 +644,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             return true;
         }
+
+
 
 
         public bool WriteBulkDailyFeeAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
