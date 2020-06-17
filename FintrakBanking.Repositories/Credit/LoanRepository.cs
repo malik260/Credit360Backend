@@ -3089,7 +3089,7 @@ namespace FintrakBanking.Repositories.Credit
                             crmsCode = s.CRMSCODE,
                         }).ToList();
 
-            var books = data.Where(d => d.loanBookingRequestId == 1380).ToList();
+            //var books = data.Where(d => d.loanBookingRequestId == 1380).ToList();
 
 
             foreach (var item in data)
