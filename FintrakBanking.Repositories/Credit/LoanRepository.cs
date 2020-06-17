@@ -13876,6 +13876,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (casaData.Count > 0)
                 {
                     customerSearchAccountNumber = casaData.FirstOrDefault()?.productAccountNumber;
+                    if (casaData.Count > 0 && customer != null) { SaveCustomerAccounts(customer.CUSTOMERID, casaData); }
                 }
 
                 if (casaData.Count <= 0)
@@ -13944,7 +13945,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == localGlobalReference.ALPHACODE).FirstOrDefault();
 
-            var sector = context.TBL_SECTOR.Where(x => x.NAME.ToLower() == localGlobalReference.CBNSECTOR.ToLower()).FirstOrDefault();
+            var sector = context.TBL_SECTOR.Where(x => x.CODE == localGlobalReference.CBNSECTORID).FirstOrDefault();
 
             short loanPerformanceStatus = 0;
             if(localGlobalReference.CBNCLASSIFICATION.ToUpper() == "PERFORMING") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.Performing;
@@ -13969,7 +13970,7 @@ namespace FintrakBanking.Repositories.Credit
                 //SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
 
-                SUBSECTORID = sector?.TBL_SUB_SECTOR.FirstOrDefault()?.SUBSECTORID ?? 1,
+                SUBSECTORID = sector?.TBL_SUB_SECTOR.FirstOrDefault()?.SUBSECTORID ?? context.TBL_SUB_SECTOR.FirstOrDefault().SUBSECTORID,
                 CURRENCYID = (short)currency.CURRENCYID,
                 //EXCHANGERATE = currentExchangeRate,
 
@@ -14051,10 +14052,7 @@ namespace FintrakBanking.Repositories.Credit
             ////end of Audit section -------------------------------
 
             context.TBL_LOAN_EXTERNAL.Add(data);
-
             return context.SaveChanges() > 0;
-
-          
         }
 
         private void SaveCustomerAccounts(int customerId, List<CasaViewModel> casaDataList)
