@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -526,6 +527,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             foreach (var item in model)
             {
+               if(model.IndexOf(item) >= 540)
+                {
+                    var b = model.IndexOf(item);
+                }
 
                 var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == item.referenceNumber && c.EODDATE == applicationDate && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyFeeAccrual).FirstOrDefault();
 
@@ -569,11 +574,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                         addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
 
 
-                        addStaging.CREDITACCOUNT = context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.DEBITACCOUNT =  context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                        //addStaging.CREDITACCOUNT = context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                        //addStaging.DEBITACCOUNT =  context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
 
-                        //addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID2.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        //addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID1.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID2.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID1.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
 
 
                         addStaging.DESCRIPTION = "Fee Daily Accrual Posting";
@@ -591,11 +596,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                         addStaging.CURRENCYID = item.currencyId;
 
 
-                        addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                        //addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
+                        //addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
-                        //addStaging.CREDITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID2.Value;
-                        //addStaging.DEBITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID1.Value;
+                        addStaging.CREDITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID2.Value;
+                        addStaging.DEBITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID1.Value;
 
 
                         addStaging.CREDITCASAACCOUNTID = null;
@@ -619,11 +624,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     }
                     catch (Exception ex)
                     {
+                        // Get stack trace for the exception with source file information
+                        var st = new StackTrace(ex, true);
+                        // Get the top stack frame
+                        var frame = st.GetFrame(0);
+                        // Get the line number from the stack frame
+                        var line = frame.GetFileLineNumber();
 
                         eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
                         eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
                         eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.referenceNumber} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.referenceNumber} Exception - {ex.Message} exception -  {ex.InnerException}. @ Line {line}" ;
                         context.SaveChanges();
                     }
 
@@ -633,6 +644,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             return true;
         }
+
+
 
 
         public bool WriteBulkDailyFeeAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
@@ -2747,11 +2760,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     }
                     catch (Exception ex)
                     {
+                        // Get stack trace for the exception with source file information
+                        var st = new StackTrace(ex, true);
+                        // Get the top stack frame
+                        var frame = st.GetFrame(0);
+                        // Get the line number from the stack frame
+                        var line = frame.GetFileLineNumber();
 
                         eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
                         eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
                         eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.loanRefNo} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.loanRefNo} Exception - {ex.Message}  - inner exception -  {ex.InnerException}. @Line: {line}";
                         context.SaveChanges();
                     }
 

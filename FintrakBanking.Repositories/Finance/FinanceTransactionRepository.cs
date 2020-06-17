@@ -670,7 +670,7 @@ namespace FintrakBanking.Repositories.Finance
         {
             if (currencyId == 0)
             {
-                return null;
+                return new CurrencyExchangeRateViewModel();
             }
             var systemDate = generalSetup.GetApplicationDate();
             var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
