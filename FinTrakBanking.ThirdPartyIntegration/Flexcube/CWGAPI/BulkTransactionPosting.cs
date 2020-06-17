@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -526,7 +527,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             foreach (var item in model)
             {
+               if(model.IndexOf(item) == 100)
+                {
 
+                }
                 var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == item.referenceNumber && c.EODDATE == applicationDate && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyFeeAccrual).FirstOrDefault();
 
                 if (checkExistence != null)
@@ -619,11 +623,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     }
                     catch (Exception ex)
                     {
+                        // Get stack trace for the exception with source file information
+                        var st = new StackTrace(ex, true);
+                        // Get the top stack frame
+                        var frame = st.GetFrame(0);
+                        // Get the line number from the stack frame
+                        var line = frame.GetFileLineNumber();
 
                         eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
                         eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
                         eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.referenceNumber} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.referenceNumber} Exception - {ex.Message} exception -  {ex.InnerException}. @ Line {line}" ;
                         context.SaveChanges();
                     }
 
@@ -2747,11 +2757,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     }
                     catch (Exception ex)
                     {
+                        // Get stack trace for the exception with source file information
+                        var st = new StackTrace(ex, true);
+                        // Get the top stack frame
+                        var frame = st.GetFrame(0);
+                        // Get the line number from the stack frame
+                        var line = frame.GetFileLineNumber();
 
                         eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
                         eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
                         eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.loanRefNo} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {item.loanRefNo} Exception - {ex.Message}  - inner exception -  {ex.InnerException}. @Line: {line}";
                         context.SaveChanges();
                     }
 

@@ -1309,6 +1309,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                              }).ToList();
 
+             
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
                 {
