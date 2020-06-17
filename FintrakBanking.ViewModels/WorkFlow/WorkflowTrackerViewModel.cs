@@ -60,5 +60,6 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int? toStaffId { get; set; }
         public int? fromApprovalLevelId { get; set; }
         public int? toApprovalLevelId { get; set; }
+        public int? currentApprovalLevelId { get; set; }
     }
 }
