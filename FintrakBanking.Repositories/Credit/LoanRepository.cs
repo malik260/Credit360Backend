@@ -2993,7 +2993,7 @@ namespace FintrakBanking.Repositories.Credit
                         && s.ISUSED == true
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
 
-                        orderby s.LOAN_BOOKING_REQUESTID descending
+                        orderby s.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel
                         {
                             bookingAmountRequested = s.AMOUNT_REQUESTED,

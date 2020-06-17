@@ -11,6 +11,11 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications();
+        List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps);
+        string GetSlaInduvidualStatus(LoanApplicationViewModel app);
+        string GetSlaGlobalStatus(LoanApplicationViewModel app);
+        string SlaStatus(float sla, int? elapse);
         IEnumerable<StaffInfoViewModel> GetPasDueObligationsAccountOfficersByGroupHeads(string groupHeadCode);
         IEnumerable<StaffInfoViewModel> GetDivisionalOfficersByGroupHeads(string groupHeadCode);
         IEnumerable<StaffInfoViewModel> GetAccountOfficersByGroupHeads(string groupHeadCode);
@@ -52,11 +57,11 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetMccAndPpmcDeliverablesReminder();
         IEnumerable<GlobalExposureViewModel> GetPastDueMccAndPpmcDeliverablesReminder();
         IEnumerable<GlobalExposureViewModel> GetDSRAReminder();
-        IEnumerable<GlobalExposureViewModel> GetSLAReport();
+        IEnumerable<LoanApplicationViewModel> GetSLAReport();
         IEnumerable<GlobalExposureViewModel> GetOutstandingCreditDocumentation();
         IEnumerable<GlobalExposureViewModel> GetSiteVisitationCustomerReminder();
-        IEnumerable<GlobalExposureViewModel> GetPastDueDeferredDocuments();
-        IEnumerable<GlobalExposureViewModel> GetExpiredInsurancePolicies();
+        IEnumerable<ChecklistApprovalViewModel> GetPastDueDeferredDocuments();
+        IEnumerable<InsurancePolicy> GetExpiredInsurancePolicies();
         IEnumerable<GlobalExposureViewModel> GetAMCONCollectionAndStatusReport();
         IEnumerable<GlobalExposureViewModel> GetSiteVisitationAccountReminder();
         IEnumerable<GlobalExposureViewModel> GetEAndSRiskCategorisationDashboard();
