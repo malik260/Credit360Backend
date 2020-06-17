@@ -103,6 +103,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? loanSystemTypeId { get; set; }
         public short currencyId { get; set; }
         public int operationTypeId { get; set; }
+        public int? loanReviewApplicationId { get; set; }
     }
 
 

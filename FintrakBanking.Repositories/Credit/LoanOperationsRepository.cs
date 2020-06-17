@@ -64,6 +64,9 @@ namespace FintrakBanking.Repositories.Credit
         private ILoanCovenantRepository loanCovenant;
         TBL_INTEGRATION_CONTROL globalIntegrationSetting = new TBL_INTEGRATION_CONTROL();
 
+        List<string> receiverEmailList = new List<string>();
+        AlertsViewModel alert = new AlertsViewModel();
+
         public LoanOperationsRepository(
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
             ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
@@ -19487,8 +19490,6 @@ namespace FintrakBanking.Repositories.Credit
                 bool result = false;
                 int data = 0;
 
-                List<string> receiverEmailList = new List<string>();
-                AlertsViewModel alert = new AlertsViewModel();
                 var dynamicMessage = string.Empty;
                 var staffEmail = context.TBL_STAFF.Find(entity.staffId);
                 var lmsApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(reviewRecord.LOANREVIEWAPPLICATIONID);
@@ -19589,6 +19590,22 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         output = context.SaveChanges() > 0;
+                        if (entity.operationId == (int)OperationsEnum.OverdraftTenorExtension || entity.operationId == (int)OperationsEnum.TenorChange || entity.operationId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
+                        {
+                            var staff = context.TBL_STAFF.Find(reviewRecord.CREATEDBY);
+                            var retailEmail = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "ExtensionReport").FirstOrDefault();
+                            var loanDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(p => p.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
+                            var facility = context.TBL_PRODUCT.Find(loanDetail.PRODUCTID);
+                            var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE) + ";" + retailEmail.DEFAULTEMAIL;
+                            alert.receiverEmailList.Add(emailList);
+
+                            var customer12 = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                            var alertTemplate = retailEmail.TEMPLATE;
+                            alertTemplate = alertTemplate.Replace("@{{customerName}}", customer12);
+                            alertTemplate = alertTemplate.Replace("@{{facility}}", facility.PRODUCTNAME);
+                            alertTemplate = alertTemplate.Replace("@{{days}}", loanDetail.APPROVEDTENOR.ToString());
+                            LogEmailAlert(alertTemplate, retailEmail.TITLE, alert.receiverEmailList, "10070", 10070, "ExtensionReport");
+                        }
                     }
                     if (output == true && result == true)
                     {
@@ -19603,6 +19620,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // return data;
         }
+
 
         public int GoForLienRemovalApproval(ApprovalViewModel entity)
         {
@@ -22176,7 +22194,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 bool output = false;
                 bool result = false;
-
+                var dynamicMessage = string.Empty;
                 //if (facilityType == LoanSystemTypeEnum.OverdraftFacility)
 
                 //var checkForOverDraft = this.context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.REVOLVINGLOANID == loanId);
@@ -22191,6 +22209,7 @@ namespace FintrakBanking.Repositories.Credit
                                  select new LoanPaymentRestructureScheduleInputViewModel()
                                  {
                                      loanId = b.REVOLVINGLOANID,
+                                     loanReviewApplicationId = a.LOANREVIEWAPPLICATIONID,
                                      principalAmount = (double)b.OVERDRAFTLIMIT,
                                      interestRate = b.INTERESTRATE,
                                      effectiveDate = a.EFFECTIVEDATE,
@@ -22315,6 +22334,7 @@ namespace FintrakBanking.Repositories.Credit
                              select new LoanPaymentRestructureScheduleInputViewModel()
                              {
                                  loanId = b.TERMLOANID,
+                                 loanReviewApplicationId = a.LOANREVIEWAPPLICATIONID,
                                  scheduleMethodId = (short)b.SCHEDULETYPEID,
                                  principalAmount = (double)b.OUTSTANDINGPRINCIPAL,
                                  principalFrequency = b.PRINCIPALFREQUENCYTYPEID,
@@ -23145,6 +23165,7 @@ namespace FintrakBanking.Repositories.Credit
                                 select new LoanPaymentRestructureScheduleInputViewModel()
                                 {
                                     loanReviewOperationsId = a.LOANREVIEWOPERATIONID,
+                                    loanReviewApplicationId = a.LOANREVIEWAPPLICATIONID,
                                     loanId = b.CONTINGENTLOANID,
                                     principalAmount = (double)a.PREPAYMENT,
                                     loanSystemTypeId = a.LOANSYSTEMTYPEID,
@@ -23353,6 +23374,43 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+
+        private string GetBusinessUsersEmailsToGroupHead(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
 
         public bool DocumentDeferral(int loanId)
         {

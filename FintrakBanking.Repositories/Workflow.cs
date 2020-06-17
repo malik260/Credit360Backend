@@ -1168,7 +1168,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (amount == 0) { return true; }
             if (investmentGrade == true) { return true; }
             if (level.MAXIMUMAMOUNT >= amount) { return true; }
-            if (level.MAXIMUMAMOUNT == 0 && ActionIsApprovalDecision()) { return true; } //to pass access bnk only tenor setup as amt>0
+            if (level.MAXIMUMAMOUNT == 0 && level.TENOR > 0) { return true; } //to pass access bnk only tenor setup as amt>0 and there is no amt setup only tenor setup
             return false;
         }
 
@@ -1218,7 +1218,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (IsLastLevel(approvalLevels, level))
             //if (IsLastLevel(approvalLevels, level) && (level.CANAPPROVE))
                 //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
-                {
+            {
                 return true;
             }
                 return false;
