@@ -59,13 +59,10 @@
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
-
                 handler.UseDefaultCredentials = true;
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-               // ResponseMessageViewModel res = null;
                 string responseMessage = "";
-                //string responseData = "";
                 getAPIURLSettings("Customer");
 
                 try
@@ -79,7 +76,6 @@
                     client.DefaultRequestHeaders.Authorization = token;
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
 
                     List<CustomerViewModels> customers = new List<CustomerViewModels>();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
@@ -125,7 +121,6 @@
 
                     handler.Dispose();
                     client.Dispose();
-
                     return customers;
                 }
                 catch (APIErrorException ex)
@@ -308,8 +303,8 @@
                 //ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 getAPIURLSettings("CustomerAccountBalance");
-                try
 
+                try
                 {
                     handler.UseDefaultCredentials = true;
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -323,7 +318,6 @@
                     client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
 
-
                     CasaViewModel casaViewModels = new CasaViewModel();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
@@ -331,12 +325,12 @@
 
                     List<CasaViewModel> casa = new List<CasaViewModel>();
                     responseDateTime = DateTime.Now;
+
                     if (response.IsSuccessStatusCode)
                     {
                         var jsonString = await response.Content.ReadAsStringAsync();
                         JObject responseDataJsonString = JObject.Parse(jsonString);
                         var jsonDataString = responseDataJsonString["data"].ToString();
-
                         var objData = JsonConvert.DeserializeObject<List<CasaIntegrationViewModel>>(jsonDataString);
 
                         foreach (var d in objData)
@@ -356,15 +350,14 @@
                             });
                         }
                     }
+
                     handler.Dispose();
                     client.Dispose();
                     responseMessage = await response.Content.ReadAsStringAsync();
-
                     return casa;
                 }
                 catch (APIErrorException ex)
                 {
-                    //throw new APIErrorException("Core Banking API Error - " + ex.Message);
                     throw new APIErrorException("Core Banking API Error - " + response.RequestMessage);
                 }
 
@@ -383,14 +376,19 @@
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    FinTrakBankingContext logContext = new FinTrakBankingContext();
 
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
                     logContext.SaveChanges();
-                    
                 }
             }
 
+            //private string GetLatestEntryFromCustomApiLogs(string customerCode, string apiUrl)
+            //{
+            //    FinTrakBankingContext logContext = new FinTrakBankingContext();
+            //    var result = logContext.TBL_CUSTOM_API_LOGS.Where(O => O.REFERENCENUMBER == customerCode && O.APIURL.Contains(apiUrl)).OrderByDescending(O => O.APILOGID).Select(O => O.RESPONSEMESSAGE).FirstOrDefault();
+            //    return result;
+            //}
 
             public async Task<string> CheckExposePerson(string customerCode)
             {

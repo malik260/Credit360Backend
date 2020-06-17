@@ -62,6 +62,7 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingDocumentsContext documentContext;
         private string _transactionReferenceNo = "";
         private ILoanCovenantRepository loanCovenant;
+        TBL_INTEGRATION_CONTROL globalIntegrationSetting = new TBL_INTEGRATION_CONTROL();
 
         List<string> receiverEmailList = new List<string>();
         AlertsViewModel alert = new AlertsViewModel();
@@ -96,6 +97,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanCovenant = _loanCovenant;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            globalIntegrationSetting = context.TBL_INTEGRATION_CONTROL.FirstOrDefault();
+
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
         }
 
@@ -377,7 +380,7 @@ namespace FintrakBanking.Repositories.Credit
                 //}).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                if (setup.USE_THIRD_PARTY_INTEGRATION && globalIntegrationSetting.USE_THIRPARTY_POSTING)
                 {
                     using (var stagingContext = new FinTrakBankingStagingContext())
                     {
@@ -1323,7 +1326,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         item.date = applicationDate;
 
-                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
+                       // result = financeTransaction.PostDailyLoansInterestAccrual(item);
                     }
                 }
                 if (result)
@@ -2131,7 +2134,7 @@ namespace FintrakBanking.Repositories.Credit
                 //}).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                if (setup.USE_THIRD_PARTY_INTEGRATION && globalIntegrationSetting.USE_THIRPARTY_POSTING)
                 {
                     BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 

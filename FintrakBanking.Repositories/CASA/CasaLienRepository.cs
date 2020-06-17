@@ -28,8 +28,9 @@ namespace FintrakBanking.Repositories.CASA
         private TransactionPosting tran;
         bool USE_TWO_FACTOR_AUTHENTICATION = false;
         bool USE_THIRD_PARTY_INTEGRATION = false;
+        TBL_INTEGRATION_CONTROL globalIntegrationSetting = new TBL_INTEGRATION_CONTROL();
         //private ILoanOperationsRepository creditOperations;
-       
+
         public CasaLienRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
                                             //ILoanOperationsRepository _creditOperations, 
                                             FinTrakBankingContext _context, TransactionPosting tran, ITwoFactorAuthIntegrationService _twoFactorAuth)
@@ -41,6 +42,7 @@ namespace FintrakBanking.Repositories.CASA
             this.twoFactorAuth = _twoFactorAuth;
             //this.creditOperations = _creditOperations;
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            globalIntegrationSetting = context.TBL_INTEGRATION_CONTROL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = setup.USE_THIRD_PARTY_INTEGRATION;
             USE_TWO_FACTOR_AUTHENTICATION = setup.USE_TWO_FACTOR_AUTHENTICATION;
         }
@@ -66,7 +68,7 @@ namespace FintrakBanking.Repositories.CASA
                 }
             }
 
-            if (USE_THIRD_PARTY_INTEGRATION)
+            if (USE_THIRD_PARTY_INTEGRATION && globalIntegrationSetting.USE_THIRDPARTY_LIEN )
             {
 
                 ResponseMessage result = null;
