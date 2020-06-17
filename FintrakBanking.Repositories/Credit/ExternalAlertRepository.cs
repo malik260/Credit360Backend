@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
@@ -1471,67 +1472,23 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetFacilityRestructuredNotification()
+        public IEnumerable<TBL_LOAN_REVIEW_OPERATION> GetFacilityRestructuredNotification()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-             .Select(d => new GlobalExposureViewModel
-             {
-                 customerName = d.CUSTOMERNAME,
-                 accountOfficerName = d.ACCOUNTOFFICERNAME,
-                 accountNumber = d.ACCOUNTNUMBER,
-                 branchName = d.GROUPOBLIGORNAME,
-                 maturityDate = d.MATURITYDATE,
-                 id = d.ID,
-                 referenceNumber = d.REFERENCENUMBER,
-                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                 date = d.DATE,
-                 customerId = d.CUSTOMERID,
-                 groupObligorName = d.GROUPOBLIGORNAME,
-                 alphaCode = d.ALPHACODE,
-                 productCode = d.PRODUCTCODE,
-                 currencyName = d.CURRENCYNAME,
-                 productName = d.PRODUCTNAME,
-                 facilityType = d.ADJFACILITYTYPE,
-                 adjFacilityType = d.ADJFACILITYTYPE,
-                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                 odStatus = d.ODSTATUS,
-                 currencyType = d.CURRENCYTYPE,
-                 cbnSector = d.CBNSECTOR,
-                 cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                 cbnClassification = d.CBNCLASSIFICATION,
-                 pwcClassification = d.PWCCLASSIFICATION,
-                 ifrsClassification = d.IFRSCLASSIFICATION,
-                 tenor = d.TENOR,
-                 location = d.LOCATION,
-                 bookingDate = d.BOOKINGDATE,
-                 valueDate = d.VALUEDATE,
-                 maturityBand = d.MATURITYBAND,
-                 customerType = d.CUSTOMERTYPE,
-                 branchCode = d.BRANCHCODE,
-                 obligorRiskRating = d.OBLIGORRISKRATING,
-                 lastCrDate = d.LASTCRDATE,
-                 productId = d.PRODUCTID,
-                 exposureType = d.EXPOSURETYPE,
-                 exposureTypeCode = d.EXPOSURETYPECODE,
-                 teamCode = d.TEAMCODE,
-                 lastCreditAmount = d.LASTCREDITAMOUNT,
-                 cardLimit = d.CARDLIMIT,
-                 fxrate = d.FXRATE,
-                 interestrate = d.INTERESTRATE,
-                 principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                 loanAmounyLcy = d.LOANAMOUNYLCY,
-                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                 totalExposure = d.TOTALEXPOSURE,
-                 impairmentAmount = d.IMPAIRMENTAMOUNT,
-                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                 amountDue = d.AMOUNTDUE,
-             }).ToList();
+            List<int> operationIds = new List<int> {(int)OperationsEnum.OverdraftTenorExtension,
+                                                    (int)OperationsEnum.TenorChange,
+                                                    (int)OperationsEnum.ContingentLiabilityTenorExtension,
+                                                    (int)OperationsEnum.ContractualInterestRateChange,
+                                                    (int)OperationsEnum.PaymentDateChange,
+                                                    (int)OperationsEnum.PrincipalFrequencyChange,
+                                                    (int)OperationsEnum.InterestandPrincipalFrequencyChange,
+                                                    (int)OperationsEnum.Fee_chargeChange,
+                                                    (int)OperationsEnum.Restructured,
+                                                    (int)OperationsEnum.OverdraftInterestRate,
+                                                    (int)OperationsEnum.OverdraftTopup };
 
-            return data;
+            var data = context.TBL_LOAN_REVIEW_OPERATION.Where(d => operationIds.Contains(d.OPERATIONTYPEID) && d.OPERATIONCOMPLETED == true && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).ToList();
+            var records = data.GroupBy(x => x.LOANID).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.LOANID);
+            return records;
         }
 
         public IEnumerable<GlobalExposureViewModel> GetMccAndPpmcDeliverables()
@@ -1786,68 +1743,214 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetSLAReport()
+        public IEnumerable<LoanApplicationViewModel> GetSLAReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-             .Select(d => new GlobalExposureViewModel
-             {
-                 customerName = d.CUSTOMERNAME,
-                 accountOfficerName = d.ACCOUNTOFFICERNAME,
-                 accountNumber = d.ACCOUNTNUMBER,
-                 branchName = d.GROUPOBLIGORNAME,
-                 maturityDate = d.MATURITYDATE,
-                 id = d.ID,
-                 referenceNumber = d.REFERENCENUMBER,
-                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                 date = d.DATE,
-                 customerId = d.CUSTOMERID,
-                 groupObligorName = d.GROUPOBLIGORNAME,
-                 alphaCode = d.ALPHACODE,
-                 productCode = d.PRODUCTCODE,
-                 currencyName = d.CURRENCYNAME,
-                 productName = d.PRODUCTNAME,
-                 facilityType = d.ADJFACILITYTYPE,
-                 adjFacilityType = d.ADJFACILITYTYPE,
-                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                 odStatus = d.ODSTATUS,
-                 currencyType = d.CURRENCYTYPE,
-                 cbnSector = d.CBNSECTOR,
-                 cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                 cbnClassification = d.CBNCLASSIFICATION,
-                 pwcClassification = d.PWCCLASSIFICATION,
-                 ifrsClassification = d.IFRSCLASSIFICATION,
-                 tenor = d.TENOR,
-                 location = d.LOCATION,
-                 bookingDate = d.BOOKINGDATE,
-                 valueDate = d.VALUEDATE,
-                 maturityBand = d.MATURITYBAND,
-                 customerType = d.CUSTOMERTYPE,
-                 branchCode = d.BRANCHCODE,
-                 obligorRiskRating = d.OBLIGORRISKRATING,
-                 lastCrDate = d.LASTCRDATE,
-                 productId = d.PRODUCTID,
-                 exposureType = d.EXPOSURETYPE,
-                 exposureTypeCode = d.EXPOSURETYPECODE,
-                 teamCode = d.TEAMCODE,
-                 lastCreditAmount = d.LASTCREDITAMOUNT,
-                 cardLimit = d.CARDLIMIT,
-                 fxrate = d.FXRATE,
-                 interestrate = d.INTERESTRATE,
-                 principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                 loanAmounyLcy = d.LOANAMOUNYLCY,
-                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                 totalExposure = d.TOTALEXPOSURE,
-                 impairmentAmount = d.IMPAIRMENTAMOUNT,
-                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                 amountDue = d.AMOUNTDUE,
-             }).ToList();
-
-            return data;
+            return GetPendingLoanApplications();
         }
+        
+        #region sla logic
+        public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications()
+        {
+
+            var operations = context.TBL_LOAN_APPLICATION.Where(x => x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                && x.ISADHOCAPPLICATION != true).Select(x => x.OPERATIONID).ToList();
+
+            IQueryable<LoanApplicationViewModel> applications = null;
+            var query = new List<LoanApplicationViewModel>();
+
+            query = context.TBL_LOAN_APPLICATION.Where(x =>
+                x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                && x.ISADHOCAPPLICATION != true
+            )
+        .OrderByDescending(x => x.LOANAPPLICATIONID)
+        .Join(
+            context.TBL_APPROVAL_TRAIL.Where(x => (operations.Contains(x.OPERATIONID) || operations.Contains(x.DESTINATIONOPERATIONID ?? 0))
+                && x.APPROVALSTATEID != (int)ApprovalState.Ended
+                && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                && x.RESPONSESTAFFID == null
+                && (x.TOSTAFFID == null)
+            ),
+            a => a.LOANAPPLICATIONID,
+            b => b.TARGETID,
+            (a, b) => new { a, b })
+        .Select(x => new LoanApplicationViewModel
+        {
+            loanApplicationId = x.a.LOANAPPLICATIONID,
+            applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+            relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
+            customerId = x.a.CUSTOMERID,
+            branchId = x.a.BRANCHID,
+            currencyId = context.TBL_LOAN_APPLICATION_DETAIL
+                                        .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
+                                        .Select(s => s.CURRENCYID)
+                                        .FirstOrDefault(),
+            productClassId = x.a.PRODUCTCLASSID,
+            productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+
+            customerGroupId = x.a.CUSTOMERGROUPID,
+            loanTypeId = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
+            relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
+            relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
+            applicationDate = x.a.APPLICATIONDATE,
+            systemDateTime = x.a.SYSTEMDATETIME,
+            applicationAmount = x.a.APPLICATIONAMOUNT,
+            facility = x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() > 1 ? "Multilple(" + x.a.TBL_LOAN_APPLICATION_DETAIL.Where(t => t.DELETED == false).Count() + ")" : context.TBL_LOAN_APPLICATION_DETAIL
+                                        .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
+                                        .Select(s => s.TBL_PRODUCT.PRODUCTNAME.Substring(0, 20))
+                                        .FirstOrDefault(),
+            approvedAmount = x.a.APPROVEDAMOUNT,
+            interestRate = x.a.INTERESTRATE,
+            applicationTenor = x.a.APPLICATIONTENOR,
+            lastComment = x.b.COMMENT,
+            currentApprovalStateId = x.b.APPROVALSTATEID,
+            currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
+            currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME,
+            currentApprovalLevelTypeId = x.b.TBL_APPROVAL_LEVEL1.LEVELTYPEID,
+            approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID,
+            toStaffId = x.b.TOSTAFFID,
+            divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
+            divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == x.a.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
+            customerBusinessUnitId = context.TBL_CUSTOMER.Where(s => s.CUSTOMERID == x.a.CUSTOMERID).Select(c => c.BUSINESSUNTID).FirstOrDefault(),
+            timeIn = x.b.SYSTEMARRIVALDATETIME,
+            slaTime = x.b.SLADATETIME,
+
+            loanInformation = x.a.LOANINFORMATION,
+            submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
+            customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
+            isRelatedParty = x.a.ISRELATEDPARTY,
+            isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
+            approvalStatusId = x.b.APPROVALSTATUSID,
+            applicationStatusId = x.a.APPLICATIONSTATUSID,
+            branchName = x.a.TBL_BRANCH.BRANCHNAME,
+            relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
+            relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
+            misCode = x.a.MISCODE,
+            loanTypeName = x.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+            createdBy = x.a.OWNEDBY,
+            loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
+            customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+            customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+            customerTypeId = x.a.LOANAPPLICATIONTYPEID,
+            isInvestmentGrade = x.a.ISINVESTMENTGRADE,
+            loantermSheetId = x.a.LOANTERMSHEETID,
+            loansWithOthers = x.a.LOANSWITHOTHERS,
+            ownershipStructure = x.a.OWNERSHIPSTRUCTURE,
+            requireCollateral = x.a.REQUIRECOLLATERAL,
+            regionId = x.a.CAPREGIONID,
+            collateralDetail = x.a.COLLATERALDETAIL,
+            isadhocapplication = x.a.ISADHOCAPPLICATION,
+            requireCollateralTypeId = x.a.REQUIRECOLLATERALTYPEID,
+            operationId = x.a.OPERATIONID,
+            productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
+            tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
+            countryId = context.TBL_COUNTRY.FirstOrDefault().COUNTRYID,
+            globalsla = context.TBL_LOAN_APPLICATION_DETAIL
+                                            .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
+                                            .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA)
+                                            .FirstOrDefault(),
+            currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
+            dateTimeCreated = x.a.DATETIMECREATED,
+            apiRequestId = x.a.APIREQUESTID
+        }).ToList();
+
+            applications = query.AsQueryable()
+                .Where(x => x.currentApprovalLevelTypeId != 2)
+                .GroupBy(d => d.loanApplicationId)
+                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+            return applications;
+        }
+        public List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps)
+        {
+            foreach (var app in apps)
+            {
+                app.slaGlobalStatus = GetSlaGlobalStatus(app);
+                app.slaInduvidualStatus = GetSlaInduvidualStatus(app);
+            }
+            return apps;
+        }
+        public string GetSlaInduvidualStatus(LoanApplicationViewModel app)
+        {
+            float sla = app.currentApprovalLevelSlaInterval;
+            //int? elapse = (DateTime.Now - timeIn)?.Hours;
+            int? elapse = (int)GetTimeIntervalHours(app.timeIn.Value, DateTime.Now);
+            return SlaStatus(sla, elapse);
+        }
+        public string GetSlaGlobalStatus(LoanApplicationViewModel app)
+        {
+            float sla = app.globalsla;
+            //int? elapse = (DateTime.Now - dateTimeCreated).Hours;
+            int? elapse = (int)GetTimeIntervalHours(app.dateTimeCreated, DateTime.Now);
+            return SlaStatus(sla, elapse);
+        }
+        public string SlaStatus(float sla, int? elapse)
+        {
+            if (sla == 0) return "success";
+            if (elapse == 0 || elapse == null) return "success";
+            float factor = (float)(elapse / sla) * 100;
+            if (factor <= 30) return "success";
+            if (factor <= 70) return "warning";
+            if (factor <= 100) return "danger";
+            return "danger";
+        }
+        public double GetTimeIntervalHours(DateTime startDate, DateTime endDate)
+        {
+            double hours = 0;
+            var second = new TimeSpan(0, 0, 1);
+            var range = GetDateRange(startDate, endDate);
+            var test = range.ToList();
+            range = FilterHolidaysFromDateIntervals(range);
+            var intervals = range.Select(r => new DateTimeAndTimeOfDayViewModel
+            {
+                dateTime = r
+            });
+            var list = intervals.ToList();
+            //dateTimeAndTimeOfDay = list;
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                var elapsed = list[i + 1].dateTime.Subtract(list[i].dateTime);
+                if (elapsed.Days <= 1)
+                {
+                    list[i + 1].timeOfDay = elapsed;
+                }
+                else
+                {
+                    list[i + 1].timeOfDay = list[i + 1].dateTime.TimeOfDay + second;
+                }
+            }
+            hours = list.Sum(l => l.timeOfDay.TotalHours);
+            return hours;
+        }
+        public IEnumerable<DateTime> FilterHolidaysFromDateIntervals(IEnumerable<DateTime> dateTimes)
+        {
+            var list = dateTimes.ToList();
+            var countryId = context.TBL_COUNTRY.FirstOrDefault().COUNTRYID;
+            list = list.FindAll(l => !IsInHolidays(l, countryId));
+            return list;
+        }
+        public IEnumerable<DateTime> GetDateRange(DateTime startDate, DateTime endDate)
+        {
+            if (endDate < startDate)
+                throw new ArgumentException("endDate must be greater than or equal to startDate");
+            yield return startDate;
+
+            while (startDate.Date < endDate.Date && startDate.AddDays(1).Date < endDate.Date)
+            {
+                yield return new DateTime(startDate.AddDays(1).Year, startDate.AddDays(1).Month, startDate.AddDays(1).Day, 23, 59, 59);
+                startDate = startDate.AddDays(1);
+            }
+            yield return endDate;
+        }
+        public bool IsInHolidays(DateTime date, int countryId)
+        {
+            List<TBL_PUBLIC_HOLIDAY> holidays;
+            holidays = context.TBL_PUBLIC_HOLIDAY.ToList();
+            var output = holidays.Any(x => x.DATE == date.Date);
+            return output;
+        }
+        #endregion sla logic
+
 
         public IEnumerable<GlobalExposureViewModel> GetOutstandingCreditDocumentation()
         {
@@ -1975,129 +2078,77 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetPastDueDeferredDocuments()
+        public IEnumerable<ChecklistApprovalViewModel> GetPastDueDeferredDocuments()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-            .Select(d => new GlobalExposureViewModel
-            {
-                customerName = d.CUSTOMERNAME,
-                accountOfficerName = d.ACCOUNTOFFICERNAME,
-                accountNumber = d.ACCOUNTNUMBER,
-                branchName = d.GROUPOBLIGORNAME,
-                maturityDate = d.MATURITYDATE,
-                id = d.ID,
-                referenceNumber = d.REFERENCENUMBER,
-                accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                facilityType = d.ADJFACILITYTYPE,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-            }).ToList();
+            List<int> days = new List<int> { 14, 7, 3, 1 };
+            var dataLOS = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                           join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                           where b.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred
+                           && (days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, b.DEFEREDDATE).Value)
+                           || (DbFunctions.TruncateTime(b.DEFEREDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)))
+                           select new ChecklistApprovalViewModel()
+                           {
+                               customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               customerId = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID : a.TBL_CUSTOMER.CUSTOMERID,
+                               proposedAmount = a.APPROVEDAMOUNT,
+                               approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               deferredDate = b.DEFEREDDATE,
+                               deferralDuration = 1,
+                               cummulativeDays = 1,
+                               condition = b.CONDITION,
+                               loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                               conditionId = b.LOANCONDITIONID,
+                               loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                               applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                               relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
+                               relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
+                               applicationAmount = a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
+                               applicationTenor = a.PROPOSEDTENOR,
+                               applicationDate = a.TBL_LOAN_APPLICATION.APPLICATIONDATE,
+                               isInvestmentGrade = a.TBL_LOAN_APPLICATION.ISINVESTMENTGRADE,
+                               isPoliticallyExposed = a.TBL_LOAN_APPLICATION.ISPOLITICALLYEXPOSED,
+                               isRelatedParty = a.TBL_LOAN_APPLICATION.ISRELATEDPARTY,
+                               approvalStatusId = b.APPROVALSTATUSID,
+                               applicationStatusId = a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                               submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
+                               loanInformation = a.LOANPURPOSE,
+                               isLMS = c.ISLMS == true,
+                               reason = c.DEFERRALREASON,
+                           }).ToList();
 
-            return data;
+            return dataLOS;
         }
-        public IEnumerable<GlobalExposureViewModel> GetExpiredInsurancePolicies()
-        {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-             .Select(d => new GlobalExposureViewModel
-             {
-                 customerName = d.CUSTOMERNAME,
-                 accountOfficerName = d.ACCOUNTOFFICERNAME,
-                 accountNumber = d.ACCOUNTNUMBER,
-                 branchName = d.GROUPOBLIGORNAME,
-                 maturityDate = d.MATURITYDATE,
-                 id = d.ID,
-                 referenceNumber = d.REFERENCENUMBER,
-                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                 date = d.DATE,
-                 customerId = d.CUSTOMERID,
-                 groupObligorName = d.GROUPOBLIGORNAME,
-                 alphaCode = d.ALPHACODE,
-                 productCode = d.PRODUCTCODE,
-                 currencyName = d.CURRENCYNAME,
-                 productName = d.PRODUCTNAME,
-                 facilityType = d.ADJFACILITYTYPE,
-                 adjFacilityType = d.ADJFACILITYTYPE,
-                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                 odStatus = d.ODSTATUS,
-                 currencyType = d.CURRENCYTYPE,
-                 cbnSector = d.CBNSECTOR,
-                 cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                 cbnClassification = d.CBNCLASSIFICATION,
-                 pwcClassification = d.PWCCLASSIFICATION,
-                 ifrsClassification = d.IFRSCLASSIFICATION,
-                 tenor = d.TENOR,
-                 location = d.LOCATION,
-                 bookingDate = d.BOOKINGDATE,
-                 valueDate = d.VALUEDATE,
-                 maturityBand = d.MATURITYBAND,
-                 customerType = d.CUSTOMERTYPE,
-                 branchCode = d.BRANCHCODE,
-                 obligorRiskRating = d.OBLIGORRISKRATING,
-                 lastCrDate = d.LASTCRDATE,
-                 productId = d.PRODUCTID,
-                 exposureType = d.EXPOSURETYPE,
-                 exposureTypeCode = d.EXPOSURETYPECODE,
-                 teamCode = d.TEAMCODE,
-                 lastCreditAmount = d.LASTCREDITAMOUNT,
-                 cardLimit = d.CARDLIMIT,
-                 fxrate = d.FXRATE,
-                 interestrate = d.INTERESTRATE,
-                 principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                 loanAmounyLcy = d.LOANAMOUNYLCY,
-                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                 totalExposure = d.TOTALEXPOSURE,
-                 impairmentAmount = d.IMPAIRMENTAMOUNT,
-                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                 amountDue = d.AMOUNTDUE,
-             }).ToList();
 
-            return data;
+        public IEnumerable<InsurancePolicy> GetExpiredInsurancePolicies()
+        {
+              List<int> days = new List<int> { 30, 25, 14, 7, 3, 1 };
+              var dataLOS = (from i in context.TBL_COLLATERAL_ITEM_POLICY
+                           join b in context.TBL_COLLATERAL_CUSTOMER on i.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                           where i.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                           && (days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, i.ENDDATE).Value)
+                           || (DbFunctions.TruncateTime(i.ENDDATE) < DbFunctions.TruncateTime(DateTime.UtcNow)))
+                           select new InsurancePolicy()
+                           {
+                               referenceNumber = i.POLICYREFERENCENUMBER,
+                               insuranceCompanyId = i.INSURANCECOMPANYID,
+                               insuranceCompany = context.TBL_INSURANCE_COMPANY.Where(o => o.INSURANCECOMPANYID == i.INSURANCECOMPANYID).Select(o => o.COMPANYNAME).FirstOrDefault(),
+                               sumInsured = i.SUMINSURED,
+                               startDate = i.STARTDATE,
+                               expiryDate = i.ENDDATE,
+                               customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == b.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault(),
+                               accountOfficer = context.TBL_STAFF.Where(c => c.CREATEDBY == i.CREATEDBY).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault(),
+                               insuranceTypeId = i.INSURANCETYPEID,
+                               hasExpired = i.HASEXPIRED,
+                               policyId = i.POLICYID,
+                               inSurPremiumAmount = i.PREMIUMAMOUNT,
+                               description = i.DESCRIPTION,
+                               premiumPercent = i.PREMIUMPERCENT,
+                               insuranceType = context.TBL_INSURANCE_TYPE.Where(ins => ins.INSURANCETYPEID == i.INSURANCETYPEID).Select(ins => ins.INSURANCETYPE).FirstOrDefault(),
+                               customerId = (int)i.TBL_COLLATERAL_CUSTOMER.CUSTOMERID,
+                           })?.ToList();
+            return dataLOS;
         }
 
         public IEnumerable<GlobalExposureViewModel> GetAMCONCollectionAndStatusReport()
@@ -4882,7 +4933,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<GlobalExposureViewModel> GetLoanRepaymentReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => d.UNPODAYSOVERDUE > 0)
+            List<int> days = new List<int> { 21, 14, 7, 3, 1 };
+            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value))
              .Select(d => new GlobalExposureViewModel
              {
                  customerName = d.CUSTOMERNAME,
@@ -4900,6 +4952,7 @@ namespace FintrakBanking.Repositories.Credit
                  unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
                  interestReceivableTcy = d.INTERESTRECIEVABLETCY,
                  amountDue = d.AMOUNTDUE,
+                 maturityDate = d.MATURITYDATE,
                  unPoDaysOverdue = d.UNPODAYSOVERDUE,
              }).ToList();
 
@@ -5064,67 +5117,24 @@ namespace FintrakBanking.Repositories.Credit
             return staffList;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetStaffLoanPortfolioReport()
+        public IEnumerable<StaffInfoViewModel> GetStaffLoanPortfolioReport()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-              && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-             .Select(d => new GlobalExposureViewModel
-             {
-                 customerName = d.CUSTOMERNAME,
-                 accountOfficerName = d.ACCOUNTOFFICERNAME,
-                 accountNumber = d.ACCOUNTNUMBER,
-                 branchName = d.GROUPOBLIGORNAME,
-                 maturityDate = d.MATURITYDATE,
-                 id = d.ID,
-                 referenceNumber = d.REFERENCENUMBER,
-                 accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                 date = d.DATE,
-                 customerId = d.CUSTOMERID,
-                 groupObligorName = d.GROUPOBLIGORNAME,
-                 alphaCode = d.ALPHACODE,
-                 productCode = d.PRODUCTCODE,
-                 currencyName = d.CURRENCYNAME,
-                 productName = d.PRODUCTNAME,
-                 facilityType = d.ADJFACILITYTYPE,
-                 adjFacilityType = d.ADJFACILITYTYPE,
-                 adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                 odStatus = d.ODSTATUS,
-                 currencyType = d.CURRENCYTYPE,
-                 cbnSector = d.CBNSECTOR,
-                 cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                 cbnClassification = d.CBNCLASSIFICATION,
-                 pwcClassification = d.PWCCLASSIFICATION,
-                 ifrsClassification = d.IFRSCLASSIFICATION,
-                 tenor = d.TENOR,
-                 location = d.LOCATION,
-                 bookingDate = d.BOOKINGDATE,
-                 valueDate = d.VALUEDATE,
-                 maturityBand = d.MATURITYBAND,
-                 customerType = d.CUSTOMERTYPE,
-                 branchCode = d.BRANCHCODE,
-                 obligorRiskRating = d.OBLIGORRISKRATING,
-                 lastCrDate = d.LASTCRDATE,
-                 productId = d.PRODUCTID,
-                 exposureType = d.EXPOSURETYPE,
-                 exposureTypeCode = d.EXPOSURETYPECODE,
-                 teamCode = d.TEAMCODE,
-                 lastCreditAmount = d.LASTCREDITAMOUNT,
-                 cardLimit = d.CARDLIMIT,
-                 fxrate = d.FXRATE,
-                 interestrate = d.INTERESTRATE,
-                 principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                 principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                 loanAmounyLcy = d.LOANAMOUNYLCY,
-                 loanAmounyTcy = d.LOANAMOUNYTCY,
-                 totalExposure = d.TOTALEXPOSURE,
-                 impairmentAmount = d.IMPAIRMENTAMOUNT,
-                 unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                 unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                 interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                 amountDue = d.AMOUNTDUE,
-             }).ToList();
+            List<int> days = new List<int> { 21, 14, 7, 3, 1 };
+            var staffLoanPortfolio = context.TBL_GLOBAL_EXPOSURE.Where(d =>
+            days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value))
+            .Select(d => d.ACCOUNTOFFICERCODE).ToList();
 
-            return data;
+            var staffList = (from s in context.TBL_STAFF
+                             where staffLoanPortfolio.Contains(s.MISCODE)
+                             select new StaffInfoViewModel
+                             {
+                                 staffId = s.STAFFID,
+                                 supervisorStaffId = s.SUPERVISOR_STAFFID,
+                                 Email = s.EMAIL,
+                                 misCode = s.MISCODE,
+                             }).ToList();
+
+            return staffList;
         }
 
         public IEnumerable<GlobalExposureViewModel> GetExStaffLoanPortfolioReport()
