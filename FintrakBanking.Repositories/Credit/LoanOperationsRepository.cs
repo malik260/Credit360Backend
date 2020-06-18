@@ -19491,7 +19491,7 @@ namespace FintrakBanking.Repositories.Credit
                 int data = 0;
 
                 var dynamicMessage = string.Empty;
-                var staffEmail = context.TBL_STAFF.Find(entity.staffId);
+                var staffEmail = context.TBL_STAFF.Find(reviewRecord.CREATEDBY);
                 var lmsApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(reviewRecord.LOANREVIEWAPPLICATIONID);
                 var lmsApplication = context.TBL_LMSR_APPLICATION.Find(lmsApplicationDetail.LOANAPPLICATIONID);
                 var customer = context.TBL_CUSTOMER.Find(lmsApplicationDetail.CUSTOMERID);
