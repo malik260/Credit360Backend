@@ -45,7 +45,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime VALUEDATE { get; set; }
 
         //[Column(TypeName = "date")]
-        public DateTime POSTEDDATE { get; set; }
+        public DateTime? POSTEDDATE { get; set; }
 
         public int COMPANYID { get; set; }
 
@@ -57,7 +57,7 @@ namespace FintrakBanking.Entities.Models
 
         public double CURRENCYRATE { get; set; }
 
-        public DateTime POSTEDDATETIME { get; set; }
+        public DateTime? POSTEDDATETIME { get; set; }
 
         public bool ISAPPROVED { get; set; }
 
@@ -66,9 +66,9 @@ namespace FintrakBanking.Entities.Models
         public int APPROVEDBY { get; set; }
 
         //[Column(TypeName = "date")]
-        public DateTime APPROVEDDATE { get; set; }
+        public DateTime? APPROVEDDATE { get; set; }
 
-        public DateTime APPROVEDDATETIME { get; set; }
+        public DateTime? APPROVEDDATETIME { get; set; }
 
         public short SOURCEAPPLICATIONID { get; set; }
 

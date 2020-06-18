@@ -367,8 +367,9 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
-            var result = context.SaveChanges() > 0;
-
+            
+             var result = context.SaveChanges() > 0;
+            
             return referenceCode;
         }
 

@@ -55,15 +55,15 @@ namespace FintrakBanking.ViewModels.Finance
         public int operationId { get; set; }
         public string description { get; set; }
         public DateTime valueDate { get; set; }
-        public DateTime transactionDate { get; set; }
+        public DateTime? transactionDate { get; set; }
         public short currencyId { get; set; }
         public double currencyRate { get; set; }
-        public DateTime postedDateTime { get; set; }
+        public DateTime? postedDateTime { get; set; }
         public bool isApproved { get; set; }
         public int postedBy { get; set; }
         public int approvedBy { get; set; }
-        public DateTime approvedDate { get; set; }
-        public DateTime approvedDateTime { get; set; }
+        public DateTime? approvedDate { get; set; }
+        public DateTime? approvedDateTime { get; set; }
         public short sourceApplicationId { get; set; }
         public int transactionId { get; set; }
         public int glAccountId { get; set; }
