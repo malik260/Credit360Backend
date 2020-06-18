@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
 
         public int OPERATIONID { get; set; }
 
-        [Required]
+        
         //[StringLength(50)]
         public string SOURCEREFERENCENUMBER { get; set; }
 
@@ -36,17 +36,14 @@ namespace FintrakBanking.Entities.Models
 
         //[Column(TypeName = "money")]
         public decimal CREDITAMOUNT { get; set; }
-
-        [Required]
+        
         //[StringLength(500)]
         public string DESCRIPTION { get; set; }
-
-        //[Column(TypeName = "date")]
         public DateTime VALUEDATE { get; set; }
-
-        //[Column(TypeName = "date")]
         public DateTime POSTEDDATE { get; set; }
-
+        public DateTime POSTEDDATETIME { get; set; }
+        public DateTime APPROVEDDATE { get; set; }
+        public DateTime APPROVEDDATETIME { get; set; }
         public int COMPANYID { get; set; }
 
         public short SOURCEBRANCHID { get; set; }
@@ -57,8 +54,6 @@ namespace FintrakBanking.Entities.Models
 
         public double CURRENCYRATE { get; set; }
 
-        public DateTime POSTEDDATETIME { get; set; }
-
         public bool ISAPPROVED { get; set; }
 
         public int POSTEDBY { get; set; }
@@ -66,9 +61,7 @@ namespace FintrakBanking.Entities.Models
         public int APPROVEDBY { get; set; }
 
         //[Column(TypeName = "date")]
-        public DateTime APPROVEDDATE { get; set; }
-
-        public DateTime APPROVEDDATETIME { get; set; }
+        
 
         public short SOURCEAPPLICATIONID { get; set; }
 

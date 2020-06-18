@@ -27,13 +27,13 @@ namespace FintrakBanking.Finance.ViewModels
         public string accountName { get; set; }
         public string description { get; set; }
         public DateTime valueDate { get; set; }
-        public DateTime postedDate { get; set; }
-        public DateTime postedTime { get; set; }
+        public DateTime? postedDate { get; set; }
+        public DateTime? postedTime { get; set; }
         public string postedBy { get; set; }
         public string approvedBy { get; set; }
         public string postCurrency { get; set; }
         public double currencyRate { get; set; }
-        public DateTime approvedDate { get; set; }
+        public DateTime? approvedDate { get; set; }
         public string baseCurrency { get; set; }
         public string companyName { get; set; }
         public string logoPath { get; set; }
