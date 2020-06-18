@@ -670,7 +670,7 @@ namespace FintrakBanking.Repositories.Finance
         {
             if (currencyId == 0)
             {
-                return null;
+                return new CurrencyExchangeRateViewModel();
             }
             var systemDate = generalSetup.GetApplicationDate();
             var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
@@ -678,7 +678,7 @@ namespace FintrakBanking.Repositories.Finance
 
             if (USE_THIRD_PARTY_INTEGRATION)
             {
-
+                
                 if (currencyId == baseCurrency)
                 {
                     return new CurrencyExchangeRateViewModel { baseCurrencyId = baseCurrency, currencyId = currencyId, buyingRate = 1, sellingRate = 1, date = date, isBaseCurrency = true };
@@ -688,15 +688,24 @@ namespace FintrakBanking.Repositories.Finance
                     var toCurrencyCode = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == baseCurrency).CURRENCYCODE;
                     var fromCurrencyCode = this.context.TBL_CURRENCY.Where(x => x.CURRENCYID == currencyId).Select(f => f.CURRENCYCODE).FirstOrDefault();
                     var rateCode = "TT";
-
-                    
-                    var rate = integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
-                    if (rate.sellingRate <= 0)
+                    var today = DateTime.Now.Date;
+                    var exRate = GetExchangeRateStaging(date, currencyId, baseCurrency, rateCode);
+                    if (today > exRate.date.Date)
                     {
-                        return GetExchangeRateStaging(date, currencyId, baseCurrency, rateCode);
+                        var rate = integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
+                        if (rate.sellingRate <= 0)
+                        {
+                            return exRate;
+                        }
+                        UpdateExchangeRate(rate, currencyId, rateCode, baseCurrency);
+                        return rate;
                     }
-                    UpdateExchangeRate(rate, currencyId, rateCode, baseCurrency);
-                    return rate;
+                    else
+                    {
+                        return exRate;
+                    }
+
+
                 }
 
                 //return data;
@@ -738,6 +747,7 @@ namespace FintrakBanking.Repositories.Finance
 
         private CurrencyExchangeRateViewModel GetExchangeRateStaging(DateTime date, short currencyId, short baseCurrency, string rateCode)
         {
+            var currency = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == currencyId);
             var exchangeRateCode = context.TBL_CURRENCY_RATECODE.FirstOrDefault(r => r.RATECODE.Trim() == rateCode);
             //var systemDate = generalSetup.GetApplicationDate();
             if (currencyId == baseCurrency)
@@ -753,7 +763,14 @@ namespace FintrakBanking.Repositories.Finance
                                 select x).OrderByDescending(x => x.CURRENCYRATEID).FirstOrDefault();
 
                 if (rateInfo == null)
-                    throw new ConditionNotMetException($"Exchange rate for {generalSetup.GetApplicationDate()} is not defined. Define the exchange rate and try again");
+                {
+                    if (currency == null)
+                    {
+                        throw new ConditionNotMetException($"Currency is not defined. Define the Currency First and try again");
+                    }
+                    throw new ConditionNotMetException($"Exchange rate for {currency.CURRENCYNAME} is not defined. Define the exchange rate and try again");
+                    //throw new ConditionNotMetException($"Exchange rate for {generalSetup.GetApplicationDate()} is not defined. Define the exchange rate and try again");
+                }
 
                 return new CurrencyExchangeRateViewModel
                 {
