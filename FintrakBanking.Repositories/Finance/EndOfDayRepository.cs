@@ -16,6 +16,7 @@ using System.Transactions;
 using System.Data.Entity;
 using FintrakBanking.Interfaces.ThridPartyIntegration;
 using FintrakBanking.Common;
+using System.Diagnostics;
 
 namespace FintrakBanking.Repositories.Finance
 {
@@ -957,6 +958,12 @@ namespace FintrakBanking.Repositories.Finance
                         catch (Exception ex)
                         {
                             //transactionScope.Dispose();
+                            // Get stack trace for the exception with source file information
+                            var st = new StackTrace(ex, true);
+                            // Get the top stack frame
+                            var frame = st.GetFrame(0);
+                            // Get the line number from the stack frame
+                            var line = frame.GetFileLineNumber();
 
                             var innerException = "";
                             if (ex.InnerException != null)
@@ -1112,11 +1119,17 @@ namespace FintrakBanking.Repositories.Finance
                         catch (Exception ex)
                         {
                             //transactionScope.Dispose();
+                            // Get stack trace for the exception with source file information
+                            var st = new StackTrace(ex, true);
+                            // Get the top stack frame
+                            var frame = st.GetFrame(0);
+                            // Get the line number from the stack frame
+                            var line = frame.GetFileLineNumber();
 
                             var innerException = "";
                             if (ex.InnerException != null)
                             {
-                                innerException = ex.InnerException.InnerException.Message;
+                                innerException = ex.InnerException?.InnerException?.Message;
                             }
 
                             //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
@@ -1151,7 +1164,15 @@ namespace FintrakBanking.Repositories.Finance
 
                         try
                         {
+                            List<string> affectedReferences = new List<string> {"001 - EBFC - 0000034", "063 - EBFC - 000002", "063 - EBFC - 000003",
+                                "063 - EBFC - 000004", "107 - MPTA - 0000011", "834 - MPTA - 000001", "607 - WPTL - 000001", "536 - EBGB - 000001",
+                               "066 - MPTL - 000004", "066 - MPTL - 000003", "063 - EBFC - 000005" };
+                            if (affectedReferences.Contains(loanOperation.GetTransactionReferenceNo()))
+                            {
+                                int vet = 0;
+                                var b = vet;
 
+                            }
                             loanOperation.ProcessLoanRepaymentPostingPastDue(date, companyId, staffId);
 
                             //transactionScope.Complete();

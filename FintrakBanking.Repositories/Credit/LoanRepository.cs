@@ -2993,7 +2993,7 @@ namespace FintrakBanking.Repositories.Credit
                         && s.ISUSED == true
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
 
-                        orderby s.LOAN_BOOKING_REQUESTID descending
+                        orderby s.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel
                         {
                             bookingAmountRequested = s.AMOUNT_REQUESTED,
@@ -3089,7 +3089,7 @@ namespace FintrakBanking.Repositories.Credit
                             crmsCode = s.CRMSCODE,
                         }).ToList();
 
-            var books = data.Where(d => d.loanBookingRequestId == 1380).ToList();
+            //var books = data.Where(d => d.loanBookingRequestId == 1380).ToList();
 
 
             foreach (var item in data)
@@ -4587,8 +4587,12 @@ namespace FintrakBanking.Repositories.Credit
                             if (CustomerIsDirector(appDetail.CUSTOMERID))
                             {
                                 var alertDetail = context.TBL_ALERT_TITLE.Where(x=>x.BINDINGMETHOD == "GetEnhancedDisbursementToDirectorsNotification").FirstOrDefault();
-                                alert.receiverEmailList.Add(alertDetail.DEFAULTEMAIL);
-                                LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetEnhancedDisbursementToDirectorsNotification");
+                                var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE)+";"+alertDetail.DEFAULTEMAIL + GetAllCreditPortfolioStaffEmails();
+                                alert.receiverEmailList.Add(emailList);
+                                var alertTemplate = alertDetail.TEMPLATE;
+                                var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
+                                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                                LogEmailAlert(alertTemplate, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetEnhancedDisbursementToDirectorsNotification");
                             }
 
                             return 2;
@@ -4604,6 +4608,54 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        private string GetBusinessUsersEmailsToGroupHead(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
+        public string GetAllCreditPortfolioStaffEmails()
+        {
+            var list = "";
+            var role = context.TBL_STAFF_ROLE.Where(r => r.STAFFROLECODE == "CP").FirstOrDefault();
+            var roleEmail = context.TBL_STAFF.Where(s => s.STAFFROLEID == role.STAFFROLEID).ToList();
+
+            foreach (var t in roleEmail)
+            {
+                list = list + ";" + t.EMAIL;
+            }
+            return list;
+        }
         private bool CustomerIsDirector(int? customerId)
         {
             if (customerId == null || customerId == 0)
@@ -13876,6 +13928,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (casaData.Count > 0)
                 {
                     customerSearchAccountNumber = casaData.FirstOrDefault()?.productAccountNumber;
+                    if (casaData.Count > 0 && customer != null) { SaveCustomerAccounts(customer.CUSTOMERID, casaData); }
                 }
 
                 if (casaData.Count <= 0)
@@ -13944,7 +13997,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == localGlobalReference.ALPHACODE).FirstOrDefault();
 
-            var sector = context.TBL_SECTOR.Where(x => x.NAME.ToLower() == localGlobalReference.CBNSECTOR.ToLower()).FirstOrDefault();
+            var sector = context.TBL_SECTOR.Where(x => x.CODE == localGlobalReference.CBNSECTORID).FirstOrDefault();
 
             short loanPerformanceStatus = 0;
             if(localGlobalReference.CBNCLASSIFICATION.ToUpper() == "PERFORMING") loanPerformanceStatus = (short)LoanPrudentialStatusEnum.Performing;
@@ -13969,7 +14022,7 @@ namespace FintrakBanking.Repositories.Credit
                 //SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
 
-                SUBSECTORID = sector?.TBL_SUB_SECTOR.FirstOrDefault()?.SUBSECTORID ?? 1,
+                SUBSECTORID = sector?.TBL_SUB_SECTOR.FirstOrDefault()?.SUBSECTORID ?? context.TBL_SUB_SECTOR.FirstOrDefault().SUBSECTORID,
                 CURRENCYID = (short)currency.CURRENCYID,
                 //EXCHANGERATE = currentExchangeRate,
 
@@ -14051,10 +14104,7 @@ namespace FintrakBanking.Repositories.Credit
             ////end of Audit section -------------------------------
 
             context.TBL_LOAN_EXTERNAL.Add(data);
-
             return context.SaveChanges() > 0;
-
-          
         }
 
         private void SaveCustomerAccounts(int customerId, List<CasaViewModel> casaDataList)

@@ -4890,6 +4890,7 @@ namespace FintrakBanking.Repositories.Credit
                                   toStaffId = a.TOSTAFFID,
                                   fromApprovalLevelId = a.FROMAPPROVALLEVELID,
                                   toApprovalLevelId = a.TOAPPROVALLEVELID,
+                                  currentApprovalLevelId = a.TOAPPROVALLEVELID,
                                   requestStaffId = a.REQUESTSTAFFID,
                                   isSkipAppraisalEnabled = jumpsToDrawDown != null ? jumpsToDrawDown.ISSKIPPROCESSENABLED : false,
                               })
@@ -4943,6 +4944,7 @@ namespace FintrakBanking.Repositories.Credit
                                   toStaffId = current.TOSTAFFID,
                                   fromApprovalLevelId = current.FROMAPPROVALLEVELID,
                                   toApprovalLevelId = current.TOAPPROVALLEVELID,
+                                  currentApprovalLevelId = current.TOAPPROVALLEVELID,
                                   requestStaffId = current.REQUESTSTAFFID,
                                   isSkipAppraisalEnabled = jumpsToDrawDown != null ? jumpsToDrawDown.ISSKIPPROCESSENABLED : false,
                                   comments = (from a in context.TBL_APPROVAL_TRAIL
