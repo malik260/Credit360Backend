@@ -32,6 +32,7 @@ namespace FintrakBanking.Repositories.Finance
         private ITwoFactorAuthIntegrationService twoFactoeAuth;
         bool USE_THIRD_PARTY_INTEGRATION;
         bool USE_TWO_FACTOR_AUTHENTICATION;
+        TBL_INTEGRATION_CONTROL globalIntegrationSetting = new TBL_INTEGRATION_CONTROL();
         public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, IIntegrationWithFinacle _integration,
                                             //ILoanOperationsRepository _creditOperations, 
                                             ITwoFactorAuthIntegrationService _twoFactoeAuth,
@@ -44,6 +45,7 @@ namespace FintrakBanking.Repositories.Finance
             this.integration = _integration;
             this.twoFactoeAuth = _twoFactoeAuth;
             //this.creditOperations = _creditOperations;
+            globalIntegrationSetting = context.TBL_INTEGRATION_CONTROL.FirstOrDefault();
             var global = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (global != null)
             {
@@ -344,7 +346,7 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             string referenceCode = batchCode;
-            if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
+            if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false && globalIntegrationSetting.USE_THIRPARTY_POSTING)
             {
                 PostingResult response;
                 response = integration.PostTransactions(inputTransactions);
