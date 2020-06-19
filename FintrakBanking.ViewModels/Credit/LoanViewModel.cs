@@ -333,8 +333,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal debitAmount { get; set; }
         public string description { get; set; }
         public DateTime valueDate { get; set; }
-        public DateTime postedDate { get; set; }
-        public DateTime postedTime { get; set; }
+        public DateTime? postedDate { get; set; }
+        public DateTime? postedTime { get; set; }
         public double currencyRate { get; set; }
         public string postCurrency { get; set; }
         public string sourceReferenceNumber { get; set; }

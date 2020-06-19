@@ -345,28 +345,25 @@ namespace FintrakBanking.Repositories.Credit
         public camsolBulkFeedbackViewModel UploadCamsolData(CamsolDocumentViewModel model, byte[] file)
         {
             var camsolInfo = new List<LoanCAMSOLViewModel>();
-
             var failedCamsolInfo = new List<LoanCAMSOLViewModel>();
-
             var camsolBulkFeedbackViewModel = new camsolBulkFeedbackViewModel();
 
             // Loads a spreadsheet from a file with the specified path
             //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
             SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
-
             MemoryStream ms = new MemoryStream(file);
-
             ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
 
             //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
             ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
-
             CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+
             for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
             {
                 var rowSuccess = true;
                 int excelRowPosition = 1;
                 LoanCAMSOLViewModel camsolRowData = new LoanCAMSOLViewModel();
+
                 for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
                 {
                     ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
@@ -380,7 +377,9 @@ namespace FintrakBanking.Repositories.Credit
                     switch (cellColumn)
                     {
                         case "A":
+                            camsolRowData.date = DateTime.Now;
                             camsolRowData.customercode = cell.Value.ToString();
+
                             if (camsolRowData.customercode == null)
                             {
                                 rowSuccess = false;
@@ -436,24 +435,24 @@ namespace FintrakBanking.Repositories.Credit
                             var remark = "";
                             if (cell.Value != null)
                             {
-                                remark = cell.Value.ToString();
+                                camsolRowData.remark = cell.Value.ToString();
                             }
                             else
                             {
                                 camsolRowData.remark = remark;
                             }
-
-
                             break;
                         case "I":
-                            var camsoltypeid = context.TBL_LOAN_CAMSOL_TYPE.Find((int)cell.Value);
-                            if (camsoltypeid == null)
+                            var camsolType = context.TBL_LOAN_CAMSOL_TYPE.Find((int) cell.Value);
+
+                            if (camsolType == null)
                             {
                                 rowSuccess = false;
                                 camsolRowData.message = camsolRowData.message + $"Camsol Type Id Doesnt Exist in the System";
                             }
                             else
                             {
+                                camsolRowData.camsolType = camsolType.CAMSOLTYPENAME;
                                 camsolRowData.camsoltypeid = (int)cell.Value;
                             }
                             break;
@@ -462,12 +461,10 @@ namespace FintrakBanking.Repositories.Credit
                             if (cantakeloan == "1")
                             {
                                 camsolRowData.cantakeloan = true;
-
                             }
                             else
                             {
                                 camsolRowData.cantakeloan = false;
-
                             }
 
                             break;
@@ -503,6 +500,7 @@ namespace FintrakBanking.Repositories.Credit
                     camsolBulkFeedbackViewModel.discardedRows = failedCamsolInfo;
 
                     var response = AddSimpleTempCamsol(camsolInfoRow);
+
                     if (!response)
                     {
                         camsolBulkFeedbackViewModel.discardedRows.Add(camsolInfoRow);
@@ -561,7 +559,6 @@ namespace FintrakBanking.Repositories.Credit
 
             auditTrail.AddAuditTrail(audit);
             context.TBL_TEMP_LOAN_CAMSOL.Add(camsol);
-
             var output = context.SaveChanges() > 0;
 
             workflow.StaffId = camsolModel.createdBy;
@@ -575,7 +572,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
 
             context.SaveChanges();
-
             return output;
         }
         public string goForApproval(LoanCAMSOLViewModel data)

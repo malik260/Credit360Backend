@@ -231,8 +231,6 @@ namespace FintrakBanking.Repositories.Finance
                 trans.APPROVEDDATETIME = item.approvedDateTime;
                 trans.SOURCEAPPLICATIONID = item.sourceApplicationId;
                 trans.COMPANYID = item.companyId;
-
-
                 trans.GLACCOUNTID = item.glAccountId;
                 trans.SOURCEREFERENCENUMBER = item.sourceReferenceNumber;
                 trans.CASAACCOUNTID = item.casaAccountId;
@@ -369,8 +367,9 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
-            var result = context.SaveChanges() > 0;
-
+            
+             var result = context.SaveChanges() > 0;
+            
             return referenceCode;
         }
 
@@ -406,19 +405,17 @@ namespace FintrakBanking.Repositories.Finance
                 trans.OPERATIONID = (int)item.operationId;
                 trans.DESCRIPTION = item.description;
                 trans.VALUEDATE = item.valueDate;
-                trans.POSTEDDATE = item.transactionDate;
+                trans.POSTEDDATE = DateTime.Now;
                 trans.CURRENCYID = item.currencyId;
                 trans.CURRENCYRATE = item.currencyRate;
                 trans.POSTEDDATETIME = DateTime.Now;
                 trans.ISAPPROVED = item.isApproved;
                 trans.POSTEDBY = item.postedBy;
                 trans.APPROVEDBY = item.approvedBy;
-                trans.APPROVEDDATE = item.approvedDate;
+                trans.APPROVEDDATE = item.approvedDateTime;
                 trans.APPROVEDDATETIME = item.approvedDateTime;
                 trans.SOURCEAPPLICATIONID = item.sourceApplicationId;
                 trans.COMPANYID = item.companyId;
-
-
                 trans.GLACCOUNTID = item.glAccountId;
                 trans.SOURCEREFERENCENUMBER = item.sourceReferenceNumber;
                 trans.CASAACCOUNTID = item.casaAccountId;
@@ -427,7 +424,6 @@ namespace FintrakBanking.Repositories.Finance
                 trans.SOURCEBRANCHID = item.sourceBranchId;
                 trans.DESTINATIONBRANCHID = item.destinationBranchId;
                 trans.BATCHCODE2 = item.batchId;
-
                 transactions.Add(trans);
 
             }
@@ -4062,8 +4058,6 @@ namespace FintrakBanking.Repositories.Finance
                 trans.APPROVEDDATETIME = item.approvedDateTime;
                 trans.SOURCEAPPLICATIONID = item.sourceApplicationId;
                 trans.COMPANYID = item.companyId;
-
-
                 trans.GLACCOUNTID = item.glAccountId;
                 trans.SOURCEREFERENCENUMBER = item.sourceReferenceNumber;
                 trans.CASAACCOUNTID = item.casaAccountId;

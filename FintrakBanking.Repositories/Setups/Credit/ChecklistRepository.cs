@@ -18,6 +18,8 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common;
 using System.ServiceModel;
 using System.Data.Entity;
+using FintrakBanking.ViewModels.Setups.General;
+using System.Configuration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -1645,7 +1647,125 @@ namespace FintrakBanking.Repositories.Credit
                           && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null //&& c.ISEXTERNAL == true 
                           select c).ToList();
             var output = condition.Count == status.Count;
+
+            if (output == false)
+            {
+                List<string> receiverEmailList = new List<string>();
+                AlertsViewModel alert = new AlertsViewModel();
+                var loan = context.TBL_LOAN_APPLICATION.Find(applicationId);
+                var staffEmail = context.TBL_STAFF.Find(loan.CREATEDBY);
+                var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetCreditFileChecklistReminder").FirstOrDefault();
+                var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL + GetAllCreditPortfolioStaffEmails();
+                alert.receiverEmailList.Add(emailList);
+                var alertTemplate = alertDetail.TEMPLATE;
+                var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
+                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
+                LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
+
+            }
             return output;
+        }
+
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
+        {
+            try
+            {
+                string recipient = string.Join("", recipients.ToArray());
+                string messageSubject = alertSubject + " ALERT";
+                string messageContent = messageBody;
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = messageContent,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = referenceCode,
+                    targetId = targetId,
+                    operationMethod = operationMehtod,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                new SecureException(ex.ToString());
+            }
+        }
+
+        private void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+            context.SaveChanges();
+
+        }
+        private string GetBusinessUsersEmailsToGroupHead(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
+        public string GetAllCreditPortfolioStaffEmails()
+        {
+            var list = "";
+            var role = context.TBL_STAFF_ROLE.Where(r => r.STAFFROLECODE == "CP").FirstOrDefault();
+            var roleEmail = context.TBL_STAFF.Where(s => s.STAFFROLEID == role.STAFFROLEID).ToList();
+
+            foreach (var t in roleEmail)
+            {
+                list = list + ";" + t.EMAIL;
+            }
+            return list;
         }
         public bool DeleteLoanConditionPrecedenceStatus(int conditionId, bool isLMSChecklist, UserInfo user)
         {
