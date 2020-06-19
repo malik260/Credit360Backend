@@ -1038,7 +1038,7 @@ namespace FintrakBanking.Repositories.credit
         }
         public bool AddPsrComment(PsrCommentViewModel model)
         {
-            var validate = context.TBL_PSR_COMMENT.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p => p.PROJECTSITEREPORTID).ToList();
+            var validate = context.TBL_PSR_COMMENT.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId && p.DELETED == false).Select(p => p.PROJECTSITEREPORTID).ToList();
             if (validate.Any())
             {
                 throw new SecureException("Comment has already been captured");
