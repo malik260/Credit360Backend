@@ -177,7 +177,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                // && x.RESPONSESTAFFID != null
                                 && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
-                            ).ToList();
+                            ).OrderByDescending(l => l.APPROVALTRAILID).ToList();
 
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
             SaveFlowLog("Initiation");

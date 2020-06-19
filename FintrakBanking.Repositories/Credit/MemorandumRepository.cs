@@ -1478,7 +1478,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             var appraisalOperation = context.TBL_LOAN_APPLICATION.Find(loanApplicationId.LOANAPPLICATIONID).OPERATIONID;
 
-            var isInitialize = InitializeDrawdownMemoProperties(loanApplicationId.LOANAPPLICATIONDETAILID, appraisalOperation);
+            var isInitialize = InitializeDrawdownMemoProperties(loanApplicationId.LOANAPPLICATIONDETAILID, appraisalOperation, targetId);
             
             var result = String.Empty;
             result = result + $@"
