@@ -1807,7 +1807,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lien-document-download/{lienRemovalId}")]
         public HttpResponseMessage GetLienReovalLetter(int lienRemovalId)
         {
-            CollateralLiquidationRecoveryViewModel data = repo.GetLiquidationReceipt(lienRemovalId);
+            RemoveLienViewModel data = repo.GetLienRemovalLetter(lienRemovalId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
