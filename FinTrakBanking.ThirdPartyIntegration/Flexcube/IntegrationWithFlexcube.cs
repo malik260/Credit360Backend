@@ -1174,7 +1174,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             var currency = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == currencyId);
 
-            var accountInfo = account.ACCOUNTCODE + " - " + account.ACCOUNTNAME + " for currency " + currency.CURRENCYCODE;
+            var accountInfo = account?.ACCOUNTCODE + " - " + account?.ACCOUNTNAME + " for currency " + currency?.CURRENCYCODE;
 
             var nonBranchSpecificAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
                                             join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE

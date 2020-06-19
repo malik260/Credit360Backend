@@ -59,6 +59,7 @@ namespace FintrakBanking.ViewModels.Finance
         public short currencyId { get; set; }
         public double currencyRate { get; set; }
         public DateTime postedDateTime { get; set; }
+        public DateTime postedDate { get; set; }
         public bool isApproved { get; set; }
         public int postedBy { get; set; }
         public int approvedBy { get; set; }
