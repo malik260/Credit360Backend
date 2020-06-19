@@ -527,7 +527,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             foreach (var item in model)
             {
-               if(model.IndexOf(item) >= 540)
+               if(model.IndexOf(item) >= 574)
                 {
                     var b = model.IndexOf(item);
                 }
@@ -559,7 +559,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                         var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
 
                         var chardedFeeDetails = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == item.chargedFeeId && x.DETAILTYPEID == (short)ChargeFeeDetailTypeEnum.Primary && x.REQUIREAMORTISATION == true).FirstOrDefault();
-
                         count++;
 
                         addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
@@ -573,52 +572,67 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                         addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
                         addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
 
+                        if (chardedFeeDetails != null)
+                        {
+                            //addStaging.CREDITACCOUNT = context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                            //addStaging.DEBITACCOUNT =  context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
 
-                        //addStaging.CREDITACCOUNT = context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        //addStaging.DEBITACCOUNT =  context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                            var glAccountId2 = chardedFeeDetails?.GLACCOUNTID2 ?? 0;
+                            var glAccountId1 = chardedFeeDetails?.GLACCOUNTID1 ?? 0;
 
-                        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID2.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID1.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-
-
-                        addStaging.DESCRIPTION = "Fee Daily Accrual Posting";
-                        addStaging.DESTINATIONBRANCHID = item.branchId;
-                        addStaging.ISPOSTED = false;
-                        addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
-                        addStaging.POSTEDBY = "SYSTEM";
-                        addStaging.POSTEDDATE = DateTime.Now.Date;
-                        addStaging.SOURCEBRANCHID = item.branchId;
-                        addStaging.SOURCEREFERENCENUMBER = item.referenceNumber;
-                        addStaging.VALUEDATE = item.date;
-                        addStaging.TRANSACTIONTYPE = "BP";
-                        addStaging.BANKID = "01";
-                        addStaging.PRODUCTID = product.PRODUCTID;
-                        addStaging.CURRENCYID = item.currencyId;
+                            addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(glAccountId2, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                            addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(glAccountId2, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
 
 
-                        //addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
-                        //addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
-
-                        addStaging.CREDITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID2.Value;
-                        addStaging.DEBITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID1.Value;
-
-
-                        addStaging.CREDITCASAACCOUNTID = null;
-                        addStaging.DEBITCASAACCOUNTID = null;
-                        addStaging.LOANID = null;
-                        addStaging.SYSTEMDATETIME = DateTime.Now;
-
-
-                        context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
-                        context.SaveChanges();
-
-                        WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+                            addStaging.DESCRIPTION = "Fee Daily Accrual Posting";
+                            addStaging.DESTINATIONBRANCHID = item.branchId;
+                            addStaging.ISPOSTED = false;
+                            addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
+                            addStaging.POSTEDBY = "SYSTEM";
+                            addStaging.POSTEDDATE = DateTime.Now.Date;
+                            addStaging.SOURCEBRANCHID = item.branchId;
+                            addStaging.SOURCEREFERENCENUMBER = item.referenceNumber;
+                            addStaging.VALUEDATE = item.date;
+                            addStaging.TRANSACTIONTYPE = "BP";
+                            addStaging.BANKID = "01";
+                            addStaging.PRODUCTID = product.PRODUCTID;
+                            addStaging.CURRENCYID = item.currencyId;
 
 
-                        eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
-                        eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
+                            //addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
+                            //addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+
+                            addStaging.CREDITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID2.Value;
+                            addStaging.DEBITGLACCOUNTID = chardedFeeDetails.GLACCOUNTID1.Value;
+
+
+                            addStaging.CREDITCASAACCOUNTID = null;
+                            addStaging.DEBITCASAACCOUNTID = null;
+                            addStaging.LOANID = null;
+                            addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
+                            context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                            context.SaveChanges();
+
+                            WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+
+                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
+                        }
+                        else
+                        {
+                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
+                        }
+
+
+
+                       
                         context.SaveChanges();
 
                     }
@@ -641,6 +655,19 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 }
 
             }
+
+            //REMOVE THIS CODE SNIPPET WHEN EOD LOGIC IS FULLY RESOLVED.
+            var pending = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c =>  c.EODDATE == applicationDate && c.EODSTATUSID == (int)EodOperationStatusEnum.Processing && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyFeeAccrual);
+            if(pending.Count() > 0)
+            {
+                foreach (var i in pending)
+                {
+                    i.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                    i.ERRORINFORMATION = "No error. No fee defined.";
+                }
+                context.SaveChanges();
+            }
+           
 
             return true;
         }
@@ -2548,6 +2575,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             if (result)
             {
                 output = true;
+            }
+            else
+            {
+
             }
             return output;
         }
