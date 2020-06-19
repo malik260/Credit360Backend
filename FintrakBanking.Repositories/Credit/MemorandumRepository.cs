@@ -806,50 +806,60 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private bool InitializeDrawdownMemoProperties(int targetId, int operationId) // feeder
+        private bool InitializeDrawdownMemoProperties(int targetId, int operationId, int bookingRequestId = 0) // feeder
         {
             this.targetId = targetId;
             this.operationId = operationId;
 
-                if (loanApplicationDetail == null)
-                {
-                    this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
-                    this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
-                }
-                var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;
+            if (loanApplicationDetail == null)
+            {
+                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
+                this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
+            }
+            var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;
 
-                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
-                 this.companyLogo = $@"
-                 <table style='font face: arial; size:12px' border=01 width=1100 cellpadding=0 cellspacing=0>
-                    <tr>
-                        <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
+                this.companyLogo = $@"
+                <table style='font face: arial; size:12px' border=01 width=1100 cellpadding=0 cellspacing=0>
+                <tr>
+                    <td align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
                         
-                    </tr></table>";
-                string customerName = String.Empty;
-                if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-                if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
-                this.applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
-                this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
-                this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
-                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.OPERATINGCASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
-                this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
-                this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
-                this.tenor = loanApplicationDetail.APPROVEDTENOR;
-                this.moratorium = loanApplicationDetail.MORATORIUMDURATION;
-                this.principalRepayment = "";
-                this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
-                this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-                this.otherFee = (context.TBL_CHARGE_FEE_DETAIL.FirstOrDefault(p => p.CHARGEFEEID == chargeFeeId)?.VALUE) ?? 0; 
-                this.effectiveDate = loanApplication.APPROVEDDATE;
-                this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
-                this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.TBL_STAFF.MISCODE;
-                this.currentDate = DateTime.Now.ToShortDateString();
-                this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
-                this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
-                //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
-                this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+                </tr></table>";
+            string customerName = String.Empty;
+            if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+            if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+            this.applicationReferenceNumber = loanApplication.APPLICATIONREFERENCENUMBER;
+            this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
+            this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
+            this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.OPERATINGCASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
+            this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
+            this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+            this.tenor = loanApplicationDetail.APPROVEDTENOR;
+            this.moratorium = loanApplicationDetail.MORATORIUMDURATION;
+            this.principalRepayment = "";
+            this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
+            this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
+            this.otherFee = (context.TBL_CHARGE_FEE_DETAIL.FirstOrDefault(p => p.CHARGEFEEID == chargeFeeId)?.VALUE) ?? 0; 
+            this.effectiveDate = loanApplication.APPROVEDDATE;
+            this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
+            this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.TBL_STAFF.MISCODE;
+            this.currentDate = DateTime.Now.ToShortDateString();
+            this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
+            this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
+            //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
+            this.approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+            if (bookingRequestId > 0)
+            {
+                var allRequests = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).ToList();
+                amountUtilised = allRequests.Where(r => r.LOAN_BOOKING_REQUESTID != bookingRequestId && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)?.Sum(r => r.AMOUNT_REQUESTED).ToString("#,##.00") ?? "0.00";
+                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOAN_BOOKING_REQUESTID == bookingRequestId).FirstOrDefault()?.AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
+
+            }
+            else
+            {
                 amountUtilised = "0.00";
                 newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault()?.AMOUNT_REQUESTED.ToString("#,##.00") ?? "0.00";
+            }
 
             return true;
         }
@@ -1469,7 +1479,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisalOperation = context.TBL_LOAN_APPLICATION.Find(loanApplicationId.LOANAPPLICATIONID).OPERATIONID;
 
             var isInitialize = InitializeDrawdownMemoProperties(loanApplicationId.LOANAPPLICATIONDETAILID, appraisalOperation);
-                        
+            
             var result = String.Empty;
             result = result + $@"
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=0 cellspacing=0>
