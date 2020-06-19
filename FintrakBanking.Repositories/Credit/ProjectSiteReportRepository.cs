@@ -168,7 +168,7 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports(int projectSiteReportId)
         {
-            return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x=>x.PROJECTSITEREPORTID== projectSiteReportId).Select(x => new ProjectSiteReportViewModel
+            return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x=>x.PROJECTSITEREPORTID== projectSiteReportId && x.DELETED == false).Select(x => new ProjectSiteReportViewModel
             {
                 projectSiteReportId = x.PROJECTSITEREPORTID,
                 psrReportTypeId = x.PSRREPORTTYPEID,
@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.credit
 
         public bool ProjectSiteReportGoForApproval(ProjectSiteReportViewModel model)
         {
-            var id = context.TBL_PSR_PROJECT_SITE_REPORT.Where(x=>x.PROJECTSITEREPORTID==model.projectSiteReportId).Select(x=>x).FirstOrDefault();
+            var id = context.TBL_PSR_PROJECT_SITE_REPORT.Where(x=>x.PROJECTSITEREPORTID==model.projectSiteReportId && x.DELETED == false).Select(x=>x).FirstOrDefault();
 
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
@@ -690,7 +690,7 @@ namespace FintrakBanking.Repositories.credit
 
         public bool AddPsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model)
         {
-            var validate = context.TBL_PSR_PERFORMANCE_EVALUATION.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p => p.PROJECTSITEREPORTID).ToList();
+            var validate = context.TBL_PSR_PERFORMANCE_EVALUATION.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId && p.DELETED == false).Select(p => p.PROJECTSITEREPORTID).ToList();
             if (validate.Any())
             {
                 throw new SecureException("Performance Evaluation has already been captured");
@@ -814,7 +814,7 @@ namespace FintrakBanking.Repositories.credit
 
         public bool AddPsrObservation(PsrObservationViewModel model)
         {
-            var validate = context.TBL_PSR_OBSERVATION.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p => p.PROJECTSITEREPORTID).ToList();
+            var validate = context.TBL_PSR_OBSERVATION.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId && p.DELETED == false).Select(p => p.PROJECTSITEREPORTID).ToList();
             if (validate.Any())
             {
                 throw new SecureException("Observation has already been captured");
@@ -1110,11 +1110,11 @@ namespace FintrakBanking.Repositories.credit
             var report = new PsrReportViewModel
             {
                 apgExposure = "",
-                comment = context.TBL_PSR_COMMENT.Where(o=>o.PROJECTSITEREPORTID == id).Select(o=>o.COMMENTS).FirstOrDefault(),
+                comment = context.TBL_PSR_COMMENT.Where(o=>o.PROJECTSITEREPORTID == id && o.DELETED == false).Select(o=>o.COMMENTS).FirstOrDefault(),
                 facilityDetail = "",
-                observation = context.TBL_PSR_OBSERVATION.Where(o => o.PROJECTSITEREPORTID == id).Select(o => o.COMMENTS).FirstOrDefault(),
-                recomendation = context.TBL_PSR_RECOMMENDATION.Where(o=>o.PROJECTSITEREPORTID==id).Select(o=>o.COMMENTS).FirstOrDefault(),
-                taskForNextInspection = context.TBL_PSR_NEXT_INSPECTION_TASK.Where(o=>o.PROJECTSITEREPORTID==id).Select(o=>o.COMMENTS).FirstOrDefault(),
+                observation = context.TBL_PSR_OBSERVATION.Where(o => o.PROJECTSITEREPORTID == id && o.DELETED == false).Select(o => o.COMMENTS).FirstOrDefault(),
+                recomendation = context.TBL_PSR_RECOMMENDATION.Where(o=>o.PROJECTSITEREPORTID==id && o.DELETED == false).Select(o=>o.COMMENTS).FirstOrDefault(),
+                taskForNextInspection = context.TBL_PSR_NEXT_INSPECTION_TASK.Where(o=>o.PROJECTSITEREPORTID==id && o.DELETED == false).Select(o=>o.COMMENTS).FirstOrDefault(),
             };
 
             return report;
@@ -1171,7 +1171,7 @@ namespace FintrakBanking.Repositories.credit
 
         public bool AddPsrPerformanceAnalysis(PsrPerformanceAnalysisViewModel model)
         {
-            var validate = context.TBL_PSR_ANALYSIS.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId).Select(p=>p.PROJECTSITEREPORTID).ToList();
+            var validate = context.TBL_PSR_ANALYSIS.Where(p => p.PROJECTSITEREPORTID == model.projectSiteReportId && p.DELETED == false).Select(p=>p.PROJECTSITEREPORTID).ToList();
             if(validate.Any())
             {
                 throw new SecureException("Performance analysis has already been captured");
