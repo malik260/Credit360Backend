@@ -27,7 +27,7 @@ namespace FintrakBanking.ViewModels.credit
         public int psrReportTypeId { get; set; }
         public string projectSiteReportName { get; set; }
         public string psrReportType { get; set; }
-        public string progressPayment { get; set; }
+        public decimal? progressPayment { get; set; }
         public decimal? certifiedVowd { get; set; }
         public short BranchId { get; set; }
         public int approvalStatusId { get; set; }

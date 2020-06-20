@@ -18811,8 +18811,9 @@ namespace FintrakBanking.Repositories.Credit
                     select new RemoveLienViewModel
                     {
                         unfreezeLienAccountId = x.UNFREEZELIENACCOUNTID,
-                        fileData = x.FILEDATA,
+                        //fileData = x.FILEDATA,
                         fileName = x.FILENAME,
+                        dateTimeCreated = x.DATETIMECREATED,
                         fileExtension = x.FILEEXTENSION,
                     }).ToList();
         }
