@@ -69,10 +69,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var staff = token.GetCompanyId;
-                var companyId = token.GetStaffId;
+                var staffId = token.GetStaffId;
+                var companyId = token.GetCompanyId;
 
-                var data = repo.CamSolAwaitingApproval(companyId,staff);
+                var data = repo.CamSolAwaitingApproval(companyId, staffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)
@@ -112,9 +112,8 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 if (val.Count() != 0)
                 {
-                      
                     return Request.CreateResponse(HttpStatusCode.OK,
-    new { success = true, message = "Camsol record has been approved successfully" });
+                    new { success = true, message = "Camsol record has been approved successfully" });
                    // return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = val });
                 }
 
@@ -137,12 +136,11 @@ namespace FintrakBanking.APICore.Controllers
                 data.companyId = token.GetCompanyId;
                 data.createdBy = (short)token.GetStaffId;
                 var val = repo.goForApproval(data);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = val });
-
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = val });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = $"Error: {ex.Message}" });
             }
         }
 
