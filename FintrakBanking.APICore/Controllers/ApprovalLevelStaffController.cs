@@ -200,8 +200,23 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
-        
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("work-flow-tracker/operation-site-report/{targetId}")]
+        public HttpResponseMessage GetApprovalTrailBySiteTargetId(int targetId)
+        {
+            var data = repo.GetApprovalTrailBySiteTargetId(targetId, token.GetCompanyId);
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = "No record found"});
+            }else
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        }
+
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("work-flow-tracker/approval-trail/all")]
         public async Task<HttpResponseMessage> GetAllRecordsOnApprovalTrail([FromUri] int page, [FromUri] int itemsPerPage)
         {

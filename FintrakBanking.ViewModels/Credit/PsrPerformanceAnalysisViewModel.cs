@@ -26,5 +26,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int createdBy { get; set; }
         public int deletedBy { get; set; }
         public DateTime? dateTimeDeleted { get; set; }
+        public string currency { get; set; }
     }
 }
