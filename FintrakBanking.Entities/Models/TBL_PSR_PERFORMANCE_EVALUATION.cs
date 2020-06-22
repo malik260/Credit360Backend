@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
         public decimal? CONSULTANTVOWD { get; set; }
         public decimal? COSTVARIATION { get; set; }
         public string TIMEVARIATION { get; set; }
-        public string APGISSUED { get; set; }
+        public decimal? APGISSUED { get; set; }
         public decimal? AMOUNTRECEIVED { get; set; }
         public decimal? PROGRESSPAYMENT { get; set; }
         public decimal? CERTIFIEDVOWD { get; set; }

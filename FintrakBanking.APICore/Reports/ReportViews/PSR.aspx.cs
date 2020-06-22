@@ -108,6 +108,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     signatoriy.Name = "signatories";
                     ReportViewer.LocalReport.DataSources.Add(signatoriy);
 
+                    var supervisorComment = psr.GetPsrSupervisorComment(projectSiteReportId);
+                    ReportDataSource superComment = new ReportDataSource();
+                    superComment.Value = supervisorComment;
+                    superComment.Name = "supervisorcomment";
+                    ReportViewer.LocalReport.DataSources.Add(superComment);
+
 
                     if (psrReportTypeId == 1)
                     {

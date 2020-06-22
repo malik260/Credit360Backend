@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.credit
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
                         customerId = x.CUSTOMERID,
-                        //branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                         applicationDate = x.APPLICATIONDATE,
                         applicationAmount = x.APPLICATIONAMOUNT,
                         interestRate = x.INTERESTRATE,
@@ -122,7 +122,7 @@ namespace FintrakBanking.Repositories.credit
                             inspectionDate = x.INSPECTIONDATE,
                             commencementDate = x.COMMENCEMENTDATE,
                             completionDate = x.COMPLETIONDATE,
-                           // nextVisitationDate = x.NEXTVISITATIONDATE,
+                            acceptance = x.ACCEPTANCE,
                             loanApplicationId = x.LOANAPPLICATIONID,
                             projectLocation = x.PROJECTLOCATION,
                             approvalStatusId = x.APPROVALSTATUSID,                          
@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.credit
                             projectDescription = x.PROJECTDESCRIPTION,
                             commencementDate = x.COMMENCEMENTDATE,
                             completionDate = x.COMPLETIONDATE,
-                            //nextVisitationDate = x.NEXTVISITATIONDATE,
+                            acceptance = x.ACCEPTANCE,
                             loanApplicationId = x.LOANAPPLICATIONID,
                             projectLocation = x.PROJECTLOCATION,
                             approvalStatusId = trail.APPROVALSTATUSID,
@@ -175,6 +175,7 @@ namespace FintrakBanking.Repositories.credit
                 clientName = x.CLIENTNAME,
                 contractorName = x.CONTRACTORNAME,
                 consultantName = x.CONSULTANTNAME,
+                acceptance = x.ACCEPTANCE,
                 projectAmount = x.PROJECTAMOUNT,
                 projectDescription = x.PROJECTDESCRIPTION,
                 commencementDate = x.COMMENCEMENTDATE,
@@ -245,14 +246,29 @@ namespace FintrakBanking.Repositories.credit
             }
         }
 
+        public bool SubmitAcceptance(ProjectSiteReportViewModel model)
+        {
+            bool responce = false;
+            var document = context.TBL_PSR_PROJECT_SITE_REPORT.Where(o => o.PROJECTSITEREPORTID == model.projectSiteReportId).FirstOrDefault();
+            if(document != null)
+            {
+                document.ACCEPTANCE = true;
+                responce = context.SaveChanges() > 0;
+                
+            }
+           
+            return responce;
+        }
+
         public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReportApprovals(int staffId)
         {
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ProjectSiteReportApproval).ToList();
 
-            return (from x in context.TBL_PSR_PROJECT_SITE_REPORT
+            var records =  (from x in context.TBL_PSR_PROJECT_SITE_REPORT
                    join atrail in context.TBL_APPROVAL_TRAIL on x.PROJECTSITEREPORTID equals atrail.TARGETID
-                   where x.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                     || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                   where x.DELETED == false 
+                    && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                    || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                     && atrail.RESPONSESTAFFID == null
                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                     && atrail.LOOPEDSTAFFID == null
@@ -268,7 +284,7 @@ namespace FintrakBanking.Repositories.credit
                        projectDescription = x.PROJECTDESCRIPTION,
                        commencementDate = x.COMMENCEMENTDATE,
                        completionDate = x.COMPLETIONDATE,
-                       //nextVisitationDate = x.NEXTVISITATIONDATE,
+                       nextVisitationDate = context.TBL_PSR_NEXT_INSPECTION_TASK.Where(p=>p.PROJECTSITEREPORTID == x.PROJECTSITEREPORTID && p.DELETED == false).Select(p=>p.NEXTINSPECTIONDATE).FirstOrDefault(),
                        loanApplicationId = x.LOANAPPLICATIONID,
                        projectLocation = x.PROJECTLOCATION,
                        approvalStatusId = x.APPROVALSTATUSID,
@@ -280,9 +296,43 @@ namespace FintrakBanking.Repositories.credit
 
                    }).OrderByDescending(o => o.projectSiteReportId)
                 .ToList();
+            return records;
         }
 
-       
+        public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReportApproved(int staffId)
+        {
+            var records = (from x in context.TBL_PSR_PROJECT_SITE_REPORT
+                           join b in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                           where x.DELETED == false
+                            && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && b.CREATEDBY == staffId
+                           select new ProjectSiteReportViewModel
+                           {
+                               projectSiteReportId = x.PROJECTSITEREPORTID,
+                               psrReportTypeId = x.PSRREPORTTYPEID,
+                               clientName = x.CLIENTNAME,
+                               acceptance = x.ACCEPTANCE,
+                               contractorName = x.CONTRACTORNAME,
+                               consultantName = x.CONSULTANTNAME,
+                               projectAmount = x.PROJECTAMOUNT,
+                               projectDescription = x.PROJECTDESCRIPTION,
+                               commencementDate = x.COMMENCEMENTDATE,
+                               completionDate = x.COMPLETIONDATE,
+                               nextVisitationDate = context.TBL_PSR_NEXT_INSPECTION_TASK.Where(p => p.PROJECTSITEREPORTID == x.PROJECTSITEREPORTID && p.DELETED == false).Select(p => p.NEXTINSPECTIONDATE).FirstOrDefault(),
+                               loanApplicationId = x.LOANAPPLICATIONID,
+                               projectLocation = x.PROJECTLOCATION,
+                               approvalStatusId = x.APPROVALSTATUSID,
+                               inspectionDate = x.INSPECTIONDATE,
+                               psrRepeortType = (from r in context.TBL_PSR_REPORT_TYPE where r.PSRREPORTTYPEID == x.PSRREPORTTYPEID select r.REPORTTYPENAME).FirstOrDefault(),
+                               currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
+                               approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+
+                           }).OrderByDescending(o => o.projectSiteReportId)
+                .ToList();
+            return records;
+        }
+
+
         public int AddProjectSiteReport(ProjectSiteReportViewModel model)
         {
             if (model.approvalStatusId == (short)ApprovalStatusEnum.Referred)
@@ -627,10 +677,10 @@ namespace FintrakBanking.Repositories.credit
                     apgIssued = x.APGISSUED,
                     disbursedTodate = x.DISBURSEDTODATE,
                     initialProjectSum = x.INITIALPROJECTSUM,
-                    paymentToDate = x.PAYMENTTODATE,
+                    paymentToDate = x.PROGRESSPAYMENT == null ? x.DISBURSEDTODATE : x.PROGRESSPAYMENT,
                     pmuAssessed = x.PMUASSESSED,
                     projectSum = x.PROJECTSUM,
-                    progressPayment = x.PROGRESSPAYMENT,
+                    progressPayment = x.PROGRESSPAYMENT == null ? x.DISBURSEDTODATE : x.PROGRESSPAYMENT,
                     vowdToDate = x.VOWDTODATE,
                     amortisedApg = x.AMORTISEDAPG,
                     costVariation = x.COSTVARIATION,
@@ -696,11 +746,17 @@ namespace FintrakBanking.Repositories.credit
                 throw new SecureException("Performance Evaluation has already been captured");
             }
 
+            
+            var projectSite = context.TBL_PSR_PROJECT_SITE_REPORT.Find(model.projectSiteReportId);
+            if (model.projectSum == null || model.projectSum < 1)
+            {
+                model.projectSum = projectSite.PROJECTAMOUNT;
+            }
             var entity = new TBL_PSR_PERFORMANCE_EVALUATION
             {
                 APGISSUED = model.apgIssued,
                 DISBURSEDTODATE = model.disbursedTodate,
-                INITIALPROJECTSUM = model.initialProjectSum,
+                INITIALPROJECTSUM = projectSite.PROJECTAMOUNT,
                 PAYMENTTODATE = model.paymentToDate,
                 PMUASSESSED = model.pmuAssessed,
                 PROJECTSUM = model.projectSum,
@@ -765,6 +821,20 @@ namespace FintrakBanking.Repositories.credit
             });
             // Audit Section end ------------------------
 
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeletePsrCommentImage(int id, UserInfo user)
+        {
+            var entity = context.TBL_PSR_COMMENT_IMAGES.Find(id);
+            context.TBL_PSR_COMMENT_IMAGES.Remove(entity);
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeletePsrImage(int id, UserInfo user)
+        {
+            var entity = context.TBL_PSR_IMAGES.Find(id);
+            context.TBL_PSR_IMAGES.Remove(entity);
             return context.SaveChanges() != 0;
         }
         #endregion
@@ -1302,6 +1372,27 @@ namespace FintrakBanking.Repositories.credit
             return 2;
         }
 
+        public int UpdatePsrImage(PsrImagesViewModel model, byte[] buffer)
+        {
+            
+            var recored = context.TBL_PSR_IMAGES.Find(model.psrImageId);
+            if (recored != null) {
+                recored.FILENAME = model.fileName;
+                recored.FILEEXTENSION = model.fileExtension.ToLower();
+                recored.FILESIZE = model.fileSize;
+                recored.FILESIZEUNIT = model.fileSizeUnit;
+                recored.FILEDATA = buffer;
+                recored.CREATEDBY = model.createdBy;
+                recored.DATETIMECREATED = DateTime.Now;
+                recored.IMAGECAPTION = model.imageCaption;
+                recored.PROJECTSITEREPORTID = model.projectSiteReportId;
+                }
+           
+            context.SaveChanges();
+         
+            return 2;
+        }
+
         public int AddPsrCommentImage(PsrCommentImagesViewModel model, byte[] buffer)
         {
             var existing = context.TBL_PSR_COMMENT_IMAGES.Where(x => x.FILENAME == model.fileName && x.PROJECTSITEREPORTID == model.projectSiteReportId)
@@ -1331,6 +1422,27 @@ namespace FintrakBanking.Repositories.credit
             };
 
             context.TBL_PSR_COMMENT_IMAGES.Add(entity);
+            context.SaveChanges();
+            return 2;
+        }
+
+        public int UpdatePsrCommentImage(PsrCommentImagesViewModel model, byte[] buffer)
+        {
+            var existing = context.TBL_PSR_COMMENT_IMAGES.Find(model.psrCommentImageId);
+
+            if (existing != null)
+            {
+                existing.FILENAME = model.fileName;
+                existing.FILEEXTENSION = model.fileExtension.ToLower();
+                existing.FILESIZE = model.fileSize;
+                existing.FILESIZEUNIT = model.fileSizeUnit;
+                existing.FILEDATA = buffer;
+                existing.CREATEDBY = model.createdBy;
+                existing.DATETIMECREATED = DateTime.Now;
+                existing.IMAGECAPTION = model.imageCaption;
+                existing.PROJECTSITEREPORTID = model.projectSiteReportId;
+
+            }
             context.SaveChanges();
             return 2;
         }

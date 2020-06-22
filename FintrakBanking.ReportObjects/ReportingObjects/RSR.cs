@@ -16,7 +16,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
        
         public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports(int projectSiteReportId)
         {
-
+            var project = context.TBL_PSR_PROJECT_SITE_REPORT.Find(projectSiteReportId);
+            var currency = context.TBL_CURRENCY.Find(project.CURRENCYID);
             return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x => x.PROJECTSITEREPORTID == projectSiteReportId).Select(x => new ProjectSiteReportViewModel
             {
                 projectSiteReportId = x.PROJECTSITEREPORTID,
@@ -34,8 +35,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 approvalStatusId = x.APPROVALSTATUSID,
                 inspectionDate = x.INSPECTIONDATE,
                 currencyId = x.CURRENCYID,
+                currency = currency.CURRENCYCODE,
                 approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
-                currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
+                //currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
 
             }).OrderByDescending(o => o.projectSiteReportId)
                 .ToList();
@@ -43,12 +45,15 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<PsrPerformanceEvaluationViewModel> GetProjectSiteReportsApg(int id)
         {
+            var project = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
+            var currency = context.TBL_CURRENCY.Find(project.CURRENCYID);
 
             return context.TBL_PSR_PERFORMANCE_EVALUATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
                 .Select(x => new PsrPerformanceEvaluationViewModel
                 {
                     psrPerformanceEvaluationId = x.PSRPERFORMANCEEVALUATIONID,
                     apgIssued = x.APGISSUED,
+                    currency = currency.CURRENCYCODE,
                     disbursedTodate = x.DISBURSEDTODATE,
                     initialProjectSum = x.INITIALPROJECTSUM,
                     paymentToDate = x.PAYMENTTODATE,
@@ -75,6 +80,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         {
             var projectSite = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
             var loanApprovedAmount = context.TBL_LOAN_APPLICATION.Find(projectSite.LOANAPPLICATIONID);
+            var currency = context.TBL_CURRENCY.Find(projectSite.CURRENCYID);
+
             return context.TBL_PSR_PERFORMANCE_EVALUATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
                 .Select(x => new PsrPerformanceEvaluationViewModel
                 {
@@ -82,6 +89,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     pmuPercentage = (x.PMUASSESSED / x.PROJECTSUM) * 100,
                     psrPerformanceEvaluationId = x.PSRPERFORMANCEEVALUATIONID,
                     apgIssued = x.APGISSUED,
+                    currency = currency.CURRENCYCODE,
                     disbursedTodate = x.DISBURSEDTODATE,
                     initialProjectSum = x.INITIALPROJECTSUM,
                     paymentToDate = x.PAYMENTTODATE,
@@ -105,6 +113,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<PsrPerformanceAnalysisViewModel> GetPsrPerformanceAnalysis(int id)
         {
+            var project = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
+            var currency = context.TBL_CURRENCY.Find(project.CURRENCYID);
 
             return context.TBL_PSR_ANALYSIS.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
                 .Select(x => new PsrPerformanceAnalysisViewModel
@@ -112,6 +122,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     psrAnalysisId = x.PSRANALYSISID,
                     ipc = x.IPC,
                     pmu = x.PMU,
+                    currency = currency.CURRENCYCODE,
                     aTotal = (x.IPC+x.PMU+x.VALUEOFCOLLATERAL),
                     bTotal = (x.AMOUNTDISBURSED+x.AMOUNTREQUESTED),
                     netPerformance = (x.IPC + x.PMU + x.VALUEOFCOLLATERAL) - (x.AMOUNTDISBURSED + x.AMOUNTREQUESTED),
@@ -230,8 +241,23 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }).ToList();
         }
 
+        public IEnumerable<ProjectSiteReportViewModel> GetPsrSupervisorComment(int id)
+        {
+            var projectSite = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
+            var staffName = context.TBL_STAFF.Find(projectSite.CREATEDBY);
+
+            return context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == id && x.OPERATIONID == (int)OperationsEnum.ProjectSiteReportApproval).Select(x => new ProjectSiteReportViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                superComment = x.COMMENT
+            }).OrderByDescending(x=>x.approvalTrailId).ToList().Take(1);
+        }
+
         public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)
         {
+            var project = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
+            var currency = context.TBL_CURRENCY.Find(project.CURRENCYID);
+
             return (from p in context.TBL_PSR_PROJECT_FACILITIES
                     join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                     // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
@@ -243,6 +269,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     {
                         // customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         // customerCode = c.CUSTOMERCODE,
+                        currency = currency.CURRENCYCODE,
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
                         moratrium = loan_Application_detail.MORATORIUMDURATION,
