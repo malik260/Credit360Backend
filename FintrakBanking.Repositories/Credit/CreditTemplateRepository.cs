@@ -745,8 +745,8 @@ var qry = Foo.GroupJoin(
             int ownerId = staff == null ? 0 : staff.STAFFROLEID;
 
             return this.context.TBL_DOC_TEMPLATE
-                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.COMPANYID == companyId && x.STAFFROLEID == ownerId)
-                //.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.COMPANYID == companyId)
+                //.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.COMPANYID == companyId && x.STAFFROLEID == ownerId)
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.COMPANYID == companyId)
                 .Select(x => new DocumentTemplateViewModel
                 {
                     templateId = x.TEMPLATEID,

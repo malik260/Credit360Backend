@@ -327,8 +327,7 @@ namespace FintrakBanking.Repositories.credit
                                currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
                                approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                           }).OrderByDescending(o => o.projectSiteReportId)
-                .ToList();
+                           }).OrderByDescending(o => o.projectSiteReportId).ToList();
             return records;
         }
 

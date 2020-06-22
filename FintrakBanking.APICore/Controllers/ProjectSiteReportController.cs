@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
             else
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
         [HttpGet]
@@ -697,7 +697,6 @@ namespace FintrakBanking.APICore.Controllers
                 entity.imageCaption = provider.FormData["imageCaption"];
                 entity.projectSiteReportId = Convert.ToInt32(provider.FormData["projectSiteReportId"]);
                 entity.overwrite = provider.FormData["overwrite"] == "true";
-                
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
