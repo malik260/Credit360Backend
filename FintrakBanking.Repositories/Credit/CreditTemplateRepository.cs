@@ -744,8 +744,15 @@ var qry = Foo.GroupJoin(
             var staff = context.TBL_STAFF.Find(staffId);
             int ownerId = staff == null ? 0 : staff.STAFFROLEID;
 
+            //List<int> roles = new List<int>();
+            //roles.Add(521); //cp
+            //roles.Add(6);//AO
+            //roles.Add(45);//RMO
+            //roles.Add(43);//PMO
+
             return this.context.TBL_DOC_TEMPLATE
                 //.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.COMPANYID == companyId && x.STAFFROLEID == ownerId)
+                //.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.COMPANYID == companyId && roles.Contains(ownerId))
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.COMPANYID == companyId)
                 .Select(x => new DocumentTemplateViewModel
                 {
