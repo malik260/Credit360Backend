@@ -504,7 +504,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-charge-fee-byloanid/")]
+        [Route("loan-charge-fee-byloanid/loanId/{loanId}")]
         public HttpResponseMessage GetLoanChargeFeeByLoanId(int loanId)
         {
             var data = repo.GetLoanChargeFeeByLoanId(loanId);
