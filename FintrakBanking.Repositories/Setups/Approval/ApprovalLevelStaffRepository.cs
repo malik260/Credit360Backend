@@ -796,13 +796,43 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return result;
         }
 
+
+        private IQueryable<WorkflowTrackerViewModel> GetApprovalTrailProjectSitereport(int companyId)
+        {
+            var result = (from a in context.TBL_APPROVAL_TRAIL
+                          where a.COMPANYID == companyId
+                          select new WorkflowTrackerViewModel
+
+                          {
+                              TargetId = a.TARGETID,
+                              operationId = a.OPERATIONID,
+                              arrivalDate = a.ARRIVALDATE,
+                              requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
+                              responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? context.TBL_APPROVAL_LEVEL.Where(t=>t.APPROVALLEVELID == a.TOAPPROVALLEVELID).Select(t=>t.LEVELNAME).FirstOrDefault() : "N/A",
+                              responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
+                              systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                              systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                              comment = a.COMMENT,
+                              requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : context.TBL_APPROVAL_LEVEL.Where(e => e.APPROVALLEVELID == a.FROMAPPROVALLEVELID).Select(e => e.LEVELNAME).FirstOrDefault(),
+                              operationName = context.TBL_OPERATIONS.Where(e=>e.OPERATIONID == a.OPERATIONID).Select(e=>e.OPERATIONNAME).FirstOrDefault(),
+                              approvalStatus = context.TBL_APPROVAL_STATUS.Where(t => t.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(t => t.APPROVALSTATUSNAME).FirstOrDefault()
+                          });
+            var vr = result.Distinct();
+            var vr2 = vr.ToList();
+            return result;
+        }
+
         public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
             var result = GetApprovalTrail(companyId).Where(c=>c.TargetId==targetId && c.operationId==operationId).OrderByDescending(c => c.systemArrivalDate).ToList();
             return result;
         }
 
-
+        public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailBySiteTargetId(int targetId, int companyId)
+        {
+            var result = GetApprovalTrailProjectSitereport(companyId).Where(c => c.TargetId == targetId && c.operationId == (int)OperationsEnum.ProjectSiteReportApproval).OrderByDescending(c => c.systemArrivalDate).ToList();
+            return result;
+        }
 
         public IQueryable<WorkflowTrackerViewModel> GetAllRecordsOnApprovalTrail(int companyId)
         {

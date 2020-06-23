@@ -232,6 +232,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string lienReferenceNumber { get; set; }
         public decimal lienAmount { get; set; }
         public DateTime lienDateTimeCreated { get; set; }
+        public string currency { get; set; }
     }
 
     public class LoanApplicationUpdateMessage

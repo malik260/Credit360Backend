@@ -21,7 +21,7 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? apgReceived { get; set; }
         public decimal? costVariation { get; set; }
         public string timeVariation { get; set; }
-        public string apgIssued { get; set; }
+        public decimal? apgIssued { get; set; }
         public decimal? amountReceived { get; set; }
         public int projectSiteReportId { get; set; }
         public int psrReportTypeId { get; set; }
@@ -34,5 +34,6 @@ namespace FintrakBanking.ViewModels.credit
         public string approvalStatusName { get; set; }
         public decimal? amountDisbursedPercent { get; set; }
         public decimal? pmuPercentage { get; set; }
+        public string currency { get; set; }
     }
 }

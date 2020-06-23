@@ -14,6 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICustomerCollateralRepository
     {
+        CollateralHistory getCollateralHistoryUsage(int collateralId);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerIdLMS(int customerId, bool getAll = false);
         bool ProposeCollateralForUsageLMS(CollateralCoverageViewModel model);
         #region Collateral

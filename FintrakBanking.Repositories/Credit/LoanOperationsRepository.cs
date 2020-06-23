@@ -17499,16 +17499,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
-
-
             bool result = false;
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
-
-                //try
-                // {
                 var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+
                 if (model.operationTypeId == (int)OperationsEnum.TenorChange)
                 {
                     var topUpData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == model.loanId && x.OPERATIONTYPEID == (short)OperationsEnum.OverdraftTopup && x.OPERATIONCOMPLETED == true);

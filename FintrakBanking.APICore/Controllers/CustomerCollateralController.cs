@@ -1872,15 +1872,28 @@ namespace FintrakBanking.APICore.Controllers
         [Route("collateral-history/{collateralId}")]
         public HttpResponseMessage GetCollateralHistory(short collateralId)
         {
-            try
+            var response = repo.getCollateralHistory(collateralId);
+            if(response == null)
             {
-                var response = repo.getCollateralHistory(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Records not found" });
+            }else
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
+            
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-history-usage/{collateralId}")]
+        public HttpResponseMessage GetCollateralHistoryUsage(int collateralId)
+        {
+            var response = repo.getCollateralHistoryUsage(collateralId);
+            if (response == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Records not found" });
             }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
         }
 
         [HttpGet]

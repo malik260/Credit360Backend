@@ -41,12 +41,15 @@ namespace FintrakBanking.ViewModels.credit
         public string customerName { get; set; }
         public int operationId { get; set; }
         public int? currencyId { get; set; }
+        public bool acceptance { get; set; }
         public string currency { get; set; }
         
        public IEnumerable<LoanApplicationViewModel> loanApplicationViewModel { get; set; }
         public int? loopedStaffId { get; set; }
         public string projectOffer { get; set; }
         public string groupHead { get; set; }
+        public DateTime nextVisitationDate { get; set; }
+        public string superComment { get; set; }
     }
     
 }
