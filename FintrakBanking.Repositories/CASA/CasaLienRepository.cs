@@ -16,6 +16,8 @@ using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.Common.CustomException;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
+using FintrakBanking.ViewModels.Setups.General;
+using System.Configuration;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -30,6 +32,8 @@ namespace FintrakBanking.Repositories.CASA
         bool USE_THIRD_PARTY_INTEGRATION = false;
         TBL_INTEGRATION_CONTROL globalIntegrationSetting = new TBL_INTEGRATION_CONTROL();
         //private ILoanOperationsRepository creditOperations;
+        List<string> receiverEmailList = new List<string>();
+        AlertsViewModel alert = new AlertsViewModel();
 
         public CasaLienRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
                                             //ILoanOperationsRepository _creditOperations, 
@@ -145,7 +149,39 @@ namespace FintrakBanking.Repositories.CASA
 
                 //end of Audit section -------------------------------
 
-                context.SaveChanges();
+                if (context.SaveChanges() > 0)
+                {
+                    if (model.createdBy != 1)
+                    {
+                        var customer = "";
+                        var termLoan = context.TBL_LOAN.Where(t => t.LOANREFERENCENUMBER == model.sourceReferenceNumber).FirstOrDefault();
+                        if(termLoan != null)
+                        {
+                            customer = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == termLoan.CUSTOMERID).Select(c=>c.FIRSTNAME + " " +c.MIDDLENAME +" " + c.LASTNAME).FirstOrDefault();
+                        }
+                        var revolvingLoan = context.TBL_LOAN_REVOLVING.Where(t => t.LOANREFERENCENUMBER == model.sourceReferenceNumber).FirstOrDefault();
+                        if (revolvingLoan != null)
+                        {
+                            customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == revolvingLoan.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                        }
+                        var contingentLoan = context.TBL_LOAN_CONTINGENT.Where(t => t.LOANREFERENCENUMBER == model.sourceReferenceNumber).FirstOrDefault();
+                        if (contingentLoan != null)
+                        {
+                            customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == contingentLoan.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                        }
+                        var staff = context.TBL_STAFF.Find(model.createdBy);
+                        var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "LienAccountNotification").FirstOrDefault();
+                        var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE);
+                        alert.receiverEmailList.Add(emailList);
+                        var alertTemplate = alertDetail.TEMPLATE;
+                        var accountOfficer = staff.FIRSTNAME + " " + staff.LASTNAME + " " + staff.MIDDLENAME;
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                        alertTemplate = alertTemplate.Replace("@{{customer}}", customer);
+                        alertTemplate = alertTemplate.Replace("@{{accountNumber}}", model.productAccountNumber);
+                        alertTemplate = alertTemplate.Replace("@{{sourceReferenceNumber}}", model.sourceReferenceNumber);
+                        LogEmailAlert(alertTemplate, alertDetail.TITLE, alert.receiverEmailList, "11023", 11023, "LienAccountNotification");
+                    }
+                }
             }
         }
 
@@ -242,7 +278,97 @@ namespace FintrakBanking.Repositories.CASA
 
             //end of Audit section -------------------------------
 
+            context.SaveChanges() ;
+            
+        }
+
+        private string GetBusinessUsersEmailsToGroupHead(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
+        {
+            try
+            {
+                string recipient = string.Join("", recipients.ToArray());
+                string messageSubject = alertSubject + " ALERT";
+                string messageContent = messageBody;
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = messageContent,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = referenceCode,
+                    targetId = targetId,
+                    operationMethod = operationMehtod,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                new SecureException(ex.ToString());
+            }
+        }
+
+        private void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
             context.SaveChanges();
+
         }
     }
 }
