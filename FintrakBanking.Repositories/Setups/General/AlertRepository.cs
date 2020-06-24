@@ -876,12 +876,12 @@ namespace FintrakBanking.Repositories.Setups.General
             if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(17, 0, 0); //5 o'clock pm
-                TimeSpan end = new TimeSpan(19, 0, 0); //6 o'clock pm
+                TimeSpan end = new TimeSpan(21, 0, 0); //6 o'clock pm
                 TimeSpan now = DateTime.Now.TimeOfDay;
 
                 if ((now >= start) && (now <= end))
                 {
-                    GetStaffLoanPortfolioReport();
+                    //GetStaffLoanPortfolioReport();
                     GetFacilityRestructuredNotification();
                     GetSLAReport();
                     GetPastDueDeferredDocuments();
@@ -928,13 +928,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             DateTime currentDate = DateTime.Now;
            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
-                        && (m.OPERATIONMETHOD.Trim() == "GetStaffLoanPortfolioReport"
-                        || m.OPERATIONMETHOD.Trim() == "GetFacilityRestructuredNotification"
+                        && (m.OPERATIONMETHOD.Trim() == "GetFacilityRestructuredNotification"
                         || m.OPERATIONMETHOD.Trim() == "GetSLAReport"
                         || m.OPERATIONMETHOD.Trim() == "GetPastDueDeferredDocuments"
                         || m.OPERATIONMETHOD.Trim() == "GetExpiredInsurancePolicies"
                         || m.OPERATIONMETHOD.Trim() == "GetLoanRepaymentReminder"
-                        /*&& (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" 
+                        /*
+                         * m.OPERATIONMETHOD.Trim() == "GetStaffLoanPortfolioReport"
+                        ||&& (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" 
                         || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminder"
                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLIncrease"
                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLDecrease"
