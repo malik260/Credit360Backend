@@ -17718,7 +17718,7 @@ namespace FintrakBanking.Repositories.Credit
                         TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules,
                         PREPAYMENTMETHODID = model.prepaymentMethodId,
                         TARGETID = model.TargetId,
-
+                        //FEETYPEID = model.feeTypeId
                     });
 
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
