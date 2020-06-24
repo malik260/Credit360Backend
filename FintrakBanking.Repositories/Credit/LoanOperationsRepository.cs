@@ -16962,7 +16962,7 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,

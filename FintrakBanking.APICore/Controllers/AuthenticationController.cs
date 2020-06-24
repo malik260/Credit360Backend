@@ -374,7 +374,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             //try
             //{
-            _repo.ClearLoginToken(token.GetUsername);
+            var isFirstLogOut = _repo.ClearLoginToken(token.GetUsername);
+            //if (!isFirstLogOut)
+            //{
+            //    return this.Ok(new { success = true, message = "User Logged Off" });
+            //}
             var staffDetails = _repo.GetSingleUserByUserName(token.GetUsername);
 
             if (staffDetails == null || staffDetails.username == "")
