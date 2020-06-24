@@ -44,6 +44,23 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public string ledgerAccountName { get; set; }
         public string ledgerAccountCode { get; set; }
         public string amortisationTypeName { get; set; }
+
+        public int loanReviewOperationId { get; set; }
+        public int? loanReviewApplicationId { get; set; }
+        public int loanId { get; set; }
+        public int loanSystemTypeId { get; set; }
+        //public string requestStaffName { get; set; }
+        //public string requestApprovalLevel { get; set; }
+        //public string responseStaffName { get; set; }
+        //public string responseApprovalLevel { get; set; }
+        //public string approvalStatus { get; set; }
+        //public string comment { get; set; }
+
+        //public DateTime systemArrivalDate { get; set; }
+        //public DateTime? systemResponseDate { get; set; }
+
+        public int? loanChargeFeeId { get; set; }
+
     }
 
     public class ChargeRangeViewModel : GeneralEntity
