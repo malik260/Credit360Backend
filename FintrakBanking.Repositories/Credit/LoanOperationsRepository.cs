@@ -16962,7 +16962,7 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
@@ -17718,7 +17718,7 @@ namespace FintrakBanking.Repositories.Credit
                         TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules,
                         PREPAYMENTMETHODID = model.prepaymentMethodId,
                         TARGETID = model.TargetId,
-
+                        //FEETYPEID = model.feeTypeId
                     });
 
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
@@ -19714,7 +19714,41 @@ namespace FintrakBanking.Repositories.Credit
                         caseLien.LIENSTATUS = (int)LienStatusEnum.Inactive;
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         reviewRecord.OPERATIONCOMPLETED = true;
+                        caseLien.ISLIENREMOVED = true;
                         output = context.SaveChanges() > 0;
+                        if (output == true)
+                        {
+                            if (reviewRecord.CREATEDBY != 1)
+                            {
+                                var customer = "";
+                                var termLoan = context.TBL_LOAN.Where(t => t.LOANREFERENCENUMBER == caseLien.SOURCEREFERENCENUMBER).FirstOrDefault();
+                                if (termLoan != null)
+                                {
+                                    customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == termLoan.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                                }
+                                var revolvingLoan = context.TBL_LOAN_REVOLVING.Where(t => t.LOANREFERENCENUMBER == caseLien.SOURCEREFERENCENUMBER).FirstOrDefault();
+                                if (revolvingLoan != null)
+                                {
+                                    customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == revolvingLoan.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                                }
+                                var contingentLoan = context.TBL_LOAN_CONTINGENT.Where(t => t.LOANREFERENCENUMBER == caseLien.SOURCEREFERENCENUMBER).FirstOrDefault();
+                                if (contingentLoan != null)
+                                {
+                                    customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == contingentLoan.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                                }
+                                var staff = context.TBL_STAFF.Find(reviewRecord.CREATEDBY);
+                                var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "LienAccountReleaseNotification").FirstOrDefault();
+                                var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE);
+                                alert.receiverEmailList.Add(emailList);
+                                var alertTemplate = alertDetail.TEMPLATE;
+                                var accountOfficer = staff.FIRSTNAME + " " + staff.LASTNAME + " " + staff.MIDDLENAME;
+                                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                                alertTemplate = alertTemplate.Replace("@{{customer}}", customer);
+                                alertTemplate = alertTemplate.Replace("@{{accountNumber}}", caseLien.PRODUCTACCOUNTNUMBER);
+                                alertTemplate = alertTemplate.Replace("@{{sourceReferenceNumber}}", caseLien.SOURCEREFERENCENUMBER);
+                                LogEmailAlert(alertTemplate, alertDetail.TITLE, alert.receiverEmailList, "22023", 22023, "LienAccountReleaseNotification");
+                            }
+                        }
                     }
                     if (output == true)
                     {
