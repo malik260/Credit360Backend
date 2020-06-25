@@ -1518,7 +1518,6 @@ namespace FintrakBanking.Repositories.Credit
             //}
 
             var requestedFacility = context.TBL_PRODUCT.Find(entity.productId);
-
             var operationId = 0;
             var productTypeId = requestedFacility.PRODUCTTYPEID;
 
