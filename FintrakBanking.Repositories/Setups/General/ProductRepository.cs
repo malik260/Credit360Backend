@@ -2950,7 +2950,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return (from data in context.TBL_PRODUCT_PRICE_INDEX_GLOBAL
                     join atrail in context.TBL_APPROVAL_TRAIL on data.PRODUCTPRICEINDEXGLOBALID equals atrail.TARGETID
-                    // where  data.DELETED == false && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                     where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                     && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
                     atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
@@ -2958,8 +2957,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                     && atrail.RESPONSESTAFFID == null
                     && atrail.OPERATIONID == (int)OperationsEnum.GlobalInterestRateChange
-                    //&& atrail.TOAPPROVALLEVELID == staffApprovalLevelId
-                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                    && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || atrail.REQUESTSTAFFID == staffId)
                     orderby data.DATETIMEDELETED descending
                     select new ProductPriceIndexGlobalViewModel()
                     {
