@@ -14,8 +14,8 @@
     <Shape ID="DesignTable:COLLATERAL" ZOrder="13" X="461" Y="162" Height="56" Width="161" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="52" />
     <Shape ID="DesignTable:FACILITIES" ZOrder="12" X="0" Y="0" Height="257" Width="200" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="253" />
     <Shape ID="DesignTable:EVALUATION" ZOrder="11" X="676" Y="21" Height="356" Width="195" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="352" />
-    <Shape ID="DesignTable:APG" ZOrder="10" X="216" Y="147" Height="286" Width="164" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="282" />
-    <Shape ID="DesignTable:ANALYSIS" ZOrder="9" X="1198" Y="148" Height="263" Width="172" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="259" />
+    <Shape ID="DesignTable:APG" ZOrder="10" X="216" Y="147" Height="309" Width="164" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="305" />
+    <Shape ID="DesignTable:ANALYSIS" ZOrder="9" X="1198" Y="148" Height="286" Width="172" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="282" />
     <Shape ID="DesignTable:INSPECTIONDATE" ZOrder="7" X="197" Y="479" Height="57" Width="208" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="53" />
     <Shape ID="DesignTable:SUPPORTIMAGES" ZOrder="6" X="685" Y="469" Height="86" Width="168" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="82" />
     <Shape ID="DesignTable:SIGNATORIES" ZOrder="3" X="1019" Y="556" Height="79" Width="167" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="75" />

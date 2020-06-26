@@ -53,11 +53,16 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 {
                     psrPerformanceEvaluationId = x.PSRPERFORMANCEEVALUATIONID,
                     apgIssued = x.APGISSUED,
+                    percentageOne = (x.APGISSUED / x.PROJECTSUM) * 100,
+                    percentageTwo = (x.AMOUNTRECEIVED / x.PROJECTSUM) * 100,
+                    percentageThree = (x.AMORTISEDAPG / x.APGISSUED) * 100,
+                    percentageFour = (x.CERTIFIEDVOWD / x.PROJECTSUM) * 100,
+                    percentageFive = ((x.PMUASSESSED / x.PROJECTSUM) * 100) == null ? 0 : ((x.PMUASSESSED / x.PROJECTSUM) * 100),
                     currency = currency.CURRENCYCODE,
                     disbursedTodate = x.DISBURSEDTODATE,
                     initialProjectSum = x.INITIALPROJECTSUM,
                     paymentToDate = x.PAYMENTTODATE,
-                    pmuAssessed = x.PMUASSESSED,
+                    pmuAssessed = x.PMUASSESSED == null ? 0 : x.PMUASSESSED,
                     projectSum = x.PROJECTSUM,
                     progressPayment = x.PROGRESSPAYMENT,
                     vowdToDate = x.VOWDTODATE,
@@ -120,13 +125,14 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 .Select(x => new PsrPerformanceAnalysisViewModel
                 {
                     psrAnalysisId = x.PSRANALYSISID,
-                    ipc = x.IPC,
+                    ipc = (x.IPC != null && x.IPC > 0) ? x.IPC : x.PMU,
                     pmu = x.PMU,
                     currency = currency.CURRENCYCODE,
-                    aTotal = (x.IPC+x.PMU+x.VALUEOFCOLLATERAL),
+                    aTotal = (x.IPC != null && x.IPC > 0) ? (x.IPC+x.VALUEOFCOLLATERAL) : (x.PMU+x.VALUEOFCOLLATERAL),
                     bTotal = (x.AMOUNTDISBURSED+x.AMOUNTREQUESTED),
-                    netPerformance = (x.IPC + x.PMU + x.VALUEOFCOLLATERAL) - (x.AMOUNTDISBURSED + x.AMOUNTREQUESTED),
+                    netPerformance = (x.IPC != null && x.IPC > 0) ? ((x.IPC + x.VALUEOFCOLLATERAL) - (x.AMOUNTDISBURSED + x.AMOUNTREQUESTED)) : ((x.PMU + x.VALUEOFCOLLATERAL) - (x.AMOUNTDISBURSED + x.AMOUNTREQUESTED)),
                     amountDisbursed = x.AMOUNTDISBURSED,
+                    whatToShow = (x.IPC != null && x.IPC > 0) ? "Certified VOWD to Date" : "PMU Assessed VOWD to Date",
                     amountRequested = x.AMOUNTREQUESTED,
                     valueOfCollateral = x.VALUEOFCOLLATERAL,
                     projectSiteReportId = x.PROJECTSITEREPORTID
@@ -216,24 +222,27 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<ProjectSiteReportViewModel> GetPsrSignatories(int id)
         {
+
+            var approval = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == id && x.OPERATIONID == (int)OperationsEnum.ProjectSiteReportApproval && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.APPROVALSTATEID == (int)ApprovalState.Ended).FirstOrDefault();
             var projectSite = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
             var staffName = context.TBL_STAFF.Find(projectSite.CREATEDBY);
 
             var officerName = " ";
             var groupHeadName = " ";
-
-            var groupHead = context.TBL_STAFF.Find(staffName.SUPERVISOR_STAFFID);
             officerName = staffName.FIRSTNAME + " " + staffName.MIDDLENAME + " " + staffName.LASTNAME;
 
-            if (groupHead == null)
+            if (approval != null)
             {
-                groupHeadName = "";
+                var groupHead = context.TBL_STAFF.Find(approval.REQUESTSTAFFID);
+                if (groupHead == null)
+                {
+                    groupHeadName = "";
+                }
+                else
+                {
+                    groupHeadName = groupHead.FIRSTNAME + " " + groupHead.MIDDLENAME + " " + groupHead.LASTNAME;
+                }
             }
-            else
-            {
-                groupHeadName = groupHead.FIRSTNAME + " " + groupHead.MIDDLENAME + " " + groupHead.LASTNAME;
-            }
-
             return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x => x.PROJECTSITEREPORTID == id).Select(x => new ProjectSiteReportViewModel
             {
                 projectOffer = officerName,
