@@ -1425,13 +1425,29 @@ namespace FintrakBanking.Repositories.WorkFlow
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
-                if (initiator != null && mappings.Where(x => x.GROUPID == level.Group.GROUPID && x.ALLOWMULTIPLEINITIATOR == true ).Any())
+                if (mappings.Where(x => x.GROUPID == level.Group.GROUPID && x.ALLOWMULTIPLEINITIATOR == true ).Any())
                 {
                     initiator = GetAllTrail().OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
-                    var requestStaff = context.TBL_STAFF.Find(initiator?.REQUESTSTAFFID);
-
-                    if(requestStaff != null && level.ROLEIDTOROUTE != requestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null) { continue; }
-                   // levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
+                    if (initiator != null)
+                    {
+                        var initiatorStaff = context.TBL_STAFF.Find(initiator?.REQUESTSTAFFID);
+                        if (initiatorStaff != null && level.ROLEIDTOROUTE != initiatorStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if(this.staffId > 0)
+                        {
+                            var currentRequestStaff = context.TBL_STAFF.Find(this.staffId);
+                            if (currentRequestStaff != null && level.ROLEIDTOROUTE != currentRequestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                    // levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
                 }
                 var testField = level.Level.LEVELNAME;
 
