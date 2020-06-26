@@ -14555,7 +14555,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanCamsol.CUSTOMERNAME = customer.FIRSTNAME + ' ' + customer.LASTNAME;
                 loanCamsol.PRINCIPAL = totalamount;
                 loanCamsol.INTERESTINSUSPENSE = 0;
-                loanCamsol.CAMSOLTYPEID = (int)CamsolTypeEnum.fullandfinal;///create casmol type enum
+                loanCamsol.CAMSOLTYPEID = (int)CamsolTypeEnum.FullAndFinal;///create casmol type enum
                 loanCamsol.ACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER;
                 loanCamsol.ACCOUNTNAME = casa.PRODUCTACCOUNTNAME;
                 loanCamsol.REMARK = "Full And Final Complete Write off";
@@ -29066,7 +29066,7 @@ namespace FintrakBanking.Repositories.Credit
                                      join e in context.TBL_PRODUCT on b.PRODUCTID equals e.PRODUCTID
                                      join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
                                      join g in context.TBL_LOAN_CAMSOL on b.TERMLOANID equals g.LOANID
-                                     where b.LOANSTATUSID == (short)LoanStatusEnum.WriteOff && g.CAMSOLTYPEID == (int)CamsolTypeEnum.camsol && b.COMPANYID == companyId
+                                     where b.LOANSTATUSID == (short)LoanStatusEnum.WriteOff && g.CAMSOLTYPEID == (int)CamsolTypeEnum.Camsol && b.COMPANYID == companyId
                                      select new DailyInterestAccrualViewModel()
                                      {
                                          loanId = b.TERMLOANID,

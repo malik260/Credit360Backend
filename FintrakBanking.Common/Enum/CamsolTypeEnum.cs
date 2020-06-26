@@ -8,8 +8,10 @@ namespace FintrakBanking.Common.Enum
 {
    public enum CamsolTypeEnum
     { 
-        camsol = 1,
-	    blackbook = 2,
-     	fullandfinal = 3
+        Camsol = 1,
+	    BlackBook = 2,
+     	FullAndFinal = 3,
+        WriteOffSchedule = 4,
+        AmconList = 5
     }
 }
