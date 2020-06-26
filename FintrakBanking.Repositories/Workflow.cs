@@ -200,9 +200,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(lastRequest.TOSTAFFID); }
                 if (lastRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(lastRequest.REQUESTSTAFFID, lastRequest.FROMAPPROVALLEVELID, lastRequest.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
+                //if (lastRequest !=null)
+                CustomJump(lastRequest.TOAPPROVALLEVELID, lastRequest.FROMAPPROVALLEVELID);
             }
             SaveFlowLog("After last request Validation");
-            if (lastRequest !=null) CustomJump(lastRequest.TOAPPROVALLEVELID, lastRequest.FROMAPPROVALLEVELID);
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
             // if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
@@ -820,7 +821,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //    this.fromLevelId = approvalLevels.Where(x => x.DefaultRoleId == user.STAFFROLEID).FirstOrDefault()?.ApprovalLevelId;
             //}
 
-            if (this.fromLevelId != null) // check if staff in level
+            if (this.fromLevelId > 0) // check if staff in level
             {
                 level = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
                 if (level == null)
