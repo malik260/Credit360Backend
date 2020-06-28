@@ -14816,7 +14816,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Not Implemented!");
             }
-            return allFilteredLoan;
+            return allFilteredLoan; //.Where(O => O.loanSystemTypeId == 3).OrderByDescending(O => O.loanId).Take(600);
         }
 
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)
