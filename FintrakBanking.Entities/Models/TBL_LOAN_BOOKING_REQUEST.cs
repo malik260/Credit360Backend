@@ -63,7 +63,11 @@ namespace FintrakBanking.Entities.Models
         public int? TENOR { get; set; }
         public short? APPROVEDLINESTATUSID { get; set; }
 
+        public bool? ISMAINTAINEDLINE { get; set; }
+
         public bool? TAKEFEEONCE { get; set; }
+
+        public bool ISDIBURSED { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

@@ -503,7 +503,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
                     var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.referenceNumber && c.EODDATE == applicationDate && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyFeeAccrual).FirstOrDefault();
 
-                    if (checkExistence == null)
+                    if (checkExistence != null)
                     {
                         eod_operation_Detail.EODOPERATIONLOGID = eod_Operation_Log.EODOPERATIONID;
                         eod_operation_Detail.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
@@ -512,7 +512,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                         eod_operation_Detail.EODDATE = applicationDate;
                         eod_operation_Detail.EODUSERID = staffId;
                         eod_operation_Detail_List.Add(eod_operation_Detail);
-
                     }
 
                 }
@@ -524,12 +523,20 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             }
 
             int count = 0;
-
-            foreach (var item in model)
+            var operationLogDetail = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == applicationDate && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyFeeAccrual).Select(d=>d.REFERENCENUMBER).ToList();
+            List<DailyInterestAccrualViewModel> modelList = new List<DailyInterestAccrualViewModel>();
+            foreach(var i in model)
             {
-               if(model.IndexOf(item) >= 574)
+                string referenceNumber = i.referenceNumber;
+                if (operationLogDetail.Contains(referenceNumber)) { modelList.Add(i); }
+            }
+
+            
+            foreach (var item in modelList)
+            {
+               if(modelList.IndexOf(item) >= 574)
                 {
-                    var b = model.IndexOf(item);
+                    var b = modelList.IndexOf(item);
                 }
 
                 var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == item.referenceNumber && c.EODDATE == applicationDate && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyFeeAccrual).FirstOrDefault();
@@ -616,23 +623,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                             context.SaveChanges();
 
                             WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
-
-                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
-                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
-                        }
-                        else
-                        {
-                            eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
-                            eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                            eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
-                            eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
                         }
 
+                        eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                        eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                        eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
 
-
-                       
                         context.SaveChanges();
 
                     }
