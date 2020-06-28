@@ -13128,17 +13128,14 @@ namespace FintrakBanking.Repositories.Credit
             if (isLCYUser == true)
             {
                 lcyLoans = allFilteredLoan.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
-                //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
             }
 
             if (isFCYUser == true)
             {
                 fcyLoans = allFilteredLoan.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
-
             }
 
             allFilteredLoan = lcyLoans.Union(fcyLoans).ToList();
-
             return allFilteredLoan;
 
         }
@@ -14939,7 +14936,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Not Implemented!");
             }
-            return allFilteredLoan;
+            return allFilteredLoan; //.Where(O => O.loanSystemTypeId == 3).OrderByDescending(O => O.loanId).Take(600);
         }
 
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)
