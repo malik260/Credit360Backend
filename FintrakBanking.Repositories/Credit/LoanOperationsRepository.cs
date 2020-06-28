@@ -21481,9 +21481,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 transactionDetails.AddRange(financeTransaction.BuildContingentPrincipalPosting(model, loanReferenceNumber, addContingent.CONTINGENTAMOUNT, "Contingent Liability posting", operation));
-
                 financeTransaction.PostTransaction(transactionDetails, false, twoFactorAuth);
-
                 this.context.TBL_LOAN_CONTINGENT.Add(addContingent);
 
                 //addOverDraft.SERIALNUMBER = renewalResult.serialNumber;
