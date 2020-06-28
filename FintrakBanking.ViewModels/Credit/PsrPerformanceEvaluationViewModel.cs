@@ -35,5 +35,10 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? amountDisbursedPercent { get; set; }
         public decimal? pmuPercentage { get; set; }
         public string currency { get; set; }
+        public decimal? percentageOne { get; set; }
+        public decimal? percentageTwo { get; set; }
+        public decimal? percentageThree { get; set; }
+        public decimal? percentageFour { get; set; }
+        public decimal? percentageFive { get; set; }
     }
 }

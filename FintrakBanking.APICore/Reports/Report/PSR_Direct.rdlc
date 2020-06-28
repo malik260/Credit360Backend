@@ -748,7 +748,7 @@
                             <TextRun>
                               <Value>=Fields!commencementDate.Value</Value>
                               <Style>
-                                <Format>d MMM yyyy</Format>
+                                <Format>MMMM d, yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -848,7 +848,7 @@
                             <TextRun>
                               <Value>=Fields!completionDate.Value</Value>
                               <Style>
-                                <Format>d MMM yyyy</Format>
+                                <Format>MMMM d, yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -3067,7 +3067,7 @@
                             <TextRun>
                               <Value>=Fields!inspectionDate.Value</Value>
                               <Style>
-                                <Format>d</Format>
+                                <Format>MMMM d, yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -3299,7 +3299,7 @@
                             <TextRun>
                               <Value>=Fields!nextInspectionDate.Value</Value>
                               <Style>
-                                <Format>d</Format>
+                                <Format>MMMM d, yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -3319,6 +3319,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -3547,7 +3548,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
