@@ -980,7 +980,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         && DbFunctions.TruncateTime(camsol.DATE) <= DbFunctions.TruncateTime(endDate) 
                         && (camsol.CUSTOMERNAME.ToLower().Contains(customercode.ToLower())
                         || camsol.CUSTOMERCODE == customercode || customercode == null ||  customercode == "")
-                        && camsol.CAMSOLTYPEID == (int)CamsolTypeEnum.blackbook
+                        && camsol.CAMSOLTYPEID == (int)CamsolTypeEnum.BlackBook
                         orderby camsol.DATE descending
                         select new Blacklist
                         {

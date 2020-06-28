@@ -177,7 +177,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                // && x.RESPONSESTAFFID != null
                                 && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
-                            ).ToList();
+                            ).OrderByDescending(l => l.APPROVALTRAILID).ToList();
 
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
             SaveFlowLog("Initiation");
@@ -200,9 +200,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(lastRequest.TOSTAFFID); }
                 if (lastRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(lastRequest.REQUESTSTAFFID, lastRequest.FROMAPPROVALLEVELID, lastRequest.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
+                //if (lastRequest !=null)
+                CustomJump(lastRequest.TOAPPROVALLEVELID, lastRequest.FROMAPPROVALLEVELID);
             }
             SaveFlowLog("After last request Validation");
-            if (lastRequest !=null) CustomJump(lastRequest.TOAPPROVALLEVELID, lastRequest.FROMAPPROVALLEVELID);
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
             // if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
@@ -820,7 +821,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //    this.fromLevelId = approvalLevels.Where(x => x.DefaultRoleId == user.STAFFROLEID).FirstOrDefault()?.ApprovalLevelId;
             //}
 
-            if (this.fromLevelId != null) // check if staff in level
+            if (this.fromLevelId > 0) // check if staff in level
             {
                 level = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
                 if (level == null)
@@ -1425,13 +1426,29 @@ namespace FintrakBanking.Repositories.WorkFlow
             int n = 0;
             foreach (WorkflowSetup level in levels)
             {
-                if (initiator != null && mappings.Where(x => x.GROUPID == level.Group.GROUPID && x.ALLOWMULTIPLEINITIATOR == true ).Any())
+                if (mappings.Where(x => x.GROUPID == level.Group.GROUPID && x.ALLOWMULTIPLEINITIATOR == true ).Any())
                 {
                     initiator = GetAllTrail().OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
-                    var requestStaff = context.TBL_STAFF.Find(initiator?.REQUESTSTAFFID);
-
-                    if(requestStaff != null && level.ROLEIDTOROUTE != requestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null) { continue; }
-                   // levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
+                    if (initiator != null)
+                    {
+                        var initiatorStaff = context.TBL_STAFF.Find(initiator?.REQUESTSTAFFID);
+                        if (initiatorStaff != null && level.ROLEIDTOROUTE != initiatorStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if(this.staffId > 0)
+                        {
+                            var currentRequestStaff = context.TBL_STAFF.Find(this.staffId);
+                            if (currentRequestStaff != null && level.ROLEIDTOROUTE != currentRequestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                    // levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
                 }
                 var testField = level.Level.LEVELNAME;
 

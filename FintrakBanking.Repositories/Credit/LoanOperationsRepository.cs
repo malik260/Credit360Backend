@@ -14889,7 +14889,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanCamsol.CUSTOMERNAME = customer.FIRSTNAME + ' ' + customer.LASTNAME;
                 loanCamsol.PRINCIPAL = totalamount;
                 loanCamsol.INTERESTINSUSPENSE = 0;
-                loanCamsol.CAMSOLTYPEID = (int)CamsolTypeEnum.fullandfinal;///create casmol type enum
+                loanCamsol.CAMSOLTYPEID = (int)CamsolTypeEnum.FullAndFinal;///create casmol type enum
                 loanCamsol.ACCOUNTNUMBER = casa.PRODUCTACCOUNTNUMBER;
                 loanCamsol.ACCOUNTNAME = casa.PRODUCTACCOUNTNAME;
                 loanCamsol.REMARK = "Full And Final Complete Write off";
@@ -17296,7 +17296,7 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
+                    where data.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
@@ -17833,16 +17833,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
-
-
             bool result = false;
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
-
-                //try
-                // {
                 var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+
                 if (model.operationTypeId == (int)OperationsEnum.TenorChange)
                 {
                     var topUpData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == model.loanId && x.OPERATIONTYPEID == (short)OperationsEnum.OverdraftTopup && x.OPERATIONCOMPLETED == true);
@@ -18056,7 +18052,7 @@ namespace FintrakBanking.Repositories.Credit
                         TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules,
                         PREPAYMENTMETHODID = model.prepaymentMethodId,
                         TARGETID = model.TargetId,
-
+                        //FEETYPEID = model.feeTypeId
                     });
 
                     if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
@@ -19145,8 +19141,9 @@ namespace FintrakBanking.Repositories.Credit
                     select new RemoveLienViewModel
                     {
                         unfreezeLienAccountId = x.UNFREEZELIENACCOUNTID,
-                        fileData = x.FILEDATA,
+                        //fileData = x.FILEDATA,
                         fileName = x.FILENAME,
+                        dateTimeCreated = x.DATETIMECREATED,
                         fileExtension = x.FILEEXTENSION,
                     }).ToList();
         }
@@ -20051,7 +20048,41 @@ namespace FintrakBanking.Repositories.Credit
                         caseLien.LIENSTATUS = (int)LienStatusEnum.Inactive;
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                         reviewRecord.OPERATIONCOMPLETED = true;
+                        caseLien.ISLIENREMOVED = true;
                         output = context.SaveChanges() > 0;
+                        if (output == true)
+                        {
+                            if (reviewRecord.CREATEDBY != 1)
+                            {
+                                var customer = "";
+                                var termLoan = context.TBL_LOAN.Where(t => t.LOANREFERENCENUMBER == caseLien.SOURCEREFERENCENUMBER).FirstOrDefault();
+                                if (termLoan != null)
+                                {
+                                    customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == termLoan.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                                }
+                                var revolvingLoan = context.TBL_LOAN_REVOLVING.Where(t => t.LOANREFERENCENUMBER == caseLien.SOURCEREFERENCENUMBER).FirstOrDefault();
+                                if (revolvingLoan != null)
+                                {
+                                    customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == revolvingLoan.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                                }
+                                var contingentLoan = context.TBL_LOAN_CONTINGENT.Where(t => t.LOANREFERENCENUMBER == caseLien.SOURCEREFERENCENUMBER).FirstOrDefault();
+                                if (contingentLoan != null)
+                                {
+                                    customer = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == contingentLoan.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                                }
+                                var staff = context.TBL_STAFF.Find(reviewRecord.CREATEDBY);
+                                var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "LienAccountReleaseNotification").FirstOrDefault();
+                                var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE);
+                                alert.receiverEmailList.Add(emailList);
+                                var alertTemplate = alertDetail.TEMPLATE;
+                                var accountOfficer = staff.FIRSTNAME + " " + staff.LASTNAME + " " + staff.MIDDLENAME;
+                                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                                alertTemplate = alertTemplate.Replace("@{{customer}}", customer);
+                                alertTemplate = alertTemplate.Replace("@{{accountNumber}}", caseLien.PRODUCTACCOUNTNUMBER);
+                                alertTemplate = alertTemplate.Replace("@{{sourceReferenceNumber}}", caseLien.SOURCEREFERENCENUMBER);
+                                LogEmailAlert(alertTemplate, alertDetail.TITLE, alert.receiverEmailList, "22023", 22023, "LienAccountReleaseNotification");
+                            }
+                        }
                     }
                     if (output == true)
                     {
@@ -29369,7 +29400,7 @@ namespace FintrakBanking.Repositories.Credit
                                      join e in context.TBL_PRODUCT on b.PRODUCTID equals e.PRODUCTID
                                      join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
                                      join g in context.TBL_LOAN_CAMSOL on b.TERMLOANID equals g.LOANID
-                                     where b.LOANSTATUSID == (short)LoanStatusEnum.WriteOff && g.CAMSOLTYPEID == (int)CamsolTypeEnum.camsol && b.COMPANYID == companyId
+                                     where b.LOANSTATUSID == (short)LoanStatusEnum.WriteOff && g.CAMSOLTYPEID == (int)CamsolTypeEnum.Camsol && b.COMPANYID == companyId
                                      select new DailyInterestAccrualViewModel()
                                      {
                                          loanId = b.TERMLOANID,

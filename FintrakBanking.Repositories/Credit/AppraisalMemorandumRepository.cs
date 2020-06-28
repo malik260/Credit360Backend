@@ -3065,8 +3065,7 @@ namespace FintrakBanking.Repositories.Credit
             countryId = context.TBL_COUNTRY.FirstOrDefault().COUNTRYID,
             globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED == false)
-                                            .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA)
-                                            .FirstOrDefault(),
+                                            .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA).Max(),
             currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
             dateTimeCreated = x.a.DATETIMECREATED,
             apiRequestId = x.a.APIREQUESTID
@@ -3122,7 +3121,9 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<DateTime> GetDateRange(DateTime startDate, DateTime endDate)
         {
             if (endDate < startDate)
+            {
                 throw new ArgumentException("endDate must be greater than or equal to startDate");
+            }
             yield return startDate;
 
             while (startDate.Date < endDate.Date && startDate.AddDays(1).Date < endDate.Date)
@@ -3168,13 +3169,15 @@ namespace FintrakBanking.Repositories.Credit
                 if(elapsed.Days <= 1)
                 {
                     list[i + 1].timeOfDay = elapsed;
+                    hours += list[i + 1].timeOfDay.TotalHours;
                 }
                 else
                 {
-                    list[i + 1].timeOfDay = list[i + 1].dateTime.TimeOfDay + second;
+                    var elapsedDays = elapsed.Days * 24;
+                    list[i + 1].timeOfDay = elapsed;
+                    hours += (list[i + 1].timeOfDay.TotalHours - elapsedDays);
                 }
             }
-            hours = list.Sum(l => l.timeOfDay.TotalHours);
             return hours;
         }
 

@@ -15,12 +15,12 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int PSRANALYSISID { get; set; }
 
-        public decimal VALUEOFCOLLATERAL { get; set; }
+        public decimal? VALUEOFCOLLATERAL { get; set; }
 
-        public decimal IPC { get; set; }
-        public decimal PMU { get; set; }
-        public decimal AMOUNTDISBURSED { get; set; }
-        public decimal AMOUNTREQUESTED { get; set; }
+        public decimal? IPC { get; set; }
+        public decimal? PMU { get; set; }
+        public decimal? AMOUNTDISBURSED { get; set; }
+        public decimal? AMOUNTREQUESTED { get; set; }
         public int PROJECTSITEREPORTID { get; set; }
         public bool DELETED { get; set; }
         public int CREATEDBY { get; set; }

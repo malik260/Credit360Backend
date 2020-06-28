@@ -503,6 +503,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("collateral-lms/application/{customerId}/{getAll}")]
+        public HttpResponseMessage GetProposedCustomerCollateralByCustomerIdLMS(int customerId, bool getAll)
+        {
+            try
+            {
+                var response = repo.GetProposedCustomerCollateralByCustomerIdLMS(customerId, getAll);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         [HttpGet, Route("collateral/{loanApplicationDetailId}")]
         public HttpResponseMessage GetProposedCustomerCollateralByLoanApplicationDetailId(int loanApplicationDetailId)
         {
@@ -1858,15 +1872,28 @@ namespace FintrakBanking.APICore.Controllers
         [Route("collateral-history/{collateralId}")]
         public HttpResponseMessage GetCollateralHistory(short collateralId)
         {
-            try
+            var response = repo.getCollateralHistory(collateralId);
+            if(response == null)
             {
-                var response = repo.getCollateralHistory(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Records not found" });
+            }else
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
+            
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-history-usage/{collateralId}")]
+        public HttpResponseMessage GetCollateralHistoryUsage(int collateralId)
+        {
+            var response = repo.getCollateralHistoryUsage(collateralId);
+            if (response == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Records not found" });
             }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
         }
 
         [HttpGet]
@@ -1947,6 +1974,31 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.companyId = token.GetCompanyId;
                 var response = repo.ProposeCollateralForUsage(model);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("propose-collaterals-lms")]
+        public HttpResponseMessage ProposeCollateralLms(CollateralCoverageViewModel model)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = token.GetCompanyId;
+                var response = repo.ProposeCollateralForUsageLMS(model);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }

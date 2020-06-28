@@ -1497,7 +1497,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            if (context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved && x.DELETED == false).Any())
+            if (context.TBL_LOAN_BOOKING_REQUEST.Any(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId && x.CUSTOMERID == entity.customerId && !(x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && x.ISUSED == true) && (x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved) && x.DELETED == false))
             {
                 throw new ConditionNotMetException("This facility already has a tranche disbursement request for this customer currently undergoing approval.");
             }
@@ -1518,7 +1518,6 @@ namespace FintrakBanking.Repositories.Credit
             //}
 
             var requestedFacility = context.TBL_PRODUCT.Find(entity.productId);
-
             var operationId = 0;
             var productTypeId = requestedFacility.PRODUCTTYPEID;
 
