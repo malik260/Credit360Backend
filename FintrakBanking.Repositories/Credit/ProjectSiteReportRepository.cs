@@ -696,6 +696,24 @@ namespace FintrakBanking.Repositories.credit
         }
         public bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id)
         {
+            var projectSite = context.TBL_PSR_PROJECT_SITE_REPORT.Find(model.projectSiteReportId);
+            if (model.projectSum == null || model.projectSum < 1)
+            {
+                model.projectSum = projectSite.PROJECTAMOUNT;
+            }
+
+            if (model.psrReportTypeId == 2)
+            {
+                var projectAnalysis = context.TBL_PSR_ANALYSIS.Where(a => a.PROJECTSITEREPORTID == model.projectSiteReportId).FirstOrDefault();
+                if (projectAnalysis != null)
+                {
+                    projectAnalysis.AMOUNTDISBURSED = model.disbursedTodate;
+                    projectAnalysis.PMU = model.pmuAssessed;
+                    projectAnalysis.IPC = model.certifiedVowd;
+                    context.SaveChanges();
+                }
+            }
+
             var entity = this.context.TBL_PSR_PERFORMANCE_EVALUATION.Find(id);
             entity.APGISSUED = model.apgIssued;
             entity.DISBURSEDTODATE = model.disbursedTodate;
@@ -750,6 +768,18 @@ namespace FintrakBanking.Repositories.credit
             if (model.projectSum == null || model.projectSum < 1)
             {
                 model.projectSum = projectSite.PROJECTAMOUNT;
+            }
+
+            if(model.psrReportTypeId == 2)
+            {
+                var projectAnalysis = context.TBL_PSR_ANALYSIS.Where(a=>a.PROJECTSITEREPORTID == model.projectSiteReportId).FirstOrDefault();
+                if(projectAnalysis != null)
+                {
+                    projectAnalysis.AMOUNTDISBURSED = model.disbursedTodate;
+                    projectAnalysis.PMU = model.pmuAssessed;
+                    projectAnalysis.IPC = model.certifiedVowd;
+                    context.SaveChanges();
+                }
             }
             var entity = new TBL_PSR_PERFORMANCE_EVALUATION
             {

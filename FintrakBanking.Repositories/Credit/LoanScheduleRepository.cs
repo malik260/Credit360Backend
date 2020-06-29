@@ -335,7 +335,6 @@ namespace FintrakBanking.Repositories.Credit
                         output = InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuity((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate, (int)loanInput.interestFrequencyTypeId, loanInput.maturityDate);
                 }
 
-
                 else if (scheduleMethod == LoanScheduleTypeEnum.BulletPayment)
                 {
                     if (loanInput.equityContribution.HasValue && loanInput.equityContribution != 0)

@@ -748,7 +748,7 @@
                             <TextRun>
                               <Value>=Fields!commencementDate.Value</Value>
                               <Style>
-                                <Format>d MMM yyyy</Format>
+                                <Format>MMMM d, yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -848,7 +848,7 @@
                             <TextRun>
                               <Value>=Fields!completionDate.Value</Value>
                               <Style>
-                                <Format>d MMM yyyy</Format>
+                                <Format>MMMM d, yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -1413,13 +1413,13 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>3.91208in</Width>
+              <Width>5.09541in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.75833in</Width>
+              <Width>0.675in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.74542in</Width>
+              <Width>1.34542in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1435,7 +1435,26 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>a. APG ISSUED :</Value>
+                              <Value>a. APG ISSUED :         </Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!currency.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!apgIssued.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>       % of Contract Sum</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1459,23 +1478,25 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="currency">
+                    <Textbox Name="percentageOne">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!currency.Value</Value>
-                              <Style />
+                              <Value>=Fields!percentageOne.Value</Value>
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Right</TextAlign>
+                            <TextAlign>Center</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>currency</rd:DefaultName>
+                      <rd:DefaultName>percentageOne</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1486,39 +1507,10 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <ColSpan>2</ColSpan>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox24">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!apgIssued.Value</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox18</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
+                <TablixCell />
               </TablixCells>
             </TablixRow>
             <TablixRow>
@@ -1533,7 +1525,26 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>b. APG AMOUNT RECIEVED :</Value>
+                              <Value>b. APG AMOUNT RECIEVED :        </Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!currency.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!apgReceived.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>     % of Contract Sum</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1557,23 +1568,23 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="currency1">
+                    <Textbox Name="percentageTwo">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!currency.Value</Value>
+                              <Value>=Fields!percentageTwo.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Right</TextAlign>
+                            <TextAlign>Center</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>currency1</rd:DefaultName>
+                      <rd:DefaultName>percentageTwo</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1584,41 +1595,10 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <ColSpan>2</ColSpan>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox26">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!apgReceived.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox24</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
+                <TablixCell />
               </TablixCells>
             </TablixRow>
             <TablixRow>
@@ -1633,7 +1613,26 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>c. AMORTISED APG :</Value>
+                              <Value>c. AMORTISED APG :      </Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!currency.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!amortisedApg.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>         % of APG Issued</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1657,23 +1656,23 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="currency2">
+                    <Textbox Name="percentageThree">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!currency.Value</Value>
+                              <Value>=Fields!percentageThree.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Right</TextAlign>
+                            <TextAlign>Center</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>currency2</rd:DefaultName>
+                      <rd:DefaultName>percentageThree</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1684,41 +1683,10 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <ColSpan>2</ColSpan>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox28">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!amortisedApg.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox27</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
+                <TablixCell />
               </TablixCells>
             </TablixRow>
             <TablixRow>
@@ -1733,7 +1701,26 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>d. CERTIFIED VOWD TO DATE :</Value>
+                              <Value>d. CERTIFIED VOWD TO DATE :      </Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!currency.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!certifiedVowd.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>      % of Contract Sum</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1757,23 +1744,23 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="currency3">
+                    <Textbox Name="percentageFour">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!currency.Value</Value>
+                              <Value>=Fields!percentageFour.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Right</TextAlign>
+                            <TextAlign>Center</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>currency3</rd:DefaultName>
+                      <rd:DefaultName>percentageFour</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1784,41 +1771,10 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <ColSpan>2</ColSpan>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox30">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!certifiedVowd.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox29</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
+                <TablixCell />
               </TablixCells>
             </TablixRow>
             <TablixRow>
@@ -1833,7 +1789,38 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>e. PMU ASSESSED VOWD TO DATE :</Value>
+                              <Value>e. PMU ASSESSED VOWD TO DATE :     </Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!currency.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>=First(Fields!pmuAssessed.Value, "apg")</Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value xml:space="preserve">    </Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value xml:space="preserve"> </Value>
+                              <Style>
+                                <FontWeight>Normal</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>% of contract sum</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1857,23 +1844,23 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="currency4">
+                    <Textbox Name="percentageFive">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!currency.Value</Value>
+                              <Value>=Fields!percentageFive.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Right</TextAlign>
+                            <TextAlign>Center</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>currency4</rd:DefaultName>
+                      <rd:DefaultName>percentageFive</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1884,41 +1871,10 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <ColSpan>2</ColSpan>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="pmuAssessed">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!pmuAssessed.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style>
-                            <TextAlign>Left</TextAlign>
-                          </Style>
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>pmuAssessed</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
+                <TablixCell />
               </TablixCells>
             </TablixRow>
             <TablixRow>
@@ -2453,7 +2409,7 @@
         <Top>8.3225in</Top>
         <Left>0.21333in</Left>
         <Height>2.975in</Height>
-        <Width>7.41583in</Width>
+        <Width>7.11583in</Width>
         <ZIndex>15</ZIndex>
         <Style>
           <Border>
@@ -2618,7 +2574,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Value of work done from IPC Issued</Value>
+                              <Value>=First(Fields!whatToShow.Value, "analysis")</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -2657,71 +2613,6 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>ipc1</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-              </TablixCells>
-            </TablixRow>
-            <TablixRow>
-              <Height>0.26452in</Height>
-              <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox33">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>PMU's Estimated Work Done as at date </Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox33</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="pmu">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!pmu.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>pmu</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -2948,7 +2839,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Amount now requesting for </Value>
+                              <Value>Amount Requested </Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -3165,7 +3056,6 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
               </TablixMembers>
             </TablixMember>
           </TablixMembers>
@@ -3173,7 +3063,7 @@
         <DataSetName>analysis</DataSetName>
         <Top>5.005in</Top>
         <Left>0.28in</Left>
-        <Height>2.6452in</Height>
+        <Height>2.38068in</Height>
         <Width>6.67833in</Width>
         <ZIndex>16</ZIndex>
         <Style>
@@ -3411,7 +3301,7 @@
                             <TextRun>
                               <Value>=Fields!inspectionDate.Value</Value>
                               <Style>
-                                <Format>MM/dd/yyyy</Format>
+                                <Format>MMMM d, yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -3497,7 +3387,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.92418in</Width>
+              <Width>7.41583in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -3580,7 +3470,7 @@
         <Top>20.47792in</Top>
         <Left>0.21333in</Left>
         <Height>3.82501in</Height>
-        <Width>6.92418in</Width>
+        <Width>7.41583in</Width>
         <ZIndex>20</ZIndex>
         <Style>
           <Border>
@@ -3592,7 +3482,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.92418in</Width>
+              <Width>7.41583in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -3649,7 +3539,7 @@
         <Top>11.87722in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
-        <Width>6.92418in</Width>
+        <Width>7.41583in</Width>
         <ZIndex>21</ZIndex>
         <Style>
           <Border>
@@ -3712,7 +3602,7 @@
                             <TextRun>
                               <Value>=First(Fields!nextInspectionDate.Value, "nextInspection")</Value>
                               <Style>
-                                <Format>d</Format>
+                                <Format>MMMM d, yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -3766,7 +3656,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.92418in</Width>
+              <Width>7.41583in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -3808,7 +3698,7 @@
         <Top>12.255in</Top>
         <Left>0.21333in</Left>
         <Height>2.75in</Height>
-        <Width>6.92418in</Width>
+        <Width>7.41583in</Width>
         <ZIndex>24</ZIndex>
         <Style>
           <Border>
@@ -3886,7 +3776,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -3925,7 +3814,7 @@
       </Border>
     </Style>
   </Body>
-  <Width>7.92334in</Width>
+  <Width>9.38749in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -4342,6 +4231,30 @@
           <DataField>currency</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="projectSum">
+          <DataField>projectSum</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="percentageOne">
+          <DataField>percentageOne</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="percentageTwo">
+          <DataField>percentageTwo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="percentageThree">
+          <DataField>percentageThree</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="percentageFour">
+          <DataField>percentageFour</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="percentageFive">
+          <DataField>percentageFive</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
@@ -4396,6 +4309,10 @@
         </Field>
         <Field Name="currency">
           <DataField>currency</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="whatToShow">
+          <DataField>whatToShow</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
