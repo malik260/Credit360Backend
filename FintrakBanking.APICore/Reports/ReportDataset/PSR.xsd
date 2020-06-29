@@ -142,6 +142,12 @@
               <xs:element name="costVariation" msprop:Generator_ColumnVarNameInTable="columncostVariation" msprop:Generator_ColumnPropNameInRow="costVariation" msprop:Generator_ColumnPropNameInTable="costVariationColumn" msprop:Generator_UserColumnName="costVariation" type="xs:string" minOccurs="0" />
               <xs:element name="timeVariation" msprop:Generator_ColumnVarNameInTable="columntimeVariation" msprop:Generator_ColumnPropNameInRow="timeVariation" msprop:Generator_ColumnPropNameInTable="timeVariationColumn" msprop:Generator_UserColumnName="timeVariation" type="xs:string" minOccurs="0" />
               <xs:element name="currency" msprop:Generator_ColumnVarNameInTable="columncurrency" msprop:Generator_ColumnPropNameInRow="currency" msprop:Generator_ColumnPropNameInTable="currencyColumn" msprop:Generator_UserColumnName="currency" type="xs:string" minOccurs="0" />
+              <xs:element name="projectSum" msprop:Generator_ColumnVarNameInTable="columnprojectSum" msprop:Generator_ColumnPropNameInRow="projectSum" msprop:Generator_ColumnPropNameInTable="projectSumColumn" msprop:Generator_UserColumnName="projectSum" type="xs:string" minOccurs="0" />
+              <xs:element name="percentageOne" msprop:Generator_ColumnVarNameInTable="columnpercentageOne" msprop:Generator_ColumnPropNameInRow="percentageOne" msprop:Generator_ColumnPropNameInTable="percentageOneColumn" msprop:Generator_UserColumnName="percentageOne" type="xs:string" minOccurs="0" />
+              <xs:element name="percentageTwo" msprop:Generator_ColumnVarNameInTable="columnpercentageTwo" msprop:Generator_ColumnPropNameInRow="percentageTwo" msprop:Generator_ColumnPropNameInTable="percentageTwoColumn" msprop:Generator_UserColumnName="percentageTwo" type="xs:string" minOccurs="0" />
+              <xs:element name="percentageThree" msprop:Generator_ColumnVarNameInTable="columnpercentageThree" msprop:Generator_ColumnPropNameInRow="percentageThree" msprop:Generator_ColumnPropNameInTable="percentageThreeColumn" msprop:Generator_UserColumnName="percentageThree" type="xs:string" minOccurs="0" />
+              <xs:element name="percentageFour" msprop:Generator_ColumnVarNameInTable="columnpercentageFour" msprop:Generator_ColumnPropNameInRow="percentageFour" msprop:Generator_ColumnPropNameInTable="percentageFourColumn" msprop:Generator_UserColumnName="percentageFour" type="xs:string" minOccurs="0" />
+              <xs:element name="percentageFive" msprop:Generator_ColumnVarNameInTable="columnpercentageFive" msprop:Generator_ColumnPropNameInRow="percentageFive" msprop:Generator_ColumnPropNameInTable="percentageFiveColumn" msprop:Generator_UserColumnName="percentageFive" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -158,6 +164,7 @@
               <xs:element name="amountDisbursed" msprop:Generator_ColumnVarNameInTable="columnamountDisbursed" msprop:Generator_ColumnPropNameInRow="amountDisbursed" msprop:Generator_ColumnPropNameInTable="amountDisbursedColumn" msprop:Generator_UserColumnName="amountDisbursed" type="xs:string" minOccurs="0" />
               <xs:element name="netPerformance" msprop:Generator_ColumnVarNameInTable="columnnetPerformance" msprop:Generator_ColumnPropNameInRow="netPerformance" msprop:Generator_ColumnPropNameInTable="netPerformanceColumn" msprop:Generator_UserColumnName="netPerformance" type="xs:string" minOccurs="0" />
               <xs:element name="currency" msprop:Generator_ColumnVarNameInTable="columncurrency" msprop:Generator_ColumnPropNameInRow="currency" msprop:Generator_ColumnPropNameInTable="currencyColumn" msprop:Generator_UserColumnName="currency" type="xs:string" minOccurs="0" />
+              <xs:element name="whatToShow" msprop:Generator_ColumnVarNameInTable="columnwhatToShow" msprop:Generator_ColumnPropNameInRow="whatToShow" msprop:Generator_ColumnPropNameInTable="whatToShowColumn" msprop:Generator_UserColumnName="whatToShow" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

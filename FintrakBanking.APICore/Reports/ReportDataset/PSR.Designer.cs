@@ -3641,6 +3641,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columncurrency;
             
+            private global::System.Data.DataColumn columnprojectSum;
+            
+            private global::System.Data.DataColumn columnpercentageOne;
+            
+            private global::System.Data.DataColumn columnpercentageTwo;
+            
+            private global::System.Data.DataColumn columnpercentageThree;
+            
+            private global::System.Data.DataColumn columnpercentageFour;
+            
+            private global::System.Data.DataColumn columnpercentageFive;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public APGDataTable() {
@@ -3764,6 +3776,54 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn projectSumColumn {
+                get {
+                    return this.columnprojectSum;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn percentageOneColumn {
+                get {
+                    return this.columnpercentageOne;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn percentageTwoColumn {
+                get {
+                    return this.columnpercentageTwo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn percentageThreeColumn {
+                get {
+                    return this.columnpercentageThree;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn percentageFourColumn {
+                get {
+                    return this.columnpercentageFour;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn percentageFiveColumn {
+                get {
+                    return this.columnpercentageFive;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -3799,7 +3859,24 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public APGRow AddAPGRow(string apgIssued, string apgReceived, string amortisedApg, string certifiedVowd, string pmuAssessed, string progressPayment, string disbursedTodate, string vowdToDate, string costVariation, string timeVariation, string currency) {
+            public APGRow AddAPGRow(
+                        string apgIssued, 
+                        string apgReceived, 
+                        string amortisedApg, 
+                        string certifiedVowd, 
+                        string pmuAssessed, 
+                        string progressPayment, 
+                        string disbursedTodate, 
+                        string vowdToDate, 
+                        string costVariation, 
+                        string timeVariation, 
+                        string currency, 
+                        string projectSum, 
+                        string percentageOne, 
+                        string percentageTwo, 
+                        string percentageThree, 
+                        string percentageFour, 
+                        string percentageFive) {
                 APGRow rowAPGRow = ((APGRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         apgIssued,
@@ -3812,7 +3889,13 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         vowdToDate,
                         costVariation,
                         timeVariation,
-                        currency};
+                        currency,
+                        projectSum,
+                        percentageOne,
+                        percentageTwo,
+                        percentageThree,
+                        percentageFour,
+                        percentageFive};
                 rowAPGRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowAPGRow);
                 return rowAPGRow;
@@ -3846,6 +3929,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columncostVariation = base.Columns["costVariation"];
                 this.columntimeVariation = base.Columns["timeVariation"];
                 this.columncurrency = base.Columns["currency"];
+                this.columnprojectSum = base.Columns["projectSum"];
+                this.columnpercentageOne = base.Columns["percentageOne"];
+                this.columnpercentageTwo = base.Columns["percentageTwo"];
+                this.columnpercentageThree = base.Columns["percentageThree"];
+                this.columnpercentageFour = base.Columns["percentageFour"];
+                this.columnpercentageFive = base.Columns["percentageFive"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3873,6 +3962,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columntimeVariation);
                 this.columncurrency = new global::System.Data.DataColumn("currency", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncurrency);
+                this.columnprojectSum = new global::System.Data.DataColumn("projectSum", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnprojectSum);
+                this.columnpercentageOne = new global::System.Data.DataColumn("percentageOne", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpercentageOne);
+                this.columnpercentageTwo = new global::System.Data.DataColumn("percentageTwo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpercentageTwo);
+                this.columnpercentageThree = new global::System.Data.DataColumn("percentageThree", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpercentageThree);
+                this.columnpercentageFour = new global::System.Data.DataColumn("percentageFour", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpercentageFour);
+                this.columnpercentageFive = new global::System.Data.DataColumn("percentageFive", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpercentageFive);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4026,6 +4127,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columncurrency;
             
+            private global::System.Data.DataColumn columnwhatToShow;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public ANALYSISDataTable() {
@@ -4141,6 +4244,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn whatToShowColumn {
+                get {
+                    return this.columnwhatToShow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -4176,7 +4287,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ANALYSISRow AddANALYSISRow(string valueOfCollateral, string ipc, string pmu, string aTotal, string bTotal, string less, string amountRequested, string amountDisbursed, string netPerformance, string currency) {
+            public ANALYSISRow AddANALYSISRow(string valueOfCollateral, string ipc, string pmu, string aTotal, string bTotal, string less, string amountRequested, string amountDisbursed, string netPerformance, string currency, string whatToShow) {
                 ANALYSISRow rowANALYSISRow = ((ANALYSISRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         valueOfCollateral,
@@ -4188,7 +4299,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         amountRequested,
                         amountDisbursed,
                         netPerformance,
-                        currency};
+                        currency,
+                        whatToShow};
                 rowANALYSISRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowANALYSISRow);
                 return rowANALYSISRow;
@@ -4221,6 +4333,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnamountDisbursed = base.Columns["amountDisbursed"];
                 this.columnnetPerformance = base.Columns["netPerformance"];
                 this.columncurrency = base.Columns["currency"];
+                this.columnwhatToShow = base.Columns["whatToShow"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4246,6 +4359,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnnetPerformance);
                 this.columncurrency = new global::System.Data.DataColumn("currency", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncurrency);
+                this.columnwhatToShow = new global::System.Data.DataColumn("whatToShow", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnwhatToShow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -7880,6 +7995,102 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string projectSum {
+                get {
+                    try {
+                        return ((string)(this[this.tableAPG.projectSumColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'projectSum\' in table \'APG\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAPG.projectSumColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string percentageOne {
+                get {
+                    try {
+                        return ((string)(this[this.tableAPG.percentageOneColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'percentageOne\' in table \'APG\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAPG.percentageOneColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string percentageTwo {
+                get {
+                    try {
+                        return ((string)(this[this.tableAPG.percentageTwoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'percentageTwo\' in table \'APG\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAPG.percentageTwoColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string percentageThree {
+                get {
+                    try {
+                        return ((string)(this[this.tableAPG.percentageThreeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'percentageThree\' in table \'APG\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAPG.percentageThreeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string percentageFour {
+                get {
+                    try {
+                        return ((string)(this[this.tableAPG.percentageFourColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'percentageFour\' in table \'APG\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAPG.percentageFourColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string percentageFive {
+                get {
+                    try {
+                        return ((string)(this[this.tableAPG.percentageFiveColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'percentageFive\' in table \'APG\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableAPG.percentageFiveColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsapgIssuedNull() {
                 return this.IsNull(this.tableAPG.apgIssuedColumn);
             }
@@ -8008,6 +8219,78 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcurrencyNull() {
                 this[this.tableAPG.currencyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsprojectSumNull() {
+                return this.IsNull(this.tableAPG.projectSumColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetprojectSumNull() {
+                this[this.tableAPG.projectSumColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IspercentageOneNull() {
+                return this.IsNull(this.tableAPG.percentageOneColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetpercentageOneNull() {
+                this[this.tableAPG.percentageOneColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IspercentageTwoNull() {
+                return this.IsNull(this.tableAPG.percentageTwoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetpercentageTwoNull() {
+                this[this.tableAPG.percentageTwoColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IspercentageThreeNull() {
+                return this.IsNull(this.tableAPG.percentageThreeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetpercentageThreeNull() {
+                this[this.tableAPG.percentageThreeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IspercentageFourNull() {
+                return this.IsNull(this.tableAPG.percentageFourColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetpercentageFourNull() {
+                this[this.tableAPG.percentageFourColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IspercentageFiveNull() {
+                return this.IsNull(this.tableAPG.percentageFiveColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetpercentageFiveNull() {
+                this[this.tableAPG.percentageFiveColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -8187,6 +8470,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string whatToShow {
+                get {
+                    try {
+                        return ((string)(this[this.tableANALYSIS.whatToShowColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'whatToShow\' in table \'ANALYSIS\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableANALYSIS.whatToShowColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsvalueOfCollateralNull() {
                 return this.IsNull(this.tableANALYSIS.valueOfCollateralColumn);
             }
@@ -8303,6 +8602,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcurrencyNull() {
                 this[this.tableANALYSIS.currencyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IswhatToShowNull() {
+                return this.IsNull(this.tableANALYSIS.whatToShowColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetwhatToShowNull() {
+                this[this.tableANALYSIS.whatToShowColumn] = global::System.Convert.DBNull;
             }
         }
         
