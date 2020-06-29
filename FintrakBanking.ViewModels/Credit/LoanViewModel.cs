@@ -722,6 +722,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        //public bool? isAwaitingLineMaintenance { get; set; }
+
         public CamProcessedLoanViewModel()
         {
             bookedLoanData = new LoanViewModel();
