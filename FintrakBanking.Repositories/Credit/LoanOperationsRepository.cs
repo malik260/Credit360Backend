@@ -19852,7 +19852,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         var consultant = context.TBL_ACCREDITEDCONSULTANT.Find(reviewRecord.ACCREDITEDCONSULTANTID);
                         alert.receiverEmailList.Add(consultant.EMAILADDRESS);
-                        dynamicMessage = "Dear " +consultant.FIRMNAME + "<br/> Kindly be informed that you have been shortlisted as one of the Consulting firm for our Loan(s) recovery process. Contact the bank for further details";
+                        dynamicMessage = "Dear " +consultant.FIRMNAME + "<br/> Kindly be informed that you have been shortlisted as one of the Consulting firms for our Loan(s) recovery process. Contact the bank for further details";
                         LogEmailAlert(dynamicMessage, "NOTIFICATION FOR LOAN(S) RECOVERY", alert.receiverEmailList, "80760", 80760, "NotifyRecoveryAgentForAssignedLoans");
 
                     }
