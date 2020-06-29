@@ -42,7 +42,7 @@ namespace FintrakBanking.Repositories.credit
         }
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
         {
-            return (from x in context.TBL_LOAN_APPLICATION
+            var data = (from x in context.TBL_LOAN_APPLICATION
                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                     join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID               
                     where x.ISPROJECTRELATED == true && (x.APPLICATIONREFERENCENUMBER == searchString.Trim()
@@ -56,13 +56,16 @@ namespace FintrakBanking.Repositories.credit
                         customerCode = c.CUSTOMERCODE,
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
+                        loanApplicationDetailId =a.LOANAPPLICATIONDETAILID,
                         customerId = c.CUSTOMERID,
                         psrReportTypeId = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.PSRREPORTTYPEID).FirstOrDefault(),
                         reportTypeName = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.REPORTTYPENAME).FirstOrDefault(),
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                         applicationDate = x.APPLICATIONDATE,
                         applicationAmount = x.APPLICATIONAMOUNT,
+                        approvedAmount = a.APPROVEDAMOUNT,
                         interestRate = x.INTERESTRATE,
+                        productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
                         productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
@@ -71,19 +74,54 @@ namespace FintrakBanking.Repositories.credit
                         operationId = (int)OperationsEnum.OriginalDocumentApproval,
                         isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
                     }).ToList();
+
+            foreach(var item in data)
+            {
+                if(item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                {
+                    var utilizations = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.LOANSTATUSID == (int)LoanStatusEnum.Active).ToList();
+                    if (utilizations.Count() > 0)
+                    {
+                        item.totalUtilized = utilizations.Sum(x => x.OVERDRAFTLIMIT);
+                    }
+                    else item.totalUtilized = (decimal)0;
+                }
+                if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    var utilizations = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.LOANSTATUSID == (int)LoanStatusEnum.Active).ToList();
+                    if (utilizations.Count() > 0)
+                    {
+                        item.totalUtilized = utilizations.Sum(x => x.CONTINGENTAMOUNT);
+                    }
+                    else item.totalUtilized = (decimal)0;
+
+                }
+                if (item.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan && item.productTypeId != (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    var utilizations = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.LOANSTATUSID == (int)LoanStatusEnum.Active).ToList();
+                    if (utilizations.Count() > 0)
+                    {
+                        item.totalUtilized = utilizations.Sum(x => x.PRINCIPALAMOUNT);
+                    }
+                    else item.totalUtilized = (decimal)0;
+                }
+            }
+
+            return data;
         }
 
         public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)
         {
-            return (from p in context.TBL_PSR_PROJECT_FACILITIES
-                    join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
-                    // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                    let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
+            var data = (from p in context.TBL_PSR_PROJECT_FACILITIES
+                        join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
+                        join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                        // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                        let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
 
-                    where p.PROJECTSITEREPORTID  == id
+                        where p.PROJECTSITEREPORTID  == id
 
-                    select new LoanApplicationViewModel
-                    {
+                        select new LoanApplicationViewModel
+                        {
                         customerName = context.TBL_CUSTOMER.Where(o=>o.CUSTOMERID== loan_application_detail.CUSTOMERID).Select(o=>o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                        //customerCode = c.CUSTOMERCODE,
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
@@ -93,6 +131,7 @@ namespace FintrakBanking.Repositories.credit
                         applicationDate = x.APPLICATIONDATE,
                         applicationAmount = x.APPLICATIONAMOUNT,
                         interestRate = x.INTERESTRATE,
+                        productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
                         productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == loan_application_detail.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
@@ -101,6 +140,38 @@ namespace FintrakBanking.Repositories.credit
                         operationId = (int)OperationsEnum.OriginalDocumentApproval,
                         isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
                     }).ToList();
+            foreach (var item in data)
+            {
+                if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                {
+                    var utilizations = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.LOANSTATUSID == (int)LoanStatusEnum.Active).ToList();
+                    if (utilizations.Count() > 0)
+                    {
+                        item.totalUtilized = utilizations.Sum(x => x.OVERDRAFTLIMIT);
+                    }
+                    else item.totalUtilized = (decimal)0;
+                }
+                if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    var utilizations = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.LOANSTATUSID == (int)LoanStatusEnum.Active).ToList();
+                    if (utilizations.Count() > 0)
+                    {
+                        item.totalUtilized = utilizations.Sum(x => x.CONTINGENTAMOUNT);
+                    }
+                    else item.totalUtilized = (decimal)0;
+
+                }
+                if (item.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan && item.productTypeId != (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    var utilizations = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.LOANSTATUSID == (int)LoanStatusEnum.Active).ToList();
+                    if (utilizations.Count() > 0)
+                    {
+                        item.totalUtilized = utilizations.Sum(x => x.PRINCIPALAMOUNT);
+                    }
+                    else item.totalUtilized = (decimal)0;
+                }
+            }
+            return data;
         }
 
         public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports()
@@ -394,6 +465,7 @@ namespace FintrakBanking.Repositories.credit
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = general.GetApplicationDate(),
                     LOANAPPLICATIONID = p.loanApplicationId,
+                    LOANAPPLICATIONDETAILID = p.loanApplicationDetailId,
                     PROJECTLOCATION = model.projectLocation,
                     CURRENCYID = model.currencyId,
                     INSPECTIONDATE = model.inspectionDate,

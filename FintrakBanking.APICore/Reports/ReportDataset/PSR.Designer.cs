@@ -2827,6 +2827,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnmoratrium;
             
+            private global::System.Data.DataColumn columnapprovedAmount;
+            
+            private global::System.Data.DataColumn columntotalUtilized;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public FACILITIESDataTable() {
@@ -2958,6 +2962,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn approvedAmountColumn {
+                get {
+                    return this.columnapprovedAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn totalUtilizedColumn {
+                get {
+                    return this.columntotalUtilized;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -2993,7 +3013,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public FACILITIESRow AddFACILITIESRow(string applicationReferenceNumber, string applicationAmount, string interestRate, string productName, string tenor, string collateral, string equityControl, string pledgeCollateral, string valueOfCollateral, string perfectionStatus, string nature, string moratrium) {
+            public FACILITIESRow AddFACILITIESRow(string applicationReferenceNumber, string applicationAmount, string interestRate, string productName, string tenor, string collateral, string equityControl, string pledgeCollateral, string valueOfCollateral, string perfectionStatus, string nature, string moratrium, string approvedAmount, string totalUtilized) {
                 FACILITIESRow rowFACILITIESRow = ((FACILITIESRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         applicationReferenceNumber,
@@ -3007,7 +3027,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         valueOfCollateral,
                         perfectionStatus,
                         nature,
-                        moratrium};
+                        moratrium,
+                        approvedAmount,
+                        totalUtilized};
                 rowFACILITIESRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowFACILITIESRow);
                 return rowFACILITIESRow;
@@ -3042,6 +3064,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnperfectionStatus = base.Columns["perfectionStatus"];
                 this.columnnature = base.Columns["nature"];
                 this.columnmoratrium = base.Columns["moratrium"];
+                this.columnapprovedAmount = base.Columns["approvedAmount"];
+                this.columntotalUtilized = base.Columns["totalUtilized"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3071,6 +3095,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnnature);
                 this.columnmoratrium = new global::System.Data.DataColumn("moratrium", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnmoratrium);
+                this.columnapprovedAmount = new global::System.Data.DataColumn("approvedAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapprovedAmount);
+                this.columntotalUtilized = new global::System.Data.DataColumn("totalUtilized", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntotalUtilized);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -7281,6 +7309,38 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string approvedAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableFACILITIES.approvedAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedAmount\' in table \'FACILITIES\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFACILITIES.approvedAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string totalUtilized {
+                get {
+                    try {
+                        return ((string)(this[this.tableFACILITIES.totalUtilizedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'totalUtilized\' in table \'FACILITIES\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFACILITIES.totalUtilizedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsapplicationReferenceNumberNull() {
                 return this.IsNull(this.tableFACILITIES.applicationReferenceNumberColumn);
             }
@@ -7421,6 +7481,30 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetmoratriumNull() {
                 this[this.tableFACILITIES.moratriumColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsapprovedAmountNull() {
+                return this.IsNull(this.tableFACILITIES.approvedAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetapprovedAmountNull() {
+                this[this.tableFACILITIES.approvedAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IstotalUtilizedNull() {
+                return this.IsNull(this.tableFACILITIES.totalUtilizedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SettotalUtilizedNull() {
+                this[this.tableFACILITIES.totalUtilizedColumn] = global::System.Convert.DBNull;
             }
         }
         
