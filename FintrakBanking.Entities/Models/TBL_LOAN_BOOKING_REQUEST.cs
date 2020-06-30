@@ -67,7 +67,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? TAKEFEEONCE { get; set; }
 
-        public bool ISDIBURSED { get; set; }
+        public bool ISDISBURSED { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
