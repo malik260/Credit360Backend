@@ -114,25 +114,23 @@ namespace FintrakBanking.Repositories.credit
         {
             var data = (from p in context.TBL_PSR_PROJECT_FACILITIES
                         join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
-                        join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                        // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                        join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                         let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-
                         where p.PROJECTSITEREPORTID  == id
 
                         select new LoanApplicationViewModel
                         {
-                        customerName = context.TBL_CUSTOMER.Where(o=>o.CUSTOMERID== loan_application_detail.CUSTOMERID).Select(o=>o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
-                       //customerCode = c.CUSTOMERCODE,
+                        customerName = context.TBL_CUSTOMER.Where(o=>o.CUSTOMERID== a.CUSTOMERID).Select(o=>o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
                         customerId = x.CUSTOMERID,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                         applicationDate = x.APPLICATIONDATE,
                         applicationAmount = x.APPLICATIONAMOUNT,
+                        approvedAmount = a.APPROVEDAMOUNT,
                         interestRate = x.INTERESTRATE,
                         productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
-                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == loan_application_detail.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
@@ -195,6 +193,7 @@ namespace FintrakBanking.Repositories.credit
                             completionDate = x.COMPLETIONDATE,
                             acceptance = x.ACCEPTANCE,
                             loanApplicationId = x.LOANAPPLICATIONID,
+                            loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                             projectLocation = x.PROJECTLOCATION,
                             approvalStatusId = x.APPROVALSTATUSID,                          
                             currencyId = x.CURRENCYID,
@@ -223,6 +222,7 @@ namespace FintrakBanking.Repositories.credit
                             completionDate = x.COMPLETIONDATE,
                             acceptance = x.ACCEPTANCE,
                             loanApplicationId = x.LOANAPPLICATIONID,
+                            loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                             projectLocation = x.PROJECTLOCATION,
                             approvalStatusId = trail.APPROVALSTATUSID,
                             approvalTrailId = trail.APPROVALTRAILID,
@@ -253,6 +253,7 @@ namespace FintrakBanking.Repositories.credit
                 completionDate = x.COMPLETIONDATE,
                 //nextVisitationDate = x.NEXTVISITATIONDATE,
                 loanApplicationId = x.LOANAPPLICATIONID,
+                loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                 projectLocation = x.PROJECTLOCATION,
                 approvalStatusId = x.APPROVALSTATUSID,
                 inspectionDate = x.INSPECTIONDATE,
