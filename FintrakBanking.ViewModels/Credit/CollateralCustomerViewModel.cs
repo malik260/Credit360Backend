@@ -410,6 +410,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralSummary { get; set; }
         public int? loopedStaffId { get; set; }
         public string lastApprovalComment { get; set; }
+        public int loanApplicationId2 { get; set; }
     }
 
     public class crossGarantee
@@ -520,6 +521,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalTrailId { get; set; }
         public int targetId { get; set; }
         public DateTime arrivalTime { get; set; }
+        public string accountOfficer { get; set; }
     }
 
     public class NewCollateralViewModel

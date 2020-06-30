@@ -587,6 +587,20 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("facility-line-maintenance-awaiting-approval")]
+        public HttpResponseMessage GetFacilityLineAwaitingApproval()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var data = repo.GetFacilityLineAwaitingMaintenanceApproval(token.GetStaffId, token.GetCompanyId);
+
+            if (data.Any() == false)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
+
+        [HttpGet]
         [Route("loans-disbursed")]
         public HttpResponseMessage GetdisbursedLoansApplicationDetails()
         {
@@ -656,7 +670,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
         }
-
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -1807,7 +1820,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lien-document-download/{lienRemovalId}")]
         public HttpResponseMessage GetLienReovalLetter(int lienRemovalId)
         {
-            CollateralLiquidationRecoveryViewModel data = repo.GetLiquidationReceipt(lienRemovalId);
+            RemoveLienViewModel data = repo.GetLienRemovalLetter(lienRemovalId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

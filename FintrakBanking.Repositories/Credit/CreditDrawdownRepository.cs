@@ -442,7 +442,7 @@ namespace FintrakBanking.Repositories.Credit
                     }).ToList();
 
             data = data.Where(x => x.applicationReferenceNumber != "-")
-              .GroupBy(p => p.loanBookingRequestId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+              .GroupBy(p => p.loanBookingRequestId).Select(l => l.OrderByDescending(t => t.systemArrivalDateTime).FirstOrDefault())
                   .ToList();
 
             foreach (var item in data)

@@ -11,6 +11,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationViewModel : GeneralEntity
     {
+        public short productTypeId { get; set; }
+        public decimal totalUtilized { get; set; }
+
         public int? customerBusinessUnitId { get; set; }
         public string divisionShortCode { get; set; }
         public int bookingRequestId { get; set; }
@@ -232,6 +235,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string lienReferenceNumber { get; set; }
         public decimal lienAmount { get; set; }
         public DateTime lienDateTimeCreated { get; set; }
+        public string currency { get; set; }
     }
 
     public class LoanApplicationUpdateMessage

@@ -47,6 +47,11 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
         public bool forbidExternalNotification { get; set; }
         public string coreBankingRef { get; set; }
+
+        public int loanChargeFeeId { get; set; }
+        public decimal feeAmount { get; set; }
+        public double feeRate { get; set; }
+
     }
     public class ApprovalResponse
     {

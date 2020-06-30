@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 {
     public interface IApprovalLevelStaffRepository
     {
+        IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailBySiteTargetId(int targetId, int companyId);
         bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model);
 
         bool UpdateApprovalLevelStaff(int staffLevelId, ApprovalLevelStaffViewModel model);

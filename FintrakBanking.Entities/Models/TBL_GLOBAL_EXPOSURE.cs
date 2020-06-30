@@ -35,6 +35,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public int? EXPIRYBANDID { get; set; }
         public string CURRENCYTYPE { get; set; }
         public string CBNSECTOR { get; set; }
+        public string CBNSECTORID { get; set; }
         public string CBNSECTORADJUSTED { get; set; }
         public string CBNCLASSIFICATION { get; set; }
         public string PWCCLASSIFICATION { get; set; }

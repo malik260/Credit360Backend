@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         public int PSRREPORTTYPEID { get; set; }
 
         public int LOANAPPLICATIONID { get; set; }
-
+        public int LOANAPPLICATIONDETAILID { get; set; }
         public string PROJECTLOCATION { get; set; }
 
         [Required]
@@ -58,6 +58,7 @@ namespace FintrakBanking.Entities.Models
         public int? LASTUPDATEDBY { get; set; }
         public DateTime? DATETIMEUPDATED { get; set; }
         public bool DELETED { get; set; }
+        public bool ACCEPTANCE { get; set; }
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
         public int APPROVALSTATUSID { get; set; }
