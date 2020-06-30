@@ -7197,11 +7197,11 @@ namespace FintrakBanking.Repositories.Credit
             
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
-                var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+                var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstHundred(application);
                 var proposedGroupLimitHundred = groupLimitHundred.outstandingBalance + (double)incomingAmount; 
                 if ((double)groupLimitHundred.maximumAllowedLimit != 0 && proposedGroupLimitHundred >= (double)groupLimitHundred.maximumAllowedLimit)
                 {
-                    throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+                    throw new SecureException("Group Limit for the first 100 Group Customers exporsures Exceeded");
                 }
             }
 
