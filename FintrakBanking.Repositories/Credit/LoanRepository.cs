@@ -3002,7 +3002,7 @@ namespace FintrakBanking.Repositories.Credit
                         && s.ISUSED == true
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         && s.ISMAINTAINEDLINE == null
-                        && s.ISDIBURSED == false
+                        && s.ISDISBURSED == false
 
                         orderby s.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel
@@ -8513,7 +8513,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && ((bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                                    && operationIds.Contains(atrail.OPERATIONID)
                                    && atrail.RESPONSESTAFFID == null
-                                   && s.ISDIBURSED == false
+                                   && s.ISDISBURSED == false
                                    //&& d.CRMSVALIDATED == true
                                    orderby s.LOAN_BOOKING_REQUESTID descending
                                    select new CamProcessedLoanViewModel()
@@ -8713,7 +8713,7 @@ namespace FintrakBanking.Repositories.Credit
                         && d.ISLINEFACILITY == true
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         && s.ISMAINTAINEDLINE == false
-                        && s.ISDIBURSED == false
+                        && s.ISDISBURSED == false
 
                         orderby s.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel
