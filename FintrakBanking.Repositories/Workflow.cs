@@ -773,6 +773,16 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
+        private void ValidateSourceConfiguration()
+        {
+            bool valid = true;
+            if (this.staffId > 0 && this.fromLevelId > 0)
+            {
+                valid = general.GetStaffApprovalLevelIds((int)this.toStaffId, this.operationId).ToList().Contains((int)this.fromLevelId);
+                if (valid == false) new SecureException("Target Staff is NOT in the Source approval level");
+            }
+        }
+
         private void ValidateDestinationConfiguration()
         {
             bool valid = true;
