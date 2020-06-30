@@ -50,6 +50,7 @@ namespace FintrakBanking.ViewModels.credit
         public string groupHead { get; set; }
         public DateTime nextVisitationDate { get; set; }
         public string superComment { get; set; }
+        public int? loanApplicationDetailId { get; set; }
     }
     
 }
