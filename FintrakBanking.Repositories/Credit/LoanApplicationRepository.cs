@@ -7106,7 +7106,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach(var facility in details)
                 {
-                    if (facility != null)
+                    if (facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal || facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
                     {
                         var sector = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
                         var sectorName = context.TBL_SECTOR.Find(sector.SECTORID).NAME ?? "N/A";
@@ -7115,7 +7115,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
                             decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                            decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
+                            decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 5, MidpointRounding.AwayFromZero);
                             if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + sectorName + " exceeded!");
                             //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
                         }
