@@ -269,21 +269,19 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
             var data =  (from p in context.TBL_PSR_PROJECT_FACILITIES
                         join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
-                        join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                        // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                        join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                         let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
                     
                         where p.PROJECTSITEREPORTID == id
 
                         select new LoanApplicationViewModel
                     {
-                        // customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
-                        // customerCode = c.CUSTOMERCODE,
+                        customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                         currency = currency.CURRENCYCODE,
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
-                        moratrium = loan_Application_detail.MORATORIUMDURATION,
-                        equityControl = loan_Application_detail.EQUITYAMOUNT,
+                        moratrium = a.MORATORIUMDURATION,
+                        equityControl = a.EQUITYAMOUNT,
                         pledgeCollateral = x.COLLATERALDETAIL,
                         valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
                         //  customerId = c.CUSTOMERID,
@@ -293,8 +291,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         approvedAmount = a.APPROVEDAMOUNT,
                         interestRate = x.INTERESTRATE,
                         productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
-                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == loan_Application_detail.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
-                        tenor = loan_Application_detail.APPROVEDTENOR,
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        tenor = a.APPROVEDTENOR,
                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
