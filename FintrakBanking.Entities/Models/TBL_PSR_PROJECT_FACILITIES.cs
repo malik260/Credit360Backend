@@ -15,7 +15,9 @@ namespace FintrakBanking.Entities.Models
         public int PROJECTFACITYID { get; set; }
         public int PROJECTSITEREPORTID { get; set; }
         public int LOANAPPLICATIONID { get; set; }
+        public int? LOANID { get; set; }
         public int? LOANAPPLICATIONDETAILID { get; set; }
+        public int? LOANSYSTEMTYPEID { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public int? LASTUPDATEDBY { get; set; }
@@ -23,5 +25,6 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
+        
     }
 }
