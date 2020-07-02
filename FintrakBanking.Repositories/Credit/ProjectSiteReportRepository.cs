@@ -58,6 +58,7 @@ namespace FintrakBanking.Repositories.credit
                         loanApplicationId = x.LOANAPPLICATIONID,
                         loanApplicationDetailId =a.LOANAPPLICATIONDETAILID,
                         customerId = c.CUSTOMERID,
+                        loanPurpose = a.LOANPURPOSE,
                         psrReportTypeId = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.PSRREPORTTYPEID).FirstOrDefault(),
                         reportTypeName = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.REPORTTYPENAME).FirstOrDefault(),
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
@@ -110,6 +111,148 @@ namespace FintrakBanking.Repositories.credit
             return data;
         }
 
+
+        public IEnumerable<LoanApplicationViewModel> ProjectSiteReportLoans(int id)
+        {
+            var dataTerLoan =   (from x in context.TBL_LOAN_APPLICATION 
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join r in context.TBL_LOAN on a.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
+                                join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                where x.ISPROJECTRELATED == true && x.LOANAPPLICATIONID == id
+                                let projectSiteReport = context.TBL_PSR_PROJECT_SITE_REPORT.Where(p => p.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(p => p).FirstOrDefault()
+                                select new LoanApplicationViewModel
+                                {
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    loanPurpose = a.LOANPURPOSE,
+                                    customerId = c.CUSTOMERID,
+                                    psrReportTypeId = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.PSRREPORTTYPEID).FirstOrDefault(),
+                                    reportTypeName = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.REPORTTYPENAME).FirstOrDefault(),
+                                    branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                                    applicationDate = x.APPLICATIONDATE,
+                                    applicationAmount = x.APPLICATIONAMOUNT,
+                                    approvedAmount = a.APPROVEDAMOUNT,
+                                    principalAmount = r.PRINCIPALAMOUNT,
+                                    loanReferenceNumber = r.LOANREFERENCENUMBER,
+                                    interestRate = x.INTERESTRATE,
+                                    productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
+                                    productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                    relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                    relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                    relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                    relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                    operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                    isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                            }).ToList();
+
+            var dataRevolving = (from x in context.TBL_LOAN_APPLICATION 
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join r in context.TBL_LOAN_REVOLVING on a.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
+                                join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                where x.ISPROJECTRELATED == true && x.LOANAPPLICATIONID == id
+                                let projectSiteReport = context.TBL_PSR_PROJECT_SITE_REPORT.Where(p => p.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(p => p).FirstOrDefault()
+                               select new LoanApplicationViewModel
+                               {
+                                   customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                   customerCode = c.CUSTOMERCODE,
+                                   applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                   loanApplicationId = x.LOANAPPLICATIONID,
+                                   loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                   loanPurpose = a.LOANPURPOSE,
+                                   customerId = c.CUSTOMERID,
+                                   psrReportTypeId = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.PSRREPORTTYPEID).FirstOrDefault(),
+                                   reportTypeName = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.REPORTTYPENAME).FirstOrDefault(),
+                                   branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                                   applicationDate = x.APPLICATIONDATE,
+                                   applicationAmount = x.APPLICATIONAMOUNT,
+                                   approvedAmount = a.APPROVEDAMOUNT,
+                                   principalAmount = r.OVERDRAFTLIMIT,
+                                   loanReferenceNumber = r.LOANREFERENCENUMBER,
+                                   interestRate = x.INTERESTRATE,
+                                   productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
+                                   productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                   relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                   relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                   relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                   relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                   operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                   isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                               }).ToList();
+
+            var dataContingent = (from x in context.TBL_LOAN_APPLICATION
+                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                 join r in context.TBL_LOAN_CONTINGENT on a.LOANAPPLICATIONDETAILID equals r.LOANAPPLICATIONDETAILID
+                                 join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                 where x.ISPROJECTRELATED == true && x.LOANAPPLICATIONID == id
+                                 let projectSiteReport = context.TBL_PSR_PROJECT_SITE_REPORT.Where(p => p.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(p => p).FirstOrDefault()
+                                 select new LoanApplicationViewModel
+                                 {
+                                     customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                     customerCode = c.CUSTOMERCODE,
+                                     applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                     loanApplicationId = x.LOANAPPLICATIONID,
+                                     loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                     loanPurpose = a.LOANPURPOSE,
+                                     customerId = c.CUSTOMERID,
+                                     psrReportTypeId = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.PSRREPORTTYPEID).FirstOrDefault(),
+                                     reportTypeName = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.REPORTTYPENAME).FirstOrDefault(),
+                                     branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                                     applicationDate = x.APPLICATIONDATE,
+                                     applicationAmount = x.APPLICATIONAMOUNT,
+                                     approvedAmount = a.APPROVEDAMOUNT,
+                                     principalAmount = r.CONTINGENTAMOUNT,
+                                     loanReferenceNumber = r.LOANREFERENCENUMBER,
+                                     interestRate = x.INTERESTRATE,
+                                     productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
+                                     productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                     relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                     relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                     relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                     relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                     operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                     isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                                 }).ToList();
+
+            var data = dataTerLoan.Union(dataRevolving).Union(dataContingent);
+
+            foreach (var item in data)
+            {
+                if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                {
+                    var utilizations = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.LOANSTATUSID == (int)LoanStatusEnum.Active).ToList();
+                    if (utilizations.Count() > 0)
+                    {
+                        item.totalUtilized = utilizations.Sum(x => x.OVERDRAFTLIMIT);
+                    }
+                    else item.totalUtilized = (decimal)0;
+                }
+                if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    var utilizations = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.LOANSTATUSID == (int)LoanStatusEnum.Active).ToList();
+                    if (utilizations.Count() > 0)
+                    {
+                        item.totalUtilized = utilizations.Sum(x => x.CONTINGENTAMOUNT);
+                    }
+                    else item.totalUtilized = (decimal)0;
+
+                }
+                if (item.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan && item.productTypeId != (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    var utilizations = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.LOANSTATUSID == (int)LoanStatusEnum.Active).ToList();
+                    if (utilizations.Count() > 0)
+                    {
+                        item.totalUtilized = utilizations.Sum(x => x.PRINCIPALAMOUNT);
+                    }
+                    else item.totalUtilized = (decimal)0;
+                }
+            }
+
+            return data;
+        }
+
         public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)
         {
             var data = (from p in context.TBL_PSR_PROJECT_FACILITIES
@@ -128,6 +271,7 @@ namespace FintrakBanking.Repositories.credit
                         applicationDate = x.APPLICATIONDATE,
                         applicationAmount = x.APPLICATIONAMOUNT,
                         approvedAmount = a.APPROVEDAMOUNT,
+                        loanPurpose = a.LOANPURPOSE,
                         interestRate = x.INTERESTRATE,
                         productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
                         productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),

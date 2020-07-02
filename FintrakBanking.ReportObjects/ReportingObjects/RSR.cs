@@ -283,6 +283,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         moratrium = a.MORATORIUMDURATION,
                         equityControl = a.EQUITYAMOUNT,
                         pledgeCollateral = x.COLLATERALDETAIL,
+                        loanPurpose = a.LOANPURPOSE,
                         valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
                         //  customerId = c.CUSTOMERID,
                         //branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
