@@ -1762,6 +1762,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             x.currentApprovalLevel = appRecord2.TOAPPROVALLEVELID != null ? appRecord2.TBL_APPROVAL_LEVEL1.LEVELNAME : "Credit Operations Inputer";
                             x.responsiblePerson = appRecord2.TOSTAFFID == null ? appRecord2.TOAPPROVALLEVELID != null ? appRecord2.TBL_APPROVAL_LEVEL1.LEVELNAME : "Credit Operations Inputer" : appRecord2.TBL_STAFF1.FIRSTNAME + " " + appRecord2.TBL_STAFF1.MIDDLENAME + " " + appRecord2.TBL_STAFF1.LASTNAME;
+                            x.approvalTrailId = appRecord2.APPROVALTRAILID;
                             x.currentOperationId = appRecord2.OPERATIONID;
                         }
                     }

@@ -87,6 +87,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool WorkflowTest();
 
+        ApprovalTrailViewModel GetapprovalTrailByTrailId(int approvalTrailId);
+
         IEnumerable<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity);
         IEnumerable<RepaymentScheduleTermSetupViewModel> GetAllSetupRepaymentTerms();
         List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity);
