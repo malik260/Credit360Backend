@@ -4832,8 +4832,8 @@ namespace FintrakBanking.Repositories.Credit
                 var approvalOperations = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(f => f.OPERATIONID).ToList();
                 var applicationStatuses = new int[] { (int)LoanApplicationStatusEnum.AvailmentCompleted, (int)LoanApplicationStatusEnum.CAMCompleted };
                 int[] operations = new int[] {  (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.IndividualDrawdownRequest, (int)OperationsEnum.CorporateDrawdownRequest,
-                                                (int)OperationsEnum.CreditCardDrawdownRequest, (int)OperationsEnum.CRMSApproval,(int)OperationsEnum.OfferLetterApproval,
-                                                (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking};
+                                                (int)OperationsEnum.CreditCardDrawdownRequest,
+                                                (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking};
                 int[] otherApprovalOperations = new int[] { (int)OperationsEnum.AdhocApproval, (int)OperationsEnum.OfferLetterApproval};
                 approvalOperations.AddRange(otherApprovalOperations);
                 int[] approvals = new int[] { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved, (int)ApprovalStatusEnum.Authorised };

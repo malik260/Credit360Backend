@@ -750,6 +750,18 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpGet]
+        [Route("approval-trail/{approvalTrailId}")]
+        public HttpResponseMessage GetapprovalTrailByTrailId(int approvalTrailId)
+        {
+            var data = repo.GetapprovalTrailByTrailId(approvalTrailId);
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+        }
+
         #region recommended collateral
 
         [HttpGet]
