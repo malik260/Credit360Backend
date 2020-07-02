@@ -238,6 +238,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string currency { get; set; }
         public decimal principalAmount { get; set; }
         public string loanReferenceNumber { get; set; }
+        public int? loanId { get; set; }
+        public int loanSystemTypeId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage

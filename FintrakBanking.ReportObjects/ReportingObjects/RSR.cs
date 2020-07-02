@@ -267,40 +267,211 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             var project = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
             var currency = context.TBL_CURRENCY.Find(project.CURRENCYID);
 
-            var data =  (from p in context.TBL_PSR_PROJECT_FACILITIES
-                        join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
-                        join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
-                        let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-                    
-                        where p.PROJECTSITEREPORTID == id
+            var dataTermLoan =  (from p in context.TBL_PSR_PROJECT_FACILITIES
+                                join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                                join r in context.TBL_LOAN on p.LOANID equals r.TERMLOANID
+                                let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
+                                where p.PROJECTSITEREPORTID == id && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
+                                 select new LoanApplicationViewModel
+                                {
+                                customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                                currency = currency.CURRENCYCODE,
+                                applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                loanApplicationId = x.LOANAPPLICATIONID,
+                                loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                moratrium = a.MORATORIUMDURATION,
+                                equityControl = a.EQUITYAMOUNT,
+                                pledgeCollateral = x.COLLATERALDETAIL,
+                                loanPurpose = a.LOANPURPOSE,
+                                valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
+                                applicationDate = x.APPLICATIONDATE,
+                                principalAmount = r.PRINCIPALAMOUNT == null ? 0 : r.PRINCIPALAMOUNT,
+                                applicationAmount = x.APPLICATIONAMOUNT,
+                                approvedAmount = a.APPROVEDAMOUNT,
+                                interestRate = x.INTERESTRATE,
+                                productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
+                                productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                tenor = a.APPROVEDTENOR,
+                                relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                            }).ToList();
 
-                        select new LoanApplicationViewModel
-                    {
-                        customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
-                        currency = currency.CURRENCYCODE,
-                        applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
-                        loanApplicationId = x.LOANAPPLICATIONID,
-                        moratrium = a.MORATORIUMDURATION,
-                        equityControl = a.EQUITYAMOUNT,
-                        pledgeCollateral = x.COLLATERALDETAIL,
-                        loanPurpose = a.LOANPURPOSE,
-                        valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
-                        //  customerId = c.CUSTOMERID,
-                        //branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                        applicationDate = x.APPLICATIONDATE,
-                        applicationAmount = x.APPLICATIONAMOUNT,
-                        approvedAmount = a.APPROVEDAMOUNT,
-                        interestRate = x.INTERESTRATE,
-                        productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
-                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
-                        tenor = a.APPROVEDTENOR,
-                        relationshipOfficerId = x.RELATIONSHIPOFFICERID,
-                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        relationshipManagerId = x.RELATIONSHIPMANAGERID,
-                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        operationId = (int)OperationsEnum.OriginalDocumentApproval,
-                        isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
-                    }).ToList();
+            var dataRevolving = (from p in context.TBL_PSR_PROJECT_FACILITIES
+                                join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                                join r in context.TBL_LOAN_REVOLVING on p.LOANID equals r.REVOLVINGLOANID
+                                let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
+                                where p.PROJECTSITEREPORTID == id && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
+                                 select new LoanApplicationViewModel
+                                {
+                                    customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                                    currency = currency.CURRENCYCODE,
+                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    moratrium = a.MORATORIUMDURATION,
+                                    equityControl = a.EQUITYAMOUNT,
+                                    pledgeCollateral = x.COLLATERALDETAIL,
+                                    loanPurpose = a.LOANPURPOSE,
+                                    principalAmount = r.OVERDRAFTLIMIT == null ? 0 : r.OVERDRAFTLIMIT,
+                                    valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
+                                    applicationDate = x.APPLICATIONDATE,
+                                    applicationAmount = x.APPLICATIONAMOUNT,
+                                    approvedAmount = a.APPROVEDAMOUNT,
+                                    interestRate = x.INTERESTRATE,
+                                    productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
+                                    productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                    tenor = a.APPROVEDTENOR,
+                                    relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                    relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                    relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                    relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                    operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                    isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                                }).ToList();
+
+            var dataContingent = (from p in context.TBL_PSR_PROJECT_FACILITIES
+                                join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                                join r in context.TBL_LOAN_CONTINGENT on p.LOANID equals r.CONTINGENTLOANID
+                                let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
+                                where p.PROJECTSITEREPORTID == id && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
+                                  select new LoanApplicationViewModel
+                                {
+                                    customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                                    currency = currency.CURRENCYCODE,
+                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    moratrium = a.MORATORIUMDURATION,
+                                    equityControl = a.EQUITYAMOUNT,
+                                    pledgeCollateral = x.COLLATERALDETAIL,
+                                    principalAmount = r.CONTINGENTAMOUNT == null ? 0 : r.CONTINGENTAMOUNT,
+                                    loanPurpose = a.LOANPURPOSE,
+                                    valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
+                                    applicationDate = x.APPLICATIONDATE,
+                                    applicationAmount = x.APPLICATIONAMOUNT,
+                                    approvedAmount = a.APPROVEDAMOUNT,
+                                    interestRate = x.INTERESTRATE,
+                                    productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
+                                    productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                    tenor = a.APPROVEDTENOR,
+                                    relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                    relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                    relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                    relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                    operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                    isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                                }).ToList();
+
+            var dataTermLoan2 = (from p in context.TBL_PSR_PROJECT_FACILITIES
+                                join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                                let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
+                                where p.PROJECTSITEREPORTID == id && p.LOANID == null && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
+                                 select new LoanApplicationViewModel
+                                {
+                                    customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                                    currency = currency.CURRENCYCODE,
+                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    moratrium = a.MORATORIUMDURATION,
+                                    equityControl = a.EQUITYAMOUNT,
+                                    pledgeCollateral = x.COLLATERALDETAIL,
+                                    loanPurpose = a.LOANPURPOSE,
+                                    valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
+                                    applicationDate = x.APPLICATIONDATE,
+                                    principalAmount = 0,
+                                    applicationAmount = x.APPLICATIONAMOUNT,
+                                    approvedAmount = a.APPROVEDAMOUNT,
+                                    interestRate = x.INTERESTRATE,
+                                    productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
+                                    productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                    tenor = a.APPROVEDTENOR,
+                                    relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                    relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                    relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                    relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                    operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                    isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                                }).ToList();
+
+            var dataRevolving2 = (from p in context.TBL_PSR_PROJECT_FACILITIES
+                                 join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
+                                 join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                                 let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
+                                 where p.PROJECTSITEREPORTID == id && p.LOANID == null  && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
+                                 select new LoanApplicationViewModel
+                                 {
+                                     customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                                     currency = currency.CURRENCYCODE,
+                                     applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                     loanApplicationId = x.LOANAPPLICATIONID,
+                                     loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                     moratrium = a.MORATORIUMDURATION,
+                                     equityControl = a.EQUITYAMOUNT,
+                                     pledgeCollateral = x.COLLATERALDETAIL,
+                                     loanPurpose = a.LOANPURPOSE,
+                                     principalAmount = 0,
+                                     valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
+                                     applicationDate = x.APPLICATIONDATE,
+                                     applicationAmount = x.APPLICATIONAMOUNT,
+                                     approvedAmount = a.APPROVEDAMOUNT,
+                                     interestRate = x.INTERESTRATE,
+                                     productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
+                                     productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                     tenor = a.APPROVEDTENOR,
+                                     relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                     relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                     relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                     relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                     operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                     isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                                 }).ToList();
+
+            var dataContingent2 = (from p in context.TBL_PSR_PROJECT_FACILITIES
+                                  join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
+                                  join a in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                                  let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
+                                  where p.PROJECTSITEREPORTID == id && p.LOANID == null  && p.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability
+                                  select new LoanApplicationViewModel
+                                  {
+                                      customerName = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == a.CUSTOMERID).Select(o => o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                                      currency = currency.CURRENCYCODE,
+                                      applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                      loanApplicationId = x.LOANAPPLICATIONID,
+                                      loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                      moratrium = a.MORATORIUMDURATION,
+                                      equityControl = a.EQUITYAMOUNT,
+                                      pledgeCollateral = x.COLLATERALDETAIL,
+                                      principalAmount = 0,
+                                      loanPurpose = a.LOANPURPOSE,
+                                      valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
+                                      applicationDate = x.APPLICATIONDATE,
+                                      applicationAmount = x.APPLICATIONAMOUNT,
+                                      approvedAmount = a.APPROVEDAMOUNT,
+                                      interestRate = x.INTERESTRATE,
+                                      productTypeId = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTTYPEID).FirstOrDefault(),
+                                      productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                      tenor = a.APPROVEDTENOR,
+                                      relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                      relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                      relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                      relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                      operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                      isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                                  }).ToList();
+
+            var data1 = dataTermLoan.Union(dataRevolving).Union(dataContingent);
+            var data2 = dataTermLoan2.Union(dataRevolving2).Union(dataContingent2);
+            var data = data1.Union(data2);
+
             foreach (var item in data)
             {
                 if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
