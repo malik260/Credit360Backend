@@ -9302,7 +9302,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new CamProcessedLoanViewModel
                         {
                             isLineFacility = d.ISLINEFACILITY,
-                            isLineMaintained = m.APPROVEDLINESTATUSID != null,
+                            isLineMaintained = d.APPROVEDLINESTATUSID != null,
                             bookingAmountRequested = s.AMOUNT_REQUESTED,
                             loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                             bookingRequestStatusId = s.APPROVALSTATUSID,
