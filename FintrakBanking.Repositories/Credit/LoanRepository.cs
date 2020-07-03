@@ -15994,17 +15994,17 @@ namespace FintrakBanking.Repositories.Credit
                                    //join atrail in context.TBL_APPROVAL_TRAIL on b.LOANREVIEWAPPLICATIONID equals atrail.TARGETID
                                    join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                    where a.ISDISBURSED == true 
-                                   && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                   where a.ISDISBURSED == true
+                                  && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                   // || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                                   //&& (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
-                                   // && ids.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)
-                                   //  && atrail.RESPONSESTAFFID == null
-                                   && b.OPERATIONPERFORMED == false
-                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
-                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
-                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  
+                                  //&& (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                                  // && ids.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)
+                                  //  && atrail.RESPONSESTAFFID == null
+                                  && b.OPERATIONPERFORMED == false
+                                  && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                                  && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
+                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
+                                  && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter                                                                                                                                  
                                    select new LoanViewModel
                                    {
                                        //creditAppraisalOperationId = (from p in context.TBL_LOAN join c in context.TBL_LMSR_APPLICATION_DETAIL on p.TERMLOANID equals c.LOANID join l in context.TBL_LOAN_APPLICATION_DETAIL on p.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID join aa in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals aa.LOANAPPLICATIONID where p.TERMLOANID == a.TERMLOANID select aa.OPERATIONID).FirstOrDefault(),
@@ -16069,6 +16069,7 @@ namespace FintrakBanking.Repositories.Credit
                                        disburserComment = a.DISBURSERCOMMENT,
                                        disburseDate = a.DISBURSEDATE,
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                       businessUnit = context.TBL_PROFILE_BUSINESS_UNIT.Where(x => x.BUSINESSUNITID == c.BUSINESSUNTID).Select(x => x.BUSINESSUNITINITIALS).FirstOrDefault(),
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = b.OPERATIONID,
                                        operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == e.OPERATIONID).OPERATIONNAME,
