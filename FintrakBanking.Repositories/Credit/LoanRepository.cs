@@ -551,7 +551,7 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
             var product = context.TBL_PRODUCT.Find(request.PRODUCTID);
 
-            if(applicationDetail.ISLINEFACILITY == true && request.ISMAINTAINEDLINE != true)
+            if(applicationDetail.ISLINEFACILITY == true && applicationDetail.APPROVEDLINESTATUSID == null)
             {
                 throw new ConditionNotMetException("Please Maintain the line before booking");
             }
@@ -3002,7 +3002,7 @@ namespace FintrakBanking.Repositories.Credit
                         && s.ISUSED == true
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         && s.ISMAINTAINEDLINE == null
-                        && s.ISDIBURSED == false
+                        && s.ISDISBURSED == false
 
                         orderby s.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel
@@ -8513,7 +8513,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && ((bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                                    && operationIds.Contains(atrail.OPERATIONID)
                                    && atrail.RESPONSESTAFFID == null
-                                   && s.ISDIBURSED == false
+                                   && s.ISDISBURSED == false
                                    //&& d.CRMSVALIDATED == true
                                    orderby s.LOAN_BOOKING_REQUESTID descending
                                    select new CamProcessedLoanViewModel()
@@ -8713,7 +8713,7 @@ namespace FintrakBanking.Repositories.Credit
                         && d.ISLINEFACILITY == true
                         && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         && s.ISMAINTAINEDLINE == false
-                        && s.ISDIBURSED == false
+                        && s.ISDISBURSED == false
 
                         orderby s.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel
@@ -9302,7 +9302,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new CamProcessedLoanViewModel
                         {
                             isLineFacility = d.ISLINEFACILITY,
-                            isLineMaintained = m.APPROVEDLINESTATUSID != null,
+                            isLineMaintained = d.APPROVEDLINESTATUSID != null,
                             bookingAmountRequested = s.AMOUNT_REQUESTED,
                             loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
                             bookingRequestStatusId = s.APPROVALSTATUSID,
@@ -13128,17 +13128,14 @@ namespace FintrakBanking.Repositories.Credit
             if (isLCYUser == true)
             {
                 lcyLoans = allFilteredLoan.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
-                //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
             }
 
             if (isFCYUser == true)
             {
                 fcyLoans = allFilteredLoan.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
-
             }
 
             allFilteredLoan = lcyLoans.Union(fcyLoans).ToList();
-
             return allFilteredLoan;
 
         }
@@ -14939,7 +14936,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException("Not Implemented!");
             }
-            return allFilteredLoan;
+            return allFilteredLoan; //.Where(O => O.loanSystemTypeId == 3).OrderByDescending(O => O.loanId).Take(600);
         }
 
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)

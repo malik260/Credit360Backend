@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         public int PSRREPORTTYPEID { get; set; }
 
         public int LOANAPPLICATIONID { get; set; }
-
+        public int? LOANAPPLICATIONDETAILID { get; set; }
         public string PROJECTLOCATION { get; set; }
 
         [Required]

@@ -20220,7 +20220,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         var consultant = context.TBL_ACCREDITEDCONSULTANT.Find(reviewRecord.ACCREDITEDCONSULTANTID);
                         alert.receiverEmailList.Add(consultant.EMAILADDRESS);
-                        dynamicMessage = "Dear " +consultant.FIRMNAME + "<br/> Kindly be informed that you have been shortlisted as one of the Consulting firm for our Loan(s) recovery process. Contact the bank for further details";
+                        dynamicMessage = "Dear " +consultant.FIRMNAME + "<br/> Kindly be informed that you have been shortlisted as one of the Consulting firms for our Loan(s) recovery process. Contact the bank for further details";
                         LogEmailAlert(dynamicMessage, "NOTIFICATION FOR LOAN(S) RECOVERY", alert.receiverEmailList, "80760", 80760, "NotifyRecoveryAgentForAssignedLoans");
 
                     }
@@ -21815,60 +21815,50 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 transactionDetails.AddRange(financeTransaction.BuildContingentPrincipalPosting(model, loanReferenceNumber, addContingent.CONTINGENTAMOUNT, "Contingent Liability posting", operation));
-
                 financeTransaction.PostTransaction(transactionDetails, false, twoFactorAuth);
-
                 this.context.TBL_LOAN_CONTINGENT.Add(addContingent);
 
-
-
                 //addOverDraft.SERIALNUMBER = renewalResult.serialNumber;
-
                 var result = context.SaveChanges() > 0;
-
 
                 if (renewalResult != null && result)
                 {
-
                     var tempmedia = documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Where(x => x.TEMPLOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
 
-                    var data = new TBL_MEDIA_LOAN_DOCUMENTS
-                    {
-                        FILEDATA = tempmedia.FILEDATA,
-                        DOCUMENTTITLE = tempmedia.DOCUMENTTITLE,
-                        FILENAME = tempmedia.FILENAME,
-                        FILEEXTENSION = tempmedia.FILEEXTENSION,
-                        LOANREFERENCENUMBER = tempmedia.LOANREFERENCENUMBER,
-                        LOANAPPLICATIONNUMBER = tempmedia.LOANAPPLICATIONNUMBER,
-                        SYSTEMDATETIME = tempmedia.SYSTEMDATETIME,
-                        CREATEDBY = tempmedia.CREATEDBY,
-                        ISPRIMARYDOCUMENT = tempmedia.ISPRIMARYDOCUMENT,
-                        COMPANYID = tempmedia.COMPANYID,
-                        LOANSYSTEMTYPEID = tempmedia.LOANSYSTEMTYPEID,
-                        LOANREVIEWOPERATIONID = tempmedia.TEMPLOANREVIEWOPERATIONID,
-                        PHYSICALLOCATION = tempmedia.PHYSICALLOCATION,
-                        DOCUMENTTYPEID = tempmedia.DOCUMENTTYPEID,
+                    if (tempmedia != null) {
+                        var data = new TBL_MEDIA_LOAN_DOCUMENTS
+                        {
+                            FILEDATA = tempmedia.FILEDATA,
+                            DOCUMENTTITLE = tempmedia.DOCUMENTTITLE,
+                            FILENAME = tempmedia.FILENAME,
+                            FILEEXTENSION = tempmedia.FILEEXTENSION,
+                            LOANREFERENCENUMBER = tempmedia.LOANREFERENCENUMBER,
+                            LOANAPPLICATIONNUMBER = tempmedia.LOANAPPLICATIONNUMBER,
+                            SYSTEMDATETIME = tempmedia.SYSTEMDATETIME,
+                            CREATEDBY = tempmedia.CREATEDBY,
+                            ISPRIMARYDOCUMENT = tempmedia.ISPRIMARYDOCUMENT,
+                            COMPANYID = tempmedia.COMPANYID,
+                            LOANSYSTEMTYPEID = tempmedia.LOANSYSTEMTYPEID,
+                            LOANREVIEWOPERATIONID = tempmedia.TEMPLOANREVIEWOPERATIONID,
+                            PHYSICALLOCATION = tempmedia.PHYSICALLOCATION,
+                            DOCUMENTTYPEID = tempmedia.DOCUMENTTYPEID,
+                        };
 
-                    };
+                        documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
 
-                    documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
-                    try
-                    {
-                        documentContext.SaveChanges();
+                        try
+                        {
+                            documentContext.SaveChanges();
+                        }
+                        catch (Exception ex) { }
                     }
-                    catch (Exception ex) { }
-
-
-
 
                     output = true;
                 }
             }
             catch (Exception ex)
             {
-
                 throw ex;
-
             }
 
             return output;

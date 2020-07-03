@@ -106,6 +106,9 @@
               <xs:element name="perfectionStatus" msprop:Generator_ColumnVarNameInTable="columnperfectionStatus" msprop:Generator_ColumnPropNameInRow="perfectionStatus" msprop:Generator_ColumnPropNameInTable="perfectionStatusColumn" msprop:Generator_UserColumnName="perfectionStatus" type="xs:string" minOccurs="0" />
               <xs:element name="nature" msprop:Generator_ColumnVarNameInTable="columnnature" msprop:Generator_ColumnPropNameInRow="nature" msprop:Generator_ColumnPropNameInTable="natureColumn" msprop:Generator_UserColumnName="nature" type="xs:string" minOccurs="0" />
               <xs:element name="moratrium" msprop:Generator_ColumnVarNameInTable="columnmoratrium" msprop:Generator_ColumnPropNameInRow="moratrium" msprop:Generator_ColumnPropNameInTable="moratriumColumn" msprop:Generator_UserColumnName="moratrium" type="xs:string" minOccurs="0" />
+              <xs:element name="approvedAmount" msprop:Generator_ColumnVarNameInTable="columnapprovedAmount" msprop:Generator_ColumnPropNameInRow="approvedAmount" msprop:Generator_ColumnPropNameInTable="approvedAmountColumn" msprop:Generator_UserColumnName="approvedAmount" type="xs:string" minOccurs="0" />
+              <xs:element name="totalUtilized" msprop:Generator_ColumnVarNameInTable="columntotalUtilized" msprop:Generator_ColumnPropNameInRow="totalUtilized" msprop:Generator_ColumnPropNameInTable="totalUtilizedColumn" msprop:Generator_UserColumnName="totalUtilized" type="xs:string" minOccurs="0" />
+              <xs:element name="principalAmount" msprop:Generator_ColumnVarNameInTable="columnprincipalAmount" msprop:Generator_ColumnPropNameInRow="principalAmount" msprop:Generator_ColumnPropNameInTable="principalAmountColumn" msprop:Generator_UserColumnName="principalAmount" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

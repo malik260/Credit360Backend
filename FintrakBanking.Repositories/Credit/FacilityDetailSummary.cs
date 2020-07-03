@@ -571,8 +571,9 @@ namespace FintrakBanking.Repositories.Credit
             var loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
-                               join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
+                               //join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
                                join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                               join lr in context.TBL_LOAN_BOOKING_REQUEST on ld.LOANAPPLICATIONDETAILID equals lr.LOANAPPLICATIONDETAILID
                                join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
                                join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -654,7 +655,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loanDetails = (from a in context.TBL_LOAN
                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                               join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
+                               join lr in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals lr.LOANAPPLICATIONDETAILID
+                               //join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
                                join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                join f in context.TBL_PRODUCT on a.PRODUCTID equals f.PRODUCTID
                                join pt in context.TBL_PRODUCT_TYPE on f.PRODUCTTYPEID equals pt.PRODUCTTYPEID

@@ -153,6 +153,20 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-customer-loans/{id}")]
+        public HttpResponseMessage ProjectSiteReportLoans(int id)
+        {
+            IEnumerable<LoanApplicationViewModel> response = repo.ProjectSiteReportLoans(id);
+            if (response == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("project-site-report")]

@@ -3768,12 +3768,51 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
+        public ApprovalTrailViewModel GetapprovalTrailByTrailId(int approvalTrailId)
+        {
+            if (approvalTrailId > 0)
+            {
+                var trail = context.TBL_APPROVAL_TRAIL.Find(approvalTrailId);
+                var data = new ApprovalTrailViewModel
+                {
+                    approvalTrailId = trail.APPROVALTRAILID,
+                    //comment = trail.COMMENT,
+                    targetId = trail.TARGETID,
+                    operationId = trail.OPERATIONID,
+                    //arrivalDate = trail.ARRIVALDATE,
+                    //systemArrivalDateTime = trail.SYSTEMARRIVALDATETIME,
+                    //responseDate = trail.RESPONSEDATE,
+                    //systemResponseDateTime = trail.SYSTEMRESPONSEDATETIME,
+                    //responseStaffId = trail.RESPONSESTAFFID,
+                    requestStaffId = trail.REQUESTSTAFFID,
+                    fromApprovalLevelId = trail.FROMAPPROVALLEVELID,
+                    //fromApprovalLevelName = trail.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == trail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                    //toApprovalLevelName = trail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                    toApprovalLevelId = trail.TOAPPROVALLEVELID,
+                    //approvalStateId = trail.APPROVALSTATEID,
+                    //approvalStatusId = trail.APPROVALSTATUSID,
+                    //approvalState = trail.TBL_APPROVAL_STATE.APPROVALSTATE,
+                    //approvalStatus = trail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                    ////applicationId = application.LOANAPPLICATIONID,
+                    //commentStage = "Credit Appaisal",
+                    //toStaffName = allstaff.FirstOrDefault(s => s.id == trail.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == trail.RESPONSESTAFFID).name,
+                    //fromStaffName = allstaff.FirstOrDefault(s => s.id == trail.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == trail.REQUESTSTAFFID).name,
+                };
+            return data;
+            }
+            return null;
+        }
+
+
         public IEnumerable<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel model)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.applicationDetailId);
-            detail.REPAYMENTTERMS = model.terms;
-            detail.REPAYMENTSCHEDULEID = model.repaymentScheduleId;
-            context.SaveChanges();
+            if (detail != null)
+            {
+                detail.REPAYMENTTERMS = model.terms;
+                detail.REPAYMENTSCHEDULEID = model.repaymentScheduleId;
+                context.SaveChanges();
+            }
             return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID && x.DELETED == false)
                 .Select(x => new RepaymentScheduleTermsViewModel
                 {
