@@ -551,7 +551,7 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
             var product = context.TBL_PRODUCT.Find(request.PRODUCTID);
 
-            if(applicationDetail.ISLINEFACILITY == true && request.ISMAINTAINEDLINE != true)
+            if(applicationDetail.ISLINEFACILITY == true && applicationDetail.APPROVEDLINESTATUSID == null)
             {
                 throw new ConditionNotMetException("Please Maintain the line before booking");
             }
