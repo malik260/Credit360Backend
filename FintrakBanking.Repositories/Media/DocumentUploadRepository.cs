@@ -833,7 +833,7 @@ namespace FintrakBanking.Repositories.Media
             var usageCount = 0;
             var creditBureauDoc = docContext.TBL_DOCUMENT_TYPE.FirstOrDefault(O => O.DOCUMENTTYPEID == documentTypeId);
 
-            if (creditBureauDoc.DOCUMENTTYPENAME.ToUpper().Contains("CREDIT BUREAU"))
+            if (creditBureauDoc.DOCUMENTTYPENAME.ToUpper() == "CREDIT BUREAU")
             {
                 var docCreditBureau = docContext.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.DOCUMENTID == id);
 
