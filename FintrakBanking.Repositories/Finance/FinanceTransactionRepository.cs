@@ -17,6 +17,7 @@ using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.Common.CustomException;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.ViewModels.Report;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -4157,6 +4158,478 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
+        //  public List<trialBalanceViewModel> TrialBalanceSummary(int glAccountId, int companyId, int staffId)
+        public List<TrialBalanceViewModel> TrialBalanceSummary(int glAccountId, int currencyCode, int companyId, int staffId)
+        {
+
+            List<TrialBalanceViewModel> trialBal;
+
+
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+
+                var termLoans = (from ft in context.TBL_LOAN
+                                 join p in context.TBL_PRODUCT on ft.PRODUCTID equals p.PRODUCTID
+                                 select new
+                                 {
+                                     ft.LOANREFERENCENUMBER,
+                                     ft.PRODUCTID,
+                                     p.PRODUCTCODE,
+                                     p.PRODUCTNAME,
+                                     firstName = ft.TBL_CUSTOMER.FIRSTNAME,
+                                     lastName = ft.TBL_CUSTOMER.LASTNAME,
+                                     middleName = ft.TBL_CUSTOMER.MIDDLENAME,
+                                     appDetailId = ft.LOANAPPLICATIONDETAILID,
+                                     appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                     accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER
+                                 });
+
+                var revolvingLoans = (from ft in context.TBL_LOAN_REVOLVING
+                                      join p in context.TBL_PRODUCT on ft.PRODUCTID equals p.PRODUCTID
+                                      select new
+                                      {
+                                          ft.LOANREFERENCENUMBER,
+                                          ft.PRODUCTID,
+                                          p.PRODUCTCODE,
+                                          p.PRODUCTNAME,
+                                          firstName = ft.TBL_CUSTOMER.FIRSTNAME,
+                                          lastName = ft.TBL_CUSTOMER.LASTNAME,
+                                          middleName = ft.TBL_CUSTOMER.MIDDLENAME,
+                                          appDetailId = ft.LOANAPPLICATIONDETAILID,
+                                          appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER
+                                      });
+
+                var contingentLoans = (from ft in context.TBL_LOAN_CONTINGENT
+                                       join p in context.TBL_PRODUCT on ft.PRODUCTID equals p.PRODUCTID
+                                       select new
+                                       {
+                                           ft.LOANREFERENCENUMBER,
+                                           ft.PRODUCTID,
+                                           p.PRODUCTCODE,
+                                           p.PRODUCTNAME,
+                                           firstName = ft.TBL_CUSTOMER.FIRSTNAME,
+                                           lastName = ft.TBL_CUSTOMER.LASTNAME,
+                                           middleName = ft.TBL_CUSTOMER.MIDDLENAME,
+                                           appDetailId = ft.LOANAPPLICATIONDETAILID,
+                                           appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                           accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER
+                                       });
+
+                var allLoans = termLoans.Union(revolvingLoans).Union(contingentLoans).Distinct().ToList();
+
+                var all = allLoans;
+
+                trialBal = (from ft in context.TBL_FINANCE_TRANSACTION
+                            join ca in context.TBL_CHART_OF_ACCOUNT on ft.GLACCOUNTID equals ca.GLACCOUNTID
+                            join cu in context.TBL_CURRENCY on ft.CURRENCYID equals cu.CURRENCYID
+
+                            where ft.GLACCOUNTID == glAccountId && cu.CURRENCYID == currencyCode && ft.COMPANYID == companyId
+                            //   group ft by new { ft.GLACCOUNTID, ca.ACCOUNTCODE, ca.ACCOUNTNAME, cu.CURRENCYNAME } into groupedQ
+
+
+
+                            select new TrialBalanceViewModel()
+                            {
+
+                                glAccountId = ft.GLACCOUNTID,
+                                accountCode = ca.ACCOUNTCODE,
+                                accountName = ca.ACCOUNTNAME,
+                                currency = cu.CURRENCYNAME,
+                                creditAmount = ft.CREDITAMOUNT,
+                                debitAmount = ft.DEBITAMOUNT,
+                                sourceReferenceNumber = ft.SOURCEREFERENCENUMBER,
+                                batchCode = ft.BATCHCODE,
+                                transactionDate = ft.APPROVEDDATE,
+                                narration = ft.DESCRIPTION,
+
+
+
+
+                                //  totalDebit = groupedQ.Sum(i=>i.DEBITAMOUNT)
+
+
+                            }).ToList().Select(x => {
+
+                                var loanreaferencenumber = 1;
+                                bool hasdetailid = false;
+                                string accountcode = "";
+                                if (allLoans.Where(w => w.LOANREFERENCENUMBER == x.sourceReferenceNumber).Count() == 0 && x.sourceReferenceNumber.Contains('-'))
+                                {
+                                    string[] localRef = x.sourceReferenceNumber.Split('-');
+                                    int localloandetailid = 0;
+                                    int.TryParse(localRef[1], out localloandetailid);
+                                    if (allLoans.Where(e => e.appDetailId == localloandetailid).Count() > 0)
+                                        x.sourceReferenceNumber = allLoans.Where(e => e.appDetailId == localloandetailid).FirstOrDefault().LOANREFERENCENUMBER;
+                                    accountcode = allLoans.Where(e => e.appDetailId == localloandetailid).Count() > 0 ? allLoans.Where(e => e.appDetailId == localloandetailid).FirstOrDefault().accountnumber : null;
+
+                                    hasdetailid = true;
+                                }
+
+
+                                var getProductname = all.Where(m => m.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.PRODUCTNAME).FirstOrDefault();
+
+                                // var getProductname = allLoans.Where(m => m.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.PRODUCTNAME).FirstOrDefault();
+
+                                x.productName = getProductname == null ? " " : getProductname.ToString();
+
+                                var getProductCode = allLoans.Where(z => z.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(z => z.PRODUCTCODE).FirstOrDefault();
+
+                                x.productCode = getProductCode == null ? " " : getProductCode.ToString();
+                                var firstName = allLoans.Where(z => z.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.firstName).FirstOrDefault();
+                                firstName = firstName == null ? " " : firstName;
+                                var middleName = allLoans.Where(z => z.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.middleName).FirstOrDefault();
+                                middleName = middleName == null ? " " : middleName;
+                                var lastName = allLoans.Where(z => z.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.lastName).FirstOrDefault();
+                                lastName = lastName == null ? " " : lastName;
+                                x.customerName = firstName + " " + middleName + " " + lastName;
+                                if (hasdetailid)
+                                {
+
+                                    try
+                                    {
+                                        x.sourceReferenceNumber = accountcode;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        string message = ex.Message;
+                                    }
+
+                                }
+                                return x;
+                            }).OrderBy(z => z.transactionDate).ToList();
+
+            }
+
+            return trialBal;
+        }
+
+
+        public List<trialBalanceViewModel> GetTrialBalanceSummary(ReportSearchEntity entity, int companyId)
+        {
+            #region PREVIOUS CODE....
+            //using (var context = new FinTrakBankingContext())
+            //{
+
+            //    //int customChartOfAccountId;
+            //    //  trialBalanceViewModel glAttributes;
+            //    List<trialBalanceViewModel> trialBal;
+
+            //    if (entity.customChartOfAccountId != 0)
+            //    {
+
+            //        var glAttributes = (//from ft in context.TBL_FINANCE_TRANSACTION
+            //                            //join ca in context.TBL_CHART_OF_ACCOUNT on ft.GLACCOUNTID equals ca.GLACCOUNTID
+            //                            //  join cu in context.TBL_CURRENCY on ft.CURRENCYID equals cu.CURRENCYID
+            //                           from ca in context.TBL_CHART_OF_ACCOUNT
+            //                           join cca in context.TBL_CUSTOM_CHART_OF_ACCOUNT on ca.ACCOUNTCODE equals cca.PLACEHOLDERID
+            //                           //  join ft in context.TBL_FINANCE_TRANSACTION on ca.GLACCOUNTID equals ft.GLACCOUNTID
+            //                           join cur in context.TBL_CURRENCY on cca.CURRENCYCODE equals cur.CURRENCYCODE
+            //                           where cca.CUSTOMACCOUNTID == (entity.customChartOfAccountId == 0 ? cca.CUSTOMACCOUNTID : entity.customChartOfAccountId)
+            //                           select new trialBalanceViewModel
+            //                           {
+            //                               glAccountId = ca.GLACCOUNTID,
+            //                               accountName = cca.ACCOUNTID + " | " + ca.ACCOUNTNAME + " | " + cca.PLACEHOLDERID + " | " + cca.CURRENCYCODE,
+            //                               currency = cca.CURRENCYCODE,
+            //                               customChartOfAccountId = cca.CUSTOMACCOUNTID,
+            //                               currencyId = cur.CURRENCYID
+
+
+            //                           }).FirstOrDefault();
+
+
+
+
+
+            //        // using (FinTrakBankingContext context = new FinTrakBankingContext())
+            //        // {
+
+            //        trialBal = (from ft in context.TBL_FINANCE_TRANSACTION
+            //                    join ca in context.TBL_CHART_OF_ACCOUNT on ft.GLACCOUNTID equals ca.GLACCOUNTID
+            //                    join cu in context.TBL_CURRENCY on ft.CURRENCYID equals cu.CURRENCYID
+
+            //                    where (DbFunctions.TruncateTime(ft.VALUEDATE) >= DbFunctions.TruncateTime(entity.startDate) || entity.startDate == null) && DbFunctions.TruncateTime(ft.VALUEDATE) <= DbFunctions.TruncateTime(entity.endDate)
+            //                     //   where ( entity.startDate != null ? DbFunctions.TruncateTime(ft.VALUEDATE) >= DbFunctions.TruncateTime(entity.startDate) :  null) && DbFunctions.TruncateTime(ft.VALUEDATE) <= DbFunctions.TruncateTime(entity.endDate)
+            //                     //  && ft.COMPANYID == companyId && ft.GLACCOUNTID ==( glAttributes.glAccountId == 0 ? ft.GLACCOUNTID : glAttributes.glAccountId)  && ft.CURRENCYID == glAttributes.currencyId
+            //                     && ft.COMPANYID == companyId && ft.GLACCOUNTID == glAttributes.glAccountId && ft.CURRENCYID == glAttributes.currencyId
+
+            //                    group ft by new { ft.GLACCOUNTID, ca.ACCOUNTCODE, ca.ACCOUNTNAME, ft.CURRENCYID } into groupedQ
+
+            //                    // entity.glAccountId && glAttributes.CURRENCYID
+            //                    select new trialBalanceViewModel()
+            //                    {
+
+            //                        glAccountId = groupedQ.Key.GLACCOUNTID,
+            //                        accountCode = groupedQ.Key.ACCOUNTCODE,
+            //                        accountName = groupedQ.Key.ACCOUNTNAME,
+            //                        currencyCode = groupedQ.Key.CURRENCYID,
+            //                        totalCredit = groupedQ.Sum(x => x.CREDITAMOUNT),
+            //                        totalDebit = groupedQ.Sum(x => x.DEBITAMOUNT)
+
+
+
+            //                    }).ToList();
+            //        //.Select(x => {
+
+            //        //    var totalCredit = fff.Where(m => m.GLACCOUNTID == x.glAccountId && m.TBL_CURRENCY.CURRENCYNAME == x.currency).Select(m => m.CREDITAMOUNT);
+            //        //    x.totalCredit = totalCredit.Sum();
+
+            //        //    var totalDebit = fff.Where(m => m.GLACCOUNTID == x.glAccountId && m.TBL_CURRENCY.CURRENCYNAME == x.currency).Select(m => m.DEBITAMOUNT).Sum();
+            //        //    x.totalDebit = totalDebit;
+
+
+
+
+            //        //    return x;
+
+            //        //}).Distinct().ToList();
+
+
+
+
+            //        // }
+            //    }
+            //    else
+            //    {
+
+
+
+
+            //        var glAttributes = (//from ft in context.TBL_FINANCE_TRANSACTION
+            //                            //join ca in context.TBL_CHART_OF_ACCOUNT on ft.GLACCOUNTID equals ca.GLACCOUNTID
+            //                            //  join cu in context.TBL_CURRENCY on ft.CURRENCYID equals cu.CURRENCYID
+            //                        from ca in context.TBL_CHART_OF_ACCOUNT
+            //                        join cca in context.TBL_CUSTOM_CHART_OF_ACCOUNT on ca.ACCOUNTCODE equals cca.PLACEHOLDERID
+            //                        //  join ft in context.TBL_FINANCE_TRANSACTION on ca.GLACCOUNTID equals ft.GLACCOUNTID
+            //                        join cur in context.TBL_CURRENCY on cca.CURRENCYCODE equals cur.CURRENCYCODE
+
+            //                        select new trialBalanceViewModel
+            //                        {
+            //                            glAccountId = ca.GLACCOUNTID,
+            //                            accountName = cca.ACCOUNTID + " | " + ca.ACCOUNTNAME + " | " + cca.PLACEHOLDERID + " | " + cca.CURRENCYCODE,
+            //                            currency = cca.CURRENCYCODE,
+            //                            customChartOfAccountId = cca.CUSTOMACCOUNTID,
+            //                            currencyId = cur.CURRENCYID
+
+
+            //                        }).ToList();
+
+            //        var glAccountIds = (//from ft in context.TBL_FINANCE_TRANSACTION
+            //                            //join ca in context.TBL_CHART_OF_ACCOUNT on ft.GLACCOUNTID equals ca.GLACCOUNTID
+            //                            //  join cu in context.TBL_CURRENCY on ft.CURRENCYID equals cu.CURRENCYID
+            //                        from ca in context.TBL_CHART_OF_ACCOUNT
+            //                        join cca in context.TBL_CUSTOM_CHART_OF_ACCOUNT on ca.ACCOUNTCODE equals cca.PLACEHOLDERID
+            //                        //  join ft in context.TBL_FINANCE_TRANSACTION on ca.GLACCOUNTID equals ft.GLACCOUNTID
+            //                        join cur in context.TBL_CURRENCY on cca.CURRENCYCODE equals cur.CURRENCYCODE
+            //                        select ca.GLACCOUNTID);
+
+            //        var currencyIds = (//from ft in context.TBL_FINANCE_TRANSACTION
+            //                           //join ca in context.TBL_CHART_OF_ACCOUNT on ft.GLACCOUNTID equals ca.GLACCOUNTID
+            //                           //  join cu in context.TBL_CURRENCY on ft.CURRENCYID equals cu.CURRENCYID
+            //                     from ca in context.TBL_CHART_OF_ACCOUNT
+            //                     join cca in context.TBL_CUSTOM_CHART_OF_ACCOUNT on ca.ACCOUNTCODE equals cca.PLACEHOLDERID
+            //                     //  join ft in context.TBL_FINANCE_TRANSACTION on ca.GLACCOUNTID equals ft.GLACCOUNTID
+            //                     join cur in context.TBL_CURRENCY on cca.CURRENCYCODE equals cur.CURRENCYCODE
+            //                     select cur.CURRENCYID);
+
+
+
+
+
+            //        // using (FinTrakBankingContext context = new FinTrakBankingContext())
+            //        // {
+
+            //        trialBal = (from ft in context.TBL_FINANCE_TRANSACTION
+            //                    join ca in context.TBL_CHART_OF_ACCOUNT on ft.GLACCOUNTID equals ca.GLACCOUNTID
+            //                    join cu in context.TBL_CURRENCY on ft.CURRENCYID equals cu.CURRENCYID
+
+            //                    where (DbFunctions.TruncateTime(ft.VALUEDATE) >= DbFunctions.TruncateTime(entity.startDate) || entity.startDate == null) && DbFunctions.TruncateTime(ft.VALUEDATE) <= DbFunctions.TruncateTime(entity.endDate)
+            //                       //   where ( entity.startDate != null ? DbFunctions.TruncateTime(ft.VALUEDATE) >= DbFunctions.TruncateTime(entity.startDate) :  null) && DbFunctions.TruncateTime(ft.VALUEDATE) <= DbFunctions.TruncateTime(entity.endDate)
+            //                       && ft.COMPANYID == companyId && glAccountIds.Contains(ft.GLACCOUNTID) && currencyIds.Contains(ft.CURRENCYID)
+            //                    //   && ftt.COMPANYID == companyId && SqlFunctions.StringConvert((double)ftt.GLACCOUNTID).Contains(glAttributes.glAccountId)  && ftt.CURRENCYID == glAttributes.curr
+
+            //                    group ft by new { ft.GLACCOUNTID, ca.ACCOUNTCODE, ca.ACCOUNTNAME, ft.CURRENCYID } into groupedQ
+
+            //                    // entity.glAccountId && glAttributes.CURRENCYID
+            //                    select new trialBalanceViewModel()
+            //                    {
+
+            //                        glAccountId = groupedQ.Key.GLACCOUNTID,
+            //                        accountCode = groupedQ.Key.ACCOUNTCODE,
+            //                        accountName = groupedQ.Key.ACCOUNTNAME,
+            //                        currencyCode = groupedQ.Key.CURRENCYID,
+            //                        totalCredit = groupedQ.Sum(x => x.CREDITAMOUNT),
+            //                        totalDebit = groupedQ.Sum(x => x.DEBITAMOUNT)
+
+
+
+            //                    }).ToList();
+
+            //    }
+
+            //    return trialBal;
+            //}
+            #endregion
+
+
+            using (var context = new FinTrakBankingContext())
+            {
+                List<trialBalanceViewModel> trialBal;
+
+                var glAttributes = (
+                                from ca in context.TBL_CHART_OF_ACCOUNT
+                                join cca in context.TBL_CUSTOM_CHART_OF_ACCOUNT on ca.ACCOUNTCODE equals cca.PLACEHOLDERID
+                                join cur in context.TBL_CURRENCY on cca.CURRENCYCODE equals cur.CURRENCYCODE
+
+                                select new trialBalanceViewModel
+                                {
+                                    glAccountId = ca.GLACCOUNTID,
+                                    accountName = cca.ACCOUNTID + " | " + ca.ACCOUNTNAME + " | " + cca.PLACEHOLDERID + " | " + cca.CURRENCYCODE,
+                                    accountId = cca.ACCOUNTID,
+                                    currency = cca.CURRENCYCODE,
+                                    customChartOfAccountId = cca.CUSTOMACCOUNTID,
+                                    currencyId = cur.CURRENCYID
+
+
+                                }).ToList();
+
+                var glAccountIds = (
+                                from ca in context.TBL_CHART_OF_ACCOUNT
+                                join cca in context.TBL_CUSTOM_CHART_OF_ACCOUNT on ca.ACCOUNTCODE equals cca.PLACEHOLDERID
+                                join cur in context.TBL_CURRENCY on cca.CURRENCYCODE equals cur.CURRENCYCODE
+                                select ca.GLACCOUNTID);
+
+                var currencyIds = (
+                             from ca in context.TBL_CHART_OF_ACCOUNT
+                             join cca in context.TBL_CUSTOM_CHART_OF_ACCOUNT on ca.ACCOUNTCODE equals cca.PLACEHOLDERID
+                             join cur in context.TBL_CURRENCY on cca.CURRENCYCODE equals cur.CURRENCYCODE
+                             select cur.CURRENCYID);
+
+
+                trialBal = (from ft in context.TBL_FINANCE_TRANSACTION
+                            join ca in context.TBL_CHART_OF_ACCOUNT on ft.GLACCOUNTID equals ca.GLACCOUNTID
+                            join cu in context.TBL_CURRENCY on ft.CURRENCYID equals cu.CURRENCYID
+
+                            where (DbFunctions.TruncateTime(ft.VALUEDATE) >= DbFunctions.TruncateTime(entity.startDate) || entity.startDate == null) && DbFunctions.TruncateTime(ft.VALUEDATE) <= DbFunctions.TruncateTime(entity.endDate)
+
+                               && ft.COMPANYID == companyId && glAccountIds.Contains(ft.GLACCOUNTID) && currencyIds.Contains(ft.CURRENCYID)
+
+                            group ft by new { ft.GLACCOUNTID, ca.ACCOUNTCODE, ca.ACCOUNTNAME, ft.CURRENCYID } into groupedQ
+
+                            select new trialBalanceViewModel()
+                            {
+                                glAccountId = groupedQ.Key.GLACCOUNTID,
+                                accountCode = groupedQ.Key.ACCOUNTCODE,
+                                accountName = groupedQ.Key.ACCOUNTNAME,
+                                currencyId = groupedQ.Key.CURRENCYID,
+                                totalCredit = groupedQ.Sum(x => x.CREDITAMOUNT),
+                                totalDebit = groupedQ.Sum(x => x.DEBITAMOUNT)
+
+                            }).ToList();
+
+                foreach (var item in trialBal)
+                {
+                    item.accountId = glAttributes.FirstOrDefault(i => i.glAccountId == item.glAccountId && i.currencyId == item.currencyId).accountId;
+                    //item.currency = glAttributes.FirstOrDefault(i => i.glAccountId == item.glAccountId).currency;
+                    item.currency = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == item.currencyId).CURRENCYCODE;
+
+                    item.currencyRate = context.TBL_FINANCE_TRANSACTION.FirstOrDefault(i => i.GLACCOUNTID == item.glAccountId && i.CURRENCYID == item.currencyId).CURRENCYRATE;
+
+                    item.totalDebitInBaseCurrency = item.totalDebit * (decimal)item.currencyRate;
+                    item.totalCreditInBaseCurrency = item.totalCredit * (decimal)item.currencyRate;
+
+                    item.balance = item.totalCredit - item.totalDebit;
+                    item.balanceInBaseCurrency = item.totalCreditInBaseCurrency - item.totalDebitInBaseCurrency;
+
+                    if (item.balance < 0)
+                    {
+                        item.balanceType = "Dr";
+                        item.debitBalance = Math.Abs(item.balance.Value);
+                        item.creditBalance = 0;
+
+                        item.debitBalanceInBaseCurrency = Math.Abs(item.balanceInBaseCurrency.Value);
+                        item.creditBalanceInBaseCurrency = 0;
+                    }
+                    else
+                    {
+                        item.balanceType = "Cr";
+                        item.creditBalance = Math.Abs(item.balance.Value);
+                        item.debitBalance = 0;
+
+                        item.creditBalanceInBaseCurrency = Math.Abs(item.balanceInBaseCurrency.Value);
+                        item.debitBalanceInBaseCurrency = 0;
+                    }
+                }
+
+                return trialBal;
+            }
+        }
+
+
+
+        public trialBalanceViewModel GetExportedTrialBalanceSummary(ReportSearchEntity entity, int companyId)
+        {
+            return GenerateTrialBalanceData(entity, companyId);
+        }
+
+        public trialBalanceViewModel GenerateTrialBalanceData(ReportSearchEntity entity, int companyId)
+        {
+            var record = GetTrialBalanceSummary(entity, companyId).ToList();
+            if (record == null)
+                throw new ConditionNotMetException("Record Not Found For Download");
+
+            return GenerateTrialBalance(record.ToList(), entity);
+
+        }
+
+        private trialBalanceViewModel GenerateTrialBalance(List<trialBalanceViewModel> loanInput, ReportSearchEntity entity)
+        {
+
+            Byte[] fileBytes = null;
+            trialBalanceViewModel data = new trialBalanceViewModel();
+
+            if (loanInput != null)
+            {
+                using (ExcelPackage pck = new ExcelPackage())
+                {
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Trial Balance");
+
+                    ws.Cells[1, 1].Value = "ACCOUNT ID";
+                    ws.Cells[1, 2].Value = "ACCOUNT CODE";
+                    ws.Cells[1, 3].Value = "ACCOUNT NAME";
+                    ws.Cells[1, 4].Value = "CURRENCY";
+                    ws.Cells[1, 5].Value = "CRNCY DR BAL";
+                    ws.Cells[1, 6].Value = "CRNCY CR BAL";
+                    ws.Cells[1, 7].Value = "RATE";
+                    ws.Cells[1, 8].Value = "NAIRA DR. BAL.";
+                    ws.Cells[1, 9].Value = "NAIRA CR. BAL.";
+
+                    //ws.Cells[1, 7].Value = "AMOUNT"; 
+                    for (int i = 2; i <= loanInput.Count + 1; i++)
+                    {
+                        var record = loanInput[i - 2];
+                        ws.Cells[i, 1].Value = record.accountId;
+                        ws.Cells[i, 2].Value = record.accountCode;
+                        ws.Cells[i, 3].Value = record.accountName;
+                        ws.Cells[i, 4].Value = record.currency;
+                        ws.Cells[i, 5].Value = record.debitBalance;
+                        ws.Cells[i, 6].Value = record.creditBalance;
+                        ws.Cells[i, 7].Value = record.currencyRate;
+                        ws.Cells[i, 8].Value = record.debitBalanceInBaseCurrency;
+                        ws.Cells[i, 9].Value = record.creditBalanceInBaseCurrency;
+                    }
+
+                    fileBytes = pck.GetAsByteArray();
+                    data.reportData = fileBytes;
+                    data.templateTypeName = "Trial_Balance";
+                }
+
+
+            }
+
+            return data;
+        }
 
     }
 }

@@ -51,6 +51,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralRevaluation(int companyId, int value);
         string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
         string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId, int staffId);
+        string GetTrialBalanceSummary(ReportSearchEntity searchEntity, int companyId);
         string GetAuditTrail(DateRange dateRange, int companyId, int staffId);
         string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId, int staffId);
         string GetCollateralPropertyDueForVisitationReport(int companyId, DateRange dateRange, int staffId);

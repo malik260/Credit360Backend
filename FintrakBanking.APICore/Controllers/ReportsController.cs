@@ -3109,11 +3109,29 @@ namespace FintrakBanking.APICore.Controllers
 
             var response = offerLetterRepo.Los_ConditionDynamics(referenceNumber);
             return response;
-
-
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("trial-balance-summary")]
+        public HttpResponseMessage GetTrialBalanceSummary(ReportSearchEntity entity)
+        {
+            try
+            {
+                var data = repo.GetTrialBalanceSummary(entity, token.GetCompanyId);
 
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
     }
 }
 
