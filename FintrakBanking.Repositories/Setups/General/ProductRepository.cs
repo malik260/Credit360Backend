@@ -3609,6 +3609,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             //customerTypeId = p.TBL_PRODUCT.CUSTOMERTYPEID,
                             //customerType = p.TBL_CUSTOMER_TYPE.NAME,
                             profileBusinessUnitName = p.BUSINESSUNITID != null ? p.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
+                            globalSla = p.GLOBALSLA,
                             businessUnitId = p.BUSINESSUNITID,
 
                             }).ToList();
@@ -3643,9 +3644,10 @@ namespace FintrakBanking.Repositories.Setups.General
                                 PRODUCTCLASSTYPEID = model.productClassTypeId,
                                 PRODUCT_CLASS_PROCESSID = model.productClassProcessId,
                                 //CUSTOMERTYPEID = model.customerTypeId,
-                                GLOBALSLA = model.globalSla
+                                GLOBALSLA = model.globalSla,
+                                BUSINESSUNITID = model.businessUnitId
                             };
-                            context.TBL_PRODUCT_CLASS.Add(productClass);
+                    context.TBL_PRODUCT_CLASS.Add(productClass);
                         }
                         // Audit Section ---------------------------
                         var audit = new TBL_AUDIT

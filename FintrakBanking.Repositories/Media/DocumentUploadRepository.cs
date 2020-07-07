@@ -828,70 +828,54 @@ namespace FintrakBanking.Repositories.Media
             return context.SaveChanges() != 0;
         }
 
-        public bool DeleteDocumentUpload(int id, string documentTypeName, UserInfo user)
+        public bool DeleteDocumentUpload(int id, int documentTypeId, UserInfo user)
         {
             var usageCount = 0;
+            var creditBureauDoc = docContext.TBL_DOCUMENT_TYPE.FirstOrDefault(O => O.DOCUMENTTYPEID == documentTypeId);
 
-            if (documentTypeName.ToUpper() == "CREDIT BUREAU") {
+            if (creditBureauDoc.DOCUMENTTYPENAME.ToUpper() == "CREDIT BUREAU")
+            {
                 var docCreditBureau = docContext.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.DOCUMENTID == id);
 
-                if (docCreditBureau != null) {
+                if (docCreditBureau != null)
+                {
                     var creditBureau = context.TBL_CUSTOMER_CREDIT_BUREAU.FirstOrDefault(O => O.CUSTOMERCREDITBUREAUID == docCreditBureau.CUSTOMERCREDITBUREAUID);
 
-                    if (creditBureau != null) {
+                    if (creditBureau != null)
+                    {
                         creditBureau.DELETED = true;
                         creditBureau.DELETEDBY = user.createdBy;
                         creditBureau.DATETIMEDELETED = DateTime.Now;
                     }
                 }
 
-                return context.SaveChanges() != 0;
+                return docContext.SaveChanges() > 0;
             }
 
-            //var usage = docContext.TBL_DOCUMENT_USAGE.FirstOrDefault(u => u.DOCUMENTUSAGEID == id);
+
             var usage = docContext.TBL_DOCUMENT_USAGE.FirstOrDefault(u => u.DOCUMENTUPLOADID == id);
 
             if (usage != null)
-            {// throw new SecureException("An error occured! Cannot find target item to delete.");
-
-                usageCount = docContext.TBL_DOCUMENT_USAGE
-                   .Where(u => u.DOCUMENTUPLOADID == usage.DOCUMENTUPLOADID)
-                   .Count();
-
+            {
                 usage.DELETED = true;
                 usage.DELETEDBY = user.createdBy;
                 usage.DATETIMEDELETED = DateTime.Now;
+                docContext.SaveChanges();
+
+                usageCount = docContext.TBL_DOCUMENT_USAGE
+                  .Where(u => u.DOCUMENTUPLOADID == usage.DOCUMENTUPLOADID && u.DELETED == false)
+                  .Count();
             }
 
-            if (usageCount < 2)
+            if (usageCount < 1)
             {
                 var upload = docContext.TBL_DOCUMENT_UPLOAD.Find(id);
                 upload.DELETED = true;
                 upload.DELETEDBY = user.createdBy;
                 upload.DATETIMEDELETED = DateTime.Now;
-
-                //docContext.SaveChanges();
             }
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-
-            // Audit Section ---------------------------
-            //this.audit.AddAuditTrail(new TBL_AUDIT
-            //{
-            //    AUDITTYPEID = (short)AuditTypeEnum.DocumentUploadDeleted,
-            //    STAFFID = user.createdBy,
-            //    BRANCHID = (short)user.BranchId,
-            //    DETAIL = $"TBL_Document Upload '{entity.DOCUMENTTYPEID}' was deleted by {auditStaff}",
-            //    IPADDRESS = user.userIPAddress,
-            //    URL = user.applicationUrl,
-            //    APPLICATIONDATE = general.GetApplicationDate(),
-            //    SYSTEMDATETIME = DateTime.Now,
-            //    TARGETID = entity.DOCUMENTUPLOADID
-            //});
-            // Audit Section end ------------------------
-
-            //return docContext.SaveChanges() != 0;
-            return docContext.SaveChanges() != 0;
+            return docContext.SaveChanges() > 0;
         }
 
         public DocumentUploadViewModel GetDocument(int documentId)
