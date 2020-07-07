@@ -3103,7 +3103,7 @@ namespace FintrakBanking.Repositories.Credit
         {
                 float sla = app.globalsla;
                 //int? elapse = (DateTime.Now - dateTimeCreated).Hours;
-                int? elapse = (int)GetTimeIntervalHours(app.dateTimeCreated, DateTime.Now);
+                int? elapse = (int)GetTimeIntervalHours(app.systemDateTime, DateTime.Now);
                 return SlaStatus(sla, elapse);
         }
 
