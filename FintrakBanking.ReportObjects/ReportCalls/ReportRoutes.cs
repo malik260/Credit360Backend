@@ -1330,12 +1330,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetTrialBalanceSummary(ReportSearchEntity searchEntity, int companyId)
+        public string GetTrialBalanceReport(int glAccountId, int currencyCode, int companyId, int staffId)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/TrialBalance.aspx?companyId=" + companyId.ToString() + "&branchId=" + searchEntity.branchId + "&customerName=" + searchEntity.customerName + "&startDate=" + searchEntity.startDate.ToString("dd-MM-yyyy") + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            path = reportPath + "ReportViews/TrialBalance.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId.ToString() + "&glAccountId=" + glAccountId.ToString() + "&currencyCode=" + currencyCode.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
 

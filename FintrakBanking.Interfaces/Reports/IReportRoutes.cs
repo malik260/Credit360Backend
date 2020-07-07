@@ -51,7 +51,6 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralRevaluation(int companyId, int value);
         string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
         string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId, int staffId);
-        string GetTrialBalanceSummary(ReportSearchEntity searchEntity, int companyId);
         string GetAuditTrail(DateRange dateRange, int companyId, int staffId);
         string GetFacilityApprovedNotUtilized(ReportSearchEntity searchEntity, int companyId, int staffId);
         string GetCollateralPropertyDueForVisitationReport(int companyId, DateRange dateRange, int staffId);
@@ -149,6 +148,8 @@ namespace FintrakBanking.Interfaces.Reports
         string CopyOfRiskAssetByIfrsClassification(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
 
         string GetGeneratedCFLOfferLetter(string applicationRefNumber, string ActionByName);
+        string GetTrialBalanceReport(int glAccountId, int currencyCode, int companyId, int staffId);
+
     }
 
 

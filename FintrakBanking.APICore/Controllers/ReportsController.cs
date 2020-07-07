@@ -3111,27 +3111,31 @@ namespace FintrakBanking.APICore.Controllers
             return response;
         }
 
-        [HttpPost]
+        [HttpGet]
         [ClaimsAuthorization]
-        [Route("trial-balance-summary")]
-        public HttpResponseMessage GetTrialBalanceSummary(ReportSearchEntity entity)
+        [Route("trial-balance/{glAccountId}/currency/{currencyCode}")]
+
+        public HttpResponseMessage GetTrialBalanceReport(int glAccountId, int currencyCode)
+
         {
+            var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetTrialBalanceSummary(entity, token.GetCompanyId);
-
+                var data = repo.GetTrialBalanceReport(glAccountId, currencyCode, token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
     }
 }
 

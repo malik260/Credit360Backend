@@ -501,6 +501,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\ReportDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\TransactionDataSet1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1539,6 +1544,17 @@
     </Content>
     <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
       <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\ReportDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ReportDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\ReportDataSet.xss">
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\StaffInfoDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>

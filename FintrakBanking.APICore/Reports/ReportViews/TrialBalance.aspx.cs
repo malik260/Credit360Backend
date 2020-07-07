@@ -20,15 +20,16 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 try
                 {
                     //short branchId = 0;
-                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                     //string branch = Request.QueryString["branchId"];
                     //if (branch != null && branch != "")
                     //    branchId = short.Parse(Request.QueryString["branchId"]);
 
-                    string searchParameter = Request.QueryString["searchParameter"];
 
-                    short branchId = short.Parse(Request.QueryString["branchId"]);
-                    string customerName = Request.QueryString["customerName"];
+                    //short branchId = short.Parse(Request.QueryString["branchId"]);
+                    short glAccountId = short.Parse(Request.QueryString["glAccountId"]);
+                    short staffId = short.Parse(Request.QueryString["staffId"]);
+                    short currencyCode = short.Parse(Request.QueryString["currencyCode"]);
+                    short companyId = short.Parse(Request.QueryString["companyId"]);
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -56,7 +57,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
                     LoanReportObjects sla = new LoanReportObjects();
-                    var data = sla.GetStakeHolderOnExperationOfFTP(branchId, customerName, startDate, searchParameter);
+                    var data = sla.TrialBalanceSummary(glAccountId, currencyCode, companyId, staffId);
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
@@ -69,10 +70,10 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "StakeHolderWithExpiedFTP";
+                    reportDataSource.Name = "Finance";
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/StakeholderWithExpiredFTP.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/TrialBalance.rdlc");
                     this.ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)
