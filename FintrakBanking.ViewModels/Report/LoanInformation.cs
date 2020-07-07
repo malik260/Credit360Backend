@@ -154,6 +154,7 @@ namespace FintrakBanking.ViewModels.Reports
         public int companyId { get; set; }
         public int PostedByStaffId { get; set; }
         public int glAccountId { get; set; }
+        public int customChartOfAccountId { get; set; }
     }
 
     public class AllLoanViewModel

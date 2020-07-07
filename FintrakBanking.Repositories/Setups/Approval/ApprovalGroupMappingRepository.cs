@@ -310,7 +310,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                                 createdBy = data.CREATEDBY,
                                                 allowMultipleInitiator = data.ALLOWMULTIPLEINITIATOR
                                             })
-                                            .OrderBy(x => x.position);
+                                            .OrderBy(x => x.position).ToList();
 
             return operationGroups;
         }

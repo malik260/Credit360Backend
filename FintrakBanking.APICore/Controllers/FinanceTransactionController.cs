@@ -13,6 +13,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -133,6 +134,76 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("trial-balance-summary")]
+        public HttpResponseMessage GetTrialBalanceSummary(ReportSearchEntity entity)
+        {
+            try
+            {
+                var data = repo.GetTrialBalanceSummary(entity, token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("trial-balance/export")]
+        public HttpResponseMessage GetExportedTrialBalanceSummary(ReportSearchEntity entity)
+        {
+            try
+            {
+
+                var fileBytes = repo.GetExportedTrialBalanceSummary(entity, token.GetCompanyId);
+
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = fileBytes });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data = "no-record", success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("gl-account-name")]
+        public HttpResponseMessage getGLandAccountName()
+        {
+            try
+            {
+                var data = repo.GetGLandAccountName();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
 
         // [HttpPost] [ClaimsAuthorization]
         //[Route("Posttransaction")]
