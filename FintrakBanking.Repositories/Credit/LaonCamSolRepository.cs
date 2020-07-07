@@ -595,7 +595,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string goForApproval(LoanCAMSOLViewModel data)
         {
-            bool response = false;
+           // bool response = false;
             bool action = false;
             using (var transaction = context.Database.BeginTransaction())
             {

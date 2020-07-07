@@ -174,7 +174,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string rcNumber { get; set; }
         public string customerAccountNo { get; set; }
 
-        public string companyName { get; set; }
+        public new string companyName { get; set; }
         //public short companyDirectorTypeId { get; set; }
         //public int? companyDirectorId { get; set; }
         //public string companyDirectorTypeName { get; set; }

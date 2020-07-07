@@ -112,10 +112,10 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class ActiveUserDetails : GeneralEntity
     {
-        public int companyId { get; set; }
-        public int staffId { get; set; }
+        //public int companyId { get; set; }
+        //public int staffId { get; set; }
         public int user_id { get; set; }
-        public string username { get; set; }
+        //public string username { get; set; }
         public string staffName { get; set; }
         public int branchId { get; set; }
         public int countryId { get; set; }

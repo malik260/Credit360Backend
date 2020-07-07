@@ -17,7 +17,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string  cityName { get; set; }
         public string employerSubTypeName { get; set; }
         public short employerSubTypeId { get; set; }
-        public int createdBy { get; set; }
+        public new int createdBy { get; set; }
         public int stateId { get; set; }
         public string employerTypeName { get; set; }
         public short employerTypeId { get; set; }
