@@ -512,7 +512,7 @@
                 HttpResponseMessage response = null;
                 //TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
                 ResponseMessage responseMsg = null;
-                string responseMessage = "";
+                //string responseMessage = "";
                 string responseJson = "";
                 string serialiseModel = "";
                 getAPIURLSettings("ProcessLien");

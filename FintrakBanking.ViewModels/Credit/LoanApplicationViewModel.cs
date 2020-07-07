@@ -584,11 +584,11 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class jobLoanApplicationDetailViewModel : LoanApplicationViewModel
     {
-        public string customerType;
+        //public string customerType { get; set; }
 
         public string applicationRefNo { get; set; }
 
-        public short proposedProductId { get; set; }
+        public new short proposedProductId { get; set; }
 
         public string proposedProductName { get; set; }
 

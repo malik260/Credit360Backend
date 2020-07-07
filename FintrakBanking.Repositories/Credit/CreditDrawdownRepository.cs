@@ -28,7 +28,7 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
         private IWorkflow workflow;
-        private IAuditTrailRepository audit;
+        //private IAuditTrailRepository audit;
         private IOverRideRepository overrider;
         private IntegrationWithFlexcube integration;
         private IAdminRepository admin;

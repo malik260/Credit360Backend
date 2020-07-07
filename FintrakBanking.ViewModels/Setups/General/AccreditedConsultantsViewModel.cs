@@ -28,7 +28,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short? cityId { get; set; }
         public string accountNumber { get; set; }
         public string solicitorBVN { get; set; }
-        public short? countryId { get; set; }
+        public new short? countryId { get; set; }
         public string emailAddress { get; set; }
         public string phoneNumber { get; set; }
         public string address { get; set; }

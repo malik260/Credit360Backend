@@ -39,7 +39,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string loanReferenceNo { get; set; }
 
-        public int staffId { get; set; }
+        //public int staffId { get; set; }
 
         public string customerName { get; set; }
 
