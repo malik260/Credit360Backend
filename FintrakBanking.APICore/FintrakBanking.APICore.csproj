@@ -501,11 +501,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\ReportDataSet1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ReportDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\TransactionDataSet1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1531,9 +1526,6 @@
     <Content Include="Reports\ReportDataset\OutputDocument.xss">
       <DependentUpon>OutputDocument.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
-      <DependentUpon>ReportDataSet.xsd</DependentUpon>
-    </Content>
     <Content Include="Reports\ReportDataset\PSR.xsc">
       <DependentUpon>PSR.xsd</DependentUpon>
     </Content>
@@ -1544,14 +1536,6 @@
     </None>
     <Content Include="Reports\ReportDataset\PSR.xss">
       <DependentUpon>PSR.xsd</DependentUpon>
-    </Content>
-    <None Include="Reports\ReportDataset\ReportDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ReportDataSet1.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Reports\ReportDataset\ReportDataSet.xss">
-      <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Content>
     <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
       <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
@@ -1752,6 +1736,7 @@
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\StalledPerfection.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\TrialBalance.rdlc" />
     <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />
     <EmbeddedResource Include="Reports\Report\UnearnedLoanInterest.rdlc" />
     <EmbeddedResource Include="Reports\Report\UnutilizedFacilityReport.rdlc" />
