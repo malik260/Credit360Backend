@@ -876,7 +876,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(17, 0, 0); //5 o'clock pm
-                TimeSpan end = new TimeSpan(23, 0, 0); //6 o'clock pm
+                TimeSpan end = new TimeSpan(19, 0, 0); //7 o'clock pm
                 TimeSpan now = DateTime.Now.TimeOfDay;
 
                 if ((now >= start) && (now <= end))

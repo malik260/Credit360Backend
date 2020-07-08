@@ -3109,10 +3109,32 @@ namespace FintrakBanking.APICore.Controllers
 
             var response = offerLetterRepo.Los_ConditionDynamics(referenceNumber);
             return response;
-
-
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("trial-balance/{glAccountId}/currency/{currencyCode}")]
+
+        public HttpResponseMessage GetTrialBalanceReport(int glAccountId, int currencyCode)
+
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetTrialBalanceReport(glAccountId, currencyCode, token.GetCompanyId, token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }

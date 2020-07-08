@@ -2214,6 +2214,7 @@ namespace FintrakBanking.Repositories.Credit
                 data = data.Where(t => t.approvalTrailId > firstTrail.approvalTrailId).ToList();
             }
 
+            var data3 = data.OrderByDescending(d => d.systemArrivalDateTime);
             if (data.Count > 0 && currentLevelId > 0)//get only from the current level downwards
             {
                 var firstTrail = data.FirstOrDefault(t => t.toApprovalLevelId == currentLevelId);
@@ -2248,6 +2249,8 @@ namespace FintrakBanking.Repositories.Credit
                     toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                     fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 })?.OrderBy(x => x.systemArrivalDateTime).ToList();
+
+                data3 = data.OrderByDescending(d => d.systemArrivalDateTime);
             }
 
 
@@ -2260,6 +2263,15 @@ namespace FintrakBanking.Repositories.Credit
                 foreach(var tr in multipleTrails)
                 {
                     data2.RemoveAll(d => d.approvalTrailId == tr.approvalTrailId);
+                }
+            }
+
+            foreach (var d in data2)
+            {
+                var lastOccurrence = data3.FirstOrDefault(d3 => d3.fromApprovalLevelId == d.fromApprovalLevelId);
+                if (lastOccurrence != null)
+                {
+                    d.requestStaffId = lastOccurrence.requestStaffId;
                 }
             }
 
@@ -3103,7 +3115,7 @@ namespace FintrakBanking.Repositories.Credit
         {
                 float sla = app.globalsla;
                 //int? elapse = (DateTime.Now - dateTimeCreated).Hours;
-                int? elapse = (int)GetTimeIntervalHours(app.dateTimeCreated, DateTime.Now);
+                int? elapse = (int)GetTimeIntervalHours(app.systemDateTime, DateTime.Now);
                 return SlaStatus(sla, elapse);
         }
 
@@ -3379,23 +3391,23 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (trail.FROMAPPROVALLEVELID == trail.TOAPPROVALLEVELID && trail.LOOPEDSTAFFID > 0)
                         {
-                            trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
-                            trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
-                            foreach(var t in trails)
-                            {
-                                t.REQUESTSTAFFID = staffId;
-                            }
+                            //trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
+                            //trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.LOOPEDSTAFFID).ToList();
+                            //foreach(var t in trails)
+                            //{
+                            //    t.REQUESTSTAFFID = staffId;
+                            //}
                             trail.LOOPEDSTAFFID = staffId;
                             trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
                         else
                         {
-                            trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
-                            trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
-                            foreach (var t in trails)
-                            {
-                                t.REQUESTSTAFFID = staffId;
-                            }
+                            //trails = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
+                            //trailsForAudit = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == trailForAudit.TARGETID && t.OPERATIONID == trailForAudit.OPERATIONID && t.REQUESTSTAFFID == trailForAudit.TOSTAFFID).ToList();
+                            //foreach (var t in trails)
+                            //{
+                            //    t.REQUESTSTAFFID = staffId;
+                            //}
                             trail.TOSTAFFID = staffId;
                             trail.SYSTEMARRIVALDATETIME = systemDateNow;
                         }
