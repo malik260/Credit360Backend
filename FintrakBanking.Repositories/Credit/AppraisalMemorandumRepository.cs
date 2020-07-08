@@ -3364,7 +3364,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity model)
         {
-            bool saved = false;
+            //bool saved = false;
             using (var trans = context.Database.BeginTransaction())
             {
                 if (approvalTrailId > 0)
