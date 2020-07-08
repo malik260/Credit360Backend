@@ -155,15 +155,29 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         {
             var psr = context.TBL_PSR_PROJECT_SITE_REPORT.Find(id);
             var loanApplication = context.TBL_LOAN_APPLICATION.Find(psr.LOANAPPLICATIONID);
-            var customer = context.TBL_CUSTOMER.Find(loanApplication.CUSTOMERID);
-            var facilityRating = context.TBL_FACILITY_RATING.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE).Select(c => c.PROBABILITYOFDEFAULT).FirstOrDefault();
+            var facilityRating = "";
+            var customerRating = "";
+            if (loanApplication.CUSTOMERID != null)
+            {
+                var customer = context.TBL_CUSTOMER.Find(loanApplication.CUSTOMERID);
+                customerRating = customer.CUSTOMERRATING;
+                facilityRating = context.TBL_FACILITY_RATING.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE).Select(c => c.PROBABILITYOFDEFAULT).FirstOrDefault();
+            }
+            else
+            {
+                var customer = context.TBL_CUSTOMER_GROUP.Find(loanApplication.CUSTOMERGROUPID);
+                var rating = context.TBL_CUSTOMER_RISK_RATING.Find(customer.RISKRATINGID);
+                customerRating = rating.RISKRATING; 
+                facilityRating = context.TBL_FACILITY_RATING.Where(c => c.CUSTOMERCODE == customer.GROUPCODE).Select(c => c.PROBABILITYOFDEFAULT).FirstOrDefault();
+
+            }
             return context.TBL_PSR_RECOMMENDATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
                 .Select(x => new PsrRecommendationViewModel
                 {
                     psrRecommendationId = x.PSRRECOMMENDATIONID,
                     projectSiteReportId = x.PROJECTSITEREPORTID,
                     projectRiskRating = facilityRating,
-                    customerRating = customer.CUSTOMERRATING,
+                    customerRating = customerRating,
                     comment = x.COMMENTS,
                 })
                 .ToList();
