@@ -7105,7 +7105,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach(var facility in details)
                 {
-                    if (facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal || facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
+                    if (facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal && facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
                     {
                         var sector = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
                         var sectorName = context.TBL_SECTOR.Find(sector.SECTORID).NAME ?? "N/A";

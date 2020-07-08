@@ -216,6 +216,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 ResolveLevelMultipleApproval();
             }
 
+            ValidateSourceConfiguration();
+
             ValidateDestinationConfiguration();
 
             CheckApprovalLimits();
@@ -778,7 +780,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             bool valid = true;
             if (this.staffId > 0 && this.fromLevelId > 0)
             {
-                valid = general.GetStaffApprovalLevelIds((int)this.toStaffId, this.operationId).ToList().Contains((int)this.fromLevelId);
+                valid = general.GetStaffApprovalLevelIds((int)this.staffId, this.operationId).ToList().Contains((int)this.fromLevelId);
                 if (valid == false) new SecureException("Target Staff is NOT in the Source approval level");
             }
         }
