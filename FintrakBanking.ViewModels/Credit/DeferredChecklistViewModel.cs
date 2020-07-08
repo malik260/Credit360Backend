@@ -26,5 +26,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string toApprovalLevelName { get; set; }
         public string fromApprovalLevelName { get; set; }
+        public int operationId { get; set; }
+
     }
 }
