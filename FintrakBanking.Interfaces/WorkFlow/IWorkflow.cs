@@ -63,9 +63,11 @@ namespace FintrakBanking.Interfaces.WorkFlow
                 bool deferred,
                 bool sameDesk = false,
                 bool isFlowTest = false,
-                int? businessUnitId = null
+                int? businessUnitId = null,
+                int? finalLevel = null,
+                int amount = 0
             );
-   
+
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
         void ResolveMultipleProductPath(int operationId, List<short> productIds);
     }
