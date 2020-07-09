@@ -37,7 +37,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
             {
                 switch (request.searchTypeCode)
                 {
-
                     case 0: xml = CRCRequestXML0(request); break;
 
                     case 4: xml = CRCRequestXML4(request); break;
