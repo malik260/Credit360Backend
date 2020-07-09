@@ -428,7 +428,7 @@ namespace FintrakBanking.Repositories.credit
                                         applicationDate = x.APPLICATIONDATE,
                                         applicationAmount = x.APPLICATIONAMOUNT,
                                         approvedAmount = a.APPROVEDAMOUNT,
-                                        loanReferenceNumber = "",
+                                        loanReferenceNumber = r.LOANREFERENCENUMBER,
                                         principalAmount = r.CONTINGENTAMOUNT == null ? 0 : r.CONTINGENTAMOUNT,
                                         loanPurpose = a.LOANPURPOSE,
                                         interestRate = x.INTERESTRATE,
