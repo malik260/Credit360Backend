@@ -2321,21 +2321,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 context.TBL_RAC_DETAIL.AddRange(details);
-
-                //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == staffId).Select(x => x.STAFFCODE));
-                //// Audit Section ---------------------------
-                //this.audit.AddAuditTrail(new TBL_AUDIT
-                //{
-                //    AUDITTYPEID = (short)AuditTypeEnum.RacDefinitionAdded,
-                //    STAFFID = staffId,
-                //    BRANCHID = (short)model.userBranchId,
-                //    DETAIL = $"TBL_Rac Definition with '{details}' created by {auditStaff}",
-                //    IPADDRESS = "nil",
-                //    URL = "nil",
-                //    APPLICATIONDATE = DateTime.Now,
-                //    SYSTEMDATETIME = DateTime.Now
-                //});
-
                 context.SaveChanges();
                 return null;
             }
