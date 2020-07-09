@@ -468,7 +468,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var currentsectorExposure = sectorExposure;
 
             var totalExposure = currentsectorExposure / CurrentSectorsExposures;
-            decimal percentageTotalExposure = decimal.Round((decimal)totalExposure, 4, MidpointRounding.AwayFromZero);
+            decimal percentageTotalExposure = decimal.Round((decimal)totalExposure, 5, MidpointRounding.AwayFromZero);
             var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(s => s.CBNSECTORID.Trim() == sector.CODE.Trim())?.Select(s => s.SECTORLIMIT).FirstOrDefault();
 
             model.outstandingBalance = (double)currentsectorExposure;
