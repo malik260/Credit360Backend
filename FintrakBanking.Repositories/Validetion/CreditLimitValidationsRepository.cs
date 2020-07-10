@@ -314,13 +314,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public CreditLimitValidationsModel ValidateAmountBySector(int sectorId)
         {
+            var subSector = context.TBL_SUB_SECTOR.Find(sectorId);
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
             var data = (from a in context.TBL_SECTOR
-                        where a.SECTORID == sectorId
+                        where a.SECTORID == subSector.SECTORID
                         let maximumLimit = a.LOAN_LIMIT
                         select maximumLimit).FirstOrDefault();
 
-            var sector = context.TBL_SECTOR.Find(sectorId);
+            var sector = context.TBL_SECTOR.Find(subSector.SECTORID);
 
             var totalExposure = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE)?.Select(g => g.TOTALEXPOSURELCY).FirstOrDefault();
             var sectorLimit = context.TBL_SECTOR_GLOBAL_LIMIT.Where(g => g.CBNSECTORID == sector.CODE)?.Select(g => g.SECTORLIMIT).FirstOrDefault();

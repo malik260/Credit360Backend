@@ -1099,6 +1099,7 @@
     <Compile Include="StagingModels\STG_SANCTION_LEVEL.cs" />
     <Compile Include="StagingModels\STG_SCHEMECODE_TBL.cs" />
     <Compile Include="StagingModels\STG_SECTOR_CODE.cs" />
+    <Compile Include="StagingModels\STG_SECTOR_LIMIT_ALERT.cs" />
     <Compile Include="StagingModels\STG_SOL_TBL.cs" />
     <Compile Include="StagingModels\STG_STAFF.cs" />
     <Compile Include="StagingModels\STG_STAFFMIS.cs" />

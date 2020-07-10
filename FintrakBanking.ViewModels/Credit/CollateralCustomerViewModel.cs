@@ -1145,4 +1145,16 @@ namespace FintrakBanking.ViewModels.Credit
         public string InsuranceType { get; set; }
         public int InsuranceTypeId { get; set; }
     }
+
+    public class SectorLimitAlertViewModel
+    {
+        public int id { get; set; }
+        public string sector { get; set; }
+        public decimal? bbd { get; set; }
+        public decimal? cbd { get; set; }
+        public decimal? cibd { get; set; }
+        public decimal? rbd { get; set; }
+        public decimal? exposure { get; set; }
+        public decimal? bank { get; set; }
+    }
 }
