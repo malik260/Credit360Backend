@@ -4393,7 +4393,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeBBDReminder()
         {
             // GetSectorLimitExceedeBBDReminder method
-            var sectorBBDSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a=>a.SECTOR != null).Sum(a=>a.BBD);
+            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a=>a.SECTOR != null).Sum(a=>a.BANK);
             var sectorLimitBBD = externalAlertRepository.GetSectorLimitValidationBBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeBBDReminder").FirstOrDefault();
@@ -4412,7 +4412,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var i in sectorLimitBBD)
                 {
-                    var sectorPercentage = decimal.Round(((decimal)i.bbd * (decimal)sectorBBDSum), 2, MidpointRounding.AwayFromZero); 
+                    var sectorPercentage = decimal.Round(((decimal)i.bbd * (decimal)sectorBankSum), 2, MidpointRounding.AwayFromZero); 
                     var sectorEightyFivePercent = decimal.Round((sectorPercentage * (decimal)eightyFivePercentValue), 2, MidpointRounding.AwayFromZero);
                     var sectorNinetyPercent = decimal.Round((sectorPercentage * (decimal)ninetyPercentValue), 2, MidpointRounding.AwayFromZero);
                     var sectorNinetyFivePercent = decimal.Round((sectorPercentage * (decimal)ninetyFivePercentValue), 2, MidpointRounding.AwayFromZero);
@@ -4462,7 +4462,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeCBDReminder()
         {
             // GetSectorLimitExceedeCBDReminder method
-            var sectorCBDSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.CBD);
+            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitCBD = externalAlertRepository.GetSectorLimitValidationCBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeCBDReminder").FirstOrDefault();
@@ -4480,7 +4480,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var i in sectorLimitCBD)
                 {
-                    var sectorPercentage = decimal.Round(((decimal)i.cbd * (decimal)sectorCBDSum), 2, MidpointRounding.AwayFromZero);
+                    var sectorPercentage = decimal.Round(((decimal)i.cbd * (decimal)sectorBankSum), 2, MidpointRounding.AwayFromZero);
                     var sectorEightyFivePercent = decimal.Round((sectorPercentage * (decimal)eightyFivePercentValue), 2, MidpointRounding.AwayFromZero);
                     var sectorNinetyPercent = decimal.Round((sectorPercentage * (decimal)ninetyPercentValue), 2, MidpointRounding.AwayFromZero);
                     var sectorNinetyFivePercent = decimal.Round((sectorPercentage * (decimal)ninetyFivePercentValue), 2, MidpointRounding.AwayFromZero);
@@ -4531,7 +4531,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeCIBDReminder()
         {
             // GetSectorLimitExceedeCIBDReminder method
-            var sectorCIBDSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.CIBD);
+            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitCIBD = externalAlertRepository.GetSectorLimitValidationCIBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeCIBDReminder").FirstOrDefault();
@@ -4549,7 +4549,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var i in sectorLimitCIBD)
                 {
-                    var sectorPercentage = decimal.Round(((decimal)i.cibd * (decimal)sectorCIBDSum), 2, MidpointRounding.AwayFromZero);
+                    var sectorPercentage = decimal.Round(((decimal)i.cibd * (decimal)sectorBankSum), 2, MidpointRounding.AwayFromZero);
                     var sectorEightyFivePercent = decimal.Round((sectorPercentage * (decimal)eightyFivePercentValue), 2, MidpointRounding.AwayFromZero);
                     var sectorNinetyPercent = decimal.Round((sectorPercentage * (decimal)ninetyPercentValue), 2, MidpointRounding.AwayFromZero);
                     var sectorNinetyFivePercent = decimal.Round((sectorPercentage * (decimal)ninetyFivePercentValue), 2, MidpointRounding.AwayFromZero);
@@ -4600,7 +4600,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public void GetSectorLimitExceedeRBDReminder()
         {
             // GetSectorLimitExceedeRBDReminder method
-            var sectorRBDSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.RBD);
+            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
             var sectorLimitRBD = externalAlertRepository.GetSectorLimitValidationRBD();
 
             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeRBDReminder").FirstOrDefault();
@@ -4618,7 +4618,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var i in sectorLimitRBD)
                 {
-                    var sectorPercentage = decimal.Round(((decimal)i.rbd * (decimal)sectorRBDSum), 2, MidpointRounding.AwayFromZero);
+                    var sectorPercentage = decimal.Round(((decimal)i.rbd * (decimal)sectorBankSum), 2, MidpointRounding.AwayFromZero);
                     var sectorEightyFivePercent = decimal.Round((sectorPercentage * (decimal)eightyFivePercentValue), 2, MidpointRounding.AwayFromZero);
                     var sectorNinetyPercent = decimal.Round((sectorPercentage * (decimal)ninetyPercentValue), 2, MidpointRounding.AwayFromZero);
                     var sectorNinetyFivePercent = decimal.Round((sectorPercentage * (decimal)ninetyFivePercentValue), 2, MidpointRounding.AwayFromZero);
