@@ -703,7 +703,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             bool deferred,
             bool sameDesk,
             bool isFlowTest,
-            int? businessUnitId
+            int? businessUnitId,
+            int? finalLevel = null,
+            int amount = 0
             )
         {
             InitializeOperation();
@@ -722,7 +724,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.isFlowTest = isFlowTest;
             this.statusId = (int)ApprovalStatusEnum.Pending;
             this.businessUnitId = businessUnitId;
-
+            this.finalLevel = finalLevel;
+            this.amount = amount;
 
             LogActivity();
         }
@@ -1144,7 +1147,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
                     }
-                    else { this.EndProcess(this.statusId); }
+                    else
+                    {
+                        this.EndProcess(this.statusId);
+                    }
                     
                 }
             }
