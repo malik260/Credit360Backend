@@ -3098,7 +3098,6 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
                             crmsCode = s.CRMSCODE,
-
                         }).ToList();
 
             //var books = data.Where(d => d.loanBookingRequestId == 1380).ToList();
@@ -3261,8 +3260,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             //var books2 = data.Where(d => d.loanBookingRequestId == 1380).ToList();
-
-            return data.Where(x => x.loanReferenceNumber != null);//.Distinct().ToList();
+            return data.Where(x => x.loanReferenceNumber != null); //.Distinct().ToList();
         }
 
         public IEnumerable<LoanViewModel> GetLoanFacilityBookingAwaitingApproval(int staffId, int companyId)
