@@ -3099,7 +3099,7 @@ namespace FintrakBanking.Repositories.Credit
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
                             crmsCode = s.CRMSCODE,
 
-                        }).ToList();
+                        }).ToList().Take(50);
 
             //var books = data.Where(d => d.loanBookingRequestId == 1380).ToList();
             
@@ -3784,7 +3784,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                monitoringTrigger = i.MONITORING_TRIGGER,
                                                                monitoringTriggerSetupName = i.TBL_LOAN_MONITORING_TRIG_SETUP.MONITORING_TRIGGER_NAME,
                                                            })).ToList(),
-                        }).ToList();
+                        }).ToList().Take(50);
 
 
             List<ContingentLoanViewModel> lcyLoans = new List<ContingentLoanViewModel>();
@@ -8569,7 +8569,7 @@ namespace FintrakBanking.Repositories.Credit
                                        requestStaffId = atrail.REQUESTSTAFFID,
                                        isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                        divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
-                                   }).ToList();
+                                   }).ToList().Take(50);
 
             referredBackLoans = (from s in context.TBL_LOAN_BOOKING_REQUEST
                                  join l in context.TBL_LOAN on s.LOAN_BOOKING_REQUESTID equals l.LOAN_BOOKING_REQUESTID
@@ -8637,7 +8637,7 @@ namespace FintrakBanking.Repositories.Credit
                                      isInEditMode = true,
                                      isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                      divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
-                                 }).ToList();
+                                 }).ToList().Take(50);
 
             IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = bookingRequestLoans.Union(referredBackLoans);
 
@@ -9027,7 +9027,7 @@ namespace FintrakBanking.Repositories.Credit
                                        canReRouteBooking = canReRouteBooking,
                                        approvalTrailId = atrail.APPROVALTRAILID,
                                        responseStaffId = atrail.RESPONSESTAFFID
-                                   }).ToList();
+                                   }).ToList().Take(50);
 
             //referredBackLoans = (from s in context.TBL_LOAN_BOOKING_REQUEST
             //                     join l in context.TBL_LOAN on s.LOAN_BOOKING_REQUESTID equals l.LOAN_BOOKING_REQUESTID
