@@ -4,6 +4,7 @@ using FintrakBanking.ViewModels.credit;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -519,5 +520,58 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
             return data;
         }
+
+        public IEnumerable<InterestIncomeViewModel> GetInterestIncome(DateTime startDate, DateTime endDate)
+        {
+            var dataTermLoan = (from p in context.TBL_LOAN
+                                join x in context.TBL_DAILY_ACCRUAL on p.LOANREFERENCENUMBER equals x.REFERENCENUMBER
+                                join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on p.USER_PRUDENTIAL_GUIDE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
+                                where (DbFunctions.TruncateTime(p.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(p.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                select new
+                                {
+                                    referenceNumber = p.LOANREFERENCENUMBER,
+                                    dateTimeCreated = DbFunctions.TruncateTime(p.DATETIMECREATED).Value,
+                                    dailyAccrualAmount = x.DAILYACCURALAMOUNT,
+                                    prudentialGuideLineTypeId = e.PRUDENTIALGUIDELINETYPEID,
+                                }).AsEnumerable().Select(O => new
+                                {
+                                    period = O.dateTimeCreated.ToString("MMMM, yyyy"),
+                                    dailyAccrualAmount = O.dailyAccrualAmount,
+                                    prudentialGuideLineTypeId = O.prudentialGuideLineTypeId,
+                                }).ToList();
+
+            var dataRevolving = (from p in context.TBL_LOAN_REVOLVING
+                                 join x in context.TBL_DAILY_ACCRUAL on p.LOANREFERENCENUMBER equals x.REFERENCENUMBER
+                                 join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on p.USER_PRUDENTIAL_GUIDE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
+                                 where (DbFunctions.TruncateTime(p.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(p.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                 select new
+                                 {
+                                     referenceNumber = p.LOANREFERENCENUMBER,
+                                     dateTimeCreated = DbFunctions.TruncateTime(p.DATETIMECREATED).Value,
+                                     dailyAccrualAmount = x.DAILYACCURALAMOUNT,
+                                     prudentialGuideLineTypeId = e.PRUDENTIALGUIDELINETYPEID,
+                                 }).AsEnumerable().Select(O => new
+                                 {
+                                     period = O.dateTimeCreated.ToString("MMMM, yyyy"),
+                                     dailyAccrualAmount = O.dailyAccrualAmount,
+                                     prudentialGuideLineTypeId = O.prudentialGuideLineTypeId,
+                                 }).ToList();
+
+            var result = dataTermLoan.Union(dataRevolving).GroupBy(O => O.period).Select(O => new InterestIncomeViewModel
+                         {
+                            period = O.FirstOrDefault().period,
+                            performing = O.Where(t => t.prudentialGuideLineTypeId == (int)PrudentialGuidelineTypeEnum.Performing).Sum(t => t.dailyAccrualAmount),
+                            nonPerforming = O.Where(t => t.prudentialGuideLineTypeId == (int)PrudentialGuidelineTypeEnum.NonPerforming).Sum(t => t.dailyAccrualAmount),
+                            totalMonthlyIncome = O.Sum(t => t.dailyAccrualAmount)
+                         }).ToList();
+
+            foreach (var item in result)
+            {
+                item.totalIncome = result.Sum(O => O.totalMonthlyIncome);
+            }
+
+            return result;
+        }
+
     }
 }
