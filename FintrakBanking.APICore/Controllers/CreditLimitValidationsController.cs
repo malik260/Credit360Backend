@@ -234,13 +234,11 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("validateamount/sector/{subSectorId}")]
         public HttpResponseMessage ValidateAmountBySector(int subSectorId)
         {
-            try
-            {
-
+            
                 var data = repo.ValidateAmountBySector(subSectorId);
                 if (data != null)
                 {
@@ -252,22 +250,32 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, message = "No record found" });
                 }
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = ex.Message });
-            }
-
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("validateamountfacility/sector/{sectorId}")]
+        public HttpResponseMessage ValidateAmountFacilityBySector(int sectorId)
+        {
+                var data = repo.ValidateAmountFacilityBySector(sectorId);
+                if (data != null)
+                {
+
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("validatenpl/sector/{subSectorId}")]
         public HttpResponseMessage ValidateNPLBySector(int subSectorId)
         {
-            try
-            {
-
+            
                 var data = repo.ValidateNPLBySector(subSectorId);
                 if (data != null)
                 {
@@ -278,13 +286,6 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, message = "No record found" });
                 }
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = ex.Message });
-            }
-
         }
 
 
