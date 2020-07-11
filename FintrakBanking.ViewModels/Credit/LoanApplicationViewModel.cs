@@ -243,6 +243,20 @@ namespace FintrakBanking.ViewModels.Credit
         public string legalContingentCode { get; set; }
     }
 
+    public class InterestIncomeViewModel
+    {
+        public string referenceNumber { get; set; }
+        public int prudentialGuideLineTypeId { get; set; }
+        public decimal dailyAccrualAmount { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public string period { get; set; }
+        public decimal totalMonthlyIncome { get; set; }
+        public decimal performing { get; set; }
+        public decimal nonPerforming { get; set; }
+
+        public decimal totalIncome { get; set; }
+    }
+
     public class LoanApplicationUpdateMessage
     {
         public bool isdone { get; set; } 
