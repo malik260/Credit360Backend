@@ -240,6 +240,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public int? loanId { get; set; }
         public int loanSystemTypeId { get; set; }
+        public string legalContingentCode { get; set; }
     }
 
     public class LoanApplicationUpdateMessage

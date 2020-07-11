@@ -739,7 +739,7 @@ namespace FintrakBanking.Repositories.Risk
 
         public bool UpdateRacDefinition(RacDefinitionViewModel model, int id, UserInfo user)
         {
-            var entity = this.context.TBL_RAC_DEFINITION.Find(id);
+            var entity = context.TBL_RAC_DEFINITION.Find(id);
             entity.PRODUCTID = model.productId;
             entity.RACCATEGORYID = model.racCategoryId;
             entity.ISACTIVE = model.isActive;
@@ -784,7 +784,7 @@ namespace FintrakBanking.Repositories.Risk
             });
             // Audit Section end ------------------------
 
-            return context.SaveChanges() != 0;
+            return context.SaveChanges() > 0;
         }
 
         public bool DeleteRacDefinition(int id, UserInfo user)
