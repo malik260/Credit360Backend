@@ -2911,7 +2911,7 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0)
             {
                 var racDetail = context.TBL_RAC_DETAIL.Where(r => r.TARGETID == detail.LOANAPPLICATIONDETAILID).ToList();
-                if (loan.rac != null && racDetail.Count() < 1)
+                if (loan.rac != null && racDetail.Count() == 0)
                 {
                     var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId, detail.LOANAPPLICATIONDETAILID, loan.createdBy, detail.LOANAPPLICATIONID);
                     if (recResponse != null) return true;

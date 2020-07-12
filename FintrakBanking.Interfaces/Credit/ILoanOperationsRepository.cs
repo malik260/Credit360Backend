@@ -15,7 +15,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
-        IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationDocumentationLos(int staffId, int companyId);
+        bool CreditDocumentationFillingLos(CreditDocumentationViewModel model);
+        IEnumerable<CamProcessedLoanViewModel> GetLoanOperationDocumentationLos(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetBulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryAnalysisByAgent(int staffId, int companyId, int accreditedConsultantId);
