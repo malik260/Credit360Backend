@@ -29986,9 +29986,10 @@ namespace FintrakBanking.Repositories.Credit
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
 
-            ////var activities = admin.GetUserActivitiesByUser(staffId);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+           
             var company = context.TBL_COMPANY.Find(companyId);
+            IEnumerable<CamProcessedLoanViewModel> allLoans = null;
 
             var dataTermLoans = (from a in context.TBL_LOAN
                                    join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
@@ -30228,14 +30229,193 @@ namespace FintrakBanking.Repositories.Credit
                                          }).ToList().Take(50);
 
 
-            var termLoanData = dataTermLoans.GroupBy(x => x.bookingRequestId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
-            var revolvingLoanData = dataRevolvingLoans.GroupBy(x => x.bookingRequestId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
-            var contingentLoanData = dataContingentLoans.GroupBy(x => x.bookingRequestId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var termLoanData = dataTermLoans.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var revolvingLoanData = dataRevolvingLoans.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var contingentLoanData = dataContingentLoans.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var unionAll = termLoanData.Union(revolvingLoanData);
 
             var data = unionAll.Union(contingentLoanData);
 
-            return data;
+            IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = data;
+            List<CamProcessedLoanViewModel> lcyLoans = new List<CamProcessedLoanViewModel>();
+            List<CamProcessedLoanViewModel> fcyLoans = new List<CamProcessedLoanViewModel>();
+
+            var isLCYUser = activities.Contains("lcy-user");
+            var isFCYUser = activities.Contains("fcy-user");
+
+            if (isLCYUser == true)
+            {
+                lcyLoans = lcyAndFcyLoans.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+            }
+
+            if (isFCYUser == true)
+            {
+                fcyLoans = lcyAndFcyLoans.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+            }
+
+            allLoans = lcyLoans.Union(fcyLoans);
+
+            foreach (var item in allLoans)
+            {
+                var loanRecord = context.TBL_LOAN.Where(x => x.LOAN_BOOKING_REQUESTID == item.loanBookingRequestId);
+                item.isBooked = loanRecord.Any();
+
+                int operationId = 0;
+                if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                    operationId = (short)OperationsEnum.ContigentLoanBooking;
+                if (item.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+                    operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
+                if (item.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
+                    operationId = (short)OperationsEnum.CommercialLoanBooking;
+                if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating || item.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                    operationId = (short)OperationsEnum.TermLoanBooking;
+                if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                    operationId = (short)OperationsEnum.RevolvingLoanBooking;
+
+                item.operationId = operationId;
+
+
+                if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    operationId = (short)OperationsEnum.ContigentLoanBooking;
+                    if (item.isInEditMode)
+                    {
+                        var contingentRecord = context.TBL_LOAN_CONTINGENT.Where(x => x.LOAN_BOOKING_REQUESTID == item.loanBookingRequestId);
+                        item.loanId = contingentRecord.FirstOrDefault()?.CONTINGENTLOANID;
+                    }
+                }
+
+                if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                {
+                    operationId = (short)OperationsEnum.RevolvingLoanBooking;
+                    if (item.isInEditMode)
+                    {
+                        var revolvingRecord = context.TBL_LOAN_REVOLVING.Where(x => x.LOAN_BOOKING_REQUESTID == item.loanBookingRequestId);
+                        item.loanId = revolvingRecord.FirstOrDefault()?.REVOLVINGLOANID;
+                    }
+                }
+
+                if (item.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+                {
+                    operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
+                    item.loanId = loanRecord.FirstOrDefault()?.TERMLOANID;
+                }
+
+                if (item.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
+                {
+                    operationId = (short)OperationsEnum.CommercialLoanBooking;
+                    item.loanId = loanRecord.FirstOrDefault()?.TERMLOANID;
+                }
+
+                if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating || item.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                {
+                    operationId = (short)OperationsEnum.TermLoanBooking;
+                    item.loanId = loanRecord.FirstOrDefault()?.TERMLOANID;
+                }
+
+                var trailInfo = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == item.loanBookingRequestId);
+                if (trailInfo.Any())
+                {
+                    item.isUnderApproval = true;
+                    foreach (var trail in trailInfo)
+                    {
+                        if (trail.RESPONSESTAFFID == null)
+                        {
+                            var routedStaffRecord = context.TBL_STAFF.Where(x => x.STAFFID == trail.TOSTAFFID).FirstOrDefault();
+                            if (routedStaffRecord != null) item.routedToStaff = routedStaffRecord.FIRSTNAME + " " + routedStaffRecord.LASTNAME;
+                        }
+
+                    }
+                }
+
+                var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                switch (item.productTypeId)
+                {
+                    case (short)LoanProductTypeEnum.TermLoan:
+                        decimal customerAvailableAmount = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount = customerAvailableAmount + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount;
+                        break;
+                    case (short)LoanProductTypeEnum.CommercialLoan:
+                        decimal customerAvailableAmount2 = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount2 = customerAvailableAmount2 + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount2;
+                        break;
+                    case (short)LoanProductTypeEnum.SelfLiquidating:
+                        decimal customerAvailableAmount3 = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount3 = customerAvailableAmount3 + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount3;
+                        break;
+                    case (short)LoanProductTypeEnum.RevolvingLoan:
+                        decimal overdraftBal = 0;
+                        foreach (var overdraft in overdrafts)
+                        {
+                            if (overdraft.OVERDRAFTLIMIT > 0) overdraftBal = overdraftBal + overdraft.OVERDRAFTLIMIT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - overdraftBal;
+                        break;
+                    case (short)LoanProductTypeEnum.ContingentLiability:
+                        decimal contingentBal = 0;
+                        foreach (var contingent in contingents)
+                        {
+                            if (contingent.CONTINGENTAMOUNT > 0) contingentBal = contingentBal + contingent.CONTINGENTAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - contingentBal;
+                        break;
+                    case (short)LoanProductTypeEnum.ForeignXRevolving:
+                        decimal customerAvailableAmount4 = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount4 = customerAvailableAmount4 + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount4;
+                        break;
+                    case (short)LoanProductTypeEnum.SyndicatedTermLoan:
+                        decimal customerAvailableAmount5 = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount = customerAvailableAmount5 + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount5;
+                        break;
+                }
+
+                if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan
+                    || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating
+                    || item.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving
+                    || item.productTypeId == (short)LoanProductTypeEnum.CommercialLoan
+                    || item.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                {
+                    var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.Find(item.productPriceIndexId);
+                    var interestRate = Convert.ToDouble(item.interestRate);
+                    if (priceIndex != null)
+                    {
+                        item.interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                        item.productPriceIndex = priceIndex.PRICEINDEXNAME;
+                        item.productPriceDescription = priceIndex.PRICEINDEXDESCRIPTION;
+                    }
+                }
+
+                var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
+                if (disbursedLoan.Any())
+                {
+                    item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
+                }
+            }
+            allLoans = (from a in allLoans where ((a.customerAvailableAmount >= 0)) select a).ToList();
+            return allLoans;
         }
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansOperationWriteOffAnalysis(int staffId, int companyId)
