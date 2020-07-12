@@ -30030,6 +30030,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                    && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                    && a.ISPRINTED == false
+                                   && (a.LOANSTATUSID == (int)LoanStatusEnum.Active || a.LOANSTATUSID == (int)LoanStatusEnum.Completed)
 
                                    orderby a.DATEAPPROVED descending
                                    select new CamProcessedLoanViewModel()
@@ -30108,6 +30109,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                          && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                          && a.ISPRINTED == false
+                                         && (a.LOANSTATUSID == (int)LoanStatusEnum.Active || a.LOANSTATUSID == (int)LoanStatusEnum.Completed)
 
                                          orderby a.DATEAPPROVED descending
                                          select new CamProcessedLoanViewModel()
@@ -30185,6 +30187,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                          && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                          && a.ISPRINTED == false
+                                         && (a.LOANSTATUSID == (int)LoanStatusEnum.Active || a.LOANSTATUSID == (int)LoanStatusEnum.Completed)
 
                                          orderby a.DATEAPPROVED descending
                                          select new CamProcessedLoanViewModel()
