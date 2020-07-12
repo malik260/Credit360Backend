@@ -241,6 +241,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanId { get; set; }
         public int loanSystemTypeId { get; set; }
         public string legalContingentCode { get; set; }
+        public int? singleCustomerId { get; set; }
     }
 
     public class InterestIncomeViewModel

@@ -117,6 +117,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                             loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                             customerGroupId = a.CUSTOMERGROUPID,
+                            singleCustomerId = a.CUSTOMERID,
+                            createdBy = a.CREATEDBY,
                             isInvestmentGrade = a.ISINVESTMENTGRADE,
                             isCollateralBacked = a.REQUIRECOLLATERAL,
                             tenor = a.APPLICATIONTENOR,
@@ -2080,8 +2082,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            //using (var trans = context.Database.BeginTransaction())
-            //{
+            
             ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Where(x => x.deleted == false).Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED == false).ToList();
@@ -2089,12 +2090,9 @@ namespace FintrakBanking.Repositories.Credit
             decimal cumulativeSum = 0;
             foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
 
-            if (loan.relationshipOfficerId != 0)
-            {
-                var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
-                if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
-            }
-
+            var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
+            if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
+            
             loan.applicationAmount = cumulativeSum + additionalAmount;
 
             if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) { return loan; }
@@ -2144,18 +2142,81 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
-                UpdateLoanApplication(loan);
+                 var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                 if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
+                 UpdateLoanApplication(loan);
             }
 
 
             // if (response == 0)
             response = context.SaveChanges();
 
-
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
+            if(returndate != null)
+            {
+                int customerId = (int)returndate.singleCustomerId;
+                var customer = context.TBL_CUSTOMER.Find(customerId);
+                if (customer != null)
+                {
+                    var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
+                    var sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
+                    var customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
+
+                    if (branchOverrideRequest != null)
+                    {
+                        branchOverrideRequest.ISUSED = true;
+                        branchOverrideRequest.USEDBY = returndate.createdBy;
+                        branchOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                    if (sectorOverrideRequest != null)
+                    {
+                        sectorOverrideRequest.ISUSED = true;
+                        sectorOverrideRequest.USEDBY = returndate.createdBy;
+                        sectorOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                    if (customerOverrideRequest != null)
+                    {
+                        customerOverrideRequest.ISUSED = true;
+                        customerOverrideRequest.USEDBY = returndate.createdBy;
+                        customerOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                }
+                else
+                {
+                    int customerGroupId = (int)returndate.customerGroupId;
+                    var customerGroup = context.TBL_CUSTOMER_GROUP.Find(customerGroupId);
+                    var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customerGroup.GROUPCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
+                    var sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customerGroup.GROUPCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
+                    var customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customerGroup.GROUPCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
+
+                    if (branchOverrideRequest != null)
+                    {
+                        branchOverrideRequest.ISUSED = true;
+                        branchOverrideRequest.USEDBY = returndate.createdBy;
+                        branchOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                    if (sectorOverrideRequest != null)
+                    {
+                        sectorOverrideRequest.ISUSED = true;
+                        sectorOverrideRequest.USEDBY = returndate.createdBy;
+                        sectorOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                    if (customerOverrideRequest != null)
+                    {
+                        customerOverrideRequest.ISUSED = true;
+                        customerOverrideRequest.USEDBY = returndate.createdBy;
+                        customerOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                }
+            }
+            
 
             if (response > 0 && !loan.isNewApplication)
             {
@@ -2226,7 +2287,12 @@ namespace FintrakBanking.Repositories.Credit
                             matchedTierRac = allTierRacs.Where(x => x.RACCATEGORYTYPEID == i.RACCATEGORYTYPEID.Value)?.ToList();
                         };
 
-                        if (matchedTierRac.Count() > 0) { defaultTier = matchedTierRac.FirstOrDefault(); lastRacIndex = defaultTierItems.IndexOf(i); break; }
+                        if (matchedTierRac.Count() > 0)
+                        {
+                            defaultTier = matchedTierRac.FirstOrDefault();
+                            lastRacIndex = defaultTierItems.IndexOf(i);
+                            break;
+                        }
                     }
 
                     if (matchedTierRac.Count() <= 0)
@@ -2845,7 +2911,7 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0)
             {
                 var racDetail = context.TBL_RAC_DETAIL.Where(r => r.TARGETID == detail.LOANAPPLICATIONDETAILID).ToList();
-                if (loan.rac != null && racDetail.Count() < 1)
+                if (loan.rac != null && racDetail.Count() == 0)
                 {
                     var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId, detail.LOANAPPLICATIONDETAILID, loan.createdBy, detail.LOANAPPLICATIONID);
                     if (recResponse != null) return true;
@@ -7060,27 +7126,14 @@ namespace FintrakBanking.Repositories.Credit
             var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
             int customerId = (int)application.customerId;
+            var customer = context.TBL_CUSTOMER.Find(customerId);
             int productId = details.SingleOrDefault()?.proposedProductId ?? 0;
             decimal applicationAmount = details.Sum(x => x.proposedAmount * (decimal)x.exchangeRate); // proposedAmount should be approvedAmount after application
 
-            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
+            var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
+            var sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
+            var customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
 
-            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
-
-            // if productoverride is to be used
-            //var productOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-            //    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.productLimitOverride && x.ISUSED == false),
-            //        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-            //    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-            //    .FirstOrDefault();
 
             if (branchOverrideRequest != null)
             {
@@ -7157,13 +7210,20 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
-            var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
-            if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+            if (customerOverrideRequest != null)
             {
-                throw new SecureException("Single Obligor Limit Exceeded");
+                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                //request.ISUSED = true;
             }
-
+            else
+            {
+                var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
+                var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
+                if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+                {
+                    throw new SecureException("Single Obligor Limit Exceeded");
+                }
+            }
             
             var applications = application.LoanApplicationDetail.FirstOrDefault();
             decimal incomingAmount = details.Sum(x => x.exchangeAmount);

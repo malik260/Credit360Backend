@@ -25,7 +25,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string productName { get; set; }
         public string customerName { get; set; }
         public string applicationReferenceNumber { get; set; }
+        public string customerCode { get; set; }
         public int customerId { get; set; }
+        
     }
 
     public class LoanBulkInterestReviewViewModel : GeneralEntity
