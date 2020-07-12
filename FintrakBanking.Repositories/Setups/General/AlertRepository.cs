@@ -885,13 +885,12 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool validateAlertCheck()
         {
             bool state = false;
-
+            TimeSpan now = DateTime.Now.TimeOfDay;
 
             if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(17, 0, 0); //5 o'clock pm
                 TimeSpan end = new TimeSpan(19, 0, 0); //7 o'clock pm
-                TimeSpan now = DateTime.Now.TimeOfDay;
 
                 if ((now >= start) && (now <= end))
                 {
@@ -905,8 +904,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetExpiredInsurancePolicies();
                     GetLoanRepaymentReminder();
                     state = true;
-               }
+                }
+            }
 
+            if (CompareDateSectorLimit() == true)
+            {
                 TimeSpan start2 = new TimeSpan(8, 0, 0); 
                 TimeSpan end2 = new TimeSpan(17, 0, 0); 
 
@@ -968,11 +970,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         || m.OPERATIONMETHOD.Trim() == "GetValuationReminder"
                         || m.OPERATIONMETHOD.Trim() == "GetSiteVisitationAccountReminder"
                         || m.OPERATIONMETHOD.Trim() == "GetExpiredValuationReport"
-                        || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeBBDReminder"
-                        || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeCBDReminder"
-                        || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeCIBDReminder"
-                        || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeRBDReminder"
-                        || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceededBankReminder"
 
                         /*
                          * m.OPERATIONMETHOD.Trim() == "GetStaffLoanPortfolioReport"
@@ -999,6 +996,25 @@ namespace FintrakBanking.Repositories.Setups.General
                 return true;
             }else
             return false;
+        }
+
+        private bool CompareDateSectorLimit()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeBBDReminder"
+                         || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeCBDReminder"
+                         || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeCIBDReminder"
+                         || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeRBDReminder"
+                         || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceededBankReminder"
+                         )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
         }
         private string GetBusinessUsersEmails(string accountOfficerMIsCode)
         {

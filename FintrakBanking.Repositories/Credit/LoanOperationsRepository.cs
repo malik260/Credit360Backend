@@ -29986,35 +29986,8 @@ namespace FintrakBanking.Repositories.Credit
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
 
-            //var termLoanOperationStaffRoleLevelIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
-            //var cpOperationStaffRoleLevelIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList();
-            //var fxRevolvingOperationStaffRoleLevelIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ForeignExchangeLoanBooking).ToList();
-            //var overdraftOperationStaffRoleLevelIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.RevolvingLoanBooking).ToList();
-
-            //var cpldStaffRoleLevelIds = termLoanOperationStaffRoleLevelIds
-            //                            .Union(cpOperationStaffRoleLevelIds)
-            //                            .Union(fxRevolvingOperationStaffRoleLevelIds)
-            //                            .Union(overdraftOperationStaffRoleLevelIds).Distinct();
-
-            ////var activities = admin.GetUserActivitiesByUser(staffId);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
            
-            //List<int> operationIds = new List<int>();
-            //if (cpldStaffRoleLevelIds.Any())
-            //{
-            //    operationIds.Add((int)OperationsEnum.TermLoanBooking);
-            //    operationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
-            //    operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
-            //    operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
-            //}
-
-            //var bAndGStaffRoleLevelIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
-
-
-            //if ((!cpldStaffRoleLevelIds.Any() && bAndGStaffRoleLevelIds.Any()))
-            //{
-            //    operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
-            //}
             var company = context.TBL_COMPANY.Find(companyId);
             IEnumerable<CamProcessedLoanViewModel> allLoans = null;
 
@@ -30030,6 +30003,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                    && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                    && a.ISPRINTED == false
+                                   && (a.LOANSTATUSID == (int)LoanStatusEnum.Active || a.LOANSTATUSID == (int)LoanStatusEnum.Completed)
 
                                    orderby a.DATEAPPROVED descending
                                    select new CamProcessedLoanViewModel()
@@ -30094,7 +30068,7 @@ namespace FintrakBanking.Repositories.Credit
                                        isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                        approvalTrailId = atrail.APPROVALTRAILID,
                                        responseStaffId = atrail.RESPONSESTAFFID
-                                   }).ToList();
+                                   }).ToList().Take(50);
 
             var dataRevolvingLoans = (from a in context.TBL_LOAN_REVOLVING
                                          join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
@@ -30108,6 +30082,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                          && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                          && a.ISPRINTED == false
+                                         && (a.LOANSTATUSID == (int)LoanStatusEnum.Active || a.LOANSTATUSID == (int)LoanStatusEnum.Completed)
 
                                          orderby a.DATEAPPROVED descending
                                          select new CamProcessedLoanViewModel()
@@ -30120,6 +30095,7 @@ namespace FintrakBanking.Repositories.Credit
                                              isLineMaintained = m.APPROVEDLINESTATUSID != null,
                                              requestDate = s.DATETIMECREATED,
                                              requestedBy = "",
+                                             loanId = a.REVOLVINGLOANID,
                                              systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                              operationId = s.OPERATIONID,
                                              appraisalOperationId = m.OPERATIONID,
@@ -30171,7 +30147,7 @@ namespace FintrakBanking.Repositories.Credit
                                              isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                              approvalTrailId = atrail.APPROVALTRAILID,
                                              responseStaffId = atrail.RESPONSESTAFFID
-                                         }).ToList();
+                                         }).ToList().Take(50);
 
             var dataContingentLoans = (from a in context.TBL_LOAN_CONTINGENT
                                          join s in context.TBL_LOAN_BOOKING_REQUEST on a.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
@@ -30185,6 +30161,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                          && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
                                          && a.ISPRINTED == false
+                                         && (a.LOANSTATUSID == (int)LoanStatusEnum.Active || a.LOANSTATUSID == (int)LoanStatusEnum.Completed)
 
                                          orderby a.DATEAPPROVED descending
                                          select new CamProcessedLoanViewModel()
@@ -30201,6 +30178,7 @@ namespace FintrakBanking.Repositories.Credit
                                              operationId = s.OPERATIONID,
                                              appraisalOperationId = m.OPERATIONID,
                                              crmsCode = s.CRMSCODE,
+                                             loanId = a.CONTINGENTLOANID,
                                              requestedAmount = s.AMOUNT_REQUESTED,
                                              requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
                                              approvalStatusId = atrail.APPROVALSTATUSID,
@@ -30248,12 +30226,12 @@ namespace FintrakBanking.Repositories.Credit
                                              isLocalCurrency = defaultCurrencyId == d.CURRENCYID ? true : false,
                                              approvalTrailId = atrail.APPROVALTRAILID,
                                              responseStaffId = atrail.RESPONSESTAFFID
-                                         }).ToList();
+                                         }).ToList().Take(50);
 
 
-            var termLoanData = dataTermLoans.GroupBy(x => x.bookingRequestId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
-            var revolvingLoanData = dataRevolvingLoans.GroupBy(x => x.bookingRequestId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
-            var contingentLoanData = dataContingentLoans.GroupBy(x => x.bookingRequestId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var termLoanData = dataTermLoans.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var revolvingLoanData = dataRevolvingLoans.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
+            var contingentLoanData = dataContingentLoans.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var unionAll = termLoanData.Union(revolvingLoanData);
 
             var data = unionAll.Union(contingentLoanData);
