@@ -498,8 +498,8 @@
         <DataSetName>InterestIncome</DataSetName>
         <Top>1.4675in</Top>
         <Left>0.28in</Left>
-        <Height>1.08333in</Height>
-        <Width>5.875in</Width>
+        <Height>1.08334in</Height>
+        <Width>5.87499in</Width>
         <ZIndex>2</ZIndex>
         <Style>
           <Border>
@@ -554,40 +554,10 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <ColSpan>2</ColSpan>
                   </CellContents>
                 </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox23">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox23</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
+                <TablixCell />
                 <TablixCell>
                   <CellContents>
                     <Textbox Name="totalIncome">
@@ -641,7 +611,7 @@
         <Top>2.57861in</Top>
         <Left>0.28in</Left>
         <Height>0.25in</Height>
-        <Width>5.875in</Width>
+        <Width>5.87499in</Width>
         <ZIndex>3</ZIndex>
         <Style>
           <Border>
@@ -650,7 +620,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>16.99875in</Height>
+    <Height>6.39875in</Height>
     <Style />
   </Body>
   <Width>7.8425in</Width>
