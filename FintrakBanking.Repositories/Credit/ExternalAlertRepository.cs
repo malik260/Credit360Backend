@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
@@ -17,6 +18,7 @@ namespace FintrakBanking.Repositories.Credit
     {
         // dependencies
         private FinTrakBankingContext context;
+        private FinTrakBankingStagingContext context2;
         private IAppraisalMemorandumRepository memo;
         private ILoanRepository loanRepo;
         private IFinanceTransactionRepository financeTransaction;
@@ -29,6 +31,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public ExternalAlertRepository(
             FinTrakBankingContext context,
+            FinTrakBankingStagingContext context2,
             IAppraisalMemorandumRepository memo,
             ILoanRepository loanRepo,
             IFinanceTransactionRepository financeTransaction,
@@ -40,6 +43,7 @@ namespace FintrakBanking.Repositories.Credit
             )
         {
             this.context = context;
+            this.context2 = context2;
             this.memo = memo;
             this.loanRepo = loanRepo;
             this.financeTransaction = financeTransaction;
@@ -936,6 +940,71 @@ namespace FintrakBanking.Repositories.Credit
                                    }).ToList();
 
             return valuationData;
+        }
+
+        public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBBD() 
+        {
+            var sectorLimitValidationBBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+                             where a.EXPOSURE != null && a.EXPOSURE > 0
+                             select new SectorLimitAlertViewModel
+                             {
+                                 sector = a.SECTOR,
+                                 bbd = a.BBD,
+                                 exposure = a.EXPOSURE
+                             }).ToList();
+            return sectorLimitValidationBBD;
+        }
+
+        public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCBD() 
+        {
+            var sectorLimitValidationCBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+                                            where a.EXPOSURE != null && a.EXPOSURE > 0
+                                            select new SectorLimitAlertViewModel
+                                            {
+                                                sector = a.SECTOR,
+                                                cbd = a.CBD,
+                                                exposure = a.EXPOSURE
+                                            }).ToList();
+            return sectorLimitValidationCBD;
+        }
+
+        public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCIBD() 
+        {
+            var sectorLimitValidationCIBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+                                            where a.EXPOSURE != null && a.EXPOSURE > 0
+                                            select new SectorLimitAlertViewModel
+                                            {
+                                                sector = a.SECTOR,
+                                                cibd = a.CIBD,
+                                                exposure = a.EXPOSURE
+                                            }).ToList();
+            return sectorLimitValidationCIBD;
+        }
+
+        public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationRBD() 
+        {
+            var sectorLimitValidationRBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+                                             where a.EXPOSURE != null && a.EXPOSURE > 0
+                                             select new SectorLimitAlertViewModel
+                                             {
+                                                 sector = a.SECTOR,
+                                                 rbd = a.RBD,
+                                                 exposure = a.EXPOSURE
+                                             }).ToList();
+            return sectorLimitValidationRBD;
+        }
+
+        public IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBank()
+        {
+            var sectorLimitValidationRBD = (from a in context2.STG_SECTOR_LIMIT_ALERT
+                                            where a.EXPOSURE != null && a.EXPOSURE > 0
+                                            select new SectorLimitAlertViewModel
+                                            {
+                                                sector = a.SECTOR,
+                                                bank = a.BANK,
+                                                exposure = a.EXPOSURE
+                                            }).ToList();
+            return sectorLimitValidationRBD;
         }
 
         public IEnumerable<GlobalExposureViewModel> GetExtentionReport()

@@ -721,17 +721,17 @@ namespace FintrakBanking.Repositories.Risk
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
-            //this.audit.AddAuditTrail(new TBL_AUDIT
-            //{
-            //    AUDITTYPEID = (short)AuditTypeEnum.RacDefinitionAdded,
-            //    STAFFID = model.createdBy,
-            //    BRANCHID = (short)model.userBranchId,
-            //    DETAIL = $"TBL_Rac Definition with id '{entity.RACDEFINITIONID}' created by {auditStaff}",
-            //    IPADDRESS = model.userIPAddress,
-            //    URL = model.applicationUrl,
-            //    APPLICATIONDATE = general.GetApplicationDate(),
-            //    SYSTEMDATETIME = DateTime.Now
-            //});
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.RacDefinitionAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_Rac Definition with id '{entity.RACDEFINITIONID}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
             // Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
@@ -739,7 +739,7 @@ namespace FintrakBanking.Repositories.Risk
 
         public bool UpdateRacDefinition(RacDefinitionViewModel model, int id, UserInfo user)
         {
-            var entity = this.context.TBL_RAC_DEFINITION.Find(id);
+            var entity = context.TBL_RAC_DEFINITION.Find(id);
             entity.PRODUCTID = model.productId;
             entity.RACCATEGORYID = model.racCategoryId;
             entity.ISACTIVE = model.isActive;
@@ -770,21 +770,21 @@ namespace FintrakBanking.Repositories.Risk
             
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
-            //this.audit.AddAuditTrail(new TBL_AUDIT
-            //{
-            //    AUDITTYPEID = (short)AuditTypeEnum.RacDefinitionUpdated,
-            //    STAFFID = user.createdBy,
-            //    BRANCHID = (short)user.BranchId,
-            //    DETAIL = $"TBL_Rac Definitionwith id '{entity.RACDEFINITIONID}' was updated by {auditStaff}",
-            //    IPADDRESS = user.userIPAddress,
-            //    URL = user.applicationUrl,
-            //    APPLICATIONDATE = general.GetApplicationDate(),
-            //    SYSTEMDATETIME = DateTime.Now,
-            //    TARGETID = entity.RACDEFINITIONID
-            //});
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.RacDefinitionUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Rac Definitionwith id '{entity.RACDEFINITIONID}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.RACDEFINITIONID
+            });
             // Audit Section end ------------------------
 
-            return context.SaveChanges() != 0;
+            return context.SaveChanges() > 0;
         }
 
         public bool DeleteRacDefinition(int id, UserInfo user)

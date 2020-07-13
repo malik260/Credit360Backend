@@ -1064,6 +1064,21 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/awaiting-documentation-los")]
+        public HttpResponseMessage GetLoanOperationAwaitingDocumentationLos()
+        {
+            var data = repo.GetLoanOperationDocumentationLos(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/recovery-write-off-analysis")]
         public HttpResponseMessage GetAllLoansOperationWriteOffAnalysis()
         {
