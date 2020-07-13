@@ -20,6 +20,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        IEnumerable<CamProcessedLoanViewModel> GetBookedLoanApplicationForBookingVerificationParam(int staffId, int companyId, string searchString);
+        IEnumerable<CamProcessedLoanViewModel> getLoanFacilitiesAwaitingApprovalByParam(int companyId, int staffId, string searchString);
         int AddCollateralLiquidationRecoveryWithoutFile(CollateralLiquidationRecoveryViewModel model);
         bool bulkLoanAssignmentToAgentGoForApproval(LoanRecoveryAssignmentViewModel models, UserInfo user);
         RemoveLienViewModel GetLienRemovalLetter(int lienRemovalId);

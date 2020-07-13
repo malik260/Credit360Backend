@@ -1069,6 +1069,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
        }
 
+        public string GetInterestIncome(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/InterestIncome.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
         public string CbnTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);

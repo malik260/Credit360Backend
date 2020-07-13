@@ -587,6 +587,20 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("loan-booking/verification/awaiting-approval-param/{searchString}")]
+        public HttpResponseMessage getBookedLoanApplicationsForVerificationAwaitingApprovalParam(string searchString)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var data = repo.GetBookedLoanApplicationForBookingVerificationParam(token.GetStaffId, token.GetCompanyId, searchString);
+
+            if (data.Any() == false)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
+
+        [HttpGet]
         [Route("facility-line-maintenance-awaiting-approval")]
         public HttpResponseMessage GetFacilityLineAwaitingApproval()
         {
@@ -780,6 +794,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-facility-awaiting-booking/{searchString}")]
+        public HttpResponseMessage getLoanFacilitiesAwaitingApprovalByParam(string searchString)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var response = repo.getLoanFacilitiesAwaitingApprovalByParam(token.GetCompanyId, token.GetStaffId, searchString);
+            if (!response.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+
+        }
 
         //[HttpPost]
         //[ClaimsAuthorization]

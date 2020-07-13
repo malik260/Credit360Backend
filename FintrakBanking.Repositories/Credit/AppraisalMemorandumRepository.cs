@@ -3430,11 +3430,16 @@ namespace FintrakBanking.Repositories.Credit
                         OSNAME = CommonHelpers.FriendlyName()
                     };
                     this.audit.AddAuditTrail(audit);
-                    trans.Commit();
+                    saved = context.SaveChanges() > 0;
+                    if (saved)
+                    {
+                        trans.Commit();
+                        return saved;
+                    }
                 }
+                trans.Rollback();
             }
-
-            return context.SaveChanges() > 0;
+            return saved;
         }
 
         public List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user)

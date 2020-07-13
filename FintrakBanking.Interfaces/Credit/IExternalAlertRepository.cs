@@ -11,6 +11,11 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBank();
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationRBD();
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCIBD();
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCBD();
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBBD();
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications();
         List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps);
         string GetSlaInduvidualStatus(LoanApplicationViewModel app);

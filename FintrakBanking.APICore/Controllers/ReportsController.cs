@@ -2296,6 +2296,29 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("interest-income-report")]
+        public HttpResponseMessage GetInterestIncomeReport([FromBody] InterestIncome obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetInterestIncome(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("cbn-npl-team-report")]
         public HttpResponseMessage GetcbnNplTeamReport([FromBody] RiskAssets obj)
         {
