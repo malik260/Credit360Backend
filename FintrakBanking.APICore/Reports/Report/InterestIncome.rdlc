@@ -9,7 +9,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>INCOME INTEREST REPORT</Value>
+                <Value>INTEREST INCOME REPORT</Value>
                 <Style>
                   <FontSize>14pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -498,8 +498,8 @@
         <DataSetName>InterestIncome</DataSetName>
         <Top>1.4675in</Top>
         <Left>0.28in</Left>
-        <Height>1.08333in</Height>
-        <Width>5.875in</Width>
+        <Height>1.08334in</Height>
+        <Width>5.87499in</Width>
         <ZIndex>2</ZIndex>
         <Style>
           <Border>
@@ -641,7 +641,7 @@
         <Top>2.57861in</Top>
         <Left>0.28in</Left>
         <Height>0.25in</Height>
-        <Width>5.875in</Width>
+        <Width>5.87499in</Width>
         <ZIndex>3</ZIndex>
         <Style>
           <Border>
