@@ -899,11 +899,57 @@ namespace FintrakBanking.ReportObjects
                                collateralValue = d.COLLATERALVALUE,
                                hairCut = d.HAIRCUT,
                                loanRefrenceNumber = l.LOANREFERENCENUMBER,
-
-
                            };
 
-                return data.ToList();
+                var data1 = from a in context.TBL_LOAN_COLLATERAL_MAPPING
+                           join l in context.TBL_LOAN_CONTINGENT on a.LOANID equals l.CONTINGENTLOANID
+                           join b in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                           join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                           join d in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals d.COLLATERALCUSTOMERID
+                           where d.COLLATERALCODE == collateralCode
+                           orderby a.DATETIMECREATED descending
+                           select new CollateralEstimatedViewModel()
+                           {
+                               firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                               lastName = b.TBL_CUSTOMER.LASTNAME,
+                               middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                               facilityAmount = b.APPROVEDAMOUNT,
+                               companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME,
+                               customerId = b.CUSTOMERID,
+                               facilityName = b.TBL_PRODUCT.PRODUCTNAME,
+                               collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                               collateralDetail = d.TBL_COLLATERAL_TYPE.DETAILS,
+                               collateralCode = d.COLLATERALCODE,
+                               collateralValue = d.COLLATERALVALUE,
+                               hairCut = d.HAIRCUT,
+                               loanRefrenceNumber = l.LOANREFERENCENUMBER,
+                           };
+
+                var data2 = from a in context.TBL_LOAN_COLLATERAL_MAPPING
+                            join l in context.TBL_LOAN_REVOLVING on a.LOANID equals l.REVOLVINGLOANID
+                            join b in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                            join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                            join d in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals d.COLLATERALCUSTOMERID
+                            where d.COLLATERALCODE == collateralCode
+                            orderby a.DATETIMECREATED descending
+                            select new CollateralEstimatedViewModel()
+                            {
+                                firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                                lastName = b.TBL_CUSTOMER.LASTNAME,
+                                middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                                facilityAmount = b.APPROVEDAMOUNT,
+                                companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME,
+                                customerId = b.CUSTOMERID,
+                                facilityName = b.TBL_PRODUCT.PRODUCTNAME,
+                                collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                collateralDetail = d.TBL_COLLATERAL_TYPE.DETAILS,
+                                collateralCode = d.COLLATERALCODE,
+                                collateralValue = d.COLLATERALVALUE,
+                                hairCut = d.HAIRCUT,
+                                loanRefrenceNumber = l.LOANREFERENCENUMBER,
+                            };
+
+                return data.Union(data1).Union(data2).ToList();
             }
         }
 
@@ -2284,7 +2330,6 @@ namespace FintrakBanking.ReportObjects
 
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
-
                     var collateralValuation = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
                                                join l in context.TBL_LOAN on a.LOANID equals l.TERMLOANID
                                                join ccu in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals ccu.COLLATERALCUSTOMERID
@@ -2334,14 +2379,6 @@ namespace FintrakBanking.ReportObjects
                                                    collateralValue = ccu.COLLATERALVALUE,
                                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
                                                    //tenor = (l.EFFECTIVEDATE.Date - l.MATURITYDATE.Date).Days,
-
-
-
-
-
-
-
-
                                                }).ToList().Select(x =>
                                                {
                                                    var checkForGroupHead = stagMis.Where(f => f.staffCode == x.inspectingStaffNo).Select(f => f.subHead).FirstOrDefault();
@@ -2356,8 +2393,6 @@ namespace FintrakBanking.ReportObjects
 
                                                    return x;
                                                }).ToList();
-
-
 
                     return collateralValuation;
                 }
@@ -3631,8 +3666,144 @@ namespace FintrakBanking.ReportObjects
             return data;
         }
 
+        public List<TrialBalanceViewModel> TrialBalanceSummary(int glAccountId, int currencyCode, int companyId, int staffId)
+        {
 
-      
+            List<TrialBalanceViewModel> trialBal;
+            
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+
+                var termLoans = (from ft in context.TBL_LOAN
+                                 join p in context.TBL_PRODUCT on ft.PRODUCTID equals p.PRODUCTID
+                                 select new
+                                 {
+                                     ft.LOANREFERENCENUMBER,
+                                     ft.PRODUCTID,
+                                     p.PRODUCTCODE,
+                                     p.PRODUCTNAME,
+                                     firstName = ft.TBL_CUSTOMER.FIRSTNAME,
+                                     lastName = ft.TBL_CUSTOMER.LASTNAME,
+                                     middleName = ft.TBL_CUSTOMER.MIDDLENAME,
+                                     appDetailId = ft.LOANAPPLICATIONDETAILID,
+                                     appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                     accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER
+                                 });
+
+                var revolvingLoans = (from ft in context.TBL_LOAN_REVOLVING
+                                      join p in context.TBL_PRODUCT on ft.PRODUCTID equals p.PRODUCTID
+                                      select new
+                                      {
+                                          ft.LOANREFERENCENUMBER,
+                                          ft.PRODUCTID,
+                                          p.PRODUCTCODE,
+                                          p.PRODUCTNAME,
+                                          firstName = ft.TBL_CUSTOMER.FIRSTNAME,
+                                          lastName = ft.TBL_CUSTOMER.LASTNAME,
+                                          middleName = ft.TBL_CUSTOMER.MIDDLENAME,
+                                          appDetailId = ft.LOANAPPLICATIONDETAILID,
+                                          appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER
+                                      });
+
+                var contingentLoans = (from ft in context.TBL_LOAN_CONTINGENT
+                                       join p in context.TBL_PRODUCT on ft.PRODUCTID equals p.PRODUCTID
+                                       select new
+                                       {
+                                           ft.LOANREFERENCENUMBER,
+                                           ft.PRODUCTID,
+                                           p.PRODUCTCODE,
+                                           p.PRODUCTNAME,
+                                           firstName = ft.TBL_CUSTOMER.FIRSTNAME,
+                                           lastName = ft.TBL_CUSTOMER.LASTNAME,
+                                           middleName = ft.TBL_CUSTOMER.MIDDLENAME,
+                                           appDetailId = ft.LOANAPPLICATIONDETAILID,
+                                           appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                           accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER
+                                       });
+
+                var allLoans = termLoans.Union(revolvingLoans).Union(contingentLoans).Distinct().ToList();
+
+                var all = allLoans;
+
+                trialBal = (from ft in context.TBL_FINANCE_TRANSACTION
+                            join ca in context.TBL_CHART_OF_ACCOUNT on ft.GLACCOUNTID equals ca.GLACCOUNTID
+                            join cu in context.TBL_CURRENCY on ft.CURRENCYID equals cu.CURRENCYID
+
+                            where ft.GLACCOUNTID == glAccountId && cu.CURRENCYID == currencyCode && ft.COMPANYID == companyId
+                            //   group ft by new { ft.GLACCOUNTID, ca.ACCOUNTCODE, ca.ACCOUNTNAME, cu.CURRENCYNAME } into groupedQ
+
+                            select new TrialBalanceViewModel()
+                            {
+
+                                glAccountId = ft.GLACCOUNTID,
+                                accountCode = ca.ACCOUNTCODE,
+                                accountName = ca.ACCOUNTNAME,
+                                currency = cu.CURRENCYNAME,
+                                creditAmount = ft.CREDITAMOUNT,
+                                debitAmount = ft.DEBITAMOUNT,
+                                sourceReferenceNumber = ft.SOURCEREFERENCENUMBER,
+                                batchCode = ft.BATCHCODE,
+                                transactionDate = ft.APPROVEDDATE,
+                                narration = ft.DESCRIPTION,
+
+                                //  totalDebit = groupedQ.Sum(i=>i.DEBITAMOUNT)
+
+                            }).ToList().Select(x => {
+
+                                var loanreaferencenumber = 1;
+                                bool hasdetailid = false;
+                                string accountcode = "";
+                                if (allLoans.Where(w => w.LOANREFERENCENUMBER == x.sourceReferenceNumber).Count() == 0 && x.sourceReferenceNumber.Contains('-'))
+                                {
+                                    string[] localRef = x.sourceReferenceNumber.Split('-');
+                                    int localloandetailid = 0;
+                                    int.TryParse(localRef[1], out localloandetailid);
+                                    if (allLoans.Where(e => e.appDetailId == localloandetailid).Count() > 0)
+                                        x.sourceReferenceNumber = allLoans.Where(e => e.appDetailId == localloandetailid).FirstOrDefault().LOANREFERENCENUMBER;
+                                    accountcode = allLoans.Where(e => e.appDetailId == localloandetailid).Count() > 0 ? allLoans.Where(e => e.appDetailId == localloandetailid).FirstOrDefault().accountnumber : null;
+
+                                    hasdetailid = true;
+                                }
+
+
+                                var getProductname = all.Where(m => m.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.PRODUCTNAME).FirstOrDefault();
+
+                                // var getProductname = allLoans.Where(m => m.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.PRODUCTNAME).FirstOrDefault();
+
+                                x.productName = getProductname == null ? " " : getProductname.ToString();
+
+                                var getProductCode = allLoans.Where(z => z.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(z => z.PRODUCTCODE).FirstOrDefault();
+
+                                x.productCode = getProductCode == null ? " " : getProductCode.ToString();
+                                var firstName = allLoans.Where(z => z.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.firstName).FirstOrDefault();
+                                firstName = firstName == null ? " " : firstName;
+                                var middleName = allLoans.Where(z => z.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.middleName).FirstOrDefault();
+                                middleName = middleName == null ? " " : middleName;
+                                var lastName = allLoans.Where(z => z.LOANREFERENCENUMBER == x.sourceReferenceNumber).Select(m => m.lastName).FirstOrDefault();
+                                lastName = lastName == null ? " " : lastName;
+                                x.customerName = firstName + " " + middleName + " " + lastName;
+                                if (hasdetailid)
+                                {
+
+                                    try
+                                    {
+                                        x.sourceReferenceNumber = accountcode;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        string message = ex.Message;
+                                    }
+
+                                }
+                                return x;
+                            }).OrderBy(z => z.transactionDate).ToList();
+
+            }
+
+            return trialBal;
+        }
+
     }
 }
 

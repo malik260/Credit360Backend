@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 {
     public interface IApprovalLevelStaffRepository
     {
+        IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailBySiteTargetId(int targetId, int companyId);
         bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model);
 
         bool UpdateApprovalLevelStaff(int staffLevelId, ApprovalLevelStaffViewModel model);
@@ -25,7 +26,10 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 
         IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaffById(int staffLevelId, int companyId);
 
-        Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId,
+        //Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId,
+        //    int targetId, int companyId);
+
+        IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId,
             int targetId, int companyId);
 
         IQueryable<WorkflowTrackerViewModel> GetAllRecordsOnApprovalTrail(int companyId);

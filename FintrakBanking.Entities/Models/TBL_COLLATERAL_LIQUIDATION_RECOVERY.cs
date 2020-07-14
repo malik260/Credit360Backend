@@ -23,12 +23,13 @@ namespace FintrakBanking.Entities.Models
         public byte[] FILEDATA { get; set; }
         public string FILENAME { get; set; }
         public string FILEEXTENSION { get; set; }
-        public int FILESIZE { get; set; }
+        public int? FILESIZE { get; set; }
         public string FILESIZEUNIT { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public DateTime RECEIPTDATE { get; set; }
         public decimal TOTALRECOVERYAMOUNT { get; set; }
         public decimal RECOVEREDAMOUNT { get; set; }
+        public decimal? PERCENTAGECOMMISSION { get; set; }
         public decimal? OUTSTANDINGAMOUNT { get; set; }
         public string COLLATERALCODE { get; set; }
         public string COLLECTIONMODE { get; set; }

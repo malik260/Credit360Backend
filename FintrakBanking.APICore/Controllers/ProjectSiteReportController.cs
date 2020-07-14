@@ -35,29 +35,24 @@ namespace FintrakBanking.APICore.Controllers
         [Route("project-site-report")]
         public HttpResponseMessage GetProjectSiteReport()
         {
-            try
-            {
                 IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReports();
-                if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            if (response == null) {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }else
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-            }
-            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
         }
-
-
 
         [HttpGet]
         [ClaimsAuthorization]
         [Route("project-site-report/{projectSiteReportId}/projectSiteReportId")]
         public HttpResponseMessage GetProjectSiteReport(int projectSiteReportId)
         {
-            try
-            {
+            
                 IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReports(projectSiteReportId);
-                if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            if (response == null) {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }else
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-            }
-            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
         }
 
 
@@ -66,13 +61,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("facilities/{projectSiteReportId}")]
         public HttpResponseMessage GetFacilities(int projectSiteReportId)
         {
-            try
-            {
                 IEnumerable<LoanApplicationViewModel> response = repo.GetFacilities(projectSiteReportId);
-                if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            if (response == null) {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }else
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-            }
-            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
         }
 
         
@@ -87,6 +80,21 @@ namespace FintrakBanking.APICore.Controllers
             model.createdBy = token.GetStaffId;
             model.companyId = token.GetCompanyId;
             var response = repo.SubmitApproval(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("project-site-gofor-acceptance")]
+        public HttpResponseMessage SubmitAcceptance([FromBody] ProjectSiteReportViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.SubmitAcceptance(model);
             if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
@@ -111,13 +119,25 @@ namespace FintrakBanking.APICore.Controllers
         [Route("project-site-report-approval")]
         public HttpResponseMessage GetProjectSiteReportApproval()
         {
-            try
-            {
                 IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReportApprovals(token.GetStaffId);
-                if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            if (response == null) {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }else
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("project-site-report-approved")]
+        public HttpResponseMessage GetProjectSiteReportApproved()
+        {
+            IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReportApproved(token.GetStaffId);
+            if (response == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
-            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
         [HttpGet]
@@ -126,8 +146,25 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage Search(string searchString)
         {
             IEnumerable<LoanApplicationViewModel> response = repo.Search(searchString);
-            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            if (response == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-customer-loans/{id}")]
+        public HttpResponseMessage ProjectSiteReportLoans(int id)
+        {
+            IEnumerable<LoanApplicationViewModel> response = repo.ProjectSiteReportLoans(id);
+            if (response == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
         [HttpPost]
@@ -144,7 +181,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
                 var response = repo.AddProjectSiteReport(model);
-                if (response!=0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                if (response != 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch(SecureException ex)
@@ -638,6 +675,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-comment-images/{id}")]
+        public HttpResponseMessage GetPsrCommentImages(int id)
+        {
+            IEnumerable<PsrCommentImagesViewModel> response = repo.GetPsrCommentImages(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("psr-image")]
@@ -665,7 +711,6 @@ namespace FintrakBanking.APICore.Controllers
                 entity.imageCaption = provider.FormData["imageCaption"];
                 entity.projectSiteReportId = Convert.ToInt32(provider.FormData["projectSiteReportId"]);
                 entity.overwrite = provider.FormData["overwrite"] == "true";
-                
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -684,7 +729,178 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
 
         }
-        
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-image/{id}")]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> UpdatePsrImagec(int id)
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+            try
+            {
+                var entity = new PsrImagesViewModel();
+                entity.psrImageId = id;
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.fileSizeUnit = provider.FormData["fileSizeUnit"];
+                entity.imageCaption = provider.FormData["imageCaption"];
+                entity.projectSiteReportId = Convert.ToInt32(provider.FormData["projectSiteReportId"]);
+                entity.overwrite = provider.FormData["overwrite"] == "true";
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                int response = repo.UpdatePsrImage(entity, buffer);
+
+
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-comment-image")]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddPsrCommentImage()
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+            try
+            {
+                var entity = new PsrCommentImagesViewModel();
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.fileSizeUnit = provider.FormData["fileSizeUnit"];
+                entity.imageCaption = provider.FormData["imageCaption"];
+                entity.projectSiteReportId = Convert.ToInt32(provider.FormData["projectSiteReportId"]);
+                entity.overwrite = provider.FormData["overwrite"] == "true";
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                int response = repo.AddPsrCommentImage(entity, buffer);
+
+
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-comment-image/{id}")]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> UpdatePsrCommentImage(int id)
+        {
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+            try
+            {
+                var entity = new PsrCommentImagesViewModel();
+                entity.psrCommentImageId = id;
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.fileSizeUnit = provider.FormData["fileSizeUnit"];
+                entity.imageCaption = provider.FormData["imageCaption"];
+                entity.projectSiteReportId = Convert.ToInt32(provider.FormData["projectSiteReportId"]);
+                entity.overwrite = provider.FormData["overwrite"] == "true";
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                int response = repo.UpdatePsrCommentImage(entity, buffer);
+
+
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
+
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("psr-comment-image/{id}")]
+        public HttpResponseMessage DeletePsrCommentImage(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeletePsrCommentImage(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("psr-image/{id}")]
+        public HttpResponseMessage DeletePsrImage(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeletePsrImage(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
         #endregion
 
     }

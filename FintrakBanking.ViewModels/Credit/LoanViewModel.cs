@@ -131,6 +131,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string relatedloanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
+        public bool? isLineFacility { get; set; }
         public string lmsApplicationReferenceNumber { get; set; }
 
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
@@ -332,8 +333,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal debitAmount { get; set; }
         public string description { get; set; }
         public DateTime valueDate { get; set; }
-        public DateTime postedDate { get; set; }
-        public DateTime postedTime { get; set; }
+        public DateTime? postedDate { get; set; }
+        public DateTime? postedTime { get; set; }
         public double currencyRate { get; set; }
         public string postCurrency { get; set; }
         public string sourceReferenceNumber { get; set; }
@@ -721,10 +722,19 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        //public bool? isAwaitingLineMaintenance { get; set; }
+
+        public CamProcessedLoanViewModel()
+        {
+            bookedLoanData = new LoanViewModel();
+            bookedRevolvingFacilityData = new RevolvingLoanViewModel();
+        }
+
         public bool isLineMaintained { get; set; }
 
         public bool? isLineFacility { get; set; }
 
+        public string isLineFacilityString { get; set; }
         public DateTime systemArrivalDateTime { get; set; }
 
         public int appraisalOperationId { get; set; }

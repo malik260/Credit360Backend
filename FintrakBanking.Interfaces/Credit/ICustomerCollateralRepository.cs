@@ -14,6 +14,9 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICustomerCollateralRepository
     {
+        CollateralHistory getCollateralHistoryUsage(int collateralId);
+        IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerIdLMS(int customerId, bool getAll = false);
+        bool ProposeCollateralForUsageLMS(CollateralCoverageViewModel model);
         #region Collateral
 
         //int AddCollateral(CollateralViewModel entity, byte[] file);
@@ -33,7 +36,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<CollateralViewModel> GetCollateralReleaseAwaitingJobRequest(int companyId, int branchId);
 
         bool UpdateCollateral(CollateralViewModel entity, int collateralId);
-        IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
+        IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId, bool isLMS = false);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral( int? applicationDetailId, int currencyId, int companyId);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId, bool getAll);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByLoanApplicationDetailId(int loanApplicationDetailId);

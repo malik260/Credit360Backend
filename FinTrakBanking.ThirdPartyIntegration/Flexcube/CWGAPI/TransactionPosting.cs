@@ -2,7 +2,6 @@
 {
     using FintrakBanking.Common.CustomException;
     using FintrakBanking.Entities.Models;
-    using FintrakBanking.Interfaces.Credit;
     using FintrakBanking.ViewModels.CASA;
     using FintrakBanking.ViewModels.Credit;
     using FintrakBanking.ViewModels.Customer;
@@ -10,7 +9,6 @@
     using FintrakBanking.ViewModels.Flexcube;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -65,7 +63,7 @@
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageViewModel res = null;
+                //ResponseMessageViewModel res = null;
                 string responseMessage = "";
 
                 getAPIURLSettings("EXCHANGERATE");
@@ -394,6 +392,7 @@
 
                 getAPIURLSettings("PostTransactions");
                 string apiUrl = "api/Transactions/PostTransactions";
+
                 try
                 {
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -481,7 +480,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = apiUrl,
+                        APIURL = API_URL + apiUrl,
                         LOGTYPEID = model.FirstOrDefault().operationId,
                         REFERENCENUMBER =  model.FirstOrDefault().sourceReferenceNumber,
                         REQUESTDATETIME = requestDatetime,

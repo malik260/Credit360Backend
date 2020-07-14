@@ -47,7 +47,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     dsPerformaceEvaluation.Name = "evaluation";
                     ReportViewer.LocalReport.DataSources.Add(dsPerformaceEvaluation); 
 
-                   // var apg = psr.GetProjectSiteReports(projectSiteReportId);
                     var apg = psr.GetProjectSiteReportsApg(projectSiteReportId);
                     ReportDataSource dsApg = new ReportDataSource();
                     dsApg.Value = apg;
@@ -96,6 +95,25 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     dsImage.Value = image;
                     dsImage.Name = "supportImages";
                     ReportViewer.LocalReport.DataSources.Add(dsImage);
+
+                    var commentImages = psr.GetPsrCommentsImages(projectSiteReportId);
+                    ReportDataSource commentImage = new ReportDataSource();
+                    commentImage.Value = commentImages;
+                    commentImage.Name = "commentimages";
+                    ReportViewer.LocalReport.DataSources.Add(commentImage);
+
+                    var signatories = psr.GetPsrSignatories(projectSiteReportId);
+                    ReportDataSource signatoriy = new ReportDataSource();
+                    signatoriy.Value = signatories;
+                    signatoriy.Name = "signatories";
+                    ReportViewer.LocalReport.DataSources.Add(signatoriy);
+
+                    var supervisorComment = psr.GetPsrSupervisorComment(projectSiteReportId);
+                    ReportDataSource superComment = new ReportDataSource();
+                    superComment.Value = supervisorComment;
+                    superComment.Name = "supervisorcomment";
+                    ReportViewer.LocalReport.DataSources.Add(superComment);
+
 
                     if (psrReportTypeId == 1)
                     {

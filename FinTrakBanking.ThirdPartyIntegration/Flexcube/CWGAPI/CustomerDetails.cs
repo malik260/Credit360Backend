@@ -59,13 +59,10 @@
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
-
                 handler.UseDefaultCredentials = true;
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-               // ResponseMessageViewModel res = null;
                 string responseMessage = "";
-                //string responseData = "";
                 getAPIURLSettings("Customer");
 
                 try
@@ -80,19 +77,15 @@
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-
-                    //CustomerTransactionViewModels customerViewModels = new CustomerTransactionViewModels();
                     List<CustomerViewModels> customers = new List<CustomerViewModels>();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
                     requestDatetime = DateTime.Now;
-                    //ServicePointManager.FindServicePoint(client.BaseAddress).ConnectionLeaseTimeout = 60 * 1000;
                     response = await client.GetAsync($"GetCustomerByAccountNumber/{customerAccount}");
                     responseDateTime = DateTime.Now;
 
                     if (response.IsSuccessStatusCode)
                     {
-                        //var customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
                         responseMessage = await response.Content.ReadAsStringAsync();
                         JObject jsonString = JObject.Parse(responseMessage);
 
@@ -126,26 +119,8 @@
 
                     }
 
-                    //responseMessage = await response.Content.ReadAsStringAsync();
                     handler.Dispose();
                     client.Dispose();
-
-                    //var logs = new TBL_CUSTOM_API_LOGS
-                    //{
-                    //    APIURL = $"{API_URL}GetCustomerByAccountNumber/{customerAccount}",
-                    //    LOGTYPEID = 4,
-                    //    REFERENCENUMBER = customerAccount,
-                    //    REQUESTDATETIME = requestDatetime,
-                    //    REQUESTMESSAGE = customerAccount,
-                    //    RESPONSEDATETIME = responseDateTime,
-                    //    RESPONSEMESSAGE = responseMessage,
-                    //};
-                    //FinTrakBankingContext logContext = new FinTrakBankingContext();
-
-                    // logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
-                    //logContext.SaveChanges();
-
                     return customers;
                 }
                 catch (APIErrorException ex)
@@ -179,6 +154,14 @@
                 }
 
             }
+
+            //private string GetLatestEntryFromCustomApiLogs(string customerCode, string apiUrl)
+            //{
+            //    FinTrakBankingContext logContext = new FinTrakBankingContext();
+            //    var result = logContext.TBL_CUSTOM_API_LOGS.Where(O => O.REFERENCENUMBER == customerCode && O.APIURL.Contains(apiUrl)).OrderByDescending(O => O.APILOGID).Select(O => O.RESPONSEMESSAGE).FirstOrDefault();
+            //    return result;
+            //}
+
 
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
             {
@@ -320,8 +303,8 @@
                 //ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 getAPIURLSettings("CustomerAccountBalance");
-                try
 
+                try
                 {
                     handler.UseDefaultCredentials = true;
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -335,21 +318,19 @@
                     client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
 
-
                     CasaViewModel casaViewModels = new CasaViewModel();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     response = await client.GetAsync($"GetCustomerAccountBalances/{customerCode}");
-                    //response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
 
                     List<CasaViewModel> casa = new List<CasaViewModel>();
                     responseDateTime = DateTime.Now;
+
                     if (response.IsSuccessStatusCode)
                     {
                         var jsonString = await response.Content.ReadAsStringAsync();
                         JObject responseDataJsonString = JObject.Parse(jsonString);
                         var jsonDataString = responseDataJsonString["data"].ToString();
-
                         var objData = JsonConvert.DeserializeObject<List<CasaIntegrationViewModel>>(jsonDataString);
 
                         foreach (var d in objData)
@@ -369,15 +350,14 @@
                             });
                         }
                     }
+
                     handler.Dispose();
                     client.Dispose();
                     responseMessage = await response.Content.ReadAsStringAsync();
-
                     return casa;
                 }
                 catch (APIErrorException ex)
                 {
-                    //throw new APIErrorException("Core Banking API Error - " + ex.Message);
                     throw new APIErrorException("Core Banking API Error - " + response.RequestMessage);
                 }
 
@@ -396,13 +376,19 @@
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseMessage,
                     };
-                    FinTrakBankingContext logContext = new FinTrakBankingContext();
 
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
                     logContext.SaveChanges();
-                    
                 }
             }
+
+            //private string GetLatestEntryFromCustomApiLogs(string customerCode, string apiUrl)
+            //{
+            //    FinTrakBankingContext logContext = new FinTrakBankingContext();
+            //    var result = logContext.TBL_CUSTOM_API_LOGS.Where(O => O.REFERENCENUMBER == customerCode && O.APIURL.Contains(apiUrl)).OrderByDescending(O => O.APILOGID).Select(O => O.RESPONSEMESSAGE).FirstOrDefault();
+            //    return result;
+            //}
 
             public async Task<string> CheckExposePerson(string customerCode)
             {

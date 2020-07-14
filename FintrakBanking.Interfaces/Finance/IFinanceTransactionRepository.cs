@@ -2,6 +2,8 @@
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.Report;
+using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
 
@@ -91,9 +93,10 @@ namespace FintrakBanking.Interfaces.Finance
 
         string GetCustomerAccountType(string accountNumber);
         FinanceTransactionViewModel PostEarnUnEarnedFeeOperationEntries(DailyInterestAccrualViewModel model, decimal postedAmount, string description, int operationId, int loanSystemTypeId);
+        List<TrialBalanceViewModel> GetTrialBalanceSummary(ReportSearchEntity entity, int companyId);
 
-
-
+        TrialBalanceViewModel GetExportedTrialBalanceSummary(ReportSearchEntity entity, int companyId);
+        List<TrialBalanceViewModel> GetGLandAccountName();
 
     }
 }

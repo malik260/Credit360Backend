@@ -10,27 +10,35 @@ namespace FintrakBanking.ViewModels.credit
     {
         public int psrPerformanceEvaluationId { get; set; }
 
-        public string projectSum { get; set; }
-        public string paymentToDate { get; set; }
-        public string disbursedTodate { get; set; }
-        public string initialProjectSum { get; set; }
-        public string vowdToDate { get; set; }
-        public string pmuAssessed { get; set; }
-        public string consoltantVowd { get; set; }
-        public string amortisedApg { get; set; }
-        public string apgReceived { get; set; }
-        public string costVariation { get; set; }
+        public decimal? projectSum { get; set; }
+        public decimal? paymentToDate { get; set; }
+        public decimal? disbursedTodate { get; set; }
+        public decimal? initialProjectSum { get; set; }
+        public decimal? vowdToDate { get; set; }
+        public decimal? pmuAssessed { get; set; }
+        public decimal? consoltantVowd { get; set; }
+        public decimal? amortisedApg { get; set; }
+        public decimal? apgReceived { get; set; }
+        public decimal? costVariation { get; set; }
         public string timeVariation { get; set; }
-        public string apgIssued { get; set; }
-        public string amountReceived { get; set; }
+        public decimal? apgIssued { get; set; }
+        public decimal? amountReceived { get; set; }
         public int projectSiteReportId { get; set; }
         public int psrReportTypeId { get; set; }
         public string projectSiteReportName { get; set; }
         public string psrReportType { get; set; }
-        public string progressPayment { get; set; }
-        public string certifiedVowd { get; set; }
+        public decimal? progressPayment { get; set; }
+        public decimal? certifiedVowd { get; set; }
         public short BranchId { get; set; }
         public int approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
+        public decimal? amountDisbursedPercent { get; set; }
+        public decimal? pmuPercentage { get; set; }
+        public string currency { get; set; }
+        public decimal? percentageOne { get; set; }
+        public decimal? percentageTwo { get; set; }
+        public decimal? percentageThree { get; set; }
+        public decimal? percentageFour { get; set; }
+        public decimal? percentageFive { get; set; }
     }
 }

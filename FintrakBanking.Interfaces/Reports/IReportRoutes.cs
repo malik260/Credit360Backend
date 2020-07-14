@@ -148,6 +148,9 @@ namespace FintrakBanking.Interfaces.Reports
         string CopyOfRiskAssetByIfrsClassification(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
 
         string GetGeneratedCFLOfferLetter(string applicationRefNumber, string ActionByName);
+        string GetTrialBalanceReport(int glAccountId, int currencyCode, int companyId, int staffId);
+        string GetInterestIncome(DateTime startDate, DateTime endDate);
+
     }
 
 

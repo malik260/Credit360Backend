@@ -81,6 +81,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
         public IEnumerable<feeDetails> fees { get; set; }
 
+        public short? feeTypeId { get; set; }
+
+
 
         //File Upload
         public string documentTitle { get; set; }
@@ -116,15 +119,53 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanRecoveryAssignmentViewModel
     {
         public int loanAssignId { get; set; }
+        public string referenceId { get; set; }
+        public int? approvalStatusId { get; set; }
+        public int? operationId { get; set; }
         public int loanId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int customerId { get; set; }
         public int accreditedConsultant { get; set; }
         public DateTime dateAssigned { get; set; }
         public int createdBy { get; set; }
+        public decimal? totalAmountRecovery { get; set; }
         public bool isFullyRecovered { get; set; }
+        public bool operationCompleted { get; set; }
         public DateTime? expCompletionDate { get; set; }
+        public string comment { get; set; }
     }
+
+    public class RemoveLienViewModel
+    {
+        public int unfreezeLienAccountId { get; set; }
+        public int casaLienAccountId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public int fileSize { get; set; }
+        public string fileSizeUnit { get; set; }
+        public byte[] fileData { get; set; }
+        public int createdBy { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public int approvalStatusId { get; set; }
+        public bool operationCompleted { get; set; }
+        public int operationId { get; set; }
+        public short userBranchId { get; set; }
+        public string applicationUrl { get; set; }
+        public int companyId { get; set; }
+        public string userIPAddress { get; set; }
+        public string comment { get; set; }
+        public bool overwrite { get; set; }
+        public int lastUpdatedBy { get; set; }
+        public int forwardAction { get; set; }
+        public int? receiverStaffId { get; set; }
+        public int? receiverLevelId { get; set; }
+        public short? vote { get; set; }
+        public bool isFlowTest { get; set; }
+        public bool? isFromPc { get; set; }
+        public DateTime? requestDate { get; set; }
+    }
+
 
     public class CollateralLiquidationRecoveryViewModel : GeneralEntity
     {
@@ -139,7 +180,7 @@ namespace FintrakBanking.ViewModels.Credit
         public byte[] fileData { get; set; }
         public string fileName { get; set; }
         public string fileExtension { get; set; }
-        public int fileSize { get; set; }
+        public int? fileSize { get; set; }
         public string fileSizeUnit { get; set; }
         public DateTime receiptDate { get; set; }
         public decimal totalRecoveryAmount { get; set; }
@@ -147,6 +188,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? outstandingAmount { get; set; }
         public string collateralCode { get; set; }
         public string collectionMode { get; set; }
+        public decimal? percentageCommission { get; set; }
     }
 
     public class LoanReviewOperationApprovalViewModel
@@ -339,10 +381,10 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int accreditedConsultant { get; set; }
         public bool isFullyRecovered { get; set; }
         public bool overwrite { get; set; }
-        public byte[] fileData { get; set; }
+        public byte?[] fileData { get; set; }
         public string fileName { get; set; }
         public string fileExtension { get; set; }
-        public int fileSize { get; set; }
+        public int? fileSize { get; set; }
         public string fileSizeUnit { get; set; }
         public DateTime receiptDate { get; set; }
         public decimal totalRecoveryAmount { get; set; }
@@ -351,6 +393,27 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string collateralCode { get; set; }
         public string collectionMode { get; set; }
         public int createdBy { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public string lienReferenceNumber { get; set; }
+        public decimal lienAmount { get; set; }
+        public DateTime lienDateTimeCreated { get; set; }
+        public DateTime applicationDate { get; set; }
+        public string lmsReferenceNumber { get; set; }
+        public int loanApplicationId { get; set; }
+        public int casaLienAccountId { get; set; }
+        public int lienRemovalId { get; set; }
+        public int lienRemovalOperationId { get; set; }
+        public int unfreezeLienAccountId { get; set; }
+        public string accreditedConsultantName { get; set; }
+        public string accreditedConsultantCompany { get; set; }
+        public string referenceId { get; set; }
+        public DateTime requestDate { get; set; }
+        public int numberOfLoans { get; set; }
+        public int bulkRecoveryApprovalId { get; set; }
+        public int accreditedConsultantId { get; set; }
+        public decimal? agentCommission { get; set; }
+        public decimal? percentageCommission { get; set; }
+        public decimal totalAmountRecovery { get; set; }
     }
 
 
@@ -483,6 +546,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public DateTime systemArrivalDate { get; set; }
 
         public string staffRoleCode { get; set; }
+
+        public string loanReferenceNumber { get; set; }
     }
 
     public class applicationDetails

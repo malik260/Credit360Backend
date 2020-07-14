@@ -104,10 +104,19 @@ namespace FintrakBanking.APICore.Controllers
             entity.staffId = token.GetStaffId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
 
-            WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
-          
+            try
+            {
+                WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error acting on this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error acting on this record {ex.Message}" });
+            }
         }
 
         [HttpPost]
@@ -392,7 +401,12 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetLoanDetailChangeLog(int loanApplicationId)
         {
             var data = repo.GetLoanDetailChangeLog(loanApplicationId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = "No records found" });
         }
 
         [HttpGet, Route("loan-application-approval-process")]
@@ -427,7 +441,7 @@ namespace FintrakBanking.APICore.Controllers
                 .Skip(page)
                 .Take(itemsPerPage)
                 .ToList();
-
+            repo.CalculateSLA(data);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 
@@ -734,6 +748,18 @@ namespace FintrakBanking.APICore.Controllers
         {
             bool data = repo.WorkflowTest();
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [Route("approval-trail/{approvalTrailId}")]
+        public HttpResponseMessage GetapprovalTrailByTrailId(int approvalTrailId)
+        {
+            var data = repo.GetapprovalTrailByTrailId(approvalTrailId);
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data });
         }
 
         #region recommended collateral

@@ -614,6 +614,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
                                        productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                                        productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
+                                       excludeFromLitigation = data.EXCLUDEFROMLITIGATION,
 
                                        productCode = data.PRODUCTCODE,
                                        productName = data.PRODUCTNAME + " " + data.PRODUCTCODE,
@@ -1091,6 +1092,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                                       productPriceIndexId = c.PRODUCTPRICEINDEXID,
                                                       productPriceIndexName = c.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                                                       productPriceIndexSpread = c.PRODUCTPRICEINDEXSPREAD,
+                                                      excludeFromLitigation = c.EXCLUDEFROMLITIGATION,
 
                                                       productCode = c.PRODUCTCODE,
                                                       productName = c.PRODUCTNAME,
@@ -1331,6 +1333,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productCode = tp.PRODUCTCODE,
                                        productName = tp.PRODUCTNAME,
                                        productDescription = tp.PRODUCTDESCRIPTION,
+                                       excludeFromLitigation = tp.EXCLUDEFROMLITIGATION,
 
                                        productGroupId = tp.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
 
@@ -1636,9 +1639,11 @@ namespace FintrakBanking.Repositories.Setups.General
                             existingProduct.PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL;
                             existingProduct.OVERDRAWNGL = productModel.OVERDRAWNGL;
                             existingProduct.ISFACILITYLINE = productModel.ISFACILITYLINE;
+                            existingProduct.EXCLUDEFROMLITIGATION = productModel.EXCLUDEFROMLITIGATION;
 
                             existingProduct.PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID;
                             existingProduct.PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD;
+
 
                             existingProduct.DEALTYPEID = productModel.DEALTYPEID;
                             existingProduct.DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID;
@@ -1775,6 +1780,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 RISKRATINGID = productModel.RISKRATINGID,
                                 PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID,
                                 PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD,
+                                EXCLUDEFROMLITIGATION = productModel.EXCLUDEFROMLITIGATION,
 
                                 DEALTYPEID = productModel.DEALTYPEID,
                                 DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID,
@@ -1861,7 +1867,14 @@ namespace FintrakBanking.Repositories.Setups.General
                         throw new SecureException("Product Currency must be specified. Please select a principal GL with mapped currencies");
                 }
 
-                bool output = false;
+            var isProductCodeExist = context.TBL_TEMP_PRODUCT.Any(x => x.PRODUCTCODE == productModel.productCode);
+
+            if (isProductCodeExist)
+            {
+                throw new SecureException("Product code already exist");
+            }
+
+            bool output = false;
                 var existingTempProduct = context.TBL_TEMP_PRODUCT.FirstOrDefault(x => x.PRODUCTCODE.ToLower() == productModel.productCode.ToLower()
                                                                       && x.ISCURRENT == true && x.COMPANYID == productModel.companyId
                                                                       && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending);
@@ -1980,7 +1993,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     PRODUCTTYPEID = productModel.productTypeId,
                     PRODUCTCATEGORYID = productModel.productCategoryId,
                     PRODUCTCLASSID = (short)productModel.productClassId,
-                    PRODUCTCODE = GenerateProductCode(productModel.companyId),
+                    PRODUCTCODE = productModel.productCode,
+                    // PRODUCTCODE = GenerateProductCode(productModel.companyId),
                     PRODUCTNAME = productModel.productName,
                     PRODUCTDESCRIPTION = productModel.productDescription,
                     RISKRATINGID = productModel.riskRatingId,
@@ -1992,6 +2006,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DORMANTGL = productModel.dormantGl,
                     PREMIUMDISCOUNTGL = productModel.premiumDiscountGl,
                     OVERDRAWNGL = productModel.overdrawnGl,
+                    EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation,
 
                     PRODUCTPRICEINDEXID = productModel.productPriceIndexId,
                     PRODUCTPRICEINDEXSPREAD = productModel.productPriceIndexSpread,
@@ -2156,8 +2171,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (existingTempProduct != null)
                 {
                     var existingTempProductBehaviour = context.TBL_TEMP_PRODUCT_BEHAVIOUR
-                        .FirstOrDefault(x => x.PRODUCTCODE.ToLower() ==
-                            productModel.productCode.ToLower()
+                        .FirstOrDefault(x => x.PRODUCTCODE.ToLower() == productModel.productCode.ToLower()
                                 && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
                     existingProductCurrencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
                     existingProductFees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
@@ -2252,6 +2266,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     tempProductToUpdate.PRINCIPALBALANCEGL = productModel.principalBalanceGl;
                     tempProductToUpdate.PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2;
                     tempProductToUpdate.PENALCHARGEGL = productModel.penalChargeGl;
+                    tempProductToUpdate.EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation;
 
                     tempProductToUpdate.INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl;
                     tempProductToUpdate.INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl;
@@ -2426,6 +2441,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ALLOWRATE = productModel.allowRate,
                         ALLOWTENOR = productModel.allowTenor,
                         ALLOWOVERDRAWN = productModel.allowOverdrawn,
+                        EXCLUDEFROMLITIGATION = productModel.excludeFromLitigation,
 
                         CREATEDBY = productModel.createdBy,
                         DATETIMECREATED = DateTime.Now,
@@ -2934,7 +2950,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return (from data in context.TBL_PRODUCT_PRICE_INDEX_GLOBAL
                     join atrail in context.TBL_APPROVAL_TRAIL on data.PRODUCTPRICEINDEXGLOBALID equals atrail.TARGETID
-                    // where  data.DELETED == false && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                     where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                     && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
                     atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
@@ -2942,8 +2957,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                     && atrail.RESPONSESTAFFID == null
                     && atrail.OPERATIONID == (int)OperationsEnum.GlobalInterestRateChange
-                    //&& atrail.TOAPPROVALLEVELID == staffApprovalLevelId
-                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                    && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || atrail.REQUESTSTAFFID == staffId)
                     orderby data.DATETIMEDELETED descending
                     select new ProductPriceIndexGlobalViewModel()
                     {
@@ -3595,6 +3609,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             //customerTypeId = p.TBL_PRODUCT.CUSTOMERTYPEID,
                             //customerType = p.TBL_CUSTOMER_TYPE.NAME,
                             profileBusinessUnitName = p.BUSINESSUNITID != null ? p.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
+                            globalSla = p.GLOBALSLA,
                             businessUnitId = p.BUSINESSUNITID,
 
                             }).ToList();
@@ -3629,9 +3644,10 @@ namespace FintrakBanking.Repositories.Setups.General
                                 PRODUCTCLASSTYPEID = model.productClassTypeId,
                                 PRODUCT_CLASS_PROCESSID = model.productClassProcessId,
                                 //CUSTOMERTYPEID = model.customerTypeId,
-                                GLOBALSLA = model.globalSla
+                                GLOBALSLA = model.globalSla,
+                                BUSINESSUNITID = model.businessUnitId
                             };
-                            context.TBL_PRODUCT_CLASS.Add(productClass);
+                    context.TBL_PRODUCT_CLASS.Add(productClass);
                         }
                         // Audit Section ---------------------------
                         var audit = new TBL_AUDIT

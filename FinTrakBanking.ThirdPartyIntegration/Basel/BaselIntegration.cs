@@ -236,23 +236,21 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 client.Timeout = TimeSpan.FromSeconds(180);
                 client.BaseAddress = new Uri(API_URL);
                 client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                ServicePointManager.ServerCertificateValidationCallback +=
-                    (sender, cert, chain, sslPolicyErrors) => true;
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                 requestDatetime = DateTime.Now;
+                response = await client.GetAsync(endPointUrl);
+                responseDateTime = DateTime.Now;
 
-                    response = await client.GetAsync(endPointUrl);
-                    responseDateTime = DateTime.Now;
-                
                 responseMessage = await response.Content.ReadAsStringAsync();
-
                 CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
+                //responseMessage = GetLatestEntryFromCustomApiLogs("013480453", "GetCorporatePDByCustomerID");
+
                 if (response.IsSuccessStatusCode && responseMessage.Contains("companY_RATING"))
                 {
+                    //var result = JsonConvert.DeserializeObject<CutomerRatingViewModel>(responseMessage);
                     var result = await response.Content.ReadAsAsync<CutomerRatingViewModel>();
-                    //var responseData = await response.Content.ReadAsStringAsync();
                     customerRating = result;
                 }
 
@@ -286,6 +284,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
                 logContext.SaveChanges();
             }
+        }
+
+        private string GetLatestEntryFromCustomApiLogs(string customerCode, string apiUrl)
+        {
+            FinTrakBankingContext logContext = new FinTrakBankingContext();
+            var result = logContext.TBL_CUSTOM_API_LOGS.Where(O => O.REFERENCENUMBER == customerCode && O.APIURL.Contains(apiUrl)).OrderByDescending(O => O.APILOGID).Select(O => O.RESPONSEMESSAGE).FirstOrDefault();
+            return result;
         }
 
         public async Task<FacilityRatingViewModel> GetPersonalLoansRetailByCustomerCode(string customerNumber)

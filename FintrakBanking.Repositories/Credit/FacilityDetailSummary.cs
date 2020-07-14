@@ -95,9 +95,9 @@ namespace FintrakBanking.Repositories.Credit
             return GetDisbursedLoanByLoan(loanId);
         }
 
-        public LoanViewModel ThirdPartyFacilityDetails(string referenceNumber)
+        public LoanViewModel ThirdPartyFacilityDetails(string loanReferenceNumber)
         {
-            return GetThirdPartyLoansByReferenceNumber(referenceNumber);
+            return GetThirdPartyLoansByReferenceNumber(loanReferenceNumber);
         }
 
         public LoanViewModel LMSFacilityDetail(int loanId)
@@ -192,28 +192,32 @@ namespace FintrakBanking.Repositories.Credit
         public List<ProductFeeViewModel> GetLoanProductFeesByFacilityId(int loanApplicationDetailId)
         {
             var facilityDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
+            var loanAppProdFee = new List<ProductFeeViewModel>();
 
-
-            var loanAppProdFee = (from fa in context.TBL_LOAN_APPLICATION_DETL_FEE
-                                  where fa.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                                  && fa.DELETED == false
-                                  select new ProductFeeViewModel
-                                  {
-                                      feeName = fa.TBL_CHARGE_FEE.CHARGEFEENAME,
-                                      loanApplicationDetailId = fa.LOANAPPLICATIONDETAILID,
-                                      chargeFeeId = fa.CHARGEFEEID,
-                                      consessionReason = fa.CONSESSIONREASON,
-                                      approvalStatusId = fa.APPROVALSTATUSID,
-                                      defaultfeeRateValue = fa.DEFAULT_FEERATEVALUE,
-                                      recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE,
-                                      feeRateValue = fa.RECOMMENDED_FEERATEVALUE,
-                                      feeAmount = (facilityDetail.APPROVEDAMOUNT * fa.RECOMMENDED_FEERATEVALUE) / 100,
-                                      feeIntervalName = fa.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                                      isIntegralFee = fa.TBL_CHARGE_FEE.ISINTEGRALFEE,
-                                      isRecurring = fa.TBL_CHARGE_FEE.RECURRING,
-                                      valueBase = "Rate(%)",
-                                      dealTypeId = 0
-                                  }).ToList();
+            if (facilityDetail != null)
+            {
+                loanAppProdFee = (from fa in context.TBL_LOAN_APPLICATION_DETL_FEE
+                                      where fa.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                      && fa.DELETED == false
+                                      select new ProductFeeViewModel
+                                      {
+                                          feeName = fa.TBL_CHARGE_FEE.CHARGEFEENAME,
+                                          loanApplicationDetailId = fa.LOANAPPLICATIONDETAILID,
+                                          chargeFeeId = fa.CHARGEFEEID,
+                                          consessionReason = fa.CONSESSIONREASON,
+                                          approvalStatusId = fa.APPROVALSTATUSID,
+                                          defaultfeeRateValue = fa.DEFAULT_FEERATEVALUE,
+                                          recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE,
+                                          feeRateValue = fa.RECOMMENDED_FEERATEVALUE,
+                                          feeAmount = (facilityDetail.APPROVEDAMOUNT * fa.RECOMMENDED_FEERATEVALUE) / 100,
+                                          feeIntervalName = fa.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                                          isIntegralFee = fa.TBL_CHARGE_FEE.ISINTEGRALFEE,
+                                          isRecurring = fa.TBL_CHARGE_FEE.RECURRING,
+                                          valueBase = "Rate(%)",
+                                          dealTypeId = 0
+                                      }).ToList();
+            }
+            
 
             var lisProdFeeViewModel = new List<ProductFeeViewModel>();
             foreach (var item in loanAppProdFee)
@@ -567,8 +571,9 @@ namespace FintrakBanking.Repositories.Credit
             var loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
-                               join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
+                               //join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
                                join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                               join lr in context.TBL_LOAN_BOOKING_REQUEST on ld.LOANAPPLICATIONDETAILID equals lr.LOANAPPLICATIONDETAILID
                                join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
                                join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
                                join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -650,7 +655,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loanDetails = (from a in context.TBL_LOAN
                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                               join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
+                               join lr in context.TBL_LOAN_BOOKING_REQUEST on d.LOANAPPLICATIONDETAILID equals lr.LOANAPPLICATIONDETAILID
+                               //join lr in context.TBL_LOAN_BOOKING_REQUEST on a.LOAN_BOOKING_REQUESTID equals lr.LOAN_BOOKING_REQUESTID
                                join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                join f in context.TBL_PRODUCT on a.PRODUCTID equals f.PRODUCTID
                                join pt in context.TBL_PRODUCT_TYPE on f.PRODUCTTYPEID equals pt.PRODUCTTYPEID
@@ -777,7 +783,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private LoanViewModel GetThirdPartyLoansByReferenceNumber(string referenceNumber)
+        private LoanViewModel GetThirdPartyLoansByReferenceNumber(string loanReferenceNumber)
         {
             var loanDetails = (from a in context.TBL_LOAN_EXTERNAL
                               // join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -793,7 +799,7 @@ namespace FintrakBanking.Repositories.Credit
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                join ro in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals ro.STAFFID
                                join rm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals rm.STAFFID
-                               where a.LOANREFERENCENUMBER == referenceNumber
+                               where a.LOANREFERENCENUMBER == loanReferenceNumber
                                //&& a.ISDISBURSED == true
                                select new LoanViewModel
                                {
@@ -1074,6 +1080,10 @@ namespace FintrakBanking.Repositories.Credit
                     else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
                     {
                         allFilteredLoan = SearchLoanLine(searchQuery);
+                    }
+                    else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ExternalFacility)
+                    {
+                        allFilteredLoan = SearchExternalLoan(searchQuery);
                     }
                 }
 
@@ -1488,7 +1498,44 @@ namespace FintrakBanking.Repositories.Credit
                                    }).ToList();
             return allFilteredLoan;
         }
-        
+
+        private List<LoanViewModel> SearchExternalLoan(string searchQuery)
+        {
+            if (!string.IsNullOrWhiteSpace(searchQuery)) searchQuery = searchQuery.ToUpper();
+
+            var allFilteredLoan = (from a in context.TBL_LOAN_EXTERNAL
+                                   //join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                   join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
+                                   where a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved //&& d.STATUSID == 2
+                                   && (a.LOANREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.LASTNAME.ToUpper().Contains(searchQuery.Trim())
+                                   )
+                                   select new LoanViewModel
+                                   {
+                                       loanId = a.EXTERNALLOANID,
+                                       customerId = b.CUSTOMERID,
+                                       productId = a.PRODUCTID,
+                                       customerName = b.FIRSTNAME + " " + b.MIDDLENAME + " " + b.LASTNAME,
+                                       loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       applicationReferenceNumber = a.LOANREFERENCENUMBER,
+                                       loanApplicationId = a.EXTERNALLOANID,
+                                       //loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                       interestRate = 1,
+                                       principalAmount = a.PRINCIPALAMOUNT,
+                                       //effectiveDate = a.EFFECTIVEDATE,
+                                       //maturityDate = a.MATURITYDATE,
+                                       //loanTypeName = a.LOANAPPLICATIONTYPENAME,
+                                       productTypeId = p.PRODUCTTYPEID, // 1
+                                       productName = p.PRODUCTNAME, // 1
+                                       //writtenOff = a.LOANSTATUSID == 7
+
+                                   }).ToList();
+            return allFilteredLoan;
+        }
+
         private List<LoanViewModel> RelatedContigentLoan(string relatedLoanRef, string loanRefNo)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT

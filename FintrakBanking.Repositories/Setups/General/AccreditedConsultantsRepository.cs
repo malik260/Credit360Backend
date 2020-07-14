@@ -71,7 +71,8 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = (from m in context.TBL_ACCREDITEDCONSULTANT
                         join c in context.TBL_ACCREDITEDCONSULTANT_STATE on m.ACCREDITEDCONSULTANTID equals c.ACCREDITEDCONSULTANTID
-                        where m.COMPANYID == companyId //&& c.STATEID == stateId 
+                        where m.COMPANYID == companyId
+                        && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent
                         select new AccreditedConsultantsViewModel
                         {
                             accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
@@ -99,6 +100,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = (from m in context.TBL_ACCREDITEDCONSULTANT
                         where m.COMPANYID == companyId
+                        && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent
                         select new AccreditedConsultantsViewModel
                         {
                             accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
@@ -126,10 +128,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var agencies = from m in context.TBL_ACCREDITEDCONSULTANT
                            where m.DELETED == false
-                           && m.NAME.Contains(search.ToUpper())
+                           && (m.NAME.Contains(search.ToUpper())
                            || m.FIRMNAME.Contains(search.ToUpper())
                            || m.PHONENUMBER.Contains(search)
-                           || m.ADDRESS.Contains(search.ToUpper())
+                           || m.ADDRESS.Contains(search.ToUpper()))
+                           && m.ACCREDITEDCONSULTANTTYPEID == (int)AccreditedConsultantTypeEnum.RecoveryAgent
+
                            select new AccreditedConsultantsViewModel
                            {
                                accreditedConsultantId = m.ACCREDITEDCONSULTANTID,

@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanReviewApplicationRepository
     {
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLienRemovalApplications(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> SearchLien(string searchString);
         IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
         IQueryable<LoanReviewApplicationViewModel> GetLoanReviewAvailmentAwaitingApproval(UserInfo user, int operationId, int? classId);
         SelectListViewModel GetAllSelectList();

@@ -504,7 +504,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-charge-fee-byloanid/")]
+        [Route("loan-charge-fee-byloanid/loanId/{loanId}")]
         public HttpResponseMessage GetLoanChargeFeeByLoanId(int loanId)
         {
             var data = repo.GetLoanChargeFeeByLoanId(loanId);
@@ -647,6 +647,23 @@ namespace FintrakBanking.APICore.Controllers
             entity.companyId = token.GetCompanyId;
             entity.userBranchId = (short)token.GetBranchId;
             var data = repo.CreditDocumentationFilling(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Credit Documentation completed Successfully " });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error in Credit Documentation" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("flag-printed-los")]
+        public HttpResponseMessage FlagPrintedCreditDocumentationLos([FromBody] CreditDocumentationViewModel entity)
+        {
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            entity.userBranchId = (short)token.GetBranchId;
+            var data = repo.CreditDocumentationFillingLos(entity);
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Credit Documentation completed Successfully " });

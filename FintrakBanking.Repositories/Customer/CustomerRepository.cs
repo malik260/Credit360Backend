@@ -3303,11 +3303,12 @@ namespace FintrakBanking.Repositories.Customer
                              where (x.firstName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
-                                   || x.customerCode.StartsWith(searchQuery)
-                                   || x.branchName.StartsWith(searchQuery)
-                                   || x.customerId.ToString().StartsWith(searchQuery))
+                                   || x.customerCode.StartsWith(searchQuery))
+                                   //|| x.branchName.StartsWith(searchQuery)
+                                   //|| x.customerId.ToString().StartsWith(searchQuery))
                                    && (x.customerTypeId == 1) 
                              select x).ToList();
+
             //var customerInfo = new List<CustomerViewModels>();
             //foreach (var customer in customers)
             //{
@@ -3316,7 +3317,7 @@ namespace FintrakBanking.Repositories.Customer
             //        customerInfo.Add(customer);
             //    }
             //}
-            return customers.ToList();
+            return customers.OrderBy(O => O.firstName).ToList();
             //if (customerInfo.Count > 0)
             //{
             //    return customerInfo;
@@ -3327,17 +3328,18 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerViewModels> SearchRandomSingleCorporateCustomersBySearchQuery(string searchQuery)
         {
-            var customerGroup = (from m in context.TBL_CUSTOMER_GROUP_MAPPING
-                                 select m).ToList();
+            //var customerGroup = (from m in context.TBL_CUSTOMER_GROUP_MAPPING
+            //                     select m).ToList();
             var customers = (from x in GetCustomersLite()
                              where (x.firstName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
-                                   || x.customerCode.StartsWith(searchQuery)
-                                   || x.branchName.StartsWith(searchQuery))
-                                   || x.customerId.ToString().StartsWith(searchQuery)
+                                   || x.customerCode.StartsWith(searchQuery))
+                                   //|| x.branchName.StartsWith(searchQuery)
+                                   //|| x.customerId.ToString().StartsWith(searchQuery))
                                    && (x.customerTypeId == 2)
                              select x);
+
             //var customerInfo = new List<CustomerViewModels>();
             //foreach (var customer in customers)
             //{
@@ -3351,7 +3353,7 @@ namespace FintrakBanking.Repositories.Customer
             //{
             //    return customerInfo;
             //}
-           return customers.ToList();
+           return customers.OrderBy(O => O.firstName).ToList();
         }
 
         public IEnumerable<CustomerViewModels> SearchRandomGroupCustomersBySearchQuery(string searchQuery)
@@ -3361,7 +3363,7 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.customerCode.StartsWith(searchQuery)
-                                   || x.branchName.StartsWith(searchQuery)
+                                   //|| x.branchName.StartsWith(searchQuery)
                                    || x.customerId.ToString().StartsWith(searchQuery)
                                    && context.TBL_CUSTOMER_GROUP_MAPPING.Find(x.customerId) != null
                              select x);

@@ -313,6 +313,7 @@ namespace FintrakBanking.APICore.Controllers
             entity.companyId = token.GetCompanyId;
             entity.userBranchId = (short)token.GetBranchId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.customerSensitivityLevelId = 1;
 
             var data = repo.AddExistingLoan(entity);
             if (data)
@@ -586,6 +587,34 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("loan-booking/verification/awaiting-approval-param/{searchString}")]
+        public HttpResponseMessage getBookedLoanApplicationsForVerificationAwaitingApprovalParam(string searchString)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var data = repo.GetBookedLoanApplicationForBookingVerificationParam(token.GetStaffId, token.GetCompanyId, searchString);
+
+            if (data.Any() == false)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
+
+        [HttpGet]
+        [Route("facility-line-maintenance-awaiting-approval")]
+        public HttpResponseMessage GetFacilityLineAwaitingApproval()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var data = repo.GetFacilityLineAwaitingMaintenanceApproval(token.GetStaffId, token.GetCompanyId);
+
+            if (data.Any() == false)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
+
+        [HttpGet]
         [Route("loans-disbursed")]
         public HttpResponseMessage GetdisbursedLoansApplicationDetails()
         {
@@ -655,7 +684,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
         }
-
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -766,6 +794,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-facility-awaiting-booking/{searchString}")]
+        public HttpResponseMessage getLoanFacilitiesAwaitingApprovalByParam(string searchString)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var response = repo.getLoanFacilitiesAwaitingApprovalByParam(token.GetCompanyId, token.GetStaffId, searchString);
+            if (!response.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+
+        }
 
         //[HttpPost]
         //[ClaimsAuthorization]
@@ -1683,11 +1725,55 @@ namespace FintrakBanking.APICore.Controllers
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Loan(s) Recovery Successfully assigned to the Agent" });
+                    new { success = true, data = data, message = "Bulk Recovery Successfully Saved" });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
                 new { success = false, message = "saving loan recovery assignment unsuccessfully" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-loan-recovery-assignment-initiate-approval")]
+        public HttpResponseMessage bulkLoanAssignmentToAgentGoForApproval([FromBody] LoanRecoveryAssignmentViewModel models)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            var data = repo.bulkLoanAssignmentToAgentGoForApproval(models, user);
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Bulk Recovery Successfully forwarded for approval" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "Error occur forwarding for approval" });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("collateral-liquidation-recovery-without-file")]
+        public HttpResponseMessage AddCollateralLiquidationRecovery([FromBody] CollateralLiquidationRecoveryViewModel models)
+        {
+            try { 
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+            models.createdBy = token.GetStaffId;
+                var response = repo.AddCollateralLiquidationRecoveryWithoutFile(models);
+                if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt has been uploaded successfully" });
+                if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Receipt already exist" });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this Receipt" });
         }
 
 
@@ -1725,7 +1811,10 @@ namespace FintrakBanking.APICore.Controllers
                 entity.recoveredAmount = Convert.ToDecimal(provider.FormData["recoveredAmount"]);
                 entity.collateralCode = provider.FormData["collateralCode"];
                 entity.collectionMode = provider.FormData["collectionMode"];
-                entity.receiptDate = Convert.ToDateTime(provider.FormData["receiptDate"]).Date;
+                var receiptDate = provider.FormData["receiptDate"];
+                var receiptDateSub = receiptDate.Substring(0, 15);
+                entity.receiptDate = DateTime.ParseExact(receiptDateSub, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
+                entity.percentageCommission = Convert.ToDecimal(provider.FormData["percentageCommission"]);
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -1751,6 +1840,19 @@ namespace FintrakBanking.APICore.Controllers
         {
             CollateralLiquidationRecoveryViewModel data = repo.GetLiquidationReceipt(liquidationRecoveryReceiptId);
             if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lien-document-download/{lienRemovalId}")]
+        public HttpResponseMessage GetLienReovalLetter(int lienRemovalId)
+        {
+            RemoveLienViewModel data = repo.GetLienRemovalLetter(lienRemovalId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }else
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 

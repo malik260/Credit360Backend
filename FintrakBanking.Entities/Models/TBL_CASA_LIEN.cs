@@ -41,10 +41,15 @@ namespace FintrakBanking.Entities.Models
 
         public int CREATEDBY { get; set; }
 
+        public bool? ISLIENREMOVED { get; set; }
+
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA_LIEN_TYPE TBL_CASA_LIEN_TYPE { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+
+        public int? LIENSTATUS { get; set; }
+        
     }
 }

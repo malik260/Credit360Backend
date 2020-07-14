@@ -154,6 +154,7 @@ namespace FintrakBanking.ViewModels.Reports
         public int companyId { get; set; }
         public int PostedByStaffId { get; set; }
         public int glAccountId { get; set; }
+        public int customChartOfAccountId { get; set; }
     }
 
     public class AllLoanViewModel
@@ -334,6 +335,13 @@ namespace FintrakBanking.ViewModels.Reports
         public string groupName { get; set; }
         public string branchName { get; set; }
         public string regionName { get; set; }
+    }
+
+    public class InterestIncome
+    {
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
+
     }
 
     public class Overline

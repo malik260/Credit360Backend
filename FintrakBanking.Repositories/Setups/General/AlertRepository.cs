@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Notification;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
@@ -27,7 +28,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
-        private ILoanArchiveRepository loanArchive;
+        //private ILoanArchiveRepository loanArchive;
 
         private string onePercent = "1%";
         private string onePointFivePercent = "1.5%";
@@ -47,19 +48,31 @@ namespace FintrakBanking.Repositories.Setups.General
         private double twentyFivePercentValue = 0.25;
         private double fiftyPercentValue = 0.5;
 
+        private string eightyFivePercent = "85%";
+        private string ninetyPercent = "90%";
+        private string ninetyFivePercent = "95%";
+
+        private double eightyFivePercentValue = 0.85;
+        private double ninetyPercentValue = 0.9;
+        private double ninetyFivePercentValue = 0.95;
+
+        private string eightyFiveToNinety = "YELLOW: 85% - 90%";
+        private string ninetyToNinetyFive = "AMBER: 90% - 95%";
+        private string ninetyFiveAbove = "RED: 95%";
 
 
 
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
-                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository,
-                                ILoanArchiveRepository _loanArchive)
+                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository
+                                )
         {
             this.context = _context;
             this.context2 = _context2;
             this.audit = _audit;
             this.general = _general;
             this.externalAlertRepository = _externalAlertRepository;
-            this.loanArchive = _loanArchive;
+            //this.loanArchive = _loanArchive;
+            //ILoanArchiveRepository _loanArchive
         }
 
         #region other code logic
@@ -83,7 +96,6 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).ToList();
             return alerts;
         }
-
         public IEnumerable<StaffRoleViewModel> GetAllStaffRoles()
         {
             var staffRoles = (from a in context.TBL_STAFF_ROLE
@@ -95,7 +107,6 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).ToList(); 
             return staffRoles;
         }
-
         public IEnumerable<StaffGroupEmailViewModel> GetAllStaffGroupEmail()
         {
             var staffRoles = (from a in context.TBL_ALERT_GROUP_EMAIL
@@ -108,7 +119,6 @@ namespace FintrakBanking.Repositories.Setups.General
                               }).ToList();
             return staffRoles;
         }
-
         public IEnumerable<AlertTitleViewModel> GetAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE
@@ -129,7 +139,6 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).ToList();
             return alerts;
         }
-
         public AlertTitleViewModel GetAlertById(int id)
         {
             var alert = (from a in context.TBL_ALERT_TITLE.Where(x => x.ALERTTITLEID == id)
@@ -150,7 +159,6 @@ namespace FintrakBanking.Repositories.Setups.General
                          }).FirstOrDefault();
             return alert;
         }
-
         public bool AddAlertTitle(AlertTitleViewModel model)
         {
             var entity = new TBL_ALERT_TITLE
@@ -188,7 +196,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool UpdateAlertTitle(int id, AlertTitleViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_TITLE.Find(id);
@@ -223,7 +230,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool DeleteAlertTitle(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_TITLE.Find(id);
@@ -248,8 +254,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
-
         public IEnumerable<AlertSetupViewModel> GetAllAlertSetup()
         {
             var alerts = (from a in context.TBL_ALERT_SETUP
@@ -269,7 +273,6 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).ToList();
             return alerts;
         }
-
         public AlertSetupViewModel GetAlertSetupById(int id)
         {
             var alert = (from a in context.TBL_ALERT_SETUP.Where(x => x.ALERTSETUPID == id)
@@ -283,7 +286,6 @@ namespace FintrakBanking.Repositories.Setups.General
                          }).FirstOrDefault();
             return alert;
         }
-
         public bool AddAlertSetup(AlertSetupViewModel model)
         {
             var entity = new TBL_ALERT_SETUP
@@ -315,7 +317,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool UpdateAlertSetup(int id, AlertSetupViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_SETUP.Find(id);
@@ -344,7 +345,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool DeleteAlertSetup(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_SETUP.Find(id);
@@ -369,8 +369,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
-
         public IEnumerable<LevelGroupMappingViewModel> GetAllAlertLevelGroupMapping()
         {
             var alerts = (from a in context.TBL_ALERT_ROLE_GRP_MAPPING
@@ -383,7 +381,6 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).ToList();
             return alerts;
         }
-
         public LevelGroupMappingViewModel GetAlertLevelGroupMappingById(int id)
         {
             var alert = (from a in context.TBL_ALERT_ROLE_GRP_MAPPING.Where(x => x.ALERTLEVELGROUPMAPID == id)
@@ -395,7 +392,6 @@ namespace FintrakBanking.Repositories.Setups.General
                          }).FirstOrDefault();
             return alert;
         }
-
         public bool AddAlertLevelGroupMapping(LevelGroupMappingViewModel model)
         {
             var entity = new TBL_ALERT_ROLE_GRP_MAPPING
@@ -425,7 +421,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool UpdateAlertLevelGroupMapping(int id, LevelGroupMappingViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_ROLE_GRP_MAPPING.Find(id);
@@ -452,7 +447,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool DeleteAlertLevelGroupMapping(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_ROLE_GRP_MAPPING.Find(id);
@@ -477,8 +471,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
-
         public IEnumerable<AlertLevelGroupViewModel> GetAllAlertLevelGroup()
         {
             var alerts = (from a in context.TBL_ALERT_ROLE_GROUP
@@ -490,7 +482,6 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).ToList();
             return alerts;
         }
-
         public AlertLevelGroupViewModel GetAlertLevelGroupById(int id)
         {
             var alert = (from a in context.TBL_ALERT_ROLE_GROUP.Where(x => x.ALERTLEVELGROUPID == id)
@@ -502,7 +493,6 @@ namespace FintrakBanking.Repositories.Setups.General
                          }).FirstOrDefault();
             return alert;
         }
-
         public bool AddAlertLevelGroup(AlertLevelGroupViewModel model)
         {
             var entity = new TBL_ALERT_ROLE_GROUP
@@ -532,7 +522,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool UpdateAlertLevelGroup(int id, AlertLevelGroupViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_ROLE_GROUP.Find(id);
@@ -559,7 +548,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool DeleteAlertLevelGroup(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_ROLE_GROUP.Find(id);
@@ -584,8 +572,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
-
         public IEnumerable<AlertLevelViewModel> GetAllAlertLevel()
         {
             var alerts = (from a in context.TBL_ALERT_STAFF_ROLE 
@@ -602,7 +588,6 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).ToList();
             return alerts;
         }
-
         public IEnumerable<AlertLevelViewModel> GetAllAlertGroupEmail()
         {
             var alerts = (from a in context.TBL_ALERT_STAFF_ROLE
@@ -619,7 +604,6 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).ToList();
             return alerts;
         }
-
         public bool AddAlertStaffRole(AlertLevelViewModel model)
         {
             var entity = new TBL_ALERT_STAFF_ROLE
@@ -649,7 +633,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool AddAlertGroupEmail(AlertLevelViewModel model)
         {
             var entity = new TBL_ALERT_GROUP_EMAIL
@@ -680,7 +663,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool UpdateAlertLevel(int id, AlertLevelViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_STAFF_ROLE.Find(id);
@@ -707,7 +689,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool DeleteAlertLevel(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_STAFF_ROLE.Find(id);
@@ -732,8 +713,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
-
         public IEnumerable<AlertMisViewModel> GetAllUserMisCode()
         {
             var alerts = (from a in context2.STG_USER_MIS
@@ -746,7 +725,6 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).GroupBy(a => a.profitCenterDefinitionCode).Select(a => a.FirstOrDefault());
             return alerts;
         }
-
         public IEnumerable<AlertFrequencyViewModel> GetAllFrequency()
         {
             var frequency = (from a in context.TBL_ALERT_FREQUENCY
@@ -758,7 +736,6 @@ namespace FintrakBanking.Repositories.Setups.General
                              }).ToList();
             return frequency;
         }
-
         public IEnumerable<AlertConditionViewModel> GetAllConditions()
         {
             var condition = (from a in context.TBL_ALERT_CONDITION
@@ -779,7 +756,6 @@ namespace FintrakBanking.Repositories.Setups.General
                              }).ToList();
             return condition;
         }
-
         public AlertConditionViewModel GetAlertConditionById(int id)
         {
             var alert = (from a in context.TBL_ALERT_CONDITION.Where(x => x.ALERTCONDITIONID == id)
@@ -800,7 +776,6 @@ namespace FintrakBanking.Repositories.Setups.General
                          }).FirstOrDefault();
             return alert;
         }
-
         public bool AddAlertCondition(AlertConditionViewModel model)
         {
             var entity = new TBL_ALERT_CONDITION
@@ -838,7 +813,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool UpdateAlertCondition(int id, AlertConditionViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_CONDITION.Find(id);
@@ -872,7 +846,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public bool DeleteAlertCondition(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_CONDITION.Find(id);
@@ -897,7 +870,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-
         public IEnumerable<TblOperationsViewModel> GetAllOperations()
         {
             var opeartion = (from a in context.TBL_OPERATIONS
@@ -908,34 +880,55 @@ namespace FintrakBanking.Repositories.Setups.General
                              }).ToList();
             return opeartion;
         }
-
         #endregion end of code logic
 
         public bool validateAlertCheck()
         {
             bool state = false;
-            /*
-            GetDigitalLoanExceptionNPLIncrease();
-            GetDigitalLoanExceptionNPLDecrease();
-            GetDigitalLoanExceptionNPLModuleIncrease();
-            GetDigitalLoanExceptionNPLModuleDecrease();
-            GetDigitalLoanDisbursementIncrease();
-            GetDigitalLoanDisbursementDecrease();
-            GetDigitalLoanDisbursementModuleIncrease();
-            GetDigitalLoanDisbursementModuleDecrease();
-            GetDigitalLoanDPDIncrease();
-            GetDigitalLoanDPDDecrease();
-            GetDigitalLoanDPDModuleIncrease();
-            GetDigitalLoanDPDModuleDecrease();
-            GetDigitalLoanLiquidationIncrease();
-            GetDigitalLoanLiquidationModuleIncrease();
-            */
+            TimeSpan now = DateTime.Now.TimeOfDay;
+
             if (CompareDate() == true)
+            {
+                TimeSpan start = new TimeSpan(17, 0, 0); //5 o'clock pm
+                TimeSpan end = new TimeSpan(19, 0, 0); //7 o'clock pm
+
+                if ((now >= start) && (now <= end))
+                {
+                    //GetStaffLoanPortfolioReport();
+                    GetValuationReminder();
+                    GetSiteVisitationAccountReminder();
+                    GetExpiredValuationReport();
+                    GetFacilityRestructuredNotification();
+                    GetSLAReport();
+                    GetPastDueDeferredDocuments();
+                    GetExpiredInsurancePolicies();
+                    GetLoanRepaymentReminder();
+                    state = true;
+                }
+            }
+
+            if (CompareDateSectorLimit() == true)
+            {
+                TimeSpan start2 = new TimeSpan(8, 0, 0); 
+                TimeSpan end2 = new TimeSpan(17, 0, 0); 
+
+                if ((now >= start2) && (now <= end2))
+                {
+                    GetSectorLimitExceedeBBDReminder();
+                    GetSectorLimitExceedeCBDReminder();
+                    GetSectorLimitExceedeCIBDReminder();
+                    GetSectorLimitExceedeRBDReminder();
+                    GetSectorLimitExceededBankReminder();
+                    state = true;
+                }
+
+                
+            }
+
+            /*if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
                 TimeSpan end = new TimeSpan(11, 0, 0); //11 o'clock
-
-                 
                 TimeSpan now = DateTime.Now.TimeOfDay;
 
                 if ((now >= start) && (now <= end))
@@ -946,50 +939,43 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetPastDueObligationsReminderByGroupHeads();
                     state = true;
                 }
-                /*TimeSpan archiveStart = new TimeSpan(20, 0, 0); //8 o'pm
-                 TimeSpan archiveEnd = new TimeSpan(21, 0, 0); //11 o'pm
-                 else if ((now >= archiveStart) && (now <= archiveEnd))
-                 {
-                    ProcessLoanArchive();
-                 } */
-            }
+                
+                GetDigitalLoanExceptionNPLIncrease();
+                GetDigitalLoanExceptionNPLDecrease();
+                GetDigitalLoanExceptionNPLModuleIncrease();
+                GetDigitalLoanExceptionNPLModuleDecrease();
+                GetDigitalLoanDisbursementIncrease();
+                GetDigitalLoanDisbursementDecrease();
+                GetDigitalLoanDisbursementModuleIncrease();
+                GetDigitalLoanDisbursementModuleDecrease();
+                GetDigitalLoanDPDIncrease();
+                GetDigitalLoanDPDDecrease();
+                GetDigitalLoanDPDModuleIncrease();
+                GetDigitalLoanDPDModuleDecrease();
+                GetDigitalLoanLiquidationIncrease();
+                GetDigitalLoanLiquidationModuleIncrease(); 
 
+            }*/
             return state;
-
-            /*GetLoanExpirationReminder(); 
-            GetUnpaidObligationReminder();
-            GetLoanRepaymentReminder();
-            GetImminentMaturitiesAlertEmail();
-            GetCreditCardMaturingObligations();
-            GetExpiringFacilityReport();
-            GetUnAuthorizedOverdraftReport();
-            GetOverlineMonitoringReport();
-            GetCreditCardDelinquencyMonitoringReport();
-            GetRiskAssetsReportNotification();
-            GetDashboardReportNotification();
-            GetCACReport();
-            GetOverlineCreditCardPosition();
-            GetPastDueFacilitiesNotification();
-            GetExpiredFacilityNotification();
-            GetLoanExpirationReminderAccountOfficer();
-            GetLoanRepaymentReminderAccountOfficer();
-            GetUnpaidObligationReminderAccountOfficer();
-            GetOverlineReminder();
-            GetMaturingObligationsReport();
-            GetOverlineFacilityNotification();
-            GetImminentObligationMaturityFacilityNotification();
-            GetNplOnCreditPortfolio();
-            GetLoanExpirationReminderAccountOfficer();*/
-            
         }
-
         private bool CompareDate()
         {
             DateTime currentDate = DateTime.Now;
-           var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate) 
-                        && (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" 
+           var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                        && (m.OPERATIONMETHOD.Trim() == "GetFacilityRestructuredNotification"
+                        || m.OPERATIONMETHOD.Trim() == "GetSLAReport"
+                        || m.OPERATIONMETHOD.Trim() == "GetPastDueDeferredDocuments"
+                        || m.OPERATIONMETHOD.Trim() == "GetExpiredInsurancePolicies"
+                        || m.OPERATIONMETHOD.Trim() == "GetLoanRepaymentReminder"
+                        || m.OPERATIONMETHOD.Trim() == "GetValuationReminder"
+                        || m.OPERATIONMETHOD.Trim() == "GetSiteVisitationAccountReminder"
+                        || m.OPERATIONMETHOD.Trim() == "GetExpiredValuationReport"
+
+                        /*
+                         * m.OPERATIONMETHOD.Trim() == "GetStaffLoanPortfolioReport"
+                        ||&& (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" 
                         || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminder"
-                        /*|| m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLIncrease"
+                        || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLIncrease"
                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLDecrease"
                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleIncrease"
                         || m.OPERATIONMETHOD.Trim() == "GetDigitalLoanExceptionNPLModuleDecrease"
@@ -1010,6 +996,25 @@ namespace FintrakBanking.Repositories.Setups.General
                 return true;
             }else
             return false;
+        }
+
+        private bool CompareDateSectorLimit()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeBBDReminder"
+                         || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeCBDReminder"
+                         || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeCIBDReminder"
+                         || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceedeRBDReminder"
+                         || m.OPERATIONMETHOD.Trim() == "GetSectorLimitExceededBankReminder"
+                         )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
         }
         private string GetBusinessUsersEmails(string accountOfficerMIsCode)
         {
@@ -1047,7 +1052,78 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return emailList;
         }
+        private string GetBusinessUsersEmailsToGroupHead(string accountOfficerMIsCode)
+        {
+            string emailList = "";
 
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                 var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                 if (groupHead != null)
+                                 {
+                                     emailList = emailList + ";" + groupHead.EMAIL;
+                                 }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
+        public string GetBusinessTeamEmails(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                 var groupHead = context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                 if (groupHead != null)
+                                 {
+                                     emailList = emailList + ";" + groupHead.EMAIL;
+                                 }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
         public void GroupImminentMaturitiesByGroupHeads()
         {
             // Maturing Obligations/GetImminentMaturities method by group heads
@@ -1155,8 +1231,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
-
         public void GetPastDueObligationsReminderByGroupHeads()
         {
             // GetPastDueObligationsReminder method by group heads
@@ -1258,7 +1332,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         public void GetImminentMaturities()
         {
                 // Maturing Obligations/GetImminentMaturities method
@@ -1350,13 +1423,11 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         //public bool ProcessLoanArchive()
         //{
         //    return loanArchive.ProcessLoanArchieving();
 
         //}
-
         public void GetCreditCardMaturingObligations()
         {
             // GetCreditCardMaturingObligations method
@@ -1422,7 +1493,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -1461,7 +1532,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -1525,7 +1596,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -1561,7 +1632,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -1633,7 +1704,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -1672,7 +1743,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -1743,7 +1814,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
 
@@ -1813,7 +1884,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
 
@@ -1937,7 +2008,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 
                 SendAlertNotification(alerts);
@@ -1975,7 +2046,7 @@ namespace FintrakBanking.Repositories.Setups.General
             alert.template = alertTemplate;
             alert.alertTitle = alertTitle;
             alert.canFire = true;
-
+            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
             alerts.Add(alert);
 
             SendAlertNotification(alerts);
@@ -2013,7 +2084,7 @@ namespace FintrakBanking.Repositories.Setups.General
             alert.template = alertTemplate;
             alert.alertTitle = alertTitle;
             alert.canFire = true;
-
+            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
             alerts.Add(alert);
 
             SendAlertNotification(alerts);
@@ -2083,7 +2154,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -2154,7 +2225,7 @@ namespace FintrakBanking.Repositories.Setups.General
                      alert.template = alertTemplate;
                      alert.alertTitle = alertTitle;
                      alert.canFire = true;
-
+                     alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                      alerts.Add(alert);
                  }
                  SendAlertNotification(alerts);
@@ -2223,44 +2294,7 @@ namespace FintrakBanking.Repositories.Setups.General
                      alert.template = alertTemplate;
                      alert.alertTitle = alertTitle;
                      alert.canFire = true;
-
-                     alerts.Add(alert);
-                 }
-                 SendAlertNotification(alerts);
-             }
-         }
-        public void GetLoanRepaymentReminder()
-         {
-             // GetLoanRepaymentReminder method
-             var loanRepaymentReminder = externalAlertRepository.GetLoanRepaymentReminder();
-             var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentReminder").FirstOrDefault();
-
-             var defaultEmail = "";
-             if (alertTitleInfo.DEFAULTEMAIL != null)
-             {
-                 defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
-             }
-
-             if (loanRepaymentReminder != null && loanRepaymentReminder.Count() > 0)
-             {
-
-                 List<AlertsViewModel> alerts = new List<AlertsViewModel>();
-                 foreach (var i in loanRepaymentReminder)
-                 {
-                     AlertsViewModel alert = new AlertsViewModel();
-                     var alertTitle = alertTitleInfo.TITLE;
-                     var alertTemplate = alertTitleInfo.TEMPLATE;
-
-                     string emailList = "";
-                     alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
-                     alertTemplate = alertTemplate.Replace("@{{maturityBand}}", i.customerName);
-
-                     emailList = i.customerName + defaultEmail;
-                     alert.receiverEmailList.Add(emailList);
-                     alert.template = alertTemplate;
-                     alert.alertTitle = alertTitle;
-                     alert.canFire = true;
-
+                     alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                      alerts.Add(alert);
                  }
                  SendAlertNotification(alerts);
@@ -2329,7 +2363,7 @@ namespace FintrakBanking.Repositories.Setups.General
                      alert.template = alertTemplate;
                      alert.alertTitle = alertTitle;
                      alert.canFire = true;
-
+                     alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                      alerts.Add(alert);
                  }
                  SendAlertNotification(alerts);
@@ -2398,7 +2432,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
 
@@ -2467,7 +2501,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -2538,7 +2572,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -2613,7 +2647,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -2683,7 +2717,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
@@ -2756,7 +2790,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
 
@@ -2796,10 +2830,547 @@ namespace FintrakBanking.Repositories.Setups.General
                     alert.template = alertTemplate;
                     alert.alertTitle = alertTitle;
                     alert.canFire = true;
-
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
                     alerts.Add(alert);
                 }
                 SendAlertNotification(alerts);
+            }
+        }
+
+        public void GetStaffLoanPortfolioReport()
+        {
+            // GetStaffLoanPortfolioReport method
+            var staffList = externalAlertRepository.GetStaffLoanPortfolioReport();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetStaffLoanPortfolioReport").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (staffList != null && staffList.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var staff in staffList)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    string emailList = "";
+                    emailList = GetBusinessUsersEmailsToGroupHead(staff.misCode);
+
+                    List<int> days = new List<int> { 21, 14, 7, 3, 1 };
+                    var loanInformation = context.TBL_GLOBAL_EXPOSURE.Where(d => days.Contains(DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value) && d.ACCOUNTOFFICERCODE == staff.misCode && d.PRINCIPALOUTSTANDINGBALLCY > 0).ToList();
+
+                    if (loanInformation != null && loanInformation.Count() > 0)
+                    {
+
+                        foreach (var t in loanInformation)
+                        {
+                            var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(t.PRINCIPALOUTSTANDINGBALLCY));
+                            var maturityDate = t.MATURITYDATE?.ToString("dd-MM-yyyy");
+                            int numberOfDays = (t.MATURITYDATE.Value - DateTime.Now).Days;
+                            var customerName = t.CUSTOMERNAME;
+
+                            if (t.PRINCIPALOUTSTANDINGBALLCY > 0)
+                            {
+                                alertTemplate = alertTemplate.Replace("@{{customerName}}", customerName);
+                                alertTemplate = alertTemplate.Replace("@{{days}}", numberOfDays.ToString());
+
+                                emailList = emailList + defaultEmail + GetAllCreditPortfolioStaffEmails();
+                                alert.receiverEmailList.Add(emailList);
+                                alert.template = alertTemplate;
+                                alert.alertTitle = alertTitle;
+                                alert.canFire = true;
+                                alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                                alerts.Add(alert);
+                            }
+                        }
+                      
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetFacilityRestructuredNotification() {
+            // GetFacilityRestructuredNotification method
+            var facilitiesRestructured = externalAlertRepository.GetFacilityRestructuredNotification();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetFacilityRestructuredNotification").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (facilitiesRestructured != null && facilitiesRestructured.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var facilityRestructured in facilitiesRestructured)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    string emailList = "";
+                    var staff = context.TBL_STAFF.Find(facilityRestructured.CREATEDBY);
+                    emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE);
+
+                    var loanInformation = context.TBL_LOAN_REVIEW_OPERATION.Where(d =>d.LOANID == facilityRestructured.LOANID && d.OPERATIONCOMPLETED == true && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).ToList();
+
+                    if (loanInformation != null && loanInformation.Count() > 1)
+                    {
+                        var staffFullName = staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME;
+                        var times = loanInformation.Count();
+                        var loanDtail = context.TBL_LMSR_APPLICATION_DETAIL.Find(facilityRestructured.LOANREVIEWAPPLICATIONID);
+                        var facility = context.TBL_PRODUCT.Find(loanDtail.PRODUCTID).PRODUCTNAME;
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", staffFullName);
+                        alertTemplate = alertTemplate.Replace("@{{facility}}", facility);
+                        alertTemplate = alertTemplate.Replace("@{{times}}", times.ToString());
+
+                        emailList = emailList + defaultEmail + GetAllCreditPortfolioStaffEmails();
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                        alerts.Add(alert);
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetSLAReport()
+        {
+            // GetSLAReport method
+            var pendingLoans = externalAlertRepository.GetSLAReport();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSlaReport").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (pendingLoans != null && pendingLoans.Count() > 0)
+            {
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+               
+                foreach (var pendingLoan in pendingLoans)
+                {
+                    pendingLoan.slaGlobalStatus = externalAlertRepository.GetSlaGlobalStatus(pendingLoan);
+                    pendingLoan.slaInduvidualStatus = externalAlertRepository.GetSlaInduvidualStatus(pendingLoan);
+
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    string emailList = "";
+                    var staff = context.TBL_STAFF.Find(pendingLoan.createdBy);
+                    emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE);
+
+                    if (pendingLoan.slaGlobalStatus == "warning" || pendingLoan.slaGlobalStatus == "danger")
+                    {
+                        var staffFullName = staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME;
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", staffFullName);
+                        alertTemplate = alertTemplate.Replace("@{{customerName}}", pendingLoan.customerName);
+                        alertTemplate = alertTemplate.Replace("@{{facility}}", pendingLoan.facility);
+                        alertTemplate = alertTemplate.Replace("@{{hours}}", pendingLoan.currentApprovalLevelSlaInterval.ToString());
+
+                        emailList = emailList + defaultEmail + GetAllCreditPortfolioStaffEmails();
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                        alerts.Add(alert);
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetPastDueDeferredDocuments()
+        {
+            // GetPastDueDeferredDocuments method
+            var pastDueDeferredDocuments = externalAlertRepository.GetPastDueDeferredDocuments();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetPastDueDeferredDocuments").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (pastDueDeferredDocuments != null && pastDueDeferredDocuments.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                    var result = string.Empty;
+                    var tempResult = string.Empty;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    var alertTitle = alertTitleInfo.TITLE;
+                    string emailList = "";
+                    var n = 0;
+
+                    tempResult = $@"
+                        <h3><b>PAST DUE DEFERRED DOCUMENTS RECORDS</b></h3>
+                        <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>S/N</b></td>
+                            <td><b>Customer Name</b></td>
+                            <td><b>Condition</b></td>
+                            <td><b>Deferred Date</b></td>
+                            <td><b>Reason</b></td>
+                        </tr>
+                        ";
+
+                            foreach (var t in pastDueDeferredDocuments)
+                            {
+                                n++;
+                                var deferredDate = t.deferredDate?.ToString("dd-MM-yyyy");
+                                tempResult = tempResult + $@"
+                                    <tr>
+                                    <td>{n}</td>
+                                    <td>{t.customerName}</td>
+                                    <td>{t.condition}</td>
+                                    <td>{$"{deferredDate}"}</td>
+                                    <td>{t.reason}</td>
+                                </tr>
+                                ";
+                            }
+
+                        tempResult = tempResult + $"</table><br/>";
+                        result = tempResult;
+
+
+                if (result.Count() > 0 && alertTemplate.Replace("@{{accounts}}", result).Count() > 0)
+                {
+                        alertTemplate = alertTemplate.Replace("@{{accounts}}", result);
+                        emailList = defaultEmail + GetAllCreditPortfolioStaffEmails();
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                        alerts.Add(alert);
+                    }
+                
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetLoanRepaymentReminder()
+        {
+            // GetLoanRepaymentReminder method
+            var loanRepaymentReminder = externalAlertRepository.GetLoanRepaymentReminder();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetLoanRepaymentReminder").FirstOrDefault();
+            int numberOfDays = 0;
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (loanRepaymentReminder != null && loanRepaymentReminder.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var i in loanRepaymentReminder)
+                {
+                    
+                    numberOfDays = (i.maturityDate.Value - DateTime.Now).Days;
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var alertTitle = alertTitleInfo.TITLE;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    if (numberOfDays > 0)
+                    {
+                        string emailList = "";
+                        alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
+                        alertTemplate = alertTemplate.Replace("@{{maturityBand}}", numberOfDays.ToString());
+
+                        emailList = defaultEmail;
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                        alerts.Add(alert);
+                    }
+                }
+                SendAlertNotification(alerts);
+            }
+        }
+        public void GetExpiredInsurancePolicies()
+        {
+            // GetExpiredInsurancePolicies method
+            var expiredInsurancePolicies = externalAlertRepository.GetExpiredInsurancePolicies();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetExpiredInsurancePolicies").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (expiredInsurancePolicies != null && expiredInsurancePolicies.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                var result = string.Empty;
+                var tempResult = string.Empty;
+                var alertTemplate = alertTitleInfo.TEMPLATE;
+                var alertTitle = alertTitleInfo.TITLE;
+                string emailList = "";
+                var n = 0;
+
+                tempResult = $@"
+                        <h3><b>EXPIRED INSURANCE POLICIES RECORDS</b></h3>
+                        <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>S/N</b></td>
+                            <td><b>Customer Name</b></td>
+                            <td><b>Reference Nummber</b></td>
+                            <td><b>Start Date</b></td>
+                            <td><b>End Date</b></td>
+                            <td><b>Insurance Company</b></td>
+                            <td><b>Description</b></td>
+                            <td><b>Insurance Type</b></td>
+                            <td><b>Account Officer</b></td>
+                        </tr>
+                        ";
+
+                foreach (var t in expiredInsurancePolicies)
+                {
+                    n++;
+                    var startDate = t.startDate?.ToString("dd-MM-yyyy");
+                    var endDate = t.expiryDate?.ToString("dd-MM-yyyy");
+                    tempResult = tempResult + $@"
+                                    <tr>
+                                    <td>{n}</td>
+                                    <td>{t.customerName}</td>
+                                    <td>{t.referenceNumber}</td>
+                                    <td>{$"{startDate}"}</td>
+                                    <td>{$"{endDate}"}</td>
+                                    <td>{t.insuranceCompany}</td>
+                                    <td>{t.description}</td>
+                                    <td>{t.insuranceType}</td>
+                                    <td>{t.accountOfficer}</td>
+                                </tr>
+                                ";
+                }
+
+                tempResult = tempResult + $"</table><br/>";
+                result = tempResult;
+
+
+                if (result.Count() > 0 && alertTemplate.Replace("@{{policies}}", result).Count() > 0)
+                {
+                    alertTemplate = alertTemplate.Replace("@{{policies}}", result);
+                    emailList = defaultEmail + GetAllCreditPortfolioStaffEmails();
+                    alert.receiverEmailList.Add(emailList);
+                    alert.template = alertTemplate;
+                    alert.alertTitle = alertTitle;
+                    alert.canFire = true;
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                    alerts.Add(alert);
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetValuationReminder()
+        {
+            // GetValuationReminder method
+            var valuationReminder = externalAlertRepository.GetValuationReminder();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetValuationReminder").FirstOrDefault();
+            int numberOfDays = 0;
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (valuationReminder != null && valuationReminder.Count() > 0)
+            {
+                
+                List<int> days = new List<int> { 60, 30, 21, 14, 7, 3, 1 };
+                var dueValuation = valuationReminder.Where(f => days.Contains((f.nextValuationDate - DateTime.Now).Days)).ToList();
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                if (dueValuation.Count() > 0)
+                {
+                    foreach (var i in dueValuation)
+                    {
+
+                        numberOfDays = (i.nextValuationDate - DateTime.Now).Days;
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                        if (numberOfDays > 0)
+                        {
+                            string emailList = "";
+                            alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
+                            alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
+                            alertTemplate = alertTemplate.Replace("@{{collateralCode}}", i.collateralCode);
+                            alertTemplate = alertTemplate.Replace("@{{days}}", numberOfDays.ToString());
+
+                            emailList = defaultEmail + ";" + GetBusinessUsersEmailsToGroupHead(i.accountOfficerCode);
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                            alerts.Add(alert);
+                        }
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetSiteVisitationAccountReminder()
+        {
+            // GetSiteVisitationAccountReminder method
+            var visitationReminder = externalAlertRepository.GetSiteVisitationAccountReminder();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSiteVisitationAccountReminder").FirstOrDefault();
+            int numberOfDays = 0;
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (visitationReminder != null && visitationReminder.Count() > 0)
+            {
+                List<int> days = new List<int> { 60, 30, 21, 14, 7, 3, 1 };
+                var dueVisitation = visitationReminder.Where(f => days.Contains((f.nextVisitationDate - DateTime.Now).Days)).ToList();
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                if (dueVisitation.Count() > 0)
+                {
+                    foreach (var i in dueVisitation)
+                    {
+
+                        numberOfDays = (i.nextValuationDate - DateTime.Now).Days;
+                        AlertsViewModel alert = new AlertsViewModel();
+                        var alertTitle = alertTitleInfo.TITLE;
+                        var alertTemplate = alertTitleInfo.TEMPLATE;
+                        if (numberOfDays > 0)
+                        {
+                            string emailList = "";
+                            alertTemplate = alertTemplate.Replace("@{{customerName}}", i.customerName);
+                            alertTemplate = alertTemplate.Replace("@{{accountOfficerName}}", i.accountOfficerName);
+                            alertTemplate = alertTemplate.Replace("@{{collateralDescription}}", i.collateralSummary);
+                            alertTemplate = alertTemplate.Replace("@{{location}}", i.propertyAddress);
+                            alertTemplate = alertTemplate.Replace("@{{days}}", numberOfDays.ToString());
+
+                            emailList = defaultEmail + ";" + GetBusinessUsersEmailsToGroupHead(i.accountOfficerCode);
+                            alert.receiverEmailList.Add(emailList);
+                            alert.template = alertTemplate;
+                            alert.alertTitle = alertTitle;
+                            alert.canFire = true;
+                            alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                            alerts.Add(alert);
+                        }
+                    }
+                }
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+        public void GetExpiredValuationReport()
+        {
+            // GetExpiredValuationReport method
+            var expiredValuationReport = externalAlertRepository.GetExpiredValuationReport();
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetExpiredValuationReport").FirstOrDefault();
+
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = alertTitleInfo.DEFAULTEMAIL;
+            }
+            if (expiredValuationReport != null && expiredValuationReport.Count() > 0)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                var result = string.Empty;
+                var tempResult = string.Empty;
+                var alertTemplate = alertTitleInfo.TEMPLATE;
+                var alertTitle = alertTitleInfo.TITLE;
+                string emailList = "";
+                var n = 0;
+
+                var expiredValuation = expiredValuationReport.Where(f => (f.nextValuationDate - DateTime.Now).Days <= 0).ToList();
+
+                tempResult = $@"
+                        <h3><b>EXPIRED VALUATION REPORTS</b></h3>
+                        <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>S/N</b></td>
+                            <td><b>DESCRIPTION</b></td>
+                            <td><b>EXPIRATION DATE</b></td>
+                            <td><b>CUSTOMER NAME</b></td>
+                            <td><b>RELATIONSHIP MANAGER</b></td>
+                        </tr>
+                        ";
+                if (expiredValuation.Count() > 0)
+                {
+                    foreach (var t in expiredValuation)
+                    {
+                        n++;
+                        var expiredDate = t.nextValuationDate.ToString("dd-MM-yyyy");
+                        tempResult = tempResult + $@"
+                                    <tr>
+                                    <td>{n}</td>
+                                    <td>{t.collateralSummary}</td>
+                                    <td>{$"{expiredDate}"}</td>
+                                    <td>{t.customerName}</td>
+                                    <td>{t.accountOfficerName}</td>
+                                </tr>
+                                ";
+                    }
+                }
+                tempResult = tempResult + $"</table><br/>";
+                result = tempResult;
+
+
+                if (result.Count() > 0 && alertTemplate.Replace("@{{valuationList}}", result).Count() > 0)
+                {
+                    alertTemplate = alertTemplate.Replace("@{{valuationList}}", result);
+                    emailList = defaultEmail;
+                    alert.receiverEmailList.Add(emailList);
+                    alert.template = alertTemplate;
+                    alert.alertTitle = alertTitle;
+                    alert.canFire = true;
+                    alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                    alerts.Add(alert);
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
             }
         }
 
@@ -2847,7 +3418,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             
         }
-
         private bool validateConditionTrigger(short frequencyId, short conditionId)
         {
             if (ValidateFrequency(frequencyId, conditionId))
@@ -2856,7 +3426,6 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else { return false; }
         }
-
         private bool ValidateFrequency(short frequencyId, short conditionId)
         {
             var frequency = context.TBL_ALERT_FREQUENCY.Find(frequencyId);
@@ -2926,7 +3495,6 @@ namespace FintrakBanking.Repositories.Setups.General
         //    return levels;
         //}
 
-
         public string GetAllStaffRoleEmails(int alerttitleId)
         {
             var list = "";
@@ -2946,8 +3514,6 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             return list;
         }
-
-
         public string GetAllDivisionHeadsEmails(string regionCode)
         {
             var list = "";
@@ -2963,7 +3529,6 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             return list;
         }
-
         public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
         {
             try
@@ -2994,7 +3559,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 new SecureException(ex.ToString());
             }
         }
-
         private void SaveMessageDetails(MessageLogViewModel model)
         {
             var message = new TBL_MESSAGE_LOG()
@@ -3019,9 +3583,21 @@ namespace FintrakBanking.Repositories.Setups.General
 
         }
 
+        public string GetAllCreditPortfolioStaffEmails()
+        {
+            var list = "";
+            var role = context.TBL_STAFF_ROLE.Where(r => r.STAFFROLECODE == "CP").FirstOrDefault();
+            var roleEmail = context.TBL_STAFF.Where(s => s.STAFFROLEID == role.STAFFROLEID).ToList();
+
+            foreach (var t in roleEmail)
+            {
+                list = list + ";" + t.EMAIL;
+            }
+            return list;
+        }
         #endregion logic codes
 
-       // trigger alerts methods
+        // trigger alerts methods
         public void GetDigitalLoanExceptionNPLIncrease()
         {
             var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
@@ -3248,7 +3824,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         //Disbursement
         public void GetDigitalLoanDisbursementIncrease()
         {
@@ -3481,7 +4056,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         //DPD
         public void GetDigitalLoanDPDIncrease()
         {
@@ -3715,7 +4289,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
         }
-
         public void GetDigitalLoanLiquidationIncrease()
         {
             var exceptionNPLs = (from a in context2.TBL_TRIGGER_MEASURESPRODUCTNAME select a).ToList();
@@ -3833,6 +4406,350 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
+        public void GetSectorLimitExceedeBBDReminder()
+        {
+            // GetSectorLimitExceedeBBDReminder method
+            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a=>a.SECTOR != null).Sum(a=>a.BANK);
+            var sectorLimitBBD = externalAlertRepository.GetSectorLimitValidationBBD();
+
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeBBDReminder").FirstOrDefault();
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (sectorLimitBBD != null && sectorLimitBBD.Count() > 0)
+            {
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                string emailList = "";
+                var alertTitle = alertTitleInfo.TITLE;
+               
+
+                foreach (var i in sectorLimitBBD)
+                {
+                    var sectorPercentage = decimal.Round(((decimal)i.bbd * (decimal)sectorBankSum), 2, MidpointRounding.AwayFromZero); 
+                    var sectorEightyFivePercent = decimal.Round((sectorPercentage * (decimal)eightyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyPercent = decimal.Round((sectorPercentage * (decimal)ninetyPercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyFivePercent = decimal.Round((sectorPercentage * (decimal)ninetyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    AlertsViewModel alert = new AlertsViewModel();
+
+                    if (i.exposure >= sectorEightyFivePercent || i.exposure >= sectorNinetyPercent || i.exposure >= sectorNinetyFivePercent)
+                    {
+                        if (i.exposure >= sectorEightyFivePercent && i.exposure < sectorNinetyPercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", eightyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", eightyFiveToNinety);
+                        }
+
+                        if (i.exposure >= sectorNinetyPercent && i.exposure < sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyPercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyToNinetyFive);
+                        }
+
+                        if (i.exposure >= sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyFiveAbove);
+                        }
+
+                        emailList = defaultEmail;
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                        alerts.Add(alert);
+                    }
+                }
+                
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+        public void GetSectorLimitExceedeCBDReminder()
+        {
+            // GetSectorLimitExceedeCBDReminder method
+            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorLimitCBD = externalAlertRepository.GetSectorLimitValidationCBD();
+
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeCBDReminder").FirstOrDefault();
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (sectorLimitCBD != null && sectorLimitCBD.Count() > 0)
+            {
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                string emailList = "";
+                var alertTitle = alertTitleInfo.TITLE;
+
+                foreach (var i in sectorLimitCBD)
+                {
+                    var sectorPercentage = decimal.Round(((decimal)i.cbd * (decimal)sectorBankSum), 2, MidpointRounding.AwayFromZero);
+                    var sectorEightyFivePercent = decimal.Round((sectorPercentage * (decimal)eightyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyPercent = decimal.Round((sectorPercentage * (decimal)ninetyPercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyFivePercent = decimal.Round((sectorPercentage * (decimal)ninetyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    AlertsViewModel alert = new AlertsViewModel();
+
+                    if (i.exposure >= sectorEightyFivePercent || i.exposure >= sectorNinetyPercent || i.exposure >= sectorNinetyFivePercent)
+                    {
+                        if (i.exposure >= sectorEightyFivePercent && i.exposure < sectorNinetyPercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", eightyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", eightyFiveToNinety);
+                        }
+
+                        if (i.exposure >= sectorNinetyPercent && i.exposure < sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyPercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyToNinetyFive);
+                        }
+
+                        if (i.exposure >= sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyFiveAbove);
+                        }
+
+                        emailList = defaultEmail;
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                        alerts.Add(alert);
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+        public void GetSectorLimitExceedeCIBDReminder()
+        {
+            // GetSectorLimitExceedeCIBDReminder method
+            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorLimitCIBD = externalAlertRepository.GetSectorLimitValidationCIBD();
+
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeCIBDReminder").FirstOrDefault();
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (sectorLimitCIBD != null && sectorLimitCIBD.Count() > 0)
+            {
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                var alertTitle = alertTitleInfo.TITLE;
+                string emailList = "";
+
+                foreach (var i in sectorLimitCIBD)
+                {
+                    var sectorPercentage = decimal.Round(((decimal)i.cibd * (decimal)sectorBankSum), 2, MidpointRounding.AwayFromZero);
+                    var sectorEightyFivePercent = decimal.Round((sectorPercentage * (decimal)eightyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyPercent = decimal.Round((sectorPercentage * (decimal)ninetyPercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyFivePercent = decimal.Round((sectorPercentage * (decimal)ninetyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    AlertsViewModel alert = new AlertsViewModel();
+
+                    if (i.exposure >= sectorEightyFivePercent || i.exposure >= sectorNinetyPercent || i.exposure >= sectorNinetyFivePercent)
+                    {
+                        if (i.exposure >= sectorEightyFivePercent && i.exposure < sectorNinetyPercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", eightyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", eightyFiveToNinety);
+                        }
+
+                        if (i.exposure >= sectorNinetyPercent && i.exposure < sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyPercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyToNinetyFive);
+                        }
+
+                        if (i.exposure >= sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyFiveAbove);
+                        }
+
+                        emailList = defaultEmail;
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                        alerts.Add(alert);
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+        public void GetSectorLimitExceedeRBDReminder()
+        {
+            // GetSectorLimitExceedeRBDReminder method
+            var sectorBankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorLimitRBD = externalAlertRepository.GetSectorLimitValidationRBD();
+
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceedeRBDReminder").FirstOrDefault();
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (sectorLimitRBD != null && sectorLimitRBD.Count() > 0)
+            {
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                var alertTitle = alertTitleInfo.TITLE;
+                string emailList = "";
+
+                foreach (var i in sectorLimitRBD)
+                {
+                    var sectorPercentage = decimal.Round(((decimal)i.rbd * (decimal)sectorBankSum), 2, MidpointRounding.AwayFromZero);
+                    var sectorEightyFivePercent = decimal.Round((sectorPercentage * (decimal)eightyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyPercent = decimal.Round((sectorPercentage * (decimal)ninetyPercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyFivePercent = decimal.Round((sectorPercentage * (decimal)ninetyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    AlertsViewModel alert = new AlertsViewModel();
+
+                    if (i.exposure >= sectorEightyFivePercent || i.exposure >= sectorNinetyPercent || i.exposure >= sectorNinetyFivePercent)
+                    {
+                        if (i.exposure >= sectorEightyFivePercent && i.exposure < sectorNinetyPercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", eightyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", eightyFiveToNinety);
+                        }
+
+                        if (i.exposure >= sectorNinetyPercent && i.exposure < sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyPercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyToNinetyFive);
+                        }
+
+                        if (i.exposure >= sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyFiveAbove);
+                        }
+
+                        emailList = defaultEmail;
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                        alerts.Add(alert);
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+        public void GetSectorLimitExceededBankReminder()
+        {
+            // GetSectorLimitExceededBankReminder method
+            var sectorbankSum = context2.STG_SECTOR_LIMIT_ALERT.Where(a => a.SECTOR != null).Sum(a => a.BANK);
+            var sectorLimitBank = externalAlertRepository.GetSectorLimitValidationBank();
+
+            var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetSectorLimitExceededBankReminder").FirstOrDefault();
+            var defaultEmail = "";
+            if (alertTitleInfo.DEFAULTEMAIL != null)
+            {
+                defaultEmail = ";" + alertTitleInfo.DEFAULTEMAIL;
+            }
+
+            if (sectorLimitBank != null && sectorLimitBank.Count() > 0)
+            {
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                var alertTitle = alertTitleInfo.TITLE;
+                string emailList = "";
+
+                foreach (var i in sectorLimitBank)
+                {
+                    var sectorPercentage = decimal.Round(((decimal)i.bank * (decimal)sectorbankSum), 2, MidpointRounding.AwayFromZero);
+                    var sectorEightyFivePercent = decimal.Round((sectorPercentage * (decimal)eightyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyPercent = decimal.Round((sectorPercentage * (decimal)ninetyPercentValue), 2, MidpointRounding.AwayFromZero);
+                    var sectorNinetyFivePercent = decimal.Round((sectorPercentage * (decimal)ninetyFivePercentValue), 2, MidpointRounding.AwayFromZero);
+
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    AlertsViewModel alert = new AlertsViewModel();
+
+                    if (i.exposure >= sectorEightyFivePercent || i.exposure >= sectorNinetyPercent || i.exposure >= sectorNinetyFivePercent)
+                    {
+                        if (i.exposure >= sectorEightyFivePercent && i.exposure < sectorNinetyPercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", eightyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", eightyFiveToNinety);
+                        }
+
+                        if (i.exposure >= sectorNinetyPercent && i.exposure < sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyPercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyToNinetyFive);
+                        }
+
+                        if (i.exposure >= sectorNinetyFivePercent)
+                        {
+                            alertTemplate = alertTemplate.Replace("@{{sector}}", i.sector);
+                            alertTemplate = alertTemplate.Replace("@{{percentage}}", ninetyFivePercent);
+                            alertTemplate = alertTemplate.Replace("@{{indicator}}", ninetyFiveAbove);
+                        }
+
+                        emailList = defaultEmail;
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+                        alerts.Add(alert);
+                    }
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
 
     }
 }

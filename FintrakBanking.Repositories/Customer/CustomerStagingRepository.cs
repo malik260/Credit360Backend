@@ -65,13 +65,14 @@ namespace FintrakBanking.Repositories.Customer
                 //           select a.TBL_CUSTOMER.CUSTOMERCODE).ToList();
                 //var customerCode  = mainContext.TBL_CASA.Where(a => a.PRODUCTACCOUNTNUMBER == searchTerm);
 
-                var customerinfo  = (from a in mainContext.TBL_CASA join b in mainContext.TBL_CUSTOMER
-                                    on a.CUSTOMERID equals b.CUSTOMERID where a.PRODUCTACCOUNTNUMBER == searchTerm
-                                   select new CustomerViewModels
-                                   {
-                                       customerCode = b.CUSTOMERCODE,
+                var customerinfo  = (from a in mainContext.TBL_CASA
+                                     join b in mainContext.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                     where a.PRODUCTACCOUNTNUMBER == searchTerm && a.DELETED == false
+                                     select new CustomerViewModels
+                                     {
+                                        customerCode = b.CUSTOMERCODE,
+                                     }).ToList();
 
-                                   }).ToList();
                 //var casa = mainContext.TBL_CASA.Where(a => a.PRODUCTACCOUNTNUMBER == searchTerm);
                 //var existingCustomer = mainContext.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).;
 

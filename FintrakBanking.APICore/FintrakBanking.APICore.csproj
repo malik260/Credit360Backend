@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <FilesToIncludeForPublish>AllFilesInTheProject</FilesToIncludeForPublish>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -500,7 +501,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\ReportDataSet1.Designer.cs">
+    <Compile Include="Reports\ReportDataset\ReportDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ReportDataSet.xsd</DependentUpon>
@@ -888,6 +889,13 @@
     <Compile Include="Reports\ReportViews\ProfileActivityReport.aspx.designer.cs">
       <DependentUpon>ProfileActivityReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\InterestIncome.aspx.cs">
+      <DependentUpon>InterestIncome.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\InterestIncome.aspx.designer.cs">
+      <DependentUpon>InterestIncome.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\PSR.aspx.cs">
       <DependentUpon>PSR.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1209,6 +1217,13 @@
     <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx.designer.cs">
       <DependentUpon>SubmissionOfOriginalDocument.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\TrialBalance.aspx.cs">
+      <DependentUpon>TrialBalance.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\TrialBalance.aspx.designer.cs">
+      <DependentUpon>TrialBalance.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\TurnOverConvenant.aspx.cs">
       <DependentUpon>TurnOverConvenant.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1357,6 +1372,7 @@
     <Content Include="Reports\ReportViews\Overline.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\ProfileActivityReport.aspx" />
+    <Content Include="Reports\ReportViews\InterestIncome.aspx" />
     <Content Include="Reports\ReportViews\PSR.aspx" />
     <Content Include="Reports\ReportViews\RACCR.aspx" />
     <Content Include="Reports\ReportViews\RACCRT.aspx" />
@@ -1395,6 +1411,7 @@
     <Content Include="Reports\ReportViews\StaffRoleProfileGroupReport.aspx" />
     <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
     <Content Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx" />
+    <Content Include="Reports\ReportViews\TrialBalance.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
     <Content Include="Reports\ReportViews\UnpaidObligationReport.aspx" />
@@ -1522,9 +1539,6 @@
     <Content Include="Reports\ReportDataset\OutputDocument.xss">
       <DependentUpon>OutputDocument.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
-      <DependentUpon>ReportDataSet.xsd</DependentUpon>
-    </Content>
     <Content Include="Reports\ReportDataset\PSR.xsc">
       <DependentUpon>PSR.xsd</DependentUpon>
     </Content>
@@ -1536,16 +1550,19 @@
     <Content Include="Reports\ReportDataset\PSR.xss">
       <DependentUpon>PSR.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
+      <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
+    </Content>
     <None Include="Reports\ReportDataset\ReportDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ReportDataSet1.Designer.cs</LastGenOutput>
+      <LastGenOutput>ReportDataSet.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\ReportDataSet.xss">
       <DependentUpon>ReportDataSet.xsd</DependentUpon>
-    </Content>
-    <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
-      <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\StaffInfoDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1699,6 +1716,7 @@
     <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\InterestIncome.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanBookingReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanClassification.rdlc" />
@@ -1743,6 +1761,7 @@
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\StalledPerfection.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\TrialBalance.rdlc" />
     <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />
     <EmbeddedResource Include="Reports\Report\UnearnedLoanInterest.rdlc" />
     <EmbeddedResource Include="Reports\Report\UnutilizedFacilityReport.rdlc" />

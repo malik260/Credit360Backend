@@ -131,6 +131,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public WorkflowResponse Response { get { return response; } set { response = value; } }
         public bool isCrossOperationProcess { get; private set; }
         public bool? IsFromPc { set { isFromPc = value; } }
+        public bool SkipLimitsCheck { set { skipLimitsCheck = value; } }
         public string Flow_log { set { flow_log = value; } }
 
 
@@ -164,9 +165,9 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             lastRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
-            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && lastRequest != null) //if it is not initiation
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred && this.statusId != (int)ApprovalStatusEnum.Reroute && lastRequest != null) //if it is not initiation
             {
-                throw new SecureException("An error occured, Next Level can't be preset unless on refer back. Kindly refresh your browser and try again.");
+                throw new SecureException("An error occured, Next Level can't be preset unless on refer back or re-routing. Kindly refresh your browser and try again.");
             }
 
             this.referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
@@ -176,7 +177,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                // && x.RESPONSESTAFFID != null
                                 && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
-                            ).ToList();
+                            ).OrderByDescending(l => l.APPROVALTRAILID).ToList();
 
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
             SaveFlowLog("Initiation");
@@ -199,9 +200,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(lastRequest.TOSTAFFID); }
                 if (lastRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(lastRequest.REQUESTSTAFFID, lastRequest.FROMAPPROVALLEVELID, lastRequest.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
+                //if (lastRequest !=null)
+                CustomJump(lastRequest.TOAPPROVALLEVELID, lastRequest.FROMAPPROVALLEVELID);
             }
             SaveFlowLog("After last request Validation");
-            if (lastRequest !=null) CustomJump(lastRequest.TOAPPROVALLEVELID, lastRequest.FROMAPPROVALLEVELID);
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
             // if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
@@ -213,6 +215,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 ResolveLevelMultipleApproval();
             }
+
+            ValidateSourceConfiguration();
 
             ValidateDestinationConfiguration();
 
@@ -450,7 +454,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         if(currentLevel.GROUPID == destinationLevel.GROUPID && currentLevel.POSITION > destinationLevel.POSITION)
                         {
-                            throw new SecureException("You cannot move a transaction below the current level.");
+                            throw new SecureException("Network Error, Kindly reload the page.");
                         }
                     }
 
@@ -699,7 +703,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             bool deferred,
             bool sameDesk,
             bool isFlowTest,
-            int? businessUnitId
+            int? businessUnitId,
+            int? finalLevel = null,
+            int amount = 0
             )
         {
             InitializeOperation();
@@ -718,7 +724,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.isFlowTest = isFlowTest;
             this.statusId = (int)ApprovalStatusEnum.Pending;
             this.businessUnitId = businessUnitId;
-
+            this.finalLevel = finalLevel;
+            this.amount = amount;
 
             LogActivity();
         }
@@ -771,6 +778,16 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
+        private void ValidateSourceConfiguration()
+        {
+            bool valid = true;
+            if (this.staffId > 0 && this.fromLevelId > 0)
+            {
+                valid = general.GetStaffApprovalLevelIds((int)this.staffId, this.operationId).ToList().Contains((int)this.fromLevelId);
+                if (valid == false) new SecureException("Target Staff is NOT in the Source approval level");
+            }
+        }
+
         private void ValidateDestinationConfiguration()
         {
             bool valid = true;
@@ -819,7 +836,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //    this.fromLevelId = approvalLevels.Where(x => x.DefaultRoleId == user.STAFFROLEID).FirstOrDefault()?.ApprovalLevelId;
             //}
 
-            if (this.fromLevelId != null) // check if staff in level
+            if (this.fromLevelId > 0) // check if staff in level
             {
                 level = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
                 if (level == null)
@@ -1087,7 +1104,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return null; }
             GetReportingLine(staffId);
-            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (this.fromLevelId == null && !businessRoleIds.Contains(fromStaff.STAFFROLEID)))
+            //if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (this.fromLevelId == null && !businessRoleIds.Contains(fromStaff.STAFFROLEID)))
+            if (this.statusId == (int)ApprovalStatusEnum.Referred || !businessRoleIds.Contains(next.DefaultRoleId ?? 0) || (!businessRoleIds.Contains(fromStaff.STAFFROLEID)))
             {
                 return null;
             }
@@ -1129,7 +1147,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
                     }
-                    else { this.EndProcess(this.statusId); }
+                    else
+                    {
+                        this.EndProcess(this.statusId);
+                    }
                     
                 }
             }
@@ -1166,6 +1187,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (amount == 0) { return true; }
             if (investmentGrade == true) { return true; }
             if (level.MAXIMUMAMOUNT >= amount) { return true; }
+            if (level.MAXIMUMAMOUNT == 0 && level.TENOR > 0) { return true; } //to pass access bnk only tenor setup as amt>0 and there is no amt setup only tenor setup
             return false;
         }
 
@@ -1212,8 +1234,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool IsLastApprover(TBL_APPROVAL_LEVEL level)
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId).ToList();
-            if (IsLastLevel(approvalLevels, level) && (level.CANAPPROVE))
-            //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
+            if (IsLastLevel(approvalLevels, level))
+            //if (IsLastLevel(approvalLevels, level) && (level.CANAPPROVE))
+                //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
             {
                 return true;
             }
@@ -1424,10 +1447,26 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (mappings.Where(x => x.GROUPID == level.Group.GROUPID && x.ALLOWMULTIPLEINITIATOR == true ).Any())
                 {
                     initiator = GetAllTrail().OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
-                    var requestStaff = context.TBL_STAFF.Find(initiator.REQUESTSTAFFID);
-
-                    if(level.ROLEIDTOROUTE != requestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null) { continue; }
-                   // levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
+                    if (initiator != null)
+                    {
+                        var initiatorStaff = context.TBL_STAFF.Find(initiator?.REQUESTSTAFFID);
+                        if (initiatorStaff != null && level.ROLEIDTOROUTE != initiatorStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if(this.staffId > 0)
+                        {
+                            var currentRequestStaff = context.TBL_STAFF.Find(this.staffId);
+                            if (currentRequestStaff != null && level.ROLEIDTOROUTE != currentRequestStaff.STAFFROLEID && level.ROLEIDTOROUTE != null)
+                            {
+                                continue;
+                            }
+                        }
+                    }
+                    // levels = levels.Where(x => x.ROLEIDTOROUTE == requestStaff.STAFFROLEID || x.ROLEIDTOROUTE == null).ToList();
                 }
                 var testField = level.Level.LEVELNAME;
 
@@ -1482,6 +1521,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             decimal pepAmount = rule.PEPAMOUNT ?? 0;
             decimal minimumAmount = rule.MINIMUMAMOUNT ?? 0;
             decimal maximumAmount = rule.MAXIMUMAMOUNT ?? 0;
+            int tenor = rule.TENOR ?? 0;
 
             if ((minimumAmount > 0 && maximumAmount == 0) && (minimumAmount < levelBusinessRule.Amount)) limitChecked = true;
             if ((minimumAmount == 0 && maximumAmount > 0) && (levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
@@ -1489,7 +1529,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if ((rule.PEP && pepAmount > 0) && (levelBusinessRule.Pep && pepAmount <= levelBusinessRule.PepAmount)) limitChecked = flagChecked = true;
 
-            //if ((rule.TENOR >= levelBusinessRule.tenor) && (rule.TENOR > 0 && levelBusinessRule.tenor > 0)) limitChecked = true;//by ify to be used later
+            if ((tenor > 0) && (tenor >= levelBusinessRule.tenor)) limitChecked = true;//by ify to be used later
 
             //if (rule.PEP && levelBusinessRule.Pep == true) flagChecked = true;
             if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == true) flagChecked = true;
@@ -1558,13 +1598,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     reciever = context.TBL_STAFF.Find(this.toStaffId);
                     recipientName = reciever.FIRSTNAME;
-                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.DELETED == false).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
+                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.toStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x=>x.RELIEFSTAFFID).FirstOrDefault();
                 }
                 else if (this.loopedStaffId != null)
                 {
                     reciever = context.TBL_STAFF.Find(this.loopedStaffId);
                     recipientName = reciever.FIRSTNAME;
-                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && DateTime.Now <= x.ENDDATE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
+                    this.reliefStaffId = context.TBL_STAFF_RELIEF.Where(x => x.STAFFID == this.loopedStaffId && DateTime.Now <= x.ENDDATE && x.ISACTIVE && x.DELETED == false).Select(x => x.RELIEFSTAFFID).FirstOrDefault();
                 }
                 else
                 {

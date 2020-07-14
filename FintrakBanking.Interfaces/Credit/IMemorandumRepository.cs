@@ -13,6 +13,7 @@ namespace FintrakBanking.Interfaces.Credit
         decimal GetApprovalAmount();
         string GetCallMemoMarkup(int id);
         bool Init(int operationId, int targetId, bool isDrawdwon = false);
+        bool InitForThirdpartyLoans(int operationId, int targetId);
         string Replace(string content);
         string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId);
         string GetDrawdownMemoHtml(int staffId, int targetId);

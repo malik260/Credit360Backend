@@ -12,8 +12,8 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_LOAN_EXTERNAL()
         {
-            TBL_LOAN_SCHEDULE_DAILY = new HashSet<TBL_LOAN_SCHEDULE_DAILY>();
-            TBL_LOAN_SCHEDULE_PERIODIC = new HashSet<TBL_LOAN_SCHEDULE_PERIODIC>();
+            //TBL_LOAN_SCHEDULE_DAILY = new HashSet<TBL_LOAN_SCHEDULE_DAILY>();
+            //TBL_LOAN_SCHEDULE_PERIODIC = new HashSet<TBL_LOAN_SCHEDULE_PERIODIC>();
         }
 
         [Key]
@@ -271,11 +271,11 @@
 
         public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_SCHEDULE_DAILY> TBL_LOAN_SCHEDULE_DAILY { get; set; }
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        //public virtual ICollection<TBL_LOAN_SCHEDULE_DAILY> TBL_LOAN_SCHEDULE_DAILY { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_SCHEDULE_PERIODIC> TBL_LOAN_SCHEDULE_PERIODIC { get; set; }
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        //public virtual ICollection<TBL_LOAN_SCHEDULE_PERIODIC> TBL_LOAN_SCHEDULE_PERIODIC { get; set; }
 
         //public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 

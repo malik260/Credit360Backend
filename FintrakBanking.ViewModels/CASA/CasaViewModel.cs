@@ -22,8 +22,8 @@ namespace FintrakBanking.ViewModels.CASA
         //public string accountStatus { get; set; }
         //public DateTime lastTransactionDate { get; set; }
 
-
-
+        
+        public string searchString { get; set; }
         public int casaAccountId { get; set; }
         public string productAccountNumber { get; set; }
         public string productAccountName { get; set; }
@@ -72,6 +72,11 @@ namespace FintrakBanking.ViewModels.CASA
         public string refreshBatchId { get; set; }
         public DateTime? lastRefreshDatetime { get; set; }
         public short? aprovalStatusId { get; set; }
+
+        public string description { get; set; }
+        public string lienReferenceNumber { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public short? lienTypeId { get; set; }
     }
 
     public class CasaCustomerSearchViewModel : CasaViewModel

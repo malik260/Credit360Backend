@@ -23,5 +23,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationRefNo { get; set; }
         //public int deferralDuration { get { return (this.deferredDate - dateCreated).Value.Days; } }
         public int cumulativeDays { get { return (DateTime.Now - this.dateCreated).Days; } }
+
+        public string toApprovalLevelName { get; set; }
+        public string fromApprovalLevelName { get; set; }
+        public int operationId { get; set; }
+
     }
 }

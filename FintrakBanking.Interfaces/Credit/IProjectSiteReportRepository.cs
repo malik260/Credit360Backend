@@ -12,6 +12,16 @@ namespace FintrakBanking.Interfaces.credit
 {
     public interface IProjectSiteReportRepository
     {
+        IEnumerable<LoanApplicationViewModel> ProjectSiteReportLoans(int id);
+        bool SubmitAcceptance(ProjectSiteReportViewModel model);
+        IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReportApproved(int staffId);
+        int UpdatePsrCommentImage(PsrCommentImagesViewModel model, byte[] buffer);
+        int UpdatePsrImage(PsrImagesViewModel model, byte[] buffer);
+        bool DeletePsrImage(int id, UserInfo user);
+        bool DeletePsrCommentImage(int id, UserInfo user);
+        int AddPsrCommentImage(PsrCommentImagesViewModel model, byte[] buffer);
+        IEnumerable<PsrCommentImagesViewModel> GetPsrCommentImages(int id);
+        PsrCommentImagesViewModel GetPsrCommentImage(int id);
         int AddPsrImage(PsrImagesViewModel model, byte[] buffer);
         IEnumerable<PsrImagesViewModel> GetPsrImages(int id);
         PsrImagesViewModel GetPsrImage(int id);
