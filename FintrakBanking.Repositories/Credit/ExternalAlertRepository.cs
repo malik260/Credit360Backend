@@ -2937,67 +2937,25 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<GlobalExposureViewModel> GetCreditFileChecklistReminder()
+        public IEnumerable<DeferredChecklistViewModel> GetCreditFileChecklistReminder()
         {
-            var data = context.TBL_GLOBAL_EXPOSURE.Where(d => DbFunctions.TruncateTime(d.MATURITYDATE) == DbFunctions.TruncateTime(d.BOOKINGDATE) && d.ADJFACILITYTYPE == "OVERDRAFT"
-             && DbFunctions.DiffDays(DateTime.UtcNow, d.MATURITYDATE).Value > 90)
-            .Select(d => new GlobalExposureViewModel
-            {
-                customerName = d.CUSTOMERNAME,
-                accountOfficerName = d.ACCOUNTOFFICERNAME,
-                accountNumber = d.ACCOUNTNUMBER,
-                branchName = d.GROUPOBLIGORNAME,
-                maturityDate = d.MATURITYDATE,
-                id = d.ID,
-                referenceNumber = d.REFERENCENUMBER,
-                accountOfficerCode = d.ACCOUNTOFFICERCODE,
-                date = d.DATE,
-                customerId = d.CUSTOMERID,
-                groupObligorName = d.GROUPOBLIGORNAME,
-                alphaCode = d.ALPHACODE,
-                productCode = d.PRODUCTCODE,
-                currencyName = d.CURRENCYNAME,
-                productName = d.PRODUCTNAME,
-                facilityType = d.ADJFACILITYTYPE,
-                adjFacilityType = d.ADJFACILITYTYPE,
-                adjFacilityTypeId = d.ADJFACILITYTYPEid,
-                odStatus = d.ODSTATUS,
-                currencyType = d.CURRENCYTYPE,
-                cbnSector = d.CBNSECTOR,
-                cbnSectorAdjusted = d.CBNSECTORADJUSTED,
-                cbnClassification = d.CBNCLASSIFICATION,
-                pwcClassification = d.PWCCLASSIFICATION,
-                ifrsClassification = d.IFRSCLASSIFICATION,
-                tenor = d.TENOR,
-                location = d.LOCATION,
-                bookingDate = d.BOOKINGDATE,
-                valueDate = d.VALUEDATE,
-                maturityBand = d.MATURITYBAND,
-                customerType = d.CUSTOMERTYPE,
-                branchCode = d.BRANCHCODE,
-                obligorRiskRating = d.OBLIGORRISKRATING,
-                lastCrDate = d.LASTCRDATE,
-                productId = d.PRODUCTID,
-                exposureType = d.EXPOSURETYPE,
-                exposureTypeCode = d.EXPOSURETYPECODE,
-                teamCode = d.TEAMCODE,
-                lastCreditAmount = d.LASTCREDITAMOUNT,
-                cardLimit = d.CARDLIMIT,
-                fxrate = d.FXRATE,
-                interestrate = d.INTERESTRATE,
-                principalOutStandingBaltcy = d.PRINCIPALOUTSTANDINGBALTCY,
-                principalOutStandingBallcy = d.PRINCIPALOUTSTANDINGBALLCY,
-                loanAmounyLcy = d.LOANAMOUNYLCY,
-                loanAmounyTcy = d.LOANAMOUNYTCY,
-                totalExposure = d.TOTALEXPOSURE,
-                impairmentAmount = d.IMPAIRMENTAMOUNT,
-                unpoInterestAmount = d.UNPOINTERESTAMOUNT,
-                unpaidObligationAmount = d.TOTALUNPAIDOBLIGATION,
-                interestReceivableTcy = d.INTERESTRECIEVABLETCY,
-                amountDue = d.AMOUNTDUE,
-            }).ToList();
-
-            return data;
+            var condition = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
+                             join a in context.TBL_LOAN_APPLICATION_DETAIL on c.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                             where (DbFunctions.DiffDays(DateTime.UtcNow, c.DEFEREDDATE).Value <= c.DEFEREDDAYS 
+                             && c.ISSUBSEQUENT == false
+                             && c.CHECKLISTSTATUSID != null
+                             && c.DEFEREDDATE != null
+                             && c.DEFEREDDAYS != null)
+                             select new DeferredChecklistViewModel()
+                             {
+                                 customerId = a.CUSTOMERID,
+                                 loanApplicationId = a.LOANAPPLICATIONID,
+                                 condition = c.CONDITION,
+                                 deferredDate = c.DEFEREDDATE,
+                                 deferredDays = c.DEFEREDDAYS,
+                                 accountOfficer = a.CREATEDBY,
+                             }).ToList();
+            return condition;
         }
 
         public IEnumerable<GlobalExposureViewModel> GetPendingCreditApprovalReport()
