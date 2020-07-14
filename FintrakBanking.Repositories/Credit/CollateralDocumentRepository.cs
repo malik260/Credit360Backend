@@ -21,7 +21,7 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private ICustomerCollateralRepository coll;
-         private ICollateralDocumentRepository document;
+        // private ICollateralDocumentRepository document;
 
         public CollateralDocumentRepository(CustomerCollateralRepository coll, FinTrakBankingDocumentsContext context, FinTrakBankingContext bankingContext, IGeneralSetupRepository general, IAuditTrailRepository audit)
         {

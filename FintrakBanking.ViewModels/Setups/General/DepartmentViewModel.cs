@@ -26,7 +26,7 @@
         public string branchName { get; set; }
 
         public int customertId { get; set; }
-        public int staffId { get; set; }
+        public new int staffId { get; set; }
         public string firstname { get; set; }
         public string lastname { get; set; }
         public string middlename { get; set; }
