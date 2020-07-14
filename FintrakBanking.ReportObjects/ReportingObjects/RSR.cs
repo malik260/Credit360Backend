@@ -558,12 +558,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                  }).ToList();
 
             var result = dataTermLoan.Union(dataRevolving).GroupBy(O => O.period).Select(O => new InterestIncomeViewModel
-                         {
-                            period = O.FirstOrDefault().period,
-                            performing = O.Where(t => t.prudentialGuideLineTypeId == (int)PrudentialGuidelineTypeEnum.Performing).Sum(t => t.dailyAccrualAmount),
-                            nonPerforming = O.Where(t => t.prudentialGuideLineTypeId == (int)PrudentialGuidelineTypeEnum.NonPerforming).Sum(t => t.dailyAccrualAmount),
-                            totalMonthlyIncome = O.Sum(t => t.dailyAccrualAmount)
-                         }).ToList();
+            {
+                period = O.FirstOrDefault().period,
+                performing = O.Where(t => t.prudentialGuideLineTypeId == (int)PrudentialGuidelineTypeEnum.Performing).Sum(t => t.dailyAccrualAmount),
+                nonPerforming = O.Where(t => t.prudentialGuideLineTypeId == (int)PrudentialGuidelineTypeEnum.NonPerforming).Sum(t => t.dailyAccrualAmount),
+                totalMonthlyIncome = O.Sum(t => t.dailyAccrualAmount)
+            }).ToList();
 
             foreach (var item in result)
             {
