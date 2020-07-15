@@ -69,7 +69,7 @@ namespace FintrakBanking.Repositories.Risk
 
                 racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
 
-                if (isCorporate)
+                if (isCorporate || model.productClassId == (int)ProductClassEnum.MortgageLoan)
                 {
                     var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
                                                                                            && (x.EMPLOYMENTTYPE == "EMPLOYER" || x.EMPLOYMENTTYPE == "SELFEMPLOYED")
@@ -87,7 +87,7 @@ namespace FintrakBanking.Repositories.Risk
 
                     racDefinition.AddRange(racDefinitionOnEmployer);
                 }
-                else if (!isCorporate)
+                else if (!isCorporate && model.productClassId != (int)ProductClassEnum.MortgageLoan)
                 {
                     var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
                                                                                          && (x.EMPLOYMENTTYPE == "EMPLOYEE")
