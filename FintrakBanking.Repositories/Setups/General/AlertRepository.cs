@@ -903,6 +903,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     GetPastDueDeferredDocuments();
                     GetExpiredInsurancePolicies();
                     GetLoanRepaymentReminder();
+                    GetGroupCreditFileChecklistReminder();
                     state = true;
                 }
             }
@@ -970,8 +971,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         || m.OPERATIONMETHOD.Trim() == "GetValuationReminder"
                         || m.OPERATIONMETHOD.Trim() == "GetSiteVisitationAccountReminder"
                         || m.OPERATIONMETHOD.Trim() == "GetExpiredValuationReport"
+                        || m.OPERATIONMETHOD.Trim() == "GetGroupCreditFileChecklistReminder"
 
-                        /*
+                        /* 
                          * m.OPERATIONMETHOD.Trim() == "GetStaffLoanPortfolioReport"
                         ||&& (m.OPERATIONMETHOD.Trim() == "GetImminentMaturities" 
                         || m.OPERATIONMETHOD.Trim() == "GetPastDueObligationsReminder"
@@ -4749,6 +4751,82 @@ namespace FintrakBanking.Repositories.Setups.General
                     SendAlertNotification(alerts);
                 }
             }
+        }
+
+        public void GetGroupCreditFileChecklistReminder()
+        {
+            // GetGroupCreditFileChecklistReminder method
+            var creditFileChecklist = externalAlertRepository.GetCreditFileChecklistReminder();
+                var alertTitleInfo = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "GetGroupCreditFileChecklistReminder").FirstOrDefault();
+
+                var defaultEmail = "";
+                if (alertTitleInfo.DEFAULTEMAIL != null)
+                {
+                    defaultEmail = alertTitleInfo.DEFAULTEMAIL;
+                }
+                if (creditFileChecklist != null && creditFileChecklist.Count() > 0)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                    var result = string.Empty;
+                    var tempResult = string.Empty;
+                    var alertTemplate = alertTitleInfo.TEMPLATE;
+                    var alertTitle = alertTitleInfo.TITLE;
+                    string emailList = "";
+                    var n = 0;
+
+                    tempResult = $@"
+                        <h3><b>Deferred Records</b></h3>
+                        <table cellpadding='0' cellspacing='0' border='1' width='800px'>
+                        <tr>
+                            <td><b>S/N</b></td>
+                            <td><b>Condition</b></td>
+                            <td><b>Reference Number</b></td>
+                            <td><b>Deferred Date</b></td>
+                            <td><b>Deferred Days</b></td>
+                        </tr>
+                        ";
+                    if (creditFileChecklist.Count() > 0)
+                    {
+                        foreach (var t in creditFileChecklist)
+                        {
+                            n++;
+                            var reference = context.TBL_LOAN_APPLICATION.Find(t.loanApplicationId)?.APPLICATIONREFERENCENUMBER;
+                            var deferredDate = t.deferredDate.Value.ToString("dd-MM-yyyy");
+                            tempResult = tempResult + $@"
+                                    <tr>
+                                    <td>{n}</td>
+                                    <td>{t.condition}</td>
+                                    <td>{reference}</td>
+                                    <td>{deferredDate}</td>
+                                    <td>{t.deferredDays}</td>
+                                </tr>
+                                ";
+                        }
+                    }
+                    tempResult = tempResult + $"</table><br/>";
+                    result = tempResult;
+
+
+                    if (result.Count() > 0 && alertTemplate.Replace("@{{checkList}}", result).Count() > 0)
+                    {
+                        alertTemplate = alertTemplate.Replace("@{{checkList}}", result);
+                        alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", "Colleague");
+                        emailList = defaultEmail+";"+ GetAllCreditPortfolioStaffEmails();
+                        alert.receiverEmailList.Add(emailList);
+                        alert.template = alertTemplate;
+                        alert.alertTitle = alertTitle;
+                        alert.canFire = true;
+                        alert.operationMethod = alertTitleInfo.BINDINGMETHOD;
+
+                        alerts.Add(alert);
+                    }
+
+                    if (alerts.Count() > 0)
+                    {
+                        SendAlertNotification(alerts);
+                    }
+                }
         }
 
     }

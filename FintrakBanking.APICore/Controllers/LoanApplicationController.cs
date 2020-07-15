@@ -1260,7 +1260,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
             var response = repo.ValidateInvoiceDetails(data);
-            if (response != null)
+            if (response == true)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }

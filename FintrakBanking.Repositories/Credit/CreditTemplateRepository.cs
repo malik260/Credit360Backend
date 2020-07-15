@@ -312,7 +312,7 @@ var qry = Foo.GroupJoin(
         public List<LoadedDocumentSectionViewModel> GetSavedDocumentation(int operationId, int targetId)
         {
             // int staffId, is REDUNDANT!
-            var printedDoc = "";
+            //var printedDoc = "";
             var sections = context.TBL_DOC_TEMPLATE_SAVED
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .OrderBy(x => x.POSITION)

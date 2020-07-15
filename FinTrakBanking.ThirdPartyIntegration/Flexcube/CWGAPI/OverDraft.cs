@@ -954,7 +954,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
                 InterestRateInquiryViewModel responseModel = new InterestRateInquiryViewModel();
-                bool output = false;
+               // bool output = false;
                 HttpClient client = new HttpClient(handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();

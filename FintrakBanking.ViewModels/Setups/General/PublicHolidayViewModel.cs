@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
         public int publicHolidayId { get; set; }
 
-        public int countryId { get; set; }
+        public new int countryId { get; set; }
 
         public DateTime date { get; set; }
 

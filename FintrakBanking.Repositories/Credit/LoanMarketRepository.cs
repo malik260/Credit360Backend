@@ -104,8 +104,7 @@ namespace FintrakBanking.Repositories.Credit
                 _context.SaveChanges();
                 return "The record has been deleted successful";
             }
-            return "The record has not been deleted";
-            // Audit Section ---------------------------
+
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.ApprovedMarketDeleted,
@@ -121,6 +120,9 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             this._auditTrail.AddAuditTrail(audit);
+            return "The record has not been deleted";
+            // Audit Section ---------------------------
+           
         }
 
         public LoanMarketViewModel GetLoanMarket(int markeetId, int companyId)

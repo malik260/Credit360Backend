@@ -48,7 +48,7 @@ namespace FintrakBanking.ViewModels.Media
 
         public string fileData  { get; set; }
 
-        public int? companyId { get; set; }
+        public new int? companyId { get; set; }
 
         public int? approvalStatusId { get; set; }
 

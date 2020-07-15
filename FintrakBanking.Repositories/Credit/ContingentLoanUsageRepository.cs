@@ -117,7 +117,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                throw;
+                throw new ConditionNotMetException(ex.Message);
             }
         }
 

@@ -72,7 +72,7 @@ namespace FintrakBanking.ViewModels.Finance
         public int? casaAccountId { get; set; }
         public decimal debitAmount { get; set; }
         public decimal creditAmount { get; set; }
-        public short sourceBranchId { get; set; }
+        public new short sourceBranchId { get; set; }
         public short destinationBranchId { get; set; }
         public string batchId { get; set; }
         public string currencyCrossCode { get; set; }

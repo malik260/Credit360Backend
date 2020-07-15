@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
     {
         FinTrakBankingContext coreContext = new FinTrakBankingContext();
         FinTrakBankingStagingContext stagingContext = new FinTrakBankingStagingContext();
-        private IGeneralSetupRepository genSetup;
+        //private IGeneralSetupRepository genSetup;
 
 
         public bool MigrateExchangeRate()

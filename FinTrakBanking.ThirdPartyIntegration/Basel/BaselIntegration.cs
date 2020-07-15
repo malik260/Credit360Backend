@@ -57,7 +57,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpClient client = new HttpClient(handler);
             DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
             HttpResponseMessage response = null;
-            ResponseMessageViewModel res = null;
+            //ResponseMessageViewModel res = null;
             string responseMessage = "";
 
             getAPIURLSettings("BASEL");
