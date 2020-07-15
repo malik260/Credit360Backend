@@ -30,7 +30,8 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IWorkflow workflow;
         private IApprovalLevelStaffRepository level;
-
+        List<string> receiverEmailList = new List<string>();
+        AlertsViewModel alert = new AlertsViewModel();
         public ChecklistRepository(FinTrakBankingContext _context, IApprovalLevelStaffRepository _level,
                                                     IGeneralSetupRepository genSetup,
                                                     IAuditTrailRepository _auditTrail, IWorkflow _workFlow)
@@ -1633,6 +1634,20 @@ namespace FintrakBanking.Repositories.Credit
                           && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null //&& c.ISEXTERNAL == true
                           select c).ToList();
             var output = condition.Count == status.Count;
+            if (output == false)
+            {
+                var loan = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
+                var staffEmail = context.TBL_STAFF.Find(loan.CREATEDBY);
+                var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetCreditFileChecklistReminder").FirstOrDefault();
+                var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL + ";" + GetAllCreditPortfolioStaffEmails();
+                alert.receiverEmailList.Add(emailList);
+                var alertTemplate = alertDetail.TEMPLATE;
+                var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
+                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
+                LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
+
+            }
             return output;
         }
         public bool LMSValidatePrecedenceChecklistCompleted(int applicationId)
@@ -1650,9 +1665,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (output == false)
             {
-                List<string> receiverEmailList = new List<string>();
-                AlertsViewModel alert = new AlertsViewModel();
-                var loan = context.TBL_LOAN_APPLICATION.Find(applicationId);
+                var loan = context.TBL_LMSR_APPLICATION.Find(applicationId);
                 var staffEmail = context.TBL_STAFF.Find(loan.CREATEDBY);
                 var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetCreditFileChecklistReminder").FirstOrDefault();
                 var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL + GetAllCreditPortfolioStaffEmails();
@@ -2517,6 +2530,19 @@ namespace FintrakBanking.Repositories.Credit
 
                 deferredCondition.DEFEREDDATE = DateTime.Now.AddDays(deferredCondition.DEFEREDDAYS ?? 0);
                 context.Entry(deferredCondition).State = System.Data.Entity.EntityState.Modified;
+
+                var lmsrApplication = context.TBL_LOAN_APPLICATION_DETAIL.Find(deferredCondition.LOANAPPLICATIONDETAILID);
+                var loan = context.TBL_LOAN_APPLICATION.Find(lmsrApplication.LOANAPPLICATIONID);
+                var staffEmail = context.TBL_STAFF.Find(loan.CREATEDBY);
+                var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetCreditFileChecklistReminder").FirstOrDefault();
+                var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL + ";" + GetAllCreditPortfolioStaffEmails();
+                alert.receiverEmailList.Add(emailList);
+                var alertTemplate = alertDetail.TEMPLATE;
+                var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
+                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
+                LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
+
             }
 
             // Audit Section ---------------------------
@@ -2570,6 +2596,18 @@ namespace FintrakBanking.Repositories.Credit
                 var deferredCondition = context.TBL_LMSR_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
                 deferredCondition.ISSUBSEQUENT = true;
                 context.Entry(deferredCondition).State = System.Data.Entity.EntityState.Modified;
+
+                var lmsrApplication = context.TBL_LMSR_APPLICATION_DETAIL.Find(deferredCondition.LOANREVIEWAPPLICATIONID);
+                var loan = context.TBL_LMSR_APPLICATION.Find(lmsrApplication.LOANAPPLICATIONID);
+                var staffEmail = context.TBL_STAFF.Find(loan.CREATEDBY);
+                var alertDetail = context.TBL_ALERT_TITLE.Where(x => x.BINDINGMETHOD == "GetCreditFileChecklistReminder").FirstOrDefault();
+                var emailList = GetBusinessUsersEmailsToGroupHead(staffEmail.MISCODE) + ";" + alertDetail.DEFAULTEMAIL +";"+ GetAllCreditPortfolioStaffEmails();
+                alert.receiverEmailList.Add(emailList);
+                var alertTemplate = alertDetail.TEMPLATE;
+                var accountOfficer = staffEmail.FIRSTNAME + " " + staffEmail.LASTNAME + " " + staffEmail.MIDDLENAME;
+                alertTemplate = alertTemplate.Replace("@{{accountOfficer}}", accountOfficer);
+                alertTemplate = alertTemplate.Replace("@{{referenceNumber}}", loan.APPLICATIONREFERENCENUMBER);
+                LogEmailAlert(alertDetail.TEMPLATE, alertDetail.TITLE, alert.receiverEmailList, "20023", 20023, "GetCreditFileChecklistReminder");
             }
 
             // Audit Section ---------------------------
@@ -2593,6 +2631,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
+
         private IQueryable<DeferredChecklistViewModel> GetDeferralChecklist()
         {
             var staff = context.TBL_STAFF;

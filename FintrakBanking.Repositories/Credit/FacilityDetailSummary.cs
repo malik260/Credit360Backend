@@ -20,14 +20,14 @@ namespace FintrakBanking.Repositories.Credit
     public class FacilityDetailSummary : IFacilityDetailSummary
     {
         private FinTrakBankingContext context;
-        private IGeneralSetupRepository generalSetup;
+        //private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
         private ILoanScheduleRepository loanSchedule;
         private ILoanCovenantRepository loanCovenant;
         private IFinanceTransactionRepository financeTransaction;
-        private ICasaLienRepository casaLien;
-        private ICustomerRepository customers;
-        private IOverRideRepository overrider;
+        //private ICasaLienRepository casaLien;
+        //private ICustomerRepository customers;
+        //private IOverRideRepository overrider;
         private IFinanceTransactionRepository transRepo;
 
         public FacilityDetailSummary(

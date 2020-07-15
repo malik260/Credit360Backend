@@ -3377,7 +3377,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AssignApplication(int approvalTrailId, int staffId, GeneralEntity model)
         {
-            bool saved = false;
+            //bool saved = false;
             using (var trans = context.Database.BeginTransaction())
             {
                 if (approvalTrailId > 0)
@@ -3431,16 +3431,12 @@ namespace FintrakBanking.Repositories.Credit
                         OSNAME = CommonHelpers.FriendlyName()
                     };
                     this.audit.AddAuditTrail(audit);
-                    saved = context.SaveChanges() > 0;
-                    if (saved)
-                    {
-                        trans.Commit();
-                        return saved;
-                    }
+
+                    trans.Commit();
                 }
-                trans.Rollback();
             }
-            return saved;
+
+            return context.SaveChanges() > 0;
         }
 
         public List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user)

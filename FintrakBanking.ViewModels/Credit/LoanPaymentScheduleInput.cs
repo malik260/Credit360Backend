@@ -102,7 +102,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? newCasaAccountId { get; set; }
         public short? loanSystemTypeId { get; set; }
         public short currencyId { get; set; }
-        public int operationTypeId { get; set; }
+        public new int operationTypeId { get; set; }
         public int? loanReviewApplicationId { get; set; }
     }
 

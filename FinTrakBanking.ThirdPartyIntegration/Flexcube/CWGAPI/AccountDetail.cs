@@ -118,7 +118,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageViewModel res = null;
+                //ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 handler.UseDefaultCredentials = true;
                 //HttpClient client = new HttpClient(handler);
