@@ -214,6 +214,120 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+
+        public DashboardViewModel GetLoanInThePipelineLms(int operationId, int staffId, int companyId, int branchId, int? classId)
+        {
+            var staff = context.TBL_STAFF.FirstOrDefault(O => O.STAFFID == staffId);
+
+            var approvalOperations = context.TBL_OPERATIONS.Where(x => x.OPERATIONTYPEID == (short)OperationTypeEnum.LoanReviewApplication)
+                .Select(x => x.OPERATIONID).ToList();
+
+            bool ignoreBranch = true; // rm = false, ho = true
+            if (operationId == 47) if (ProcessInitiator(staffId, operationId, classId, 2)) ignoreBranch = false;
+            if (approvalOperations.Contains(operationId)) if (ProcessInitiator(staffId, operationId, classId, 1)) ignoreBranch = false;
+            //if (camOperationIds.Contains(operationId)) if (ProcessInitiator(staffId, operationId, classId, 1)) ignoreBranch = false;
+
+            List<int> operationIds = new List<int>();
+            operationIds.Add(operationId);
+            operationIds.AddRange(approvalOperations);
+
+            IQueryable<LoanReviewApplicationViewModel> applications = null;
+            var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
+
+            var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == branchId || ignoreBranch)
+                        .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
+                        .Join(context.TBL_CUSTOMER, ab => ab.a.CUSTOMERID, c => c.CUSTOMERID, (ab, c) => new { ab, c, b = ab.b })
+                        .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
+                            // && x.APPROVALSTATEID != (int)ApprovalState.Ended
+                            && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                            || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                            || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Authorised
+                            || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+                                && x.RESPONSESTAFFID == null
+                                && ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
+                                || (!levelIds.Contains((int)x.TOAPPROVALLEVELID)) && (x.TOSTAFFID == staffId))
+                        ),
+                            alaba => alaba.ab.a.LOANAPPLICATIONID,
+                            trail => trail.TARGETID,
+                            (alaba, trail) => new { application = alaba.ab.a, trail, branch = alaba.b, customer = alaba.c })
+                        .Select(x => new LoanReviewApplicationViewModel
+                        {
+                            approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
+                            loanReviewApplicationId = x.application.LOANAPPLICATIONID,     
+                            approvedAmount = x.application.APPROVEDAMOUNT == null ? 0 : x.application.APPROVEDAMOUNT,
+                            dateTimeCreated = x.application.DATETIMECREATED,
+                
+                        }).GroupBy(d => d.loanReviewApplicationId).ToList();
+
+            applications = query.AsQueryable().Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault()).OrderByDescending(x => x.loanReviewApplicationId);
+
+            var result = (new DashboardViewModel
+            {
+                loanCount = applications.Count(),
+                sumOfProposedAmount = applications.Sum(O => (double) O.approvedAmount)
+            });
+
+            return result;
+        }
+
+        public DashboardViewModel GetApprovedLoansLms(int companyId, int staffId)
+        {
+            var staff = context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o).FirstOrDefault();
+            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId || c.staffRoleId == staff.STAFFROLEID).ToList();
+            var staffApprovalLevels = approvalLevel.Select(x => x.approvalLevelId).Distinct();
+
+            var data = (from l in context.TBL_LMSR_APPLICATION_DETAIL
+                        join a in context.TBL_LMSR_APPLICATION on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                        join t in context.TBL_APPROVAL_TRAIL on l.LOANAPPLICATIONID equals t.TARGETID
+                        where l.DELETED == false //a.APPROVALSTATEID != (int)ApprovalState.Ended &&
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                        && a.COMPANYID == companyId
+                        //&& l.DATETIMECREATED >= startDate && l.DATETIMECREATED <= endDate
+                        //&& a.TOSTAFFID == staff.STAFFID
+                        && t.RESPONSESTAFFID == staff.STAFFID
+                        //&& levelIds.Contains((int) t.TOAPPROVALLEVELID)
+                        && staffApprovalLevels.ToList().Contains((int)t.TOAPPROVALLEVELID)
+                        select new { l, a })?.ToList();
+            
+            var result = new DashboardViewModel
+            {
+                loanCount = data?.Select(O => O.l.LOANAPPLICATIONID).Distinct().Count() ?? 0,
+                sumOfProposedAmount = data?.Sum(x => (double) x.l.APPROVEDAMOUNT) ?? 0
+            };
+
+            return result;
+        }
+
+        private bool ProcessInitiator(int staffId, int operationId, int? productClassId, int position)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.TBL_OPERATIONS.OPERATIONTYPEID == 11 && x.PRODUCTCLASSID == productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+
+            return index == (position - 1);
+        }
+
         public List<DashboardViewModel> ExpotureByRiskRating(DateTime startDate, DateTime endDate, int companyId, int staffId)
         {
             var staff = context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o).FirstOrDefault();
