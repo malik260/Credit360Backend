@@ -12011,6 +12011,10 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3> <br />
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>                   
+                    <tr>
                         <td><b>Date:</b></td>
                         <td>{DateTime.Now}</td>
                     </tr>
@@ -12095,6 +12099,10 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             result = result + $@"
                 <table border=1 width=750 cellpadding=5 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>                    
                     <tr>
                       <td><strong>Date</strong></td>
                       <td>{data.DATECREATED}</td>  
