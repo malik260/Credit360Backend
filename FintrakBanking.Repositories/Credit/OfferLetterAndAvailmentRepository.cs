@@ -228,7 +228,7 @@ namespace FintrakBanking.Repositories.Credit
             var acceptIds = (from a in context.TBL_LOAN_APPLICATION
                              join b in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals b.TARGETID
                              where a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && a.AVAILMENTDATE == null
-                             && b.OPERATIONID == a.OPERATIONID && staffIds.Contains(b.RESPONSESTAFFID ?? 0)
+                             && b.OPERATIONID == a.OPERATIONID && (staffIds.Contains(b.RESPONSESTAFFID ?? 0) || staffIds.Contains(b.TOSTAFFID ?? 0))
                              select new { TARGETID = b.TARGETID }).Select(t => t.TARGETID).ToList();
 
 

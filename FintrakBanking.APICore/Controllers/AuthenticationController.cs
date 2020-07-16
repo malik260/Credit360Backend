@@ -206,8 +206,9 @@ namespace FintrakBanking.APICore.Controllers
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now,
                         TARGETID = -1,
-                        //OSNAME = CommonHelpers.FriendlyName()
-                        OSNAME = "test"
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
+                        //OSNAME = "test"
                     };
 
                     _auditTrail.AddAuditTrail(audit1);
@@ -234,8 +235,9 @@ namespace FintrakBanking.APICore.Controllers
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = -1,
-                    //OSNAME = CommonHelpers.FriendlyName()
-                    OSNAME = "test"
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
+                    //OSNAME = "test"
                 };
 
                 _auditTrail.AddAuditTrail(audit);
