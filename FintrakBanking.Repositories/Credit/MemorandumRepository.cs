@@ -11766,6 +11766,17 @@ namespace FintrakBanking.Repositories.Credit
                
                 <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr></table> ";   
+                   
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
+                <h3><b>DOCUMENTATION DEFERRAL/WAIVER FORM</b></h3>
+                <br />
+               
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
                         <td><strong>BORROWER:</strong></td> 
                         <td>{customerName}</td>
                         <td><strong>DATE:</strong> </td>
