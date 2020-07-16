@@ -403,11 +403,10 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc ("the Lender") has approved a term loan ("facility") under the following terms and conditions:</Value>
+                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc ("the Lender") has approved a term loan ("Maternal Health Service Support") under the following terms and conditions:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
+                      <FontSize>12pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
@@ -493,7 +492,7 @@
             </Paragraphs>
             <rd:DefaultName>currentDate</rd:DefaultName>
             <Top>1.53186cm</Top>
-            <Left>0.51718cm</Left>
+            <Left>0.58255cm</Left>
             <Height>0.70583cm</Height>
             <Width>5.7897cm</Width>
             <ZIndex>2</ZIndex>

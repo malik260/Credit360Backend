@@ -463,6 +463,9 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
                         return links.InvoiceDiscountingFacility;
 
+                    case (short)ProductClassEnum.MHSS:
+                        return links.General;
+
                     default:
                         return links.General;
                 }
