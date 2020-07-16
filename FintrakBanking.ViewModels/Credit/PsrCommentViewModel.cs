@@ -44,8 +44,8 @@ namespace FintrakBanking.ViewModels.credit
         public byte[] fileData { get; set; }
         public string fileName { get; set; }
         public string imageCaption { get; set; }
-        public int createdBy { get; set; }
-        public DateTime dateTimeCreated { get; set; }
+        //public int createdBy { get; set; }
+        //public DateTime dateTimeCreated { get; set; }
         public int projectSiteReportId { get; set; }
         public string fileExtension { get; set; }
         public int fileSize { get; set; }

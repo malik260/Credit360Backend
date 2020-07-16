@@ -865,7 +865,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? valuerTypeId { get; set; }
         public int? cityId { get; set; }
         public string cityName { get; set; }
-        public short? countryId { get; set; }
+        public new short? countryId { get; set; }
         public string countryName { get; set; }
         public string accountNumber { get; set; }
         public string valuerBVN { get; set; }

@@ -694,7 +694,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var camsol = context.TBL_LOAN_CAMSOL.Where(O => O.CUSTOMERNAME.Contains(model.customerName.ToUpper()) || model.customerName.ToUpper().Contains(O.CUSTOMERNAME)).FirstOrDefault();
 
-            var reference = "<p style='font face:arial;size:12px;'>ABP/ROG/OA/BO/03/2016/0061</p>";
+           // var reference = "<p style='font face:arial;size:12px;'>ABP/ROG/OA/BO/03/2016/0061</p>";
             var asAtDate = model.asAtDate.ToString("dd MMM yyyy");
             var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault()?.ADDRESS;
             var fullName = model.customerName;

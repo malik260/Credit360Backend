@@ -102,7 +102,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class ApproveAPSRequestViewModel : ApprovalViewModel
     {
         public int contingenliabilityUsageId { get; set; }       
-        public int productId { get; set; }
+        public new int productId { get; set; }
         public short userBranchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public decimal amountRequested { get; set; }

@@ -1,21 +1,13 @@
-﻿using FintrakBanking.Common;
-using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.Interfaces.AlertMonitoring;
-using FintrakBanking.Interfaces.Setups.General;
+﻿using FintrakBanking.Interfaces.AlertMonitoring;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
     public class AlertMessagesEngine : IAlertMessagesEngine
     {
-        int mailId = 0;
+       // int mailId = 0;
         private string displayName = ConfigurationManager.AppSettings["emailDisplayName"];
         private string userName = ConfigurationManager.AppSettings["Username"];
         private string password = ConfigurationManager.AppSettings["Password"];

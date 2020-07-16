@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         public int groupId { get; set; }
         public int position { get; set; }
         public int operationId { get; set; }
-        public int staffId { get; set; }
+       // public int staffId { get; set; }
         public int approvalLevelId { get; set; }
         public decimal maximumAmount { get; set; }
         public decimal minimumAmount { get; set; }

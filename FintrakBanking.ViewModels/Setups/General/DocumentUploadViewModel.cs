@@ -22,7 +22,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public byte[] fileData { get; set; }
 
-        public int? companyId { get; set; }
+        public new int? companyId { get; set; }
 
         public DateTime? issueDate { get; set; }
 

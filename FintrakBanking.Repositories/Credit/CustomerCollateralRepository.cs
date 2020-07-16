@@ -526,7 +526,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(a => a.COLLATERALCUSTOMERID == release.COLLATERALCUSTOMERID).FirstOrDefault();
             var levelsettings = context.TBL_APPROVAL_LEVEL_SETTING.Where(x => ids.Contains(x.APPROVALLEVELID));
-            int status = 0;
+           // int status = 0;
 
             bool output = false;
 
