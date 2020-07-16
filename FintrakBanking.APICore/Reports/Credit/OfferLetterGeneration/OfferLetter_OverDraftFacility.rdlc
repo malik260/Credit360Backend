@@ -1547,21 +1547,6 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Image Name="Image1">
-            <Source>Embedded</Source>
-            <Value>logomain</Value>
-            <Sizing>FitProportional</Sizing>
-            <Top>0.02778in</Top>
-            <Left>5.00236in</Left>
-            <Height>0.48959in</Height>
-            <Width>1.88464in</Width>
-            <ZIndex>13</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Image>
           <Textbox Name="Textbox2">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -1615,7 +1600,7 @@
             <Left>0.18628in</Left>
             <Height>0.55209in</Height>
             <Width>6.60417in</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2076,7 +2061,7 @@
             <Left>0.20361in</Left>
             <Height>1.25in</Height>
             <Width>6.58873in</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2231,7 +2216,7 @@
             <Left>0.18628in</Left>
             <Height>0.53124in</Height>
             <Width>6.63109in</Width>
-            <ZIndex>16</ZIndex>
+            <ZIndex>15</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>

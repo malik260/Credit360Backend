@@ -386,6 +386,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                 ImportFinance = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
                 CashBackedOnly = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
                 InvoiceDiscountingFacility = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                //mhss = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
             };
 
             if (productClassProcessId == (short)ProductClassProcessEnum.CAMBased)
@@ -413,6 +414,9 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
                         return links.InvoiceDiscountingFacility;
+
+                    case (short)ProductClassEnum.MHSS:
+                        return links.General;
 
                     default:
                         return links.General;

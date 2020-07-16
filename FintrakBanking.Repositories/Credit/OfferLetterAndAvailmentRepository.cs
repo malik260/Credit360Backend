@@ -3462,6 +3462,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var loanApp = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => o).FirstOrDefault();
 
+                var ao = context.TBL_STAFF.Where(o => o.STAFFID == loanApp.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault();
                 var rm = context.TBL_STAFF.Where(o => o.STAFFID == loanApp.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault();
 
                 var rmId = loanApp.RELATIONSHIPMANAGERID;
@@ -3470,6 +3471,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
 
+                clause = clause != null ? clause.Replace("{@RelationshipOfficerName}", ao) : null;
                 clause = clause != null ? clause.Replace("{@RelationshipManagerName}", rm) : null;
                 clause = clause != null ? clause.Replace("{@BusinessManagerName}", bm) : null;
                 if (loanApp.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
