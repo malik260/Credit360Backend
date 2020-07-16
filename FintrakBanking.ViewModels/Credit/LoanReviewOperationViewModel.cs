@@ -419,36 +419,8 @@ public int? newInterestFrequencyTypeId { get; set; }
 
     public class LoanReviewApplicationViewModel : GeneralEntity
     {
-        public string slaGlobalStatus
-        {
-            get
-            {
-                float sla = globalsla;
-                int? elapse = (DateTime.Now - dateTimeCreated).Hours;
-                return SlaStatus(sla, elapse);
-            }
-        }
-
-        public string slaInduvidualStatus
-        {
-            get
-            {
-                float sla = currentApprovalLevelSlaInterval;
-                int? elapse = (DateTime.Now - timeIn)?.Hours;
-                return SlaStatus(sla, elapse);
-            }
-        }
-
-        private string SlaStatus(float sla, int? elapse)
-        {
-            if (sla == 0) return "success";
-            if (elapse == 0 || elapse == null) return "success";
-            float factor = (float)(elapse / sla) * 100;
-            if (factor <= 30) return "success";
-            if (factor <= 70) return "warning";
-            if (factor <= 100) return "danger";
-            return "danger";
-        }
+        public string slaGlobalStatus { get; set; }
+        public string slaInduvidualStatus { get; set; }
         public string currentApprovalStatus { get; set; }
         public DateTime? slaTime { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
@@ -514,6 +486,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public short loanSystemTypeId { get; set; }
         public int performanceTypeId { get; set; }
         public int? operationId { get; set; }
+        public DateTime systemDateTime { get; set; }
         public DateTime? timeIn { get; set; }
         public DateTime? timeOut { get; set; }
         public string facilityType { get; set; }
