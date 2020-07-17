@@ -486,7 +486,6 @@ public int? newInterestFrequencyTypeId { get; set; }
         public short loanSystemTypeId { get; set; }
         public int performanceTypeId { get; set; }
         public int? operationId { get; set; }
-        public DateTime systemDateTime { get; set; }
         public DateTime? timeIn { get; set; }
         public DateTime? timeOut { get; set; }
         public string facilityType { get; set; }
