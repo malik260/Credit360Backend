@@ -99,6 +99,7 @@ namespace FintrakBanking.APICore.Controllers
                     //var data = repo.GoForBulkApproval(entity, info);
                     var record = repo.GoForBulkApproval(data);
                     var result = "";
+
                     if (record == true)
                     {
                        result = "Record Approved";
@@ -110,6 +111,7 @@ namespace FintrakBanking.APICore.Controllers
 
                     val.Add(result);
                 }
+
                 if (val.Count() != 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

@@ -80,7 +80,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetEndUseOfFundsReminder();
         IEnumerable<GlobalExposureViewModel> GetCollateralVerificationReminder();
         IEnumerable<GlobalExposureViewModel> GetCallMemoReminder();
-        IEnumerable<GlobalExposureViewModel> GetCreditFileChecklistReminder();
+        IEnumerable<DeferredChecklistViewModel> GetCreditFileChecklistReminder();
         IEnumerable<GlobalExposureViewModel> GetPendingCreditApprovalReport();
         IEnumerable<GlobalExposureViewModel> GetEmployerDeliquencyReport();
         IEnumerable<GlobalExposureViewModel> GetFacilitiesWithMissedPaymentReport();

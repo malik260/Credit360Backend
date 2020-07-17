@@ -175,6 +175,7 @@ namespace FintrakBanking.Repositories.Credit
                     relationshipOfficerName = x.c.a.TBL_STAFF.FIRSTNAME + " " + x.c.a.TBL_STAFF.MIDDLENAME + " " + x.c.a.TBL_STAFF.LASTNAME,
                     relationshipManagerName = x.c.a.TBL_STAFF1.FIRSTNAME + " " + x.c.a.TBL_STAFF1.MIDDLENAME + " " + x.c.a.TBL_STAFF1.LASTNAME,
                     currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
+                    systemArrivalDateTime = x.d.SYSTEMARRIVALDATETIME,
                     loanTypeId = x.c.a.LOANAPPLICATIONTYPEID,
                     productTypeId = x.c.b.TBL_PRODUCT.PRODUCTTYPEID,
                     productTypeName = x.c.b.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
@@ -207,7 +208,7 @@ namespace FintrakBanking.Repositories.Credit
                 )
                 .GroupBy(c => c.loanApplicationId)
                 .Select(y => y.FirstOrDefault())
-                .OrderByDescending(c => c.loanApplicationId)
+                .OrderByDescending(c => c.systemArrivalDateTime)
                 ;
             //var testList = data.ToList();
             //var testCount = data.Count();
@@ -228,7 +229,7 @@ namespace FintrakBanking.Repositories.Credit
             var acceptIds = (from a in context.TBL_LOAN_APPLICATION
                              join b in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals b.TARGETID
                              where a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && a.AVAILMENTDATE == null
-                             && b.OPERATIONID == a.OPERATIONID && staffIds.Contains(b.RESPONSESTAFFID ?? 0)
+                             && b.OPERATIONID == a.OPERATIONID && (staffIds.Contains(b.RESPONSESTAFFID ?? 0) || staffIds.Contains(b.TOSTAFFID ?? 0))
                              select new { TARGETID = b.TARGETID }).Select(t => t.TARGETID).ToList();
 
 
@@ -3434,8 +3435,10 @@ namespace FintrakBanking.Repositories.Credit
             if (isLMS)
             {
                 customerExist = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
-
+                var loanApp = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId);
+                var ao = context.TBL_STAFF.Where(o => o.STAFFID == loanApp.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault();
                 var cause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                cause = cause != null ? cause.Replace("{@RelationshipOfficerName}", ao) : null;
                 cause = cause.Replace("{@RelationshipManagerName}", "");
                 cause = cause.Replace("{@BusinessManagerName}", "");
 
@@ -3452,7 +3455,6 @@ namespace FintrakBanking.Repositories.Credit
                               customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.ADDRESS).FirstOrDefault(),
                               title = b.TITLE,
                           }).FirstOrDefault();
-
             }
             else
             {
@@ -3461,6 +3463,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var loanApp = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => o).FirstOrDefault();
 
+                var ao = context.TBL_STAFF.Where(o => o.STAFFID == loanApp.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault();
                 var rm = context.TBL_STAFF.Where(o => o.STAFFID == loanApp.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault();
 
                 var rmId = loanApp.RELATIONSHIPMANAGERID;
@@ -3468,7 +3471,7 @@ namespace FintrakBanking.Repositories.Credit
                 var bm = context.TBL_STAFF.Where(o => o.STAFFID == bmId).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault();
 
                 var clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
-
+                clause = clause != null ? clause.Replace("{@RelationshipOfficerName}", ao) : null;
                 clause = clause != null ? clause.Replace("{@RelationshipManagerName}", rm) : null;
                 clause = clause != null ? clause.Replace("{@BusinessManagerName}", bm) : null;
                 if (loanApp.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
@@ -3487,7 +3490,7 @@ namespace FintrakBanking.Repositories.Credit
                                   title = b.TITLE,
 
                               }).FirstOrDefault();
-                }
+                     }
                 else
                 {
                     detail = (from a in context.TBL_LOAN_APPLICATION
@@ -3514,7 +3517,8 @@ namespace FintrakBanking.Repositories.Credit
             if (offerLetterDoc != null)
             {
                 offerLetterDoc.OFFERLETTERSALUTATION = "The Managing Director, <br /><br /> " + detail.customerName + "<br /><br />" + detail.customerAddress + "<br /><br /> Attention: " + detail.title + " " + detail.customerName2;
-                // offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
+
+                detail.offerLetteracceptance = detail.offerLetteracceptance != null ? detail.offerLetteracceptance.Replace("{@customerName}", detail.customerName) : null;
 
                 if (!context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Any())
                 {

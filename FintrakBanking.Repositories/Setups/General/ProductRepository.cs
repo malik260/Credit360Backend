@@ -3112,8 +3112,44 @@ namespace FintrakBanking.Repositories.Setups.General
                             comment = "Initiation"
                         };
                         var response = workFlow.LogForApproval(entity);
+                    //================================================================
+                    //int lastStatusId = response.StatusId;
+                    //if (currentOperationType == (short)OperationsEnum.LoanReviewApprovalAvailment) appl.APPROVALSTATUSID = (short)lastStatusId;
 
-                        if (response)
+                    //if (workflow.NewState == (int)ApprovalState.Ended && model.isFlowTest == false)
+                    //{
+                    //    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    //    {
+                    //        short nextOperatioId = 0;
+                    //        var flowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == model.operationId).FirstOrDefault();
+                    //        var defaultFlowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == 0).FirstOrDefault();
+                    //        if (model.operationId == (short)OperationsEnum.LoanReviewApprovalAvailment)
+                    //        {
+                    //            appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    //        }
+
+                    //        if (flowOrder == null)
+                    //        {
+                    //            if (defaultFlowOrder.REQUIREOFFERLETTER && currentOperationType != (short)OperationsEnum.LoanReviewApprovalAvailment)
+                    //            {
+                    //                nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
+                    //                LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
+                    //            }
+                    //            else if (defaultFlowOrder.REQUIREAVAILMENT)
+                    //            {
+                    //                if (workflow.Response.nextLevelName == null) workflow.Response.nextLevelName = "Credit Admin";
+                    //                nextOperatioId = (short)OperationsEnum.LoanReviewApprovalAvailment;
+                    //                LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
+                    //                //appl.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    //            }
+                    //            else
+                    //            {
+                    //                LogLMSOperationForRouting(model, items, nextOperatioId, (short)OperationsEnum.LoanReviewApprovalAvailment);
+                    //            }
+                    //        }
+
+                            //=============================================================================
+                            if (response)
                         {
                             trans.Commit();
 

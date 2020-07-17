@@ -17,5 +17,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<DashboardViewModel> ApprovedLoan(DateTime startDate, DateTime endDate, int companyId, int staffId);
         List<DashboardViewModel> TotalRiskExposure(DateTime startDate, DateTime endDate, int companyId, int staffId);
         List<LoanDisburseByType> LoanDisbursedByType(DateTime startDate, DateTime endDate, int companyId, int staffId);
+        DashboardViewModel GetLoanInThePipelineLms(int operationId, int staffId, int companyId, int branchId, int? classId);
+        DashboardViewModel GetApprovedLoansLms(int companyId, int staffId);
     }
 }

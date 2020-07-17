@@ -9579,7 +9579,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             allLoans = (from a in allLoans where ((a.customerAvailableAmount >= 0)) select a).ToList();
-            return allLoans;
+            return allLoans.OrderByDescending(c => c.systemArrivalDateTime);
 
 
         }
