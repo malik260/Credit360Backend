@@ -30,6 +30,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 customer.companyId=  token.GetCompanyId;
+                customer.createdBy = token.GetStaffId;
                 var data = repo.AddCRMSCode(customer);
                 if (data ==null)
                 {
