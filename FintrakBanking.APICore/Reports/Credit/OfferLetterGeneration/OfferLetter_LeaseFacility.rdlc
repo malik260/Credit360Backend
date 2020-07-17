@@ -508,11 +508,11 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!currentDate.Value</Value>
+                    <Value>=Format(Cdate(Parameters!currentDate.Value),"dd/MM/yyyy")</Value>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
-                      <Format>d MMM yyyy</Format>
+                      <Format>d/MMMM/yyyy</Format>
                     </Style>
                   </TextRun>
                 </TextRuns>
