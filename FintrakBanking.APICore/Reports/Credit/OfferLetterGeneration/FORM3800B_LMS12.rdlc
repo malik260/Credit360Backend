@@ -957,7 +957,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!date.Value</Value>
+                              <Value>=Format(Cdate(Fields!date.Value),"dd/MM/yyyy")</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                                 <Format>d MMM yyyy</Format>
@@ -980,6 +980,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>

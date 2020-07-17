@@ -403,11 +403,10 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc ("the Lender") has approved a term loan ("facility") under the following terms and conditions:</Value>
+                    <Value>Further to your application for a credit facility and our subsequent discussions, we are pleased to inform you that the Management of Access Bank Plc ("the Lender") has approved a term loan ("Maternal Health Service Support") under the following terms and conditions:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
+                      <FontSize>12pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
@@ -478,11 +477,11 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!currentDate.Value</Value>
+                    <Value>=Format(Cdate(Parameters!currentDate.Value),"dd/MM/yyyy")</Value>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
-                      <Format>d MMMM, yyyy</Format>
+                      <Format>d/MMMM/yyyy</Format>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -493,7 +492,7 @@
             </Paragraphs>
             <rd:DefaultName>currentDate</rd:DefaultName>
             <Top>1.53186cm</Top>
-            <Left>0.51718cm</Left>
+            <Left>0.58255cm</Left>
             <Height>0.70583cm</Height>
             <Width>5.7897cm</Width>
             <ZIndex>2</ZIndex>
@@ -1034,51 +1033,10 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>The interest rate for the facility shall be </Value>
+                                  <Value>The interest rate for the facility shall be 14% + FIXED per annum, which shall be subject to review from time to time in line with the prevailing money market condition. Any change in pricing of the facility notified by the Bank to customer/company shall be binding on the parties. However, any excess over the approved limit or any unliquidated expired facility shall attract an interest on authorized excess overdraft at a rate of 12% per annum.</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>=Fields!interestRate.Value.ToString + "%  " + First(Fields!productPriceIndex.Value, "OfferLetterLoanDetail")</Value>
-                                  <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value> per annum, which shall be subject to review from time to time in line with the prevailing money market condition. Any change in pricing of the facility notified by the Bank to customer/company shall be binding on the parties. However, any excess over the approved limit or any unliquidated expired facility shall attract an interest </Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>on authorized excess overdraft</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value> at a rate of 12% per annum. </Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontSize>12pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>

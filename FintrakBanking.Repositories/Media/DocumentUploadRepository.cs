@@ -68,7 +68,6 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId, int operationId, int targetId, bool isOperationSpecific=false)
         {
-
             var firstQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
                 , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>

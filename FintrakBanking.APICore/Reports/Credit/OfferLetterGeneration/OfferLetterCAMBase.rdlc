@@ -1264,7 +1264,7 @@
             <Top>2.25253cm</Top>
             <Left>0.48543cm</Left>
             <Height>0.5559cm</Height>
-            <Width>4.76786cm</Width>
+            <Width>9.50515cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -1297,7 +1297,7 @@
             <Top>1.03825cm</Top>
             <Left>0.48543cm</Left>
             <Height>1.10845cm</Height>
-            <Width>4.76786cm</Width>
+            <Width>9.50515cm</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
@@ -1316,7 +1316,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!currentDate.Value</Value>
+                    <Value>=Format(Cdate(Parameters!currentDate.Value),"dd/MM/yyyy")</Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -1331,10 +1331,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>currentDate</rd:DefaultName>
-            <Top>0.26186cm</Top>
-            <Left>0.48543cm</Left>
+            <Top>0.22659cm</Top>
+            <Left>0.4478cm</Left>
             <Height>0.70583cm</Height>
-            <Width>5.7897cm</Width>
+            <Width>9.54278cm</Width>
             <ZIndex>8</ZIndex>
             <Style>
               <Border>
