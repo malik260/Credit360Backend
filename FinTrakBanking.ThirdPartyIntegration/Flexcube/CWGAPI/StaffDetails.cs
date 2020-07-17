@@ -61,7 +61,7 @@
                 handler.UseDefaultCredentials = true;
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageViewModel res = null;
+                //ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 HttpClient client = new HttpClient(handler);
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);

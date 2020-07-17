@@ -386,6 +386,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                 ImportFinance = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
                 CashBackedOnly = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
                 InvoiceDiscountingFacility = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                //mhss = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
             };
 
             if (productClassProcessId == (short)ProductClassProcessEnum.CAMBased)
@@ -413,6 +414,9 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
                         return links.InvoiceDiscountingFacility;
+
+                    case (short)ProductClassEnum.MHSS:
+                        return links.General;
 
                     default:
                         return links.General;
@@ -458,6 +462,9 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
                         return links.InvoiceDiscountingFacility;
+
+                    case (short)ProductClassEnum.MHSS:
+                        return links.General;
 
                     default:
                         return links.General;
@@ -1068,6 +1075,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/RiskAssetsReport.aspx?runDate="+runDate+"&level="+level+"&MisCode="+misCode+"&exposureType="+exposureType+"&divisionName="+divisionName+"&branchName="+branchName+"&regionName="+regionName+"&key1="+dateInfor+"&key2="+hashValue.hashedDateValue+"&groupName="+groupName;
             return path;
        }
+
+        public string GetInterestIncome(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/InterestIncome.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
 
         public string CbnTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
         {

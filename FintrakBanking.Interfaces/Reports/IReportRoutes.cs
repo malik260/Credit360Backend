@@ -149,6 +149,7 @@ namespace FintrakBanking.Interfaces.Reports
 
         string GetGeneratedCFLOfferLetter(string applicationRefNumber, string ActionByName);
         string GetTrialBalanceReport(int glAccountId, int currencyCode, int companyId, int staffId);
+        string GetInterestIncome(DateTime startDate, DateTime endDate);
 
     }
 

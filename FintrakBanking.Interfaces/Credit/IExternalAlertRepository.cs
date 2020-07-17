@@ -11,6 +11,11 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBank();
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationRBD();
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCIBD();
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCBD();
+        IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBBD();
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications();
         List<LoanApplicationViewModel> CalculateSLA(List<LoanApplicationViewModel> apps);
         string GetSlaInduvidualStatus(LoanApplicationViewModel app);
@@ -43,12 +48,12 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetNairaCreditCardReport();
         IEnumerable<GlobalExposureViewModel> GetCreditProgramsLimits();
         IEnumerable<GlobalExposureViewModel> GetSchemePerformanceReport();
-        IEnumerable<GlobalExposureViewModel> GetExpiredValuationReport();
+        IEnumerable<AllCollateralViewModel> GetExpiredValuationReport();
         IEnumerable<GlobalExposureViewModel> GetExtentionReport();
         IEnumerable<GlobalExposureViewModel> GetCustomerStockTaking();
         IEnumerable<GlobalExposureViewModel> GetCustomerStockTakingReminder();
         IEnumerable<GlobalExposureViewModel> GetTranchPaymentReminder();
-        IEnumerable<GlobalExposureViewModel> GetValuationReminder();
+        IEnumerable<AllCollateralViewModel> GetValuationReminder();
         IEnumerable<GlobalExposureViewModel> GetInsuranceReminder();
         IEnumerable<GlobalExposureViewModel> GetExtendedFacilityNotification();
         IEnumerable<GlobalExposureViewModel> GetEnhancedDisbursementToDirectorsNotification();
@@ -63,7 +68,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<ChecklistApprovalViewModel> GetPastDueDeferredDocuments();
         IEnumerable<InsurancePolicy> GetExpiredInsurancePolicies();
         IEnumerable<GlobalExposureViewModel> GetAMCONCollectionAndStatusReport();
-        IEnumerable<GlobalExposureViewModel> GetSiteVisitationAccountReminder();
+        IEnumerable<AllCollateralViewModel> GetSiteVisitationAccountReminder();
         IEnumerable<GlobalExposureViewModel> GetEAndSRiskCategorisationDashboard();
         IEnumerable<GlobalExposureViewModel> GetBankExposureEAndSExclusionListReport();
         IEnumerable<GlobalExposureViewModel> GetGreenBondProceedsUtilizationReport();
@@ -75,7 +80,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<GlobalExposureViewModel> GetEndUseOfFundsReminder();
         IEnumerable<GlobalExposureViewModel> GetCollateralVerificationReminder();
         IEnumerable<GlobalExposureViewModel> GetCallMemoReminder();
-        IEnumerable<GlobalExposureViewModel> GetCreditFileChecklistReminder();
+        IEnumerable<DeferredChecklistViewModel> GetCreditFileChecklistReminder();
         IEnumerable<GlobalExposureViewModel> GetPendingCreditApprovalReport();
         IEnumerable<GlobalExposureViewModel> GetEmployerDeliquencyReport();
         IEnumerable<GlobalExposureViewModel> GetFacilitiesWithMissedPaymentReport();

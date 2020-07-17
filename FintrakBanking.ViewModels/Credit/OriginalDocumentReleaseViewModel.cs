@@ -17,7 +17,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
         public string documentReferenceNumber { get; set; }
         public string createdByName { get; set; }
-        public int companyId { get; set; }
+        //public int companyId { get; set; }
         public DateTime? docDateTimeCreated { get; set; }
         public string documentDescription { get; set; }
         public int operationId { get; set; }

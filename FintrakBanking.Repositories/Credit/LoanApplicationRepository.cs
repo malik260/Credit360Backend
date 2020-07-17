@@ -74,7 +74,6 @@ namespace FintrakBanking.Repositories.Credit
             this.integration = _integration;
             this.limitValidation = _limitValidation;
             this.creditCommon = _creditCommon;
-
         }
 
         // public
@@ -118,6 +117,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
                             loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                             customerGroupId = a.CUSTOMERGROUPID,
+                            singleCustomerId = a.CUSTOMERID,
+                            createdBy = a.CREATEDBY,
                             isInvestmentGrade = a.ISINVESTMENTGRADE,
                             isCollateralBacked = a.REQUIRECOLLATERAL,
                             tenor = a.APPLICATIONTENOR,
@@ -2081,8 +2082,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            //using (var trans = context.Database.BeginTransaction())
-            //{
+            
             ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Where(x => x.deleted == false).Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED == false).ToList();
@@ -2090,12 +2090,9 @@ namespace FintrakBanking.Repositories.Credit
             decimal cumulativeSum = 0;
             foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
 
-            if (loan.relationshipOfficerId != 0)
-            {
-                var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
-                if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
-            }
-
+            var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
+            if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
+            
             loan.applicationAmount = cumulativeSum + additionalAmount;
 
             if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) { return loan; }
@@ -2145,18 +2142,81 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
-                UpdateLoanApplication(loan);
+                 var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                 if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
+                 UpdateLoanApplication(loan);
             }
 
 
             // if (response == 0)
             response = context.SaveChanges();
 
-
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
+            if(returndate != null)
+            {
+                int customerId = (int)returndate.singleCustomerId;
+                var customer = context.TBL_CUSTOMER.Find(customerId);
+                if (customer != null)
+                {
+                    var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
+                    var sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
+                    var customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
+
+                    if (branchOverrideRequest != null)
+                    {
+                        branchOverrideRequest.ISUSED = true;
+                        branchOverrideRequest.USEDBY = returndate.createdBy;
+                        branchOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                    if (sectorOverrideRequest != null)
+                    {
+                        sectorOverrideRequest.ISUSED = true;
+                        sectorOverrideRequest.USEDBY = returndate.createdBy;
+                        sectorOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                    if (customerOverrideRequest != null)
+                    {
+                        customerOverrideRequest.ISUSED = true;
+                        customerOverrideRequest.USEDBY = returndate.createdBy;
+                        customerOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                }
+                else
+                {
+                    int customerGroupId = (int)returndate.customerGroupId;
+                    var customerGroup = context.TBL_CUSTOMER_GROUP.Find(customerGroupId);
+                    var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customerGroup.GROUPCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
+                    var sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customerGroup.GROUPCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
+                    var customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customerGroup.GROUPCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
+
+                    if (branchOverrideRequest != null)
+                    {
+                        branchOverrideRequest.ISUSED = true;
+                        branchOverrideRequest.USEDBY = returndate.createdBy;
+                        branchOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                    if (sectorOverrideRequest != null)
+                    {
+                        sectorOverrideRequest.ISUSED = true;
+                        sectorOverrideRequest.USEDBY = returndate.createdBy;
+                        sectorOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                    if (customerOverrideRequest != null)
+                    {
+                        customerOverrideRequest.ISUSED = true;
+                        customerOverrideRequest.USEDBY = returndate.createdBy;
+                        customerOverrideRequest.SOURCE_REFERENCE_NUMBER = returndate.applicationReferenceNumber;
+                        context.SaveChanges();
+                    }
+                }
+            }
+            
 
             if (response > 0 && !loan.isNewApplication)
             {
@@ -2184,154 +2244,159 @@ namespace FintrakBanking.Repositories.Credit
 
         public RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
         {
-            List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
-            var msg = new RacReturnInfoViewModel();
-            if (rac.form == null || rac.form.Count == 0) return null;
-            var ids = rac.form.Select(x => x.criteriaId);
-
-            definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-               && ids.Contains(x.RACDEFINITIONID)
-           ).ToList();
-
-            // is tier related?, get default rac
-            var isRacRelated = definitions.Where(o => o.RACCATEGORYTYPEID != null).Any();
-            TBL_RAC_DEFINITION defaultTier = new TBL_RAC_DEFINITION();
-            List<TBL_RAC_DEFINITION> defaultDefinition = new List<TBL_RAC_DEFINITION>();
-            List<TBL_RAC_DEFINITION> racTiers = new List<TBL_RAC_DEFINITION>();
-            List<TBL_RAC_DEFINITION> allTierRacs = new List<TBL_RAC_DEFINITION>();
-            List<TBL_RAC_DEFINITION> defaultTierItems = new List<TBL_RAC_DEFINITION>();
-
-            var b = definitions.FirstOrDefault();
-            allTierRacs = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && x.RACCATEGORYID == b.RACCATEGORYID).ToList();
-            int lastRacIndex = 0;
-            //List<int?> racCategoryTypeIds = allTierRacs.Select(x => x.RACCATEGORYTYPEID).ToList() ;
-
-            var submission = new RacFormControlValue();
-
-            if (isRacRelated == true)
+            try
             {
-                defaultTierItems = allTierRacs.Where(x => x.ISRACTIERCONTROLKEY == true).ToList();
-                if (defaultTierItems.Count() <= 0) { throw new ConditionNotMetException("Control keys have not been setup for the RAC Tiers"); }
+                List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
+                var msg = new RacReturnInfoViewModel();
+                if (rac.form == null || rac.form.Count == 0) return null;
+                var ids = rac.form.Select(x => x.criteriaId);
 
-                List<TBL_RAC_DEFINITION> matchedTierRac = new List<TBL_RAC_DEFINITION>();
+                definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                   && ids.Contains(x.RACDEFINITIONID)
+               ).ToList();
 
-                var submissionRac = new RacFormControlValue().value;
-                foreach (var i in defaultTierItems)
+                // is tier related?, get default rac
+                var isRacRelated = definitions.Where(o => o.RACCATEGORYTYPEID != null).Any();
+                TBL_RAC_DEFINITION defaultTier = new TBL_RAC_DEFINITION();
+                List<TBL_RAC_DEFINITION> defaultDefinition = new List<TBL_RAC_DEFINITION>();
+                List<TBL_RAC_DEFINITION> racTiers = new List<TBL_RAC_DEFINITION>();
+                List<TBL_RAC_DEFINITION> allTierRacs = new List<TBL_RAC_DEFINITION>();
+                List<TBL_RAC_DEFINITION> defaultTierItems = new List<TBL_RAC_DEFINITION>();
+
+                var b = definitions.FirstOrDefault();
+                allTierRacs = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && x.RACCATEGORYID == b.RACCATEGORYID).ToList();
+                int lastRacIndex = 0;
+                //List<int?> racCategoryTypeIds = allTierRacs.Select(x => x.RACCATEGORYTYPEID).ToList() ;
+
+                var submission = new RacFormControlValue();
+
+                if (isRacRelated == true)
                 {
-                    submissionRac = (submissionRac == null) ? rac.form.FirstOrDefault(x => x.criteriaId == i.RACDEFINITIONID).value : submissionRac;
+                    defaultTierItems = allTierRacs.Where(x => x.ISRACTIERCONTROLKEY == true).ToList();
+                    if (defaultTierItems.Count() <= 0) { throw new ConditionNotMetException("Control keys have not been setup for the RAC Tiers"); }
 
-                    if (submission != null && ValidRacSubmission(i, submissionRac, operationId ?? 0, targetId))
+                    List<TBL_RAC_DEFINITION> matchedTierRac = new List<TBL_RAC_DEFINITION>();
+
+                    var submissionRac = new RacFormControlValue().value;
+                    foreach (var i in defaultTierItems)
                     {
-                        matchedTierRac = allTierRacs.Where(x => x.RACCATEGORYTYPEID == i.RACCATEGORYTYPEID.Value)?.ToList();
-                    };
+                        submissionRac = (submissionRac == null) ? rac.form.FirstOrDefault(x => x.criteriaId == i.RACDEFINITIONID).value : submissionRac;
 
-                    if (matchedTierRac.Count() > 0) { defaultTier = matchedTierRac.FirstOrDefault(); lastRacIndex = defaultTierItems.IndexOf(i); break; }
-                }
+                        if (submission != null && ValidRacSubmission(i, submissionRac, operationId ?? 0, targetId))
+                        {
+                            matchedTierRac = allTierRacs.Where(x => x.RACCATEGORYTYPEID == i.RACCATEGORYTYPEID.Value)?.ToList();
+                        };
 
-                if (matchedTierRac.Count() <= 0)
-                {
-                    //throw new ConditionNotMetException("Could match RAC control key to any tier");
-                    msg.loanApplicationDetailId = targetId;
-                    msg.loanApplicationId = applicationId;
-                    return msg;
-                }
+                        if (matchedTierRac.Count() > 0)
+                        {
+                            defaultTier = matchedTierRac.FirstOrDefault();
+                            lastRacIndex = defaultTierItems.IndexOf(i);
+                            break;
+                        }
+                    }
 
-                defaultDefinition.AddRange(allTierRacs.Where(x => x.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList());
-
-                racTiers = allTierRacs.Where(x => x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID)
-                                                                                                                      .ThenByDescending(a => a.RACITEMID).ToList();
-
-
-                definitions = defaultDefinition;
-            }
-
-
-            List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
-
-            int index; int ctr = 0;
-            for (int i = 0; i < definitions.Count; i++)
-            {
-                var definition = definitions[i];
-                index = i;
-
-                submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
-
-                if (isRacRelated)
-                {
-
-                    List<int> definitionId = new List<int>();
-                    definitionId = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && x.RACCATEGORYID == definition.RACCATEGORYID && x.RACITEMID == definition.RACITEMID).Select(d => d.RACDEFINITIONID).ToList();
-                    //definitionId.AddRange(allTierRacs.Select(x => x.RACDEFINITIONID));
-
-                    submission = rac.form.FirstOrDefault(x => definitionId.Contains(x.criteriaId));
-                }
-
-
-                if (submission == null) continue;
-
-                bool validation = validation = ValidRacSubmission(definition, submission.value, operationId ?? 0, targetId);
-
-                if (validation == false && ctr == 0)
-                {
-                    if (racTiers.Count() <= 0)
+                    if (matchedTierRac.Count() <= 0)
                     {
-                        saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
+                        //throw new ConditionNotMetException("Could match RAC control key to any tier");
                         msg.loanApplicationDetailId = targetId;
                         msg.loanApplicationId = applicationId;
                         return msg;
                     }
 
-                    if (racTiers.Count() > 0 && ctr == 0)
-                    {
-                        var lastRacIndexTierItems = defaultTierItems[lastRacIndex + 1];
-                        definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                        && ids.Contains(x.RACDEFINITIONID) && x.RACCATEGORYTYPEID == lastRacIndexTierItems.RACCATEGORYTYPEID && x.RACCATEGORYTYPEID != definition.RACCATEGORYTYPEID
-                        ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
+                    defaultDefinition.AddRange(allTierRacs.Where(x => x.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList());
 
-                    }
+                    racTiers = allTierRacs.Where(x => x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID)
+                                                                                                                          .ThenByDescending(a => a.RACITEMID).ToList();
 
-                    if (racTiers.Count() > 0 && ctr > 0)
-                    {
-                        saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
-                        msg.loanApplicationDetailId = targetId;
-                        msg.loanApplicationId = applicationId;
-                        return msg;
-                    }
 
-                    ctr = ctr + 1;
-                    continue;
+                    definitions = defaultDefinition;
                 }
-                else if (validation == true)
+
+
+                List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
+
+                int index; int ctr = 0;
+                for (int i = 0; i < definitions.Count; i++)
                 {
-                    details.Add(new TBL_RAC_DETAIL
-                    {
-                        RACDEFINITIONID = definition.RACDEFINITIONID,
-                        OPERATIONID = operationId ?? 0,
-                        TARGETID = targetId,
-                        ACTUALVALUE = submission.value,
-                        CREATEDBY = staffId,
-                        DATETIMECREATED = DateTime.Now,
-                    });
+                    var definition = definitions[i];
+                    index = i;
 
-                    continue;
+                    submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
+
+                    if (isRacRelated)
+                    {
+
+                        List<int> definitionId = new List<int>();
+                        definitionId = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && x.RACCATEGORYID == definition.RACCATEGORYID && x.RACITEMID == definition.RACITEMID).Select(d => d.RACDEFINITIONID).ToList();
+                        //definitionId.AddRange(allTierRacs.Select(x => x.RACDEFINITIONID));
+
+                        submission = rac.form.FirstOrDefault(x => definitionId.Contains(x.criteriaId));
+                    }
+
+
+                    if (submission == null) continue;
+
+                    bool validation = ValidRacSubmission(definition, submission.value, operationId ?? 0, targetId);
+
+                    if (validation == false && ctr == 0)
+                    {
+                        if (racTiers.Count() <= 0)
+                        {
+                            saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
+                            msg.loanApplicationDetailId = targetId;
+                            msg.loanApplicationId = applicationId;
+                            return msg;
+                        }
+
+                        if (racTiers.Count() > 0 && ctr == 0)
+                        {
+                            var lastRacIndexTierItems = defaultTierItems[lastRacIndex + 1];
+                            definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                            && ids.Contains(x.RACDEFINITIONID) && x.RACCATEGORYTYPEID == lastRacIndexTierItems.RACCATEGORYTYPEID && x.RACCATEGORYTYPEID != definition.RACCATEGORYTYPEID
+                            ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
+
+                        }
+
+                        if (racTiers.Count() > 0 && ctr > 0)
+                        {
+                            saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
+                            msg.loanApplicationDetailId = targetId;
+                            msg.loanApplicationId = applicationId;
+                            return msg;
+                        }
+
+                        ctr = ctr + 1;
+                        continue;
+                    }
+                    else if (validation == true)
+                    {
+                        details.Add(new TBL_RAC_DETAIL
+                        {
+                            RACDEFINITIONID = definition.RACDEFINITIONID,
+                            OPERATIONID = operationId ?? 0,
+                            TARGETID = targetId,
+                            ACTUALVALUE = submission.value,
+                            CREATEDBY = staffId,
+                            DATETIMECREATED = DateTime.Now,
+                        });
+
+                        continue;
+                    }
+
+                    break;
                 }
 
-                break;
+                context.TBL_RAC_DETAIL.AddRange(details);
+                context.SaveChanges();
+                return null;
+            }
+           catch (Exception ex)
+            {
+                throw ex;
             }
 
-            context.TBL_RAC_DETAIL.AddRange(details);
-            context.SaveChanges();
-            //try
-            //{
 
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw ex;
-            //}
-
-
-            return null;
+           
 
             //foreach (var definition in definitions)
             //{
@@ -2846,7 +2911,7 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0)
             {
                 var racDetail = context.TBL_RAC_DETAIL.Where(r => r.TARGETID == detail.LOANAPPLICATIONDETAILID).ToList();
-                if (loan.rac != null && racDetail.Count() < 1)
+                if (loan.rac != null && racDetail.Count() == 0)
                 {
                     var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId, detail.LOANAPPLICATIONDETAILID, loan.createdBy, detail.LOANAPPLICATIONID);
                     if (recResponse != null) return true;
@@ -7061,27 +7126,14 @@ namespace FintrakBanking.Repositories.Credit
             var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
             int customerId = (int)application.customerId;
+            var customer = context.TBL_CUSTOMER.Find(customerId);
             int productId = details.SingleOrDefault()?.proposedProductId ?? 0;
             decimal applicationAmount = details.Sum(x => x.proposedAmount * (decimal)x.exchangeRate); // proposedAmount should be approvedAmount after application
 
-            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
+            var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
+            var sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
+            var customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
 
-            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
-
-            // if productoverride is to be used
-            //var productOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-            //    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.productLimitOverride && x.ISUSED == false),
-            //        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-            //    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-            //    .FirstOrDefault();
 
             if (branchOverrideRequest != null)
             {
@@ -7106,7 +7158,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach(var facility in details)
                 {
-                    if (facility != null)
+                    if (facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal && facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
                     {
                         var sector = context.TBL_SUB_SECTOR.Find(facility.subSectorId);
                         var sectorName = context.TBL_SECTOR.Find(sector.SECTORID).NAME ?? "N/A";
@@ -7115,7 +7167,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
                             decimal sectorsAmount = (decimal)sectorValidation.outstandingSectorsBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
-                            decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 4, MidpointRounding.AwayFromZero);
+                            decimal percentageTotalExposure = decimal.Round((sectorAmount / sectorsAmount), 5, MidpointRounding.AwayFromZero);
                             if (percentageTotalExposure > 0 && percentageTotalExposure >= sectorValidation.maximumAllowedLimit) throw new SecureException("Sector Limit for sector, " + sectorName + " exceeded!");
                             //if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
                         }
@@ -7158,13 +7210,20 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
-            var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
-            if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+            if (customerOverrideRequest != null)
             {
-                throw new SecureException("Single Obligor Limit Exceeded");
+                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                //request.ISUSED = true;
             }
-
+            else
+            {
+                var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
+                var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
+                if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+                {
+                    throw new SecureException("Single Obligor Limit Exceeded");
+                }
+            }
             
             var applications = application.LoanApplicationDetail.FirstOrDefault();
             decimal incomingAmount = details.Sum(x => x.exchangeAmount);
@@ -7197,11 +7256,11 @@ namespace FintrakBanking.Repositories.Credit
             
             if (application.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
-                var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstTwenty(application);
+                var groupLimitHundred = limitValidation.ValidateNPLByGroupFirstHundred(application);
                 var proposedGroupLimitHundred = groupLimitHundred.outstandingBalance + (double)incomingAmount; 
                 if ((double)groupLimitHundred.maximumAllowedLimit != 0 && proposedGroupLimitHundred >= (double)groupLimitHundred.maximumAllowedLimit)
                 {
-                    throw new SecureException("Group Limit for the first 20 Group Customers exporsures Exceeded");
+                    throw new SecureException("Group Limit for the first 100 Group Customers exporsures Exceeded");
                 }
             }
 

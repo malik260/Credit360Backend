@@ -96,8 +96,8 @@ namespace FintrakBanking.ViewModels.CASA
         public string customerSectorName { get; set; }
         public int subSectorId { get; set; }
         public string subSectorName { get; set; }
-        public string relationshipManagerName { get; set; }
-        public string relationshipOfficerName { get; set; }
+        //public string relationshipManagerName { get; set; }
+        //public string relationshipOfficerName { get; set; }
         public string accountHolder { get; set; }
 
         public List<CustomerBvnViewModels> customerBvnInformation { get; set; }

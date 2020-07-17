@@ -440,7 +440,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!currentDate.Value</Value>
+                    <Value>=Format(Cdate(Parameters!currentDate.Value),"dd/MM/yyyy")</Value>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -454,10 +454,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>currentDate</rd:DefaultName>
-            <Top>0.14111cm</Top>
-            <Left>0.47955cm</Left>
+            <Top>1.09361cm</Top>
+            <Left>0.5126cm</Left>
             <Height>0.70583cm</Height>
-            <Width>5.7897cm</Width>
+            <Width>5.75665cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -2843,9 +2843,9 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox23</rd:DefaultName>
-            <Top>0.40289in</Top>
+            <Top>0.76122in</Top>
             <Left>0.20181in</Left>
-            <Height>1.34169in</Height>
+            <Height>0.98335in</Height>
             <Width>6.52611in</Width>
             <ZIndex>17</ZIndex>
             <Style>
@@ -2888,7 +2888,7 @@
       <Width>6.83289in</Width>
       <Page>
         <PageHeader>
-          <Height>1.14111in</Height>
+          <Height>0.78278in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <Style>

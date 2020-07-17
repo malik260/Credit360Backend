@@ -490,7 +490,6 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("single-customers-information/")]
         public HttpResponseMessage SearchRandomSingleCustomersBySearchQuery(string searchQuery)
-
         {
             try
             {
@@ -530,7 +529,6 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("customers-information/")]
         public HttpResponseMessage SearchRandomCustomersBySearchQuery(string searchQuery)
-
         {
             try
             {
@@ -554,7 +552,6 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("single-corporate-customers-information/")]
         public HttpResponseMessage SearchRandomSingleCorporateCustomersBySearchQuery(string searchQuery)
-
         {
             try
             {

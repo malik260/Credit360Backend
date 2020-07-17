@@ -2,9 +2,6 @@
 using FintrakBanking.Common.AlertMonitoring;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.Interfaces.AlertMonitoring;
-using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.AlertMonitoring;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
@@ -13,11 +10,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
-using FintrakBanking.Finance.ViewModels;
-using FintrakBanking.Repositories.Setups.General;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {

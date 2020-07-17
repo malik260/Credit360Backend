@@ -29,8 +29,8 @@ namespace FintrakBanking.ViewModels.CASA
         public string reason { get; set; }
         public int approvedStatusId { get; set; }
         public string sourceReferenceNumber { get; set; }
-        public int createdBy { set; get; }
-        public DateTime dateTimeCreated { get; set; }
+        public new int createdBy { set; get; }
+        //public DateTime dateTimeCreated { get; set; }
         public string approvalStatus { get; set; }
         public string customerName { get; set; }
         public string itemName { get; set; }

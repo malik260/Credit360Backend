@@ -177,8 +177,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("document-upload/{id}/{documentTypeName}")]
-        public HttpResponseMessage DeleteDocumentUpload(int id, string documentTypeName)
+        [Route("document-upload/{id}/{documentTypeId}")]
+        public HttpResponseMessage DeleteDocumentUpload(int id, int documentTypeId)
         {
             UserInfo user = new UserInfo()
             {
@@ -188,7 +188,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.DeleteDocumentUpload(id, documentTypeName, user);
+            bool response = repo.DeleteDocumentUpload(id, documentTypeId, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 

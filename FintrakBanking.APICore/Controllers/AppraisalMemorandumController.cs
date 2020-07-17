@@ -577,12 +577,9 @@ namespace FintrakBanking.APICore.Controllers
             //    //    ).Take(itemsPerPage);
             //}
 
-            var data = items
-                .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
-                                                                      //.Skip(page)
-                                                                      //.Take(itemsPerPage)
-                .ToList();
-
+            var data = items.OrderByDescending(x => x.applicationReferenceNumber).ToList(); // OrderBy() must be called for Skip() to work!
+                                                                                //.Skip(page)
+                                                                                //.Take(itemsPerPage)
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
         }
 

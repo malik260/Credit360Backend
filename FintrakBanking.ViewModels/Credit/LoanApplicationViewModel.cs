@@ -236,6 +236,26 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal lienAmount { get; set; }
         public DateTime lienDateTimeCreated { get; set; }
         public string currency { get; set; }
+        public decimal principalAmount { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public int? loanId { get; set; }
+        public int loanSystemTypeId { get; set; }
+        public string legalContingentCode { get; set; }
+        public int? singleCustomerId { get; set; }
+    }
+
+    public class InterestIncomeViewModel
+    {
+        public string referenceNumber { get; set; }
+        public int prudentialGuideLineTypeId { get; set; }
+        public decimal dailyAccrualAmount { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public string period { get; set; }
+        public decimal totalMonthlyIncome { get; set; }
+        public decimal performing { get; set; }
+        public decimal nonPerforming { get; set; }
+
+        public decimal totalIncome { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -580,11 +600,11 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class jobLoanApplicationDetailViewModel : LoanApplicationViewModel
     {
-        public string customerType;
+        //public string customerType { get; set; }
 
         public string applicationRefNo { get; set; }
 
-        public short proposedProductId { get; set; }
+        public new short proposedProductId { get; set; }
 
         public string proposedProductName { get; set; }
 

@@ -338,24 +338,26 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool finalCamsolApproval(LoanCAMSOLViewModel data, short StatusId)
         {
-            var loanamSolId = (from x in context.TBL_TEMP_LOAN_CAMSOL
+            var tempCamsol = (from x in context.TBL_TEMP_LOAN_CAMSOL
                                where x.CUSTOMERCODE == data.customercode
+                               orderby x.TEMPLOAN_CAMSOLID descending
                                select new { x.TEMPLOAN_CAMSOLID, x.LOAN_CAMSOLID, x.CANTAKELOAN, x.APPROVALSTATUSID, x.CUSTOMERCODE }).FirstOrDefault();
 
-            if (loanamSolId != null)
+            if (tempCamsol != null)
             {
-                context.TBL_LOAN_CAMSOL.Where(o => o.CUSTOMERCODE == loanamSolId.CUSTOMERCODE).ToList().ForEach(x =>
-                   {
-                       x.CANTAKELOAN = loanamSolId.CANTAKELOAN;
-                   });
+                context.TBL_LOAN_CAMSOL.Where(o => o.CUSTOMERCODE == tempCamsol.CUSTOMERCODE).ToList().ForEach(x =>
+                {
+                    x.CANTAKELOAN = tempCamsol.CANTAKELOAN;
+                });
 
                 context.TBL_TEMP_LOAN_CAMSOL.Where(o => o.CUSTOMERCODE == data.customercode).ToList().ForEach(x =>
                 {
                     x.APPROVALSTATUSID = (short) ApprovalStatusEnum.Approved;
                 });
 
-                
+                return tempCamsol.CANTAKELOAN;
             }
+
             return false;
         }
 
@@ -595,7 +597,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public string goForApproval(LoanCAMSOLViewModel data)
         {
-            bool response = false;
+           // bool response = false;
             bool action = false;
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -623,13 +625,12 @@ namespace FintrakBanking.Repositories.Credit
                         transaction.Commit();
 
                         if (action == true)
-                        {
-                            return "Consession has been granted to access loan";
-                        }
-                        return "This customer has been blacklisted successfully";
+                            return "Consession has been granted to access loan!";
+                        else
+                            return "This customer has been blacklisted successfully!";
                     }
 
-                    return "Could not blacklist the customer!";
+                    return "Operation could not be completed!";
                 }
                 catch (Exception ex)
                 {
@@ -749,8 +750,6 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-
-
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -768,8 +767,6 @@ namespace FintrakBanking.Repositories.Credit
 
             try
             {
-
-
                 auditTrail.AddAuditTrail(audit);
                 // Audit Section ---------------------------
                 var response = context.SaveChanges() > 0;

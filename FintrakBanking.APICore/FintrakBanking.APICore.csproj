@@ -889,6 +889,13 @@
     <Compile Include="Reports\ReportViews\ProfileActivityReport.aspx.designer.cs">
       <DependentUpon>ProfileActivityReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\InterestIncome.aspx.cs">
+      <DependentUpon>InterestIncome.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\InterestIncome.aspx.designer.cs">
+      <DependentUpon>InterestIncome.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\PSR.aspx.cs">
       <DependentUpon>PSR.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1365,6 +1372,7 @@
     <Content Include="Reports\ReportViews\Overline.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\ProfileActivityReport.aspx" />
+    <Content Include="Reports\ReportViews\InterestIncome.aspx" />
     <Content Include="Reports\ReportViews\PSR.aspx" />
     <Content Include="Reports\ReportViews\RACCR.aspx" />
     <Content Include="Reports\ReportViews\RACCRT.aspx" />
@@ -1669,6 +1677,7 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_ImportFinance.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_LeaseFacility.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_MHSS.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_OtherGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_OverDraftFacility.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ScheduledCollateral.rdlc" />
@@ -1708,6 +1717,7 @@
     <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\InterestIncome.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanBookingReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanClassification.rdlc" />

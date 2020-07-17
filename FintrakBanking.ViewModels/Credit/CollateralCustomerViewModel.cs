@@ -139,7 +139,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string propertyAddress { get; set; }
         public DateTime dateOfAcquisition { get; set; }
         public DateTime lastValuationDate { get; set; }
-        public DateTime? nextValuationDate { get; set; }
         public short? valuerId { get; set; }
         public string valuerReferenceNumber { get; set; }
         public short propertyValueBaseTypeId { get; set; }
@@ -322,6 +321,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? approvalStatusId { get; set; }
 
         public DateTime nextVisitationDate { get { return lastVisitationDate.AddDays((double)(visitationCycle)); } set { } }
+        
         public DateTime lastVisitationDate { get; set; }
         public int visitationCycle { get; set; }
         public bool requireVisitation { get; set; }
@@ -532,7 +532,8 @@ namespace FintrakBanking.ViewModels.Credit
    
     public class AllCollateralViewModel : CollateralViewModel
     {
-
+       // public DateTime nextValuationDate { get { return lastValuationDate.AddDays((double)(valuationCycle)); } set { } }
+        public DateTime nextValuationDate { get; set; }
         public CollateralStockViewModel collateralStock { get; set; }
 
         public CollateralVehicleViewModel collateralVehicle { get; set; }
@@ -548,7 +549,10 @@ namespace FintrakBanking.ViewModels.Credit
         public CollateralGauranteeViewModel collateralGaurantee { get; set; }
         public MiscellaneousNote collateralMiscellaneous { get; set; }
         public List<CollateralCustomerPolicyViewModel> collateralItemPolicy { get; set; }
-
+        public string accountOfficerName { get; set; }
+        public string accountOfficerCode { get; set; }
+        public DateTime lastVisitationdate { get; set; }
+        public DateTime? nextVisitationDates { get; set; }
     }
 
     public class CollateralDepositViewModel
@@ -861,7 +865,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? valuerTypeId { get; set; }
         public int? cityId { get; set; }
         public string cityName { get; set; }
-        public short? countryId { get; set; }
+        public new short? countryId { get; set; }
         public string countryName { get; set; }
         public string accountNumber { get; set; }
         public string valuerBVN { get; set; }
@@ -1140,5 +1144,17 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string InsuranceType { get; set; }
         public int InsuranceTypeId { get; set; }
+    }
+
+    public class SectorLimitAlertViewModel
+    {
+        public int id { get; set; }
+        public string sector { get; set; }
+        public decimal? bbd { get; set; }
+        public decimal? cbd { get; set; }
+        public decimal? cibd { get; set; }
+        public decimal? rbd { get; set; }
+        public decimal? exposure { get; set; }
+        public decimal? bank { get; set; }
     }
 }

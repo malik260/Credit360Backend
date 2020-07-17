@@ -26,5 +26,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string toApprovalLevelName { get; set; }
         public string fromApprovalLevelName { get; set; }
+        public int operationId { get; set; }
+        public int? deferredDays { get; set; }
+        public int customerId { get; set; }
+        public int accountOfficer { get; set; }
     }
 }
