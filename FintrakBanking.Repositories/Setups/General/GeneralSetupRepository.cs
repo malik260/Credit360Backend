@@ -489,11 +489,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct().Union(roleLevelIds).Union(relievedLevelids);
 
-            var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
+            var approvalStaffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
 
             if (scope == 2)
             {
-                var groups = context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
+                var groups = context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && approvalStaffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
                 return context.TBL_APPROVAL_LEVEL
                     .Where(x => groups.Contains(x.GROUPID))
                     .Select(x => x.APPROVALLEVELID)
@@ -503,7 +503,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
             //return staffLevels.Union(roleLevelIds); // without relief code
-            return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
+            return approvalStaffLevels.Union(roleLevelIds).Union(relievedLevelids);
         }
 
         public IEnumerable<int> GetStaffApprovalLevelIdsWithoutRelief(int staffId, int operationId)

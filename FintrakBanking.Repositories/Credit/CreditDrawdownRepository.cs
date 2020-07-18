@@ -260,8 +260,7 @@ namespace FintrakBanking.Repositories.Credit
                     return workflow.Response;
                     //return 3;
                 }
-
-                else if (workflow.NewState == (int)ApprovalState.Ended)
+                else if (workflow.NewState == (int)ApprovalState.Ended && request.CRMSVALIDATED == true)
                 {
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                     var operationId = 0;
@@ -303,7 +302,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.SaveChanges();
                     trans.Commit();
-                    workflow.Response.responseMessage += " but CRMS Code Capture Might be needed.";
+                    if (operationId != (short)OperationsEnum.ContigentLoanBooking)
+                    {
+                        workflow.Response.responseMessage += " but CRMS Code Capture Might be needed.";
+                    }
                     return workflow.Response;
                     //return 0;
                 }
