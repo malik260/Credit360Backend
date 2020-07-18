@@ -87,14 +87,15 @@ namespace FintrakBanking.ReportObjects.Credit
                 var signatory = (from a in context.TBL_APPROVAL_TRAIL
                             join b in context.TBL_STAFF on a.REQUESTSTAFFID equals b.STAFFID
                             join c in context.TBL_LOAN_APPLICATION on a.TARGETID equals c.LOANAPPLICATIONID
-                            where c.APPLICATIONREFERENCENUMBER == applicationRefNumber && a.FROMAPPROVALLEVELID != null orderby(a.APPROVALTRAILID)
+                            where c.APPLICATIONREFERENCENUMBER == applicationRefNumber && a.FROMAPPROVALLEVELID != null
+                            orderby a.APPROVALTRAILID
                             select new SignatoryViewModel()
                             {
                                 
                                 staffName = b.LASTNAME + " " + b.FIRSTNAME + " " + b.MIDDLENAME,
                             }).Take(2).ToList();
 
-                if (signatory != null)
+                if (signatory != null && signatory.Count() > 0)
                 {
                     signatory[0].rmStaffName = signatory[0].staffName;
                     signatory[0].bmStaffName = signatory[1].staffName;

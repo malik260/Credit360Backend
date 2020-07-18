@@ -337,6 +337,13 @@ namespace FintrakBanking.ViewModels.Reports
         public string regionName { get; set; }
     }
 
+    public class InterestIncome
+    {
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
+
+    }
+
     public class Overline
     {
         public DateTime runDate { get; set; }

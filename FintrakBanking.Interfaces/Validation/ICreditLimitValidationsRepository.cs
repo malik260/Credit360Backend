@@ -10,6 +10,7 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
 {
     public interface ICreditLimitValidationsRepository
     {
+        CreditLimitValidationsModel ValidateAmountFacilityBySector(int sectorId);
         CreditLimitValidationsModel ValidateNPLByGroupFirstTwenty(LoanApplicationViewModel application);
         CreditLimitValidationsModel ValidateNPLByGroupFirstHundred(LoanApplicationViewModel application);
         CreditLimitValidationsModel ValidateNPLByCurrency(LoanApplicationViewModel application);
