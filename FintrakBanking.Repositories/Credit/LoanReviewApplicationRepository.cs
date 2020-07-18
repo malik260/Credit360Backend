@@ -215,6 +215,7 @@ namespace FintrakBanking.Repositories.Credit
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
+            var staffs = general.GetStaffRlieved(staffId);
 
 
             var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch)
@@ -226,9 +227,11 @@ namespace FintrakBanking.Repositories.Credit
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Authorised
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
-                     && x.RESPONSESTAFFID == null
-                     && ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
-                     || (!levelIds.Contains((int)x.TOAPPROVALLEVELID)) && (x.TOSTAFFID == staffId))
+                    && x.RESPONSESTAFFID == null
+                    && levelIds.Contains((int)x.TOAPPROVALLEVELID)
+                    && ((x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
+                     //&& ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == staffId)
+                    || (!levelIds.Contains((int)x.TOAPPROVALLEVELID) && (x.TOSTAFFID == staffId)))
              ),
                  alaba => alaba.ab.a.LOANAPPLICATIONID,
                  trail => trail.TARGETID,
@@ -345,12 +348,121 @@ namespace FintrakBanking.Repositories.Credit
 
                  applications = query.AsQueryable()
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .OrderByDescending(x => x.loanReviewApplicationId);
+                //.OrderByDescending(x => x.loanReviewApplicationId)
+                ;
 
-            var list = applications.ToList();
-            var count = applications.Where(x=>x.referenceNumber == "0000001040" || x.referenceNumber == "0000001039").ToList();
+            //var list = applications.ToList();
+            //var count = applications.Where(x=>x.referenceNumber == "0000001040" || x.referenceNumber == "0000001039").ToList();
             
             return applications; 
+        }
+
+        public List<LoanReviewApplicationViewModel> CalculateSLA(List<LoanReviewApplicationViewModel> apps)
+        {
+            foreach (var app in apps)
+            {
+                app.slaGlobalStatus = GetSlaGlobalStatus(app);
+                app.slaInduvidualStatus = GetSlaInduvidualStatus(app);
+            }
+            return apps;
+        }
+
+        private string GetSlaInduvidualStatus(LoanReviewApplicationViewModel app)
+        {
+            float sla = app.currentApprovalLevelSlaInterval;
+            //int? elapse = (DateTime.Now - timeIn)?.Hours;
+            int? elapse = (int)GetTimeIntervalHours(app.timeIn.Value, DateTime.Now);
+            return SlaStatus(sla, elapse);
+        }
+
+        public string GetSlaGlobalStatus(LoanReviewApplicationViewModel app)
+        {
+            float sla = app.globalsla;
+            //int? elapse = (DateTime.Now - dateTimeCreated).Hours;
+            int? elapse = (int)GetTimeIntervalHours(app.dateTimeCreated, DateTime.Now);
+            return SlaStatus(sla, elapse);
+        }
+
+        private string SlaStatus(float sla, int? elapse)
+        {
+            if (sla == 0) return "success";
+            if (elapse == 0 || elapse == null) return "success";
+            float factor = (float)(elapse / sla) * 100;
+            if (factor <= 30) return "success";
+            if (factor <= 70) return "warning";
+            if (factor <= 100) return "danger";
+            return "danger";
+        }
+
+        public IEnumerable<DateTime> GetDateRange(DateTime startDate, DateTime endDate)
+        {
+            if (endDate < startDate)
+            {
+                throw new ArgumentException("endDate must be greater than or equal to startDate");
+            }
+            yield return startDate;
+
+            while (startDate.Date < endDate.Date && startDate.AddDays(1).Date < endDate.Date)
+            {
+                yield return new DateTime(startDate.AddDays(1).Year, startDate.AddDays(1).Month, startDate.AddDays(1).Day, 23, 59, 59);
+                startDate = startDate.AddDays(1);
+            }
+            yield return endDate;
+        }
+
+        public bool IsInHolidays(DateTime date, int countryId)
+        {
+            List<TBL_PUBLIC_HOLIDAY> holidays;
+            //holidays = context.TBL_PUBLIC_HOLIDAY.ToList();
+            var output = context.TBL_PUBLIC_HOLIDAY.Any(x => x.DATE == date.Date);
+            return output;
+        }
+
+        public IEnumerable<DateTime> FilterHolidaysFromDateIntervals(IEnumerable<DateTime> dateTimes)
+        {
+            var list = dateTimes.ToList();
+            var countryId = context.TBL_COUNTRY.FirstOrDefault().COUNTRYID;
+            List<TBL_PUBLIC_HOLIDAY> holidays = context.TBL_PUBLIC_HOLIDAY.Where(h => h.COUNTRYID == countryId).ToList();
+            var dates = holidays.Select(h => h.DATE);
+            list = list.FindAll(l => !IsInDatesList(l, dates));
+            return list;
+        }
+
+        public bool IsInDatesList(DateTime dateTime, IEnumerable<DateTime> dateTimes)
+        {
+            var output = dateTimes.Any(x => x.Date == dateTime.Date);
+            return output;
+        }
+
+        public double GetTimeIntervalHours(DateTime startDate, DateTime endDate)
+        {
+            double hours = 0;
+            var second = new TimeSpan(0, 0, 1);
+            var range = GetDateRange(startDate, endDate);
+            var test = range.ToList();
+            range = FilterHolidaysFromDateIntervals(range);
+            var intervals = range.Select(r => new DateTimeAndTimeOfDayViewModel
+            {
+                dateTime = r
+            });
+            var list = intervals.ToList();
+            //dateTimeAndTimeOfDay = list;
+            for (int i = 0; i < list.Count - 1; i++)
+            {
+                var elapsed = list[i + 1].dateTime.Subtract(list[i].dateTime);
+                if (elapsed.Days <= 1)
+                {
+                    list[i + 1].timeOfDay = elapsed;
+                    hours += list[i + 1].timeOfDay.TotalHours;
+                }
+                else
+                {
+                    var elapsedDays = elapsed.Days * 24;
+                    list[i + 1].timeOfDay = elapsed;
+                    hours += (list[i + 1].timeOfDay.TotalHours - elapsedDays);
+                }
+            }
+            return hours;
         }
 
         private bool ProcessInitiator(int staffId, int operationId, int? productClassId, int position)
@@ -1579,6 +1691,7 @@ namespace FintrakBanking.Repositories.Credit
                                     middleName = g.MIDDLENAME,
                                     lastName = g.LASTNAME,
                                     customerCode = g.CUSTOMERCODE,
+                                    customerName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
                                     applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                     loanApplicationId = a.LOANAPPLICATIONID,
                                     loanApplicationIdForOperation = d.LOANID,
@@ -1646,6 +1759,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanApplicationIdForOperation = d.LOANID,
                                     customerId = a.CUSTOMERID,
                                     branchId = a.BRANCHID,
+                                    customerName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
                                     customerGroupId = a.CUSTOMERGROUPID,
                                     applicationDate = a.APPLICATIONDATE,
                                     applicationAmount = d.PROPOSEDAMOUNT,

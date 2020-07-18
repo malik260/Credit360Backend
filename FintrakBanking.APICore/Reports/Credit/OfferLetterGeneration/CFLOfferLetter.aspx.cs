@@ -134,6 +134,9 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
                     case (int)ProductClassEnum.EmergingBusiness:
                         reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
                         break;
+                    case (int)ProductClassEnum.MHSS:
+                        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_MHSS.rdlc");
+                        break;
 
                     default:
                         reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");

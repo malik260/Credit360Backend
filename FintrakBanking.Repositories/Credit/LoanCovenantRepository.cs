@@ -30,7 +30,7 @@ namespace FintrakBanking.Repositories.Customer
         private IGeneralSetupRepository genSetup;
         
         private CustomerDetails customer;
-        bool USE_TWO_FACTOR_AUTHENTICATION = false;
+        //bool USE_TWO_FACTOR_AUTHENTICATION = false;
         bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public LoanCovenantRepository(IAuditTrailRepository _auditTrail,

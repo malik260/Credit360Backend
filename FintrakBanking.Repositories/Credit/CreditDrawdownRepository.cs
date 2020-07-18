@@ -28,7 +28,7 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
         private IWorkflow workflow;
-        private IAuditTrailRepository audit;
+        //private IAuditTrailRepository audit;
         private IOverRideRepository overrider;
         private IntegrationWithFlexcube integration;
         private IAdminRepository admin;
@@ -260,8 +260,7 @@ namespace FintrakBanking.Repositories.Credit
                     return workflow.Response;
                     //return 3;
                 }
-
-                else if (workflow.NewState == (int)ApprovalState.Ended)
+                else if (workflow.NewState == (int)ApprovalState.Ended && request.CRMSVALIDATED == true)
                 {
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                     var operationId = 0;
@@ -303,7 +302,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.SaveChanges();
                     trans.Commit();
-                    workflow.Response.responseMessage += " but CRMS Code Capture Might be needed.";
+                    if (operationId != (short)OperationsEnum.ContigentLoanBooking)
+                    {
+                        workflow.Response.responseMessage += " but CRMS Code Capture Might be needed.";
+                    }
                     return workflow.Response;
                     //return 0;
                 }
@@ -436,6 +438,7 @@ namespace FintrakBanking.Repositories.Credit
                         availmentDate = m.AVAILMENTDATE,
                         requestDate = req.DATETIMECREATED,
                         apiRequestId = m.APIREQUESTID,
+                        toStaffId = atrail.TOSTAFFID,
                         //staffId = (atrail.LOOPEDSTAFFID != null ? atrail.LOOPEDSTAFFID : atrail.TOSTAFFID),
                         divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                         divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),

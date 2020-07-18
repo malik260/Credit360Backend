@@ -63,13 +63,15 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.loanReviewApplicationId) 
-                    .Skip(page).Take(itemsPerPage);
+                    .OrderByDescending(x => x.approvalTrailId) 
+                    //.OrderByDescending(x => x.loanReviewApplicationId)
+                    .Skip(page).Take(itemsPerPage).ToList();
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "No record found" });
             }
+            /*data =*/ repo.CalculateSLA(data);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             
         }

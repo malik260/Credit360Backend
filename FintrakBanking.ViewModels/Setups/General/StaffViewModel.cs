@@ -165,7 +165,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string MisInfo { get; set; }
         public string City { get; set; }
         public string State { get; set; }
-        public string company { get; set; }
+        //public string company { get; set; }
 
     }
 

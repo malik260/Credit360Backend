@@ -1732,7 +1732,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             
                 var data = repo.SendEmailToRecoveryAgent(token.GetCompanyId,token.GetStaffId,(short)token.GetBranchId, accreditedConsultantId);
-                if (data == null)
+                if (data == false)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });

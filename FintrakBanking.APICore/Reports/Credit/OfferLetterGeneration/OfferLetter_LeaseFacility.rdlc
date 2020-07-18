@@ -508,11 +508,11 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!currentDate.Value</Value>
+                    <Value>=Format(Cdate(Parameters!currentDate.Value),"dd/MM/yyyy")</Value>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
-                      <Format>d MMM yyyy</Format>
+                      <Format>d/MMMM/yyyy</Format>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -1287,21 +1287,6 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Image Name="Image1">
-            <Source>Embedded</Source>
-            <Value>logomain</Value>
-            <Sizing>FitProportional</Sizing>
-            <Top>0.02778in</Top>
-            <Left>5.00236in</Left>
-            <Height>0.48959in</Height>
-            <Width>1.88464in</Width>
-            <ZIndex>10</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Image>
           <Tablix Name="Tablix6">
             <TablixBody>
               <TablixColumns>
@@ -1895,7 +1880,7 @@
             <Left>0.18663in</Left>
             <Height>1.75in</Height>
             <Width>6.58873in</Width>
-            <ZIndex>11</ZIndex>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1927,7 +1912,7 @@
             <Left>0.24068in</Left>
             <Height>0.25in</Height>
             <Width>6.53468in</Width>
-            <ZIndex>12</ZIndex>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2301,7 +2286,7 @@
             <Left>0.20361in</Left>
             <Height>0.5in</Height>
             <Width>6.60006in</Width>
-            <ZIndex>13</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2625,7 +2610,7 @@
             <Left>0.17717in</Left>
             <Height>0.75in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2780,7 +2765,7 @@
             <Left>0.18663in</Left>
             <Height>0.53124in</Height>
             <Width>6.59053in</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>

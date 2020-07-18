@@ -98,23 +98,28 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 
             var reportLink = string.Empty;
 
-            foreach(var x in loanApplicationDetail)
+            foreach (var x in loanApplicationDetail)
             {
-                if (x.productClassId == 41 && x.productTypeId != 102)
+                if (x.productClassId == (int)ProductClassEnum.ImportFinanceFacility && x.productTypeId != 102)
                 {
                     reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_ImportFinance.rdlc");
-                } else if (x.productClassId == 33 && x.productTypeId == 102)
+                }
+                else if (x.productClassId == (int)ProductClassEnum.EmergingBusiness && x.productTypeId == 102)
                 {
                     reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
-                }else if (x.productClassId == 33 && x.productTypeId != 102)
+                }else if (x.productClassId == (int)ProductClassEnum.EmergingBusiness && x.productTypeId != 102)
                 {
                     reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
+                }
+                else if (x.productClassId == (int)ProductClassEnum.MHSS)
+                {
+                    reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_MHSS.rdlc");
                 }
                 else
                 {
                     reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
                 }
-               
+
                 //switch (x.productClassId)
                 //{
                 //    case (int)ProductClassEnum.ImportFinanceFacilities:
