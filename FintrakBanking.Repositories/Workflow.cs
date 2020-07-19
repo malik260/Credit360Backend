@@ -257,7 +257,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             SaveFlowLog("Before Final Trail Logging");
             if (this.isFlowTest) return true;
 
-            if (level.ISPOSTAPPROVALREVIEWER == true) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+            if(level != null)
+            {
+                if (level.ISPOSTAPPROVALREVIEWER == true) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+            }
+
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
