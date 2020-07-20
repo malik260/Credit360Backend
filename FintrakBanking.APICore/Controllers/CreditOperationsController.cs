@@ -400,6 +400,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("process-review-loan-data/{searchString}")]
+        public HttpResponseMessage GetProcessLoanReviewData(string searchString)
+        {
+            var data = loanRepo.GetProcessLoanReviewData(token.GetCompanyId, token.GetStaffId, searchString);  
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("approved-non-term-loan-review")]
         public HttpResponseMessage GetApprovedNonTermLoansForReview()
         {
