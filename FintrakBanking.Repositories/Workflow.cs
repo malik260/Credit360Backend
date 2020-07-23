@@ -261,7 +261,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             SaveFlowLog("Before Final Trail Logging");
             if (this.isFlowTest) return true;
 
-            if (currentlevel?.ISPOSTAPPROVALREVIEWER == true) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+            if (currentlevel != null)
+            {
+                if (currentlevel?.ISPOSTAPPROVALREVIEWER == true) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+            }
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -833,7 +836,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.staffId > 0 && this.fromLevelId > 0)
             {
                 valid = general.GetStaffApprovalLevelIds((int)this.staffId, this.operationId).ToList().Contains((int)this.fromLevelId);
-                if (valid == false) new SecureException("Target Staff is NOT in the Source approval level");
+                if (valid == false) new SecureException("Source Staff is NOT in the Source approval level");
             }
         }
 
