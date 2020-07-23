@@ -44,6 +44,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         float? InterestRateConcession { set; }
         float? FeeRateConcession { set; }
         bool? IsFromPc { set; }
+        bool? TerminateOnApproval { set; }
         string Flow_log { set; }
         bool SkipLimitsCheck { set; }
 
