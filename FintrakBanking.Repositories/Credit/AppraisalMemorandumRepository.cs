@@ -3182,19 +3182,33 @@ namespace FintrakBanking.Repositories.Credit
             });
             var list = intervals.ToList();
             //dateTimeAndTimeOfDay = list;
-            for (int i = 0; i < list.Count - 1; i++)
+            if (list.Count == 1)
             {
-                var elapsed = list[i + 1].dateTime.Subtract(list[i].dateTime);
-                if(elapsed.Days <= 1)
+                var startHour = 8;
+                var elapsed = list[0].dateTime;
+                var elapsedHour = elapsed.Hour;
+                if (elapsedHour > startHour)
                 {
-                    list[i + 1].timeOfDay = elapsed;
-                    hours += list[i + 1].timeOfDay.TotalHours;
+                    var elapsedWorkingHour = elapsedHour - startHour;
+                    hours += elapsedWorkingHour;
                 }
-                else
+            }
+            else
+            {
+                for (int i = 0; i < list.Count - 1; i++)
                 {
-                    var elapsedDays = elapsed.Days * 24;
-                    list[i + 1].timeOfDay = elapsed;
-                    hours += (list[i + 1].timeOfDay.TotalHours - elapsedDays);
+                    var elapsed = list[i + 1].dateTime.Subtract(list[i].dateTime);
+                    if (elapsed.Days <= 1)
+                    {
+                        list[i + 1].timeOfDay = elapsed;
+                        hours += list[i + 1].timeOfDay.TotalHours;
+                    }
+                    else
+                    {
+                        var elapsedDays = elapsed.Days * 24;
+                        list[i + 1].timeOfDay = elapsed;
+                        hours += (list[i + 1].timeOfDay.TotalHours - elapsedDays);
+                    }
                 }
             }
             return hours;
