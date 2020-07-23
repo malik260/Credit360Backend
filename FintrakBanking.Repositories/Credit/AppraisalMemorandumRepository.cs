@@ -876,7 +876,7 @@ namespace FintrakBanking.Repositories.Credit
                          b.OPERATIONID == (int)OperationsEnum.AdhocApproval 
                          && b.APPROVALSTATEID != (int)ApprovalState.Ended
                          && b.RESPONSESTAFFID == null
-                         && levelIds.Contains((int)b.TOAPPROVALLEVELID)
+                         && ((levelIds.Contains((int)b.TOAPPROVALLEVELID) && b.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)b.TOAPPROVALLEVELID) && b.LOOPEDSTAFFID == staffId))
                          && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
                          //&& b.LOOPEDSTAFFID == null
                      )
@@ -918,6 +918,7 @@ namespace FintrakBanking.Repositories.Credit
                              isRelatedParty = a.ISRELATEDPARTY,
                              isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                              approvalStatusId = (short)a.APPROVALSTATUSID,
+                             approvalStatusName = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME.ToUpper(),
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              branchName = a.TBL_BRANCH.BRANCHNAME,
                              relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
