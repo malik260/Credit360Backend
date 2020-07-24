@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Customer
         //IEnumerable<CustomerInformationStagingViewModels> GetIntegratedCustomerInformation(string searchTerm);
         // CustomerStagingRepository(FinTrakBankingStagingContext _context, FinTrakBankingContext _mainContext);
         // Task<List<CustomerViewModels>> GetIntegratedCustomerInformation(string searchTerm);
-        List<CustomerViewModels> GetIntegratedCustomerInformation(string searchTerm);
+        List<CustomerViewModels> GetIntegratedCustomerInformation(string searchTerm, bool isProspectConversion);
         //Task<CustomerIntegrationViewModels> GetIntegratedCustomerInformation(string searchTerm);
         //Task<List<CustomerIntegrationViewModels>> GetIntegratedCustomerInformation(string searchTerm);
 
