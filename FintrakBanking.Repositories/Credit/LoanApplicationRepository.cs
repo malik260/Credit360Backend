@@ -1138,8 +1138,7 @@ namespace FintrakBanking.Repositories.Credit
                              month = a.MONTH,
                              year = a.YEAR,
                              productAccountName = context.TBL_CASA.Where(o => o.CUSTOMERID == customerId).Select(o => o.PRODUCTACCOUNTNAME).FirstOrDefault(),
-
-                         }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
+                         }).GroupBy(O => new { O.accountNumber, O.credit_Turnover, O.debit_Turnover, O.min_Credit_Balance, O.min_Debit_Balance }).Select(O => O.FirstOrDefault()).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
 
 
             var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
