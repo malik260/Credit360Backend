@@ -177,6 +177,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string valuerName { get; set; }
         public string valuerAccountNumber { get; set; }
+        public DateTime nextValuationDate { get; set; }
 
         //public string thirdPartyName { get; set; }
 
