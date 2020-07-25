@@ -78,6 +78,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private AlertPlaceholders placeholders = null;
         private LevelBusinessRule levelBusinessRule = null;
         private bool? isFromPc = false;
+        private bool? terminateOnApproval = false;
         private string flow_log = String.Empty;
         //private WorkflowResponse response = null;
 
@@ -131,14 +132,16 @@ namespace FintrakBanking.Repositories.WorkFlow
         public WorkflowResponse Response { get { return response; } set { response = value; } }
         public bool isCrossOperationProcess { get; private set; }
         public bool? IsFromPc { set { isFromPc = value; } }
+        public bool? TerminateOnApproval { set { terminateOnApproval = value; } }
+        
         public bool SkipLimitsCheck { set { skipLimitsCheck = value; } }
         public string Flow_log { set { flow_log = value; } }
 
 
 
-
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
+        private WorkflowSetup currentlevel;
         private WorkflowSetup next;
         private List<TBL_APPROVAL_TRAIL> trailLog; 
         private List<TBL_APPROVAL_TRAIL> referredLog;
@@ -148,13 +151,16 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int slaInterval = 780; // 1month
         List<ReportingLine> line = new List<ReportingLine>();
         private List<int> creditOperationIds;
+        //private WorkflowSetup currentLevel;
+
         public bool LogActivity()
         {
             ValidateCall();
             InitializeOperation();
             if (Authorization() == false) { return false; }
-
             creditOperationIds = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(o => o.OPERATIONID).ToList();
+            int[] drawdownIds = { (int)OperationsEnum.CorporateDrawdownRequest, (int)OperationsEnum.IndividualDrawdownRequest };
+            creditOperationIds.AddRange(drawdownIds.ToList());
             this.trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
                                 && x.OPERATIONID == this.operationId
@@ -257,11 +263,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             SaveFlowLog("Before Final Trail Logging");
             if (this.isFlowTest) return true;
 
-            if(level != null)
+            if (currentlevel != null)
             {
-                if (level.ISPOSTAPPROVALREVIEWER == true) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+                if (currentlevel?.ISPOSTAPPROVALREVIEWER == true) { this.statusId = (int)ApprovalStatusEnum.Closed; }
             }
-
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -293,7 +298,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var grouplevels = context.TBL_APPROVAL_LEVEL.Where(x => x.GROUPID == currentLevel.GROUPID);
                 var reviewers = grouplevels.Where(x => x.ISPOSTAPPROVALREVIEWER == true);
                 
-                if (reviewers.Any() && level.ISPOSTAPPROVALREVIEWER == false && lastRequest.APPROVALSTATUSID !=10) { StartPostApprovalLevelsReview(reviewers.FirstOrDefault().APPROVALLEVELID); }
+
+                if (reviewers.Any() && currentlevel.ISPOSTAPPROVALREVIEWER == false && lastRequest.APPROVALSTATUSID !=10 && terminateOnApproval == false)
+                {
+                    this.nextLevelId = reviewers.FirstOrDefault().APPROVALLEVELID;
+                    StartPostApprovalLevelsReview(reviewers.FirstOrDefault().APPROVALLEVELID);
+                }
             }
            
            
@@ -890,7 +900,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     throw new SecureException("This Approval Level is not in the workflow setup!");
                 }
 
-                if (level.ISPOSTAPPROVALREVIEWER == true && lastRequest.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred) this.statusId = (int)ApprovalStatusEnum.Approved;
+                if (level?.ISPOSTAPPROVALREVIEWER == true && lastRequest.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred) this.statusId = (int)ApprovalStatusEnum.Approved;
 
                 var staff = level.Staff.Where(x => x.STAFFID == this.staffId); // check if staff is in approval_level_staff
 
@@ -918,6 +928,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
 
                 this.neededNumberOfApproval = level.NumberOfApprovals;
+                this.currentlevel = level;
             }
 
             //if (this.fromLevelId == null) // && externalInitialization == false
@@ -935,7 +946,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.nextLevelId == null && fromLevelId != null)
             {
-                var currentLevel = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
+                var currentLevel = this.currentlevel = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
                 if (currentLevel == null) throw new SecureException("This Approval Level is not in the workflow setup!");
                 next = approvalLevels.FirstOrDefault(x =>
                     (x.GroupPosition > currentLevel.GroupPosition) // next group
@@ -1230,7 +1241,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         private bool WithinMaximumLimit(TBL_APPROVAL_LEVEL level)
-        {
+        {   
             if (amount == 0) { return true; }
             if (investmentGrade == true) { return true; }
             if (level.MAXIMUMAMOUNT >= amount) { return true; }

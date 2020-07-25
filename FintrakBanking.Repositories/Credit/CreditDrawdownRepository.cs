@@ -205,6 +205,7 @@ namespace FintrakBanking.Repositories.Credit
                 var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.targetId);
                 var applicationDet = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
                 var application = context.TBL_LOAN_APPLICATION.Find(applicationDet.LOANAPPLICATIONID);
+                bool isContingent = false;
 
                 // checking of company limit at availment
                 var exposure = GetCurrentCompanyExposure();
@@ -214,7 +215,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("Company Limit Exceeded!");
                 }
-
+                
                 workflow.StaffId = entity.createdBy;
                 workflow.CompanyId = entity.companyId;
                 workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
@@ -226,13 +227,12 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Amount = request.AMOUNT_REQUESTED;
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = entity.isFromPc;
-                //if(request.AMOUNT_REQUESTED > 100000000)
-                //workflow.FinalLevel = application.TRANCHEAPPROVAL_LEVELID;
 
-                //if (GetCurrentApprovalLevelId(entity.companyId, entity.operationId, entity.targetId) == application.TRANCHEAPPROVAL_LEVELID)
-                //{
-                //    workflow.NextLevelId = GetFirstAvailmentLevelId(entity.operationId);
-                //}
+                if (context.TBL_PRODUCT.Where(x=>x.PRODUCTID == request.PRODUCTID).FirstOrDefault()?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    workflow.TerminateOnApproval = true;
+                    isContingent = true;
+                }
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
@@ -260,7 +260,8 @@ namespace FintrakBanking.Repositories.Credit
                     return workflow.Response;
                     //return 3;
                 }
-                else if (workflow.NewState == (int)ApprovalState.Ended && request.CRMSVALIDATED == true)
+                else if ((workflow.NewState == (int)ApprovalState.Ended && request.CRMSVALIDATED == true) 
+                        || (workflow.NewState == (int)ApprovalState.Ended && isContingent == true))
                 {
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                     var operationId = 0;
@@ -358,7 +359,8 @@ namespace FintrakBanking.Repositories.Credit
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                             && req.ISUSED == false && atrail.RESPONSESTAFFID == null
                             && ((atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved)
-                                            && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved))
+                                            && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
+                                            && (atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing))
                             && (req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                             && ( (levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null) 
                               || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && staffs.Contains((int)atrail.LOOPEDSTAFFID)))

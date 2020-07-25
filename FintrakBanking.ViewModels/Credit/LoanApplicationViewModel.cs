@@ -181,6 +181,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvedTenor { get; set; }
         public List<LoanApplicationDetailViewModel> applicationDetails { get; set; }
 
+        public string approvalStatusName { get; set; }
+
         public string tenorString
         {
             get
