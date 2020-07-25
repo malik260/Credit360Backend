@@ -159,6 +159,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             InitializeOperation();
             if (Authorization() == false) { return false; }
             creditOperationIds = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(o => o.OPERATIONID).ToList();
+            int[] drawdownIds = { (int)OperationsEnum.CorporateDrawdownRequest, (int)OperationsEnum.IndividualDrawdownRequest };
+            creditOperationIds.AddRange(drawdownIds.ToList());
             this.trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
                                 && x.OPERATIONID == this.operationId

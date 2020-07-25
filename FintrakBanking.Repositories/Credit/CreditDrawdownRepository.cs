@@ -1321,7 +1321,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (operationId == (short)OperationsEnum.ContigentLoanBooking)
                 {
-                    var summedPrincipal = approvedAmount - (from l in context.TBL_LOAN_CONTINGENT
+                    var summedPrincipal = (from l in context.TBL_LOAN_CONTINGENT
                                                             where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                                                             && l.LOANSTATUSID == (short)LoanStatusEnum.Active
                                                             select (decimal?)l.CONTINGENTAMOUNT).Sum() ?? 0;
@@ -1331,7 +1331,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (operationId == (short)OperationsEnum.RevolvingLoanBooking)
                 {
-                    var summedPrincipal = approvedAmount - (from l in context.TBL_LOAN_REVOLVING
+                    var summedPrincipal = (from l in context.TBL_LOAN_REVOLVING
                                                             where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                                                             && l.LOANSTATUSID == (short)LoanStatusEnum.Active
                                                             select (decimal?)l.OVERDRAFTLIMIT).Sum() ?? 0;
