@@ -443,6 +443,11 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.IsFromPc = model.isFromPc;
                 workflow.IsFlowTest = model.isFlowTest;
                 workflow.SkipLimitsCheck = appl.ISRELATEDPARTY;
+                var details = appl.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.DELETED == false
+                                             && d.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased
+                                             && d.TBL_LOAN_APPLICATION.FLOWCHANGEID != (int)FlowChangeEnum.CASHCOLLATERIZED
+                                             && d.TBL_LOAN_APPLICATION.ISADHOCAPPLICATION == false
+                                             && d.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual).ToList();
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
                     Amount = appl.TOTALEXPOSUREAMOUNT, // totalApplicationAmount,
@@ -454,7 +459,8 @@ namespace FintrakBanking.Repositories.Credit
                     InterventionFunds = appl.ISINTERVENTIONFUNDS,
                     OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
-                    esrm = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual),
+                    //esrm = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual),
+                    esrm = details.Any(),
                     isContingentFacility = appl.TBL_LOAN_APPLICATION_DETAIL.Any(d => d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                 };
 
@@ -876,7 +882,7 @@ namespace FintrakBanking.Repositories.Credit
                          b.OPERATIONID == (int)OperationsEnum.AdhocApproval 
                          && b.APPROVALSTATEID != (int)ApprovalState.Ended
                          && b.RESPONSESTAFFID == null
-                         && levelIds.Contains((int)b.TOAPPROVALLEVELID)
+                         && ((levelIds.Contains((int)b.TOAPPROVALLEVELID) && b.LOOPEDSTAFFID == null) || (!levelIds.Contains((int)b.TOAPPROVALLEVELID) && b.LOOPEDSTAFFID == staffId)) //|| (!levelIds.Contains((int)b.TOAPPROVALLEVELID) && b.REQUESTSTAFFID == b.TOSTAFFID))
                          && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
                          //&& b.LOOPEDSTAFFID == null
                      )
@@ -918,6 +924,7 @@ namespace FintrakBanking.Repositories.Credit
                              isRelatedParty = a.ISRELATEDPARTY,
                              isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                              approvalStatusId = (short)a.APPROVALSTATUSID,
+                             approvalStatusName = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME.ToUpper(),
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              branchName = a.TBL_BRANCH.BRANCHNAME,
                              relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
@@ -1005,7 +1012,7 @@ namespace FintrakBanking.Repositories.Credit
             //var test4 = model.receiverLevelId;
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, null, true);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = nextLevel;
+            workflow.NextLevelId = null;
             //workflow.ToStaffId = nextStaff;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
@@ -3133,7 +3140,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<DateTime> GetDateRange(DateTime startDate, DateTime endDate)
         {
-            if (endDate < startDate)
+            if (endDate.Date < startDate.Date)
             {
                 throw new ArgumentException("endDate must be greater than or equal to startDate");
             }
@@ -3176,19 +3183,33 @@ namespace FintrakBanking.Repositories.Credit
             });
             var list = intervals.ToList();
             //dateTimeAndTimeOfDay = list;
-            for (int i = 0; i < list.Count - 1; i++)
+            if (list.Count == 1)
             {
-                var elapsed = list[i + 1].dateTime.Subtract(list[i].dateTime);
-                if(elapsed.Days <= 1)
+                var startHour = 8;
+                var elapsed = list[0].dateTime;
+                var elapsedHour = elapsed.Hour;
+                if (elapsedHour > startHour)
                 {
-                    list[i + 1].timeOfDay = elapsed;
-                    hours += list[i + 1].timeOfDay.TotalHours;
+                    var elapsedWorkingHour = elapsedHour - startHour;
+                    hours += elapsedWorkingHour;
                 }
-                else
+            }
+            else
+            {
+                for (int i = 0; i < list.Count - 1; i++)
                 {
-                    var elapsedDays = elapsed.Days * 24;
-                    list[i + 1].timeOfDay = elapsed;
-                    hours += (list[i + 1].timeOfDay.TotalHours - elapsedDays);
+                    var elapsed = list[i + 1].dateTime.Subtract(list[i].dateTime);
+                    if (elapsed.Days <= 1)
+                    {
+                        list[i + 1].timeOfDay = elapsed;
+                        hours += list[i + 1].timeOfDay.TotalHours;
+                    }
+                    else
+                    {
+                        var elapsedDays = elapsed.Days * 24;
+                        list[i + 1].timeOfDay = elapsed;
+                        hours += (list[i + 1].timeOfDay.TotalHours - elapsedDays);
+                    }
                 }
             }
             return hours;

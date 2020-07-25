@@ -2693,6 +2693,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.DeferredExecution = true;
                 workflow.ExternalInitialization = false;
                 workflow.Amount = request.AMOUNT_REQUESTED;
+
                 //if(request.AMOUNT_REQUESTED > 100000000)
                 //workflow.FinalLevel = application.TRANCHEAPPROVAL_LEVELID;
 
@@ -2713,8 +2714,6 @@ namespace FintrakBanking.Repositories.Credit
                     OrrBasedApproval = application.ISORRBASEDAPPROVAL,
                     DomiciliationNotInPlace = application.DOMICILIATIONNOTINPLACE,
                 };
-
-                workflow.LogActivity();
 
                 context.SaveChanges();
 
@@ -9082,29 +9081,38 @@ namespace FintrakBanking.Repositories.Credit
             return data; //.Where(x => x.loanReferenceNumber == null);//.Distinct().ToList();
         }
 
-
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForCrmsCode(int companyId, int staffId)
         {
             var staff = context.TBL_STAFF.Find(staffId);
             var staffRec = context.TBL_PROFILE_USER.Where(a => a.STAFFID == staffId).FirstOrDefault();
 
             var activities = admin.GetUserActivitiesByUser(staffRec.USERID);
-            // var activities = admin.GetUserActivitiesByUser(staffId);
-            // var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
-
 
             List<int> operationIds = new List<int>();
 
-            operationIds.Add((int)OperationsEnum.TermLoanBooking);
-            operationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
-            operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
-            operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
-            //operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
+            operationIds.Add((int)OperationsEnum.CorporateDrawdownRequest);
+            operationIds.Add((int)OperationsEnum.IndividualDrawdownRequest);
+            operationIds.Add((int)OperationsEnum.CreditCardDrawdownRequest);
+            operationIds.Add((int)OperationsEnum.RevolvingTranchDisbursement);
+            var staffs = generalSetup.GetStaffRlieved(staffId);
+
+            List<int> levelIds = new List<int>();
+            foreach (var i in operationIds) { levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList()); }
+
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IndividualDrawdownRequest).ToList());
+            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditCardDrawdownRequest).ToList());
+
+            //TEMPORARY CODE LINES TO HOLD PREVIOUS TRANSACTION BEFORE DELETE
+            List<int> clpdOperationIds = new List<int>();
+            clpdOperationIds.Add((int)OperationsEnum.TermLoanBooking);
+            clpdOperationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
+            clpdOperationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
+            clpdOperationIds.Add((int)OperationsEnum.CommercialLoanBooking);
+            //END OF TEMPORARY CODE LINES TO HOLD PREVIOUS TRANSACTION BEFORE DELETE
 
             var company = context.TBL_COMPANY.Find(companyId);
-            //IEnumerable<CamProcessedLoanViewModel> allLoans = null;
             IEnumerable<CamProcessedLoanViewModel> bookingRequestLoans = null;
-            //IEnumerable<CamProcessedLoanViewModel> referredBackLoans = null;
 
             bookingRequestLoans = (from s in context.TBL_LOAN_BOOKING_REQUEST
                                    join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
@@ -9114,11 +9122,22 @@ namespace FintrakBanking.Repositories.Credit
                                    join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                    where m.COMPANYID == companyId
-                                   && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
-                                   && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                                   //&& ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
-                                   && operationIds.Contains(atrail.OPERATIONID)
+                                   //************************
+                                   && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                                            && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
+                                            && s.ISUSED == false 
+                                            && s.DELETED == false
+                                   && clpdOperationIds.Contains(atrail.OPERATIONID)
                                    && atrail.RESPONSESTAFFID == null && (s.CRMSVALIDATED == false || s.CRMSVALIDATED == null)
+                                   //************************
+
+                                   || ( (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
+                                         || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing))
+                                       && s.ISUSED == false
+                                       && s.DELETED == false
+                                       && ((levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
+                                       && operationIds.Contains(atrail.OPERATIONID)))
+                                   && atrail.RESPONSESTAFFID == null //&& (s.CRMSVALIDATED == false || s.CRMSVALIDATED == null)
                                    orderby s.LOAN_BOOKING_REQUESTID descending
                                    select new CamProcessedLoanViewModel()
                                    {
@@ -15894,47 +15913,47 @@ namespace FintrakBanking.Repositories.Credit
                     });
         }
 
-        public bool LoopInStaff(ApprovalViewModel model)
-        {
-            int staffId = model.staffId;
+        //public bool LoopInStaff(ApprovalViewModel model)
+        //{
+        //    int staffId = model.staffId;
 
-            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+        //    var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
-            workflow.StaffId = model.createdBy;
-            workflow.OperationId = model.operationId;
-            workflow.TargetId = model.targetId;
-            workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = null;
-            workflow.ProductId = null;
-            //workflow.NextLevelId = model.approvalLevelId;
-            //workflow.ToStaffId = staffId; 
-            workflow.LoopedRoleId = staff.STAFFROLEID;
-            workflow.LoopedStaffId = model.staffId;
-            workflow.StatusId = (int)ApprovalStatusEnum.LoopedIn;
-            workflow.Comment = model.comment;
-            workflow.DeferredExecution = true;
+        //    workflow.StaffId = model.createdBy;
+        //    workflow.OperationId = model.operationId;
+        //    workflow.TargetId = model.targetId;
+        //    workflow.CompanyId = model.companyId;
+        //    workflow.ProductClassId = null;
+        //    workflow.ProductId = null;
+        //    //workflow.NextLevelId = model.approvalLevelId;
+        //    //workflow.ToStaffId = staffId; 
+        //    workflow.LoopedRoleId = staff.STAFFROLEID;
+        //    workflow.LoopedStaffId = model.staffId;
+        //    workflow.StatusId = (int)ApprovalStatusEnum.LoopedIn;
+        //    workflow.Comment = model.comment;
+        //    workflow.DeferredExecution = true;
 
-            workflow.LogActivity();
+        //    workflow.LogActivity();
 
-            //Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.BranchId,
-                DETAIL = $"facility booking with booking account number  refered back to modifier.",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName()
-            };
-            context.TBL_AUDIT.Add(audit);
-            //end of Audit section -------------------------------
+        //    //Audit Section ---------------------------
+        //    var audit = new TBL_AUDIT
+        //    {
+        //        AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
+        //        STAFFID = model.createdBy,
+        //        BRANCHID = (short)model.BranchId,
+        //        DETAIL = $"facility booking with booking account number  refered back to modifier.",
+        //        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+        //        URL = model.applicationUrl,
+        //        APPLICATIONDATE = generalSetup.GetApplicationDate(),
+        //        SYSTEMDATETIME = DateTime.Now,
+        //        DEVICENAME = CommonHelpers.GetDeviceName(),
+        //        OSNAME = CommonHelpers.FriendlyName()
+        //    };
+        //    context.TBL_AUDIT.Add(audit);
+        //    //end of Audit section -------------------------------
 
-            return context.SaveChanges() > 0;
-        }
+        //    return context.SaveChanges() > 0;
+        //}
 
 
         public WorkflowResponse ReferBackBooking(ApprovalViewModel model)

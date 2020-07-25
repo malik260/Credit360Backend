@@ -30,14 +30,15 @@ namespace FintrakBanking.Repositories.CRMS
         private IAuditTrailRepository auditTrail;
         private ILoanScheduleRepository loanSchedule;
         private ICRMSCodeBookRepository codeBook;
+        private ICreditDrawdownRepository drawdown;
         private IFinacleIntegrationRepository finacleIntegration;
         private IntegrationWithFlexcube integration;
 
 
         public CRMSRegulatories(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
-                                        IAuditTrailRepository _audit,
-                                        ICRMSCodeBookRepository _codeBook, IFinacleIntegrationRepository _finacleIntegration,
+                                        IAuditTrailRepository _audit, ICreditDrawdownRepository _drawdown,
+        ICRMSCodeBookRepository _codeBook, IFinacleIntegrationRepository _finacleIntegration,
                                         IntegrationWithFlexcube _integration)
         {
             this.context = _context;
@@ -46,6 +47,7 @@ namespace FintrakBanking.Repositories.CRMS
             this.codeBook = _codeBook;
             this.finacleIntegration = _finacleIntegration;
             integration = _integration;
+            drawdown = _drawdown;
         }
 
         public string AddCRMSCode(CRMSViewModel param)
@@ -65,6 +67,25 @@ namespace FintrakBanking.Repositories.CRMS
             loan.CRMSDATE = DateTime.Now;
             loan.CRMSVALIDATED = true;
 
+            var finishingJob = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
+                && x.TARGETID == loan.LOAN_BOOKING_REQUESTID && x.OPERATIONID == loan.OPERATIONID);
+
+            if (finishingJob.Any())
+            {
+                var approvalModel = new LoanAvailmentApprovalViewModel
+                {
+                    createdBy = param.createdBy,
+                    companyId = param.companyId,
+                    targetId = loan.LOAN_BOOKING_REQUESTID,
+                    comment = "Captured CRMS code",
+                    approvalStatusId = (short)ApprovalStatusEnum.Approved,
+                    // amount = entity.principalAmount,
+                    operationId = (short)loan.OPERATIONID,
+                };
+
+                drawdown.GoForBookingRequestApproval(approvalModel, loan.LOAN_BOOKING_REQUESTID);
+            }
+            
 
             //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == param.loanId).Select(x => x).FirstOrDefault();
             //if (loan == null)

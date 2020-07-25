@@ -19095,14 +19095,14 @@ namespace FintrakBanking.Repositories.Credit
                                 }).ToList(),
                             }).ToList();
 
-            foreach (var can in dataContingentLoan)
-            {
-                var test = can.lmsLoanReferenceNumber;
-            }
-            foreach (var can in dataRevolvingLoan)
-            {
-                var test = can.lmsLoanReferenceNumber;
-            }
+            //foreach (var can in dataContingentLoan)
+            //{
+            //    var test = can.lmsLoanReferenceNumber;
+            //}
+            //foreach (var can in dataRevolvingLoan)
+            //{
+            //    var test = can.lmsLoanReferenceNumber;
+            //}
             var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var thirdPartyLoanData = thirdpartyLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
