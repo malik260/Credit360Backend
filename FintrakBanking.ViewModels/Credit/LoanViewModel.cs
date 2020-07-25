@@ -126,7 +126,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanReviewApplicationId { get; set; }
 
         public int loanApplicationDetailId { get; set; }
-
+        public double approvedInterestRate { get; set; }
+        
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string relatedloanReferenceNumber { get; set; }
@@ -175,6 +176,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string reviewLoanDetaile { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
+        public short? loanTypeId2 { get; set; }
         public decimal overDraft { get; set; }
         public string archiveCode { get; set; }
         public int contigentAmount {get; set;}
@@ -253,6 +255,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productName { get; set; }
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
+        public string customerGroupName { get; set; }
         public string principalFrequencyTypeName { get; set; }
         public string interestFrequencyTypeName { get; set; }
         public string comment { get; set; }
@@ -370,6 +373,19 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public int tenorLms { get { return (this.approvedTenor); } }
+        public string approvedLoanTenorString
+        {
+            get
+            {
+                var units = tenorLms == 1 ? " day" : " days";
+                if (tenorLms < 15) return tenorLms.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(tenorLms / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+
         public int performanceTypeId
         {
             get
@@ -418,6 +434,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string pricipalFrequencyTypeName { get; set; }
         public string responsiblePerson { get; set; }
         public short productClassProcessId { get; set; }
+        public short? productClassProcessId2 { get; set; }
         public short loanApplicationTypeId { get; set; }
         public int appraisalApplicationId { get; set; }
         public int? appraisalCustomerId { get; set; }
@@ -428,6 +445,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? synOperationId { get; set; }
         public int creditAppraisalOperationId { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
+        public int? tenorModeId { get; set; }
         public int applicationDetailId { get; set; }
         public string appraisalOperationName { get; set; }
 

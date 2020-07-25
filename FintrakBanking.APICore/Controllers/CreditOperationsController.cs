@@ -398,6 +398,22 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("modify-lms-facility/{loanApplicationDetailId}")]
+        public HttpResponseMessage ModifyLMSFacility([FromBody] FacilityModificationViewModel model, int loanApplicationDetailId)
+        {
+            var response = loanRepo.ModifyLMSFacility(model, loanApplicationDetailId);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Facility Has Been Modified Successfully" });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Facility Modification was not Successful" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("process-review-loan-data/{searchString}")]
@@ -414,6 +430,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        
         [HttpGet]
         [ClaimsAuthorization]
         [Route("approved-non-term-loan-review")]
