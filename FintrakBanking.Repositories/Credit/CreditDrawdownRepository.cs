@@ -205,7 +205,7 @@ namespace FintrakBanking.Repositories.Credit
                 var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.targetId);
                 var applicationDet = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
                 var application = context.TBL_LOAN_APPLICATION.Find(applicationDet.LOANAPPLICATIONID);
-                bool isContingent = false;
+                //bool isContingent = false;
 
                 // checking of company limit at availment
                 var exposure = GetCurrentCompanyExposure();
@@ -228,11 +228,11 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = entity.isFromPc;
 
-                if (context.TBL_PRODUCT.Where(x=>x.PRODUCTID == request.PRODUCTID).FirstOrDefault()?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
-                {
-                    workflow.TerminateOnApproval = true;
-                    isContingent = true;
-                }
+                //if (context.TBL_PRODUCT.Where(x=>x.PRODUCTID == request.PRODUCTID).FirstOrDefault()?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                //{
+                //    workflow.TerminateOnApproval = true;
+                //    isContingent = true;
+                //}
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
@@ -260,8 +260,9 @@ namespace FintrakBanking.Repositories.Credit
                     return workflow.Response;
                     //return 3;
                 }
-                else if ((workflow.NewState == (int)ApprovalState.Ended && request.CRMSVALIDATED == true) 
-                        || (workflow.NewState == (int)ApprovalState.Ended && isContingent == true))
+                else if (workflow.NewState == (int)ApprovalState.Ended)
+                    //&& request.CRMSVALIDATED == true) 
+                        //|| (workflow.NewState == (int)ApprovalState.Ended && isContingent == true))
                 {
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                     var operationId = 0;
@@ -303,10 +304,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.SaveChanges();
                     trans.Commit();
-                    if (operationId != (short)OperationsEnum.ContigentLoanBooking)
-                    {
-                        workflow.Response.responseMessage += " but CRMS Code Capture Might be needed.";
-                    }
+                    //if (operationId != (short)OperationsEnum.ContigentLoanBooking)
+                    //{
+                    //    workflow.Response.responseMessage += " but CRMS Code Capture Might be needed.";
+                    //}
                     return workflow.Response;
                     //return 0;
                 }
