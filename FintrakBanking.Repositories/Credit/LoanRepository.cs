@@ -9123,19 +9123,20 @@ namespace FintrakBanking.Repositories.Credit
                                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                    where m.COMPANYID == companyId
                                    //************************
-                                   && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                                   && (((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                             && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
                                             && s.ISUSED == false 
                                             && s.DELETED == false
                                    && clpdOperationIds.Contains(atrail.OPERATIONID)
-                                   && atrail.RESPONSESTAFFID == null && (s.CRMSVALIDATED == false || s.CRMSVALIDATED == null)
+                                   && atrail.RESPONSESTAFFID == null && (s.CRMSVALIDATED == false || s.CRMSVALIDATED == null))
                                    //************************
 
-                                   || ( (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
-                                         || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing))
+                                   || ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
+                                         //|| (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing))
                                        && s.ISUSED == false
                                        && s.DELETED == false
-                                       && ((levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
+                                       && ((levelIds.Contains((int)atrail.TOAPPROVALLEVELID)))
+                                       && (staffs.Contains(atrail.TOSTAFFID ?? 0) || atrail.TOSTAFFID == null)
                                        && operationIds.Contains(atrail.OPERATIONID)))
                                    && atrail.RESPONSESTAFFID == null //&& (s.CRMSVALIDATED == false || s.CRMSVALIDATED == null)
                                    orderby s.LOAN_BOOKING_REQUESTID descending
@@ -9161,7 +9162,7 @@ namespace FintrakBanking.Repositories.Credit
                                        customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                                        customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
                                        customerType = cust.TBL_CUSTOMER_TYPE.NAME,
-
+                                       systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                        applicationTenor = m.APPLICATIONTENOR,
                                        effectiveDate = (DateTime)d.EFFECTIVEDATE,
                                        expiryDate = (DateTime)d.EXPIRYDATE,
