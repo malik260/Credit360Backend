@@ -477,7 +477,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("customer-transactions-filter/{customerId}/{applicationId}/{froma}/{to}/{fYear}/{tYear}")]
         public HttpResponseMessage GetCustomerTransactionsByFilter(int customerId, int applicationId, int froma, int to, int fYear, int tYear)
         {
-
             try
             {
                 var status = repo.GetCustomerTransactionsByFilterLogic(customerId, applicationId, froma, to, fYear, tYear, false);

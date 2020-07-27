@@ -301,15 +301,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("customer-staging/")]
-        public HttpResponseMessage GetStagedCustomer(string searchTerm)
+        [Route("customer-staging/isProspectConversion/{isProspectConversion}/")]
+        public HttpResponseMessage GetStagedCustomer(string searchTerm, [FromUri] bool isProspectConversion)
         {
-            //var data2 = new CustomerViewModels();
-            //return Request.CreateResponse(HttpStatusCode.OK,
-            //      new { success = true, result = data2 });
             try
             {
-                var data = stagingRepo.GetIntegratedCustomerInformation(searchTerm);
+                var data = stagingRepo.GetIntegratedCustomerInformation(searchTerm, isProspectConversion);
                 if (data != null && data.Count == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

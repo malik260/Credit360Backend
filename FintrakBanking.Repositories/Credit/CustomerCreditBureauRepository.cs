@@ -590,7 +590,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else if (jsonNoResult["NoResult"] != null)
                 {
-                    string stringNoResult = "XDS API Response - " + feedBackString; // noResult.ToString();
+                    string stringNoResult = "XDS API Response - No Result Found"; //+ feedBackString; // noResult.ToString();
                     resultData.errorMessage = stringNoResult;
                     resultData.errorOccured = true;
                     resultData.status = 2;
