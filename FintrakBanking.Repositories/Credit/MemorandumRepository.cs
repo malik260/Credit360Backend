@@ -573,12 +573,12 @@ namespace FintrakBanking.Repositories.Credit
 
                 //CASH COLLATERIZED
                 this.cashCollaterizedCustomerInformationData = cashCollaterizedCustomerInformationHtml();
-                this.cashCollaterizedCustomerFacilityData = IdfCustomerFacilityHtml();
-                this.cashCollaterizedCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
-                this.cashCollaterizedCurrentRequestData = IdfCurrentRequestHtml();
-                this.cashCollaterizedBackgroungInformationData = IdfBackgroungInformationHtml();
-                this.cashCollaterizedChecklistEligibilityData = IdfChecklistEligibilityHtml();
-                this.cashCollaterizedDocumentationChecklistData = IdfDocumentationChecklistHtml();
+                this.cashCollaterizedCustomerFacilityData = cashCollateralizedCustomerFacilityHtml();
+                this.cashCollaterizedCustomerAccountActivityData = cashCollateralizedCustomerAccountActivityHtml();
+                this.cashCollaterizedCurrentRequestData = cashCollateralizedCurrentRequestHtml();
+                this.cashCollaterizedBackgroungInformationData = cashCollateralizedBackgroungInformationHtml();
+                this.cashCollaterizedChecklistEligibilityData = cashCollateralizedChecklistEligibilityHtml();
+                this.cashCollaterizedDocumentationChecklistData = cashCollateralizedDocumentationChecklistHtml();
 
                 //TOD 
                 this.todHeaderData = TodHeaderHtml();
@@ -700,13 +700,13 @@ namespace FintrakBanking.Repositories.Credit
                 this.idfDocumentationChecklistData = IdfDocumentationChecklistHtml();
 
                 //CASH COLLATERIZED
-                this.cashCollaterizedCustomerInformationData = IdfCustomerInformationHtml();
-                this.cashCollaterizedCustomerFacilityData = IdfCustomerFacilityHtml();
-                this.cashCollaterizedCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
-                this.cashCollaterizedCurrentRequestData = IdfCurrentRequestHtml();
-                this.cashCollaterizedBackgroungInformationData = IdfBackgroungInformationHtml();
-                this.cashCollaterizedChecklistEligibilityData = IdfChecklistEligibilityHtml();
-                this.cashCollaterizedDocumentationChecklistData = IdfDocumentationChecklistHtml();
+                this.cashCollaterizedCustomerInformationData = cashCollaterizedCustomerInformationHtml();
+                this.cashCollaterizedCustomerFacilityData = cashCollateralizedCustomerFacilityHtml();
+                this.cashCollaterizedCustomerAccountActivityData = cashCollateralizedCustomerAccountActivityHtml();
+                this.cashCollaterizedCurrentRequestData = cashCollateralizedCurrentRequestHtml();
+                this.cashCollaterizedBackgroungInformationData = cashCollateralizedBackgroungInformationHtml();
+                this.cashCollaterizedChecklistEligibilityData = cashCollateralizedChecklistEligibilityHtml();
+                this.cashCollaterizedDocumentationChecklistData = cashCollateralizedDocumentationChecklistHtml();
 
                 //TOD 
                 this.todHeaderData = TodHeaderHtml();
@@ -910,9 +910,9 @@ namespace FintrakBanking.Repositories.Credit
             this.isThirdPartyFacility = true;
             if (lmsCamOperationIds.Contains(operationId)) // LMS
             {
+                var lmsrApplication = context.TBL_LMSR_APPLICATION.Find(targetId);
                 if (lmsrApplication == null)
                 {
-                    this.lmsrApplication = context.TBL_LMSR_APPLICATION.Find(targetId);
                     this.customerIds = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     //this.customerExposure = CustomerExposureMarkup();
                 }
@@ -996,13 +996,13 @@ namespace FintrakBanking.Repositories.Credit
                 this.idfDocumentationChecklistData = IdfDocumentationChecklistHtml();
 
                 //CASH COLLATERIZED
-                this.cashCollaterizedCustomerInformationData = IdfCustomerInformationHtml();
-                this.cashCollaterizedCustomerFacilityData = IdfCustomerFacilityHtml();
-                this.cashCollaterizedCustomerAccountActivityData = IdfCustomerAccountActivityHtml();
-                this.cashCollaterizedCurrentRequestData = IdfCurrentRequestHtml();
-                this.cashCollaterizedBackgroungInformationData = IdfBackgroungInformationHtml();
-                this.cashCollaterizedChecklistEligibilityData = IdfChecklistEligibilityHtml();
-                this.cashCollaterizedDocumentationChecklistData = IdfDocumentationChecklistHtml();
+                this.cashCollaterizedCustomerInformationData = cashCollaterizedCustomerInformationHtml();
+                this.cashCollaterizedCustomerFacilityData = cashCollateralizedCustomerFacilityHtml();
+                this.cashCollaterizedCustomerAccountActivityData = cashCollateralizedCustomerAccountActivityHtml();
+                this.cashCollaterizedCurrentRequestData = cashCollateralizedCurrentRequestHtml();
+                this.cashCollaterizedBackgroungInformationData = cashCollateralizedBackgroungInformationHtml();
+                this.cashCollaterizedChecklistEligibilityData = cashCollateralizedChecklistEligibilityHtml();
+                this.cashCollaterizedDocumentationChecklistData = cashCollateralizedDocumentationChecklistHtml();
 
                 //TOD 
                 this.todHeaderData = TodHeaderHtml();
@@ -5861,7 +5861,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(todCustomerInformationHolder, todCustomerInformationData);
             content = content.Replace(todCustomerAccountActivityHolder, todCustomerAccountActivityData);
             content = content.Replace(todCustomerFacilityHolder, todCustomerFacilityData); 
-             content = content.Replace(todCurrentRequestHolder, todCurrentRequestData);
+            content = content.Replace(todCurrentRequestHolder, todCurrentRequestData);
             content = content.Replace(todBackgroungInformationHolder, todBackgroungInformationData);
             content = content.Replace(currentLMSFlowHolder, currentLMSFlowData);
 
@@ -8668,7 +8668,7 @@ namespace FintrakBanking.Repositories.Credit
             var n = 0;
             result = result + $@"
                 <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
-                <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
+                <h3><b>CREDIT PROGRAM SHEET (CASH COLLATERIZED)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
@@ -8930,7 +8930,22 @@ namespace FintrakBanking.Repositories.Credit
             result = result + FussCustomerFacilityHtml();
             return result;
         }
+
+        public string cashCollateralizedCustomerFacilityHtml()
+        {
+            var result = String.Empty;
+            result = result + FussCustomerFacilityHtml();
+            return result;
+        }
+
         public string IdfCustomerAccountActivityHtml()
+        {
+            var result = String.Empty;
+            result = result + FussCustomerAccountActivityHtml();
+            return result;
+        }
+
+        public string cashCollateralizedCustomerAccountActivityHtml()
         {
             var result = String.Empty;
             result = result + FussCustomerAccountActivityHtml();
@@ -8942,7 +8957,22 @@ namespace FintrakBanking.Repositories.Credit
             result = result + FussCurrentRequestHtml();
             return result;
         }
+
+        public string cashCollateralizedCurrentRequestHtml()
+        {
+            var result = String.Empty;
+            result = result + FussCurrentRequestHtml();
+            return result;
+        }
+
         public string IdfBackgroungInformationHtml()
+        {
+            var result = String.Empty;
+            result = result + FussBackgroungInformationHtml();
+            return result;
+        }
+
+        public string cashCollateralizedBackgroungInformationHtml()
         {
             var result = String.Empty;
             result = result + FussBackgroungInformationHtml();
@@ -8954,7 +8984,74 @@ namespace FintrakBanking.Repositories.Credit
             result = result + FussChecklistEligibilityHtml();
             return result;
         }
+
+        public string cashCollateralizedChecklistEligibilityHtml()
+        {
+            var result = String.Empty;
+            result = result + FussChecklistEligibilityHtml();
+            return result;
+        }
+
         public string IdfDocumentationChecklistHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th colspan='4'><strong>Documentation Checklist</strong></th>                     
+                    </tr> 
+                   <tr>
+                        <td>Deed of assignment for 100% contracts proceeds to Access Bank (where obtainable)</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Approved contract OR purchase order, stating bank A/C details.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   <tr>
+                        <td>Vendor’s letter to Principal requesting domiciliation of contract proceeds to Access Bank, stating that the instruction cannot be varied without the express consent of Access Bank.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Domiciliation letter OR Proof that domiciliation has worked in the past (in cases where the principal is unwilling to accept domiciliation)</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   
+                    <tr>
+                        <td>A copy of the final invoice(s) and/or an original waybill, stamped ‘received’ by the Principal indicating the bank details. </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>A formal client’s request for draw-down, stating relevant account details.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Evidence of other receivables domiciled to us other the one being discounted</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+               <br />";
+            return result;
+        }
+
+        public string cashCollateralizedDocumentationChecklistHtml()
         {
             var result = String.Empty;
             result = result + $@"
