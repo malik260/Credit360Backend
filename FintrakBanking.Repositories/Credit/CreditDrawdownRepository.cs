@@ -215,7 +215,13 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("Company Limit Exceeded!");
                 }
-                
+
+                if (application.ISLINEFACILITY == true && entity.documentProvided != null)
+                {
+                    if (entity?.documentProvided == true) { applicationDet.APPROVEDLINESTATUSID = 1; }
+                    if (entity?.documentProvided == false) { applicationDet.APPROVEDLINESTATUSID = 2; }
+                }
+
                 workflow.StaffId = entity.createdBy;
                 workflow.CompanyId = entity.companyId;
                 workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
@@ -233,6 +239,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.TerminateOnApproval = true;
                     isContingent = true;
                 }
+
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
@@ -441,6 +448,7 @@ namespace FintrakBanking.Repositories.Credit
                         requestDate = req.DATETIMECREATED,
                         apiRequestId = m.APIREQUESTID,
                         toStaffId = atrail.TOSTAFFID,
+                        documentProvided = d.APPROVEDLINESTATUSID,
                         //staffId = (atrail.LOOPEDSTAFFID != null ? atrail.LOOPEDSTAFFID : atrail.TOSTAFFID),
                         divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                         divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
