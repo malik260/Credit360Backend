@@ -82,6 +82,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("loan-request/legal-document-for-lines/{loanBookingRequestId}/{value}")]
+        public HttpResponseMessage setLineFacilityLegalDocumentStatus(int loanBookingRequestId,bool value, [FromBody] RecommendedCollateralViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.createdBy = (short)token.GetStaffId;
+            entity.createdBy = (short)token.GetCompanyId;
+            var response = repo.setLineFacilityLegalDocumentStatus(entity,loanBookingRequestId,value);
+
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response });
+
+        }
+
 
         [HttpGet]
         [Route("loan-application/availment-completed")]

@@ -332,6 +332,40 @@ namespace FintrakBanking.Repositories.Credit
             //return workflow.Response;
         }
 
+        public bool setLineFacilityLegalDocumentStatus(RecommendedCollateralViewModel entity,int loanBookingRequestId, bool value)
+        {
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
+            if(request != null)
+            {
+                var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
+                if(facility != null)
+                {
+                    facility.APPROVEDLINESTATUSID = value == true ? facility.APPROVEDLINESTATUSID = 1 : facility.APPROVEDLINESTATUSID = 2;
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationUpdate,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = (short)entity.userBranchId,
+                        TARGETID = request.LOAN_BOOKING_REQUESTID,
+                        DETAIL = $"Line facility Legal Document set to '{ value }' for loan application ref '{facility.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER} on facility {facility.TBL_PRODUCT.PRODUCTNAME}'",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                        URL = entity.applicationUrl,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
+                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    context.TBL_AUDIT.Add(audit);
+
+                    return context.SaveChanges() > 0;
+                }
+                return false;
+            }
+
+            return false;
+        }
+
         public IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId, bool isInitiation = false)
         {
             List<int> operationIds = new List<int>();
