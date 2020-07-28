@@ -8,8 +8,10 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +24,8 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository _general;
         private IAuditTrailRepository _audit;
         private IWorkflow _workflow;
-
+        List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+        AlertsViewModel alert = new AlertsViewModel();
 
 
         public CollateralValuationRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
@@ -553,6 +556,28 @@ namespace FintrakBanking.Repositories.Credit
                 _workflow.LogActivity();
                 try
                 {
+                    if (_workflow.NewState != (int)ApprovalState.Ended)
+                    {
+                        var approvingStaff = _context.TBL_STAFF.Find(model.createdBy);
+                        var staffRole = _context.TBL_STAFF_ROLE.Where(r => r.STAFFROLEID == approvingStaff.STAFFROLEID).FirstOrDefault();
+                        if (staffRole.STAFFROLECODE.ToLower() == "VAL CR DOC OFF")
+                        {
+                            var prereqisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.VALUATIONPREREQUISITEID == model.valuationPrerequisiteId && O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing).Select(O => O).FirstOrDefault();
+                            var valuerReport = _context.TBL_VALUATION_REPORT.Where(o => o.COLLATERALVALUATIONID == prereqisite.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
+                            var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
+                            var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
+                            
+                            var staffCreated = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
+                            var rem = _context.TBL_STAFF.Find(staffCreated.SUPERVISOR_STAFFID);
+                            var staffFullName = staffCreated.FIRSTNAME +" "+ staffCreated.MIDDLENAME + " " + staffCreated.LASTNAME;
+                            var messageBody = "Dear " + staffFullName + "</br> There " + collateral.VALUATIONNAME + " valuation carried out by "+ valuer.ToUpper() + " with fee note " + valuerReport.VALUATIONFEE +" and valuation detail: "+ valuerReport.VALUERCOMMENT;
+                            var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
+                            var emailList = staffCreated.EMAIL + ";" + rem.EMAIL;
+                            alert.receiverEmailList.Add(emailList);
+                            LogEmailAlert(messageBody, alertSubject, alert.receiverEmailList, "98007", 98007, "CollateralValuationNotification");
+                        }
+                    }
+                        
                     if (_workflow.NewState == (int) ApprovalState.Ended)
                     {
                         var prereqisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.VALUATIONPREREQUISITEID == model.valuationPrerequisiteId && O.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing).Select(O => O).FirstOrDefault();
@@ -565,6 +590,18 @@ namespace FintrakBanking.Repositories.Credit
                         if (valuerReport != null) 
                             valuerReport.APPROVALSTATUSID = (int) ApprovalStatusEnum.Approved;
                         //}
+
+                        var collateral = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALVALUATIONID == valuerReport.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
+                        var valuer = _context.TBL_COLLATERAL_VALUER.Where(o => o.COLLATERALVALUERID == valuerReport.VALUERID).Select(o => o.NAME).FirstOrDefault();
+
+                        var staffCreated = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
+                        var staffFullName = staffCreated.FIRSTNAME + " " + staffCreated.MIDDLENAME + " " + staffCreated.LASTNAME;
+                        var messageBody = "Dear " + staffFullName + "</br> There " + collateral.VALUATIONNAME + " valuation carried out by " + valuer.ToUpper() + " with fee note " + valuerReport.VALUATIONFEE + " and valuation detail: " + valuerReport.VALUERCOMMENT;
+                        var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
+                        var emailList = GetBusinessUsersEmailsToGroupHead(staffCreated.MISCODE);
+                        alert.receiverEmailList.Add(emailList);
+                        LogEmailAlert(messageBody, alertSubject, alert.receiverEmailList, "98007", 98007, "CollateralValuationNotification");
+
                     }
 
                     response = _context.SaveChanges() > 0;
@@ -579,6 +616,98 @@ namespace FintrakBanking.Repositories.Credit
                 //return false;
             }
         }
+
+
+        private string GetBusinessUsersEmailsToGroupHead(string accountOfficerMIsCode)
+        {
+            string emailList = "";
+
+            var accountOfficer = _context.TBL_STAFF.Where(x => x.MISCODE.ToLower() == accountOfficerMIsCode.ToLower()).FirstOrDefault();
+            if (accountOfficer != null)
+            {
+                emailList = accountOfficer.EMAIL;
+                if (accountOfficer.SUPERVISOR_STAFFID != null)
+                {
+                    var relationshipManager = _context.TBL_STAFF.Where(x => x.STAFFID == accountOfficer.SUPERVISOR_STAFFID).FirstOrDefault();
+                    if (relationshipManager != null)
+                    {
+                        emailList = emailList + ";" + relationshipManager.EMAIL;
+                        if (relationshipManager.SUPERVISOR_STAFFID != null)
+                        {
+                            var zonalHead = _context.TBL_STAFF.Where(x => x.STAFFID == relationshipManager.SUPERVISOR_STAFFID).FirstOrDefault();
+                            if (zonalHead != null)
+                            {
+                                emailList = emailList + ";" + zonalHead.EMAIL;
+
+                                var groupHead = _context.TBL_STAFF.Where(x => x.STAFFID == zonalHead.SUPERVISOR_STAFFID).FirstOrDefault();
+
+                                if (groupHead != null)
+                                {
+                                    emailList = emailList + ";" + groupHead.EMAIL;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return emailList;
+        }
+
+        public void LogEmailAlert(string messageBody, string alertSubject, List<string> recipients, string referenceCode, int targetId, string operationMehtod)
+        {
+            try
+            {
+                string recipient = string.Join("", recipients.ToArray());
+                string messageSubject = alertSubject + " ALERT";
+                string messageContent = messageBody;
+                //string templateUrl = context.TBL_ALERT_GENERAL_TEMPLATE.Find(1).TEMPLATEBODY; //"~/EmailTemp/Monitoring.html";
+                //string mailBody = templateUrl.Replace("{Description}", messageContent);  //EmailHelpers.PopulateBody(messageContent, templateUrl); 
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = messageContent,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = referenceCode,
+                    targetId = targetId,
+                    operationMethod = operationMehtod,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                new SecureException(ex.ToString());
+            }
+        }
+        private void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId,
+                OPERATIONMETHOD = model.operationMethod
+            };
+
+            _context.TBL_MESSAGE_LOG.Add(message);
+            _context.SaveChanges();
+        }
+
 
         public bool DeleteValuationPrerequisite(int valuationPrerequisiteId, UserInfo user)
         {
