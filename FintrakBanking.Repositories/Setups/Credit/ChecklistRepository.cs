@@ -2871,11 +2871,15 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.NextLevelId = null;
                 workflow.Comment = "Request for Deferral Document Approval";
                 workflow.OperationId = (int)OperationsEnum.ProvisionOfDeferredDocument;
+
+                workflow.LevelBusinessRule = new LevelBusinessRule { excludeLegal = model.excludeLegal.Value };
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
 
-                if (deferral != null)
+                if (deferral != null) {
                     deferral.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    deferral.EXCLUDELEGAL = model.excludeLegal;
+                }
 
                 data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 trans.Commit();

@@ -2154,8 +2154,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if(returndate != null)
             {
-                int customerId = (int)returndate.singleCustomerId;
+                int customerId = returndate.singleCustomerId != null ? returndate.singleCustomerId.Value : 0;
                 var customer = context.TBL_CUSTOMER.Find(customerId);
+
                 if (customer != null)
                 {
                     var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
@@ -7134,10 +7135,15 @@ namespace FintrakBanking.Repositories.Credit
             int productId = details.SingleOrDefault()?.proposedProductId ?? 0;
             decimal applicationAmount = details.Sum(x => x.proposedAmount * (decimal)x.exchangeRate); // proposedAmount should be approvedAmount after application
 
-            var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
-            var sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
-            var customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
+            TBL_OVERRIDE_DETAIL branchOverrideRequest = null;
+            TBL_OVERRIDE_DETAIL sectorOverrideRequest = null;
+            TBL_OVERRIDE_DETAIL customerOverrideRequest = null;
 
+            if (customer != null) {
+                branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
+                sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
+                customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
+            }
 
             if (branchOverrideRequest != null)
             {
