@@ -215,7 +215,13 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("Company Limit Exceeded!");
                 }
-                
+
+                if (application.ISLINEFACILITY == true && entity.documentProvided != null)
+                {
+                    if (entity?.documentProvided == true) { applicationDet.APPROVEDLINESTATUSID = 1; }
+                    if (entity?.documentProvided == false) { applicationDet.APPROVEDLINESTATUSID = 2; }
+                }
+
                 workflow.StaffId = entity.createdBy;
                 workflow.CompanyId = entity.companyId;
                 workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
@@ -233,6 +239,7 @@ namespace FintrakBanking.Repositories.Credit
                 //    workflow.TerminateOnApproval = true;
                 //    isContingent = true;
                 //}
+
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
@@ -323,6 +330,40 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             //return workflow.Response;
+        }
+
+        public bool setLineFacilityLegalDocumentStatus(RecommendedCollateralViewModel entity,int loanBookingRequestId, bool value)
+        {
+            var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
+            if(request != null)
+            {
+                var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
+                if(facility != null)
+                {
+                    facility.APPROVEDLINESTATUSID = value == true ? facility.APPROVEDLINESTATUSID = 1 : facility.APPROVEDLINESTATUSID = 2;
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationUpdate,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = (short)entity.userBranchId,
+                        TARGETID = request.LOAN_BOOKING_REQUESTID,
+                        DETAIL = $"Line facility Legal Document set to '{ value }' for loan application ref '{facility.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER} on facility {facility.TBL_PRODUCT.PRODUCTNAME}'",
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                        URL = entity.applicationUrl,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
+                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    context.TBL_AUDIT.Add(audit);
+
+                    return context.SaveChanges() > 0;
+                }
+                return false;
+            }
+
+            return false;
         }
 
         public IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId, bool isInitiation = false)
@@ -442,6 +483,7 @@ namespace FintrakBanking.Repositories.Credit
                         requestDate = req.DATETIMECREATED,
                         apiRequestId = m.APIREQUESTID,
                         toStaffId = atrail.TOSTAFFID,
+                        documentProvided = d.APPROVEDLINESTATUSID,
                         //staffId = (atrail.LOOPEDSTAFFID != null ? atrail.LOOPEDSTAFFID : atrail.TOSTAFFID),
                         divisionCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == cust.CUSTOMERID select p.BUSINESSUNITINITIALS).FirstOrDefault(),
                         divisionShortCode = (from p in context.TBL_PROFILE_BUSINESS_UNIT join c in context.TBL_CUSTOMER on p.BUSINESSUNITID equals c.BUSINESSUNTID where c.CUSTOMERID == d.CUSTOMERID select p.BUSINESSUNITSHORTCODE).FirstOrDefault(),
