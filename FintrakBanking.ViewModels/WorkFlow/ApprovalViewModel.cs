@@ -52,6 +52,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int loanChargeFeeId { get; set; }
         public decimal feeAmount { get; set; }
         public double feeRate { get; set; }
+        public bool? documentProvided { get; set; }
 
     }
     public class ApprovalResponse

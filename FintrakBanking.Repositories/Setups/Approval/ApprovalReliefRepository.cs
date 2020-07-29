@@ -218,7 +218,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     ENDDATE = model.endDate,
                     //ISACTIVE = model.isActive,
                     ISACTIVE = DateTime.Now.CompareTo(model.endDate) < 0,
-                    LASTUPDATEDBY = model.lastUpdatedBy,
+                    //LASTUPDATEDBY = model.lastUpdatedBy,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = DateTime.Now,
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -305,9 +305,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var charge = (from a in context.TBL_TEMP_STAFF_RELIEF
                            join t in context.TBL_APPROVAL_TRAIL on a.TEMPRELIEFID equals t.TARGETID
                            where (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
-                               && a.ISCURRENT == true
-                               && t.RESPONSESTAFFID == null
-                               && t.OPERATIONID == (int)OperationsEnum.StaffReliefCreation
+                           && a.ISCURRENT == true
+                           && a.DELETED == false
+                           && t.RESPONSESTAFFID == null
+                           && t.OPERATIONID == (int)OperationsEnum.StaffReliefCreation
                            && ids.Contains((int)t.TOAPPROVALLEVELID)
                           
                            select new ApprovalReliefViewModel

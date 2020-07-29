@@ -88,6 +88,8 @@
     <Compile Include="Models\TBL_LC_ISSUANCE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LIEN_REMOVAL.cs" />
     <Compile Include="Models\TBL_LINE_FACILITY_STATUS.cs" />
+    <Compile Include="Models\TBL_LMSR_APPLICATION_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LMSR_APPLICATION_DETL_ARCH.cs" />
     <Compile Include="Models\TBL_LMSR_FLOW_ORDER.cs" />
     <Compile Include="Models\SqlDatabaseConfiguration.cs" />
     <Compile Include="Models\TBL_ALERT_DAILYREPORT.cs" />
