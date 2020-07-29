@@ -222,14 +222,16 @@ namespace FintrakBanking.Repositories.Credit
                     .Where(x => x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                     .Select(x => (int)x.TBL_LOAN_APPLICATION_DETAIL.PROPOSEDPRODUCTID).ToList();
 
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
+            var operationId = (int)OperationsEnum.OfferLetterApproval;
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
             var staffIds = genSetup.GetStaffRlieved(staffId);
 
             var acceptIds = (from a in context.TBL_LOAN_APPLICATION
                              join b in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals b.TARGETID
                              where a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && a.AVAILMENTDATE == null
-                             && b.OPERATIONID == a.OPERATIONID && (staffIds.Contains(b.RESPONSESTAFFID ?? 0) || staffIds.Contains(b.TOSTAFFID ?? 0))
+                             && 
+                             ((b.OPERATIONID == a.OPERATIONID && staffIds.Contains(b.RESPONSESTAFFID ?? 0)) || (b.OPERATIONID == operationId && staffIds.Contains(b.TOSTAFFID ?? 0)))
                              select new { TARGETID = b.TARGETID }).Select(t => t.TARGETID).ToList();
 
 

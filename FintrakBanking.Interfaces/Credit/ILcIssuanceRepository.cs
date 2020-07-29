@@ -14,9 +14,10 @@ namespace FintrakBanking.Interfaces.credit
     {
         #region LCISSUANCE
         List<LcIssuanceApprovalViewModel> SearchLc(string searchString);
+        List<LcIssuanceApprovalViewModel> SearchLcLMS(string searchString);
 
         IEnumerable<LcIssuanceViewModel> GetLcIssuance(int id);
-
+        IEnumerable<LcIssuanceApprovalViewModel> GetLcEnhancementByLcEnhancementId(int tempLcIssuanceId);
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuances(int staffId);
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForEnhancement(int staffId);
 
