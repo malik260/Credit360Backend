@@ -560,7 +560,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         var approvingStaff = _context.TBL_STAFF.Find(model.createdBy);
                         var staffRole = _context.TBL_STAFF_ROLE.Where(r => r.STAFFROLEID == approvingStaff.STAFFROLEID).FirstOrDefault();
-                        if (staffRole.STAFFROLECODE.ToLower() == "VAL CR DOC OFF")
+                        if (staffRole.STAFFROLECODE == "VAL CR DOC OFF")
                         {
                             var prereqisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.VALUATIONPREREQUISITEID == model.valuationPrerequisiteId && O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing).Select(O => O).FirstOrDefault();
                             var valuerReport = _context.TBL_VALUATION_REPORT.Where(o => o.COLLATERALVALUATIONID == prereqisite.COLLATERALVALUATIONID).Select(o => o).FirstOrDefault();
