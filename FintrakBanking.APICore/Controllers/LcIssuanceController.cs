@@ -99,6 +99,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lc-search/lms/{searchString}")]
+        public HttpResponseMessage SearchLcLMS(string searchString)
+        {
+            try
+            {
+                List<LcIssuanceApprovalViewModel> response = repo.SearchLcLMS(searchString);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lc-issuance/approval")]
         public HttpResponseMessage GetLcIssuancesForApproval()
         {
@@ -167,6 +184,16 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetLcIssuance(int lcIssuanceId)
         {
             IEnumerable<LcIssuanceViewModel> response = repo.GetLcIssuance(lcIssuanceId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-issuance-enhancement/{tempLcIssuanceId}")]
+        public HttpResponseMessage GetLcIssGetLcEnhancementByLcEnhancementIduance(int tempLcIssuanceId)
+        {
+            IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcEnhancementByLcEnhancementId(tempLcIssuanceId);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }

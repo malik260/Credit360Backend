@@ -5742,7 +5742,12 @@ namespace FintrakBanking.Repositories.Credit
             var reliefStaffIds = genSetup.GetStaffRlieved(user.staffId);
 
             var applications = context.TBL_LOAN_APPLICATION_ARCHIVE
-                .Where(x => x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected && (x.CREATEDBY == user.staffId || reliefStaffIds.Contains(x.CREATEDBY)))
+                .Where(x => (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected
+                || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected
+                || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted
+                )
+                && (reliefStaffIds.Contains(x.CREATEDBY))
+                )
             .Select(x => new LoanApplicationViewModel
             {
                 loanApplicationId = x.LOANAPPLICATIONID,
@@ -5808,7 +5813,7 @@ namespace FintrakBanking.Repositories.Credit
             //.ThenByDescending(x => x.loanApplicationId)
             ;
 
-            //var test = applications.ToList();
+            var test = applications.ToList();
             return applications;
         }
 
