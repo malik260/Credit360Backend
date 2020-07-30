@@ -88,6 +88,13 @@ namespace FintrakBanking.ViewModels.credit
         public int? usanceApplicationStatusId { get; set; }
         public int? usanceApprovalStatusId { get; set; }
         public decimal? totalUsanceAmount { get; set; }
+        public string currentApprovalLevel { get; set; }
+        public string requestApprovalLevel { get; set; }
+        public string requestStaffName { get; set; }
+        public string currentlyWith { get; set; }
+        public DateTime arrivalDate { get; set; }
+        public int? operationId { get; set; }
+        public string approvalStatus { get; set; }
 
         #endregion LCISSUANCE
     }
@@ -213,6 +220,8 @@ namespace FintrakBanking.ViewModels.credit
         public int? currentApprovalLevelId { get; set; }
 
         public string currentApprovalLevel { get; set; }
+        public string requestApprovalLevel { get; set; }
+        public string requestStaffName { get; set; }
 
         public string lastComment { get; set; }
 
@@ -261,6 +270,7 @@ namespace FintrakBanking.ViewModels.credit
         public int? loopedStaffId { get; set; }
         public List<LcReleaseAmountViewModel> lcReleases { get; set; }
         public List<LcUssanceViewModel> lcUsances { get; set; }
+        public List<LcIssuanceViewModel> lcEnhancements { get; set; }
 
 
         //ussance

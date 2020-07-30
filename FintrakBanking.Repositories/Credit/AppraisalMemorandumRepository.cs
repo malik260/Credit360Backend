@@ -1363,10 +1363,10 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
             var cancelationInProgress = context.TBL_APPROVAL_TRAIL.Any(t => t.TARGETID == lc.LCISSUANCEID && t.OPERATIONID == (int)OperationsEnum.LCTerminationApproval && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended);
-            //if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress && cancelationInProgress)
-            //{
-            //    throw new SecureException("LC Issuance Cancelation Approval Already Ongoing");
-            //}
+            if (lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress || lc.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted)
+            {
+                throw new SecureException("LC Issuance Cancelation Approval Already Ongoing or Completed");
+            }
             if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
             // WORKFLOW
             using (var trans = context.Database.BeginTransaction())
@@ -1482,7 +1482,8 @@ namespace FintrakBanking.Repositories.Credit
                 LCTOLERANCEPERCENTAGE = lc.LCTOLERANCEPERCENTAGE,
                 LCTOLERANCEVALUE = lc.LCTOLERANCEVALUE,
                 RELEASEDAMOUNT = lc.RELEASEDAMOUNT,
-                OPERATIONID = lc.OPERATIONID
+                OPERATIONID = lc.OPERATIONID,
+                DATETIMEARCHIVED = DateTime.Now
             };
             context.TBL_LC_ISSUANCE_ARCHIVE.Add(newArch);
             return context.SaveChanges() != 0;

@@ -113,5 +113,6 @@ namespace FintrakBanking.Entities.Models
 
 
         public int? OPERATIONID { get; set; }
+        public DateTime DATETIMEARCHIVED { get; set; }
     }
 }
