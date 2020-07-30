@@ -63,6 +63,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     EXEMPTREVOLVINGFACILITY = model.exemptRevolvingFacility,
                     EXEMPTRENEWAL = model.exemptRenewal,
                     TENOR = model.tenor,
+                    EXCLUDELEGAL = model.excludeLegal,
 
                     COMPANYID = model.companyId,
                     CREATEDBY = model.createdBy,
@@ -162,6 +163,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     tenor = x.TENOR,
                     withoutInstruction = x.WITHINSTRUCTION,
                     domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
+                    excludeLegal = x.EXCLUDELEGAL,
                 })
                 .ToList();
         }
@@ -193,6 +195,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 exemptRevolvingFacility = rule.EXEMPTREVOLVINGFACILITY,
                 exemptRenewal = rule.EXEMPTRENEWAL,
                 tenor = rule.TENOR,
+                excludeLegal = rule.EXCLUDELEGAL,
             };
         }
 
@@ -221,6 +224,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 entity.TENOR = model.tenor;
                 entity.WITHINSTRUCTION = model.withoutInstruction;
                 entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
+                entity.EXCLUDELEGAL = model.excludeLegal;
 
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;
