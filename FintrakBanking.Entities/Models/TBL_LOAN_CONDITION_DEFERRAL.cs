@@ -40,5 +40,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_CONDITION_PRECEDENT TBL_LOAN_CONDITION_PRECEDENT { get; set; }
 
         public int? CONDITIONDEFERRALSTATUS { get; set; }
+
+        public bool? EXCLUDELEGAL { get; set; }
     }
 }
