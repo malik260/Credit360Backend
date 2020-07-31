@@ -9178,7 +9178,6 @@ namespace FintrakBanking.Repositories.Credit
                                        productName = d.TBL_PRODUCT.PRODUCTNAME,
                                        casaAccountId = s.CASAACCOUNTID,
                                        casaAccountId2 = s.CASAACCOUNTID2,
-                                       systemArrivalDateTime = atrail.SYSTEMARRIVALDATETIME,
                                        interestRate = d.APPROVEDINTERESTRATE,
                                        approvedInterestRate = d.APPROVEDINTERESTRATE,
                                        approvedAmount = d.APPROVEDAMOUNT,
