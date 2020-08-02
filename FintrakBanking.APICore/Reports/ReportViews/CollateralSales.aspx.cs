@@ -30,14 +30,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     string inputHashValue = Request.QueryString["hashValue"];
                     var incomingDateHash = hash.HashString(startDateString).Replace("-", "");
 
-                    if (inputHashValue != incomingDateHash)
-                    {
-                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                        this.ReportViewer.LocalReport.Refresh();
-                        return;
-                    }
-
-
                     RemedialAssetsReport remedialAssets = new RemedialAssetsReport();
                     var data = remedialAssets.CollateralSales(endDate, startDate);
 
@@ -57,8 +49,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/RecoveryAgentPerformance.rdlc");
 
-                    //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                    //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
                     ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)

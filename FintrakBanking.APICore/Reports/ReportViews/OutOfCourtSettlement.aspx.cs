@@ -30,14 +30,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     string inputHashValue = Request.QueryString["hashValue"];
                     var incomingDateHash = hash.HashString(startDateString).Replace("-", "");
 
-                    if (inputHashValue != incomingDateHash)
-                    {
-                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                        this.ReportViewer.LocalReport.Refresh();
-                        return;
-                    }
-
-
                     RemedialAssetsReport remedialAssets = new RemedialAssetsReport();
                     var data = remedialAssets.OutOfCourtSettlement(endDate, startDate);
 
