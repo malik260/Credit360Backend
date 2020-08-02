@@ -30001,7 +30001,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                    where m.COMPANYID == companyId
                                    && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
-                                   && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
+                                   && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                    && a.ISPRINTED == false
                                    && (a.LOANSTATUSID == (int)LoanStatusEnum.Active || a.LOANSTATUSID == (int)LoanStatusEnum.Completed)
 
@@ -30080,7 +30080,7 @@ namespace FintrakBanking.Repositories.Credit
                                          join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                          where m.COMPANYID == companyId
                                          && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
-                                         && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
+                                         && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
                                          && a.ISPRINTED == false
                                          && (a.LOANSTATUSID == (int)LoanStatusEnum.Active || a.LOANSTATUSID == (int)LoanStatusEnum.Completed)
 
@@ -30159,7 +30159,7 @@ namespace FintrakBanking.Repositories.Credit
                                          join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                          where m.COMPANYID == companyId
                                          && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
-                                         && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.DELETED == false
+                                         && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved 
                                          && a.ISPRINTED == false
                                          && (a.LOANSTATUSID == (int)LoanStatusEnum.Active || a.LOANSTATUSID == (int)LoanStatusEnum.Completed)
 

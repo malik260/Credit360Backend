@@ -9178,7 +9178,6 @@ namespace FintrakBanking.Repositories.Credit
                                        productName = d.TBL_PRODUCT.PRODUCTNAME,
                                        casaAccountId = s.CASAACCOUNTID,
                                        casaAccountId2 = s.CASAACCOUNTID2,
-
                                        interestRate = d.APPROVEDINTERESTRATE,
                                        approvedInterestRate = d.APPROVEDINTERESTRATE,
                                        approvedAmount = d.APPROVEDAMOUNT,
@@ -17940,7 +17939,7 @@ namespace FintrakBanking.Repositories.Credit
                           where a.LEGALCONTINGENTCODE == legalContingentCode && a.LOANAPPLICATIONDETAILID != loanApplicationDetailId
                           select a.LEGALCONTINGENTCODE
                           ).FirstOrDefault();
-            if (string.IsNullOrEmpty(record))
+            if (record == null)
             {
                 result = false;
             }
