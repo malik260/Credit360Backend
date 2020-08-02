@@ -47,7 +47,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     reportDataSource.Name = "CollateralSalesReport";
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/RecoveryAgentPerformance.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/CollateralSales.rdlc");
 
                     ReportViewer.LocalReport.Refresh();
                 }

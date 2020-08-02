@@ -44,7 +44,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "RevalidationOfFullAndFinalSettlement";
+                    reportDataSource.Name = "RevalidationOfFulAndfinalSettlement";
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/RevalidationOfFullAndFinalSettlement.rdlc");
