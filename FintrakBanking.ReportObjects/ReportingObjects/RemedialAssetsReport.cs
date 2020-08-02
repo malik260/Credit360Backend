@@ -130,7 +130,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) 
+                                && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
