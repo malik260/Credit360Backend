@@ -21,16 +21,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 try
                 {
-                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
-                    string inputDateInfo = Request.QueryString["key1"];
-                    string inputHashValue = Request.QueryString["key2"];
+                    string startDateString = Request.QueryString["startDate"];
+                    DateTime.TryParse(startDateString, out DateTime startDate);
+                    string endDateString = Request.QueryString["endDate"];
+                    DateTime.TryParse(endDateString, out DateTime endDate);
 
                     HashHelper hash = new HashHelper();
-
-                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
-
-                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+                    string inputHashValue = Request.QueryString["hashValue"];
+                    var incomingDateHash = hash.HashString(startDateString).Replace("-", "");
 
                     if (inputHashValue != incomingDateHash)
                     {
@@ -38,18 +36,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
-
-                    var currentDate = DateTime.Now;
-
-                    var dateDifference = currentDate - incomingDate;
-
-                    if (dateDifference.Seconds > 30)
-                    {
-                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                        this.ReportViewer.LocalReport.Refresh();
-                        return;
-                    }
-
 
                     RemedialAssetsReport remedialAssets = new RemedialAssetsReport();
                     var data = remedialAssets.RecoveryAgentPerformance(endDate, startDate);

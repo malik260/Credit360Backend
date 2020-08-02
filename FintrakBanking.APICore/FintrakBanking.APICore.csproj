@@ -602,6 +602,48 @@
     <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.designer.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx.cs">
+      <DependentUpon>FullAndFinalSettlementAndWaivers.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx.designer.cs">
+      <DependentUpon>FullAndFinalSettlementAndWaivers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\IdleAssetsSales.aspx.cs">
+      <DependentUpon>IdleAssetsSales.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\IdleAssetsSales.aspx.designer.cs">
+      <DependentUpon>IdleAssetsSales.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RevalidationOfFullAndFinalSettlement.aspx.cs">
+      <DependentUpon>RevalidationOfFullAndFinalSettlement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RevalidationOfFullAndFinalSettlement.aspx.designer.cs">
+      <DependentUpon>RevalidationOfFullAndFinalSettlement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LitigationRecoveries.aspx.cs">
+      <DependentUpon>LitigationRecoveries.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LitigationRecoveries.aspx.designer.cs">
+      <DependentUpon>LitigationRecoveries.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryCommission.aspx.cs">
+      <DependentUpon>RecoveryCommission.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryCommission.aspx.designer.cs">
+      <DependentUpon>RecoveryCommission.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryAgentUpdate.aspx.cs">
+      <DependentUpon>RecoveryAgentUpdate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryAgentUpdate.aspx.designer.cs">
+      <DependentUpon>RecoveryAgentUpdate.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralValuationReport.aspx.cs">
       <DependentUpon>CollateralValuationReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -685,6 +727,20 @@
     </Compile>
     <Compile Include="Reports\ReportViews\CustomeFacilityRepayment.aspx.designer.cs">
       <DependentUpon>CustomeFacilityRepayment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralSales.aspx.cs">
+      <DependentUpon>CollateralSales.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralSales.aspx.designer.cs">
+      <DependentUpon>CollateralSales.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OutOfCourtSettlement.aspx.cs">
+      <DependentUpon>OutOfCourtSettlement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OutOfCourtSettlement.aspx.designer.cs">
+      <DependentUpon>OutOfCourtSettlement.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\RecoveryAgentPerformance.aspx.cs">
       <DependentUpon>RecoveryAgentPerformance.aspx</DependentUpon>
@@ -1337,6 +1393,12 @@
     <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
+    <Content Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx" />
+    <Content Include="Reports\ReportViews\IdleAssetsSales.aspx" />
+    <Content Include="Reports\ReportViews\RevalidationOfFullAndFinalSettlement.aspx" />
+    <Content Include="Reports\ReportViews\LitigationRecoveries.aspx" />
+    <Content Include="Reports\ReportViews\RecoveryCommission.aspx" />
+    <Content Include="Reports\ReportViews\RecoveryAgentUpdate.aspx" />
     <Content Include="Reports\ReportViews\CollateralValuationReport.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\ContigentLiabilityInformation.aspx" />
@@ -1349,6 +1411,8 @@
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
+    <Content Include="Reports\ReportViews\CollateralSales.aspx" />
+    <Content Include="Reports\ReportViews\OutOfCourtSettlement.aspx" />
     <Content Include="Reports\ReportViews\RecoveryAgentPerformance.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
     <Content Include="Reports\ReportViews\DeferralWaiver.aspx" />
