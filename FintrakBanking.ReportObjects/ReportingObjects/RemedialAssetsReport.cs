@@ -21,7 +21,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER  equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
@@ -49,7 +51,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
@@ -76,7 +80,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
@@ -89,6 +95,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                     dateOfEngagement = ln.DATEASSIGNED,
                                     accountBalance = (double)0.0,
                                 }).ToList();
+                var groupRecord = dataLoan.GroupBy(x => x.accreditedConsultant)
+                    .Select(g => g.OrderByDescending(b => b.accreditedConsultant).FirstOrDefault())
+                ; ;
+                foreach(var i in groupRecord)
+                {
+                    i.listOfAccountAssigned = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == i.accreditedConsultant).Select(x => x.APPLICATIONREFERENCENUMBER).ToList();
+;                }
 
                 return dataLoan;
             }
@@ -103,7 +116,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
@@ -130,8 +145,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) 
-                                && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate) 
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
                                 && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
@@ -160,7 +175,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
@@ -188,7 +205,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
@@ -216,7 +235,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,
@@ -244,7 +265,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 join c in context.TBL_CUSTOMER on ln.CUSTOMERID equals c.CUSTOMERID
                                 join b in context.TBL_COLLATERAL_LIQUIDATION_RECOVERY on ln.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                                 where
-                                ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                (DbFunctions.TruncateTime(ln.DATEASSIGNED) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(ln.DATEASSIGNED) <= DbFunctions.TruncateTime(endDate))
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                 select new LoanReviewOperationApprovalViewModel
                                 {
                                     accountNumber = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == ln.ACCREDITEDCONSULTANT).FirstOrDefault().ACCOUNTNUMBER,

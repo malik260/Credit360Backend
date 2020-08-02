@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -423,6 +424,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string accountName { get; set; }
         public DateTime dateOfEngagement { get; set; }
         public double accountBalance { get; set; }
+        public List<string> listOfAccountAssigned { get; set; }
     }
 
 
