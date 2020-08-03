@@ -79,6 +79,7 @@
     <Compile Include="ReportingObjects\LimitsMonitoringReportsObjects.cs" />
     <Compile Include="ReportingObjects\LoanReportObjects.cs" />
     <Compile Include="ReportingObjects\OutputDocument.cs" />
+    <Compile Include="ReportingObjects\RemedialAssetsReport.cs" />
     <Compile Include="ReportingObjects\RSR.cs" />
     <Compile Include="ReportingObjects\ScheduledCollateralObject.cs" />
     <Compile Include="ReportingObjects\ScheduleOfCollateralsObjects.cs" />
