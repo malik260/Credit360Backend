@@ -3159,6 +3159,224 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        // remedial asset report
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("out-of-court-settlement-report")]
+        public HttpResponseMessage GetOutOfCourtSettlementReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetOutOfCourtSettlement(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }else
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("collateral-sales-report")]
+        public HttpResponseMessage GetCollateralSalesReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetCollateralSales(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("recovery-agent-update-report")]
+        public HttpResponseMessage GetRecoveryAgentUpdateReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetRecoveryAgentUpdate(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("recovery-commission-report")]
+        public HttpResponseMessage GetRecoveryCommissionReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetRecoveryCommission(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("recovery-agent-performance-report")]
+        public HttpResponseMessage GetRecoveryAgentPerformanceReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetRecoveryAgentPerformance(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("litigation-recoveries-report")]
+        public HttpResponseMessage GetLitigationRecoveriesReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetLitigationRecoveries(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("revalidation-of-full-and-final-settlement-report")]
+        public HttpResponseMessage GetRevalidationOfFullAndFinalSettlementReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetRevalidationOfFullAndFinalSettlement(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("idle-assets-sales-report")]
+        public HttpResponseMessage GetIdleAssetsSalesReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetIdleAssetsSales(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("full-and-final-settlement-and-waivers-report")]
+        public HttpResponseMessage GetFullAndFinalSettlementAndWaiversReport([FromBody] RemedialAssetReport obj)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetFullAndFinalSettlementAndWaivers(obj.startDate, obj.endDate);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
     }
 }
 
