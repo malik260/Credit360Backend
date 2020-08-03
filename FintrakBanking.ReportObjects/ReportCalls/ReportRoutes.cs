@@ -386,6 +386,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                 ImportFinance = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
                 CashBackedOnly = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
                 InvoiceDiscountingFacility = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                //mhss = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
             };
 
             if (productClassProcessId == (short)ProductClassProcessEnum.CAMBased)
@@ -413,6 +414,9 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
                         return links.InvoiceDiscountingFacility;
+
+                    case (short)ProductClassEnum.MHSS:
+                        return links.General;
 
                     default:
                         return links.General;
@@ -458,6 +462,9 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
                         return links.InvoiceDiscountingFacility;
+
+                    case (short)ProductClassEnum.MHSS:
+                        return links.General;
 
                     default:
                         return links.General;
@@ -1345,6 +1352,90 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
             string path = string.Empty;
             path = reportPath + "ReportViews/TrialBalance.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId.ToString() + "&glAccountId=" + glAccountId.ToString() + "&currencyCode=" + currencyCode.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+
+
+        // remedial assets report
+
+        public string GetOutOfCourtSettlement(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/OutOfCourtSettlement.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetCollateralSales(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CollateralSales.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetRecoveryAgentUpdate(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RecoveryAgentUpdate.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetRecoveryCommission(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RecoveryCommission.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetRecoveryAgentPerformance(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RecoveryAgentPerformance.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetLitigationRecoveries(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LitigationRecoveries.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetRevalidationOfFullAndFinalSettlement(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RevalidationOfFullAndFinalSettlement.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetIdleAssetsSales(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/IdleAssetsSales.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
+            return path;
+        }
+
+        public string GetFullAndFinalSettlementAndWaivers(DateTime startDate, DateTime endDate)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/FullAndFinalSettlementAndWaivers.aspx?startDate=" + startDate + "&endDate=" + endDate + "&hashValue=" + hashValue;
             return path;
         }
 

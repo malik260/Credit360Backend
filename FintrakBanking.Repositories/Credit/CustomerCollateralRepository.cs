@@ -4768,7 +4768,7 @@ namespace FintrakBanking.Repositories.Credit
                 { 
                     var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == imCollateral.COLLATERALCUSTOMERID);
                     NotifyForCollateralStatusUpdate(collateralMain, entity.perfectionStatusId);
-                    NotifyForCollateralRevaluation(collateralMain, entity.lastValuationDate);
+                    NotifyForCollateralRevaluation(collateralMain, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
                     NotifyForCollateralVisitation(collateralMain);
                 }
                 
@@ -4782,7 +4782,7 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.lastValuationDate != collateral.LASTVALUATIONDATE)
             {
                 var collateralMain = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
-                NotifyForCollateralRevaluation(collateralMain, entity.lastValuationDate);
+                NotifyForCollateralRevaluation(collateralMain, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
                 NotifyForCollateralVisitation(collateralMain);
             }
             collateral.PROPERTYNAME = entity.propertyName;
@@ -7795,7 +7795,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (property.LASTVALUATIONDATE != entity.lastValuationDate)
                     {
                         var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
-                        NotifyForCollateralRevaluation(collateral, entity.lastValuationDate);
+                        NotifyForCollateralRevaluation(collateral, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
                         NotifyForCollateralVisitation(collateral);
                     }
                     property.CITYID = entity.cityId;
@@ -7893,7 +7893,7 @@ namespace FintrakBanking.Repositories.Credit
                         var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
                         NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
                         NotifyForCollateralStatusUpdate(collateral, entity.perfectionStatusId);
-                        NotifyForCollateralRevaluation(collateral, entity.lastValuationDate);
+                        NotifyForCollateralRevaluation(collateral, entity.lastValuationDate, valuationCycle: entity.valuationCycle);
                         NotifyForCollateralVisitation(collateral);
                     }
                    
@@ -8475,7 +8475,7 @@ namespace FintrakBanking.Repositories.Credit
                 var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERID == collateral.CUSTOMERID);
                 targetId = collateral.COLLATERALCUSTOMERID;
                 jobReQuestCode = collateral.COLLATERALCODE;
-                alertSubject = "NOTIFICATION COLLATERAL VALUATION REMINDER FROM FINTRAK 360TEST ALERT";
+                alertSubject = "NOTIFICATION COLLATERAL VALUATION REMINDER FROM FINTRAK ALERT";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
                 messageBody = $"Dear {staffFullName} <br /><br />," +
                                $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer?.LASTNAME + ", " + customer?.FIRSTNAME + " " + customer?.MIDDLENAME}" +
@@ -8491,7 +8491,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public void NotifyForCollateralRevaluation(TBL_COLLATERAL_CUSTOMER collateral, DateTime lastValuationDate, bool saveInternally = false)
+        public void NotifyForCollateralRevaluation(TBL_COLLATERAL_CUSTOMER collateral, DateTime lastValuationDate, bool saveInternally = false, int? valuationCycle = null)
         {
             string messageBody;
             string alertSubject;
@@ -8500,12 +8500,22 @@ namespace FintrakBanking.Repositories.Credit
             string staffFullName;
             int targetId;
             DateTime valuationDate;
+
             if (collateral.COLLATERALTYPEID != (int)CollateralTypeEnum.Property) return;
             var property = context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(p => p.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
+
             if (property != null)
             {
-                valuationDate = lastValuationDate.AddDays((double)collateral.VALUATIONCYCLE);
-
+                if (valuationCycle != null) {
+                    valuationDate = lastValuationDate.AddDays(valuationCycle.Value);
+                }
+                else if (collateral.VALUATIONCYCLE != null) {
+                    valuationDate = lastValuationDate.AddDays((double)collateral.VALUATIONCYCLE);
+                }
+                else {
+                    valuationDate = lastValuationDate;
+                }
+                
                 //if (collateral.COLLATERALTYPEID == (int)CollateralTypeEnum.PlantAndMachinery)
                 //{
                 //    var property = context.TBL_COLLATERAL_PLANT_AND_EQUIP.FirstOrDefault(p => p.COLLATERALCUSTOMERID == collateral.COLLATERALCUSTOMERID);
@@ -8514,6 +8524,7 @@ namespace FintrakBanking.Repositories.Credit
                 //        valuationDate = property.AddDays((double)collateral.VALUATIONCYCLE);//not complete!!!
                 //    }
                 //}
+
                 targetId = collateral.COLLATERALCUSTOMERID;
                 jobReQuestCode = collateral.COLLATERALCODE;
                 var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == collateral.CREATEDBY);
@@ -8525,6 +8536,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     staffFullName = staff?.FIRSTNAME + " " + staff?.MIDDLENAME + " " + staff?.LASTNAME;
                 }
+
                 var customer = context.TBL_CUSTOMER.FirstOrDefault(s => s.CUSTOMERID == collateral.CUSTOMERID);
                 alertSubject = "NOTIFICATION COLLATERAL VALUATION REMINDER FROM FINTRAK 360TEST ALERT";
                 recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,paul.asiemo@accessbankplc.com";
@@ -8532,9 +8544,9 @@ namespace FintrakBanking.Repositories.Credit
                                $"This is to inform you that the collateral, {collateral.COLLATERALSUMMARY} belonging to {customer?.LASTNAME + ", " + customer?.FIRSTNAME + " " + customer?.MIDDLENAME}" +
                                $"(Customer ID: {collateral.CUSTOMERCODE}) with OMV {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.OPENMARKETVALUE)} and FSV of {collateral.TBL_CURRENCY.CURRENCYCODE} {String.Format("{0:0,0.00}", property.FORCEDSALEVALUE)} is due for revaluation on {valuationDate.ToShortDateString()} <br /><br />" +
                                $"Kindly inform the customer, and initiate request for revaluation on Fintrak <br /><br />" +
-                               $"Regards"
-                               ;
-                           LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
+                               $"Regards";
+
+                LogEmailAlert(messageBody, alertSubject, recipients, jobReQuestCode, targetId);
 
                 //alertSubject = "Collateral Valuation Reminder from FINTRAK 360(TEST ALERT)";
                 //recipients = "John.Adeonojobi@ACCESSBANKPLC.com,Fayokemi.Akintunde@ACCESSBANKPLC.com,OLUKAYODE.AJAYI@ACCESSBANKPLC.com,ifeanyi.ikemefuna@fintraksoftware.com,chris.sualeze@fintraksoftware.com," +

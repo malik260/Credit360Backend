@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -53,8 +54,13 @@ namespace FintrakBanking.Repositories.Customer
                 
             });
         }
-        public List<CustomerViewModels> GetIntegratedCustomerInformation(string searchTerm)
+
+        public List<CustomerViewModels> GetIntegratedCustomerInformation(string searchTerm, bool isProspectConversion)
         {
+            if (isProspectConversion) {
+                CheckIfAccountNumberExist(searchTerm);
+            }
+
             var data = new List<CustomerViewModels>();
             var setup = mainContext.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (setup.USE_THIRD_PARTY_INTEGRATION)
@@ -124,6 +130,15 @@ namespace FintrakBanking.Repositories.Customer
             }
 
 
+        }
+
+        private void CheckIfAccountNumberExist(string accounNumber)
+        {
+            var account = (from a in mainContext.TBL_CASA
+                                where a.PRODUCTACCOUNTNUMBER == accounNumber && a.DELETED == false
+                                select a).FirstOrDefault();
+
+            if (account != null) { throw new SecureException("Account Number Already Exist On Credit360!"); }
         }
 
         //public async Task<CustomerIntegrationViewModels> GetIntegratedCustomerInformation(string searchTerm)

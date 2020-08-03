@@ -181,6 +181,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvedTenor { get; set; }
         public List<LoanApplicationDetailViewModel> applicationDetails { get; set; }
 
+        public string approvalStatusName { get; set; }
+
         public string tenorString
         {
             get
@@ -1067,6 +1069,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int productClassId { get; set; }
         public int loanDetailReviewTypeId { get; set; }
         public decimal approvedAmount { get; set; }
+        public string reviewDetails { get; set; }
         public List<ProductFeesViewModel> fees { get; set; }
     }
 

@@ -143,27 +143,32 @@ namespace FintrakBanking.Repositories.Setups.Approval
         public IEnumerable<ApprovalReliefViewModel> GetAllApprovalRelief(int companyId)
         {
 
-            var reliefs = context.TBL_STAFF_RELIEF
+            var relisfData = context.TBL_STAFF_RELIEF
                 .Where(x => x.DELETED == false)
-                .OrderByDescending(x => x.RELIEFID)
-                .Select(x => new ApprovalReliefViewModel
-                {
-                    reliefId = x.RELIEFID,
-                    relievedStaffId = x.STAFFID,
-                    reliefStaffId = x.RELIEFSTAFFID,
-                    staffName = context.TBL_STAFF.Where(s => s.STAFFID == x.STAFFID)
-                                                .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
-                                                .FirstOrDefault().name ?? "",
-                    reliefStaffName = context.TBL_STAFF.Where(s => s.STAFFID == x.RELIEFSTAFFID)
-                                                .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
-                                                .FirstOrDefault().name ?? "",
-                    reliefReason = x.RELIEFREASON,
-                    startDate = x.STARTDATE,
-                    endDate = x.ENDDATE,
-                    //isActive = x.ISACTIVE,
-                    isActive = DateTime.Now.CompareTo(x.ENDDATE) < 0,
+                .OrderByDescending(x => x.RELIEFID).ToList();
+            foreach(var r in relisfData)
+            {
+                r.ISACTIVE = DateTime.Now.CompareTo(r.ENDDATE) < 0;
+            }
+            context.SaveChanges();
+            var reliefs = relisfData.Select(x => new ApprovalReliefViewModel
+            {
+                reliefId = x.RELIEFID,
+                relievedStaffId = x.STAFFID,
+                reliefStaffId = x.RELIEFSTAFFID,
+                staffName = context.TBL_STAFF.Where(s => s.STAFFID == x.STAFFID)
+                                            .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
+                                            .FirstOrDefault().name ?? "",
+                reliefStaffName = context.TBL_STAFF.Where(s => s.STAFFID == x.RELIEFSTAFFID)
+                                            .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
+                                            .FirstOrDefault().name ?? "",
+                reliefReason = x.RELIEFREASON,
+                startDate = x.STARTDATE,
+                endDate = x.ENDDATE,
+                isActive = x.ISACTIVE,
+                //isActive = DateTime.Now.CompareTo(x.ENDDATE) < 0,
 
-                }).ToList();
+            }).ToList();
 
             return reliefs;
         }
@@ -175,8 +180,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var existingTempApprovalRelief = context.TBL_TEMP_STAFF_RELIEF
                    .FirstOrDefault(x => x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.RELIEFID == model.reliefId);
             var unApprovedApprovalRelief = context.TBL_TEMP_STAFF_RELIEF
-                .Where(x => x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                && x.RELIEFID == model.reliefId && x.ISCURRENT==true);
+                    .Where(x => x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                    && x.RELIEFID == model.reliefId && x.ISCURRENT == true);
             TBL_TEMP_STAFF_RELIEF tempApprovalRelief = new TBL_TEMP_STAFF_RELIEF();
 
             if (unApprovedApprovalRelief.Any())
@@ -213,7 +218,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     ENDDATE = model.endDate,
                     //ISACTIVE = model.isActive,
                     ISACTIVE = DateTime.Now.CompareTo(model.endDate) < 0,
-                    LASTUPDATEDBY = model.lastUpdatedBy,
+                    //LASTUPDATEDBY = model.lastUpdatedBy,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = DateTime.Now,
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -244,11 +249,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
             {
                 try
                 {
-
-
                     this.auditTrail.AddAuditTrail(audit);
                     //end of Audit section -------------------------------
-
 
                     output = await context.SaveChangesAsync() > 0;
 
@@ -284,7 +286,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
                         return output;
                     }
-
+                    trans.Rollback();
                     return false;
                 }
                 catch (Exception ex)
@@ -303,9 +305,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var charge = (from a in context.TBL_TEMP_STAFF_RELIEF
                            join t in context.TBL_APPROVAL_TRAIL on a.TEMPRELIEFID equals t.TARGETID
                            where (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
-                               && a.ISCURRENT == true
-                               && t.RESPONSESTAFFID == null
-                               && t.OPERATIONID == (int)OperationsEnum.StaffReliefCreation
+                           && a.ISCURRENT == true
+                           && a.DELETED == false
+                           && t.RESPONSESTAFFID == null
+                           && t.OPERATIONID == (int)OperationsEnum.StaffReliefCreation
                            && ids.Contains((int)t.TOAPPROVALLEVELID)
                           
                            select new ApprovalReliefViewModel
@@ -365,9 +368,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
             //var tempApprovalRelief = (from a in context.TBL_TEMP_STAFF_RELIEF where a.TEMPRELIEFID == targetId select a).FirstOrDefault();
             var tempApprovalRelief = context.TBL_TEMP_STAFF_RELIEF.Find(targetId);
             TBL_STAFF_RELIEF targetApprovalRelief;
+            TBL_STAFF_RELIEF targetApprovalReliefForAudit;
+            string previousReliefForAudit = string.Empty;
             if (tempApprovalRelief.RELIEFID > 0) 
             {
                 targetApprovalRelief = context.TBL_STAFF_RELIEF.Find(tempApprovalRelief.RELIEFID);
+                targetApprovalReliefForAudit = targetApprovalRelief;
                 if (targetApprovalRelief != null)
                 {
                     targetApprovalRelief.RELIEFREASON = tempApprovalRelief.RELIEFREASON;
@@ -376,6 +382,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     targetApprovalRelief.STARTDATE = tempApprovalRelief.STARTDATE;
                     targetApprovalRelief.ENDDATE = tempApprovalRelief.ENDDATE;
                     targetApprovalRelief.ISACTIVE = tempApprovalRelief.ISACTIVE;
+                    targetApprovalRelief.LASTUPDATEDBY = tempApprovalRelief.CREATEDBY;
+                    targetApprovalRelief.DATETIMEUPDATED = DateTime.Now;
+                    previousReliefForAudit = targetApprovalReliefForAudit.ToString();
                 };
             }
             else
@@ -388,16 +397,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STARTDATE = tempApprovalRelief.STARTDATE,
                     ENDDATE = tempApprovalRelief.ENDDATE,
                     ISACTIVE = tempApprovalRelief.ISACTIVE,
-                    CREATEDBY = (int)tempApprovalRelief.CREATEDBY,
-                    DATETIMECREATED = general.GetApplicationDate(),
-
-
+                    CREATEDBY = tempApprovalRelief.CREATEDBY,
+                    DATETIMECREATED = DateTime.Now,
                 };
                 context.TBL_STAFF_RELIEF.Add(targetApprovalRelief);
             }
-
-
-
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -405,7 +409,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 AUDITTYPEID = (short)AuditTypeEnum.ApprovalReliefApproved,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = "Approved Approval Relief",
+                DETAIL = "Approved Approval Relief " + previousReliefForAudit,
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),

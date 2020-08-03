@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -229,6 +230,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
+  
         public short principalFrequencyTypeId { get; set; }
         public short interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
@@ -414,41 +416,26 @@ public int? newInterestFrequencyTypeId { get; set; }
         public decimal? agentCommission { get; set; }
         public decimal? percentageCommission { get; set; }
         public decimal totalAmountRecovery { get; set; }
+        public string nameOfRecoveryAgent { get; set; }
+        public string address { get; set; }
+        public string telephoneNumber { get; set; }
+        public DateTime expectedRecoveryDate { get; set; }
+        public int periodToRecover { get { return (this.expectedRecoveryDate.Date - this.dateOfAssignment.Date).Days; } }
+        public decimal amountRecovered { get; set; }
+        public string accountNumber { get; set; }
+        public string accountName { get; set; }
+        public DateTime dateOfEngagement { get; set; }
+        public double accountBalance { get; set; }
+        public List<string> listOfAccountAssigned { get; set; }
+        public string email { get; set; }
+        public DateTime dateOfAssignment { get; set; }
     }
 
 
     public class LoanReviewApplicationViewModel : GeneralEntity
     {
-        public string slaGlobalStatus
-        {
-            get
-            {
-                float sla = globalsla;
-                int? elapse = (DateTime.Now - dateTimeCreated).Hours;
-                return SlaStatus(sla, elapse);
-            }
-        }
-
-        public string slaInduvidualStatus
-        {
-            get
-            {
-                float sla = currentApprovalLevelSlaInterval;
-                int? elapse = (DateTime.Now - timeIn)?.Hours;
-                return SlaStatus(sla, elapse);
-            }
-        }
-
-        private string SlaStatus(float sla, int? elapse)
-        {
-            if (sla == 0) return "success";
-            if (elapse == 0 || elapse == null) return "success";
-            float factor = (float)(elapse / sla) * 100;
-            if (factor <= 30) return "success";
-            if (factor <= 70) return "warning";
-            if (factor <= 100) return "danger";
-            return "danger";
-        }
+        public string slaGlobalStatus { get; set; }
+        public string slaInduvidualStatus { get; set; }
         public string currentApprovalStatus { get; set; }
         public DateTime? slaTime { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }

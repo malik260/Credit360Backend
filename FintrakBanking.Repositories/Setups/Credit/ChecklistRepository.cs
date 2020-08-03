@@ -2726,7 +2726,7 @@ namespace FintrakBanking.Repositories.Credit
                                          && d.TBL_CUSTOMER.CUSTOMERTYPEID != (int)CustomerTypeEnum.Individual).ToList();
             foreach (var id in details)
             {
-                var checklists = context.TBL_ESG_CHECKLIST_DETAIL.Where(c => c.DELETED != true && c.LOANAPPLICATIONDETAILID == id.LOANAPPLICATIONDETAILID).ToList();
+                var checklists = context.TBL_ESG_CHECKLIST_DETAIL.Where(c => c.DELETED != true && c.LOANAPPLICATIONDETAILID == id.LOANAPPLICATIONDETAILID && c.CHECKLIST_TYPEID == (int)CheckListTypeEnum.ESGMChecklist).ToList();
                 if (checklists.Count() > 0)
                 {
                     continue;
@@ -2734,7 +2734,19 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("ESRM Checklist items for "+id.TBL_PRODUCT1.PRODUCTNAME+" product still pending");
                 }
+            }
 
+            if (details.Count > 0)
+            {
+                var greenChecklists = context.TBL_ESG_CHECKLIST_DETAIL.Where(c => c.DELETED != true && c.LOANAPPLICATIONDETAILID == applicationId && c.CHECKLIST_TYPEID == (int)CheckListTypeEnum.GreenRating).ToList();
+                if (greenChecklists.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    throw new SecureException("Green Loan Identification items for this request " + app.APPLICATIONREFERENCENUMBER + " still pending");
+                }
             }
             return true;
         }
@@ -2859,11 +2871,15 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.NextLevelId = null;
                 workflow.Comment = "Request for Deferral Document Approval";
                 workflow.OperationId = (int)OperationsEnum.ProvisionOfDeferredDocument;
+
+                workflow.LevelBusinessRule = new LevelBusinessRule { excludeLevel = model.excludeLegal.Value };
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
 
-                if (deferral != null)
+                if (deferral != null) {
                     deferral.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    deferral.EXCLUDELEGAL = model.excludeLegal;
+                }
 
                 data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 trans.Commit();

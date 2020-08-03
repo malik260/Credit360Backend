@@ -8668,7 +8668,7 @@ namespace FintrakBanking.Repositories.Credit
             var n = 0;
             result = result + $@"
                 <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
-                <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
+                <h3><b>CREDIT PROGRAM SHEET (CASH COLLATERIZED)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
@@ -11766,6 +11766,17 @@ namespace FintrakBanking.Repositories.Credit
                
                 <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr></table> ";   
+                   
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
+                <h3><b>DOCUMENTATION DEFERRAL/WAIVER FORM</b></h3>
+                <br />
+               
+                <table style='font face: arial; size:12px' border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
                         <td><strong>BORROWER:</strong></td> 
                         <td>{customerName}</td>
                         <td><strong>DATE:</strong> </td>
@@ -12011,6 +12022,10 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>MEMO</b></h3> <br />
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>                   
+                    <tr>
                         <td><b>Date:</b></td>
                         <td>{DateTime.Now}</td>
                     </tr>
@@ -12095,6 +12110,10 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             result = result + $@"
                 <table border=1 width=750 cellpadding=5 cellspacing=0>
+                    <tr>
+                        <td colspan=2 align=right><img src='/assets/images/access.jpg' alt='Access Bank' width='245' height='52'></td>
+                        
+                    </tr>                    
                     <tr>
                       <td><strong>Date</strong></td>
                       <td>{data.DATECREATED}</td>  

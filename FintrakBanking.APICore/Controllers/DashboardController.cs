@@ -52,6 +52,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         [HttpPost]
         [Route("loans-on-pipeline")]
         public HttpResponseMessage GetLoansOnPipeline(DateRange val)
@@ -67,6 +68,37 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("get-loans-in-pipeline-Lms/operationId/{operationId}/classId/{classId}")]
+        public HttpResponseMessage GetLoanInThePipelineLms([FromUri] int operationId, [FromUri] int? classId)
+        {
+            try
+            {
+                var data = dashboard.GetLoanInThePipelineLms(operationId, token.GetStaffId, token.GetCompanyId, token.GetBranchId, classId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("get-approved-loans-Lms")]
+        public HttpResponseMessage GetApprovedLoansLms()
+        {
+            try
+            {
+                var data = dashboard.GetApprovedLoansLms(token.GetCompanyId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [Route("loans-risk-exposure")]
         public HttpResponseMessage GetLoansByRiskExposure(DateRange val)
