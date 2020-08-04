@@ -316,11 +316,12 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = true, result = data });
             }
-            catch (SecureException e)
+            catch (APIErrorException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $" {e.Message}" });
             }
+            
         }
 
         [HttpGet]
