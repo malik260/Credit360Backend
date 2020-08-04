@@ -66,7 +66,7 @@ namespace FintrakBanking.Repositories.Credit
             var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch)
              .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
              .Join(context.TBL_CUSTOMER, ab => ab.a.CUSTOMERID, c => c.CUSTOMERID, (ab, c) => new { ab, c, b = ab.b })
-             .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+             .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId 
                     && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                     || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Authorised
@@ -183,7 +183,7 @@ namespace FintrakBanking.Repositories.Credit
 
             applications = query.AsQueryable()
            .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-           .OrderByDescending(x => x.loanReviewApplicationId);
+           .OrderByDescending(x => x.approvalTrailId);
 
             var list = applications.ToList();
             //var count = applications.Count();
