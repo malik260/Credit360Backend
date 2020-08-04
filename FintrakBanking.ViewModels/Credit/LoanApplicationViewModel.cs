@@ -1079,5 +1079,46 @@ namespace FintrakBanking.ViewModels.Credit
         public TimeSpan timeOfDay { get; set; }
     }
 
+
+    public class ContractorTieringViewModel : GeneralEntity
+    {
+        public int contractorTierId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public string criteria { get; set; }
+        public int criteriaValue { get; set; }
+        public string tierName { get; set; }
+        public float tierValue { get; set; }
+        public List<ContractorTieringViewModel> contractorForm { get; set; }
+    }
+
+    public class ProjectRiskRatingViewModel : GeneralEntity
+    {
+        public int projectRiskRatingId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public string customerTier { get; set; }
+        public string contractEmployer { get; set; }
+        public string complexity { get; set; }
+        public string location { get; set; }
+        public decimal projectValue { get; set; }
+        public string importContent { get; set; }
+    }
+
+    public class ContractorCriteriaViewModel 
+    {
+        public int criteriaId { get; set; }
+        public string criteria { get; set; }
+        public float tierOne { get; set; }
+        public float tierTwo { get; set; }
+        public float tierThree { get; set; }
+    }
+
+    public class ProjectRiskRatingCategoryViewModel
+    {
+        public int categoryId { get; set; }
+        public string categoryName { get; set; }
+    }
+
 }
 

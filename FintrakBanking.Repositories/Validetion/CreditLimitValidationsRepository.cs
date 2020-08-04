@@ -1800,5 +1800,21 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 applicationId = appl.LOANAPPLICATIONID,
             });
         }
+
+        public IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingCategories()
+        {
+            var groupLimits = (from a in context.TBL_GROUP_LIMIT
+                               where a.DELETED == false
+                               select new GroupLimitViewModel
+                               {
+                                   groupLimitId = a.GROUPLIMITID,
+                                   groupLimitValue = a.GROUPLIMITVALUE,
+                                   groupName = a.GROUPNAME,
+                                   description = a.DESCRIPTION,
+                                   limitNumber = a.LIMITNUMBER
+                               }).ToList();
+
+            return groupLimits;
+        }
     }
 }

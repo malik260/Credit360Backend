@@ -3960,6 +3960,33 @@ namespace FintrakBanking.Repositories.Credit
             return GetRecommendedCollateral(entity.applicationId,entity.createdBy);
         }
 
+
+        public bool AddContractorTiering(ContractorTieringViewModel entity)
+        {
+            bool res = false;
+            if (entity.contractorForm.Count() > 0)
+            {
+                foreach(var i in entity.contractorForm)
+                {
+                    context.TBL_CONTRACTOR_TIERING.Add(new TBL_CONTRACTOR_TIERING
+                    {
+                        APPLICATIONREFERENCENUMBER = entity.applicationReferenceNumber,
+                        CUSTOMERID = entity.customerId,
+                        CRITERIA = entity.criteria,
+                        CRITERIAVALUE = i.criteriaValue,
+                        TIERNAME = entity.tierName,
+                        TIERVALUE = entity.tierValue,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = entity.createdBy
+                    });
+
+                    if (context.SaveChanges() > 0) res = true;
+                }
+               
+            }
+            return res;
+        }
+
         public List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity)
         {
             var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Find(entity.id);

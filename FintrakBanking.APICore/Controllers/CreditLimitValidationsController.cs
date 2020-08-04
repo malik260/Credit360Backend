@@ -730,5 +730,20 @@ namespace FintrakBanking.APICore.Controllers
                new { success = false, message = $"deleted Record not Successfull" });
         }
         #endregion
+
+
+        [HttpGet]
+        [Route("project-risk-rating-categories")]
+        public HttpResponseMessage getAllProjectRiskRatingCategories()
+        {
+            var response = repo.GetAllGroupLimit();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
     }
 } 
