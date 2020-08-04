@@ -2928,24 +2928,14 @@ namespace FintrakBanking.Repositories.Setups.General
         private IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalApprovalList(int staffId)
             {
 
-                //var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GlobalInterestRateChange).ToList();
                 var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GlobalInterestRateChangeApproval).ToList();
 
             return (from data in context.TBL_PRODUCT_PRICE_INDEX_GLOBAL
                     join atrail in context.TBL_APPROVAL_TRAIL on data.PRODUCTPRICEINDEXGLOBALID equals atrail.TARGETID
                     where
-                    //(atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                    //&& data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
-                    //atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
-                    //data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
-                    //data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                    //(atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                     data.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && atrail.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
-                    //data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
-                    //data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                     && atrail.RESPONSESTAFFID == null
-                    //&& atrail.OPERATIONID == (int)OperationsEnum.GlobalInterestRateChange
                     && atrail.OPERATIONID == (int)OperationsEnum.GlobalInterestRateChangeApproval
                     && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && (atrail.TOSTAFFID == staffId || atrail.TOSTAFFID == null))
                     orderby atrail.APPROVALTRAILID descending
@@ -2961,7 +2951,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         hasBeenApplied = data.HASBEENAPPLIED,
                         isMarketInduced = data.ISMARKETINDUCED,
                         dateTimeCreated = data.DATETIMECREATED,
-                        //operationId = (int)OperationsEnum.GlobalInterestRateChange,
                         operationId = (int)OperationsEnum.GlobalInterestRateChangeApproval,
                         currentApprovalLevelId = atrail.TOAPPROVALLEVELID
                     });
@@ -2973,14 +2962,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 var indexes = (from data in context.TBL_PRODUCT_PRICE_INDEX_GLOBAL
                                join atrail in context.TBL_APPROVAL_TRAIL on data.PRODUCTPRICEINDEXGLOBALID equals atrail.TARGETID
                                where 
-                               //(atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                 data.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                               //data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
-                               //data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                                && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
                                || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                                && atrail.RESPONSESTAFFID == null
-                               //&& atrail.OPERATIONID == (int)OperationsEnum.GlobalInterestRateChange
                                && atrail.OPERATIONID == (int)OperationsEnum.GlobalInterestRateChangeApproval
                                && (!ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId)
                                orderby atrail.APPROVALTRAILID descending
@@ -3002,29 +2987,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                }).ToList();
 
             return indexes;
-                                //(from data in context.TBL_PRODUCT_PRICE_INDEX_GLOBAL
-                                //            where data.DELETED == false && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                //            || data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                                //            || data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                                //            || data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                                //            orderby data.DATETIMEDELETED descending
-                                //            select new ProductPriceIndexGlobalViewModel()
-                                //            {
-                                //                productPriceIndexGlobalId = data.PRODUCTPRICEINDEXGLOBALID,
-                                //                productPriceIndexId = data.PRODUCTPRICEINDEXID,
-                                //                productPriceIndexName = context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == data.PRODUCTPRICEINDEXID).Select(m => m.PRICEINDEXNAME).FirstOrDefault(),
-                                //                oldRate = data.OLDRATE,
-                                //                newRate = data.NEWRATE,
-                                //                effectiveDate = data.EFFECTIVEDATE,
-                                //                approvalStatusId = data.APPROVALSTATUSID,
-                                //                hasBeenApplied = data.HASBEENAPPLIED,
-                                //                isMarketInduced = data.ISMARKETINDUCED,
-                                //                dateTimeUpdated = data.DATETIMEUPDATED,
-                                //                deleted = data.DELETED,
-                                //                deletedBy = data.DELETEDBY,
-                                //                dateTimeDeleted = data.DATETIMEDELETED,
-                                //                dateTimeCreated = data.DATETIMECREATED,
-                                //            });
+                                
         }
             //public IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId)
             //{
