@@ -12,6 +12,15 @@ namespace FintrakBanking.Interfaces.Reports
 {
     public interface IReportRoutes
     {
+        string GetOutOfCourtSettlement(DateTime startDate, DateTime endDate);
+        string GetCollateralSales(DateTime startDate, DateTime endDate);
+        string GetRecoveryAgentUpdate(DateTime startDate, DateTime endDate);
+        string GetRecoveryCommission(DateTime startDate, DateTime endDate);
+        string GetRecoveryAgentPerformance(DateTime startDate, DateTime endDate);
+        string GetLitigationRecoveries(DateTime startDate, DateTime endDate);
+        string GetRevalidationOfFullAndFinalSettlement(DateTime startDate, DateTime endDate);
+        string GetIdleAssetsSales(DateTime startDate, DateTime endDate);
+        string GetFullAndFinalSettlementAndWaivers(DateTime startDate, DateTime endDate);
         int GetLoanApplicationIdByReferenceNumberLMS(string applicationRefNumber);
         string GetProductSpecificTemplateCFL(short? productClassProcessId, short? productClassId, string applicationRefNumber,
                        string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName);

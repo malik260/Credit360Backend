@@ -603,6 +603,48 @@
     <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.designer.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx.cs">
+      <DependentUpon>FullAndFinalSettlementAndWaivers.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx.designer.cs">
+      <DependentUpon>FullAndFinalSettlementAndWaivers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\IdleAssetsSales.aspx.cs">
+      <DependentUpon>IdleAssetsSales.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\IdleAssetsSales.aspx.designer.cs">
+      <DependentUpon>IdleAssetsSales.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RevalidationOfFullAndFinalSettlement.aspx.cs">
+      <DependentUpon>RevalidationOfFullAndFinalSettlement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RevalidationOfFullAndFinalSettlement.aspx.designer.cs">
+      <DependentUpon>RevalidationOfFullAndFinalSettlement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LitigationRecoveries.aspx.cs">
+      <DependentUpon>LitigationRecoveries.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LitigationRecoveries.aspx.designer.cs">
+      <DependentUpon>LitigationRecoveries.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryCommission.aspx.cs">
+      <DependentUpon>RecoveryCommission.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryCommission.aspx.designer.cs">
+      <DependentUpon>RecoveryCommission.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryAgentUpdate.aspx.cs">
+      <DependentUpon>RecoveryAgentUpdate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryAgentUpdate.aspx.designer.cs">
+      <DependentUpon>RecoveryAgentUpdate.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralValuationReport.aspx.cs">
       <DependentUpon>CollateralValuationReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -686,6 +728,27 @@
     </Compile>
     <Compile Include="Reports\ReportViews\CustomeFacilityRepayment.aspx.designer.cs">
       <DependentUpon>CustomeFacilityRepayment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralSales.aspx.cs">
+      <DependentUpon>CollateralSales.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralSales.aspx.designer.cs">
+      <DependentUpon>CollateralSales.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OutOfCourtSettlement.aspx.cs">
+      <DependentUpon>OutOfCourtSettlement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OutOfCourtSettlement.aspx.designer.cs">
+      <DependentUpon>OutOfCourtSettlement.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryAgentPerformance.aspx.cs">
+      <DependentUpon>RecoveryAgentPerformance.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RecoveryAgentPerformance.aspx.designer.cs">
+      <DependentUpon>RecoveryAgentPerformance.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\DailyAccrualReport.aspx.cs">
       <DependentUpon>DailyAccrualReport.aspx</DependentUpon>
@@ -1331,6 +1394,12 @@
     <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
+    <Content Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx" />
+    <Content Include="Reports\ReportViews\IdleAssetsSales.aspx" />
+    <Content Include="Reports\ReportViews\RevalidationOfFullAndFinalSettlement.aspx" />
+    <Content Include="Reports\ReportViews\LitigationRecoveries.aspx" />
+    <Content Include="Reports\ReportViews\RecoveryCommission.aspx" />
+    <Content Include="Reports\ReportViews\RecoveryAgentUpdate.aspx" />
     <Content Include="Reports\ReportViews\CollateralValuationReport.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\ContigentLiabilityInformation.aspx" />
@@ -1343,6 +1412,9 @@
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
+    <Content Include="Reports\ReportViews\CollateralSales.aspx" />
+    <Content Include="Reports\ReportViews\OutOfCourtSettlement.aspx" />
+    <Content Include="Reports\ReportViews\RecoveryAgentPerformance.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
     <Content Include="Reports\ReportViews\DeferralWaiver.aspx" />
     <Content Include="Reports\ReportViews\DisbursalCreditTurnover.aspx" />
@@ -1557,6 +1629,13 @@
     <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
       <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\RecoveryReporting.xsc">
+      <DependentUpon>RecoveryReporting.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\RecoveryReporting.xsd" />
+    <Content Include="Reports\ReportDataset\RecoveryReporting.xss">
+      <DependentUpon>RecoveryReporting.xsd</DependentUpon>
+    </Content>
     <None Include="Reports\ReportDataset\ReportDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>ReportDataSet.Designer.cs</LastGenOutput>
@@ -1698,6 +1777,7 @@
     <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPerfectionYetToCommence.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CollateralSales.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralValuationReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
     <EmbeddedResource Include="Reports\Report\ContigentLiabilityInformation.rdlc" />
@@ -1715,11 +1795,14 @@
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\Form3800BFacilityReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\FullAndFinalSettlementAndWaivers.rdlc" />
+    <EmbeddedResource Include="Reports\Report\IdleAssetsSales.rdlc" />
     <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestIncome.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LitigationRecoveries.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanBookingReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanClassification.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
@@ -1741,6 +1824,7 @@
     <EmbeddedResource Include="Reports\Report\MiddleOfficeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OriginalDocumentSubmission.rdlc" />
+    <EmbeddedResource Include="Reports\Report\OutOfCourtSettlement.rdlc" />
     <EmbeddedResource Include="Reports\Report\OutputDocument.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -1749,6 +1833,10 @@
     <EmbeddedResource Include="Reports\Report\PSR_APG.rdlc" />
     <EmbeddedResource Include="Reports\Report\PSR_Direct.rdlc" />
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RecoveryAgentPerformance.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RecoveryAgentUpdate.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RecoveryCommission.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RevalidationOfFullAndFinalSettlement.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningFacilities.rdlc" />
