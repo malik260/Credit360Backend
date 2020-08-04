@@ -83,6 +83,8 @@
     <Compile Include="Models\TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_COLLATERAL_LIQUIDATION_RECOVERY.cs" />
     <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
+    <Compile Include="Models\TBL_FACILITY_MODIFICATION.cs" />
+    <Compile Include="Models\TBL_FACILITY_MOD_DETL_FEE.cs" />
     <Compile Include="Models\TBL_GROUP_LIMIT.cs" />
     <Compile Include="Models\TBL_INTEGRATION_CONTROL.cs" />
     <Compile Include="Models\TBL_LC_ISSUANCE_ARCHIVE.cs" />

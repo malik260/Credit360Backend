@@ -3608,7 +3608,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 ArchiveLoanApplicationDetails(f.LOANAPPLICATIONDETAILID);
             }
-            return context.SaveChanges() != 0;
+            return context.SaveChanges() > 0;
         }
 
         public void ArchiveLoanApplicationDetails(int loanApplicationDetailId)

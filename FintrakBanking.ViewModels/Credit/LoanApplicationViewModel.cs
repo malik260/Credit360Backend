@@ -1059,6 +1059,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class FacilityModificationViewModel : GeneralEntity
     {
+        public int facilityModificationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         public short approvedProductId { get; set; }
         public double approvedInterestRate { get; set; }
@@ -1070,7 +1071,16 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanDetailReviewTypeId { get; set; }
         public decimal approvedAmount { get; set; }
         public string reviewDetails { get; set; }
+        public string customerName { get; set; }
+        public string applicationRef { get; set; }
         public List<ProductFeesViewModel> fees { get; set; }
+        public int repaymentScheduleId { get; set; }
+        public int interestRepaymentId { get; set; }
+        public string repaymentTerms { get; set; }
+        public string interestRepayment { get; set; }
+        public string approvalStatus { get; set; }
+        public DateTime systemArrivalDateTime { get; set; }
+
     }
 
     public class DateTimeAndTimeOfDayViewModel
