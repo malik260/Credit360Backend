@@ -1641,6 +1641,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (rule.EXEMPTCONTINGENTFACILITY && !levelBusinessRule.isContingentFacility) flagChecked = true;
             //if (rule.EXEMPTREVOLVINGFACILITY && !levelBusinessRule.isRevolvingFacility) flagChecked = true;
             //if (rule.EXEMPTRENEWAL && !levelBusinessRule.isRenewal) flagChecked = true;
+            if(rule.EXCLUDELEVEL ?? false && !levelBusinessRule.excludeLevel) flagChecked = true;
 
 
 
