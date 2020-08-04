@@ -1812,5 +1812,170 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             return categories;
         }
+
+        public bool AddContractorCriteria(ContractorCriteriaViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CONTRACTOR_CRITERIA cONTRACTOR_CRITERIA;
+                    cONTRACTOR_CRITERIA = new TBL_CONTRACTOR_CRITERIA
+                    {
+                        CRITERIA = entity.criteria,
+                        TIERONE = entity.tierOne,
+                        TIERTWO = entity.tierTwo,
+                        TIERTHREE = entity.tierThree,
+                    };
+                    context.TBL_CONTRACTOR_CRITERIA.Add(cONTRACTOR_CRITERIA);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateContractorCriteria(ContractorCriteriaViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CONTRACTOR_CRITERIA _CRITERIA;
+                    if (entity.criteriaId > 0)
+                    {
+                        _CRITERIA = context.TBL_CONTRACTOR_CRITERIA.Find(entity.criteriaId);
+                        if (_CRITERIA != null)
+                        {
+                            _CRITERIA.CRITERIA = entity.criteria;
+                            _CRITERIA.TIERONE = entity.tierOne;
+                            _CRITERIA.TIERTWO = entity.tierTwo;
+                            _CRITERIA.TIERTHREE = entity.tierThree;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+
+        public bool AddProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_PROJECT_RISK_RATING_CRITERIA tBL_PROJECT_RISK;
+                    tBL_PROJECT_RISK = new TBL_PROJECT_RISK_RATING_CRITERIA
+                    {
+                        CRITERIA = entity.criteria,
+                        CRITERIAVALUE = entity.criteriaValue,
+                        PROJECTRISKRATINGCATEGORYID = entity.projectRiskRatingCategoryId,
+                    };
+                    context.TBL_PROJECT_RISK_RATING_CRITERIA.Add(tBL_PROJECT_RISK);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_PROJECT_RISK_RATING_CRITERIA tBL_PROJECT_RISK;
+                    if (entity.projectRiskRatingCriteriaId > 0)
+                    {
+                        tBL_PROJECT_RISK = context.TBL_PROJECT_RISK_RATING_CRITERIA.Find(entity.projectRiskRatingCriteriaId);
+                        if (tBL_PROJECT_RISK != null)
+                        {
+                            tBL_PROJECT_RISK.CRITERIA = entity.criteria;
+                            tBL_PROJECT_RISK.CRITERIAVALUE = entity.criteriaValue;
+                            tBL_PROJECT_RISK.PROJECTRISKRATINGCATEGORYID = entity.projectRiskRatingCategoryId;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool AddProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_PROJECT_RISK_RATING_CATEGORY tBL_PROJECT_RISK;
+                    tBL_PROJECT_RISK = new TBL_PROJECT_RISK_RATING_CATEGORY
+                    {
+                        CATEGORYNAME = entity.categoryName
+                    };
+                    context.TBL_PROJECT_RISK_RATING_CATEGORY.Add(tBL_PROJECT_RISK);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_PROJECT_RISK_RATING_CATEGORY tBL_PROJECT_RISK;
+                    if (entity.categoryId > 0)
+                    {
+                        tBL_PROJECT_RISK = context.TBL_PROJECT_RISK_RATING_CATEGORY.Find(entity.categoryId);
+                        if (tBL_PROJECT_RISK != null)
+                        {
+                            tBL_PROJECT_RISK.CATEGORYNAME = entity.categoryName;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
     }
 }

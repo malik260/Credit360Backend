@@ -10,6 +10,13 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
 {
     public interface ICreditLimitValidationsRepository
     {
+        bool UpdateProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity);
+        bool AddProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity);
+        bool UpdateProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity);
+        bool AddProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity);
+        bool UpdateContractorCriteria(ContractorCriteriaViewModel entity);
+        IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingCategories();
+        bool AddContractorCriteria(ContractorCriteriaViewModel entity);
         CreditLimitValidationsModel ValidateAmountFacilityBySector(int sectorId);
         CreditLimitValidationsModel ValidateNPLByGroupFirstTwenty(LoanApplicationViewModel application);
         CreditLimitValidationsModel ValidateNPLByGroupFirstHundred(LoanApplicationViewModel application);

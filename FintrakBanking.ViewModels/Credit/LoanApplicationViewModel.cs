@@ -1105,7 +1105,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string importContent { get; set; }
     }
 
-    public class ContractorCriteriaViewModel 
+    public class ContractorCriteriaViewModel : GeneralEntity
     {
         public int criteriaId { get; set; }
         public string criteria { get; set; }
@@ -1114,10 +1114,18 @@ namespace FintrakBanking.ViewModels.Credit
         public float tierThree { get; set; }
     }
 
-    public class ProjectRiskRatingCategoryViewModel
+    public class ProjectRiskRatingCategoryViewModel : GeneralEntity
     {
         public int categoryId { get; set; }
         public string categoryName { get; set; }
+    }
+
+    public class ProjectRiskRatingCriteriaViewModel : GeneralEntity
+    {
+        public int projectRiskRatingCriteriaId { get; set; }
+        public string criteria { get; set; }
+        public int criteriaValue { get; set; }
+        public int projectRiskRatingCategoryId { get; set; }
     }
 
 }
