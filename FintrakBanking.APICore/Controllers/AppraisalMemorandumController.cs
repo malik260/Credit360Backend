@@ -924,7 +924,7 @@ namespace FintrakBanking.APICore.Controllers
             entity.createdBy = token.GetStaffId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
 
-            WorkflowResponse response = repo.GetWorkflowNextStatusLms(entity);
+            var response = repo.PostContractorTiering(entity);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
         }

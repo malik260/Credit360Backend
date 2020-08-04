@@ -4404,7 +4404,35 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
-
+        public bool PostContractorTiering(ContractorTieringViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CONTRACTOR_TIERING tBL_CONTRACTOR;
+                    tBL_CONTRACTOR = new TBL_CONTRACTOR_TIERING
+                    {
+                        APPLICATIONREFERENCENUMBER = entity.applicationReferenceNumber,
+                        CUSTOMERID = entity.customerId,
+                        CRITERIA = entity.criteria,
+                        CRITERIAVALUE = entity.criteriaValue,
+                        TIERNAME = entity.tierName,
+                        TIERVALUE = entity.tierValue,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now
+                    };
+                    context.TBL_CONTRACTOR_TIERING.Add(tBL_CONTRACTOR);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
 
     }
 

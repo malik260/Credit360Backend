@@ -1803,18 +1803,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingCategories()
         {
-            var groupLimits = (from a in context.TBL_GROUP_LIMIT
-                               where a.DELETED == false
-                               select new GroupLimitViewModel
+            var categories = (from a in context.TBL_PROJECT_RISK_RATING_CATEGORY
+                               select new ProjectRiskRatingCategoryViewModel
                                {
-                                   groupLimitId = a.GROUPLIMITID,
-                                   groupLimitValue = a.GROUPLIMITVALUE,
-                                   groupName = a.GROUPNAME,
-                                   description = a.DESCRIPTION,
-                                   limitNumber = a.LIMITNUMBER
+                                   categoryId = a.CATEGORYID,
+                                   categoryName = a.CATEGORYNAME
                                }).ToList();
 
-            return groupLimits;
+            return categories;
         }
     }
 }
