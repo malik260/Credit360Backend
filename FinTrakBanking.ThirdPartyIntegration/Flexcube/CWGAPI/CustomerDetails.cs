@@ -87,10 +87,11 @@
                     if (response.IsSuccessStatusCode)
                     {
                         responseMessage = await response.Content.ReadAsStringAsync();
-                        JObject jsonString = JObject.Parse(responseMessage);
+                        //responseMessage = GetLatestEntryFromCustomApiLogs(customerAccount, "GetCustomerByAccountNumber");
 
                         if (responseMessage.Contains("data"))
                         {
+                            JObject jsonString = JObject.Parse(responseMessage);
                             var data = jsonString["data"].ToString();
                             var objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(data);
 
@@ -112,9 +113,9 @@
                                 customers.Add(customerModel);
                             }
                         }
-                        else if (responseMessage.Contains("33"))
+                        else
                         {
-                            throw new APIErrorException($"Core Banking API Error - {responseMessage}");
+                            throw new APIErrorException($"Core Banking API Error - GetCustomerByAccountNumber API is Currently Unavailable. Contact IT Admin or ESB Team for Support!");
                         }
 
                     }
@@ -125,7 +126,7 @@
                 }
                 catch (APIErrorException ex)
                 {
-                    throw new APIErrorException($"Core Banking API Error - {ex.Message}");
+                    throw new APIErrorException($"{ex.Message}");
                 }
                 catch (Exception ex)
                 {
