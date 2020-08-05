@@ -1977,5 +1977,35 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return false;
         }
 
+        public IEnumerable<ContractorCriteriaViewModel> getAllContractorCriteria()
+        {
+            var contractorCriteria = (from a in context.TBL_CONTRACTOR_CRITERIA
+                              select new ContractorCriteriaViewModel
+                              {
+                                  criteriaId = a.CRITERIAID,
+                                  criteria = a.CRITERIA,
+                                  tierOne = a.TIERONE,
+                                  tierTwo = a.TIERTWO,
+                                  tierThree = a.TIERTHREE
+                              }).ToList();
+
+            return contractorCriteria;
+        }
+
+        public IEnumerable<ProjectRiskRatingCriteriaViewModel> getAllProjectRiskRatingCriteria()
+        {
+            var contractorCriteria = (from a in context.TBL_PROJECT_RISK_RATING_CRITERIA
+                                      select new ProjectRiskRatingCriteriaViewModel
+                                      {
+                                          projectRiskRatingCriteriaId = a.PROJECTRISKRATINGCRITERIAID,
+                                          projectRiskRatingCategoryId = a.PROJECTRISKRATINGCATEGORYID,
+                                          criteria = a.CRITERIA,
+                                          criteriaValue = a.CRITERIAVALUE,
+                                          category = context.TBL_PROJECT_RISK_RATING_CATEGORY.Where(p=>p.CATEGORYID == a.PROJECTRISKRATINGCATEGORYID).Select(p=>p.CATEGORYNAME).FirstOrDefault()
+                                      }).ToList();
+
+            return contractorCriteria;
+        }
+
     }
 }

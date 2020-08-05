@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("TBL_PROJECT_RISK_RATING")]
+    [Table("TBL_PROJECT_RISK_RATING_CRITERIA")]
     public partial class TBL_PROJECT_RISK_RATING_CRITERIA
     {
         [Key]

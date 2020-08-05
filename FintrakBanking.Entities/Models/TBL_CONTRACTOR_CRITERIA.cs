@@ -14,8 +14,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CRITERIAID { get; set; }
         public string CRITERIA { get; set; }
-        public float TIERONE { get; set; }
-        public float TIERTWO { get; set; }
-        public float TIERTHREE { get; set; }
+        public decimal TIERONE { get; set; }
+        public decimal TIERTWO { get; set; }
+        public decimal TIERTHREE { get; set; }
     }
 }

@@ -881,5 +881,33 @@ namespace FintrakBanking.APICore.Controllers
                new { success = false, message = $"Saved Record not Successfull" });
         }
 
+        [HttpGet]
+        [Route("contractor-criteria")]
+        public HttpResponseMessage getAllContractorCriteria()
+        {
+            var response = repo.getAllContractorCriteria();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
+        [Route("project-risk-rating-criteria")]
+        public HttpResponseMessage getAllProjectRiskCriteria()
+        {
+            var response = repo.getAllProjectRiskRatingCriteria();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
     }
 } 
