@@ -70,7 +70,8 @@ namespace FintrakBanking.Repositories.credit
                                         customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                                         applicationRef = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                         systemArrivalDateTime = t.SYSTEMARRIVALDATETIME,
-                                        approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME
+                                        approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                        productClassProcessId = d.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID
                                         //repaymentScheduleId 
                                         //interestRepaymentId 
                                         //repaymentTerms 
@@ -121,14 +122,15 @@ namespace FintrakBanking.Repositories.credit
                 };
 
                 var save = context.TBL_FACILITY_MODIFICATION.Add(entity);
+                context.SaveChanges();
                 var fees = new List<TBL_FACILITY_MOD_DETL_FEE>();
                 foreach (var f in model.fees)
                 {
-                    var existingFee = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(c => c.LOANCHARGEFEEID == f.feeId);
+                    var existingFee = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(c => c.LOANAPPLICATIONDETAILID == save.LOANAPPLICATIONDETAILID && c.CHARGEFEEID == f.feeId && c.DELETED == false);
                     var fee = new TBL_FACILITY_MOD_DETL_FEE
                     {
                         FACILITYMODIFICATIONID = save.FACILITYMODIFICATIONID,
-                        LOANCHARGEFEEID = f.feeId,
+                        LOANCHARGEFEEID = existingFee.LOANCHARGEFEEID,
                         CHARGEFEEID = existingFee.CHARGEFEEID,
                         DEFAULT_FEERATEVALUE = existingFee.DEFAULT_FEERATEVALUE,
                         RECOMMENDED_FEERATEVALUE = f.rate
@@ -176,7 +178,7 @@ namespace FintrakBanking.Repositories.credit
 
         public WorkflowResponse ApproveFacilityModification(ForwardViewModel model)
         {
-            using (var trans = context.Database.BeginTransaction())
+            using (var trans = this.context.Database.BeginTransaction())
             {
                 bool saved;
                 var modification = context.TBL_FACILITY_MODIFICATION.Find(model.targetId);
@@ -190,7 +192,7 @@ namespace FintrakBanking.Repositories.credit
                 workflow.CompanyId = model.companyId;
                 workflow.Vote = 2;
                 workflow.StatusId = model.forwardAction;
-                workflow.Comment = "Kindly approve this facility modification";
+                workflow.Comment = model.comment;
                 workflow.DeferredExecution = true;
                 workflow.LogActivity();
                 saved = context.SaveChanges() > 0;
@@ -209,6 +211,14 @@ namespace FintrakBanking.Repositories.credit
                     modification.LASTUPDATEDBY = model.createdBy;
                 }
                 saved = context.SaveChanges() > 0;
+                if (saved)
+                {
+                    trans.Commit();
+                }
+                else
+                {
+                    trans.Rollback();
+                }
             }
             return workflow.Response;
         }
@@ -257,6 +267,8 @@ namespace FintrakBanking.Repositories.credit
             var fees = context.TBL_FACILITY_MOD_DETL_FEE.Where(f => f.FACILITYMODIFICATIONID == model.FACILITYMODIFICATIONID).ToList();
             var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.LOANAPPLICATIONDETAILID);
             var loan = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
+            var formerApplicationAmount = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT);
+            var formerTotalExposureAmount = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT);
             if (facility != null && loan != null)
             {
                 if (fees != null)
@@ -280,8 +292,8 @@ namespace FintrakBanking.Repositories.credit
                 facility.LOANDETAILREVIEWTYPEID = model.LOANDETAILREVIEWTYPEID;
                 facility.APPROVEDAMOUNT = model.APPROVEDAMOUNT;
                 facility.PROPOSEDAMOUNT = model.APPROVEDAMOUNT;
-                loan.APPLICATIONAMOUNT = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT);
-                loan.TOTALEXPOSUREAMOUNT += difference;
+                loan.APPLICATIONAMOUNT = formerApplicationAmount + difference;
+                loan.TOTALEXPOSUREAMOUNT = loan.TOTALEXPOSUREAMOUNT > 0 ? loan.TOTALEXPOSUREAMOUNT + difference : formerApplicationAmount + difference;
             }
             saved = context.SaveChanges() > 0;
             return saved;

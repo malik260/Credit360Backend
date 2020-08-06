@@ -267,6 +267,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (currentlevel?.ISPOSTAPPROVALREVIEWER == true) { this.statusId = (int)ApprovalStatusEnum.Closed; }
             }
+            //if(this.fromLevelId > 0)
+            //{
+            //    var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+            //    var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
+            //    if (isReviewer) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+            //}
+
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -492,8 +499,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.approvalGrid.Count() > 1 &&  statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
             {
+                var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+                var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
                 var firstRequest = trailLog.OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
-                if (firstRequest.REQUESTSTAFFID == this.staffId && IsInAllGridLevels(this.approvalGrid, this.staffId)) throw new SecureException("You cannot approve a process you initiated!");
+                if (firstRequest.REQUESTSTAFFID == this.staffId && IsInAllGridLevels(this.approvalGrid, this.staffId) && !isReviewer) throw new SecureException("You cannot approve a process you initiated!");
             }
 
             var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
@@ -925,7 +934,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     throw new SecureException("This Approval Level is not in the workflow setup!");
                 }
 
-                if (level?.ISPOSTAPPROVALREVIEWER == true && lastRequest.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred) this.statusId = (int)ApprovalStatusEnum.Approved;
+                if (level?.ISPOSTAPPROVALREVIEWER == true && lastRequest.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred) this.statusId = (int)ApprovalStatusEnum.Closed;
 
                 var staff = level.Staff.Where(x => x.STAFFID == this.staffId); // check if staff is in approval_level_staff
 

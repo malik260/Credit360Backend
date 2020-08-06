@@ -7,9 +7,12 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CRMS;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.ThridPartyIntegration;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Repositories.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using FinTrakBanking.ThirdPartyIntegration;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -28,17 +31,21 @@ namespace FintrakBanking.Repositories.CRMS
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
-        private ILoanScheduleRepository loanSchedule;
+        //private ILoanScheduleRepository loanSchedule;
         private ICRMSCodeBookRepository codeBook;
         private ICreditDrawdownRepository drawdown;
+        IWorkflow workflow;
         private IFinacleIntegrationRepository finacleIntegration;
         private IntegrationWithFlexcube integration;
-
+        private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
+        private List<int> apsOperationIds = new List<int> { 107, 108, 109 }; // 
 
         public CRMSRegulatories(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
-                                        IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
+                                        IAuditTrailRepository _auditTrail, 
+                                        //ILoanScheduleRepository _loanSchedule,
                                         IAuditTrailRepository _audit, ICreditDrawdownRepository _drawdown,
-        ICRMSCodeBookRepository _codeBook, IFinacleIntegrationRepository _finacleIntegration,
+                                        IWorkflow workflow,
+                                        ICRMSCodeBookRepository _codeBook, IFinacleIntegrationRepository _finacleIntegration,
                                         IntegrationWithFlexcube _integration)
         {
             this.context = _context;
@@ -47,93 +54,538 @@ namespace FintrakBanking.Repositories.CRMS
             this.codeBook = _codeBook;
             this.finacleIntegration = _finacleIntegration;
             integration = _integration;
+            this.workflow = workflow;
             drawdown = _drawdown;
         }
 
         public string AddCRMSCode(CRMSViewModel param)
         {
-            //if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
-            //{
-            var loan = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == param.loanId).Select(x => x).FirstOrDefault();
-            if (loan == null)
-                throw new ConditionNotMetException("This Booking Request does not exist");
-
-            param.crmsCode = param.crmsCode.Trim();
-            var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE == param.crmsCode).Any();
-            if (codeExist == true)
-                throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
-
-            loan.CRMSCODE = param.crmsCode;
-            loan.CRMSDATE = DateTime.Now;
-            loan.CRMSVALIDATED = true;
-
-            var finishingJob = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
-                && x.TARGETID == loan.LOAN_BOOKING_REQUESTID && x.OPERATIONID == loan.OPERATIONID);
-
-            if (finishingJob.Any())
+            using (var trans = context.Database.BeginTransaction())
             {
-                var approvalModel = new LoanAvailmentApprovalViewModel
+                if (param.isLms)
                 {
-                    createdBy = param.createdBy,
-                    companyId = param.companyId,
-                    targetId = loan.LOAN_BOOKING_REQUESTID,
-                    comment = "Captured CRMS code",
-                    approvalStatusId = (short)ApprovalStatusEnum.Approved,
-                    // amount = entity.principalAmount,
-                    operationId = (short)loan.OPERATIONID,
-                };
+                    WorkflowResponse response;
+                    var loan = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == param.loanId).Select(x => x).FirstOrDefault();
+                    if (loan == null)
+                        throw new ConditionNotMetException("This LMS Request does not exist");
 
-                drawdown.GoForBookingRequestApproval(approvalModel, loan.LOAN_BOOKING_REQUESTID);
+                    param.crmsCode = param.crmsCode.Trim();
+                    var codeExist = context.TBL_LMSR_APPLICATION.Where(x => x.CRMSCODE == param.crmsCode).Any();
+                    if (codeExist == true)
+                        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+                    loan.CRMSCODE = param.crmsCode;
+                    loan.CRMSDATE = DateTime.Now;
+                    loan.CRMSVALIDATED = true;
+
+                    var finishingJob = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
+                        && x.TARGETID == loan.LOANAPPLICATIONID && x.OPERATIONID == (int)OperationsEnum.LoanReviewApprovalAvailment
+                        && x.RESPONSESTAFFID == null);
+
+                    if (finishingJob.Any())
+                    {
+                        var approvalModel = new ForwardReviewViewModel
+                        {
+                            userBranchId = param.userBranchId,
+                            lastUpdatedBy = param.lastUpdatedBy,
+                            applicationUrl = param.applicationUrl,
+                            createdBy = param.createdBy,
+                            companyId = param.companyId,
+                            comment = "Captured CRMS code",
+                            forwardAction = (int)ApprovalStatusEnum.Processing,
+                            applicationId = loan.LOANAPPLICATIONID,
+                            operationId = (int)OperationsEnum.LoanReviewApprovalAvailment,
+                        };
+                        response = ForwardApplicationAppraisal(approvalModel);
+                        var saved = context.SaveChanges() > 0;
+                        if (saved)
+                        {
+                            trans.Commit();
+                            return response.responseMessage;
+                        }
+                        else
+                        {
+                            trans.Rollback();
+                            throw new ConditionNotMetException("An error occured while trying to Capture CRMS CODE!");
+                        }
+                    }
+                    else
+                    {
+                        trans.Rollback();
+                        throw new ConditionNotMetException("There was no pending Job on CRMS CAPTURE Queue");
+                    }
+                }
+                else
+                {
+                    //if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+                    //{
+                    var loan = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == param.loanId).Select(x => x).FirstOrDefault();
+                    if (loan == null)
+                        throw new ConditionNotMetException("This Booking Request does not exist");
+
+                    param.crmsCode = param.crmsCode.Trim();
+                    var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE == param.crmsCode).Any();
+                    if (codeExist == true)
+                        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+                    loan.CRMSCODE = param.crmsCode;
+                    loan.CRMSDATE = DateTime.Now;
+                    loan.CRMSVALIDATED = true;
+
+                    var finishingJob = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
+                        && x.TARGETID == loan.LOAN_BOOKING_REQUESTID && x.OPERATIONID == loan.OPERATIONID);
+
+                    if (finishingJob.Any())
+                    {
+
+                        var approvalModel = new LoanAvailmentApprovalViewModel
+                        {
+                            createdBy = param.createdBy,
+                            companyId = param.companyId,
+                            targetId = loan.LOAN_BOOKING_REQUESTID,
+                            comment = "Captured CRMS code",
+                            approvalStatusId = (short)ApprovalStatusEnum.Approved,
+                            // amount = entity.principalAmount,
+                            operationId = (short)loan.OPERATIONID,
+                        };
+
+                        drawdown.GoForBookingRequestApproval(approvalModel, loan.LOAN_BOOKING_REQUESTID);
+                    }
+
+
+                    //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == param.loanId).Select(x => x).FirstOrDefault();
+                    //if (loan == null)
+                    //    throw new ConditionNotMetException("This Facility does not exist");
+
+                    //var codeExist = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CRMSCODE == param.crmsCode).Any();
+                    //if (codeExist == true)
+                    //    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+                    //loan.CRMSCODE = param.crmsCode;
+                    //loan.CRMSDATE = DateTime.Now;
+                    //loan.CRMSVALIDATED = true;
+                    //}
+
+                    //else if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
+                    //{
+                    //    var loan = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == param.loanId).Select(x => x).FirstOrDefault();
+                    //    if (loan == null)
+                    //        throw new ConditionNotMetException("This loan does not exist");
+
+                    //    var codeExist = context.TBL_LOAN_REVOLVING.Where(x => x.CRMSCODE == param.crmsCode).Any();
+                    //    if (codeExist == true)
+                    //        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+                    //    loan.CRMSCODE = param.crmsCode;
+                    //    loan.CRMSDATE = DateTime.Now;
+
+                    //}
+                    //else if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
+                    //{
+                    //    var loan = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == param.loanId).Select(x => x).FirstOrDefault();
+                    //    if (loan == null)
+                    //        throw new ConditionNotMetException("This loan does not exist");
+
+                    //    var codeExist = context.TBL_LOAN_CONTINGENT.Where(x => x.CRMSCODE == param.crmsCode).Any();
+                    //    if (codeExist == true)
+                    //        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+                    //    loan.CRMSCODE = param.crmsCode;
+                    //    loan.CRMSDATE = DateTime.Now;
+
+                    //}
+                    if (context.SaveChanges() > 0)
+                    {
+                        trans.Commit();
+                        return "Successful";
+                    }
+                    trans.Rollback();
+                    return "Failed";
+                }
             }
-            
+   
+        }
 
-            //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == param.loanId).Select(x => x).FirstOrDefault();
-            //if (loan == null)
-            //    throw new ConditionNotMetException("This Facility does not exist");
+        public bool ChecklistCompleted(int applicationId)
+        {
+            var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                             where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                             && c.TBL_LMSR_APPLICATION_DETAIL.DELETED != true
+                             && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false
+                             select c).ToList();
 
-            //var codeExist = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CRMSCODE == param.crmsCode).Any();
-            //if (codeExist == true)
-            //    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+            var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                          where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                             && c.TBL_LMSR_APPLICATION_DETAIL.DELETED != true
+                          && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null
+                          select c).ToList();
 
-            //loan.CRMSCODE = param.crmsCode;
-            //loan.CRMSDATE = DateTime.Now;
-            //loan.CRMSVALIDATED = true;
-            //}
+            return condition.Count == status.Count;
+        }
 
-            //else if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
-            //{
-            //    var loan = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == param.loanId).Select(x => x).FirstOrDefault();
-            //    if (loan == null)
-            //        throw new ConditionNotMetException("This loan does not exist");
+        public WorkflowResponse ForwardApplicationAppraisal(ForwardReviewViewModel model)
+        {
+            int nextProcessId = model.operationId + 1;
+            int operationId = model.operationId; // beware of nplappraisal!
+            var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+            int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
 
-            //    var codeExist = context.TBL_LOAN_REVOLVING.Where(x => x.CRMSCODE == param.crmsCode).Any();
-            //    if (codeExist == true)
-            //        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
-
-            //    loan.CRMSCODE = param.crmsCode;
-            //    loan.CRMSDATE = DateTime.Now;
-
-            //}
-            //else if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
-            //{
-            //    var loan = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == param.loanId).Select(x => x).FirstOrDefault();
-            //    if (loan == null)
-            //        throw new ConditionNotMetException("This loan does not exist");
-
-            //    var codeExist = context.TBL_LOAN_CONTINGENT.Where(x => x.CRMSCODE == param.crmsCode).Any();
-            //    if (codeExist == true)
-            //        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
-
-            //    loan.CRMSCODE = param.crmsCode;
-            //    loan.CRMSDATE = DateTime.Now;
-
-            //}
-            if (context.SaveChanges() > 0)
+            var checklistValidation = ChecklistCompleted(model.applicationId);
+            if (appl.CREATEDBY == model.createdBy && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter && checklistValidation == false)
             {
-                return "Successful";
+                throw new SecureException("Checklist not completed!");
             }
-            return "Failed";
 
+            // customization for CAM approvals
+            //bool operationIsCam = (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+            if (camOperationIds.Contains(operationId))
+            {
+                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                operationId = (int)appl.OPERATIONID;
+                nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
+            }
+
+
+            if (apsOperationIds.Contains(operationId))
+            {
+                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                operationId = (int)appl.OPERATIONID;
+                nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment; // redefine
+                workflow.Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0;
+            }
+
+            if (camOperationIds.Contains(operationId) || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
+            {
+                workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
+            }
+            var lmsrDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+            workflow.BusinessUnitId = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == lmsrDetail.FirstOrDefault().CUSTOMERID).BUSINESSUNTID;
+            workflow.StaffId = model.lastUpdatedBy;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.OperationId = operationId;
+            workflow.TargetId = appl.LOANAPPLICATIONID;
+            workflow.ProductClassId = null;
+            workflow.StatusId = model.forwardAction;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.Comment = model.comment;
+            workflow.Vote = model.vote;
+            workflow.DeferredExecution = true;
+            workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+            workflow.IsFlowTest = model.isFlowTest;
+            workflow.IsFromPc = model.isFromPc;
+            workflow.Tenor = lmsrDetail.Max(d => d.APPROVEDTENOR);
+            workflow.LevelBusinessRule = new LevelBusinessRule
+            {
+                Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                Pep = model.politicallyExposed,
+                //InsiderRelated = appl.ISRELATEDPARTY ?? false,
+                ProjectRelated = appl.ISPROJECTRELATED ?? false,
+                OnLending = appl.ISONLENDING ?? false,
+                InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
+                WithInstruction = appl.WITHINSTRUCTION ?? false,
+                //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
+                DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+                tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
+            };
+
+
+            //if (model.forwardAction == 8 || model.forwardAction == 9)
+            //{
+            //    var dictionary = GetRepresentStepdownItems(appl.LOANAPPLICATIONID, model.forwardAction, operationId);
+            //    workflow.NextLevelId = dictionary["levelId"];
+            //    workflow.ToStaffId = dictionary["staffId"];
+            //    if (model.forwardAction == 8) workflow.ToStaffId = null;
+            //}
+
+            workflow.LogActivity();
+
+            // DETAIL CHANGES
+            List<TBL_LMSR_APPLICATION_DETAIL> items = null;
+            if (model.recommendedChanges != null && model.recommendedChanges.Count() > 0) // only approving authority
+            {
+                //updateApprovedAmount = true;
+                items = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
+                foreach (var changed in model.recommendedChanges)
+                {
+                    var detail = items.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == changed.detailId);
+                    if (detail != null)
+                    {
+                        //detail.APPROVEDPRODUCTID = (short)changed.productId;
+                        detail.APPROVEDAMOUNT = changed.amount;
+                        detail.APPROVEDINTERESTRATE = changed.interestRate;
+                        detail.APPROVEDTENOR = changed.tenor;
+                        detail.APPROVALSTATUSID = changed.statusId;
+                        //detail.LASTUPDATEDBY = model.createdBy;
+                        //detail.DATETIMEUPDATED = DateTime.Now;
+
+                        if (model.isBusiness) // DELETE OR UPDATE PROPOSED
+                        {
+                            if (detail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
+                            else
+                            {
+                                detail.PROPOSEDAMOUNT = changed.amount;
+                                detail.PROPOSEDINTERESTRATE = changed.interestRate;
+                                detail.PROPOSEDTENOR = changed.tenor;
+                            }
+                        }
+                    }
+                }
+            }
+
+            context.SaveChanges();
+
+            int lastStatusId = workflow.StatusId;
+            if (workflow.NewState == (int)ApprovalState.Ended)
+            {
+                if ((workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Closed) && operationId != lastOperationId/* && model.operationId != 71*/) // jump process OR end flag
+                {
+                    if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
+                    if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
+                    workflow.SetResponse = false;
+                    workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, null, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
+                }
+
+                if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
+                AddLoanCollateralMapping(model.applicationId);//, appl., (short)LoanSystemTypeEnum.OverdraftFacility);
+
+                //generate offer letter doc
+                AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
+
+                //context.SaveChanges();
+
+            }
+
+            //return lastStatusId;
+            return workflow.Response;
+        }
+
+        public void AddOfferLetterClauses(int applicationId, int staffId, bool isLMS, bool callSaveChanges)
+        {
+            //int? customerExist = null;
+            var detail = new OfferLetterViewModel();
+
+            var clause = "";
+            var acceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+
+            if (isLMS)
+            {
+
+                var approvedProduct = context.TBL_LMSR_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => o.TBL_PRODUCT.PRODUCTTYPEID).FirstOrDefault();
+                var customerExist = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId);
+                var customer = customerExist != null ? context.TBL_CUSTOMER.Where(b => b.CUSTOMERID == customerExist.CUSTOMERID).Select(b => b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME).FirstOrDefault() : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == customerExist.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault();
+                acceptance = acceptance.Replace("{@DATE}", DateTime.Now.ToLongDateString());
+                acceptance = acceptance.Replace("{@OBLIGUR}", customer);
+
+
+                if (approvedProduct == (int)LoanProductTypeEnum.ContingentLiability)
+                {
+                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE_BG").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                }
+                else
+                {
+                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                }
+
+                detail = (from a in context.TBL_LMSR_APPLICATION
+                          join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                          where a.LOANAPPLICATIONID == applicationId
+                          select new OfferLetterViewModel
+                          {
+                              customerName = customer,
+                              offerLetteracceptance = acceptance,
+                              offerLetterClauses = clause,
+                              customerId = b.CUSTOMERID,
+                              customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.ADDRESS).FirstOrDefault(),
+                              title = b.TITLE,
+                          }).FirstOrDefault();
+
+            }
+            else
+            {
+
+                var approvedProduct = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => o.APPROVEDPRODUCTID).FirstOrDefault();
+                var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId);
+                var customer = customerExist != null ? context.TBL_CUSTOMER.Where(b => b.CUSTOMERID == customerExist.CUSTOMERID).Select(b => b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME).FirstOrDefault() : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == customerExist.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault();
+                acceptance = acceptance.Replace("{@DATE}", DateTime.Now.ToLongDateString());
+                acceptance = acceptance.Replace("{@OBLIGUR}", customer);
+
+
+                if (approvedProduct == (int)ProductClassEnum.AutoLoans)
+                {
+                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTER_LEASE_FACILITY").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+
+                }
+                //else if (approvedProduct == (int)ProductClassEnum.ContingentFacilities)
+                //{
+                //    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE_BG").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                //}
+                else if (approvedProduct == (int)ProductClassEnum.ImportFinanceFacilities)
+                {
+                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTER_IMPORT_FINANCE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                }
+                else
+                {
+                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                }
+
+                detail = (from a in context.TBL_LOAN_APPLICATION
+                          join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                          where a.LOANAPPLICATIONID == applicationId
+                          select new OfferLetterViewModel
+                          {
+                              customerName = customer,
+                              offerLetteracceptance = acceptance,
+                              offerLetterClauses = clause,
+                              customerId = b.CUSTOMERID,
+                              customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.ADDRESS).FirstOrDefault(),
+                              title = b.TITLE,
+
+                          }).FirstOrDefault();
+            }
+
+
+            var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
+            if (offerLetterDoc != null)
+            {
+                offerLetterDoc.OFFERLETTERSALUTATION = "The Managing Director, <br /><br /> " + detail.customerName + "<br /><br />" + detail.customerAddress + "<br /><br /> Attention: " + detail.title + " " + detail.customerName;
+                // offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
+
+                if (!context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Any())
+                {
+
+                    var loanOfferLetter = new TBL_LOAN_OFFER_LETTER
+                    {
+                        CREATEDBY = staffId,
+                        DATETIMECREATED = DateTime.Now,
+                        DELETED = false,
+                        ISLMS = isLMS,
+                        LOANAPPLICATIONID = applicationId,
+                        OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
+                        OFFERLETTERCLAUSES = detail.offerLetterClauses,
+                        ISACCEPTED = true,
+                        ISFINAL = false
+                    };
+
+                    context.TBL_LOAN_OFFER_LETTER.Add(loanOfferLetter);
+
+                    if (callSaveChanges)
+                        context.SaveChanges();
+                }
+            }
+        }
+
+        public decimal GetMaximumApplicationOutstandingBalance(int applicationId)
+        {
+            decimal amount = 0;
+            var appl = context.TBL_LMSR_APPLICATION_DETAIL.Where(x =>
+                x.LOANAPPLICATIONID == applicationId &&
+                x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved &&
+                x.DELETED != true
+                )
+                .OrderByDescending(x => x.APPROVEDAMOUNT)
+                .FirstOrDefault();
+            if (appl != null) amount = appl.APPROVEDAMOUNT;
+            return amount;
+        }
+
+        private int GetFirstAvailmentLevelId(int operationId)
+        {
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         levelTypeId = l.LEVELTYPEID,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList()
+                     ;
+
+            var level = levels.FirstOrDefault(x => x.levelTypeId == (int)ApprovalLevelType.Routing); // routing
+            if (level == null) level = levels.FirstOrDefault(x => x.levelPosition == 1);
+
+            return level.levelId;
+        }
+
+        public bool AddLoanCollateralMapping(int loanApplicationId)
+        {
+            LoanApplicationViewModel appl;
+            List<int> existingCollateralIds;
+            List<TBL_LOAN_APPLICATION_COLLATERL> recommendedCollaterals;
+
+            var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false).Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+
+            foreach (var d in details)
+            {
+                appl = GetLoanApplicationByLoanSystemType(d.LOANSYSTEMTYPEID, d.LOANID);
+
+                existingCollateralIds = context.TBL_LOAN_COLLATERAL_MAPPING
+                    .Where(x => x.LOANID == d.LOANID && x.ISRELEASED == false)
+                    .Select(x => x.COLLATERALCUSTOMERID)
+                    .ToList();
+
+                recommendedCollaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == appl.loanApplicationId).ToList();
+
+                foreach (var recommended in recommendedCollaterals)
+                {
+                    if (existingCollateralIds.Contains(recommended.COLLATERALCUSTOMERID)) continue;
+                    context.TBL_LOAN_COLLATERAL_MAPPING.Add(new TBL_LOAN_COLLATERAL_MAPPING
+                    {
+                        COLLATERALCUSTOMERID = recommended.COLLATERALCUSTOMERID,
+                        LOANAPPCOLLATERALID = recommended.LOANAPPCOLLATERALID,
+                        LOANID = d.LOANID,
+                        LOANSYSTEMTYPEID = d.LOANSYSTEMTYPEID,
+                        ISRELEASED = false,
+                    });
+                }
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
+        private LoanApplicationViewModel GetLoanApplicationByLoanSystemType(int loanSystemTypeId, int loanId)
+        {
+            var result = new LoanApplicationViewModel();
+
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+            {
+                result = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId)
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL, l => l.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (l, d) => new { l, d })
+                    .Select(x => new LoanApplicationViewModel { loanApplicationId = x.d.LOANAPPLICATIONID })
+                    .FirstOrDefault();
+            }
+            else
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
+            {
+                result = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId)
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL, l => l.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (l, d) => new { l, d })
+                    .Select(x => new LoanApplicationViewModel { loanApplicationId = x.d.LOANAPPLICATIONID })
+                    .FirstOrDefault();
+            }
+            else
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
+            {
+                result = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId)
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL, l => l.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (l, d) => new { l, d })
+                    .Select(x => new LoanApplicationViewModel { loanApplicationId = x.d.LOANAPPLICATIONID })
+                    .FirstOrDefault();
+            }
+            else
+            {
+                throw new SecureException("Collateral Failed To Map. Loan System Type could not be resolved!");
+            }
+
+            if (result.loanApplicationId < 1) throw new SecureException("Collateral Failed To Map. Error resolving Loan Application Information.");
+
+            return result;
         }
 
         private List<CRMSTemplateViewModel> GetFee(CRMSViewModel param)
@@ -261,21 +713,24 @@ namespace FintrakBanking.Repositories.CRMS
             if (param.isLms)
             {
                 tLoan = (from x in context.TBL_LOAN
-                         join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
-                         join op in context.TBL_LOAN_REVIEW_OPERATION on x.TERMLOANID equals op.LOANID
-                         join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
+                         join ld in context.TBL_LMSR_APPLICATION_DETAIL on x.TERMLOANID equals ld.LOANID
+                         join e in context.TBL_LMSR_APPLICATION on ld.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                         //join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                         //join op in context.TBL_LOAN_REVIEW_OPERATION on x.TERMLOANID equals op.LOANID
+                         //join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
+                         join opn in context.TBL_OPERATIONS on e.OPERATIONID equals opn.OPERATIONID
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                         where x.COMPANYID == param.companyId && ld.CRMSCODE == null
-                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
-                         && operations.Contains((short)op.OPERATIONTYPEID)
+                         where x.COMPANYID == param.companyId && e.CRMSCODE != null
+                         && DbFunctions.TruncateTime(e.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                         && DbFunctions.TruncateTime(e.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                         && operations.Contains((short)e.OPERATIONID)
                          select new CRMSRegulatoryViewModel
                          {
                              accountNumber = c.PRODUCTACCOUNTNUMBER,
                              beneficiary = b.FIRSTNAME + " " + b.LASTNAME,
-                             crmsCode = ld.CRMSCODE,
-                             crmsDate = ld.CRMSDATE,
+                             crmsCode = e.CRMSCODE,
+                             crmsDate = e.CRMSDATE,
                              effectiveDate = x.EFFECTIVEDATE,
                              facilityType = x.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
                              grantedAmount = x.PRINCIPALAMOUNT,
@@ -288,21 +743,24 @@ namespace FintrakBanking.Repositories.CRMS
                          }).ToList();
 
                 revolving = (from x in context.TBL_LOAN_REVOLVING
-                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
-                             join op in context.TBL_LOAN_REVIEW_OPERATION on x.REVOLVINGLOANID equals op.LOANID
-                             join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
+                             join ld in context.TBL_LMSR_APPLICATION_DETAIL on x.REVOLVINGLOANID equals ld.LOANID
+                             join e in context.TBL_LMSR_APPLICATION on ld.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                             //join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                             //join op in context.TBL_LOAN_REVIEW_OPERATION on x.REVOLVINGLOANID equals op.LOANID
+                             //join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
+                             join opn in context.TBL_OPERATIONS on e.OPERATIONID equals opn.OPERATIONID
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                             where x.COMPANYID == param.companyId && ld.CRMSCODE == null
-                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
-                         && operations.Contains((short)op.OPERATIONTYPEID)
+                             where x.COMPANYID == param.companyId && e.CRMSCODE != null
+                             && DbFunctions.TruncateTime(e.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                             && DbFunctions.TruncateTime(e.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                             && operations.Contains((short)e.OPERATIONID)
                              select new CRMSRegulatoryViewModel
                              {
                                  accountNumber = c.PRODUCTACCOUNTNUMBER,
                                  beneficiary = b.FIRSTNAME + " " + b.LASTNAME,
-                                 crmsCode = ld.CRMSCODE,
-                                 crmsDate = ld.CRMSDATE,
+                                 crmsCode = e.CRMSCODE,
+                                 crmsDate = e.CRMSDATE,
                                  effectiveDate = x.EFFECTIVEDATE,
                                  facilityType = x.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
                                  grantedAmount = x.OVERDRAFTLIMIT,
@@ -315,21 +773,24 @@ namespace FintrakBanking.Repositories.CRMS
                              }).ToList();
 
                 contingent = (from x in context.TBL_LOAN_CONTINGENT
-                              join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
-                              join op in context.TBL_LOAN_REVIEW_OPERATION on x.CONTINGENTLOANID equals op.LOANID
-                              join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
+                              join ld in context.TBL_LMSR_APPLICATION_DETAIL on x.CONTINGENTLOANID equals ld.LOANID
+                              join e in context.TBL_LMSR_APPLICATION on ld.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                              //join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                              //join op in context.TBL_LOAN_REVIEW_OPERATION on x.CONTINGENTLOANID equals op.LOANID
+                              //join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
+                              join opn in context.TBL_OPERATIONS on e.OPERATIONID equals opn.OPERATIONID
                               join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                               join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                              where x.COMPANYID == param.companyId && ld.CRMSCODE == null
-                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
-                         && operations.Contains((short)op.OPERATIONTYPEID)
+                              where x.COMPANYID == param.companyId && e.CRMSCODE != null
+                              && DbFunctions.TruncateTime(e.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                              && DbFunctions.TruncateTime(e.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                              && operations.Contains((short)e.OPERATIONID)
                               select new CRMSRegulatoryViewModel
                               {
                                   accountNumber = c.PRODUCTACCOUNTNUMBER,
                                   beneficiary = b.FIRSTNAME + " " + b.LASTNAME,
-                                  crmsCode = ld.CRMSCODE,
-                                  crmsDate = ld.CRMSDATE,
+                                  crmsCode = e.CRMSCODE,
+                                  crmsDate = e.CRMSDATE,
                                   effectiveDate = x.EFFECTIVEDATE,
                                   facilityType = x.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
                                   grantedAmount = x.CONTINGENTAMOUNT,
@@ -345,10 +806,11 @@ namespace FintrakBanking.Repositories.CRMS
             else
             {
                 tLoan = (from x in context.TBL_LOAN
-                         join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                         //join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                         join ld in context.TBL_LOAN_BOOKING_REQUEST on x.LOAN_BOOKING_REQUESTID equals ld.LOAN_BOOKING_REQUESTID
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                         where x.COMPANYID == param.companyId && ld.CRMSCODE == null
+                         where x.COMPANYID == param.companyId && ld.CRMSCODE != null
                          && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                          && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                          select new CRMSRegulatoryViewModel
@@ -369,10 +831,11 @@ namespace FintrakBanking.Repositories.CRMS
                          }).ToList();
 
                 revolving = (from x in context.TBL_LOAN_REVOLVING
-                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                            //join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                             join ld in context.TBL_LOAN_BOOKING_REQUEST on x.LOAN_BOOKING_REQUESTID equals ld.LOAN_BOOKING_REQUESTID
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                             where x.COMPANYID == param.companyId && ld.CRMSCODE == null
+                             where x.COMPANYID == param.companyId && ld.CRMSCODE != null
                          && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                          && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                              select new CRMSRegulatoryViewModel
@@ -393,12 +856,13 @@ namespace FintrakBanking.Repositories.CRMS
                              }).ToList();
 
                 contingent = (from x in context.TBL_LOAN_CONTINGENT
-                              join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                            //join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                              join ld in context.TBL_LOAN_BOOKING_REQUEST on x.LOAN_BOOKING_REQUESTID equals ld.LOAN_BOOKING_REQUESTID
                               join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                               join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                              where x.COMPANYID == param.companyId && ld.CRMSCODE == null
-                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                              where x.COMPANYID == param.companyId && ld.CRMSCODE != null
+                            && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                            && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                               select new CRMSRegulatoryViewModel
                               {
                                   accountNumber = c.PRODUCTACCOUNTNUMBER,
