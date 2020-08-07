@@ -9148,7 +9148,7 @@ namespace FintrakBanking.Repositories.Credit
                                        requestDate = s.DATETIMECREATED,
                                        requestedBy = "",
                                        requestedAmount = s.AMOUNT_REQUESTED,
-                                       requestOperationId = (short)OperationsEnum.CorporateDrawdownRequest,
+                                       requestOperationId = (short)s.OPERATIONID,
                                        approvalStatusId = atrail.APPROVALSTATUSID,
                                        approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                        loanApplicationId = m.LOANAPPLICATIONID,
