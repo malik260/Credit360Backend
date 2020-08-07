@@ -1395,21 +1395,22 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 var data = repo.GoForApprovalGlobalPriceIndex(entity);
 
-                if (data == 1)
+                if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation has been approved successfully." });
-                }
-                else if (data == 2)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation has been disapproved successfully." });
-                }
-                else if (data == 3)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-                }
+                        new { success = true, message = data.responseMessage });
+                        //new { success = true, message = "Operation has been approved successfully." });
+            }
+                //else if (data == 2)
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK,
+                //        new { success = true, message = "Operation has been disapproved successfully." });
+                //}
+                //else if (data == 3)
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK,
+                //    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                //}
                 
                 else
                 {
@@ -1443,7 +1444,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             
                 var token = new TokenDecryptionHelper();
-                var data = repo.GetProductPriceIndexGlobal().ToList();
+                var data = repo.GetProductPriceIndexGlobal(token.GetStaffId).ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1468,10 +1469,10 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
 
                 var record = repo.AddProductPriceIndexGlobal(model);
-                if (record)
+                if (record != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = record, message = "Global Interest Rate has been Sent For Approval" });
+                        new { success = true, result = record, message = record.responseMessage });
                 }
                 else
                     return Request.CreateResponse(HttpStatusCode.OK,
