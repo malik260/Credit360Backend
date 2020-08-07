@@ -12,6 +12,7 @@
         public short OPERATIONID         { get; set; }
         public bool REQUIREAPPRAISAL     { get; set; }
         public bool REQUIREOFFERLETTER   { get; set; }
+        public bool REQUIREDRAWDOWN { get; set; }
         public bool REQUIREAVAILMENT     { get; set; }
         public int COMPANYID             { get; set; }
         public DateTime DATETIMECREATED  { get; set; }
