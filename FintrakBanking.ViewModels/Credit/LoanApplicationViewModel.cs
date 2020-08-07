@@ -1090,5 +1090,71 @@ namespace FintrakBanking.ViewModels.Credit
         public TimeSpan timeOfDay { get; set; }
     }
 
+    public class ContractorCriteriaFormControlValue
+    {
+        public int criteriaId { get; set; }
+        public decimal value { get; set; }
+    }
+
+    public class ProjectRistratingFormControlValue
+    {
+        public int categoryId { get; set; }
+        public int value { get; set; }
+    }
+    public class ContractorTieringViewModel : GeneralEntity
+    {
+        public List<ContractorCriteriaFormControlValue> form { get; set; }
+        public int contractorTierId { get; set; }
+        public int loanApplicationId { get; set; }
+        public int customerId { get; set; }
+        public int contractorCriteriaId { get; set; }
+        public decimal actualValue { get; set; }
+        public string criteria { get; set; }
+        public string tier { get; set; }
+        public decimal computation { get; set; }
+    }
+
+    public class ProjectRiskRatingViewModel : GeneralEntity
+    {
+        public List<ProjectRistratingFormControlValue> form { get; set; }
+        public int projectRiskRatingId { get; set; }
+        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public int? loanBookingRequestId { get; set; }
+        public int categoryId { get; set; }
+        public int categoryValue { get; set; }
+        public string categoryName { get; set; }
+        public int computation { get; set; }
+        public string riskCategorisation { get; set; }
+        public decimal customerTier { get; set; }
+    }
+
+    public class ContractorCriteriaViewModel : GeneralEntity
+    {
+        public int criteriaId { get; set; }
+        public string criteria { get; set; }
+        public decimal tierOne { get; set; }
+        public decimal tierTwo { get; set; }
+        public decimal tierThree { get; set; }
+    }
+
+    public class ProjectRiskRatingCategoryViewModel : GeneralEntity
+    {
+        public int categoryId { get; set; }
+        public string categoryName { get; set; }
+        public List<ProjectRiskRatingCriteriaViewModel> criterias { get; set; }
+        public string criteria { get; set; }
+        public int criteriaValue { get; set; }
+    }
+
+    public class ProjectRiskRatingCriteriaViewModel : GeneralEntity
+    {
+        public int projectRiskRatingCriteriaId { get; set; }
+        public string criteria { get; set; }
+        public int criteriaValue { get; set; }
+        public int projectRiskRatingCategoryId { get; set; }
+        public string category { get; set; }
+    }
+
 }
 

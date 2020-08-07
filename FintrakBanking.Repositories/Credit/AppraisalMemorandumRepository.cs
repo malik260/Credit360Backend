@@ -3966,6 +3966,55 @@ namespace FintrakBanking.Repositories.Credit
             return GetRecommendedCollateral(entity.applicationId,entity.createdBy);
         }
 
+
+        public ContractorTieringViewModel AddContractorTiering(ContractorTieringViewModel contractorCriteria)
+        {
+            var validateExisting = context.TBL_CONTRACTOR_TIERING.Where(c => c.LOANAPPLICATIONID == contractorCriteria.loanApplicationId && c.CUSTOMERID == contractorCriteria.customerId).ToList();
+                if(validateExisting != null && validateExisting.Count() > 0)
+                {
+                    throw new SecureException("Sorry contractor criteria already captured");
+                }
+            try
+            {
+                List<TBL_CONTRACTOR_CRITERIA> definitions = new List<TBL_CONTRACTOR_CRITERIA>();
+                var msg = new ContractorTieringViewModel();
+                if (contractorCriteria.form == null || contractorCriteria.form.Count == 0) return null;
+                var ids = contractorCriteria.form.Select(x => x.criteriaId);
+
+                definitions = context.TBL_CONTRACTOR_CRITERIA.Where(x => ids.Contains(x.CRITERIAID)
+               ).ToList();
+
+                var submission = new ContractorCriteriaFormControlValue();
+
+                List<TBL_CONTRACTOR_TIERING> details = new List<TBL_CONTRACTOR_TIERING>();
+
+                for (int i = 0; i < definitions.Count; i++)
+                {
+                    var definition = definitions[i];
+                    submission = contractorCriteria.form.FirstOrDefault(x => x.criteriaId == definition.CRITERIAID);
+                    if (submission == null) continue;
+                        details.Add(new TBL_CONTRACTOR_TIERING
+                        {
+                            LOANAPPLICATIONID = contractorCriteria.loanApplicationId,
+                            CUSTOMERID = contractorCriteria.customerId,
+                            CONTRACTORCRITERIAID = submission.criteriaId,
+                            ACTUALVALUE = submission.value,
+                            CREATEDBY = contractorCriteria.createdBy,
+                            DATETIMECREATED = DateTime.Now,
+                        });
+
+                }
+
+                context.TBL_CONTRACTOR_TIERING.AddRange(details);
+                context.SaveChanges();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity)
         {
             var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Find(entity.id);
@@ -4383,7 +4432,54 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
+        public ProjectRiskRatingViewModel AddProjectRiskRating(ProjectRiskRatingViewModel projectRiskRating)
+        {
+            var validateExisting = context.TBL_PROJECT_RISK_RATING.Where(c => c.LOANAPPLICATIONID == projectRiskRating.loanApplicationId && c.LOANAPPLICATIONDETAILID == projectRiskRating.loanApplicationDetailId).ToList();
+            if (validateExisting != null && validateExisting.Count() > 0)
+            {
+                throw new SecureException("Sorry project risk rating already captured");
+            }
+            try
+            {
+                List<TBL_PROJECT_RISK_RATING_CATEGORY> definitions = new List<TBL_PROJECT_RISK_RATING_CATEGORY>();
+                var msg = new ProjectRiskRatingViewModel();
+                if (projectRiskRating.form == null || projectRiskRating.form.Count == 0) return null;
+                var ids = projectRiskRating.form.Select(x => x.categoryId);
 
+                definitions = context.TBL_PROJECT_RISK_RATING_CATEGORY.Where(x => ids.Contains(x.CATEGORYID)
+                ).ToList();
+
+                var submission = new ProjectRistratingFormControlValue();
+
+                List<TBL_PROJECT_RISK_RATING> details = new List<TBL_PROJECT_RISK_RATING>();
+
+                for (int i = 0; i < definitions.Count; i++)
+                {
+                    var definition = definitions[i];
+                    submission = projectRiskRating.form.FirstOrDefault(x => x.categoryId == definition.CATEGORYID);
+                    if (submission == null) continue;
+                    details.Add(new TBL_PROJECT_RISK_RATING
+                    {
+                        LOANAPPLICATIONID = projectRiskRating.loanApplicationId,
+                        LOANAPPLICATIONDETAILID = projectRiskRating.loanApplicationDetailId,
+                        LOANBOOKINGREQUESTID = projectRiskRating.loanBookingRequestId,
+                        CATEGORYID = submission.categoryId,
+                        CATEGORYVALUE = submission.value,
+                        CREATEDBY = projectRiskRating.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                    });
+
+                }
+
+                context.TBL_PROJECT_RISK_RATING.AddRange(details);
+                context.SaveChanges();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
     }
 
