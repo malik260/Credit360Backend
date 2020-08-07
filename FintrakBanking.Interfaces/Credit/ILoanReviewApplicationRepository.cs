@@ -17,6 +17,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
         List<LoanReviewApplicationViewModel> CalculateSLA(List<LoanReviewApplicationViewModel> apps);
         IQueryable<LoanReviewApplicationViewModel> GetLoanReviewAvailmentAwaitingApproval(UserInfo user, int operationId, int? classId);
+        IQueryable<LoanReviewApplicationViewModel> GetLoanReviewDrawdownApproval(UserInfo user, int? classId);
         SelectListViewModel GetAllSelectList();
         SelectListViewModel GetAllLMSApprovalOperationList();
         LoanChargeFeeViewModel GetChargeFeeDetails(int id);
