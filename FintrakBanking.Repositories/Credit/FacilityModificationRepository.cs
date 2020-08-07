@@ -294,6 +294,8 @@ namespace FintrakBanking.Repositories.credit
                 facility.PROPOSEDAMOUNT = model.APPROVEDAMOUNT;
                 loan.APPLICATIONAMOUNT = formerApplicationAmount + difference;
                 loan.TOTALEXPOSUREAMOUNT = loan.TOTALEXPOSUREAMOUNT > 0 ? loan.TOTALEXPOSUREAMOUNT + difference : formerApplicationAmount + difference;
+                loan.DATETIMEUPDATED = DateTime.Now;
+                loan.LASTUPDATEDBY = model.CREATEDBY;
             }
             saved = context.SaveChanges() > 0;
             return saved;
