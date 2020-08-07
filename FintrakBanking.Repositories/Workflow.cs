@@ -265,7 +265,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (currentlevel != null)
             {
-                if (currentlevel?.ISPOSTAPPROVALREVIEWER == true) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+                if (currentlevel?.ISPOSTAPPROVALREVIEWER == true)
+                {
+                    this.statusId = (int)ApprovalStatusEnum.Closed;
+                }
             }
             //if(this.fromLevelId > 0)
             //{
