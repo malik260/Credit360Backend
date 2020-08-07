@@ -4428,7 +4428,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public ProjectRiskRatingViewModel AddProjectRiskRating(ProjectRiskRatingViewModel projectRiskRating)
         {
-            var validateExisting = context.TBL_PROJECT_RISK_RATING.Where(c => c.LOANAPPLICATIONID == projectRiskRating.loanApplicationId && c.LOANAPPLICATIONDETAILID == projectRiskRating.loanApplicationDetailId && c.LOANBOOKINGREQUESTID == projectRiskRating.loanBookingRequestId).ToList();
+            var validateExisting = context.TBL_PROJECT_RISK_RATING.Where(c => c.LOANAPPLICATIONID == projectRiskRating.loanApplicationId && c.LOANAPPLICATIONDETAILID == projectRiskRating.loanApplicationDetailId).ToList();
             if (validateExisting != null && validateExisting.Count() > 0)
             {
                 throw new SecureException("Sorry project risk rating already captured");

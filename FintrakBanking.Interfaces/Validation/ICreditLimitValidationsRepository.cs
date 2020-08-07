@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
     {
         IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId);
         IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId);
-        IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskCriteria();
+        IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingByCategories();
         IEnumerable<ContractorTieringViewModel> getContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId);
         IEnumerable<ContractorTieringViewModel> getContractorTieringByApplication(int loanApplicationId, int customerId);
         IEnumerable<ContractorCriteriaViewModel> getAllContractorCriteria();
