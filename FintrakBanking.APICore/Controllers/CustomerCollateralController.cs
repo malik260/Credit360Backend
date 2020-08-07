@@ -2639,6 +2639,20 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
+        [HttpPost]
+        [Route("collateral-swap/forward-for-approval")]
+        public HttpResponseMessage CollateralSwapMemorandum([FromBody] CollateralSwapViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The COLLATERAL SWAP request has been APPROVED successfully" });
+        }
+
 
         [HttpPut]
         [ClaimsAuthorization]
@@ -2654,6 +2668,10 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = repo.UpdateCollateralSwap(model, id, user);
+
+            if (!response) {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, message = "An error occurred while updating the record", count = 0 });
+            }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, message = "The record has been updated successfully", count = 1 });
         }
 

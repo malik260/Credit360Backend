@@ -2115,6 +2115,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStatusId = collateral.approvalStatusId,
                     referenceNumber = facility.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                     productName = facility.TBL_PRODUCT.PRODUCTNAME,
+                    customerId = collateral.customerId,
                     customerName = obligorName,
                     collateralOwnerName = collateralOwnerName
                 };
@@ -11439,7 +11440,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralSwapViewModel> GetCollateralSwapsForApproval(int staffId)
         {
-            var operationId = (int)OperationsEnum.lcReleaseOfShippingDocuments;
+            //var operationId = (int)OperationsEnum.lcReleaseOfShippingDocuments;
+            var operationId = (int)OperationsEnum.CollateralSwap;
             var levelIds = genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
             var collateralSwapsForApproval = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
@@ -11523,6 +11525,68 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model)
+        {
+            int operationId = (int)OperationsEnum.CollateralSwap; // CHANGE
+            var cs = context.TBL_COLLATERAL_SWAP_REQUEST.Find(model.collateralSwapId);
+            if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
+            // WORKFLOW
+            workflow.OperationId = operationId;
+            workflow.StaffId = model.createdBy;
+            workflow.TargetId = model.collateralSwapId;
+            workflow.CompanyId = model.companyId;
+            workflow.Vote = model.vote;
+            //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
+            //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
+            workflow.NextLevelId = 0;
+            workflow.ToStaffId = null;
+            workflow.StatusId = (int)model.forwardAction;
+            workflow.Comment = model.comment;
+            var c = context.TBL_CUSTOMER.Find(model.customerId);
+            //var c = context.TBL_CUSTOMER.Find(cs.TBL_CUSTOMER.CUSTOMERID);
+
+            workflow.BusinessUnitId = c?.BUSINESSUNTID;
+            var placeholders = new AlertPlaceholders();
+            placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
+            placeholders.referenceNumber = "<br />LETTER GEN REQ REFERENCENUMBER: " + cs.COLLATERALSWAPID;
+            placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER LETTER GEN REQ";
+            placeholders.operationName = "<br />OPERATION NAME: LETTER GEN REQ";
+            placeholders.branchName = "<br />BRANCH NAME: " + c.TBL_BRANCH.BRANCHNAME;
+            workflow.Placeholders = placeholders;
+
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
+
+            // UPDATE APPLICATION
+            //cs.APPROVALSTATUSID = (short)workflow.StatusId;
+            cs.COLLATERALSWAPSTATUSID = (int)LoanApplicationStatusEnum.collateralSwapInProgress;
+            //if (cs.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { cs.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
+
+            if (workflow.NewState == (int)ApprovalState.Ended) // cam status
+            {
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    cs.COLLATERALSWAPSTATUSID = (int)LoanApplicationStatusEnum.collateralSwapCompleted;
+                    //cs.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
+                    //cs.APPROVEDDATE = DateTime.Now;
+                    workflow.SetResponse = true;
+                }
+                else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+                {
+                    cs.COLLATERALSWAPSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
+                }
+
+                //if (contextControl != null) contextControl.SaveChanges();
+            }
+
+            //cs.DATEACTEDON = DateTime.Now;
+            context.SaveChanges();
+            return workflow.Response;
+        }
+
         public bool UpdateCollateralSwap(CollateralSwapViewModel model, int id, UserInfo user)
         {
             var swap = context.TBL_COLLATERAL_SWAP_REQUEST.Find(id);
@@ -11534,7 +11598,8 @@ namespace FintrakBanking.Repositories.Credit
             swap.OLDCOLLATERALID = model.oldCollateralId;
             swap.CUSTOMERID = model.customerId;
             swap.DATETIMEUPDATED = genSetup.GetApplicationDate();
-            swap.LASTUPDATEDBY = model.createdBy;
+            swap.LASTUPDATEDBY = user.createdBy;
+            //swap.LASTUPDATEDBY = model.createdBy;
 
             return context.SaveChanges() != 0;
         }

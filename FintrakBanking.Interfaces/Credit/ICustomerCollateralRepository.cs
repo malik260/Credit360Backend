@@ -185,6 +185,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteCollateralSwap(int collateralSwapId, UserInfo user);
         IEnumerable<LoanApplicationDetailViewModel> GetCollateralMappingDetails(int id);
         CollateralInsurancePolicyViewModel GetAddedInsuranceById(int id);
+        WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
 
 
