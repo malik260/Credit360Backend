@@ -731,7 +731,7 @@ namespace FintrakBanking.Repositories.Credit
             offerLetters.ActionByName = staffFullName;
 
             if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
-                transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+               transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
             }
 
         }
@@ -2172,19 +2172,26 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId = 0, bool getAll = false)
+        public IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId = 0, bool getAll = false, bool isClassified = false)
         {
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
             var staffs = from s in context.TBL_STAFF select s;
             var creditOperationIds = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(f => f.OPERATIONID).ToList();
             var allstaff = this.GetAllStaffNames();
 
+            
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
             if (getAll)
             {
                 trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
             }
+            if (isClassified)
+            {
+                var operationRecord = context.TBL_OPERATIONS.Find(operationId);
+                var classOperations = context.TBL_OPERATIONS.Where(x => x.CLASS == operationRecord.CLASS).Select(c=>c.OPERATIONID).ToList() ;
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == applicationId && classOperations.Contains(x.OPERATIONID)).ToList();
 
+            }
             trail = trail.Where(t => !(t.FROMAPPROVALLEVELID == t.TOAPPROVALLEVELID && t.LOOPEDSTAFFID > 0)).ToList();
 
             var data = trail.Select(x => new ApprovalTrailViewModel
@@ -2215,7 +2222,7 @@ namespace FintrakBanking.Repositories.Credit
                 currentLevelId = data.LastOrDefault()?.toApprovalLevelId ?? 0;
             }
 
-            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended))//get only un-ended trail incase of workflow ending&/change
+            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended) && !isClassified)//get only un-ended trail incase of workflow ending&/change
             {
                 var firstTrail = data.FirstOrDefault(t => t.approvalStateId == (int)ApprovalState.Ended);
                 data = data.Where(t => t.approvalTrailId > firstTrail.approvalTrailId).ToList();
@@ -2286,6 +2293,7 @@ namespace FintrakBanking.Repositories.Credit
             data.OrderByDescending(d => d.systemArrivalDateTime).ToList();
             return data;
         }
+
 
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {

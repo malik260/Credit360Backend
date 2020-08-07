@@ -30,6 +30,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int operationId;
         private int? destinationOperationId;
         private bool isFlowTest;
+        private bool isClassifiedReferBack;
         private int? exclusiveFlowChangeId = null;
         private int? businessUnitId = null;
         private TBL_APPROVAL_TRAIL approvalTrail;
@@ -136,6 +137,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         
         public bool SkipLimitsCheck { set { skipLimitsCheck = value; } }
         public string Flow_log { set { flow_log = value; } }
+        public bool IsClassifiedReferBack { get { return isClassifiedReferBack; } set { isClassifiedReferBack = value; } }
 
 
 
