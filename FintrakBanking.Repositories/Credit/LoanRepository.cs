@@ -15955,6 +15955,59 @@ namespace FintrakBanking.Repositories.Credit
         //    return context.SaveChanges() > 0;
         //}
 
+        private WorkflowResponse invokeClassifiedReferBack(ApprovalViewModel model)
+        {
+            int staffId = model.staffId;
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = null;
+
+            workflow.StatusId = (int)ApprovalStatusEnum.Closed;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+
+            workflow.LogActivity();
+
+            //NEW WF ACTIVITY BEGINS
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = null;
+
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+            workflow.ExternalInitialization = true;
+
+            workflow.LogActivity();
+
+            //Audit Section ---------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.BranchId,
+            //    DETAIL = $"facility booking with booking account number  refered back to modifier.",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
+            //context.TBL_AUDIT.Add(audit);
+            ////end of Audit section -------------------------------
+
+            context.SaveChanges();
+            return workflow.Response;
+        }
 
         public WorkflowResponse ReferBackBooking(ApprovalViewModel model)
         {
@@ -15965,6 +16018,8 @@ namespace FintrakBanking.Repositories.Credit
             //int staffId = model.staffId;
 
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+            if (model.isClassified) { return invokeClassifiedReferBack(model); }
 
             var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
                  .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })

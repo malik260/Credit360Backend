@@ -731,7 +731,7 @@ namespace FintrakBanking.Repositories.Credit
             offerLetters.ActionByName = staffFullName;
 
             if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
-                transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+               transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
             }
 
         }
