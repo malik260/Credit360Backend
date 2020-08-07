@@ -1079,30 +1079,42 @@ namespace FintrakBanking.ViewModels.Credit
         public TimeSpan timeOfDay { get; set; }
     }
 
+    public class ContractorCriteriaFormControlValue
+    {
+        public int criteriaId { get; set; }
+        public decimal value { get; set; }
+    }
 
+    public class ProjectRistratingFormControlValue
+    {
+        public int categoryId { get; set; }
+        public int value { get; set; }
+    }
     public class ContractorTieringViewModel : GeneralEntity
     {
+        public List<ContractorCriteriaFormControlValue> form { get; set; }
         public int contractorTierId { get; set; }
-        public string applicationReferenceNumber { get; set; }
+        public int loanApplicationId { get; set; }
         public int customerId { get; set; }
+        public int contractorCriteriaId { get; set; }
+        public decimal actualValue { get; set; }
         public string criteria { get; set; }
-        public int criteriaValue { get; set; }
-        public string tierName { get; set; }
-        public float tierValue { get; set; }
-        public List<ContractorTieringViewModel> contractorForm { get; set; }
+        public string tier { get; set; }
+        public decimal computation { get; set; }
     }
 
     public class ProjectRiskRatingViewModel : GeneralEntity
     {
+        public List<ProjectRistratingFormControlValue> form { get; set; }
         public int projectRiskRatingId { get; set; }
-        public string applicationReferenceNumber { get; set; }
-        public int customerId { get; set; }
-        public string customerTier { get; set; }
-        public string contractEmployer { get; set; }
-        public string complexity { get; set; }
-        public string location { get; set; }
-        public decimal projectValue { get; set; }
-        public string importContent { get; set; }
+        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public int? loanBookingRequestId { get; set; }
+        public int categoryId { get; set; }
+        public int categoryValue { get; set; }
+        public string categoryName { get; set; }
+        public int computation { get; set; }
+        public string riskCategorisation { get; set; }
     }
 
     public class ContractorCriteriaViewModel : GeneralEntity
@@ -1118,6 +1130,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int categoryId { get; set; }
         public string categoryName { get; set; }
+        public List<ProjectRiskRatingCriteriaViewModel> criterias { get; set; }
     }
 
     public class ProjectRiskRatingCriteriaViewModel : GeneralEntity

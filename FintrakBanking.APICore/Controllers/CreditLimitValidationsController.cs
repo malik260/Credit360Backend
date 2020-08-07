@@ -814,7 +814,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("update-project=risk-criteria/{projectRiskRatingCriteriaId}")]
+        [Route("update-project-risk-criteria/{projectRiskRatingCriteriaId}")]
         public HttpResponseMessage UpdateProjectRiskCriteria(int projectRiskRatingCriteriaId, [FromBody] ProjectRiskRatingCriteriaViewModel entity)
         {
 
@@ -859,7 +859,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("update-project=risk-category/{categoryId}")]
+        [Route("update-project-risk-category/{categoryId}")]
         public HttpResponseMessage UpdateProjectRiskCategory(int categoryId, [FromBody] ProjectRiskRatingCategoryViewModel entity)
         {
 
@@ -900,6 +900,78 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage getAllProjectRiskCriteria()
         {
             var response = repo.getAllProjectRiskRatingCriteria();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
+        [Route("contractor-tiering/{loanApplicationId}/{customerId}")]
+        public HttpResponseMessage getContractorTieringByApplication(int loanApplicationId, int customerId)
+        {
+            var response = repo.getContractorTieringByApplication(loanApplicationId, customerId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
+        [Route("contractor-tiering-computation/{loanApplicationId}/{customerId}")]
+        public HttpResponseMessage getContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId)
+        {
+            var response = repo.getContractorTieringByApplicationAndCustomer(loanApplicationId, customerId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+
+        [HttpGet]
+        [Route("all-project-risk-rating-criteria")]
+        public HttpResponseMessage getAllProjectRiskRatingCriteria()
+        {
+            var response = repo.getAllProjectRiskCriteria();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+
+        [HttpGet]
+        [Route("project-risk-rating/{loanApplicationId}/{loanApplicationDetailId}/{loanBookingRequestId}")]
+        public HttpResponseMessage getContractorTieringByApplication(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        {
+            var response = repo.getProjectRiskRatingByApplicationDetailId(loanApplicationId, loanApplicationDetailId, loanBookingRequestId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
+        [Route("project-risk-rating-computation/{loanApplicationId}/{loanApplicationDetailId}/{loanBookingRequestId}")]
+        public HttpResponseMessage getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        {
+            var response = repo.getProjectRiskRatingByApplicationAndApplicationDetailId(loanApplicationId, loanApplicationDetailId, loanBookingRequestId);
             if (response != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });

@@ -923,10 +923,9 @@ namespace FintrakBanking.APICore.Controllers
             entity.companyId = token.GetCompanyId;
             entity.createdBy = token.GetStaffId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
+            var response = repo.AddContractorTiering(entity);
 
-            var response = repo.PostContractorTiering(entity);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
         }
 
         [HttpGet]
@@ -940,5 +939,19 @@ namespace FintrakBanking.APICore.Controllers
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
+
+        [HttpPost]
+        [Route("add-project-risk-rating")]
+        public HttpResponseMessage PostProjectRiskRating([FromBody] ProjectRiskRatingViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            var response = repo.AddProjectRiskRating(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
+        }
+
     }
 }

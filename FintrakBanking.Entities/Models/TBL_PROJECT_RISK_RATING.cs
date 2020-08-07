@@ -13,14 +13,11 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int PROJECTRISKRATINGID { get; set; }
-        public string APPLICATIONREFERENCENUMBER { get; set; }
-        public int CUSTOMERID { get; set; }
-        public string CUSTOMERTIER { get; set; }
-        public string CONTRACTOREMPLOYER { get; set; }
-        public string COMPLEXITY { get; set; }
-        public string LOCATION { get; set; }
-        public decimal PROJECTVALUE { get; set; }
-        public string IMPORTCONTENT { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
+        public int LOANAPPLICATIONDETAILID { get; set; }
+        public int? LOANBOOKINGREQUESTID { get; set; }
+        public int CATEGORYID { get; set; }
+        public int CATEGORYVALUE { get; set; }
         public int CREATEDBY { get; set; }
         public int? LASTUPDATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
