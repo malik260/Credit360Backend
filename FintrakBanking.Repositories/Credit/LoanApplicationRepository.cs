@@ -6087,7 +6087,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanCurrency = item.TBL_CURRENCY.CURRENCYCODE;
 
-                fx = (fina.GetExchangeRate(item.DATETIMECREATED, item.CURRENCYID, companyId).buyingRate);
+                fx = (fina.GetExchangeRate(item.DATETIMECREATED, item.CURRENCYID, companyId).sellingRate);
 
                 double rate;
                 var productBehaviour = collateralRate.Where(p => p.productId == item.PROPOSEDPRODUCTID).FirstOrDefault();

@@ -11,6 +11,7 @@ using FintrakBanking.Common;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.Finance;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -19,6 +20,7 @@ namespace FintrakBanking.Repositories.credit
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
+        private IFinanceTransactionRepository finance;
         private ILoanApplicationRepository loanRepo;
         private IWorkflow workflow;
 
@@ -26,6 +28,7 @@ namespace FintrakBanking.Repositories.credit
                 FinTrakBankingContext _context,
                 IGeneralSetupRepository _general,
                 IAuditTrailRepository _audit,
+                IFinanceTransactionRepository _finance,
                 ILoanApplicationRepository _loanRepo,
                 IWorkflow _workflow
             )
@@ -33,6 +36,7 @@ namespace FintrakBanking.Repositories.credit
             this.context = _context;
             this.general = _general;
             this.audit = _audit;
+            this.finance = _finance;
             this.loanRepo = _loanRepo;
             this.workflow = _workflow;
         }
@@ -267,8 +271,7 @@ namespace FintrakBanking.Repositories.credit
             var fees = context.TBL_FACILITY_MOD_DETL_FEE.Where(f => f.FACILITYMODIFICATIONID == model.FACILITYMODIFICATIONID).ToList();
             var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.LOANAPPLICATIONDETAILID);
             var loan = context.TBL_LOAN_APPLICATION.Find(facility.LOANAPPLICATIONID);
-            var formerApplicationAmount = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT);
-            var formerTotalExposureAmount = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT);
+            var formerApplicationAmount = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT * (decimal)d.EXCHANGERATE);
             if (facility != null && loan != null)
             {
                 if (fees != null)
@@ -278,7 +281,8 @@ namespace FintrakBanking.Repositories.credit
                         var updated = UpdateLoanDetailFees(fees, model.CREATEDBY);
                     }
                 }
-                var difference = model.APPROVEDAMOUNT - facility.APPROVEDAMOUNT;
+                //var currencyRate = (finance.GetExchangeRate(facility.DATETIMECREATED, facility.CURRENCYID, loan.COMPANYID).sellingRate);
+                var difference = (model.APPROVEDAMOUNT - facility.APPROVEDAMOUNT) * (decimal)facility.EXCHANGERATE;
                 saved = loanRepo.ArchiveLoanApplication(facility.LOANAPPLICATIONID, (int)OperationsEnum.FacilityModificationApproval, 0, model.CREATEDBY);
                 model.APPROVEDTENOR = ConvertTenorToDays(model.APPROVEDTENOR, model.TENORMODEID);
                 facility.APPROVEDPRODUCTID = model.APPROVEDPRODUCTID;
