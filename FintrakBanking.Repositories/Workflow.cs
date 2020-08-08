@@ -1052,7 +1052,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 .ToList();
 
             if (votes.FirstOrDefault(x => x.REQUESTSTAFFID == (int)this.staffId) != null) throw new SecureException("You have already acted on this item.");
-
+            if(this.statusId == (int)ApprovalStatusEnum.Referred)
+            {
+                return true;
+            }
             // APPROVING ORDER VALIDATION
             var approvers = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == fromLevelId).ToList();
             var current = approvers.FirstOrDefault(x => x.STAFFID == this.staffId);
