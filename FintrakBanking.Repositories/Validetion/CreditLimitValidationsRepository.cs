@@ -1800,5 +1800,359 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 applicationId = appl.LOANAPPLICATIONID,
             });
         }
+
+        public IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingCategories()
+        {
+            var categories = (from a in context.TBL_PROJECT_RISK_RATING_CATEGORY
+                               select new ProjectRiskRatingCategoryViewModel
+                               {
+                                   categoryId = a.CATEGORYID,
+                                   categoryName = a.CATEGORYNAME
+                               }).ToList();
+
+            return categories;
+        }
+
+        public bool AddContractorCriteria(ContractorCriteriaViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CONTRACTOR_CRITERIA cONTRACTOR_CRITERIA;
+                    cONTRACTOR_CRITERIA = new TBL_CONTRACTOR_CRITERIA
+                    {
+                        CRITERIA = entity.criteria,
+                        TIERONE = entity.tierOne,
+                        TIERTWO = entity.tierTwo,
+                        TIERTHREE = entity.tierThree,
+                    };
+                    context.TBL_CONTRACTOR_CRITERIA.Add(cONTRACTOR_CRITERIA);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateContractorCriteria(ContractorCriteriaViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CONTRACTOR_CRITERIA _CRITERIA;
+                    if (entity.criteriaId > 0)
+                    {
+                        _CRITERIA = context.TBL_CONTRACTOR_CRITERIA.Find(entity.criteriaId);
+                        if (_CRITERIA != null)
+                        {
+                            _CRITERIA.CRITERIA = entity.criteria;
+                            _CRITERIA.TIERONE = entity.tierOne;
+                            _CRITERIA.TIERTWO = entity.tierTwo;
+                            _CRITERIA.TIERTHREE = entity.tierThree;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+
+        public bool AddProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_PROJECT_RISK_RATING_CRITERIA tBL_PROJECT_RISK;
+                    tBL_PROJECT_RISK = new TBL_PROJECT_RISK_RATING_CRITERIA
+                    {
+                        CRITERIA = entity.criteria,
+                        CRITERIAVALUE = entity.criteriaValue,
+                        PROJECTRISKRATINGCATEGORYID = entity.projectRiskRatingCategoryId,
+                    };
+                    context.TBL_PROJECT_RISK_RATING_CRITERIA.Add(tBL_PROJECT_RISK);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_PROJECT_RISK_RATING_CRITERIA tBL_PROJECT_RISK;
+                    if (entity.projectRiskRatingCriteriaId > 0)
+                    {
+                        tBL_PROJECT_RISK = context.TBL_PROJECT_RISK_RATING_CRITERIA.Find(entity.projectRiskRatingCriteriaId);
+                        if (tBL_PROJECT_RISK != null)
+                        {
+                            tBL_PROJECT_RISK.CRITERIA = entity.criteria;
+                            tBL_PROJECT_RISK.CRITERIAVALUE = entity.criteriaValue;
+                            tBL_PROJECT_RISK.PROJECTRISKRATINGCATEGORYID = entity.projectRiskRatingCategoryId;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool AddProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_PROJECT_RISK_RATING_CATEGORY tBL_PROJECT_RISK;
+                    tBL_PROJECT_RISK = new TBL_PROJECT_RISK_RATING_CATEGORY
+                    {
+                        CATEGORYNAME = entity.categoryName
+                    };
+                    context.TBL_PROJECT_RISK_RATING_CATEGORY.Add(tBL_PROJECT_RISK);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool UpdateProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_PROJECT_RISK_RATING_CATEGORY tBL_PROJECT_RISK;
+                    if (entity.categoryId > 0)
+                    {
+                        tBL_PROJECT_RISK = context.TBL_PROJECT_RISK_RATING_CATEGORY.Find(entity.categoryId);
+                        if (tBL_PROJECT_RISK != null)
+                        {
+                            tBL_PROJECT_RISK.CATEGORYNAME = entity.categoryName;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public IEnumerable<ContractorCriteriaViewModel> getAllContractorCriteria()
+        {
+            var contractorCriteria = (from a in context.TBL_CONTRACTOR_CRITERIA
+                              select new ContractorCriteriaViewModel
+                              {
+                                  criteriaId = a.CRITERIAID,
+                                  criteria = a.CRITERIA,
+                                  tierOne = a.TIERONE,
+                                  tierTwo = a.TIERTWO,
+                                  tierThree = a.TIERTHREE
+                              }).ToList();
+
+            return contractorCriteria;
+        }
+
+        public IEnumerable<ContractorTieringViewModel> getContractorTieringByApplication(int loanApplicationId, int customerId)
+        {
+            var contractorTiering = (from a in context.TBL_CONTRACTOR_TIERING
+                                     where a.LOANAPPLICATIONID == loanApplicationId && a.CUSTOMERID == customerId
+                                      select new ContractorTieringViewModel
+                                      {
+                                          contractorTierId = a.CONTRACTORTIERID,
+                                          loanApplicationId = a.LOANAPPLICATIONID,
+                                          customerId = a.CUSTOMERID,
+                                          actualValue = a.ACTUALVALUE
+                                      }).ToList();
+
+            return contractorTiering;
+        }
+
+        public IEnumerable<ContractorTieringViewModel> getContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId)
+        {
+            var contractorTiering = (from a in context.TBL_CONTRACTOR_TIERING
+                                     join c in context.TBL_CONTRACTOR_CRITERIA on a.CONTRACTORCRITERIAID equals c.CRITERIAID
+                                     where a.LOANAPPLICATIONID == loanApplicationId && a.CUSTOMERID == customerId
+                                     select new 
+                                     {
+                                         contractorTierId = a.CONTRACTORTIERID,
+                                         loanApplicationId = a.LOANAPPLICATIONID,
+                                         customerId = a.CUSTOMERID,
+                                         criteria = c.CRITERIA,
+                                         actualValue = a.ACTUALVALUE
+                                     }).AsEnumerable().Select(a => new ContractorTieringViewModel
+                                     {
+                                         contractorTierId = a.contractorTierId,
+                                         loanApplicationId = a.loanApplicationId,
+                                         customerId = a.customerId,
+                                         criteria = a.criteria,
+                                         actualValue = a.actualValue
+                                     }).ToList();
+
+                            var result = contractorTiering.Select(a => new ContractorTieringViewModel
+                            {
+                                contractorTierId = a.contractorTierId,
+                                loanApplicationId = a.loanApplicationId,
+                                customerId = a.customerId,
+                                criteria = a.criteria,
+                                actualValue = a.actualValue,
+                                computation = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == a.loanApplicationId).Sum(d => d.ACTUALVALUE),
+                            }).ToList();
+
+                            return result;
+        }
+
+        public IEnumerable<ProjectRiskRatingCriteriaViewModel> getAllProjectRiskRatingCriteria()
+        {
+            var contractorCriteria = (from a in context.TBL_PROJECT_RISK_RATING_CRITERIA
+                                      where a.PROJECTRISKRATINGCATEGORYID > 0
+                                      select new ProjectRiskRatingCriteriaViewModel
+                                      {
+                                          projectRiskRatingCriteriaId = a.PROJECTRISKRATINGCRITERIAID,
+                                          projectRiskRatingCategoryId = a.PROJECTRISKRATINGCATEGORYID,
+                                          criteria = a.CRITERIA,
+                                          criteriaValue = a.CRITERIAVALUE,
+                                          category = context.TBL_PROJECT_RISK_RATING_CATEGORY.Where(p=>p.CATEGORYID == a.PROJECTRISKRATINGCATEGORYID).Select(p=>p.CATEGORYNAME).FirstOrDefault()
+                                      }).ToList();
+
+            return contractorCriteria;
+        }
+
+        public IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingByCategories()
+        {
+            var projectRiskRatingCriteria = (from a in context.TBL_PROJECT_RISK_RATING_CATEGORY
+                                      where a.CATEGORYNAME != null
+                                      select new ProjectRiskRatingCategoryViewModel
+                                      {
+                                          categoryId = a.CATEGORYID,
+                                          categoryName = a.CATEGORYNAME,
+                                          criterias = context.TBL_PROJECT_RISK_RATING_CRITERIA.Where(x=>x.PROJECTRISKRATINGCATEGORYID == a.CATEGORYID).Select(x => new ProjectRiskRatingCriteriaViewModel
+                                          {
+                                              criteria = x.CRITERIA,
+                                              criteriaValue = x.CRITERIAVALUE
+                                          }).ToList(),
+                                      }).ToList();
+
+            return projectRiskRatingCriteria;
+        }
+
+        public IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        {
+            var projectRiskrating = (from a in context.TBL_PROJECT_RISK_RATING
+                                     where a.LOANAPPLICATIONID == loanApplicationId && a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                     select new ProjectRiskRatingViewModel
+                                     {
+                                         categoryId = a.CATEGORYID,
+                                         categoryValue = a.CATEGORYVALUE,
+                                     }).ToList();
+
+            return projectRiskrating;
+        }
+
+        public IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        {
+            var customerTier1 = context.TBL_CONTRACTOR_TIERING.Where(d => d.LOANAPPLICATIONID == loanApplicationId).ToList();
+            var projectRiskRating = (from a in context.TBL_PROJECT_RISK_RATING
+                                     join c in context.TBL_PROJECT_RISK_RATING_CATEGORY on a.CATEGORYID equals c.CATEGORYID
+                                     where a.LOANAPPLICATIONID == loanApplicationId && a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                     select new
+                                     {
+                                         loanApplicationId = a.LOANAPPLICATIONID,
+                                         loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                         loanBookingRequestId = a.LOANBOOKINGREQUESTID,
+                                         categoryName = c.CATEGORYNAME,
+                                         categoryValue = a.CATEGORYVALUE
+                                     }).AsEnumerable().Select(a => new ProjectRiskRatingViewModel
+                                     {
+                                         loanApplicationId = a.loanApplicationId,
+                                         loanApplicationDetailId = a.loanApplicationDetailId,
+                                         loanBookingRequestId = a.loanBookingRequestId,
+                                         categoryName = a.categoryName,
+                                         categoryValue = a.categoryValue
+                                     }).ToList();
+
+                                var result = projectRiskRating.Select(a => new ProjectRiskRatingViewModel
+                                {
+                                    loanApplicationId = a.loanApplicationId,
+                                    loanApplicationDetailId = a.loanApplicationDetailId,
+                                    loanBookingRequestId = a.loanBookingRequestId,
+                                    categoryName = a.categoryName,
+                                    categoryValue = a.categoryValue,
+                                    computation = context.TBL_PROJECT_RISK_RATING.Where(d => d.LOANAPPLICATIONDETAILID == a.loanApplicationDetailId).Sum(d => d.CATEGORYVALUE),
+                                }).ToList();
+
+            foreach(var i in result)
+            {
+                int rating = 0;
+                i.customerTier = 0;
+                if (customerTier1 != null)
+                {
+                    decimal compute = customerTier1.Where(x => x.LOANAPPLICATIONID == i.loanApplicationId).Sum(x => x.ACTUALVALUE);
+                    if (compute >= 80) { rating = 25; }
+                    if (compute >= 60 && compute <= 79) { rating = 20; }
+                    if (compute <= 59) { rating = 10; }
+                    i.customerTier = compute;
+                }
+               
+                var overRallTotal = i.computation + rating;
+                if(overRallTotal >= 81 && overRallTotal <= 100)
+                {
+                    i.riskCategorisation = "LOW";
+                }
+                if (overRallTotal >= 66 && overRallTotal < 81)
+                {
+                    i.riskCategorisation = "MODERATE";
+                }
+                if (overRallTotal >= 51 && overRallTotal < 66)
+                {
+                    i.riskCategorisation = "ABOVE AVERAGE";
+                }
+                if (overRallTotal < 51)
+                {
+                    i.riskCategorisation = "HIGH";
+                }
+            }
+
+            return result;
+        }
     }
 }
