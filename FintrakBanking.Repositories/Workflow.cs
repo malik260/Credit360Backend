@@ -949,7 +949,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if (relieverStaff != null) staff = level.Staff.Where(x => x.STAFFID == relieverStaff.STAFFID); // ?
                 }
 
-                if (staff.Any() == false && defaultRole == null && relieverStaff == null)
+                if (staff.Any() == false && defaultRole == null && relieverStaff == null && IsClassifiedReferBack == false)
                 {
                     throw new SecureException("You are not in the current workflow level " + level.Level.LEVELNAME);
                 }

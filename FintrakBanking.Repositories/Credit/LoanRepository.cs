@@ -9131,7 +9131,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && atrail.RESPONSESTAFFID == null && (s.CRMSVALIDATED == false || s.CRMSVALIDATED == null))
                                    //************************
 
-                                   || ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
+                                   || ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
                                          //|| (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing))
                                        && s.ISUSED == false
                                        && s.DELETED == false
@@ -15976,17 +15976,18 @@ namespace FintrakBanking.Repositories.Credit
 
             //NEW WF ACTIVITY BEGINS
             workflow.StaffId = model.createdBy;
-            workflow.OperationId = model.operationId;
+            workflow.OperationId =  (short)model.nextOperation;
             workflow.TargetId = model.targetId;
             workflow.CompanyId = model.companyId;
             workflow.ProductClassId = model.productClassId;
             workflow.ProductId = model.productId;
-            workflow.NextLevelId = null;
+            workflow.NextLevelId = model.approvalLevelId;
+            workflow.IsClassifiedReferBack = true;
 
-            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;
-            workflow.ExternalInitialization = true;
+            //workflow.ExternalInitialization = true;
 
             workflow.LogActivity();
 
