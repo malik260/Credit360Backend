@@ -67,8 +67,7 @@ namespace FintrakBanking.Repositories.Credit
              .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
              .Join(context.TBL_CUSTOMER, ab => ab.a.CUSTOMERID, c => c.CUSTOMERID, (ab, c) => new { ab, c, b = ab.b })
              .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
-                    && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
-                    || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+                    && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
                      && x.RESPONSESTAFFID == null
                      && ((levelIds.Contains((int)x.TOAPPROVALLEVELID) && x.TOSTAFFID == null) || (levelIds.Contains((int)x.TOAPPROVALLEVELID) && staffs.Contains(x.TOSTAFFID ?? 0))
                      || (!levelIds.Contains((int)x.TOAPPROVALLEVELID)) && staffs.Contains(x.TOSTAFFID ?? 0))

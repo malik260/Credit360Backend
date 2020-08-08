@@ -1160,7 +1160,7 @@ namespace FintrakBanking.APICore.Controllers
 
             var response = repo.ReferBackBooking(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request was sent to " + response.nextPersonName + " successful" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response.responseMessage });
         }
 
 

@@ -317,8 +317,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             //        StartPostApprovalLevelsReview(reviewers.FirstOrDefault().APPROVALLEVELID);
             //    }
             //}
-           
-           
+
+
 
             if (this.deferredExecution)
             {
@@ -516,7 +516,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.lastRequest != null && this.lastRequest.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred && this.statusId != (short)ApprovalStatusEnum.Referred)
             {
                 
-                if(this.statusId != (short)ApprovalStatusEnum.Approved && this.newStateId != (short)ApprovalState.Ended)
+                if(this.statusId != (short)ApprovalStatusEnum.Approved && this.statusId != (short)ApprovalStatusEnum.Referred && this.newStateId != (short)ApprovalState.Ended)
                 {
                     if(currentLevel != null && destinationLevel != null)
                     {
@@ -1134,13 +1134,21 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ContinueProcess(int status)
         {
-            this.statusId = status == (int)ApprovalStatusEnum.Disapproved ? (int)ApprovalStatusEnum.Processing : (int)ApprovalStatusEnum.Authorised;
+            this.statusId = status == (int)ApprovalStatusEnum.Disapproved ? (int)ApprovalStatusEnum.Processing : status == (int)ApprovalStatusEnum.Finishing ? status : (int)ApprovalStatusEnum.Authorised;
             this.newStateId = (int)ApprovalState.Processing;
         }
 
         private void EndProcess(int status)
         {   
             if(lastRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastRequest.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
+            if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred)
+            {
+                var nextLevel = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
+                if (nextLevel?.ISPOSTAPPROVALREVIEWER == true)
+                {
+                    return;
+                }
+            }
 
             this.statusId = ResolveLastStatus(status);
             this.newStateId = (int)ApprovalState.Ended;
@@ -1652,11 +1660,24 @@ namespace FintrakBanking.Repositories.WorkFlow
             //if (rule.ISFORCONTINGENTFACILITY && levelBusinessRule.isContingentFacility) flagChecked = true;
             //if (rule.ISFORREVOLVINGFACILITY && levelBusinessRule.isRevolvingFacility) flagChecked = true;
             //if (rule.ISFORRENEWAL && levelBusinessRule.isRenewal) flagChecked = true;
-            if (rule.EXEMPTCONTINGENTFACILITY && !levelBusinessRule.isContingentFacility) flagChecked = true;
             //if (rule.EXEMPTREVOLVINGFACILITY && !levelBusinessRule.isRevolvingFacility) flagChecked = true;
             //if (rule.EXEMPTRENEWAL && !levelBusinessRule.isRenewal) flagChecked = true;
             if(rule.EXCLUDELEVEL && !levelBusinessRule.excludeLevel) flagChecked = true;
-
+            if (rule.EXEMPTCONTINGENTFACILITY)
+            {
+                if (levelBusinessRule.isContingentFacility)//if contingent, all other rules are overidden
+                {
+                    flagChecked = false;
+                    limitChecked = false;
+                }
+                else
+                {//if not contingent, other rules stand
+                    if (minimumAmount == 0 && maximumAmount == 0)//if not contingent & no other rule exists, it passes
+                    {
+                        flagChecked = true;
+                    }
+                }
+            }
 
 
 
