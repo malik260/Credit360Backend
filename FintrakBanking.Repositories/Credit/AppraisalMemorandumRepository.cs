@@ -3831,6 +3831,7 @@ namespace FintrakBanking.Repositories.Credit
                     //fromApprovalLevelName = trail.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == trail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                     //toApprovalLevelName = trail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                     toApprovalLevelId = trail.TOAPPROVALLEVELID,
+                    loopedStaffId = trail.LOOPEDSTAFFID,
                     //approvalStateId = trail.APPROVALSTATEID,
                     //approvalStatusId = trail.APPROVALSTATUSID,
                     //approvalState = trail.TBL_APPROVAL_STATE.APPROVALSTATE,
@@ -3840,6 +3841,17 @@ namespace FintrakBanking.Repositories.Credit
                     //toStaffName = allstaff.FirstOrDefault(s => s.id == trail.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == trail.RESPONSESTAFFID).name,
                     //fromStaffName = allstaff.FirstOrDefault(s => s.id == trail.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == trail.REQUESTSTAFFID).name,
                 };
+
+                if (data.fromApprovalLevelId == data.toApprovalLevelId && data.loopedStaffId > 0)
+                {
+                    var loopedStaff = context.TBL_STAFF.Find(data.loopedStaffId);
+                    if(loopedStaff == null)
+                    {
+                        throw new SecureException("Looped Staff Can't be null!");
+                    }
+                    var defaultLoopedStaffLevelId = context.TBL_APPROVAL_LEVEL.FirstOrDefault(l => l.STAFFROLEID == loopedStaff.STAFFROLEID).APPROVALLEVELID;
+                    data.toApprovalLevelId = defaultLoopedStaffLevelId;
+                }
             return data;
             }
             return null;
