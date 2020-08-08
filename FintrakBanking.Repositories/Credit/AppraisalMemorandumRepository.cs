@@ -1622,8 +1622,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Vote = model.vote;
             //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
             //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = 0;
-            workflow.ToStaffId = null;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);

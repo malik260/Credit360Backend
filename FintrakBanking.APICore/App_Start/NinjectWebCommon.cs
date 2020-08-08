@@ -278,6 +278,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IAlertRepository>().To<AlertRepository>();
             kernel.Bind<ICashFlowLendingRepository>().To<CashFlowLendingRepository>();
             kernel.Bind<ILoanArchiveRepository>().To<LoanArchiveRepository>();
+            kernel.Bind<IFacilityModificationRepository>().To<FacilityModificationRepository>();
         }
     }
     
