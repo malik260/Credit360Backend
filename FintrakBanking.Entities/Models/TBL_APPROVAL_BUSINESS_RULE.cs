@@ -38,6 +38,7 @@
         public bool EXEMPTCONTINGENTFACILITY { get; set; }
         public bool EXEMPTREVOLVINGFACILITY { get; set; }
         public bool EXEMPTRENEWAL { get; set; }
+        public bool EXCLUDELEVEL { get; set; }
 
         public int COMPANYID { get; set; }
         public int? TENOR { get; set; }

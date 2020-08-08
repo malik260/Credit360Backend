@@ -5,6 +5,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -36,7 +37,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId);
         bool IsProductCodeAlreadyExist(string productCode);
         bool IsProductExist(string productCode);
-        int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity);
+        WorkflowResponse GoForApprovalGlobalPriceIndex(ApprovalViewModel entity);
 
         int GoForApproval(ApprovalViewModel entity);
         Task<ProductViewModel> AddTempProduct(ProductViewModel product);
@@ -55,12 +56,12 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         #region Product Price Index
         IEnumerable<ProductPriceIndexViewModel> GetProductPriceIndex(int companyId);
-        IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobal();
+        IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobal(int staffId);
         IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalAwaitingApproval(int staffId);
         ProductPriceIndexViewModel GetProductPriceIndexById(int productPriceIndexId, int companyId);
         ProductPriceIndexViewModel GetAllProductPriceIndicesById(int priceIndexId);
         ProductPriceIndexViewModel AddProductPriceIndex(ProductPriceIndexViewModel prodPriceIndex);
-        bool AddProductPriceIndexGlobal(ProductPriceIndexGlobalViewModel prodPriceIndexGlobal);
+        WorkflowResponse AddProductPriceIndexGlobal(ProductPriceIndexGlobalViewModel prodPriceIndexGlobal);
         bool UpdateProductPriceIndexGlobal(int prodPriceIndexGlobalId, ProductPriceIndexGlobalViewModel prodPriceIndexGlobal);
 
         bool UpdateProductPriceIndex(int productPriceIndexId, ProductPriceIndexViewModel prodPriceIndex);

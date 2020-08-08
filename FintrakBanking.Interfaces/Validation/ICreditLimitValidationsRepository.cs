@@ -10,6 +10,20 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
 {
     public interface ICreditLimitValidationsRepository
     {
+        IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId);
+        IEnumerable<ProjectRiskRatingViewModel> getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId);
+        IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingByCategories();
+        IEnumerable<ContractorTieringViewModel> getContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId);
+        IEnumerable<ContractorTieringViewModel> getContractorTieringByApplication(int loanApplicationId, int customerId);
+        IEnumerable<ContractorCriteriaViewModel> getAllContractorCriteria();
+        IEnumerable<ProjectRiskRatingCriteriaViewModel> getAllProjectRiskRatingCriteria();
+        bool UpdateProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity);
+        bool AddProjectRiskCategory(ProjectRiskRatingCategoryViewModel entity);
+        bool UpdateProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity);
+        bool AddProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity);
+        bool UpdateContractorCriteria(ContractorCriteriaViewModel entity);
+        IEnumerable<ProjectRiskRatingCategoryViewModel> getAllProjectRiskRatingCategories();
+        bool AddContractorCriteria(ContractorCriteriaViewModel entity);
         CreditLimitValidationsModel ValidateAmountFacilityBySector(int sectorId);
         CreditLimitValidationsModel ValidateNPLByGroupFirstTwenty(LoanApplicationViewModel application);
         CreditLimitValidationsModel ValidateNPLByGroupFirstHundred(LoanApplicationViewModel application);

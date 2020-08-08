@@ -65,12 +65,6 @@ namespace FintrakBanking.Repositories.Customer
             var setup = mainContext.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (setup.USE_THIRD_PARTY_INTEGRATION)
             {
-                //var casa = (from a in mainContext.TBL_CASA
-                //            where a.PRODUCTACCOUNTNUMBER == searchTerm
-                //           //select a.TBL_CUSTOMER.CUSTOMERCODE;
-                //           select a.TBL_CUSTOMER.CUSTOMERCODE).ToList();
-                //var customerCode  = mainContext.TBL_CASA.Where(a => a.PRODUCTACCOUNTNUMBER == searchTerm);
-
                 var customerinfo  = (from a in mainContext.TBL_CASA
                                      join b in mainContext.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                      where a.PRODUCTACCOUNTNUMBER == searchTerm && a.DELETED == false
@@ -79,30 +73,15 @@ namespace FintrakBanking.Repositories.Customer
                                         customerCode = b.CUSTOMERCODE,
                                      }).ToList();
 
-                //var casa = mainContext.TBL_CASA.Where(a => a.PRODUCTACCOUNTNUMBER == searchTerm);
-                //var existingCustomer = mainContext.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).;
-
                 if (customerinfo.Count > 0)
                 {
-                    //IQueryable<CustomerViewModels> allCustomers = null;
-
                     List<CustomerViewModels> allCustomers = new List<CustomerViewModels>();
                     allCustomers = GetExistingCustomerInformation(customerinfo[0].customerCode).ToList();
                     return allCustomers.ToList();
                 }
                 else
                 { 
-                //mainContext.TBL_CASA.Where(a => a.PRODUCTACCOUNTNUMBER == searchTerm);
-                //var existingCustomer = mainContext.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == searchTerm);
-                //CustomerDetails customer = new CustomerDetails(mainContext);
-                //customer.RunAsync().GetAwaiter().GetResult();
-                //return await customer.GetCustomerByAccountNumber(searchTerm);//GetAllCustomers
-                //return customer.GetAllCustomers(searchTerm).GetAwaiter().GetResult();
-
-                //return  customer.GetCustomerByAccountNumber(searchTerm).GetAwaiter().GetResult();
-                    
-                Task.Run(async () => { data = await _customer.GetCustomerByAccountsNumber(searchTerm); }).GetAwaiter().GetResult();
-
+                    Task.Run(async () => { data = await _customer.GetCustomerByAccountsNumber(searchTerm); }).GetAwaiter().GetResult();
                     return data;
                 }
                 //return customer.GetCustomerByAccountNumber(searchTerm).GetAwaiter().GetResult();

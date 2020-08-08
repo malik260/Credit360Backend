@@ -706,13 +706,13 @@ namespace FintrakBanking.APICore.Controllers
             }
             else if (responseId == 2)
             {
-                dynamicMessage = "Loan has been successfully disbursed";
+                dynamicMessage = "Loan has been successfully disbursed and forward for Filling";
                 if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
-                    dynamicMessage = "Overdraft facility grant successfully committed";
+                    dynamicMessage = "Overdraft facility grant successfully committed and forward for Filling";
                 if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
-                    dynamicMessage = "Contingent Liability has been committed successfully";
+                    dynamicMessage = "Contingent Liability has been committed successfully and forward for Filling";
                 if (model.operationId == (short)OperationsEnum.TermLoanBooking)
-                    dynamicMessage = "Loan has been successfully disbursed";
+                    dynamicMessage = "Loan has been successfully disbursed and forward for Filling";
                 return Request.CreateResponse(HttpStatusCode.OK,
                                         new { success = true, message = dynamicMessage });
             }
@@ -1160,7 +1160,7 @@ namespace FintrakBanking.APICore.Controllers
 
             var response = repo.ReferBackBooking(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Request was sent to " + response.nextPersonName + " successful" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response.responseMessage });
         }
 
 
@@ -1664,8 +1664,13 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage VerifyLegalContingentCode(string legalContingentCode, int loanApplicationDetailId)
         {
             var response = repo.VerifyLegalContingentCode(legalContingentCode, loanApplicationDetailId);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = response, message = "Success" });
+            }
+            else
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failed" });
         }
 
         [HttpPost]

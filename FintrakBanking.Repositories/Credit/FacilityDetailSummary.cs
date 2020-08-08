@@ -906,9 +906,12 @@ namespace FintrakBanking.Repositories.Credit
                                    //crmsCode = lr.CRMSCODE
                                }).FirstOrDefault();
             var applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
-            loanDetails.accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanDetails.loanId && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault();
-            loanDetails.totalRepayment = PresentRepayments(loanDetails.loanReferenceNumber, loanDetails.companyId);
-            loanDetails.pastDueDays = loanDetails.pastDueDate != null ? DateTime.Now > loanDetails.pastDueDate ? (DateTime.Now.Subtract(loanDetails.pastDueDate.Value).Days) : 0 : 0;
+            if(loanDetails != null)
+            {
+                loanDetails.accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanDetails.loanId && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault();
+                loanDetails.totalRepayment = PresentRepayments(loanDetails.loanReferenceNumber, loanDetails.companyId);
+                loanDetails.pastDueDays = loanDetails.pastDueDate != null ? DateTime.Now > loanDetails.pastDueDate ? (DateTime.Now.Subtract(loanDetails.pastDueDate.Value).Days) : 0 : 0;
+            }
 
             return loanDetails;
 

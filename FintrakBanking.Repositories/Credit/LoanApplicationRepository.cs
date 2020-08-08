@@ -2154,8 +2154,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if(returndate != null)
             {
-                int customerId = (int)returndate.singleCustomerId;
+                int customerId = returndate.singleCustomerId != null ? returndate.singleCustomerId.Value : 0;
                 var customer = context.TBL_CUSTOMER.Find(customerId);
+
                 if (customer != null)
                 {
                     var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == loan.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
@@ -3530,7 +3531,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var details = app.TBL_LOAN_APPLICATION_DETAIL.ToList();
             TBL_LOAN_APPLICATION_ARCHIVE loanApplArchive = new TBL_LOAN_APPLICATION_ARCHIVE();
-            loanApplArchive.ARCHIVEDATE = genSetup.GetApplicationDate();
+            loanApplArchive.ARCHIVEDBY = archivedBy;
+            loanApplArchive.ARCHIVEDATE = DateTime.Now;
             loanApplArchive.LOANAPPLICATIONID = app.LOANAPPLICATIONID;
             loanApplArchive.APPLICATIONREFERENCENUMBER = app.APPLICATIONREFERENCENUMBER;
             loanApplArchive.LOANPRELIMINARYEVALUATIONID = app.LOANPRELIMINARYEVALUATIONID;
@@ -3607,7 +3609,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 ArchiveLoanApplicationDetails(f.LOANAPPLICATIONDETAILID);
             }
-            return context.SaveChanges() != 0;
+            return context.SaveChanges() > 0;
         }
 
         public void ArchiveLoanApplicationDetails(int loanApplicationDetailId)
@@ -6084,7 +6086,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanCurrency = item.TBL_CURRENCY.CURRENCYCODE;
 
-                fx = (fina.GetExchangeRate(item.DATETIMECREATED, item.CURRENCYID, companyId).buyingRate);
+                fx = (fina.GetExchangeRate(item.DATETIMECREATED, item.CURRENCYID, companyId).sellingRate);
 
                 double rate;
                 var productBehaviour = collateralRate.Where(p => p.productId == item.PROPOSEDPRODUCTID).FirstOrDefault();
@@ -7133,10 +7135,15 @@ namespace FintrakBanking.Repositories.Credit
             int productId = details.SingleOrDefault()?.proposedProductId ?? 0;
             decimal applicationAmount = details.Sum(x => x.proposedAmount * (decimal)x.exchangeRate); // proposedAmount should be approvedAmount after application
 
-            var branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
-            var sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
-            var customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
+            TBL_OVERRIDE_DETAIL branchOverrideRequest = null;
+            TBL_OVERRIDE_DETAIL sectorOverrideRequest = null;
+            TBL_OVERRIDE_DETAIL customerOverrideRequest = null;
 
+            if (customer != null) {
+                branchOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride).FirstOrDefault();
+                sectorOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride).FirstOrDefault();
+                customerOverrideRequest = context.TBL_OVERRIDE_DETAIL.Where(c => c.CUSTOMERCODE == customer.CUSTOMERCODE && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && c.ISUSED == false && c.CREATEDBY == application.createdBy && c.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride).FirstOrDefault();
+            }
 
             if (branchOverrideRequest != null)
             {
@@ -7326,6 +7333,8 @@ namespace FintrakBanking.Repositories.Credit
                     facility.PROPOSEDAMOUNT = model.approvedAmount;
                     loan.APPLICATIONAMOUNT = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT);
                     loan.TOTALEXPOSUREAMOUNT += difference;
+                    loan.DATETIMEUPDATED = DateTime.Now;
+                    loan.LASTUPDATEDBY = model.createdBy;
                 }
                 saved = context.SaveChanges();
                 trans.Commit();

@@ -730,5 +730,256 @@ namespace FintrakBanking.APICore.Controllers
                new { success = false, message = $"deleted Record not Successfull" });
         }
         #endregion
+
+
+        [HttpGet]
+        [Route("project-risk-rating-categories")]
+        public HttpResponseMessage getAllProjectRiskRatingCategories()
+        {
+            var response = repo.getAllProjectRiskRatingCategories();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpPost]
+        [Route("add-contractor-criteria")]
+        public HttpResponseMessage AddContractorCriteria([FromBody] ContractorCriteriaViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.AddContractorCriteria(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPut]
+        [Route("update-contractor-criteria/{criteriaId}")]
+        public HttpResponseMessage UpdateContractorCriteria(int criteriaId, [FromBody] ContractorCriteriaViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.criteriaId = criteriaId;
+
+            var data = repo.UpdateContractorCriteria(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPost]
+        [Route("add-project-risk-criteria")]
+        public HttpResponseMessage AddProjectRiskCriteria([FromBody] ProjectRiskRatingCriteriaViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.AddProjectRiskCriteria(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPut]
+        [Route("update-project-risk-criteria/{projectRiskRatingCriteriaId}")]
+        public HttpResponseMessage UpdateProjectRiskCriteria(int projectRiskRatingCriteriaId, [FromBody] ProjectRiskRatingCriteriaViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.projectRiskRatingCriteriaId = projectRiskRatingCriteriaId;
+
+            var data = repo.UpdateProjectRiskCriteria(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPost]
+        [Route("add-project-risk-category")]
+        public HttpResponseMessage AddProjectRiskCategory([FromBody] ProjectRiskRatingCategoryViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.AddProjectRiskCategory(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPut]
+        [Route("update-project-risk-category/{categoryId}")]
+        public HttpResponseMessage UpdateProjectRiskCategory(int categoryId, [FromBody] ProjectRiskRatingCategoryViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.categoryId = categoryId;
+
+            var data = repo.UpdateProjectRiskCategory(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpGet]
+        [Route("contractor-criteria")]
+        public HttpResponseMessage getAllContractorCriteria()
+        {
+            var response = repo.getAllContractorCriteria();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
+        [Route("project-risk-rating-criteria")]
+        public HttpResponseMessage getAllProjectRiskCriteria()
+        {
+            var response = repo.getAllProjectRiskRatingCriteria();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
+        [Route("contractor-tiering/{loanApplicationId}/{customerId}")]
+        public HttpResponseMessage getContractorTieringByApplication(int loanApplicationId, int customerId)
+        {
+            var response = repo.getContractorTieringByApplication(loanApplicationId, customerId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
+        [Route("contractor-tiering-computation/{loanApplicationId}/{customerId}")]
+        public HttpResponseMessage getContractorTieringByApplicationAndCustomer(int loanApplicationId, int customerId)
+        {
+            var response = repo.getContractorTieringByApplicationAndCustomer(loanApplicationId, customerId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+
+        [HttpGet]
+        [Route("all-project-risk-rating-criteria")]
+        public HttpResponseMessage getAllProjectRiskRatingByCategories()
+        {
+            var response = repo.getAllProjectRiskRatingByCategories();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+
+        [HttpGet]
+        [Route("project-risk-rating/{loanApplicationId}/{loanApplicationDetailId}/{loanBookingRequestId}")]
+        public HttpResponseMessage getContractorTieringByApplication(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        {
+            var response = repo.getProjectRiskRatingByApplicationDetailId(loanApplicationId, loanApplicationDetailId, loanBookingRequestId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
+        [Route("project-risk-rating-computation/{loanApplicationId}/{loanApplicationDetailId}/{loanBookingRequestId}")]
+        public HttpResponseMessage getProjectRiskRatingByApplicationAndApplicationDetailId(int loanApplicationId, int loanApplicationDetailId, int loanBookingRequestId)
+        {
+            var response = repo.getProjectRiskRatingByApplicationAndApplicationDetailId(loanApplicationId, loanApplicationDetailId, loanBookingRequestId);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
     }
 } 

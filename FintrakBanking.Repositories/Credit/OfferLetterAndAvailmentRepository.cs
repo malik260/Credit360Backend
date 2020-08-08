@@ -130,6 +130,38 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        //public bool GenerateCRMSCode(int loanBookingRequestId, UserViewModel model)
+        //{
+        //    int ctr = 1;
+        //    try
+        //    {
+        //        var crmsModel = GenerateCRMSReport(loanBookingRequestId, model.companyId, ctr).FirstOrDefault();
+
+        //        //var result = "<INFO>Number of Records in Return file: 1.</INFO><INFO>Credit Profile successfully created for Borrower with Unique Identification Number: |22184798858|. Assigned Credit Reference Number is: |00044/20191113/24424880|.</INFO>"; 
+
+        //        var result = integration.FetchCBNCRMSCode(crmsModel, crmsModel.loanSystemTypeId);
+        //        var bookingRequest = context.TBL_LOAN_BOOKING_REQUEST.FirstOrDefault(r => r.LOAN_BOOKING_REQUESTID == loanBookingRequestId);
+
+        //        if (result.responseMessage.ToLower().Contains("successfully"))
+        //        {
+        //            var resultArray = result.responseMessage.Split('|');
+
+        //            if (bookingRequest != null)
+        //            {
+        //                bookingRequest.CRMSCODE = resultArray[3];
+        //            }
+        //        }
+
+        //        //TODO method to save CRMSCODE into TBL_LOAN_BOOKING_REQUEST
+        //        //}
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw new ConditionNotMetException("Automatic CRMS Code Generation Failed." + "Core Banking API error: " + " Please Try Again or Choose to add the CRMS code Manually");
+        //    }
+        //    return true;
+        //}
+
         public IQueryable<CamProcessedLoanViewModel> GetApplicationsAtOfferLetter(int staffId, int companyId) // Control Generation
         {
             var exceptIds = context.TBL_LOAN_RATE_FEE_CONCESSION

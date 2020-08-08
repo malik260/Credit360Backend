@@ -731,7 +731,7 @@ namespace FintrakBanking.Repositories.Credit
             offerLetters.ActionByName = staffFullName;
 
             if (WorkflowStageName != "" && loanApplication.APIREQUESTID != null) {
-                transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
+               transaction.ApiOfferLetterPosting(offerLetters, loanApplication.APPLICATIONREFERENCENUMBER);
             }
 
         }
@@ -1622,8 +1622,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Vote = model.vote;
             //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
             //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = 0;
-            workflow.ToStaffId = null;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
@@ -2174,19 +2172,26 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId = 0, bool getAll = false)
+        public IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId = 0, bool getAll = false, bool isClassified = false)
         {
             var staffRoles = context.TBL_STAFF_ROLE.ToList();
             var staffs = from s in context.TBL_STAFF select s;
             var creditOperationIds = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Select(f => f.OPERATIONID).ToList();
             var allstaff = this.GetAllStaffNames();
 
+            
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
             if (getAll)
             {
                 trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
             }
+            if (isClassified)
+            {
+                var operationRecord = context.TBL_OPERATIONS.Find(operationId);
+                var classOperations = context.TBL_OPERATIONS.Where(x => x.CLASS == operationRecord.CLASS).Select(c=>c.OPERATIONID).ToList() ;
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == applicationId && classOperations.Contains(x.OPERATIONID)).ToList();
 
+            }
             trail = trail.Where(t => !(t.FROMAPPROVALLEVELID == t.TOAPPROVALLEVELID && t.LOOPEDSTAFFID > 0)).ToList();
 
             var data = trail.Select(x => new ApprovalTrailViewModel
@@ -2200,6 +2205,7 @@ namespace FintrakBanking.Repositories.Credit
                 systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
                 responseStaffId = x.RESPONSESTAFFID,
                 requestStaffId = x.REQUESTSTAFFID,
+                operationId = x.OPERATIONID,
                 fromApprovalLevelId = x.FROMAPPROVALLEVELID,
                 fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                 toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
@@ -2217,7 +2223,7 @@ namespace FintrakBanking.Repositories.Credit
                 currentLevelId = data.LastOrDefault()?.toApprovalLevelId ?? 0;
             }
 
-            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended))//get only un-ended trail incase of workflow ending&/change
+            while (data.Exists(d => d.approvalStateId == (int)ApprovalState.Ended) && !isClassified)//get only un-ended trail incase of workflow ending&/change
             {
                 var firstTrail = data.FirstOrDefault(t => t.approvalStateId == (int)ApprovalState.Ended);
                 data = data.Where(t => t.approvalTrailId > firstTrail.approvalTrailId).ToList();
@@ -2288,6 +2294,7 @@ namespace FintrakBanking.Repositories.Credit
             data.OrderByDescending(d => d.systemArrivalDateTime).ToList();
             return data;
         }
+
 
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
@@ -3825,6 +3832,7 @@ namespace FintrakBanking.Repositories.Credit
                     //fromApprovalLevelName = trail.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == trail.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                     //toApprovalLevelName = trail.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == trail.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
                     toApprovalLevelId = trail.TOAPPROVALLEVELID,
+                    loopedStaffId = trail.LOOPEDSTAFFID,
                     //approvalStateId = trail.APPROVALSTATEID,
                     //approvalStatusId = trail.APPROVALSTATUSID,
                     //approvalState = trail.TBL_APPROVAL_STATE.APPROVALSTATE,
@@ -3834,6 +3842,17 @@ namespace FintrakBanking.Repositories.Credit
                     //toStaffName = allstaff.FirstOrDefault(s => s.id == trail.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == trail.RESPONSESTAFFID).name,
                     //fromStaffName = allstaff.FirstOrDefault(s => s.id == trail.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == trail.REQUESTSTAFFID).name,
                 };
+
+                if (data.fromApprovalLevelId == data.toApprovalLevelId && data.loopedStaffId > 0)
+                {
+                    var loopedStaff = context.TBL_STAFF.Find(data.loopedStaffId);
+                    if(loopedStaff == null)
+                    {
+                        throw new SecureException("Looped Staff Can't be null!");
+                    }
+                    var defaultLoopedStaffLevelId = context.TBL_APPROVAL_LEVEL.FirstOrDefault(l => l.STAFFROLEID == loopedStaff.STAFFROLEID).APPROVALLEVELID;
+                    data.toApprovalLevelId = defaultLoopedStaffLevelId;
+                }
             return data;
             }
             return null;
@@ -3958,6 +3977,55 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
             return GetRecommendedCollateral(entity.applicationId,entity.createdBy);
+        }
+
+
+        public ContractorTieringViewModel AddContractorTiering(ContractorTieringViewModel contractorCriteria)
+        {
+            var validateExisting = context.TBL_CONTRACTOR_TIERING.Where(c => c.LOANAPPLICATIONID == contractorCriteria.loanApplicationId && c.CUSTOMERID == contractorCriteria.customerId).ToList();
+                if(validateExisting != null && validateExisting.Count() > 0)
+                {
+                    throw new SecureException("Sorry contractor criteria already captured");
+                }
+            try
+            {
+                List<TBL_CONTRACTOR_CRITERIA> definitions = new List<TBL_CONTRACTOR_CRITERIA>();
+                var msg = new ContractorTieringViewModel();
+                if (contractorCriteria.form == null || contractorCriteria.form.Count == 0) return null;
+                var ids = contractorCriteria.form.Select(x => x.criteriaId);
+
+                definitions = context.TBL_CONTRACTOR_CRITERIA.Where(x => ids.Contains(x.CRITERIAID)
+               ).ToList();
+
+                var submission = new ContractorCriteriaFormControlValue();
+
+                List<TBL_CONTRACTOR_TIERING> details = new List<TBL_CONTRACTOR_TIERING>();
+
+                for (int i = 0; i < definitions.Count; i++)
+                {
+                    var definition = definitions[i];
+                    submission = contractorCriteria.form.FirstOrDefault(x => x.criteriaId == definition.CRITERIAID);
+                    if (submission == null) continue;
+                        details.Add(new TBL_CONTRACTOR_TIERING
+                        {
+                            LOANAPPLICATIONID = contractorCriteria.loanApplicationId,
+                            CUSTOMERID = contractorCriteria.customerId,
+                            CONTRACTORCRITERIAID = submission.criteriaId,
+                            ACTUALVALUE = submission.value,
+                            CREATEDBY = contractorCriteria.createdBy,
+                            DATETIMECREATED = DateTime.Now,
+                        });
+
+                }
+
+                context.TBL_CONTRACTOR_TIERING.AddRange(details);
+                context.SaveChanges();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity)
@@ -4377,7 +4445,54 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
+        public ProjectRiskRatingViewModel AddProjectRiskRating(ProjectRiskRatingViewModel projectRiskRating)
+        {
+            var validateExisting = context.TBL_PROJECT_RISK_RATING.Where(c => c.LOANAPPLICATIONID == projectRiskRating.loanApplicationId && c.LOANAPPLICATIONDETAILID == projectRiskRating.loanApplicationDetailId).ToList();
+            if (validateExisting != null && validateExisting.Count() > 0)
+            {
+                throw new SecureException("Sorry project risk rating already captured");
+            }
+            try
+            {
+                List<TBL_PROJECT_RISK_RATING_CATEGORY> definitions = new List<TBL_PROJECT_RISK_RATING_CATEGORY>();
+                var msg = new ProjectRiskRatingViewModel();
+                if (projectRiskRating.form == null || projectRiskRating.form.Count == 0) return null;
+                var ids = projectRiskRating.form.Select(x => x.categoryId);
 
+                definitions = context.TBL_PROJECT_RISK_RATING_CATEGORY.Where(x => ids.Contains(x.CATEGORYID)
+                ).ToList();
+
+                var submission = new ProjectRistratingFormControlValue();
+
+                List<TBL_PROJECT_RISK_RATING> details = new List<TBL_PROJECT_RISK_RATING>();
+
+                for (int i = 0; i < definitions.Count; i++)
+                {
+                    var definition = definitions[i];
+                    submission = projectRiskRating.form.FirstOrDefault(x => x.categoryId == definition.CATEGORYID);
+                    if (submission == null) continue;
+                    details.Add(new TBL_PROJECT_RISK_RATING
+                    {
+                        LOANAPPLICATIONID = projectRiskRating.loanApplicationId,
+                        LOANAPPLICATIONDETAILID = projectRiskRating.loanApplicationDetailId,
+                        LOANBOOKINGREQUESTID = projectRiskRating.loanBookingRequestId,
+                        CATEGORYID = submission.categoryId,
+                        CATEGORYVALUE = submission.value,
+                        CREATEDBY = projectRiskRating.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                    });
+
+                }
+
+                context.TBL_PROJECT_RISK_RATING.AddRange(details);
+                context.SaveChanges();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
     }
 

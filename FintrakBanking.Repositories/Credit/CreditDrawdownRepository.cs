@@ -1499,10 +1499,40 @@ namespace FintrakBanking.Repositories.Credit
         //     select (decimal?)l.OVERDRAFTLIMIT).Sum() ?? 0;
         //}
 
+
+        private void ValidateGlobalLimit(List<LoanBookingRequestViewModel> models, List<TBL_LOAN_APPLICATION_DETAIL> lineFacilities)
+        {
+            var affectedModels = models.Where(x => lineFacilities.Select(c => x.loanApplicationDetailId).Contains(x.loanApplicationDetailId));
+            foreach(var request in models)
+            {
+                var existingLoans = context.TBL_LOAN.Where(x => x.CUSTOMERID == request.customerId && x.LOANAPPLICATIONDETAILID == request.loanApplicationDetailId).ToList();
+                var existingOverdraft = context.TBL_LOAN_REVOLVING.Where(x => x.CUSTOMERID == request.customerId && x.LOANAPPLICATIONDETAILID == request.loanApplicationDetailId).ToList();
+                var existingContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.CUSTOMERID == request.customerId && x.LOANAPPLICATIONDETAILID == request.loanApplicationDetailId).ToList();
+
+                var sumOfExistingLoans = existingLoans.Count > 0 ? existingLoans?.Sum(x => x.PRINCIPALAMOUNT) ?? (decimal)0 : 0;
+                var sunOfExistingOverdrafts = existingOverdraft.Count > 0 ? existingOverdraft?.Sum(x => x.OVERDRAFTLIMIT) ?? (decimal)0 : 0;
+                var sumOfExistingLiabilities = existingContingent.Count > 0 ? existingContingent?.Sum(x => x.CONTINGENTAMOUNT) ?? (decimal)0 : 0;
+
+                var valueTaken = sumOfExistingLoans + sunOfExistingOverdrafts + sumOfExistingLiabilities;
+
+                var currentFacility = lineFacilities.FirstOrDefault(x=>x.LOANAPPLICATIONDETAILID == request.loanApplicationDetailId);
+                var individualGlobalLimit = currentFacility.APPROVEDLINELIMIT;
+                var customerRecord = context.TBL_CUSTOMER.Where(x=>x.CUSTOMERID == request.customerId || x.CUSTOMERID == currentFacility.CUSTOMERID).FirstOrDefault();
+                var customer = customerRecord?.FIRSTNAME + " " + customerRecord?.LASTNAME;
+
+                if(valueTaken >= individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) has already been met."); }
+                if (individualGlobalLimit != null && (valueTaken + request.amount_Requested) > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer.") ; }
+            }
+        }
+
         public WorkflowResponse AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> models)
         {
             using (var trans = context.Database.BeginTransaction())
             {
+                var loanApplicationDetailIds = models.Select(p => p.loanApplicationDetailId).ToList();
+                var lineFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.ISLINEFACILITY == true && loanApplicationDetailIds.Contains(x.LOANAPPLICATIONDETAILID)).ToList();
+                if(lineFacilities.Count > 0) { ValidateGlobalLimit(models, lineFacilities); }
+
                 foreach (var model in models)
                 {
                     if (model.approvalStatusId != (short)ApprovalStatusEnum.Referred)

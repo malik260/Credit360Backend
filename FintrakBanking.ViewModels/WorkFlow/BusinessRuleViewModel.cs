@@ -29,5 +29,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool exemptRenewal { get; set; }
         public bool esrm { get; set; }
         public int? tenor { get; set; }
+        public bool excludeLevel { get; set; }
+        
     }
 }
