@@ -142,6 +142,7 @@
     <Compile Include="Credit\DashboardRepository.cs" />
     <Compile Include="Credit\DeferredFeeRepository.cs" />
     <Compile Include="Credit\ExternalAlertRepository.cs" />
+    <Compile Include="Credit\FacilityModificationRepository.cs" />
     <Compile Include="Credit\LcConditionRepository.cs" />
     <Compile Include="Credit\LcDocumentRepository.cs" />
     <Compile Include="Credit\LcIssuanceRepository.cs" />

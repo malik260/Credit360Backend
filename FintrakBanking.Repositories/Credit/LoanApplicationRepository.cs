@@ -3531,7 +3531,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var details = app.TBL_LOAN_APPLICATION_DETAIL.ToList();
             TBL_LOAN_APPLICATION_ARCHIVE loanApplArchive = new TBL_LOAN_APPLICATION_ARCHIVE();
-            loanApplArchive.ARCHIVEDATE = genSetup.GetApplicationDate();
+            loanApplArchive.ARCHIVEDBY = archivedBy;
+            loanApplArchive.ARCHIVEDATE = DateTime.Now;
             loanApplArchive.LOANAPPLICATIONID = app.LOANAPPLICATIONID;
             loanApplArchive.APPLICATIONREFERENCENUMBER = app.APPLICATIONREFERENCENUMBER;
             loanApplArchive.LOANPRELIMINARYEVALUATIONID = app.LOANPRELIMINARYEVALUATIONID;
@@ -3608,7 +3609,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 ArchiveLoanApplicationDetails(f.LOANAPPLICATIONDETAILID);
             }
-            return context.SaveChanges() != 0;
+            return context.SaveChanges() > 0;
         }
 
         public void ArchiveLoanApplicationDetails(int loanApplicationDetailId)
@@ -6086,7 +6087,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanCurrency = item.TBL_CURRENCY.CURRENCYCODE;
 
-                fx = (fina.GetExchangeRate(item.DATETIMECREATED, item.CURRENCYID, companyId).buyingRate);
+                fx = (fina.GetExchangeRate(item.DATETIMECREATED, item.CURRENCYID, companyId).sellingRate);
 
                 double rate;
                 var productBehaviour = collateralRate.Where(p => p.productId == item.PROPOSEDPRODUCTID).FirstOrDefault();
@@ -7333,6 +7334,8 @@ namespace FintrakBanking.Repositories.Credit
                     facility.PROPOSEDAMOUNT = model.approvedAmount;
                     loan.APPLICATIONAMOUNT = loan.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT);
                     loan.TOTALEXPOSUREAMOUNT += difference;
+                    loan.DATETIMEUPDATED = DateTime.Now;
+                    loan.LASTUPDATEDBY = model.createdBy;
                 }
                 saved = context.SaveChanges();
                 trans.Commit();

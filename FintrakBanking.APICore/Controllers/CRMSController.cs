@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
@@ -31,8 +32,12 @@ namespace FintrakBanking.APICore.Controllers
             {
                 customer.companyId=  token.GetCompanyId;
                 customer.createdBy = token.GetStaffId;
+                customer.userBranchId = (short)token.GetBranchId;
+                customer.companyId = token.GetCompanyId;
+                customer.lastUpdatedBy = token.GetStaffId;
+                customer.applicationUrl = HttpContext.Current.Request.Path;
                 var data = repo.AddCRMSCode(customer);
-                if (data ==null)
+                if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
@@ -46,6 +51,10 @@ namespace FintrakBanking.APICore.Controllers
             catch (BadLogicException be)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {ex.Message}" });
             }
             catch (Exception ex)
             {

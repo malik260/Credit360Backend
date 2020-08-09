@@ -915,6 +915,19 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
         }
 
+        [HttpPost]
+        [Route("contractor-tiering")]
+        public HttpResponseMessage PostContractorTiering([FromBody] ContractorTieringViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            var response = repo.AddContractorTiering(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
+        }
+
         [HttpGet]
         [Route("global-interest-rate-change-comments/trail/{applicationId}/operation/{operationId}")]
         public HttpResponseMessage GetGlobalInterestRateChangeTrail(int applicationId, int operationId)
@@ -926,5 +939,19 @@ namespace FintrakBanking.APICore.Controllers
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
+
+        [HttpPost]
+        [Route("add-project-risk-rating")]
+        public HttpResponseMessage PostProjectRiskRating([FromBody] ProjectRiskRatingViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            var response = repo.AddProjectRiskRating(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
+        }
+
     }
 }

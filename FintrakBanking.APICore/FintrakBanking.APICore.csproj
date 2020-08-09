@@ -353,6 +353,7 @@
     <Compile Include="Controllers\DocumentTypeController.cs" />
     <Compile Include="Controllers\DocumentUploadController.cs" />
     <Compile Include="Controllers\DocumentUsageController.cs" />
+    <Compile Include="Controllers\FacilityModificationController.cs" />
     <Compile Include="Controllers\FinacleIntegrationController.cs" />
     <Compile Include="Controllers\LcIssuanceController.cs" />
     <Compile Include="Controllers\LetterGenerationRequestController.cs" />

@@ -82,7 +82,11 @@
     <Compile Include="Models\TBL_BULK_PREPAYMENTREVERSAL.cs" />
     <Compile Include="Models\TBL_BULK_RECOVERY_ASSIGNMENT_AGENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_COLLATERAL_LIQUIDATION_RECOVERY.cs" />
+    <Compile Include="Models\TBL_CONTRACTOR_CRITERIA.cs" />
+    <Compile Include="Models\TBL_CONTRACTOR_TIERING.cs" />
     <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
+    <Compile Include="Models\TBL_FACILITY_MODIFICATION.cs" />
+    <Compile Include="Models\TBL_FACILITY_MOD_DETL_FEE.cs" />
     <Compile Include="Models\TBL_GROUP_LIMIT.cs" />
     <Compile Include="Models\TBL_INTEGRATION_CONTROL.cs" />
     <Compile Include="Models\TBL_LC_ISSUANCE_ARCHIVE.cs" />
@@ -197,6 +201,9 @@
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_RELEASE.cs" />
     <Compile Include="DocumentModels\TBL_DOC_MAPPING.cs" />
     <Compile Include="Models\TBL_PROFILE_BUSINESS_UNIT.cs" />
+    <Compile Include="Models\TBL_PROJECT_RISK_RATING.cs" />
+    <Compile Include="Models\TBL_PROJECT_RISK_RATING_CATEGORY.cs" />
+    <Compile Include="Models\TBL_PROJECT_RISK_RATING_CRITERIA.cs" />
     <Compile Include="Models\TBL_PSR_ANALYSIS.cs" />
     <Compile Include="Models\TBL_PSR_COMMENT.cs" />
     <Compile Include="Models\TBL_PSR_COMMENT_IMAGES.cs" />
