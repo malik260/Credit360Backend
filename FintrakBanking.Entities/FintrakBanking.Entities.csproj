@@ -140,6 +140,7 @@
     <Compile Include="Models\TBL_EOD_OPERATION_LOG_DETAIL.cs" />
     <Compile Include="Models\TBL_FACILITY_RATING.cs" />
     <Compile Include="Models\TBL_INTERNAL_EXPOSURE.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATERL_ARCH.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_FINAL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_FINAL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_CAMSOL_ARCHIVE.cs" />

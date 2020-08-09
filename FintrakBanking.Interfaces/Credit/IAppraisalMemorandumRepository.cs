@@ -40,7 +40,7 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse LetterGenerationRequestMemorandum(LetterGenerationRequestViewModel model);
 
         String ResponseMessage(WorkflowResponse response, string itemHeading);
-        WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
+        //WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
