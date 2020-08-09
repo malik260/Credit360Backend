@@ -1311,7 +1311,7 @@ namespace FintrakBanking.Repositories.Credit
                                 nextOperatioId = (short)OperationsEnum.LoanReviewApprovalOfferLetter;
                                 LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
                             }
-                            if (flowOrder.REQUIREDRAWDOWN)
+                            if (defaultFlowOrder.REQUIREDRAWDOWN)
                             {
                                 nextOperatioId = (short)OperationsEnum.LoanReviewDrawdownForExtension;
                                 LogLMSOperationForRouting(model, items, nextOperatioId, (short)operationId);
