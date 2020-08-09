@@ -11,7 +11,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         int? BusinessUnitId { get; set; }
         int? DestinationOperationId { get; set; }
         bool IsFlowTest { get; set; }
-        //bool IsClassifiedReferBack { get; set; }
+        bool IsClassifiedReferBack { get; set; }
         int? ExclusiveFlowChangeId { get; set; }
         int? LoopedStaffId { get; set; }
         int? LoopedRoleId { get; set; }
