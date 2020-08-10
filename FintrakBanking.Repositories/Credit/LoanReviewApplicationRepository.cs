@@ -1385,12 +1385,12 @@ namespace FintrakBanking.Repositories.Credit
                     //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
                     tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
-                    excludeLevel =  appl.OPERATIONID == (int)OperationsEnum.OverdraftSubAllocationApproval ||
-                                    appl.OPERATIONID == (int)OperationsEnum.LoanRecapitilizationApproval ||
-                                    appl.OPERATIONID == (int)OperationsEnum.OverdraftTopUpApproval ||
-                                    appl.OPERATIONID == (int)OperationsEnum.OverdraftTenorExtensionApproval ||
-                                    (appl.OPERATIONID == (int)OperationsEnum.TenorExtensionApproval &&
-                                    appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability)
+                    excludeLevel =  (appl.OPERATIONID != (int)OperationsEnum.OverdraftSubAllocationApproval &&
+                                    appl.OPERATIONID != (int)OperationsEnum.LoanRecapitilizationApproval &&
+                                    appl.OPERATIONID != (int)OperationsEnum.OverdraftTopUpApproval &&
+                                    appl.OPERATIONID != (int)OperationsEnum.OverdraftTenorExtensionApproval &&
+                                    !(appl.OPERATIONID == (int)OperationsEnum.TenorExtensionApproval &&
+                                    appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.ContingentLiability))
                 };
 
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
