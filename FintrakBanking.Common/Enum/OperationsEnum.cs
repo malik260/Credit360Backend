@@ -120,8 +120,10 @@
     LmsOperations = 116,
     EarnUnEarnedFee = 117,
     CRMSApproval = 118,
-    
+    TenorExtensionApproval = 120,
+
     //
+    LoanRecapitilizationApproval = 132,
     AdhocApproval = 133,
     OriginalDocumentApproval = 134,
     lcIssuance = 135,
