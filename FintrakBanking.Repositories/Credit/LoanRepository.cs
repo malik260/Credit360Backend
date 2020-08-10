@@ -15960,6 +15960,12 @@ namespace FintrakBanking.Repositories.Credit
             int staffId = model.staffId;
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
+            List<short> drawdownPostApprovalOperations = new List<short>();
+            drawdownPostApprovalOperations.Add((short)OperationsEnum.CorporateDrawdownRequest);
+            drawdownPostApprovalOperations.Add((short)OperationsEnum.IndividualDrawdownRequest);
+            drawdownPostApprovalOperations.Add((short)OperationsEnum.CreditCardDrawdownRequest);
+            drawdownPostApprovalOperations.Add((short)OperationsEnum.RevolvingTranchDisbursement);
+
             workflow.StaffId = model.createdBy;
             workflow.OperationId = model.operationId;
             workflow.TargetId = model.targetId;
@@ -15975,18 +15981,29 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
 
             //NEW WF ACTIVITY BEGINS
+            TBL_LOAN_BOOKING_REQUEST request = new TBL_LOAN_BOOKING_REQUEST();
+            if (drawdownPostApprovalOperations.Contains((short)model.nextOperation))
+            {
+                request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.targetId);
+                if (request != null) { request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending; }
+            }
+
+            var backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation).FirstOrDefault();
             workflow.StaffId = model.createdBy;
-            workflow.OperationId =  (short)model.nextOperation;
+            workflow.OperationId = (short)request.OPERATIONID; // (int)model.nextOperation ??  ;
             workflow.TargetId = model.targetId;
             workflow.CompanyId = model.companyId;
             workflow.ProductClassId = model.productClassId;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.approvalLevelId;
             workflow.IsClassifiedReferBack = true;
+            workflow.ToStaffId = backTrail.TOSTAFFID;
 
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;
+
+            
             //workflow.ExternalInitialization = true;
 
             workflow.LogActivity();
