@@ -15982,13 +15982,21 @@ namespace FintrakBanking.Repositories.Credit
 
             //NEW WF ACTIVITY BEGINS
             TBL_LOAN_BOOKING_REQUEST request = new TBL_LOAN_BOOKING_REQUEST();
+            request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.targetId);
+
+            var backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.TOAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
+            if (model.nextOperation == null)
+            {
+                model.nextOperation = request.OPERATIONID;
+                backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation && x.FROMAPPROVALLEVELID == model.approvalLevelId).FirstOrDefault();
+            }
+
             if (drawdownPostApprovalOperations.Contains((short)model.nextOperation))
             {
-                request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.targetId);
                 if (request != null) { request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending; }
             }
 
-            var backTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.nextOperation).FirstOrDefault();
+            
             workflow.StaffId = model.createdBy;
             workflow.OperationId = (short)request.OPERATIONID; // (int)model.nextOperation ??  ;
             workflow.TargetId = model.targetId;
@@ -15997,7 +16005,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.approvalLevelId;
             workflow.IsClassifiedReferBack = true;
-            workflow.ToStaffId = backTrail.TOSTAFFID;
+            workflow.ToStaffId = backTrail?.TOSTAFFID;
 
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
