@@ -70,6 +70,10 @@
         public bool REQUIRECOLLATERAL { get; set; }
 
         public int? CAPREGIONID { get; set; }
+        public string CRMSCODE { get; set; }
+        public bool? CRMSVALIDATED { get; set; }
+
+        public DateTime? CRMSDATE { get; set; }
 
         //public int? PROPOSEDTENOR { get; set; }
 

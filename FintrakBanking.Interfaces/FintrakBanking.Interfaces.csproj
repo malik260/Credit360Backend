@@ -90,6 +90,7 @@
     <Compile Include="Credit\ICreditDrawdownRepository.cs" />
     <Compile Include="Credit\IDeferredFeeRepository.cs" />
     <Compile Include="Credit\IExternalAlertRepository.cs" />
+    <Compile Include="Credit\IFacilityModificationRepository.cs" />
     <Compile Include="Credit\ILcConditionRepository.cs" />
     <Compile Include="Credit\ILcDocumentRepository.cs" />
     <Compile Include="Credit\ILcIssuanceRepository.cs" />

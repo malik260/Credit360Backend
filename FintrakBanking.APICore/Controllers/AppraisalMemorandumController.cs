@@ -224,20 +224,20 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LETTER GENERATION") });
         }
 
-        [HttpPost]
-        [Route("collateral-swap/forward")]
-        public HttpResponseMessage CollateralSwapMemorandum([FromBody] CollateralSwapViewModel entity)
-        {
-            entity.userBranchId = (short)token.GetBranchId;
-            entity.companyId = token.GetCompanyId;
-            entity.createdBy = token.GetStaffId;
-            entity.staffId = token.GetStaffId;
-            entity.applicationUrl = HttpContext.Current.Request.Path;
+        //[HttpPost]
+        //[Route("collateral-swap/forward-for-approval")]
+        //public HttpResponseMessage CollateralSwapMemorandum([FromBody] CollateralSwapViewModel entity)
+        //{
+        //    entity.userBranchId = (short)token.GetBranchId;
+        //    entity.companyId = token.GetCompanyId;
+        //    entity.createdBy = token.GetStaffId;
+        //    entity.staffId = token.GetStaffId;
+        //    entity.applicationUrl = HttpContext.Current.Request.Path;
 
-            WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
+        //    WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "COLLATERAL SWAP") });
-        }
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "COLLATERAL SWAP") });
+        //}
 
 
         [HttpGet]
