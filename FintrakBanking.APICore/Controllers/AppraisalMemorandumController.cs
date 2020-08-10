@@ -224,20 +224,20 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "LETTER GENERATION") });
         }
 
-        [HttpPost]
-        [Route("collateral-swap/forward")]
-        public HttpResponseMessage CollateralSwapMemorandum([FromBody] CollateralSwapViewModel entity)
-        {
-            entity.userBranchId = (short)token.GetBranchId;
-            entity.companyId = token.GetCompanyId;
-            entity.createdBy = token.GetStaffId;
-            entity.staffId = token.GetStaffId;
-            entity.applicationUrl = HttpContext.Current.Request.Path;
+        //[HttpPost]
+        //[Route("collateral-swap/forward-for-approval")]
+        //public HttpResponseMessage CollateralSwapMemorandum([FromBody] CollateralSwapViewModel entity)
+        //{
+        //    entity.userBranchId = (short)token.GetBranchId;
+        //    entity.companyId = token.GetCompanyId;
+        //    entity.createdBy = token.GetStaffId;
+        //    entity.staffId = token.GetStaffId;
+        //    entity.applicationUrl = HttpContext.Current.Request.Path;
 
-            WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
+        //    WorkflowResponse response = repo.CollateralSwapMemorandum(entity);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "COLLATERAL SWAP") });
-        }
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = repo.ResponseMessage(response, "COLLATERAL SWAP") });
+        //}
 
 
         [HttpGet]
@@ -277,10 +277,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/currentLevel/{currentLevelId}/all/{all}")]
-        public HttpResponseMessage GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all)
+        [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/currentLevel/{currentLevelId}/all/{all}/isClassified/{isClassified}")]
+        public HttpResponseMessage GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all, bool isClassified)
         {
-            var data = repo.GetTrailForReferBack(applicationId, operationId, currentLevelId, all);
+            var data = repo.GetTrailForReferBack(applicationId, operationId, currentLevelId, all, isClassified);
             if (data.Any())
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
@@ -915,6 +915,19 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
         }
 
+        [HttpPost]
+        [Route("contractor-tiering")]
+        public HttpResponseMessage PostContractorTiering([FromBody] ContractorTieringViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            var response = repo.AddContractorTiering(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
+        }
+
         [HttpGet]
         [Route("global-interest-rate-change-comments/trail/{applicationId}/operation/{operationId}")]
         public HttpResponseMessage GetGlobalInterestRateChangeTrail(int applicationId, int operationId)
@@ -926,5 +939,19 @@ namespace FintrakBanking.APICore.Controllers
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found" });
         }
+
+        [HttpPost]
+        [Route("add-project-risk-rating")]
+        public HttpResponseMessage PostProjectRiskRating([FromBody] ProjectRiskRatingViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            var response = repo.AddProjectRiskRating(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Contractor criteria has been added successfully" });
+        }
+
     }
 }

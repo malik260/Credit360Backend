@@ -19,6 +19,13 @@ namespace FintrakBanking.Entities.Models
 
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }  
+        public virtual DbSet<TBL_FACILITY_MOD_DETL_FEE> TBL_FACILITY_MOD_DETL_FEE { get; set; }
+        public virtual DbSet<TBL_FACILITY_MODIFICATION> TBL_FACILITY_MODIFICATION { get; set; }
+        public virtual DbSet<TBL_PROJECT_RISK_RATING_CRITERIA> TBL_PROJECT_RISK_RATING_CRITERIA { get; set; }
+        public virtual DbSet<TBL_CONTRACTOR_CRITERIA> TBL_CONTRACTOR_CRITERIA { get; set; }
+        public virtual DbSet<TBL_PROJECT_RISK_RATING> TBL_PROJECT_RISK_RATING { get; set; }
+        public virtual DbSet<TBL_PROJECT_RISK_RATING_CATEGORY> TBL_PROJECT_RISK_RATING_CATEGORY { get; set; }
+        public virtual DbSet<TBL_CONTRACTOR_TIERING> TBL_CONTRACTOR_TIERING { get; set; }
         public virtual DbSet<TBL_LMSR_APPLICATION_DETL_ARCH> TBL_LMSR_APPLICATION_DETL_ARCH { get; set; }
         public virtual DbSet<TBL_LMSR_APPLICATION_ARCHIVE> TBL_LMSR_APPLICATION_ARCHIVE { get; set; }
         public virtual DbSet<TBL_PSR_COMMENT_IMAGES> TBL_PSR_COMMENT_IMAGES { get; set; }
@@ -288,6 +295,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_ARCHIVE> TBL_LOAN_APPLICATION_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COLLATERL> TBL_LOAN_APPLICATION_COLLATERL { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_COLLATERL_ARCH> TBL_LOAN_APPLICATION_COLLATERL_ARCH { get; set; }
+
         public virtual DbSet<TBL_LOAN_APPLICATION_COLLATRL2> TBL_LOAN_APPLICATION_COLLATRL2 { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COLT2_LOG> TBL_LOAN_APPLICATION_COLT2_LOG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COVENANT> TBL_LOAN_APPLICATION_COVENANT { get; set; }
@@ -4773,6 +4782,10 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_COLLATERL>()
+                .Property(e => e.LEGAL_FEE_AMOUNT)
+                .HasPrecision(38, 2);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_COLLATERL_ARCH>()
                 .Property(e => e.LEGAL_FEE_AMOUNT)
                 .HasPrecision(38, 2);
 

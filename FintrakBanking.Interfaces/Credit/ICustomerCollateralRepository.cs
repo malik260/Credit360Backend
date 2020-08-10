@@ -43,6 +43,8 @@ namespace FintrakBanking.Interfaces.Credit
         CollateralViewModel GetCustomerCollateralInformation(int collateralCustomerId, int companyId);
         List<CollateralViewModel> GetCustomerPropertyCollaterals(int? customerId, int companyId);
 
+        CollateralViewModel GetCustomerCollateralByCustomerCollateralId(int customerCollateralId);
+
         IEnumerable<CollateralViewModel> GetTempCustomerCollateralForApproval(int companyId, int staffId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId);
         CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId);
@@ -185,6 +187,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteCollateralSwap(int collateralSwapId, UserInfo user);
         IEnumerable<LoanApplicationDetailViewModel> GetCollateralMappingDetails(int id);
         CollateralInsurancePolicyViewModel GetAddedInsuranceById(int id);
+        WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
 
 

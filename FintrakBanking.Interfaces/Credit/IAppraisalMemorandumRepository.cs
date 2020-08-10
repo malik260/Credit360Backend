@@ -15,6 +15,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IAppraisalMemorandumRepository
     {
+        ProjectRiskRatingViewModel AddProjectRiskRating(ProjectRiskRatingViewModel projectRiskRating);
+        ContractorTieringViewModel AddContractorTiering(ContractorTieringViewModel contractorCriteria);
         //IEnumerable<ApprovalTrailCallMemoViewModel> GetAppraisalMemorandumTrailCallMemo(int operationId);
         IEnumerable<ApprovalTrailViewModel> GetGlobalInterestRateChangeTrail(int applicationId, int operationid);
         IEnumerable<ApprovalTrailViewModel> GetCallmemoApprovalTrail(int applicationId, int operationId);
@@ -38,12 +40,12 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse LetterGenerationRequestMemorandum(LetterGenerationRequestViewModel model);
 
         String ResponseMessage(WorkflowResponse response, string itemHeading);
-        WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
+        //WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
         IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all);
-        IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all);
+        IEnumerable<ApprovalTrailViewModel> GetTrailForReferBack(int applicationId, int operationId, int currentLevelId, bool all, bool isClassified);
 
         // IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
         LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId);

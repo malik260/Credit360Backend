@@ -147,7 +147,7 @@
     IndictiveTermsheet = 201,   //formerly id = 115
     CreditCardsCashBacked = 202,    //formerly 116
     CollateralSwap = 206,
-
+    FacilityModificationApproval = 207,
 
     OverdraftInterestRateChangeApproval = 211,
     ChangeRepaymentAccountApproval = 212,
@@ -192,8 +192,9 @@
 
     ReversalOfPrepayment = 249,
     BulkLiquidation = 258,
+    LoanReviewDrawdownForExtension = 265
 
-    
+
 }
 
 
