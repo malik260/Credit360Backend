@@ -1140,7 +1140,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int projectRiskRatingCriteriaId { get; set; }
         public string criteria { get; set; }
-        public int criteriaValue { get; set; }
+        public decimal criteriaValue { get; set; }
         public int projectRiskRatingCategoryId { get; set; }
         public string category { get; set; }
     }

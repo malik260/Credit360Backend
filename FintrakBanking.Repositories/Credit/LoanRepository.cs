@@ -16811,7 +16811,6 @@ namespace FintrakBanking.Repositories.Credit
                                        join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
                                        join a in context.TBL_LOAN on b.LOANID equals a.TERMLOANID
                                        where b.OPERATIONPERFORMED == false
-                                       && e.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                        && b.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                        && (e.APPLICATIONREFERENCENUMBER == searchString
                                        || c.FIRSTNAME.ToLower() == searchString.ToLower()
@@ -18927,5 +18926,316 @@ namespace FintrakBanking.Repositories.Credit
         //        throw new ConditionNotMetException("The refered level is higher than the current level.");
 
         //}
+
+
+
+        public bool saveBulkLoanRecoveryReporting(List<LoanRecoveryReportBatchViewModel> models, UserInfo user)
+        {
+            bool result = false;
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+            List<TBL_LOAN_RECOVERY_REPORTING_BATCH> bulkLoanTable = new List<TBL_LOAN_RECOVERY_REPORTING_BATCH>();
+            if (models == null)
+            {
+                throw new ConditionNotMetException("Kindly select at least one loan.");
+            }
+
+            var validate = context.TBL_LOAN_RECOVERY_REPORTING_BATCH.Where(x => x.REFERENCEID == referenceNumber
+                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
+                                                          || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
+            if (validate != null)
+            {
+                throw new SecureException("Request already exist and undergoing approval");
+            }
+
+            LoanRecoveryReportBatchViewModel request = new LoanRecoveryReportBatchViewModel();
+
+            foreach (var model in models)
+            {
+                request.createdBy = user.createdBy;
+                request.loanId = model.loanId;
+                request.loanReferenceNumber = model.loanReferenceNumber;
+                request.accreditedConsultant = model.accreditedConsultant;
+                request.referenceId = referenceNumber;
+                request.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                request.operationId = (int)OperationsEnum.RecoveryReporting;
+                request.operationCompleted = false;
+                request.totalAmountRecovery = model.totalRecoveryAmount;
+                request.amountRecovered = model.recoveredAmount;
+                request.customerId = model.customerId;
+                var loanData = addBulkLoanRecoveryReporting(request);
+                bulkLoanTable.Add(loanData);
+            }
+            context.TBL_LOAN_RECOVERY_REPORTING_BATCH.AddRange(bulkLoanTable);
+            if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+            TBL_LOAN_RECOVERY_REPORTING_APPROVAL requests = new TBL_LOAN_RECOVERY_REPORTING_APPROVAL();
+            requests = context.TBL_LOAN_RECOVERY_REPORTING_APPROVAL.Add(new TBL_LOAN_RECOVERY_REPORTING_APPROVAL
+            {
+                REFERENCEID = referenceNumber,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                OPERATIONID = (int)OperationsEnum.RecoveryReporting,
+                DATETIMECREATED = DateTime.Now
+            });
+            if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryReport,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Added TBL_LOAN_RECOVERY_REPORTING_BATCH '{ referenceNumber}' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            });
+
+            int resultStatus = context.SaveChanges();
+            if (resultStatus > 0)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        public WorkflowResponse bulkLoanRecoveryReportingGoForApproval(LoanRecoveryReportApprovalViewModel models, UserInfo user)
+        {
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (models == null)
+            {
+                throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
+            }
+
+            var validate = context.TBL_LOAN_RECOVERY_REPORTING_APPROVAL.Where(x => x.REFERENCEID == models.referenceId
+                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Pending
+                                                          || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
+            if (validate != null)
+            {
+                throw new SecureException("Request already exist and undergoing approval");
+            }
+
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+
+                if (validate == null)
+                {
+                    var data = context.TBL_LOAN_RECOVERY_REPORTING_BATCH.Where(x => x.REFERENCEID == models.referenceId).ToList();
+                    foreach(var d in data)
+                    {
+                        d.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    }
+                    context.SaveChanges();
+
+                    var approval = context.TBL_LOAN_RECOVERY_REPORTING_APPROVAL.Where(x => x.REFERENCEID == models.referenceId).FirstOrDefault();
+                    approval.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    approval.REGION = models.region;
+                    approval.COMMENT = models.comment;
+                    approval.MISCODE = models.misCode;
+                    approval.CREATEDBY = user.createdBy;
+                    if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+                    workflow.StaffId = user.createdBy;
+                    workflow.CompanyId = user.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = approval.LOANRECOVERYREPORTAPPROVALID;
+                    workflow.Comment = models.comment;
+                    workflow.OperationId = (int)OperationsEnum.RecoveryReporting;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = false;
+
+                    var response = workflow.LogActivity();
+                    context.SaveChanges();
+                }
+                transactionScope.Complete();
+
+                transactionScope.Dispose();
+
+            }
+            return workflow.Response;
+        }
+
+        private TBL_LOAN_RECOVERY_REPORTING_BATCH addBulkLoanRecoveryReporting(LoanRecoveryReportBatchViewModel entity)
+        {
+            var data = new TBL_LOAN_RECOVERY_REPORTING_BATCH
+            {
+                LOANID = entity.loanId,
+                LOANREFERENCENUMBER = entity.loanReferenceNumber,
+                CUSTOMERID = entity.customerId,
+                ACCREDITEDCONSULTANT = entity.accreditedConsultant,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = entity.createdBy,
+                REFERENCEID = entity.referenceId,
+                OPERATIONID = entity.operationId,
+                APPROVALSTATUSID = entity.approvalStatusId,
+                OPERATIONCOMPLETED = entity.operationCompleted,
+                TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
+                AMOUNTRECOVERED = entity.amountRecovered
+            };
+            return data;
+        }
+
+        //===============recovery commission
+
+        public bool saveBulkLoanRecoveryCommission(List<LoanRecoveryCommissionBatchViewModel> models, UserInfo user)
+        {
+            bool result = false;
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            
+            List<TBL_LOAN_RECOVERY_COMMISSION_BATCH> bulkLoanTable = new List<TBL_LOAN_RECOVERY_COMMISSION_BATCH>();
+            if (models == null)
+            {
+                throw new ConditionNotMetException("Kindly select at least one loan.");
+            }
+
+            var validate = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == referenceNumber
+                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred
+                                                          || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
+            if (validate != null)
+            {
+                throw new SecureException("Request already exist and undergoing approval");
+            }
+
+            LoanRecoveryCommissionBatchViewModel request = new LoanRecoveryCommissionBatchViewModel();
+
+            foreach (var model in models)
+            {
+                request.createdBy = user.createdBy;
+                request.loanId = model.loanId;
+                request.loanReferenceNumber = model.loanReferenceNumber;
+                request.accreditedConsultant = model.accreditedConsultant;
+                request.referenceId = referenceNumber;
+                request.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                request.operationId = (int)OperationsEnum.RecoveryCommission;
+                request.operationCompleted = false;
+                request.totalAmountRecovery = model.totalRecoveryAmount;
+                request.amountRecovered = model.recoveredAmount;
+                request.customerId = model.customerId;
+                request.misCode = model.recoveryMisCode;
+                request.region = model.recoveryRegion;
+                var loanData = addBulkLoanRecoveryCommission(request);
+                bulkLoanTable.Add(loanData);
+            }
+            context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.AddRange(bulkLoanTable);
+            if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+            TBL_LOAN_RECOVERY_COMMISSION_APPROVAL requests = new TBL_LOAN_RECOVERY_COMMISSION_APPROVAL();
+            requests = context.TBL_LOAN_RECOVERY_COMMISSION_APPROVAL.Add(new TBL_LOAN_RECOVERY_COMMISSION_APPROVAL
+            {
+                REFERENCEID = referenceNumber,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                OPERATIONID = (int)OperationsEnum.RecoveryCommission,
+                DATETIMECREATED = DateTime.Now,
+            });
+            if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.BulkLoanRecoveryReport,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Added TBL_LOAN_RECOVERY_COMMISSION_BATCH '{ referenceNumber}' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            });
+
+            int resultStatus = context.SaveChanges();
+            if (resultStatus > 0)
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        public WorkflowResponse bulkLoanRecoveryCommissionGoForApproval(LoanRecoveryCommissionApprovalViewModel models, UserInfo user)
+        {
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (models == null)
+            {
+                throw new ConditionNotMetException("Kindly select an accredited consultant/agent.");
+            }
+
+            var validate = context.TBL_LOAN_RECOVERY_COMMISSION_APPROVAL.Where(x => x.REFERENCEID == models.referenceId
+                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Pending
+                                                          || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
+            if (validate != null)
+            {
+                throw new SecureException("Request already exist and undergoing approval");
+            }
+
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+
+                if (validate == null)
+                {
+                    var data = context.TBL_LOAN_RECOVERY_COMMISSION_BATCH.Where(x => x.REFERENCEID == models.referenceId).ToList();
+                    foreach (var d in data)
+                    {
+                        d.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    }
+                    context.SaveChanges();
+
+                    var approval = context.TBL_LOAN_RECOVERY_COMMISSION_APPROVAL.Where(x => x.REFERENCEID == models.referenceId).FirstOrDefault();
+                    approval.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    approval.AGENTACCOUNTNUMBER = models.agentAccountNumber;
+                    approval.COMMENT = models.comment;
+                    approval.DATEOFENGAGEMENT = models.dateOfEngagement == null ? DateTime.Now : models.dateOfEngagement;
+                    approval.CREATEDBY = user.createdBy;
+                    approval.COLLECTIONDATE = models.collectionDate;
+                    approval.MODEOFCOLLECTION = models.modeOfCollection;
+                    approval.COMMISSIONRATE = models.commissionRate;
+                    if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
+
+                    workflow.StaffId = user.createdBy;
+                    workflow.CompanyId = user.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = approval.LOANRECOVERYCOMMISSIONAPPROVALID;
+                    workflow.Comment = models.comment;
+                    workflow.OperationId = (int)OperationsEnum.RecoveryCommission;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = false;
+
+                    var response = workflow.LogActivity();
+                    context.SaveChanges();
+                }
+                transactionScope.Complete();
+
+                transactionScope.Dispose();
+
+            }
+            return workflow.Response;
+        }
+
+        private TBL_LOAN_RECOVERY_COMMISSION_BATCH addBulkLoanRecoveryCommission(LoanRecoveryCommissionBatchViewModel entity)
+        {
+            var data = new TBL_LOAN_RECOVERY_COMMISSION_BATCH
+            {
+                LOANID = entity.loanId,
+                LOANREFERENCENUMBER = entity.loanReferenceNumber,
+                CUSTOMERID = entity.customerId,
+                ACCREDITEDCONSULTANT = entity.accreditedConsultant,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = entity.createdBy,
+                REFERENCEID = entity.referenceId,
+                OPERATIONID = entity.operationId,
+                APPROVALSTATUSID = entity.approvalStatusId,
+                OPERATIONCOMPLETED = entity.operationCompleted,
+                TOTALAMOUNTRECOVERY = entity.totalAmountRecovery,
+                AMOUNTRECOVERED = entity.amountRecovered,
+                MISCODE = entity.misCode,
+                REGION = entity.region
+            };
+            return data;
+        }
+
+
     }
 }
