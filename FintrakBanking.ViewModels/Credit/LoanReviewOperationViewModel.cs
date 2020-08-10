@@ -242,6 +242,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double interestRate { get; set; }
         public DateTime effectiveDate { get; set; }
         public DateTime maturityDate { get; set; }
+        public string loanCategory { get; set; }
         public DateTime bookingDate { get; set; }
         public decimal principalAmount { get; set; }
         public int principalInstallmentLeft { get; set; }
@@ -424,11 +425,20 @@ public int? newInterestFrequencyTypeId { get; set; }
         public decimal amountRecovered { get; set; }
         public string accountNumber { get; set; }
         public string accountName { get; set; }
-        public DateTime dateOfEngagement { get; set; }
+        public DateTime? dateOfEngagement { get; set; }
         public double accountBalance { get; set; }
         public List<string> listOfAccountAssigned { get; set; }
         public string email { get; set; }
         public DateTime dateOfAssignment { get; set; }
+        public int loanRecoveryReportBatchId { get; set; }
+        public decimal? totalAllrecoveryAmount { get; set; }
+        public string recoveryMisCode { get; set; }
+        public string recoveryRegion { get; set; }
+        public int loanRecoveryCommissionBatchId { get; set; }
+        public string region { get; set; }
+        public decimal? creditToAgent { get; set; }
+        public decimal? amountToDebit { get; set; }
+        public decimal? amountToCredit { get; set; }
     }
 
 
@@ -717,4 +727,100 @@ public int? newInterestFrequencyTypeId { get; set; }
         public IEnumerable<feeDetails> fees { get; set; }
 
     }
+
+
+    public class LoanRecoveryReportBatchViewModel : GeneralEntity
+    {
+        public int loanRecoveryReportBatchId { get; set; }
+        public string referenceId { get; set; }
+        public int? approvalStatusId { get; set; }
+        public int? operationId { get; set; }
+        public int loanId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public decimal? totalAmountRecovery { get; set; }
+        public decimal? amountRecovered { get; set; }
+        public bool operationCompleted { get; set; }
+        public decimal? recoveredAmount { get; set; }
+        public decimal? totalRecoveryAmount { get; set; }
+    }
+
+    public class LoanRecoveryReportApprovalViewModel : GeneralEntity
+    {
+        public int loanRecoveryReportApprovalId { get; set; }
+        public string referenceId { get; set; }
+        public int? approvalStatusId { get; set; }
+        public int? operationId { get; set; }
+        public int loanId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public bool operationCompleted { get; set; }
+        public decimal? totalAmountRecovery { get; set; }
+        public decimal? amountRecovered { get; set; }
+        //for approval records
+        public string accountNumber { get; set; }
+        public string accountName { get; set; }
+        public decimal? accountBalance { get; set; }
+        public string misCode { get; set; }
+        public string region { get; set; }
+        public string comment { get; set; }
+        public int numberOfLoans { get; set; }
+        public int? currentApprovalLevelId { get; set; }
+        public string approverComment { get; set; }
+    }
+
+    public class LoanRecoveryCommissionApprovalViewModel : GeneralEntity
+    {
+        public int loanRecoveryCommissionApprovalId { get; set; }
+        public string referenceId { get; set; }
+        public int? approvalStatusId { get; set; }
+        public int? operationId { get; set; }
+        public int loanId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public bool operationCompleted { get; set; }
+        public decimal? totalAmountRecovery { get; set; }
+        public decimal? amountRecovered { get; set; }
+        //for approval records
+        public string accountNumber { get; set; }
+        public string accountName { get; set; }
+        public decimal? accountBalance { get; set; }
+        public string misCode { get; set; }
+        public string region { get; set; }
+        public string comment { get; set; }
+        public int numberOfLoans { get; set; }
+        public int? currentApprovalLevelId { get; set; }
+        public string approverComment { get; set; }
+        public string agentAccountNumber { get; set; }
+        public DateTime? dateOfEngagement { get; set; }
+        public DateTime? collectionDate { get; set; }
+        public string modeOfCollection { get; set; }
+        public decimal? commissionRate { get; set; }
+    }
+
+
+    public class LoanRecoveryCommissionBatchViewModel : GeneralEntity
+    {
+        public int loanRecoveryCommissionBatchId { get; set; }
+        public string referenceId { get; set; }
+        public int? approvalStatusId { get; set; }
+        public int? operationId { get; set; }
+        public int loanId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public int customerId { get; set; }
+        public int accreditedConsultant { get; set; }
+        public decimal? totalAmountRecovery { get; set; }
+        public decimal? amountRecovered { get; set; }
+        public bool operationCompleted { get; set; }
+        public decimal? recoveredAmount { get; set; }
+        public decimal? totalRecoveryAmount { get; set; }
+        public string misCode { get; set; }
+        public string region { get; set; }
+        public string recoveryMisCode { get; set; }
+        public string recoveryRegion { get; set; }
+    }
+
 }

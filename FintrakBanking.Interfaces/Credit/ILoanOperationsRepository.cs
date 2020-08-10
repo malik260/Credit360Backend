@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
@@ -15,6 +16,18 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
+        WorkflowResponse GoForRecoveryCommissionApproval(ApprovalViewModel entity);
+        IEnumerable<LoanRecoveryCommissionApprovalViewModel> GetBulkRecoveryCommissionAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryCommissionByReference(int staffId, int companyId, string referenceId);
+        IEnumerable<LoanRecoveryCommissionApprovalViewModel> GetBulkRecoveryCommissionAwaitingApprovalList(int staffId, int companyId);
+        IEnumerable<LoanRecoveryCommissionApprovalViewModel> BulkRecoveryCommissionApplicationList(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllPaymentRecoveredCommissionByAgent(int staffId, int companyId);
+        IEnumerable<LoanRecoveryReportApprovalViewModel> GetBulkRecoveryReportingAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanReviewOperationApprovalViewModel> GetAllLoansRecoveredByAgentForReporting(int staffId, int companyId);
+        IEnumerable<LoanRecoveryReportApprovalViewModel> GetBulkRecoveryReportingAwaitingApprovalList(int staffId, int companyId);
+        WorkflowResponse GoForRecoveryReportingApproval(ApprovalViewModel entity);
+        IEnumerable<LoanReviewOperationApprovalViewModel> getAllLoansRecoveryReportingByReference(int staffId, int companyId, string referenceId);
+        IEnumerable<LoanRecoveryReportApprovalViewModel> BulkRecoveryReportingApplicationList(int staffId, int companyId);
         bool CreditDocumentationFillingLos(CreditDocumentationViewModel model);
         IEnumerable<CamProcessedLoanViewModel> GetLoanOperationDocumentationLos(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> BulkRecoveryToAgentAwaitingApprovalList(int staffId, int companyId);

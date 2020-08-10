@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using FintrakBanking.Interfaces.Setups.General;
 using System.Globalization;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -1160,7 +1161,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-operation/recovery-report-all-agents")]
         public HttpResponseMessage GetAllLoansRecoveredByAgent()
         {
-            var data = repo.GetAllLoansRecoveredByAgent(token.GetStaffId, token.GetCompanyId);
+            var data = repo.GetAllLoansRecoveredByAgentForReporting(token.GetStaffId, token.GetCompanyId);
             if (data == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -1773,6 +1774,207 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
             
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("bulk-recovery-reporting/application-list")]
+        public HttpResponseMessage BulkRecoveryReportingAwaitingApprovalList()
+        {
+            var data = repo.BulkRecoveryReportingApplicationList(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("bulk-recovery-reporting/awaiting-approval-list")]
+        public HttpResponseMessage getBulkRecoveryReportingAwaitingApprovalList()
+        {
+            var data = repo.GetBulkRecoveryReportingAwaitingApprovalList(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/bulk-recovery-reporting-approval/{reference}")]
+        public HttpResponseMessage getAllLoansRecoveryReportingByReference(string reference)
+        {
+            var data = repo.getAllLoansRecoveryReportingByReference(token.GetStaffId, token.GetCompanyId, reference);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-recovery-reporting-approval")]
+        public HttpResponseMessage GoForRecoveryReportingApproval([FromBody]ApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.GoForRecoveryReportingApproval(entity);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("bulk-recovery-reporting/awaiting-approval")]
+        public HttpResponseMessage GetBulkRecoveryReportingAwaitingApproval()
+        {
+            var data = repo.GetBulkRecoveryReportingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+
+
+        //====================== recovery commission
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/recovery-commission-by-agents")]
+        public HttpResponseMessage getAllPaymentRecoveredCommissionByAgent()
+        {
+            var data = repo.getAllPaymentRecoveredCommissionByAgent(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("bulk-recovery-commission/application-list")]
+        public HttpResponseMessage BulkRecoveryCommissionAwaitingApprovalList()
+        {
+            var data = repo.BulkRecoveryCommissionApplicationList(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("bulk-recovery-commission/awaiting-approval-list")]
+        public HttpResponseMessage getBulkRecoveryCommissionAwaitingApprovalList()
+        {
+            var data = repo.GetBulkRecoveryCommissionAwaitingApprovalList(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-operation/bulk-recovery-commission-approval/{reference}")]
+        public HttpResponseMessage getAllLoansRecoveryCommissionByReference(string reference)
+        {
+            var data = repo.getAllLoansRecoveryCommissionByReference(token.GetStaffId, token.GetCompanyId, reference);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("bulk-recovery-commission/awaiting-approval")]
+        public HttpResponseMessage GetBulkRecoveryCommissionAwaitingApproval()
+        {
+            var data = repo.GetBulkRecoveryCommissionAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-recovery-commission-approval")]
+        public HttpResponseMessage GoForRecoveryApproval([FromBody]ApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.GoForRecoveryCommissionApproval(entity);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = data.responseMessage });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
         }
 
     }
