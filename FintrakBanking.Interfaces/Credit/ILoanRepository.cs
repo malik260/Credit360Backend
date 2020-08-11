@@ -20,6 +20,10 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        bool saveBulkLoanRecoveryCommission(List<LoanRecoveryCommissionBatchViewModel> models, UserInfo user);
+        WorkflowResponse bulkLoanRecoveryCommissionGoForApproval(LoanRecoveryCommissionApprovalViewModel models, UserInfo user);
+        WorkflowResponse bulkLoanRecoveryReportingGoForApproval(LoanRecoveryReportApprovalViewModel models, UserInfo user);
+        bool saveBulkLoanRecoveryReporting(List<LoanRecoveryReportBatchViewModel> models, UserInfo user);
         bool ModifyLMSFacility(FacilityModificationViewModel model, int loanApplicationDetailId);
         IEnumerable<LoanViewModel> GetProcessLoanReviewData(int companyId, int staffId, string searchString);
         IEnumerable<CamProcessedLoanViewModel> GetBookedLoanApplicationForBookingVerificationParam(int staffId, int companyId, string searchString);

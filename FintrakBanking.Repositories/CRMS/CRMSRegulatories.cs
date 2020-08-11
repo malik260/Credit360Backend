@@ -61,11 +61,12 @@ namespace FintrakBanking.Repositories.CRMS
 
         public string AddCRMSCode(CRMSViewModel param)
         {
-            using (var trans = context.Database.BeginTransaction())
+
+            WorkflowResponse response;
+            if (param.isLms)
             {
-                if (param.isLms)
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    WorkflowResponse response;
                     var loan = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == param.loanId).Select(x => x).FirstOrDefault();
                     if (loan == null)
                         throw new ConditionNotMetException("This LMS Request does not exist");
@@ -116,94 +117,92 @@ namespace FintrakBanking.Repositories.CRMS
                         throw new ConditionNotMetException("There was no pending Job on CRMS CAPTURE Queue");
                     }
                 }
+            }
+            else
+            {
+                //if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+                //{
+                var loan = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == param.loanId).Select(x => x).FirstOrDefault();
+                if (loan == null)
+                    throw new ConditionNotMetException("This Booking Request does not exist");
+
+                param.crmsCode = param.crmsCode.Trim();
+                var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE == param.crmsCode).Any();
+                if (codeExist == true)
+                    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+                loan.CRMSCODE = param.crmsCode;
+                loan.CRMSDATE = DateTime.Now;
+                loan.CRMSVALIDATED = true;
+
+                var finishingJob = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
+                    && x.TARGETID == loan.LOAN_BOOKING_REQUESTID && x.OPERATIONID == loan.OPERATIONID);
+
+                if (finishingJob.Any())
+                {
+
+                    var approvalModel = new LoanAvailmentApprovalViewModel
+                    {
+                        createdBy = param.createdBy,
+                        companyId = param.companyId,
+                        targetId = loan.LOAN_BOOKING_REQUESTID,
+                        comment = "Captured CRMS code",
+                        approvalStatusId = (short)ApprovalStatusEnum.Approved,
+                        // amount = entity.principalAmount,
+                        operationId = (short)loan.OPERATIONID,
+                    };
+
+                    response = drawdown.GoForBookingRequestApproval(approvalModel, loan.LOAN_BOOKING_REQUESTID);
+                    return response.responseMessage;
+                }
                 else
                 {
-                    //if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
-                    //{
-                    var loan = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.LOAN_BOOKING_REQUESTID == param.loanId).Select(x => x).FirstOrDefault();
-                    if (loan == null)
-                        throw new ConditionNotMetException("This Booking Request does not exist");
-
-                    param.crmsCode = param.crmsCode.Trim();
-                    var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE == param.crmsCode).Any();
-                    if (codeExist == true)
-                        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
-
-                    loan.CRMSCODE = param.crmsCode;
-                    loan.CRMSDATE = DateTime.Now;
-                    loan.CRMSVALIDATED = true;
-
-                    var finishingJob = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing
-                        && x.TARGETID == loan.LOAN_BOOKING_REQUESTID && x.OPERATIONID == loan.OPERATIONID);
-
-                    if (finishingJob.Any())
-                    {
-
-                        var approvalModel = new LoanAvailmentApprovalViewModel
-                        {
-                            createdBy = param.createdBy,
-                            companyId = param.companyId,
-                            targetId = loan.LOAN_BOOKING_REQUESTID,
-                            comment = "Captured CRMS code",
-                            approvalStatusId = (short)ApprovalStatusEnum.Approved,
-                            // amount = entity.principalAmount,
-                            operationId = (short)loan.OPERATIONID,
-                        };
-
-                        drawdown.GoForBookingRequestApproval(approvalModel, loan.LOAN_BOOKING_REQUESTID);
-                    }
-
-
-                    //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == param.loanId).Select(x => x).FirstOrDefault();
-                    //if (loan == null)
-                    //    throw new ConditionNotMetException("This Facility does not exist");
-
-                    //var codeExist = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CRMSCODE == param.crmsCode).Any();
-                    //if (codeExist == true)
-                    //    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
-
-                    //loan.CRMSCODE = param.crmsCode;
-                    //loan.CRMSDATE = DateTime.Now;
-                    //loan.CRMSVALIDATED = true;
-                    //}
-
-                    //else if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
-                    //{
-                    //    var loan = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == param.loanId).Select(x => x).FirstOrDefault();
-                    //    if (loan == null)
-                    //        throw new ConditionNotMetException("This loan does not exist");
-
-                    //    var codeExist = context.TBL_LOAN_REVOLVING.Where(x => x.CRMSCODE == param.crmsCode).Any();
-                    //    if (codeExist == true)
-                    //        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
-
-                    //    loan.CRMSCODE = param.crmsCode;
-                    //    loan.CRMSDATE = DateTime.Now;
-
-                    //}
-                    //else if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
-                    //{
-                    //    var loan = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == param.loanId).Select(x => x).FirstOrDefault();
-                    //    if (loan == null)
-                    //        throw new ConditionNotMetException("This loan does not exist");
-
-                    //    var codeExist = context.TBL_LOAN_CONTINGENT.Where(x => x.CRMSCODE == param.crmsCode).Any();
-                    //    if (codeExist == true)
-                    //        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
-
-                    //    loan.CRMSCODE = param.crmsCode;
-                    //    loan.CRMSDATE = DateTime.Now;
-
-                    //}
-                    if (context.SaveChanges() > 0)
-                    {
-                        trans.Commit();
-                        return "Successful";
-                    }
-                    trans.Rollback();
-                    return "Failed";
+                    throw new ConditionNotMetException("There was no pending Job on LOS CRMS CAPTURE Queue");
                 }
             }
+
+
+            //var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == param.loanId).Select(x => x).FirstOrDefault();
+            //if (loan == null)
+            //    throw new ConditionNotMetException("This Facility does not exist");
+
+            //var codeExist = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CRMSCODE == param.crmsCode).Any();
+            //if (codeExist == true)
+            //    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+            //loan.CRMSCODE = param.crmsCode;
+            //loan.CRMSDATE = DateTime.Now;
+            //loan.CRMSVALIDATED = true;
+            //}
+
+            //else if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
+            //{
+            //    var loan = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == param.loanId).Select(x => x).FirstOrDefault();
+            //    if (loan == null)
+            //        throw new ConditionNotMetException("This loan does not exist");
+
+            //    var codeExist = context.TBL_LOAN_REVOLVING.Where(x => x.CRMSCODE == param.crmsCode).Any();
+            //    if (codeExist == true)
+            //        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+            //    loan.CRMSCODE = param.crmsCode;
+            //    loan.CRMSDATE = DateTime.Now;
+
+            //}
+            //else if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
+            //{
+            //    var loan = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == param.loanId).Select(x => x).FirstOrDefault();
+            //    if (loan == null)
+            //        throw new ConditionNotMetException("This loan does not exist");
+
+            //    var codeExist = context.TBL_LOAN_CONTINGENT.Where(x => x.CRMSCODE == param.crmsCode).Any();
+            //    if (codeExist == true)
+            //        throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+
+            //    loan.CRMSCODE = param.crmsCode;
+            //    loan.CRMSDATE = DateTime.Now;
+
+            //}
         }
 
         public bool ChecklistCompleted(int applicationId)
