@@ -50,6 +50,7 @@ namespace FintrakBanking.Entities.Models
 
         //[StringLength(500)]
         public string ADDRESS { get; set; }
+        public DateTime? DATEOFENGAGEMENT { get; set; }
 
         //[StringLength(500)]
         public string CORECOMPETENCE { get; set; }

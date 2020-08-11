@@ -261,5 +261,75 @@ namespace FintrakBanking.APICore.Controllers
             CustomerDocumentSearchViewModel response = repo.GetCustomerDocuments(model,user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.documents.Count() });
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("recovery-reporting-document-upload")]
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddRecoveryReportingDocumentUploadAsync()
+        {
+
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
+
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
+            
+            var entity = new RecoveryReportingDocumentViewModel(); 
+            entity.description = provider.FormData["description"];
+            entity.fileName = provider.FormData["fileName"];
+            entity.fileExtension = provider.FormData["fileExtension"];
+            entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+            entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
+            entity.referenceId = provider.FormData["referenceId"];
+            entity.overwrite = provider.FormData["overwrite"] == "true";
+
+            var a = provider.FormData["targetId"];
+            if (provider.FormData["targetId"] != null && provider.FormData["targetId"] != "undefined")
+            {
+                entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
+            }
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+
+            var file = provider.Contents.FirstOrDefault();
+            var buffer = await file.ReadAsByteArrayAsync();
+            int response = repo.AddRecoveryReportingDocumentUpload(entity, buffer);
+
+
+            if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+            if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("recovery-reporting-documents/{referenceId}")]
+        public HttpResponseMessage getAllLoanRecoveryReportingDocuments(string referenceId)
+        {
+            IEnumerable<RecoveryReportingDocumentViewModel> response = repo.getAllLoanRecoveryReportingDocuments(referenceId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("recovery-report-document-download/{loanRecoveryReportApprovalId}")]
+        public HttpResponseMessage GetRecoveryReportDocument(int loanRecoveryReportApprovalId)
+        {
+            RecoveryReportingDocumentViewModel data = repo.GetRecoveryReportDocument(loanRecoveryReportApprovalId);
+            if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
     }
 }

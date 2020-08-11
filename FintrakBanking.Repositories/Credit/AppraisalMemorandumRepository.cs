@@ -2189,7 +2189,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var operationRecord = context.TBL_OPERATIONS.Find(operationId);
                 var classOperations = context.TBL_OPERATIONS.Where(x => x.CLASS == operationRecord.CLASS).Select(c=>c.OPERATIONID).ToList() ;
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == applicationId && classOperations.Contains(x.OPERATIONID)).ToList();
+                trail.AddRange(context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == applicationId && classOperations.Contains(x.OPERATIONID)).ToList());
 
             }
             trail = trail.Where(t => !(t.FROMAPPROVALLEVELID == t.TOAPPROVALLEVELID && t.LOOPEDSTAFFID > 0)).ToList();
