@@ -399,19 +399,60 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
-        [HttpPut]
+        [HttpPost]
         [ClaimsAuthorization]
-        [Route("modify-lms-facility/{loanApplicationDetailId}")]
-        public HttpResponseMessage ModifyLMSFacility([FromBody] FacilityModificationViewModel model, int loanApplicationDetailId)
+        [Route("lms-facility-modification/approval")]
+        public HttpResponseMessage ApproveFacilityModification([FromBody] ForwardViewModel model)
         {
-            var response = loanRepo.ModifyLMSFacility(model, loanApplicationDetailId);
-            if (response)
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Facility Has Been Modified Successfully" });
+                WorkflowResponse response = loanRepo.ApproveLMSFacilityModification(model);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = response.responseMessage });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error approving this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("lms-facility-modification/approval")]
+        //public HttpResponseMessage LMSFacilityModificationApproval()
+        //{
+        //    var response = loanRepo.GetLMSFacilityModification();
+        //    if (response != null)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Success" });
+        //    }
+        //    else
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+        //    }
+        //}
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("modify-lms-facility")]
+        public HttpResponseMessage ModifyLMSFacility([FromBody] FacilityModificationViewModel model)
+        {
+            var response = loanRepo.AddFacilityModification(model);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = response.responseMessage });
             }
             else
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Facility Modification was not Successful" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error saving record" });
             }
         }
 
