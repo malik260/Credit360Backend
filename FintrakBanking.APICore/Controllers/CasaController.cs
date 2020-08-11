@@ -4,6 +4,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Repositories.Finance;
 using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Linq;
 using System.Net;
@@ -307,6 +308,57 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "There's no Loan Attached to this Account Number" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-consumer-protection")]
+        public HttpResponseMessage AddConsumerProtection([FromBody] ConsumerProtectionViewModel model)
+        {
+            try
+            {
+                //model.branchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var result = lienRepo.AddConsumerProtection(model);
+
+                if (result != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = result, message = "Consumer Protection has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Consumer Protection could not be created" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-all-consumer-protections")]
+        public HttpResponseMessage GetAllConsumerProtections()
+        {
+            try
+            {
+                var data = lienRepo.GetAllConsumerProtections(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
