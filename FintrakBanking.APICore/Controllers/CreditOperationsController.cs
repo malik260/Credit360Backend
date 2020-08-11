@@ -1328,7 +1328,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation has been approved successfully." });
+                    new { success = true, message = "Operation has been approved successfully. Sent to Credit Documentation for filling" });
                 }
                 else
                 {
