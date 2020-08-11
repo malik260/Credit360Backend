@@ -76,7 +76,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int customerGroupId { get; set; }
         public bool overwrite { get; set; }
         public int customerCreditBureauId { get; set; }
-
+        
     }
 
     public class CustomerDocumentSearchViewModel
@@ -84,5 +84,26 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string customerName { get; set; }
 
         public IEnumerable<DocumentUploadViewModel> documents { get; set; }
+    }
+
+    public class RecoveryReportingDocumentViewModel
+    {
+        public int loanRecoveryReportingDocumentId { get; set; }
+        public string description { get; set; }
+        public int operationId { get; set; }
+        public bool overwrite { get; set; }
+        public int targetId { get; set; }
+        public string referenceId { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public int fileSize { get; set; }
+        public short userBranchId { get; set; }
+        public string userIPAddress { get; set; }
+        public string applicationUrl { get; set; }
+        public int createdBy { get; set; }
+        public int companyId { get; set; }
+        public string uploadedBy { get; set; }
+        public byte[] fileData { get; set; }
+        public DateTime dateTimeCreated { get; set; }
     }
 }

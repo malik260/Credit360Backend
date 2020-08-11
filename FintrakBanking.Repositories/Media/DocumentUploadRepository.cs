@@ -1054,6 +1054,108 @@ namespace FintrakBanking.Repositories.Media
         //                })
         //                .FirstOrDefault();
         //}
+
+
+        public int AddRecoveryReportingDocumentUpload(RecoveryReportingDocumentViewModel model, byte[] buffer)
+        {
+            var existing = docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Where(x => x.FILENAME == model.fileName
+                    && x.TARGETID == model.targetId
+                    && x.REFERENCEID == model.referenceId)
+            .Select(x => new RecoveryReportingDocumentViewModel
+            {
+                loanRecoveryReportingDocumentId = x.LOANRECOVERYREPORTDOCUMENTID,
+                description = x.DESCRIPTION,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                fileSize = x.FILESIZE,
+                referenceId = x.REFERENCEID,
+            })
+                .FirstOrDefault();
+
+            if (existing != null && model.overwrite == false) return 3;
+
+            var entity = new TBL_LOAN_RECOVERY_REPORTING_DOCUMENT
+            {
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension.ToLower(),
+                FILESIZE = model.fileSize,
+                FILESIZEUNIT = "kilobyte",
+                FILEDATA = buffer,
+                REFERENCEID = model.referenceId,
+                TARGETID = model.targetId,
+                OPERATIONID = model.operationId,
+                DESCRIPTION = model.description,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Add(entity);
+            docContext.SaveChanges(); 
+
+            return 2;
+        }
+
+
+        public IEnumerable<RecoveryReportingDocumentViewModel> getAllLoanRecoveryReportingDocuments(string referenceId)
+        {
+            var records = (from x in docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT
+                           where x.REFERENCEID == referenceId
+                           select new 
+                           {
+                               fileName = x.FILENAME,
+                               description = x.DESCRIPTION,
+                               loanRecoveryReportingDocumentId = x.LOANRECOVERYREPORTDOCUMENTID,
+                               referenceId = x.REFERENCEID,
+                               fileExtension = x.FILEEXTENSION,
+                               fileSize = x.FILESIZE,
+                               targetId = x.TARGETID,
+                               createdBy = x.CREATEDBY,
+                               dateTimeCreated = x.DATETIMECREATED
+                           }).AsEnumerable().Select(a => new RecoveryReportingDocumentViewModel
+                           {
+                               fileName = a.fileName,
+                               description = a.description,
+                               loanRecoveryReportingDocumentId = a.loanRecoveryReportingDocumentId,
+                               referenceId = a.referenceId,
+                               fileExtension = a.fileExtension,
+                               fileSize = a.fileSize,
+                               targetId = a.targetId,
+                               createdBy = a.createdBy,
+                               dateTimeCreated = a.dateTimeCreated
+                           }).ToList();
+
+            var result = records.Select(a => new RecoveryReportingDocumentViewModel
+            {
+                fileName = a.fileName,
+                description = a.description,
+                loanRecoveryReportingDocumentId = a.loanRecoveryReportingDocumentId,
+                referenceId = a.referenceId,
+                fileExtension = a.fileExtension,
+                fileSize = a.fileSize,
+                targetId = a.targetId,
+                dateTimeCreated = a.dateTimeCreated,
+                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == a.createdBy).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+            }).ToList();
+
+            return result;
+        }
+
+        public RecoveryReportingDocumentViewModel GetRecoveryReportDocument(int loanRecoveryReportApprovalId)
+        {
+            return docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Where(x => x.TARGETID == loanRecoveryReportApprovalId)
+                            .Select(x => new RecoveryReportingDocumentViewModel
+                            {
+                                fileName = x.FILENAME,
+                                description = x.DESCRIPTION,
+                                loanRecoveryReportingDocumentId = x.LOANRECOVERYREPORTDOCUMENTID,
+                                referenceId = x.REFERENCEID,
+                                fileExtension = x.FILEEXTENSION,
+                                fileSize = x.FILESIZE,
+                                fileData = x.FILEDATA,
+                                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == x.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
+                            }).FirstOrDefault();
+        }
+
     }
 }
 
