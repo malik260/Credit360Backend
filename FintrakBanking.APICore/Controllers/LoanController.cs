@@ -703,11 +703,11 @@ namespace FintrakBanking.APICore.Controllers
             if (responseId == 1)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation successful, forward for Filling" });
+                    new { success = true, message = "Operation successful, sent to Credit Documentation for filling" });
             }
             else if (responseId == 2)
             {
-                dynamicMessage = "Loan has been successfully disbursed and forward for Filling";
+                dynamicMessage = "Loan has been successfully disbursed, sent to Credit Documentation for filling";
                 if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
                     dynamicMessage = "Overdraft facility grant successfully committed and forward for Filling";
                 if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
