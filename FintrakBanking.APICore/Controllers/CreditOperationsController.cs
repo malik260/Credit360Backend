@@ -424,27 +424,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpGet]
-        //[ClaimsAuthorization]
-        //[Route("lms-facility-modification/approval")]
-        //public HttpResponseMessage LMSFacilityModificationApproval()
-        //{
-        //    var response = loanRepo.GetLMSFacilityModification();
-        //    if (response != null)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Success" });
-        //    }
-        //    else
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
-        //    }
-        //}
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-facility-modification/approval")]
+        public HttpResponseMessage GetFacilityModificationsForApproval()
+        {
+            try
+            {
+                IEnumerable<FacilityModificationViewModel> response = loanRepo.GetLMSFacilityModificationsForApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpPost]
         [ClaimsAuthorization]
         [Route("modify-lms-facility")]
         public HttpResponseMessage ModifyLMSFacility([FromBody] FacilityModificationViewModel model)
         {
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
             var response = loanRepo.AddFacilityModification(model);
             if (response != null)
             {
@@ -1387,7 +1389,7 @@ namespace FintrakBanking.APICore.Controllers
             else if (data == 3)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                new { success = true, message = "Operation successful, Sent to Credit Documentation for filling" });
             }
             else if (data == 4)
             {

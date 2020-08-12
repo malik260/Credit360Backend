@@ -16844,7 +16844,7 @@ namespace FintrakBanking.Repositories.Credit
                             join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
                             join a in context.TBL_LOAN on b.LOANID equals a.TERMLOANID
                             where b.OPERATIONPERFORMED == false
-                            && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && e.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && (e.APPLICATIONREFERENCENUMBER == searchString
                             || c.FIRSTNAME.ToLower() == searchString.ToLower()
                             || c.MIDDLENAME.ToLower() == searchString.ToLower()
@@ -16890,6 +16890,8 @@ namespace FintrakBanking.Repositories.Credit
                                 approvedInterestRate = b.APPROVEDINTERESTRATE,
                                 sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                 subSectorName = a.TBL_SUB_SECTOR.NAME,
+                                subSectorId = a.TBL_SUB_SECTOR.SUBSECTORID,
+                                sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                                 reviewLoanDetaile = b.REVIEWDETAILS,
                                 branchName = e.TBL_BRANCH.BRANCHNAME,
                                 lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
@@ -16980,6 +16982,8 @@ namespace FintrakBanking.Repositories.Credit
                                      interestRate = b.APPROVEDINTERESTRATE,
                                      effectiveDate = a.EFFECTIVEDATE,
                                      systemCurrentDate = DateTime.Now,
+                                     subSectorId = a.TBL_SUB_SECTOR.SUBSECTORID,
+                                     sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                                      productClassId = e.PRODUCTCLASSID,
                                      approvedInterestRate = b.APPROVEDINTERESTRATE,
                                      loanId = a.REVOLVINGLOANID,
@@ -17079,6 +17083,8 @@ namespace FintrakBanking.Repositories.Credit
                                       loanTypeId2 = e.LOANAPPLICATIONTYPEID,
                                       productClassId = e.PRODUCTCLASSID,
                                       loanId = a.CONTINGENTLOANID,
+                                      subSectorId = a.TBL_SUB_SECTOR.SUBSECTORID,
+                                      sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                                       loanSystemTypeId = b.LOANSYSTEMTYPEID,
                                       sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                       subSectorName = a.TBL_SUB_SECTOR.NAME,
@@ -17138,7 +17144,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse ApproveLMSFacilityModification(ForwardViewModel model)
         {
-                using (var trans = this.context.Database.BeginTransaction())
+                using (var trans = context.Database.BeginTransaction())
                 {
                     bool saved;
                     var modification = context.TBL_LMS_FACILITY_MODIFICATION.Find(model.targetId);
@@ -17160,15 +17166,17 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                         {
-                            modification.APPROVALSTATUSID = (short)workflow.StatusId;
+                            modification.APPROVALSTATUSID = (int)workflow.StatusId;
                             var modified = ModifyLMSFacility(modification);
-                        }
+                            context.SaveChanges();
+                    }
                         else
                         {
-                            modification.APPROVALSTATUSID = (short)workflow.StatusId;
-                        }
+                            modification.APPROVALSTATUSID = (int)workflow.StatusId;
+                            context.SaveChanges();
+                     }
                     }
-                    saved = context.SaveChanges() > 0;
+                    
                     if (saved)
                     {
                         trans.Commit();
@@ -17187,20 +17195,22 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
+                model.productClassProcessId2 = context.TBL_PRODUCT_CLASS.Find(model.productClassId).PRODUCT_CLASS_PROCESSID;
                 var entity = new TBL_LMS_FACILITY_MODIFICATION
                 {
                     LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                    PRODUCTCLASSPROCESSID = model.productClassProcessId2,
                     APPROVEDPRODUCTID = model.approvedProductId,
                     APPROVEDINTERESTRATE = model.approvedInterestRate,
                     APPROVEDTENOR = model.approvedTenor,
                     TENORMODEID = model.tenorModeId,
                     SUBSECTORID = model.subSectorId,
                     PRODUCTCLASSID = model.productClassId,
-                    LOANDETAILREVIEWTYPEID = model.loanDetailReviewTypeId,
                     APPROVEDAMOUNT = model.approvedAmount,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                     CREATEDBY = model.createdBy,
-                    DATETIMECREATED = DateTime.Now
+                    DATETIMECREATED = DateTime.Now,
+                    REVIEWDETAILS = model.reviewDetails
                 };
 
                 var save = context.TBL_LMS_FACILITY_MODIFICATION.Add(entity);
@@ -17241,9 +17251,46 @@ namespace FintrakBanking.Repositories.Credit
                 sectorId = (int)context.TBL_SUB_SECTOR.FirstOrDefault(s => s.SUBSECTORID == entity.SUBSECTORID).SECTORID,
                 subSectorId = entity.SUBSECTORID,
                 productClassId = entity.PRODUCTCLASSID,
-                loanDetailReviewTypeId = entity.LOANDETAILREVIEWTYPEID,
                 approvedAmount = entity.APPROVEDAMOUNT,
             };
+        }
+
+        public IEnumerable<FacilityModificationViewModel> GetLMSFacilityModificationsForApproval(int staffId)
+        {
+            var operationId = (int)OperationsEnum.LMSFacilityModificationApproval;
+            var levelIds = generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+            var reliefIds = generalSetup.GetStaffRlieved(staffId);
+
+            var modifications = (from x in context.TBL_LMS_FACILITY_MODIFICATION
+                                 join d in context.TBL_LMSR_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals d.LOANREVIEWAPPLICATIONID
+                                 join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
+                                 join t in context.TBL_APPROVAL_TRAIL on x.FACILITYMODIFICATIONID equals t.TARGETID
+                                 where
+                                 t.OPERATIONID == operationId
+                                 && levelIds.Contains(t.TOAPPROVALLEVELID ?? 0)
+                                 && t.RESPONSESTAFFID == null
+                                 && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                                 && (reliefIds.Contains(t.TOSTAFFID ?? 0) || t.TOSTAFFID == null)
+                                 select new FacilityModificationViewModel
+                                 {
+                                     facilityModificationId = x.FACILITYMODIFICATIONID,
+                                     loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                                     approvedProductId = x.APPROVEDPRODUCTID,
+                                     approvedInterestRate = x.APPROVEDINTERESTRATE,
+                                     approvedTenor = x.APPROVEDTENOR,
+                                     tenorModeId = x.TENORMODEID,
+                                     reviewDetails = x.REVIEWDETAILS,
+                                     sectorId = (int)context.TBL_SUB_SECTOR.FirstOrDefault(s => s.SUBSECTORID == x.SUBSECTORID).SECTORID,
+                                     subSectorId = x.SUBSECTORID,
+                                     productClassId = x.PRODUCTCLASSID,
+                                     productClassProcessId2 = x.PRODUCTCLASSPROCESSID,
+                                     approvedAmount = x.APPROVEDAMOUNT,
+                                     customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                                     applicationRef = d.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                     systemArrivalDateTime = t.SYSTEMARRIVALDATETIME,
+                                     approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                 }).ToList();
+            return modifications;
         }
 
         public bool ArchiveLMSLoanApplication(int loanAppliactionId, int operationId, int applicationStatus, int archivedBy)
@@ -19354,10 +19401,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool ModifyLMSFacility(TBL_LMS_FACILITY_MODIFICATION model)
         {
-            int saved;
-            using (var trans = context.Database.BeginTransaction())
-            {
-
+            bool saved;
                 var facility = context.TBL_LMSR_APPLICATION_DETAIL.Find(model.LOANAPPLICATIONDETAILID);
                 var loan = context.TBL_LMSR_APPLICATION.Find(facility.LOANAPPLICATIONID);
                 if (facility != null && loan != null)
@@ -19373,10 +19417,9 @@ namespace FintrakBanking.Repositories.Credit
                     facility.PROPOSEDAMOUNT = model.APPROVEDAMOUNT;
                     facility.REVIEWDETAILS = model.REVIEWDETAILS;
                 }
-                saved = context.SaveChanges();
-                trans.Commit();
-            }
-            return saved > 0;
+                saved = context.SaveChanges() > 0;
+
+            return saved;
         }
     }
 }

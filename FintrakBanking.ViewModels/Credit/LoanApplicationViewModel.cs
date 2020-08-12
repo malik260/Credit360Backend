@@ -1070,6 +1070,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int productClassId { get; set; }
         public int loanDetailReviewTypeId { get; set; }
         public int productClassProcessId { get; set; }
+        public int? productClassProcessId2 { get; set; }
         public decimal approvedAmount { get; set; }
         public string reviewDetails { get; set; }
         public string customerName { get; set; }
@@ -1136,6 +1137,16 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal tierOne { get; set; }
         public decimal tierTwo { get; set; }
         public decimal tierThree { get; set; }
+        public object options { get; set; }
+    }
+
+    public class ContractorCriteriaOptionViewModel : GeneralEntity
+    {
+        public int criteriaId { get; set; }
+        public int optionId { get; set; }
+        public string optionName { get; set; }
+        public decimal optionValue { get; set; }
+        public string criteria { get; set; }
     }
 
     public class ProjectRiskRatingCategoryViewModel : GeneralEntity
