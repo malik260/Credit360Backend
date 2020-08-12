@@ -20,6 +20,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        IEnumerable<FacilityModificationViewModel> GetLMSFacilityModificationsForApproval(int staffId);
         WorkflowResponse ApproveLMSFacilityModification(ForwardViewModel model);
         FacilityModificationViewModel GetLMSFacilityModification(int facilityModificationId);
         WorkflowResponse AddFacilityModification(FacilityModificationViewModel model);
