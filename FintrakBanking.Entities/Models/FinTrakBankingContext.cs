@@ -114,6 +114,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CALL_MEMO> TBL_CALL_MEMO { get; set; }
         public virtual DbSet<TBL_CALL_MEMO_LIMIT> TBL_CALL_MEMO_LIMIT { get; set; }
         public virtual DbSet<TBL_CALL_MEMO_TYPE> TBL_CALL_MEMO_TYPE { get; set; }
+        public virtual DbSet<TBL_CONSUMER_PROTECTION> TBL_CONSUMER_PROTECTION { get; set; }
         public virtual DbSet<TBL_CASA> TBL_CASA { get; set; }
         public virtual DbSet<TBL_CASA_ACCOUNTSTATUS> TBL_CASA_ACCOUNTSTATUS { get; set; }
         public virtual DbSet<TBL_CASA_LIEN> TBL_CASA_LIEN { get; set; }

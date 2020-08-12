@@ -18,6 +18,7 @@ using FintrakBanking.Common.CustomException;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Configuration;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -183,6 +184,82 @@ namespace FintrakBanking.Repositories.CASA
                     }
                 }
             }
+        }
+
+        public int AddConsumerProtection(ConsumerProtectionViewModel model)
+        {
+            var data = new TBL_CONSUMER_PROTECTION
+            {
+                ACTUALAMOUNTBORROWED = model.actualAmountBorrowed,
+                ANNUALINTERESTRATE = model.annualInterestRate,
+                //CONSUMERPROTECTIONID = model.consumerProtectionId,
+                INSURANCE = model.insurance,
+                LOANAMOUNT = model.loanAmount,
+                LOANAPR = model.loanAPR,
+                MONTHLYPAYMENT = model.monthlyPayment,
+                TERMOFLOANSINYEARS = model.termOfLoanInYears,
+                TOTALFEES = model.totalFees,
+                TOTALFEESANDCHARGES = model.totalFeesAndCharges,
+                
+                BRANCHID = model.branchId,
+                COMPANYID = model.companyId,
+                
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+               
+            };
+
+            context.TBL_CONSUMER_PROTECTION.Add(data);
+
+            // Audit Section ---------------------------            
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LienPlaced,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Added Consumer Protection with Actual Amount Borrowed: {model.actualAmountBorrowed}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+
+
+            };
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+
+            if (context.SaveChanges() > 0) { return data.CONSUMERPROTECTIONID; }
+
+            return 0;
+        }
+
+        public IEnumerable<ConsumerProtectionViewModel> GetAllConsumerProtections(int companyId)
+        {
+            var result = context.TBL_CONSUMER_PROTECTION.Select(O => new ConsumerProtectionViewModel()
+            {
+                actualAmountBorrowed = O.ACTUALAMOUNTBORROWED,
+                annualInterestRate = O.ANNUALINTERESTRATE,
+                consumerProtectionId = O.CONSUMERPROTECTIONID,
+                insurance = O.INSURANCE,
+                loanAmount = O.LOANAMOUNT,
+                loanAPR = O.LOANAPR,
+                monthlyPayment = O.MONTHLYPAYMENT,
+                termOfLoanInYears = O.TERMOFLOANSINYEARS,
+                totalFees = O.TOTALFEES,
+                totalFeesAndCharges = O.TOTALFEESANDCHARGES,
+
+                branchId = O.BRANCHID,
+                companyId = O.COMPANYID,
+
+                createdBy = O.CREATEDBY,
+                dateTimeCreated = O.DATETIMECREATED,
+            }).ToList();
+
+            return result;
         }
 
         public bool ReleaseLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null, bool require2FA = true)
