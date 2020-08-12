@@ -19,10 +19,10 @@ namespace FintrakBanking.Entities.Models
         public int TENORMODEID { get; set; }
         public short SUBSECTORID { get; set; }
         public int PRODUCTCLASSID { get; set; }
-        public int LOANDETAILREVIEWTYPEID { get; set; }
+        public int? PRODUCTCLASSPROCESSID { get; set; }
         public decimal APPROVEDAMOUNT { get; set; }
         public double APPROVEDINTERESTRATE { get; set; }
-        public short APPROVALSTATUSID { get; set; }
+        public int APPROVALSTATUSID { get; set; }
         public string REVIEWDETAILS { get; set; }
         
         public int CREATEDBY { get; set; }

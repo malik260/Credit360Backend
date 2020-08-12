@@ -1813,6 +1813,19 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return categories;
         }
 
+        public IEnumerable<ContractorCriteriaViewModel> getAllCriteriaList()
+        {
+            var categories = (from a in context.TBL_CONTRACTOR_CRITERIA
+                              select new ContractorCriteriaViewModel
+                              {
+                                  criteriaId = a.CRITERIAID,
+                                  criteria = a.CRITERIA
+                              }).ToList();
+
+            return categories;
+        }
+
+
         public bool AddContractorCriteria(ContractorCriteriaViewModel entity)
         {
             if (entity != null)
@@ -1828,6 +1841,31 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                         TIERTHREE = entity.tierThree,
                     };
                     context.TBL_CONTRACTOR_CRITERIA.Add(cONTRACTOR_CRITERIA);
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
+        public bool AddContractorCriteriaOption(ContractorCriteriaOptionViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CONTRACTOR_CRITERIA_OPTION cONTRACTOR_CRITERIA;
+                    cONTRACTOR_CRITERIA = new TBL_CONTRACTOR_CRITERIA_OPTION
+                    {
+                        CRITERIAID = entity.criteriaId,
+                        OPTIONNAME = entity.optionName,
+                        OPTIONVALUE = entity.optionValue,
+                    };
+                    context.TBL_CONTRACTOR_CRITERIA_OPTION.Add(cONTRACTOR_CRITERIA);
                     var response = context.SaveChanges() != 0;
                     return response;
                 }
@@ -1869,6 +1907,37 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             }
             return false;
         }
+
+        public bool UpdateContractorCriteriaOption(ContractorCriteriaOptionViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CONTRACTOR_CRITERIA_OPTION _CRITERIA;
+                    if (entity.criteriaId > 0)
+                    {
+                        _CRITERIA = context.TBL_CONTRACTOR_CRITERIA_OPTION.Find(entity.optionId);
+                        if (_CRITERIA != null)
+                        {
+                            _CRITERIA.CRITERIAID = entity.criteriaId;
+                            _CRITERIA.OPTIONVALUE = entity.optionValue;
+                            _CRITERIA.OPTIONNAME = entity.optionName;
+                        }
+
+                    }
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+            }
+            return false;
+        }
+
 
 
         public bool AddProjectRiskCriteria(ProjectRiskRatingCriteriaViewModel entity)
@@ -1986,8 +2055,29 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                   criteria = a.CRITERIA,
                                   tierOne = a.TIERONE,
                                   tierTwo = a.TIERTWO,
-                                  tierThree = a.TIERTHREE
+                                  tierThree = a.TIERTHREE,
+                                  options = context.TBL_CONTRACTOR_CRITERIA_OPTION.Where(x => x.CRITERIAID == a.CRITERIAID).Select(x => new ContractorCriteriaOptionViewModel
+                                  {
+                                      optionName = x.OPTIONNAME,
+                                      optionValue = x.OPTIONVALUE
+                                  }).ToList(),
                               }).ToList();
+
+            return contractorCriteria;
+        }
+
+        public IEnumerable<ContractorCriteriaOptionViewModel> getAllContractorCriteriaOption()
+        {
+            var contractorCriteria = (from a in context.TBL_CONTRACTOR_CRITERIA_OPTION
+                                      
+                                      select new ContractorCriteriaOptionViewModel
+                                      {
+                                          criteriaId = a.CRITERIAID,
+                                          optionId = a.OPTIONID,
+                                          optionName = a.OPTIONNAME,
+                                          optionValue = a.OPTIONVALUE,
+                                          criteria = context.TBL_CONTRACTOR_CRITERIA.Where(c=>c.CRITERIAID == a.CRITERIAID).Select(c=>c.CRITERIA).FirstOrDefault(),
+                                      }).ToList();
 
             return contractorCriteria;
         }
