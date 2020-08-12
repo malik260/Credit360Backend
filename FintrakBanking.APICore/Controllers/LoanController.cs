@@ -19,6 +19,7 @@ using FintrakBanking.Common.Extensions;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using System.Globalization;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -702,11 +703,11 @@ namespace FintrakBanking.APICore.Controllers
             if (responseId == 1)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                    new { success = true, message = "Operation successful, sent to Credit Documentation for filling" });
             }
             else if (responseId == 2)
             {
-                dynamicMessage = "Loan has been successfully disbursed and forward for Filling";
+                dynamicMessage = "Loan has been successfully disbursed, sent to Credit Documentation for filling";
                 if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
                     dynamicMessage = "Overdraft facility grant successfully committed and forward for Filling";
                 if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
@@ -1931,6 +1932,100 @@ namespace FintrakBanking.APICore.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-loan-recovery-reporting")]
+        public HttpResponseMessage saveBulkLoanRecoveryReporting([FromBody] List<LoanRecoveryReportBatchViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            var data = repo.saveBulkLoanRecoveryReporting(models, user);
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Bulk Recovery Successfully Saved" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery assignment unsuccessfully" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-loan-recovery-reporting-initiate-approval")]
+        public HttpResponseMessage bulkLoanRecoveryReportingGoForApproval([FromBody] LoanRecoveryReportApprovalViewModel models)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.bulkLoanRecoveryReportingGoForApproval(models, user);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = data.responseMessage });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "Error occur forwarding for approval" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-loan-recovery-commission")]
+        public HttpResponseMessage saveBulkLoanRecoveryCommission([FromBody] List<LoanRecoveryCommissionBatchViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            var data = repo.saveBulkLoanRecoveryCommission(models, user);
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Bulk Recovery Successfully Saved" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving loan recovery assignment unsuccessfully" });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-loan-recovery-commission-initiate-approval")]
+        public HttpResponseMessage bulkLoanRecoveryCommissionGoForApproval([FromBody] LoanRecoveryCommissionApprovalViewModel models)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            WorkflowResponse data = repo.bulkLoanRecoveryCommissionGoForApproval(models, user);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = data.responseMessage });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "Error occur forwarding for approval" });
+        }
+
 
     }
 }

@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.DocumentModels
             : base("name=FinTrakBankingDocumentsContext")
         {
         }
-
+        public virtual DbSet<TBL_LOAN_RECOVERY_REPORTING_DOCUMENT> TBL_LOAN_RECOVERY_REPORTING_DOCUMENT { get; set; }
         public virtual DbSet<TBL_CUSTOMER_CREDIT_BUREAU> TBL_CUSTOMER_CREDIT_BUREAU { get; set; }
         public virtual DbSet<TBL_DOC_COLLATERAL_VISITATION> TBL_DOC_COLLATERAL_VISITATION { get; set; }
         public virtual DbSet<TBL_DOC_COLLATERAL_RELEASE> TBL_DOC_COLLATERAL_RELEASE { get; set; }
