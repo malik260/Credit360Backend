@@ -134,6 +134,43 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.BadRequest);
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("guarantee-release")]
+        public HttpResponseMessage AddGuaranteeRelease([FromBody]IEnumerable<OriginalDocumentReleaseViewModel> model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    foreach (var x in model)
+                    {
+                        x.createdBy = token.GetStaffId;
+                        x.companyId = token.GetCompanyId;
+                    }
+
+                    var response = _repo.AddOriginalDocumentGuaranteeRelease(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "SUCCESS" });
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An Error Occurred, Kindly Contact the System Administrator" });
+                    }
+                }
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest);
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("security-release-go-for-approval")]
@@ -162,6 +199,37 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("guarantee-release-go-for-approval")]
+        public HttpResponseMessage GoForGuaranteeApproval([FromBody] IEnumerable<OriginalDocumentReleaseViewModel> model)
+        {
+            try
+            {
+                foreach (var x in model)
+                {
+                    x.createdBy = token.GetStaffId;
+                    x.companyId = token.GetCompanyId;
+                }
+                WorkflowResponse response = _repo.GoForGuaranteeApproval(model);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response , message = response.responseMessage });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "One or More Document may currently be Undergoing Approval" });
+                }
+
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
         [HttpPost]
         [ClaimsAuthorization]
