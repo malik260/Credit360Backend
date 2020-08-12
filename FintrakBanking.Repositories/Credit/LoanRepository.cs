@@ -15973,6 +15973,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductClassId = model.productClassId;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = null;
+           // workflow.DestinationOperationId = model.operationId;
+           
 
             workflow.StatusId = (int)ApprovalStatusEnum.Closed;
             workflow.Comment = model.comment;
@@ -16006,6 +16008,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.NextLevelId = model.approvalLevelId;
             workflow.IsClassifiedReferBack = true;
             workflow.ToStaffId = backTrail?.TOSTAFFID;
+            workflow.DestinationOperationId = model.operationId;
 
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
