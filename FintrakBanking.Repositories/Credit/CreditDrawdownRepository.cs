@@ -222,6 +222,54 @@ namespace FintrakBanking.Repositories.Credit
                     if (entity?.documentProvided == false) { applicationDet.APPROVEDLINESTATUSID = 2; }
                 }
 
+                if(entity.approvalStatusId != (int)ApprovalStatusEnum.Referred)
+                {
+                    var classifiedTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                     x.OPERATIONID == (int)entity.operationId
+                     && x.RESPONSESTAFFID == null
+                     && x.DESTINATIONOPERATIONID > 0
+                     && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
+                     && x.TARGETID == entity.targetId
+                    );
+
+                    var previousTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                     x.OPERATIONID == (int)entity.operationId
+                     && x.RESPONSESTAFFID == null
+                     && x.DESTINATIONOPERATIONID == null
+                     && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
+                     && x.TARGETID == entity.targetId
+                    );
+
+                    if (classifiedTrail != null && previousTrail ==  null)
+                    {
+                        classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
+                        classifiedTrail.RESPONSESTAFFID = entity.staffId;
+                        classifiedTrail.RESPONSEDATE = DateTime.Now;
+
+
+                        request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                        var operationId = classifiedTrail.OPERATIONID;
+
+                        var approvalModel = new ForwardViewModel
+                        {
+                            createdBy = entity.createdBy,
+                            companyId = entity.companyId,
+                            applicationId = request.LOAN_BOOKING_REQUESTID,
+                            comment = "A request for booking needs your attention",
+                            amount = request.AMOUNT_REQUESTED,
+                        };
+                        application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+
+                        if (operationId > 0) LogApproval(approvalModel, classifiedTrail.DESTINATIONOPERATIONID ?? 0, true, (short)ApprovalStatusEnum.Pending);
+                        context.SaveChanges();
+                        trans.Commit();
+
+                        return workflow.Response;
+                    }
+                }
+                
+
                 workflow.StaffId = entity.createdBy;
                 workflow.CompanyId = entity.companyId;
                 workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
@@ -233,13 +281,6 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Amount = request.AMOUNT_REQUESTED;
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = entity.isFromPc;
-
-                //if (context.TBL_PRODUCT.Where(x=>x.PRODUCTID == request.PRODUCTID).FirstOrDefault()?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
-                //{
-                //    workflow.TerminateOnApproval = true;
-                //    isContingent = true;
-                //}
-
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
@@ -256,6 +297,12 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
                 workflow.LogActivity();
+
+                //if (context.TBL_PRODUCT.Where(x=>x.PRODUCTID == request.PRODUCTID).FirstOrDefault()?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                //{
+                //    workflow.TerminateOnApproval = true;
+                //    isContingent = true;
+                //}
 
                 context.SaveChanges();
 
