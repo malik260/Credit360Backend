@@ -326,7 +326,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                //model.branchId = (short)token.GetBranchId;
+                model.branchId = (short)token.GetBranchId;
                 model.userIPAddress = Request.RequestUri.Host;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.CASA;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -114,10 +115,15 @@ namespace FintrakBanking.Repositories.Customer
         private void CheckIfAccountNumberExist(string accounNumber)
         {
             var account = (from a in mainContext.TBL_CASA
+                           join b in mainContext.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                 where a.PRODUCTACCOUNTNUMBER == accounNumber && a.DELETED == false
-                                select a).FirstOrDefault();
+                                select new CasaViewModel
+                                {
+                                    productAccountNumber = a.PRODUCTACCOUNTNUMBER,
+                                    customerCode = b.CUSTOMERCODE
+                                }).FirstOrDefault();
 
-            if (account != null) { throw new SecureException("Account Number Already Exist On Credit360!"); }
+            if (account != null) { throw new SecureException($"Account Number is already attached to {account.customerCode} on Credit360!"); }
         }
 
         //public async Task<CustomerIntegrationViewModels> GetIntegratedCustomerInformation(string searchTerm)

@@ -2428,8 +2428,18 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.OperationId = entity.operationId; // (int)OperationsEnum.DefferedChecklistApproval;
                     if (appl != null) workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
-                    workflow.LogActivity();
+                    var deferredRecord = new TBL_LOAN_CONDITION_DEFERRAL();
 
+                    if (!entity.isLms) {
+                        deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                                              where s.LOANCONDITIONID == entity.targetId && s.ISLMS == false
+                                              select s).FirstOrDefault();
+
+                        if (deferredRecord != null)
+                            workflow.LevelBusinessRule = new LevelBusinessRule { excludeLevel = deferredRecord.EXCLUDELEGAL.Value };
+                    }
+
+                    workflow.LogActivity();
 
                     if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                     {
@@ -2438,7 +2448,7 @@ namespace FintrakBanking.Repositories.Credit
                             var checklistRecord = (from s in context.TBL_LMSR_CONDITION_PRECEDENT
                                                    where s.LOANCONDITIONID == entity.targetId
                                                    select s).FirstOrDefault();
-                            var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                            deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
                                                   where s.LOANCONDITIONID == entity.targetId && s.ISLMS == true
                                                   select s).FirstOrDefault();
                             if (checklistRecord != null || deferredRecord != null)
@@ -2453,9 +2463,11 @@ namespace FintrakBanking.Repositories.Credit
                             var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
                                                    where s.LOANCONDITIONID == entity.targetId
                                                    select s).FirstOrDefault();
-                            var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
-                                                  where s.LOANCONDITIONID == entity.targetId && s.ISLMS == false
-                                                  select s).FirstOrDefault();
+                            //var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                            //                      where s.LOANCONDITIONID == entity.targetId && s.ISLMS == false
+                            //                      select s).FirstOrDefault();
+
+
                             if (checklistRecord != null || deferredRecord != null)
                             {
                                 deferredRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
