@@ -399,19 +399,62 @@ namespace FintrakBanking.APICore.Controllers
             
         }
 
-        [HttpPut]
+        [HttpPost]
         [ClaimsAuthorization]
-        [Route("modify-lms-facility/{loanApplicationDetailId}")]
-        public HttpResponseMessage ModifyLMSFacility([FromBody] FacilityModificationViewModel model, int loanApplicationDetailId)
+        [Route("lms-facility-modification/approval")]
+        public HttpResponseMessage ApproveFacilityModification([FromBody] ForwardViewModel model)
         {
-            var response = loanRepo.ModifyLMSFacility(model, loanApplicationDetailId);
-            if (response)
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Facility Has Been Modified Successfully" });
+                WorkflowResponse response = loanRepo.ApproveLMSFacilityModification(model);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = response.responseMessage });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error approving this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-facility-modification/approval")]
+        public HttpResponseMessage GetFacilityModificationsForApproval()
+        {
+            try
+            {
+                IEnumerable<FacilityModificationViewModel> response = loanRepo.GetLMSFacilityModificationsForApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("modify-lms-facility")]
+        public HttpResponseMessage ModifyLMSFacility([FromBody] FacilityModificationViewModel model)
+        {
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = loanRepo.AddFacilityModification(model);
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = response.responseMessage });
             }
             else
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Facility Modification was not Successful" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error saving record" });
             }
         }
 
@@ -1328,7 +1371,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation has been approved successfully." });
+                    new { success = true, message = "Operation has been approved successfully. Sent to Credit Documentation for filling" });
                 }
                 else
                 {
@@ -1346,7 +1389,7 @@ namespace FintrakBanking.APICore.Controllers
             else if (data == 3)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                new { success = true, message = "Operation successful, Sent to Credit Documentation for filling" });
             }
             else if (data == 4)
             {

@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,7 @@ namespace FintrakBanking.Interfaces.CASA
         string PlaceLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
         bool ReleaseLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null, bool require2FA = true);
 
+        int AddConsumerProtection(ConsumerProtectionViewModel model);
+        IEnumerable<ConsumerProtectionViewModel> GetAllConsumerProtections(int companyId);
     }
 }
