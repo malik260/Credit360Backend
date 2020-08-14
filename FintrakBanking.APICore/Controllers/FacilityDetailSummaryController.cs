@@ -670,7 +670,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("loan-application/availment-completed-search/{searchValue}")]
+        [Route("loan-application/availment-completed/{searchValue}")]
         public HttpResponseMessage GetLoanForTrancheFacilityUtilization(string searchValue)
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
