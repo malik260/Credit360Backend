@@ -28,6 +28,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         int GroupStatusId { get; }
         int NewState { get; }
         int? NextLevelId { get; set; }
+        bool? IgnorePostApprovalReviewer { get; set; }
         int? FinalLevel { set; }
         bool EmailNotification { set; }
         short? Vote { set; }
