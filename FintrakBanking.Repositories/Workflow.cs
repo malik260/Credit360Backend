@@ -1332,8 +1332,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.level.ISPOSTAPPROVALREVIEWER == true) return true;
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
             if (level == null ) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
-            var next = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
-            if (next.ISPOSTAPPROVALREVIEWER == true) return true;
+            if (this.nextLevelId != null)
+            {
+                var next = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
+                if (next.ISPOSTAPPROVALREVIEWER == true) return true;
+            }
             if (this.disputed == true && level.CANRESOLVEDISPUTE != true) { return false; }
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true
