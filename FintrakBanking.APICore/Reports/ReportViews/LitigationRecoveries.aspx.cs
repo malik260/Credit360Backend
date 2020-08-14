@@ -32,7 +32,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
 
                     RemedialAssetsReport remedialAssets = new RemedialAssetsReport();
-                    var data = remedialAssets.LitigationRecoveries(endDate, startDate);
+                    var data = remedialAssets.LitigationRecoveries(startDate, endDate);
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));

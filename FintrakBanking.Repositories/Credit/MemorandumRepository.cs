@@ -814,7 +814,7 @@ namespace FintrakBanking.Repositories.Credit
             if (loanApplicationDetail == null)
             {
                 this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
-                this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
+                this.loanApplication = loanApplicationDetail?.TBL_LOAN_APPLICATION;
             }
             var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;
 

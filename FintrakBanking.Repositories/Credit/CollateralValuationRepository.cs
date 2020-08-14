@@ -570,9 +570,9 @@ namespace FintrakBanking.Repositories.Credit
                             var staffCreated = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
                             var rem = _context.TBL_STAFF.Find(staffCreated.SUPERVISOR_STAFFID);
                             var staffFullName = staffCreated.FIRSTNAME +" "+ staffCreated.MIDDLENAME + " " + staffCreated.LASTNAME;
-                            var messageBody = "Dear " + staffFullName + "</br> There " + collateral.VALUATIONNAME + " valuation carried out by "+ valuer.ToUpper() + " with fee note " + valuerReport.VALUATIONFEE +" and valuation detail: "+ valuerReport.VALUERCOMMENT;
+                            var messageBody = "Dear " + staffFullName + "</br> There " + collateral?.VALUATIONNAME + " valuation carried out by "+ valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE +" and valuation detail: "+ valuerReport?.VALUERCOMMENT;
                             var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
-                            var emailList = staffCreated.EMAIL + ";" + rem.EMAIL;
+                            var emailList = staffCreated?.EMAIL + ";" + rem?.EMAIL;
                             alert.receiverEmailList.Add(emailList);
                             LogEmailAlert(messageBody, alertSubject, alert.receiverEmailList, "98007", 98007, "CollateralValuationNotification");
                         }
@@ -596,7 +596,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         var staffCreated = _context.TBL_STAFF.Find(valuerReport.CREATEDBY);
                         var staffFullName = staffCreated.FIRSTNAME + " " + staffCreated.MIDDLENAME + " " + staffCreated.LASTNAME;
-                        var messageBody = "Dear " + staffFullName + "</br> There " + collateral.VALUATIONNAME + " valuation carried out by " + valuer.ToUpper() + " with fee note " + valuerReport.VALUATIONFEE + " and valuation detail: " + valuerReport.VALUERCOMMENT;
+                        var messageBody = "Dear " + staffFullName + "</br> There " + collateral?.VALUATIONNAME + " valuation carried out by " + valuer?.ToUpper() + " with fee note " + valuerReport?.VALUATIONFEE + " and valuation detail: " + valuerReport?.VALUERCOMMENT;
                         var alertSubject = "COLLATERAL VALUATION NOTIFICATION";
                         var emailList = GetBusinessUsersEmailsToGroupHead(staffCreated.MISCODE);
                         alert.receiverEmailList.Add(emailList);

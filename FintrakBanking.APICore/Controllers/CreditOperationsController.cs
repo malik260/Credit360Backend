@@ -1156,6 +1156,21 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-operation/awaiting-documentation-los-approval")]
+        public HttpResponseMessage GetLoanOperationDocumentationLosApproval()
+        {
+            var data = repo.GetLoanOperationDocumentationLosApproval(token.GetStaffId, token.GetCompanyId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-operation/recovery-write-off-analysis")]
         public HttpResponseMessage GetAllLoansOperationWriteOffAnalysis()
         {
@@ -2013,6 +2028,31 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = data.responseMessage });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("documentation-filling-approval")]
+        public HttpResponseMessage GoForDocumentationFillingApproval([FromBody]ApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            bool data = repo.GoForDocumentationFillingApproval(entity);
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Approved" });
             }
             else
             {
