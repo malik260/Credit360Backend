@@ -1372,6 +1372,12 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.IsFlowTest = model.isFlowTest;
                 workflow.IsFromPc = model.isFromPc;
                 workflow.Tenor = lmsrDetail.Max(d => d.APPROVEDTENOR);
+                workflow.IgnorePostApprovalReviewer = (appl.OPERATIONID != (int)OperationsEnum.OverdraftSubAllocationApproval &&
+                                                        appl.OPERATIONID != (int)OperationsEnum.LoanRecapitilizationApproval &&
+                                                        appl.OPERATIONID != (int)OperationsEnum.OverdraftTopUpApproval &&
+                                                        appl.OPERATIONID != (int)OperationsEnum.OverdraftTenorExtensionApproval &&
+                                                        !(appl.OPERATIONID == (int)OperationsEnum.TenorExtensionApproval &&
+                                                        appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.ContingentLiability));
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
                     Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
@@ -1385,12 +1391,12 @@ namespace FintrakBanking.Repositories.Credit
                     //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
                     DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
                     tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
-                    excludeLevel =  (appl.OPERATIONID != (int)OperationsEnum.OverdraftSubAllocationApproval &&
-                                    appl.OPERATIONID != (int)OperationsEnum.LoanRecapitilizationApproval &&
-                                    appl.OPERATIONID != (int)OperationsEnum.OverdraftTopUpApproval &&
-                                    appl.OPERATIONID != (int)OperationsEnum.OverdraftTenorExtensionApproval &&
-                                    !(appl.OPERATIONID == (int)OperationsEnum.TenorExtensionApproval &&
-                                    appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.ContingentLiability))
+                    //excludeLevel =  (appl.OPERATIONID != (int)OperationsEnum.OverdraftSubAllocationApproval &&
+                    //                appl.OPERATIONID != (int)OperationsEnum.LoanRecapitilizationApproval &&
+                    //                appl.OPERATIONID != (int)OperationsEnum.OverdraftTopUpApproval &&
+                    //                appl.OPERATIONID != (int)OperationsEnum.OverdraftTenorExtensionApproval &&
+                    //                !(appl.OPERATIONID == (int)OperationsEnum.TenorExtensionApproval &&
+                    //                appl.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault()?.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.ContingentLiability))
                 };
 
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
@@ -1432,11 +1438,12 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
                 context.SaveChanges();
+                var isClosed = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.applicationId && x.OPERATIONID == model.operationId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Closed).Any();
 
                 int lastStatusId = workflow.StatusId;
                 if (currentOperationType == (short)OperationsEnum.LoanReviewApprovalAvailment) appl.APPROVALSTATUSID = (short)lastStatusId;
 
-                if (workflow.NewState == (int)ApprovalState.Ended && model.isFlowTest == false)
+                if (workflow.NewState == (int)ApprovalState.Ended && model.isFlowTest == false && (isClosed == true || workflow.IgnorePostApprovalReviewer == true))
                 {
                     if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                     {
