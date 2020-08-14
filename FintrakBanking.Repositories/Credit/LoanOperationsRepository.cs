@@ -29580,7 +29580,7 @@ namespace FintrakBanking.Repositories.Credit
                             && (ln.LOANSTATUSID != (int)LoanStatusEnum.Inactive )
                             && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
-                            
+
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
@@ -29718,7 +29718,7 @@ namespace FintrakBanking.Repositories.Credit
                                     casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
 
                                 }).ToList(),
-                            }).ToList();
+                            }).ToList().Take(50);
 
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
@@ -29851,7 +29851,7 @@ namespace FintrakBanking.Repositories.Credit
                                              casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
 
                                          }).ToList(),
-                                     }).ToList();
+                                     }).ToList().Take(50);
 
 
             var dataContingentLoan = (from ln in context.TBL_LOAN_CONTINGENT
@@ -29988,7 +29988,7 @@ namespace FintrakBanking.Repositories.Credit
                                               casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
 
                                           }).ToList(),
-                                      }).ToList();
+                                      }).ToList().Take(50);
 
             var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
@@ -29996,6 +29996,7 @@ namespace FintrakBanking.Repositories.Credit
             var unionAll = termLoanData.Union(revolvingLoanData);
 
             var data = unionAll.Union(contingentLoanData);
+            
 
             return data;
         }
@@ -30046,7 +30047,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing &&  !levelIds.Contains((int)atrail.TOAPPROVALLEVELID) 
                                    || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
 
-                                   orderby a.DATEAPPROVED descending
+                                 orderby a.DATEAPPROVED descending
                                    select new CamProcessedLoanViewModel()
                                    {
                                        bookingAmountRequested = s.AMOUNT_REQUESTED,
@@ -30208,8 +30209,8 @@ namespace FintrakBanking.Repositories.Credit
                                           && (a.LOANSTATUSID != (int)LoanStatusEnum.Inactive )
                                           && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
                                            || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
- 
-                                         orderby a.DATEAPPROVED descending
+
+                                       orderby a.DATEAPPROVED descending
                                          select new CamProcessedLoanViewModel()
                                          {
                                              bookingAmountRequested = s.AMOUNT_REQUESTED,
