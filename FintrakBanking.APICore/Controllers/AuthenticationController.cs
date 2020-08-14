@@ -176,6 +176,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("token")]
         public HttpResponseMessage GetTokenAsync([FromBody] TokenVM user)
         {
+          //  return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = user , password =  user.password, username = user.username, validTo = user.validTo, encodedToken = user.encodedToken});
+
             //try
             //{
             byte[] pass = Convert.FromBase64String(user.password);
@@ -206,9 +208,9 @@ namespace FintrakBanking.APICore.Controllers
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now,
                         TARGETID = -1,
-                        DEVICENAME = CommonHelpers.GetDeviceName(),
-                        OSNAME = CommonHelpers.FriendlyName()
-                        //OSNAME = "test"
+                        OSNAME = "Testing"
+                        //OSNAME = CommonHelpers.FriendlyName()
+                       // OSNAME = "test",
                     };
 
                     _auditTrail.AddAuditTrail(audit1);
@@ -235,9 +237,9 @@ namespace FintrakBanking.APICore.Controllers
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = -1,
-                    DEVICENAME = CommonHelpers.GetDeviceName(),
-                    OSNAME = CommonHelpers.FriendlyName()
-                    //OSNAME = "test"
+                    OSNAME = "",
+                    //OSNAME = CommonHelpers.FriendlyName()
+                    //OSNAME = "test",
                 };
 
                 _auditTrail.AddAuditTrail(audit);

@@ -97,6 +97,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetInActiveContigentLiabilityReport(DateRange dateRange);
         string GetLoggingStatus(DateRange dateRange);
         string GetMiddleOfficeReport(DateRange dateRange);
+        string GetAnalystReport(DateRange dateRange, int companyId, int staffId);
         string GetCollateralValuationReport(DateRange dateRange);
         string GetLoanClassificationReport(DateRange dateRange);
 
