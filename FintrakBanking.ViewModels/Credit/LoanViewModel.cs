@@ -448,6 +448,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? tenorModeId { get; set; }
         public int applicationDetailId { get; set; }
         public string appraisalOperationName { get; set; }
+        public short sectorId { get; set; }
 
 
 

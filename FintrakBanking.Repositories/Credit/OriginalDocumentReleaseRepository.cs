@@ -122,6 +122,86 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public bool AddOriginalDocumentGuaranteeRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
+        {
+
+            bool Update = false;
+
+            foreach (var mod in model)
+            {
+
+                //check if part of the documents for a collateral is not being released...
+                var docCheck = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.ORIGINALDOCUMENTAPPROVALID == mod.originalDocumentApprovalId
+                                                                                && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                                                                     .Any();
+
+                if (docCheck) throw new SecureException("Collateral Documents is currently undergoing Approval");
+
+                //check if the document was added to TBL_ORIGINAL_DOCUMENT_RELEASE but not sent for approval
+                var resultCheck = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == mod.documentUploadId
+                                                                                && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                                                                         .Any();
+
+                if (resultCheck)
+                {
+                    Update = UpdateOriginalDocumentRelease(mod);
+                    if (Update == false) return false;
+                    else continue;
+                }
+
+                //check if the document was referred
+                var resultReferred = (from odr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
+                                      join atrail in _context.TBL_APPROVAL_TRAIL on odr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                                      where atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval
+                                          && atrail.TARGETID == odr.ORIGINALDOCUMENTAPPROVALID
+                                          && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
+                                          && odr.DOCUMENTUPLOADID == mod.documentUploadId
+                                      select odr).FirstOrDefault();
+                if (resultReferred != null)
+                {
+                    Update = UpdateOriginalDocumentRelease(mod);
+                    if (Update) continue;
+                    else return false;
+                }
+
+                //check if the document is not currently undergoing approval
+                var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == mod.documentUploadId
+                                                                            && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                                                                   .Any();
+
+                if (result == true) throw new SecureException("One of the Selected Documents is currently Undergoing Approval");
+
+                var entity = new TBL_ORIGINAL_DOCUMENT_RELEASE
+                {
+                    COLLATERALCUSTOMERID = _context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(oda => oda.ORIGINALDOCUMENTAPPROVALID == mod.originalDocumentApprovalId).Select(oda => oda.COLLATERALCUSTOMERID).FirstOrDefault(),
+                    ORIGINALDOCUMENTRELEASEID = mod.originalDocumentReleaseId,
+                    ORIGINALDOCUMENTAPPROVALID = mod.originalDocumentApprovalId,
+                    DOCUMENTUPLOADID = mod.documentUploadId,
+                    DOCSUBMISSIONOPERATIONID = (int)OperationsEnum.OriginalDocumentApproval,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                    COMPANYID = mod.companyId,
+                    CREATEDBY = mod.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                };
+
+                var inUseCollateral = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.COLLATERALCUSTOMERID == entity.COLLATERALCUSTOMERID && x.DELETED == false).ToList();
+
+                if (inUseCollateral.Any()) throw new SecureException("Cannot release document for a Collateral with existing Exposure(s)");
+
+                _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Add(entity);
+
+            }
+            try
+            {
+
+                return _context.SaveChanges() > 0 || Update == true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public bool UpdateOriginalDocumentRelease(OriginalDocumentReleaseViewModel model)
         {
 
@@ -145,6 +225,8 @@ namespace FintrakBanking.Repositories.Credit
             public IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId)
         {
             var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();
+            ids.AddRange(_general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GuaranteeReleaseApproval).ToList());
+
             var staffs = _general.GetStaffRlieved(staffId);
 
             var record = from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
@@ -375,6 +457,68 @@ namespace FintrakBanking.Repositories.Credit
             return _context.SaveChanges() != 0;
         }
 
+        public WorkflowResponse GoForGuaranteeApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)
+        {
+            var record = entity.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.FirstOrDefault()).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Pending);
+            var recordReferred = entity.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.FirstOrDefault()).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Referred);
+
+            if (recordReferred != null)
+            {
+
+                foreach (var x in recordReferred)
+                {
+                    using (var transaction = _context.Database.BeginTransaction())
+                    {
+                        _workflow.StaffId = x.createdBy;
+                        _workflow.CompanyId = x.companyId;
+                        _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
+                        _workflow.TargetId = x.originalDocumentApprovalId;
+                        _workflow.Comment = "Update has been applied, Request for Guarantee Release Approval";
+                        _workflow.OperationId = (int)OperationsEnum.GuaranteeReleaseApproval;
+                        _workflow.DeferredExecution = true;
+                        _workflow.LogActivity();
+                        try
+                        {
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw ex;
+                        }
+                    }
+                }
+            }
+
+            if (record != null)
+            {
+                foreach (var x in record)
+                {
+                    var data = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.ORIGINALDOCUMENTAPPROVALID == x.originalDocumentApprovalId
+                                                                                && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
+                    _workflow.StaffId = x.createdBy;
+                    _workflow.CompanyId = x.companyId;
+                    _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
+                    _workflow.TargetId = x.originalDocumentApprovalId;
+                    _workflow.Comment = "Request for security release approval";
+                    _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
+                    _workflow.DeferredExecution = true;
+                    _workflow.ExternalInitialization = true;
+                    _workflow.LogActivity();
+
+                    if (_context.SaveChanges() > 0)
+                    {
+                        foreach (var model in data)
+                        {
+                            model.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
+                        }
+                    }
+                }
+            }
+            _context.SaveChanges();
+            return _workflow.Response;
+        }
+
         public WorkflowResponse SubmitApproval(OriginalDocumentReleaseViewModel model)
         {
             bool responce = false;
@@ -386,7 +530,7 @@ namespace FintrakBanking.Repositories.Credit
                _workflow.StatusId = model.approvalStatusId == (short)ApprovalStatusEnum.Approved ? (short)ApprovalStatusEnum.Processing : model.approvalStatusId;
                _workflow.TargetId = model.originalDocumentApprovalId;
                _workflow.Comment = model.comment;
-               _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
+                _workflow.OperationId = (int)model.docSubmissionOperationId; //(int)OperationsEnum.SecurityRelease;
                _workflow.DeferredExecution = true;
                _workflow.LogActivity();
 

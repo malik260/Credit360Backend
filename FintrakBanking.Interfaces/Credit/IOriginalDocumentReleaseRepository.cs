@@ -11,6 +11,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IOriginalDocumentReleaseRepository
     {
+        bool AddOriginalDocumentGuaranteeRelease(IEnumerable<OriginalDocumentReleaseViewModel> model);
+        WorkflowResponse GoForGuaranteeApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity);
         //OriginalDocumentReleaseViewModel AddOriginalDocumentRelease(OriginalDocumentReleaseViewModel model);
         //OriginalDocumentReleaseViewModel GetOriginalDocmentReleaseById(int id);
         bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model);

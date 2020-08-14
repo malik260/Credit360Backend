@@ -222,6 +222,54 @@ namespace FintrakBanking.Repositories.Credit
                     if (entity?.documentProvided == false) { applicationDet.APPROVEDLINESTATUSID = 2; }
                 }
 
+                if(entity.approvalStatusId != (int)ApprovalStatusEnum.Referred)
+                {
+                    var classifiedTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                     x.OPERATIONID == (int)entity.operationId
+                     && x.RESPONSESTAFFID == null
+                     && x.DESTINATIONOPERATIONID > 0
+                     && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
+                     && x.TARGETID == entity.targetId
+                    );
+
+                    var previousTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                     x.OPERATIONID == (int)entity.operationId
+                     && x.RESPONSESTAFFID == null
+                     && x.DESTINATIONOPERATIONID == null
+                     && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
+                     && x.TARGETID == entity.targetId
+                    );
+
+                    if (classifiedTrail != null && previousTrail ==  null)
+                    {
+                        classifiedTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        classifiedTrail.APPROVALSTATEID = (short)ApprovalState.Ended;
+                        classifiedTrail.RESPONSESTAFFID = entity.staffId;
+                        classifiedTrail.RESPONSEDATE = DateTime.Now;
+
+
+                        request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                        var operationId = classifiedTrail.OPERATIONID;
+
+                        var approvalModel = new ForwardViewModel
+                        {
+                            createdBy = entity.createdBy,
+                            companyId = entity.companyId,
+                            applicationId = request.LOAN_BOOKING_REQUESTID,
+                            comment = "A request for booking needs your attention",
+                            amount = request.AMOUNT_REQUESTED,
+                        };
+                        application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+
+                        if (operationId > 0) LogApproval(approvalModel, classifiedTrail.DESTINATIONOPERATIONID ?? 0, true, (short)ApprovalStatusEnum.Pending);
+                        context.SaveChanges();
+                        trans.Commit();
+
+                        return workflow.Response;
+                    }
+                }
+                
+
                 workflow.StaffId = entity.createdBy;
                 workflow.CompanyId = entity.companyId;
                 workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
@@ -234,11 +282,9 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = entity.isFromPc;
 
-
-
                 if (context.TBL_PRODUCT.Where(x => x.PRODUCTID == request.PRODUCTID).FirstOrDefault()?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                 {
-                    workflow.IgnorePostApprovalReviewwer = true;
+                    workflow.IgnorePostApprovalReviewer = true;
                     isContingent = true;
                 }
 
@@ -259,10 +305,14 @@ namespace FintrakBanking.Repositories.Credit
 
                 workflow.LogActivity();
 
+                //if (context.TBL_PRODUCT.Where(x=>x.PRODUCTID == request.PRODUCTID).FirstOrDefault()?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                //{
+                //    workflow.TerminateOnApproval = true;
+                //    isContingent = true;
+                //}
+
                 context.SaveChanges();
-
-                var isFinishingEntry = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == 39 && x.TARGETID == 9823 && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing).Any();
-
+                var isClosed = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == entity.targetId && x.OPERATIONID == entity.operationId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Closed).Any();
                 if (entity.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
@@ -271,7 +321,7 @@ namespace FintrakBanking.Repositories.Credit
                     return workflow.Response;
                     //return 3;
                 }
-                else if (workflow.NewState == (int)ApprovalState.Ended && (isFinishingEntry || isContingent) )
+                else if (workflow.NewState == (int)ApprovalState.Ended && (isClosed == true || isContingent == true))
                     //&& request.CRMSVALIDATED == true) 
                         //|| (workflow.NewState == (int)ApprovalState.Ended && isContingent == true))
                 {
