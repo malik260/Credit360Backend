@@ -1601,7 +1601,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpPost]
         [ClaimsAuthorization]
         [Route("user-group-change-report")]
@@ -1793,6 +1792,30 @@ namespace FintrakBanking.APICore.Controllers
                 param.companyId = token.GetCompanyId;
 
                 var data = repo.GetMiddleOfficeReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("analyst-report")]
+        public HttpResponseMessage GetAnalystReport(DateRange dateRange)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetAnalystReport(dateRange, token.GetCompanyId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

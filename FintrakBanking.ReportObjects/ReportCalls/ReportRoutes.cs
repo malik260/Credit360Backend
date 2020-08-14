@@ -907,6 +907,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string GetAnalystReport(DateRange dateRange, int companyId, int staffId)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/AnalystReport.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&staffId=" + staffId + "&auditTypeId=" + dateRange.auditTypeId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+
 
         public string GetCollateralValuationReport(DateRange dateRange)
         {

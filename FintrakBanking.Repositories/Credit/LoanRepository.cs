@@ -9138,8 +9138,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && atrail.RESPONSESTAFFID == null && (s.CRMSVALIDATED == false || s.CRMSVALIDATED == null))
                                    //************************
 
-                                   || ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
-                                       //|| (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing))
+                                   || ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing)
                                        && s.ISUSED == false
                                        && s.DELETED == false
                                        && ((levelIds.Contains((int)atrail.TOAPPROVALLEVELID)))
