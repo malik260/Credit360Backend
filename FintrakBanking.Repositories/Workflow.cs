@@ -274,12 +274,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.statusId = (int)ApprovalStatusEnum.Closed;
                 }
             }
-            //if(this.fromLevelId > 0)
-            //{
-            //    var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
-            //    var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
-            //    if (isReviewer) { this.statusId = (int)ApprovalStatusEnum.Closed; }
-            //}
+            //=============
+            if (this.fromLevelId > 0)
+            {
+                var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+                var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
+                if (isReviewer) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+            }
 
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL

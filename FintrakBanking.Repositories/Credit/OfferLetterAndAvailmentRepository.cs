@@ -231,6 +231,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 });
 
+            var testList = data.ToList();
             data = data.Where(x =>
                 x.applicationStatusId == (int)LoanApplicationStatusEnum.OfferLetterGenerationCompleted
                 || x.applicationStatusId == (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
