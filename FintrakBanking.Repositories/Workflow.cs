@@ -41,6 +41,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int statusId = (int)ApprovalStatusEnum.Processing;
         private int groupStatusId = (int)ApprovalStatusEnum.Processing;
         private int? nextLevelId = null; // for refer backs
+        private bool? ignorePostApprovalReviewwer = false;
         private int? finalLevel = null; // preset force to end
         private bool emailNotification = false;
         private bool smsNotification = false;
@@ -108,6 +109,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int GroupStatusId { get { return groupStatusId; } }
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
+        public bool? IgnorePostApprovalReviewwer { get { return ignorePostApprovalReviewwer; } set { ignorePostApprovalReviewwer = value; } }
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
         public TBL_APPROVAL_TRAIL ApprovalTrail { get { return approvalTrail; } set { approvalTrail = value; } }
@@ -304,19 +306,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                 FLOW_LOG = this.flow_log
             });
 
-            //if(this.nextLevelId == null && this.approvalTrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
-            //{
-            //    var currentLevel =  context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
-            //    var grouplevels = context.TBL_APPROVAL_LEVEL.Where(x => x.GROUPID == currentLevel.GROUPID);
-            //    var reviewers = grouplevels.Where(x => x.ISPOSTAPPROVALREVIEWER == true);
+            if (this.ignorePostApprovalReviewwer == false && this.approvalTrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
+            {
+                var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
+                var grouplevels = context.TBL_APPROVAL_LEVEL.Where(x => x.GROUPID == currentLevel.GROUPID);
+                var reviewers = grouplevels.Where(x => x.ISPOSTAPPROVALREVIEWER == true);
 
 
-            //    if (reviewers.Any() && currentlevel.ISPOSTAPPROVALREVIEWER == false && lastRequest.APPROVALSTATUSID != 10 && terminateOnApproval == false)
-            //    {
-            //        this.nextLevelId = reviewers.FirstOrDefault().APPROVALLEVELID;
-            //        StartPostApprovalLevelsReview(reviewers.FirstOrDefault().APPROVALLEVELID);
-            //    }
-            //}
+                if (reviewers.Any() && currentlevel.ISPOSTAPPROVALREVIEWER == false && lastRequest.APPROVALSTATUSID != 10 && terminateOnApproval == false)
+                {
+                    this.nextLevelId = reviewers.FirstOrDefault().APPROVALLEVELID;
+                    StartPostApprovalLevelsReview(reviewers.FirstOrDefault().APPROVALLEVELID);
+                }
+            }
 
 
 

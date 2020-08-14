@@ -205,7 +205,7 @@ namespace FintrakBanking.Repositories.Credit
                 var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.targetId);
                 var applicationDet = context.TBL_LOAN_APPLICATION_DETAIL.Find(request.LOANAPPLICATIONDETAILID);
                 var application = context.TBL_LOAN_APPLICATION.Find(applicationDet.LOANAPPLICATIONID);
-                //bool isContingent = false;
+                bool isContingent = false;
 
                 // checking of company limit at availment
                 var exposure = GetCurrentCompanyExposure();
@@ -234,11 +234,13 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.BusinessUnitId = applicationDet.TBL_CUSTOMER?.BUSINESSUNTID;
                 workflow.IsFromPc = entity.isFromPc;
 
-                //if (context.TBL_PRODUCT.Where(x=>x.PRODUCTID == request.PRODUCTID).FirstOrDefault()?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
-                //{
-                //    workflow.TerminateOnApproval = true;
-                //    isContingent = true;
-                //}
+
+
+                if (context.TBL_PRODUCT.Where(x => x.PRODUCTID == request.PRODUCTID).FirstOrDefault()?.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    workflow.IgnorePostApprovalReviewwer = true;
+                    isContingent = true;
+                }
 
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
@@ -259,6 +261,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 context.SaveChanges();
 
+                var isFinishingEntry = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == 39 && x.TARGETID == 9823 && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing).Any();
+
                 if (entity.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
@@ -267,7 +271,7 @@ namespace FintrakBanking.Repositories.Credit
                     return workflow.Response;
                     //return 3;
                 }
-                else if (workflow.NewState == (int)ApprovalState.Ended)
+                else if (workflow.NewState == (int)ApprovalState.Ended && (isFinishingEntry || isContingent) )
                     //&& request.CRMSVALIDATED == true) 
                         //|| (workflow.NewState == (int)ApprovalState.Ended && isContingent == true))
                 {

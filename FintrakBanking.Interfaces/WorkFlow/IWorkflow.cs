@@ -48,6 +48,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool? TerminateOnApproval { set; }
         string Flow_log { set; }
         bool SkipLimitsCheck { set; }
+        bool? IgnorePostApprovalReviewwer { set; }
 
         AlertPlaceholders Placeholders { set; }
         WorkflowResponse Response { get; set; }
