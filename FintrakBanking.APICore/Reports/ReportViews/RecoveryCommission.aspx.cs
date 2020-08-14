@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     var incomingDateHash = hash.HashString(startDateString).Replace("-", "");
 
                     RemedialAssetsReport remedialAssets = new RemedialAssetsReport();
-                    var data = remedialAssets.RecoveryCommission(endDate, startDate);
+                    var data = remedialAssets.RecoveryCommission(startDate, endDate);
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));

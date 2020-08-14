@@ -3182,6 +3182,32 @@ namespace FintrakBanking.ReportObjects
 
             return data;
         }
+
+        public IList<AnalystReportViewModel> GetAnalystReport(DateTime startDate, DateTime endDate, short? branchId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var condition = context.TBL_LOAN_CONDITION_PRECEDENT.ToList();
+
+                var data = from a in context.TBL_LOAN_APPLICATION
+                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                           join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
+                           join d in context.TBL_LOAN_CONDITION_PRECEDENT.Select(p => new { p.CREATEDBY, p.LOANAPPLICATIONDETAILID }).Distinct() on b.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                           join e in context.TBL_BRANCH on a.BRANCHID equals e.BRANCHID
+                           select new AnalystReportViewModel()
+                           {
+                               customer_name = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                               applicationreferencenumber = a.APPLICATIONREFERENCENUMBER,
+                               proposedamount = b.PROPOSEDAMOUNT,
+                               proposedinterestrate = b.PROPOSEDINTERESTRATE,
+                               loanpurpose = b.LOANPURPOSE,
+                               analystname = context.TBL_STAFF.Where(z => z.STAFFID == d.CREATEDBY).Select(c => new { FULLNAME = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME }).FirstOrDefault().FULLNAME, //+ context.TBL_STAFF.Where(z => z.STAFFID == d.CREATEDBY).FirstOrDefault().MIDDLENAME + " " + context.TBL_STAFF.Where(z => z.STAFFID == d.CREATEDBY).FirstOrDefault().MIDDLENAME,
+                               branch = e.BRANCHCODE + " ~ " + e.BRANCHNAME
+                           };
+                return data.ToList();
+            }
+        }
+
         public List<RuniningLoanViewModel> RunningLoanReport(DateTime startDate, DateTime endDate, int companyId, short? branchId)
         {
             //List<SubHead> subList = new List<SubHead>();
