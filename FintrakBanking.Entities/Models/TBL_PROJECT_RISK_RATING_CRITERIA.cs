@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int PROJECTRISKRATINGCRITERIAID { get; set; }
         public string CRITERIA { get; set; }
-        public int CRITERIAVALUE { get; set; }
+        public decimal CRITERIAVALUE { get; set; }
         public int PROJECTRISKRATINGCATEGORYID { get; set; }
     }
 }

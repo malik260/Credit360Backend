@@ -103,6 +103,7 @@
     <Compile Include="Credit\ChecklistSearchViewModel.cs" />
     <Compile Include="Credit\CollateralInsuranceRequestViewModel.cs" />
     <Compile Include="Credit\CollateralSwapViewModel.cs" />
+    <Compile Include="Credit\ConsumerProtectionViewModel.cs" />
     <Compile Include="Credit\DailyAccrualDetailViewModel.cs" />
     <Compile Include="Credit\EODErrorLogDetailsViewModel.cs" />
     <Compile Include="Credit\Form3800BReportViewModel.cs" />

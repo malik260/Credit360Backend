@@ -19,6 +19,12 @@ namespace FintrakBanking.Entities.Models
 
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }  
+        public virtual DbSet<TBL_CONTRACTOR_CRITERIA_OPTION> TBL_CONTRACTOR_CRITERIA_OPTION { get; set; }
+        public virtual DbSet<TBL_LMS_FACILITY_MODIFICATION> TBL_LMS_FACILITY_MODIFICATION { get; set; }
+        public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_APPROVAL> TBL_LOAN_RECOVERY_COMMISSION_APPROVAL { get; set; }
+        public virtual DbSet<TBL_LOAN_RECOVERY_COMMISSION_BATCH> TBL_LOAN_RECOVERY_COMMISSION_BATCH { get; set; }
+        public virtual DbSet<TBL_LOAN_RECOVERY_REPORTING_APPROVAL> TBL_LOAN_RECOVERY_REPORTING_APPROVAL { get; set; }
+        public virtual DbSet<TBL_LOAN_RECOVERY_REPORTING_BATCH> TBL_LOAN_RECOVERY_REPORTING_BATCH { get; set; }
         public virtual DbSet<TBL_FACILITY_MOD_DETL_FEE> TBL_FACILITY_MOD_DETL_FEE { get; set; }
         public virtual DbSet<TBL_FACILITY_MODIFICATION> TBL_FACILITY_MODIFICATION { get; set; }
         public virtual DbSet<TBL_PROJECT_RISK_RATING_CRITERIA> TBL_PROJECT_RISK_RATING_CRITERIA { get; set; }
@@ -108,6 +114,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CALL_MEMO> TBL_CALL_MEMO { get; set; }
         public virtual DbSet<TBL_CALL_MEMO_LIMIT> TBL_CALL_MEMO_LIMIT { get; set; }
         public virtual DbSet<TBL_CALL_MEMO_TYPE> TBL_CALL_MEMO_TYPE { get; set; }
+        public virtual DbSet<TBL_CONSUMER_PROTECTION> TBL_CONSUMER_PROTECTION { get; set; }
         public virtual DbSet<TBL_CASA> TBL_CASA { get; set; }
         public virtual DbSet<TBL_CASA_ACCOUNTSTATUS> TBL_CASA_ACCOUNTSTATUS { get; set; }
         public virtual DbSet<TBL_CASA_LIEN> TBL_CASA_LIEN { get; set; }

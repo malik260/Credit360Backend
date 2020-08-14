@@ -746,6 +746,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
         }
 
+        [HttpGet]
+        [Route("all-criteria-list")]
+        public HttpResponseMessage getAllCriteriaList()
+        {
+            var response = repo.getAllCriteriaList();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
         [HttpPost]
         [Route("add-contractor-criteria")]
         public HttpResponseMessage AddContractorCriteria([FromBody] ContractorCriteriaViewModel entity)
@@ -758,6 +772,28 @@ namespace FintrakBanking.APICore.Controllers
             entity.createdBy = token.GetStaffId;
 
             var data = repo.AddContractorCriteria(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPost]
+        [Route("add-contractor-criteria-option")]
+        public HttpResponseMessage AddContractorCriteriaOption([FromBody] ContractorCriteriaOptionViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.AddContractorCriteriaOption(entity);
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -781,6 +817,29 @@ namespace FintrakBanking.APICore.Controllers
             entity.criteriaId = criteriaId;
 
             var data = repo.UpdateContractorCriteria(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, message = "Record Saved Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Saved Record not Successfull" });
+        }
+
+        [HttpPut]
+        [Route("update-contractor-criteria-option/{optionId}")]
+        public HttpResponseMessage UpdateContractorCriteriaOption(int optionId, [FromBody] ContractorCriteriaOptionViewModel entity)
+        {
+
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = (short)token.GetCompanyId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.optionId = optionId;
+
+            var data = repo.UpdateContractorCriteriaOption(entity);
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -886,6 +945,20 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage getAllContractorCriteria()
         {
             var response = repo.getAllContractorCriteria();
+            if (response != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            else
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No records found" });
+        }
+
+        [HttpGet]
+        [Route("contractor-criteria-option")]
+        public HttpResponseMessage getAllContractorCriteriaOption()
+        {
+            var response = repo.getAllContractorCriteriaOption();
             if (response != null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
