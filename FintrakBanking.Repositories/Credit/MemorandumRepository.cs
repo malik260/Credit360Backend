@@ -794,7 +794,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.loanApplication = context.TBL_LOAN_APPLICATION.Find(loanAppId);
             }
             if (loanApplication != null)
-            {
+          {
                 if (loanApplication.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.CustomerGroup)
                 {
                     this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;

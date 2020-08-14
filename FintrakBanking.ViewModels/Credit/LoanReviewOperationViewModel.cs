@@ -422,7 +422,6 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string nameOfRecoveryAgent { get; set; }
         public string address { get; set; }
         public string telephoneNumber { get; set; }
-        public string TelephoneNumber { get; set; }
         public DateTime expectedRecoveryDate { get; set; }
 
         public int periodToRecover { get { return (this.expectedRecoveryDate.Date - this.dateOfAssignment.Date).Days; } }
