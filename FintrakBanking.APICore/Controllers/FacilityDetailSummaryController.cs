@@ -667,8 +667,10 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+
         [HttpGet]
-        [Route("loan-application/availment-completed/{searchValue}")]
+        [Route("loan-application/availment-completed-search/{searchValue}")]
         public HttpResponseMessage GetLoanForTrancheFacilityUtilization(string searchValue)
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
@@ -695,6 +697,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("loan-detail/{applicationdetilId}")]
         public HttpResponseMessage GetLoanFacilityId(int applicationdetilId)

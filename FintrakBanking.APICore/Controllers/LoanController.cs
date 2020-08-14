@@ -496,34 +496,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
         }
 
-        //[HttpGet]
-        //[Route("loan-booking/request/approval")]
-        //public HttpResponseMessage GetInitiatedLoanApplicationAwaitingApproval()
-        //{
-        //    try
-        //    {
-        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //        var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId, false);
-
-        //        if (data.Any() == false)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-        //    }
-        //    catch (ConditionNotMetException ce)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-        //    }
-        //    catch (BadLogicException be)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-        //    }
-        //}
+        
 
         [HttpGet]
         [Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
@@ -1198,35 +1171,6 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region (Loan Application Date) Pre - Loan booking
-
-        //[HttpGet]
-        //[Route("loan-application/availment-completed")]
-        //public HttpResponseMessage GetAvailedLoanApplicationsDueForInitiateBooking()
-        //{
-        //    TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //    try
-        //    {
-        //        var response = repo.GetAvailedLoanApplicationsDueForInitiateBooking(token.GetCompanyId, token.GetStaffId, token.GetBranchId);
-        //        if (!response.Any())
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
-
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        //    }
-        //    catch (ConditionNotMetException ce)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-        //    }
-        //    catch (BadLogicException be)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-        //    }
-        //    catch (SecureException e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
 
         //[HttpGet]
         //[Route("loan-application/adhoc-approval")]

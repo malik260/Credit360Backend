@@ -195,6 +195,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanReviewOperationApprovalViewModel
     {
         public decimal? prepaymentAmount;
+        public decimal? TotalExposure { get; set; }
+
         public DateTime? expCompletionDate { get; set; }
         public int loanAssignId { get; set; }
         public int loanChargeFeeId { get; set; }
@@ -421,6 +423,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string address { get; set; }
         public string telephoneNumber { get; set; }
         public DateTime expectedRecoveryDate { get; set; }
+
         public int periodToRecover { get { return (this.expectedRecoveryDate.Date - this.dateOfAssignment.Date).Days; } }
         public decimal amountRecovered { get; set; }
         public string accountNumber { get; set; }
@@ -439,6 +442,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public decimal? creditToAgent { get; set; }
         public decimal? amountToDebit { get; set; }
         public decimal? amountToCredit { get; set; }
+        public string listOfAccountsAssigned { get; set; }
+        public DateTime? recoveryDate { get; set; }
     }
 
 
@@ -821,6 +826,56 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string region { get; set; }
         public string recoveryMisCode { get; set; }
         public string recoveryRegion { get; set; }
+    }
+
+    public class RemedialAssetReportViewModel
+    {
+        public string casaAccount { get; set; }
+        public int PeriodToRecover { get { return (this.ExpectedRecoveryDate.Date - this.DateOfAssignment.Date).Days; } }
+        public int TenorAgreed { get { return (this.maturityDate.Value - this.effectiveDate).Days; } }
+        public int TenorOfPayment { get { return (this.maturityDate.Value - this.effectiveDate).Days; } }
+        public string AccountNumber { get; set; }
+        public string AccountName { get; set; }
+        public string NameOfRecoveryAgent { get; set; }
+        public string Address { get; set; }
+        public string TelephoneNumber { get; set; }
+        public DateTime ExpectedRecoveryDate { get; set; }
+        public decimal AmountRecovered { get; set; }
+        public DateTime DateOfAssignment { get; set; }
+        public string Email { get; set; }
+        public int accreditedConsultant { get; set; }
+        public string ListOfAccountsAssigned { get; set; }
+        public string RecoveryAgentName { get; set; }
+        public decimal? TotalExposure { get; set; }
+        public decimal? AccountRecovered { get; set; }
+        public DateTime DateOfRecovery { get; set; }
+        public decimal? PercentageCommissionPaid { get; set; }
+        public decimal? CommissionPayable { get; set; }
+        public DateTime? DateOfEngagement { get; set; }
+        public decimal AccountBalance { get; set; }
+        public string CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public decimal FullAndFinalAmountApproved { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime? maturityDate { get; set; }
+        public string ExpectedPaymentPeriod { get; set; }
+        public int AgeOfLastCredit { get; set; }
+        public string Classification { get; set; }
+        public string CollateralDescription { get; set; }
+        public string Branch { get; set; }
+        public string Region { get; set; }
+        public string StatusOfPerction { get; set; }
+        public DateTime DateOfValuation { get; set; }
+        public double OMV { get; set; }
+        public double FSV { get; set; }
+        public string NBV { get; set; }
+        public double AmountSold { get; set; }
+        public double PAndLImpact { get; set; }
+        public string DateSold { get; set; }
+        public string FacilityType { get; set; }
+        public string Provision { get; set; }
+        public double ResidualBalance { get; set; }
+        public double MonthlyExpectedPayment { get; set; }
     }
 
 }

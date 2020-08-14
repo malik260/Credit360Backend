@@ -418,4 +418,16 @@ namespace FintrakBanking.ViewModels.Reports
 
     }
 
+    public class AnalystReportViewModel
+    {
+        public string customer_name { get; set; }
+        public string applicationreferencenumber { get; set; }
+        public decimal proposedamount { get; set; }
+        public double proposedinterestrate { get; set; }
+        public string loanpurpose { get; set; }
+        public string analystname { get; set; }
+        public string branch { get; set; }
+
+    }
+
 }
