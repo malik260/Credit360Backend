@@ -2175,6 +2175,13 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.ProvisionOfDeferredDocument;
                 workflow.ExternalInitialization = true;
+
+                var deferral = (from a in this.context.TBL_LOAN_CONDITION_DEFERRAL where a.LOANCONDITIONID == model.conditionId select a).FirstOrDefault();
+
+                if(deferral != null && deferral.EXCLUDELEGAL != null) {
+                    workflow.LevelBusinessRule = new LevelBusinessRule { excludeLevel = deferral.EXCLUDELEGAL.Value };
+                }
+
                 workflow.LogActivity();
 
                 try
@@ -2182,7 +2189,6 @@ namespace FintrakBanking.Repositories.Credit
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var precedent = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
-                        var deferral = (from a in this.context.TBL_LOAN_CONDITION_DEFERRAL where a.LOANCONDITIONID == model.conditionId select a).FirstOrDefault();
 
                         if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                         {
@@ -2428,17 +2434,6 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.OperationId = entity.operationId; // (int)OperationsEnum.DefferedChecklistApproval;
                     if (appl != null) workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
-                    var deferredRecord = new TBL_LOAN_CONDITION_DEFERRAL();
-
-                    if (!entity.isLms) {
-                        deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
-                                              where s.LOANCONDITIONID == entity.targetId && s.ISLMS == false
-                                              select s).FirstOrDefault();
-
-                        if (deferredRecord != null)
-                            workflow.LevelBusinessRule = new LevelBusinessRule { excludeLevel = deferredRecord.EXCLUDELEGAL.Value };
-                    }
-
                     workflow.LogActivity();
 
                     if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
@@ -2448,7 +2443,7 @@ namespace FintrakBanking.Repositories.Credit
                             var checklistRecord = (from s in context.TBL_LMSR_CONDITION_PRECEDENT
                                                    where s.LOANCONDITIONID == entity.targetId
                                                    select s).FirstOrDefault();
-                            deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                            var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
                                                   where s.LOANCONDITIONID == entity.targetId && s.ISLMS == true
                                                   select s).FirstOrDefault();
                             if (checklistRecord != null || deferredRecord != null)
@@ -2463,11 +2458,9 @@ namespace FintrakBanking.Repositories.Credit
                             var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
                                                    where s.LOANCONDITIONID == entity.targetId
                                                    select s).FirstOrDefault();
-                            //var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
-                            //                      where s.LOANCONDITIONID == entity.targetId && s.ISLMS == false
-                            //                      select s).FirstOrDefault();
-
-
+                            var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                                                  where s.LOANCONDITIONID == entity.targetId && s.ISLMS == false
+                                                  select s).FirstOrDefault();
                             if (checklistRecord != null || deferredRecord != null)
                             {
                                 deferredRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;

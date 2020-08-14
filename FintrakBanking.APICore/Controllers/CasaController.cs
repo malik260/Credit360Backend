@@ -3,9 +3,12 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Repositories.Finance;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -367,6 +370,49 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
+            }
+        }
+
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("get-consumer-protection-memo/consumerProtectionById/{consumerProtectionById}")]
+        //public HttpResponseMessage GetConsumerProtectionMemoById(int consumerProtectionById)
+        //{
+        //    try
+        //    {
+        //        var data = lienRepo.GetConsumerProtectionMemoById(token.GetCompanyId, consumerProtectionById);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //               new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //               new { success = true, result = data });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //              new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-consumer-protection-memo/consumerProtectionById/{consumerProtectionById}/operationId/{operationId}")]
+        public HttpResponseMessage GetLoadedDocumentationConsumerProtection(int consumerProtectionById, int operationId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.staffId = token.GetStaffId;
+                user.companyId = token.GetCompanyId;
+                List<LoadedDocumentSectionViewModel> response = lienRepo.GetLoadedDocumentationConsumerProtection(token.GetStaffId, operationId, consumerProtectionById, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 

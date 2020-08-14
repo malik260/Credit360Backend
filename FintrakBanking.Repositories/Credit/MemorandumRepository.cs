@@ -428,6 +428,8 @@ namespace FintrakBanking.Repositories.Credit
         private string originalDocumentNonCreditProgramData;
         private string originalDocumentCreditProgramData;
 
+        
+
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
         {
@@ -12210,6 +12212,7 @@ namespace FintrakBanking.Repositories.Credit
             return transactionDynamicsDetails;
         }
 
+        
 
     }
 }
