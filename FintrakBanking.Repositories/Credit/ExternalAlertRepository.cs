@@ -5755,5 +5755,63 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+
+        public IEnumerable<RepaymentAlertViewModel> GetRepaymentDefaultersAlert()
+        {
+                    var dataLoan = (from a in context.TBL_LOAN
+                                    join b in context.TBL_LOAN_APPLICATION_COLLATERL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                    join c in context.TBL_COLLATERAL_CUSTOMER on b.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                                    join d in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals d.COLLATERALTYPEID
+                                    join e in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals e.LOANID
+                                    where
+                                    d.COLLATERALTYPEID == (int)CollateralTypeEnum.Gaurantee
+                                    && a.OUTSTANDINGPRINCIPAL > 0
+                                    && (DbFunctions.TruncateTime(e.PAYMENTDATE) == DbFunctions.TruncateTime(DateTime.Now))
+                                    && a.OUTSTANDINGPRINCIPAL > e.ENDPRINCIPALAMOUNT
+
+                                    orderby a.TERMLOANID descending
+                                    select new RepaymentAlertViewModel
+                                    {
+                                        customerName = context.TBL_CUSTOMER.Where(cc=>cc.CUSTOMERID == a.CUSTOMERID).Select(cc=>cc.FIRSTNAME+""+cc.MIDDLENAME+""+cc.LASTNAME).FirstOrDefault() == null ? context.TBL_CUSTOMER_GROUP.Where(cc => cc.CUSTOMERGROUPID == a.CUSTOMERID).Select(cc => cc.GROUPNAME).FirstOrDefault() : context.TBL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID).Select(cc => cc.FIRSTNAME + "" + cc.MIDDLENAME + "" + cc.LASTNAME).FirstOrDefault(),
+                                        customerEmail = context.TBL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID).Select(cc => cc.EMAILADDRESS).FirstOrDefault(),
+                                        outStandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                        guarantorEmail = context.TBL_COLLATERAL_GAURANTEE.Where(g=>g.COLLATERALCUSTOMERID == b.COLLATERALCUSTOMERID).Select(g=>g.EMAILADDRESS).FirstOrDefault(),
+                                        paymentDate = e.PAYMENTDATE,
+                                        periodPaymentAmount = e.PERIODPAYMENTAMOUNT,
+                                        periodPrincipalAmount = e.PERIODPRINCIPALAMOUNT,
+                                        endPrincipalAmount = e.ENDPRINCIPALAMOUNT
+                                    }).ToList();
+
+            return dataLoan;
+        }
+
+        public IEnumerable<RepaymentAlertViewModel> GetRepaymentPayDownAlert()
+        {
+            var dataLoan = (from a in context.TBL_LOAN
+                            join b in context.TBL_LOAN_APPLICATION_COLLATERL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                            join c in context.TBL_COLLATERAL_CUSTOMER on b.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                            join d in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals d.COLLATERALTYPEID
+                            join e in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals e.LOANID
+                            where
+                            d.COLLATERALTYPEID == (int)CollateralTypeEnum.Gaurantee
+                            && (DbFunctions.TruncateTime(e.PAYMENTDATE) == DbFunctions.TruncateTime(DateTime.Now))
+                            && a.OUTSTANDINGPRINCIPAL == e.ENDPRINCIPALAMOUNT
+                            && e.PERIODPAYMENTAMOUNT > 0
+
+                            orderby a.TERMLOANID descending
+                            select new RepaymentAlertViewModel
+                            {
+                                customerName = context.TBL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID).Select(cc => cc.FIRSTNAME + "" + cc.MIDDLENAME + "" + cc.LASTNAME).FirstOrDefault() == null ? context.TBL_CUSTOMER_GROUP.Where(cc => cc.CUSTOMERGROUPID == a.CUSTOMERID).Select(cc => cc.GROUPNAME).FirstOrDefault() : context.TBL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID).Select(cc => cc.FIRSTNAME + "" + cc.MIDDLENAME + "" + cc.LASTNAME).FirstOrDefault(),
+                                customerEmail = context.TBL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID).Select(cc => cc.EMAILADDRESS).FirstOrDefault(),
+                                outStandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                guarantorEmail = context.TBL_COLLATERAL_GAURANTEE.Where(g => g.COLLATERALCUSTOMERID == b.COLLATERALCUSTOMERID).Select(g => g.EMAILADDRESS).FirstOrDefault(),
+                                paymentDate = e.PAYMENTDATE,
+                                periodPaymentAmount = e.PERIODPAYMENTAMOUNT,
+                                periodPrincipalAmount = e.PERIODPRINCIPALAMOUNT,
+                                endPrincipalAmount = e.ENDPRINCIPALAMOUNT
+                            }).ToList();
+
+            return dataLoan;
+        }
     }
 }
