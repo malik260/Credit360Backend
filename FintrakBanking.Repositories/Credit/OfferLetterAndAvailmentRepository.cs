@@ -230,6 +230,7 @@ namespace FintrakBanking.Repositories.Credit
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                 });
 
+            var testList = data.ToList();
             data = data.Where(x =>
                 x.applicationStatusId == (int)LoanApplicationStatusEnum.OfferLetterGenerationCompleted
                 || x.applicationStatusId == (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress

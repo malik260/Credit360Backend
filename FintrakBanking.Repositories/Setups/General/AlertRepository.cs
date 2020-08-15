@@ -889,8 +889,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDate() == true)
             {
-                TimeSpan start = new TimeSpan(17, 0, 0); //5 o'clock pm
-                TimeSpan end = new TimeSpan(19, 0, 0); //7 o'clock pm
+                TimeSpan start = new TimeSpan(17, 0, 0); 
+                TimeSpan end = new TimeSpan(19, 0, 0); 
 
                 if ((now >= start) && (now <= end))
                 {
@@ -911,7 +911,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (CompareDateSectorLimit() == true)
             {
                 TimeSpan start2 = new TimeSpan(8, 0, 0); 
-                TimeSpan end2 = new TimeSpan(17, 0, 0); 
+                TimeSpan end2 = new TimeSpan(17, 0, 0);
 
                 if ((now >= start2) && (now <= end2))
                 {
@@ -929,8 +929,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (CompareDigitalLoanDate() == true)
             {
-                TimeSpan start11 = new TimeSpan(11, 0, 0);
-                TimeSpan end13 = new TimeSpan(13, 0, 0);
+                TimeSpan start11 = new TimeSpan(11, 0, 0); 
+                TimeSpan end13 = new TimeSpan(13, 0, 0); 
 
                 if ((now >= start11) && (now <= end13))
                 {
@@ -954,6 +954,20 @@ namespace FintrakBanking.Repositories.Setups.General
 
             }
 
+            if (CompareDefaultRepayment() == true)
+            {
+                TimeSpan start11 = new TimeSpan(14, 0, 0);
+                TimeSpan end13 = new TimeSpan(16, 0, 0);
+
+                if ((now >= start11) && (now <= end13))
+                {
+                    GetRepaymentDefaultersAlert();
+                    GetRepaymentPayDownAlert();
+                    state = true;
+                }
+            }
+
+            
             /*if (CompareDate() == true)
             {
                 TimeSpan start = new TimeSpan(8, 0, 0); //8 o'clock
@@ -1046,6 +1060,24 @@ namespace FintrakBanking.Repositories.Setups.General
             else
                 return false;
         }
+
+        private bool CompareDefaultRepayment()
+        {
+            DateTime currentDate = DateTime.Now;
+            var DBdate = context.TBL_MESSAGE_LOG.Where(m => DbFunctions.TruncateTime(m.SENDONDATETIME) == DbFunctions.TruncateTime(currentDate)
+                         && (m.OPERATIONMETHOD.Trim() == "GetRepaymentDefaultersAlert"
+                         || m.OPERATIONMETHOD.Trim() == "GetRepaymentPayDownAlert"
+                         )).FirstOrDefault();
+
+            if (DBdate == null)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+
         private string GetBusinessUsersEmails(string accountOfficerMIsCode)
         {
             string emailList = "";
@@ -4873,6 +4905,71 @@ namespace FintrakBanking.Repositories.Setups.General
                         SendAlertNotification(alerts);
                     }
                 }
+        }
+
+
+        public void GetRepaymentDefaultersAlert()
+        {
+            // GetRepaymentDefaultersAlert method
+            var repaymentDefaulters = externalAlertRepository.GetRepaymentDefaultersAlert();
+            
+            if (repaymentDefaulters != null && repaymentDefaulters.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var repaymentDefaulter in repaymentDefaulters)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(repaymentDefaulter.periodPaymentAmount));
+                    var alertTitle = "REMINDER FOR YOUR PAST DUE LOAN REPAYMENT";
+                    var alertTemplate = "Dear "+ repaymentDefaulter.customerName+" <br/>You have an outstanding repayment of "+ amount+" kindly regularise";
+                    string emailList = repaymentDefaulter.customerEmail+";"+ repaymentDefaulter.guarantorEmail;
+                           
+                    alert.receiverEmailList.Add(emailList);
+                    alert.template = alertTemplate;
+                    alert.alertTitle = alertTitle;
+                    alert.canFire = true;
+                    alert.operationMethod = "RepaymentDefault";
+                    alerts.Add(alert);
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
+        }
+
+        public void GetRepaymentPayDownAlert()
+        {
+            // GetRepaymentPayDownAlert method
+            var repaymentPayDownAlerts = externalAlertRepository.GetRepaymentPayDownAlert();
+
+            if (repaymentPayDownAlerts != null && repaymentPayDownAlerts.Count() > 0)
+            {
+
+                List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+                foreach (var repaymentPayDownAlert in repaymentPayDownAlerts)
+                {
+                    AlertsViewModel alert = new AlertsViewModel();
+                    var amount = string.Format("{0:#,##.00}", Convert.ToDecimal(repaymentPayDownAlert.periodPaymentAmount));
+                    var alertTitle = "CONGRATULATIONS FOR LOAN REGULARISATION";
+                    var alertTemplate = "Dear " + repaymentPayDownAlert.customerName + " <br/>We are pleased to say thank you for the loan regularisation " + amount + ". Thank you";
+                    string emailList = repaymentPayDownAlert.customerEmail + ";" + repaymentPayDownAlert.guarantorEmail;
+
+                    alert.receiverEmailList.Add(emailList);
+                    alert.template = alertTemplate;
+                    alert.alertTitle = alertTitle;
+                    alert.canFire = true;
+                    alert.operationMethod = "RepaymentPayDown";
+                    alerts.Add(alert);
+                }
+
+                if (alerts.Count() > 0)
+                {
+                    SendAlertNotification(alerts);
+                }
+            }
         }
 
     }

@@ -878,4 +878,16 @@ public int? newInterestFrequencyTypeId { get; set; }
         public double MonthlyExpectedPayment { get; set; }
     }
 
+    public class RepaymentAlertViewModel
+    {
+        public string customerName { get; set; }
+        public string customerEmail { get; set; }
+        public decimal outStandingPrincipal { get; set; }
+        public string guarantorEmail { get; set; }
+        public DateTime paymentDate { get; set; }
+        public decimal periodPaymentAmount { get; set; }
+        public decimal periodPrincipalAmount { get; set; }
+        public decimal endPrincipalAmount { get; set; }
+    }
+
 }

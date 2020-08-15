@@ -11,6 +11,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IExternalAlertRepository
     {
+        IEnumerable<RepaymentAlertViewModel> GetRepaymentPayDownAlert();
+        IEnumerable<RepaymentAlertViewModel> GetRepaymentDefaultersAlert();
         IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationBank();
         IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationRBD();
         IEnumerable<SectorLimitAlertViewModel> GetSectorLimitValidationCIBD();
