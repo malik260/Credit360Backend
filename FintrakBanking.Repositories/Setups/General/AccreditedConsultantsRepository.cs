@@ -249,7 +249,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 ISCURRENT = true,
                 OPERATION = "insert",
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                TBL_TEMP_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates
+                TBL_TEMP_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates,
+                DATEOFENGAGEMENT = entity.dateOfEngagement,
+                CATEGORY = entity.category
             };
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT

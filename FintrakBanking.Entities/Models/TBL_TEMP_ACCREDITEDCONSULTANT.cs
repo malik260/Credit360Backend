@@ -45,6 +45,9 @@ namespace FintrakBanking.Entities.Models
         //[StringLength(500)]
         public string EMAILADDRESS { get; set; }
 
+        public string CATEGORY { get; set; }
+        public DateTime? DATEOFENGAGEMENT { get; set; }
+
         //[StringLength(500)]
         public string PHONENUMBER { get; set; }
 
