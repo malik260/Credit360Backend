@@ -373,28 +373,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpGet]
-        //[ClaimsAuthorization]
-        //[Route("get-consumer-protection-memo/consumerProtectionById/{consumerProtectionById}")]
-        //public HttpResponseMessage GetConsumerProtectionMemoById(int consumerProtectionById)
-        //{
-        //    try
-        //    {
-        //        var data = lienRepo.GetConsumerProtectionMemoById(token.GetCompanyId, consumerProtectionById);
-        //        if (data == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = false, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = true, result = data });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //              new { success = false, message = ex.Message });
-        //    }
-        //}
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-document-section-consumer-protection/operation/{operationId}/target/{targetId}/section/{sectionId}")]
+        public HttpResponseMessage GetDocumentSection(int operationId, int targetId, int sectionId)
+        {
+            try
+            {
+                LoadedDocumentSectionViewModel response = lienRepo.GetDocumentSectionConsumerProtection(token.GetStaffId, operationId, targetId, sectionId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

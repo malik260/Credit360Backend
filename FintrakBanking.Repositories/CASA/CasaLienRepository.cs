@@ -338,6 +338,37 @@ namespace FintrakBanking.Repositories.CASA
             return replacedSections;
         }
 
+        public LoadedDocumentSectionViewModel GetDocumentSectionConsumerProtection(int staffId, int operationId, int targetId, int sectionId)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+            List<int> sectionIds = new List<int>();
+
+            if (staff != null)
+            {
+                sectionIds = context.TBL_DOC_TEMPLATE_SECTION_ROLE
+                    .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
+                    .Select(x => x.TEMPLATESECTIONID)
+                    .ToList();
+            }
+
+
+            var doc = context.TBL_DOC_TEMPLATE_DETAIL.FirstOrDefault(x => x.OPERATIONID == operationId && x.DOCUMENTDETAILID == sectionId);
+            var section = context.TBL_DOC_TEMPLATE_SECTION.FirstOrDefault(s => s.TEMPLATESECTIONID == doc.TEMPLATESECTIONID);
+            if (doc == null) return new LoadedDocumentSectionViewModel();
+
+            InitForConsumerProtection(targetId);
+
+            return new LoadedDocumentSectionViewModel
+            {
+                sectionId = doc.DOCUMENTDETAILID,
+                title = doc.TITLE,
+                description = doc.DESCRIPTION,
+                templateDocument = Replace(doc.TEMPLATEDOCUMENT),
+                canEdit = section.CANEDIT,
+                editable = section.CANEDIT && sectionIds.Contains(doc.TEMPLATESECTIONID),
+            };
+        }
+
         //public string GetConsumerProtectionMemoById(int companyId, int consumerProtectionById)
         //{
         //    var result = context.TBL_CONSUMER_PROTECTION.Where(O => O.CONSUMERPROTECTIONID == consumerProtectionById).Select(O => new ConsumerProtectionViewModel()
@@ -608,7 +639,7 @@ namespace FintrakBanking.Repositories.CASA
                         <td>
                             <table style='font face: arial; size:12px' border=1 width=450 cellpadding=10 cellspacing=0>
                                 <tr>
-                                    <td colspan='2'><strong>THE LOAN</strong></td>
+                                    <th colspan='2'><b>THE LOAN</b></th>
                                 </tr>
                                 <tr>
                                     <td>Loan amount:</td>
@@ -616,15 +647,15 @@ namespace FintrakBanking.Repositories.CASA
                                 </tr>
                                 <tr>
                                     <td>Tenor:</td>
-                                    <td>{ model.termOfLoanInYears } months / years (delete whichever is not applicable)</td>
+                                    <td>{ model.termOfLoanInYears } months / years <b>(delete whichever is not applicable)</b></td>
                                 </tr>
                                 <tr>
                                     <td>Interest rate:</td>
-                                    <td>{ model.annualInterestRate } % Variable/Fixed (delete whichever is not applicable)</td>
+                                    <td>{ model.annualInterestRate } % Variable / Fixed <b>(delete whichever is not applicable)</b></td>
                                 </tr>
                                 <tr>
                                     <td>Collateral:</td>
-                                    <td>Yes/No (delete whichever is not applicable)</td>
+                                    <td>Yes / No <b>(delete whichever is not applicable)</b></td>
                                 </tr>
                    
                             </table>
@@ -633,7 +664,7 @@ namespace FintrakBanking.Repositories.CASA
                         <td>
                             <table style='font face: arial; size:12px' border=1 width=450 cellpadding=10 cellspacing=0>
                                 <tr>
-                                    <td>TOTAL COST TO CONSUMER</td>
+                                    <th><b>TOTAL COST TO CONSUMER</b></th>
                                 </tr>
                                 <tr>
                                     <td>Total amount you will N { model.actualAmountBorrowed } pay back  </td>
@@ -662,7 +693,7 @@ namespace FintrakBanking.Repositories.CASA
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <th colspan='2'>
-                            Specific information about your loan
+                            <b>Specific information about your loan</b>
                         </th>
                     </tr>
 
@@ -794,9 +825,9 @@ namespace FintrakBanking.Repositories.CASA
                 <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>
-                            <table style='font face: arial; size:12px' border=1 width=450 cellpadding=10 cellspacing=0>
+                            <table style='font face: arial; size:12px' border=1 width=445 cellpadding=10 cellspacing=0>
                                 <tr>
-                                    <td colspan='2'><b>(A) credit prover’s fees</b></td>
+                                    <th colspan='2'><b>(A) credit prover’s fees</b></th>
                                 </tr>
                                
                                 <tr>
@@ -825,9 +856,9 @@ namespace FintrakBanking.Repositories.CASA
                         </td>
 
                         <td>
-                            <table style='font face: arial; size:12px' border=1 width=450 cellpadding=10 cellspacing=0>
+                            <table style='font face: arial; size:12px' border=1 width=445 cellpadding=10 cellspacing=0>
                                 <tr>
-                                    <td colspan='2'><b>(B) Third party fees/charges</b></td>
+                                    <th colspan='2'><b>(B) Third party fees/charges</b></th>
                                 </tr>
                                 <tr>
                                     <td colspan='2'>(List all applicable 3rd party fees)</td>

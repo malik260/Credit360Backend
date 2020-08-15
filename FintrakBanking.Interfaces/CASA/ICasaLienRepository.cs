@@ -19,6 +19,6 @@ namespace FintrakBanking.Interfaces.CASA
         int AddConsumerProtection(ConsumerProtectionViewModel model);
         IEnumerable<ConsumerProtectionViewModel> GetAllConsumerProtections(int companyId);
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentationConsumerProtection(int staffId, int operationId, int targetId, UserInfo user);
-        //string GetConsumerProtectionMemoById(int companyId, int consumerProtectionById);
+        LoadedDocumentSectionViewModel GetDocumentSectionConsumerProtection(int staffId, int operationId, int targetId, int sectionId);
     }
 }
