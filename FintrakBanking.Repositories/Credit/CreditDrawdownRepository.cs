@@ -365,7 +365,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.SaveChanges();
                     trans.Commit();
-                    if (operationId != (short)OperationsEnum.ContigentLoanBooking)
+                    if (operationId != (short)OperationsEnum.ContigentLoanBooking && workflow.NewState == (int)ApprovalState.Ended)
                     {
                         workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
                     }

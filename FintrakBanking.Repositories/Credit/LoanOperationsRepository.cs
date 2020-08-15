@@ -29549,11 +29549,11 @@ namespace FintrakBanking.Repositories.Credit
                 levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList().Distinct());
             }
 
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.RevolvingLoanBooking).ToList());
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList());
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList());
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList());
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ForeignExchangeLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.RevolvingLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ForeignExchangeLoanBooking).ToList());
 
 
             var company = context.TBL_COMPANY.Find(companyId);
