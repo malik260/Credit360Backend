@@ -348,8 +348,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 DELETED = false,
-                TBL_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates
-            };
+                TBL_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates,
+                DATEOFENGAGEMENT = entity.dateOfEngagement,
+                CATEGORY = entity.category
+                };
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
             {
@@ -447,9 +449,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 //tempAccreditedConsultantsToUpdate.PRODUCT_BEHAVIOURID = productModel.productBehaviourId;
                 tempAccreditedConsultantsToUpdate.OPERATION = "update";
                 tempAccreditedConsultantsToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                tempAccreditedConsultantsToUpdate.DATEOFENGAGEMENT = entity.dateOfEngagement;
+                tempAccreditedConsultantsToUpdate.CATEGORY = entity.category;
 
-               
-               
+
+
+
                 context.TBL_TEMP_ACCREDITEDCONSULTANT.Add(tempAccreditedConsultantsToUpdate);
                 context.SaveChanges();
                 //Product Behaviour Update
@@ -497,6 +502,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                     ISCURRENT = true,
                     OPERATION = "update",
+                    DATEOFENGAGEMENT = entity.dateOfEngagement,
+                    CATEGORY = entity.category
                 };              
 
                 context.TBL_TEMP_ACCREDITEDCONSULTANT.Add(tempAccreditedConsultants);
@@ -586,6 +593,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 consultants.PHONENUMBER = entity.phoneNumber;
                 consultants.ADDRESS = entity.address;
                 consultants.CORECOMPETENCE = entity.coreCompetence;
+                consultants.DATEOFENGAGEMENT = entity.dateOfEngagement;
+                consultants.CATEGORY = entity.category;
 
             };
             AccreditedConsultantId = entity.accreditedConsultantId;
@@ -637,6 +646,8 @@ namespace FintrakBanking.Repositories.Setups.General
                               emailAddress = a.EMAILADDRESS,
                               phoneNumber = a.PHONENUMBER,
                               address = a.ADDRESS,
+                              dateOfEngagement = a.DATEOFENGAGEMENT,
+                              category = a.CATEGORY,
                               coreCompetence = a.CORECOMPETENCE,
                               accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(x => x.ACCREDITEDCONSULTANTID == a.ACCREDITEDCONSULTANTTYPEID).FirstOrDefault().NAME,
                               accreditedConsultantStates = context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE.Where(x => x.TEMPACCREDITEDCONSULTANTID == a.TEMPACCREDITEDCONSULTANTID).Select(k =>
@@ -724,6 +735,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingaccreditedConsultant.CREATEDBY = accreditedConsultantModel.CREATEDBY;
                     existingaccreditedConsultant.DATETIMECREATED = DateTime.Now;
                     existingaccreditedConsultant.DELETED = false;
+                    existingaccreditedConsultant.DATEOFENGAGEMENT = accreditedConsultantModel.DATEOFENGAGEMENT;
+                    existingaccreditedConsultant.CATEGORY = accreditedConsultantModel.CATEGORY;
                 }
 
                 accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
@@ -766,6 +779,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         CREATEDBY = accreditedConsultantModel.CREATEDBY,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
                         DELETED = false,
+                        DATEOFENGAGEMENT = accreditedConsultantModel.DATEOFENGAGEMENT,
+                        CATEGORY = accreditedConsultantModel.CATEGORY,
 
                     };
                     accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
