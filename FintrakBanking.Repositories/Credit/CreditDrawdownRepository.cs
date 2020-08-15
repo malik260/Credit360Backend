@@ -365,10 +365,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.SaveChanges();
                     trans.Commit();
-                    //if (operationId != (short)OperationsEnum.ContigentLoanBooking)
-                    //{
-                    //    workflow.Response.responseMessage += " but CRMS Code Capture Might be needed.";
-                    //}
+                    if (operationId != (short)OperationsEnum.ContigentLoanBooking && workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
+                    }
                     return workflow.Response;
                     //return 0;
                 }
