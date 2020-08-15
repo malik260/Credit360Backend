@@ -29575,9 +29575,9 @@ namespace FintrakBanking.Repositories.Credit
                             && lp.DELETED == false
                             && ln.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                             && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            && ln.ISPRINTED == false
+                            && op.ISPRINTED == false
                             && op.OPERATIONCOMPLETED == true
-                            && (ln.LOANSTATUSID != (int)LoanStatusEnum.Inactive )
+                            && (ln.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                             && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
                             || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
 
@@ -29736,7 +29736,7 @@ namespace FintrakBanking.Repositories.Credit
                                         && lp.DELETED == false
                                         && ln.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                         && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                        && ln.ISPRINTED == false
+                                        && op.ISPRINTED == false
                                         && op.OPERATIONCOMPLETED == true
                                         && (ln.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
                                         && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing && !levelIds.Contains((int)atrail.TOAPPROVALLEVELID)
