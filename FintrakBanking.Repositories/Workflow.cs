@@ -267,15 +267,15 @@ namespace FintrakBanking.Repositories.WorkFlow
             SaveFlowLog("Before Final Trail Logging");
             if (this.isFlowTest) return true;
 
-            if (currentlevel != null)
-            {
-                if (currentlevel?.ISPOSTAPPROVALREVIEWER == true)
-                {
-                    this.statusId = (int)ApprovalStatusEnum.Closed;
-                }
-            }
+            //if (currentlevel != null)
+            //{
+            //    if (currentlevel?.ISPOSTAPPROVALREVIEWER == true)
+            //    {
+            //        this.statusId = (int)ApprovalStatusEnum.Closed;
+            //    }
+            //}
             //=============
-            if (this.fromLevelId > 0)
+            if (this.fromLevelId > 0 && this.statusId != (short)ApprovalStatusEnum.Referred)
             {
                 var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
                 var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
@@ -947,7 +947,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     throw new SecureException("This Approval Level is not in the workflow setup!");
                 }
 
-                if (level?.ISPOSTAPPROVALREVIEWER == true && lastRequest.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred) this.statusId = (int)ApprovalStatusEnum.Closed;
+                //if (level?.ISPOSTAPPROVALREVIEWER == true && lastRequest.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred) this.statusId = (int)ApprovalStatusEnum.Closed;
 
                 var staff = level.Staff.Where(x => x.STAFFID == this.staffId); // check if staff is in approval_level_staff
 
@@ -1460,6 +1460,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool ActionIsApprovalDecision()
         {
             //return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved || this.statusId == (int)ApprovalStatusEnum.Authorised);
+            if (this.fromLevelId > 0)
+            {
+                var currentLevel = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+                return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved || currentLevel.CANAPPROVE);
+            }
             return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved );
         }
 
