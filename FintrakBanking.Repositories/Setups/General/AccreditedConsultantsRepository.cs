@@ -54,6 +54,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         emailAddress = m.EMAILADDRESS,
                         phoneNumber = m.PHONENUMBER,
                         address = m.ADDRESS,
+                        dateOfEngagement = m.DATEOFENGAGEMENT,
+                        category = m.CATEGORY,
                         coreCompetence = m.CORECOMPETENCE,
                         accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTTYPEID).FirstOrDefault().NAME,
                         accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
@@ -87,6 +89,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             emailAddress = m.EMAILADDRESS,
                             phoneNumber = m.PHONENUMBER,
                             address = m.ADDRESS,
+                            dateOfEngagement = m.DATEOFENGAGEMENT,
+                            category = m.CATEGORY,
                             consultantType = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(t => t.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTTYPEID).Select(t => t.NAME).FirstOrDefault(),
                             coreCompetence = m.CORECOMPETENCE,
                             stateName = context.TBL_STATE.FirstOrDefault(x => x.STATEID == c.STATEID).STATENAME,
@@ -115,6 +119,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             emailAddress = m.EMAILADDRESS,
                             phoneNumber = m.PHONENUMBER,
                             address = m.ADDRESS,
+                            dateOfEngagement = m.DATEOFENGAGEMENT,
+                            category = m.CATEGORY,
                             consultantType = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(t => t.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTTYPEID).Select(t => t.NAME).FirstOrDefault(),
                             coreCompetence = m.CORECOMPETENCE,
                             stateName = (from s in context.TBL_STATE join c in context.TBL_ACCREDITEDCONSULTANT_STATE on s.STATEID equals c.STATEID where c.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID select s.STATENAME).FirstOrDefault(),
@@ -148,6 +154,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                emailAddress = m.EMAILADDRESS,
                                phoneNumber = m.PHONENUMBER,
                                address = m.ADDRESS,
+                               dateOfEngagement = m.DATEOFENGAGEMENT,
+                               category = m.CATEGORY,
                                stateName = (from s in context.TBL_STATE join c in context.TBL_ACCREDITEDCONSULTANT_STATE on s.STATEID equals c.STATEID where c.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID select s.STATENAME).FirstOrDefault(),
                            };
 
@@ -174,6 +182,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             phoneNumber = m.PHONENUMBER,
                             address = m.ADDRESS,
                             coreCompetence = m.CORECOMPETENCE,
+                            dateOfEngagement = m.DATEOFENGAGEMENT,
+                            category = m.CATEGORY,
                             accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
                                new AccreditedConsultantStateViewModel()
                                {
