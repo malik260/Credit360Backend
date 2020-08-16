@@ -267,19 +267,20 @@ namespace FintrakBanking.Repositories.WorkFlow
             SaveFlowLog("Before Final Trail Logging");
             if (this.isFlowTest) return true;
 
-            if (currentlevel != null)
-            {
-                if (currentlevel?.ISPOSTAPPROVALREVIEWER == true)
-                {
-                    this.statusId = (int)ApprovalStatusEnum.Closed;
-                }
-            }
-            //if(this.fromLevelId > 0)
+            //if (currentlevel != null)
             //{
-            //    var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
-            //    var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
-            //    if (isReviewer) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+            //    if (currentlevel?.ISPOSTAPPROVALREVIEWER == true)
+            //    {
+            //        this.statusId = (int)ApprovalStatusEnum.Closed;
+            //    }
             //}
+            //=============
+            if (this.fromLevelId > 0 && this.statusId != (short)ApprovalStatusEnum.Referred)
+            {
+                var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+                var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
+                if (isReviewer) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+            }
 
 
             this.approvalTrail = context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
@@ -946,7 +947,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     throw new SecureException("This Approval Level is not in the workflow setup!");
                 }
 
-                if (level?.ISPOSTAPPROVALREVIEWER == true && lastRequest.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred) this.statusId = (int)ApprovalStatusEnum.Closed;
+                //if (level?.ISPOSTAPPROVALREVIEWER == true && lastRequest.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred) this.statusId = (int)ApprovalStatusEnum.Closed;
 
                 var staff = level.Staff.Where(x => x.STAFFID == this.staffId); // check if staff is in approval_level_staff
 
@@ -1332,8 +1333,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.level.ISPOSTAPPROVALREVIEWER == true) return true;
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
             if (level == null ) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
-            var next = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
-            if (next.ISPOSTAPPROVALREVIEWER == true) return true;
+            if (this.nextLevelId != null)
+            {
+                var next = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
+                if (next.ISPOSTAPPROVALREVIEWER == true) return true;
+            }
             if (this.disputed == true && level.CANRESOLVEDISPUTE != true) { return false; }
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true
@@ -1456,6 +1460,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool ActionIsApprovalDecision()
         {
             //return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved || this.statusId == (int)ApprovalStatusEnum.Authorised);
+            if (this.fromLevelId > 0)
+            {
+                var currentLevel = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+                return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved || currentLevel.CANAPPROVE);
+            }
             return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved );
         }
 

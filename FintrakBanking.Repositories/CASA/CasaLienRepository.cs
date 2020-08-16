@@ -19,6 +19,9 @@ using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFa
 using FintrakBanking.ViewModels.Setups.General;
 using System.Configuration;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
+using FintrakBanking.ViewModels;
+using FintrakBanking.Repositories.Credit;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -36,6 +39,24 @@ namespace FintrakBanking.Repositories.CASA
         List<string> receiverEmailList = new List<string>();
         AlertsViewModel alert = new AlertsViewModel();
 
+        // CONSUMER PROTECTION
+        private string consumerProtectionEmailData;
+        private string consumerProtectionAddressData;
+        private string consumerProtectionPhoneNumberData;
+        private string consumerProtectionFeesAndChargesData;
+        private string consumerProtectionRepaymentsData;
+        private string consumerProtectionLoanDetailsData;
+        private string consumerProtectionLoanSpecificInformationData;
+
+        // CONSUMER PROTECTION
+        private readonly string consumerProtectionEmailHolder = "@{{consumerProtectionEmail}}";
+        private readonly string consumerProtectionAddressHolder = "@{{consumerProtectionAddress}}";
+        private readonly string consumerProtectionPhoneNumberHolder = "@{{consumerProtectionPhoneNumber}}";
+        private readonly string consumerProtectionFeesAndChargesHolder = "@{{consumerProtectionFeesAndCharges}}";
+        private readonly string consumerProtectionRepaymentsHolder = "@{{consumerProtectionRepayments}}";
+        private readonly string consumerProtectionLoanDetailsHolder = "@{{consumerProtectionLoanDetails}}";
+        private readonly string consumerProtectionLoanSpecificInformationHolder = "@{{consumerProtectionLoanSpecificInformation}}";
+
         public CasaLienRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
                                             //ILoanOperationsRepository _creditOperations, 
                                             FinTrakBankingContext _context, TransactionPosting tran, ITwoFactorAuthIntegrationService _twoFactorAuth)
@@ -45,6 +66,7 @@ namespace FintrakBanking.Repositories.CASA
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
             this.twoFactorAuth = _twoFactorAuth;
+            //this.memo = _memo;
             //this.creditOperations = _creditOperations;
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             globalIntegrationSetting = context.TBL_INTEGRATION_CONTROL.FirstOrDefault();
@@ -239,7 +261,7 @@ namespace FintrakBanking.Repositories.CASA
 
         public IEnumerable<ConsumerProtectionViewModel> GetAllConsumerProtections(int companyId)
         {
-            var result = context.TBL_CONSUMER_PROTECTION.Select(O => new ConsumerProtectionViewModel()
+            var result = context.TBL_CONSUMER_PROTECTION.Select(O => new ConsumerProtectionViewModel
             {
                 actualAmountBorrowed = O.ACTUALAMOUNTBORROWED,
                 annualInterestRate = O.ANNUALINTERESTRATE,
@@ -260,6 +282,123 @@ namespace FintrakBanking.Repositories.CASA
             }).ToList();
 
             return result;
+        }
+
+        public List<LoadedDocumentSectionViewModel> GetLoadedDocumentationConsumerProtection(int staffId, int operationId, int targetId, UserInfo user)
+        {
+            // int staffId, is REDUNDANT!
+            var printedDoc = "";
+            var rawSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
+                .OrderBy(x => x.POSITION)
+                .Select(x => new LoadedDocumentSectionViewModel
+                {
+                    position = x.POSITION,
+                    sectionId = x.DOCUMENTDETAILID,
+                    title = x.TITLE,
+                    description = x.DESCRIPTION,
+                    canEdit = x.CANEDIT, // system
+                    // editable = sectionIds.Contains(x.TEMPLATESECTIONID),
+                    templateSectionId = x.TEMPLATESECTIONID,
+                    templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
+                })
+                .ToList();
+
+            List<LoadedDocumentSectionViewModel> replacedSections = new List<LoadedDocumentSectionViewModel>();
+            InitForConsumerProtection(targetId);
+
+            foreach (var raw in rawSections)
+            {
+                var templateId = context.TBL_DOC_TEMPLATE_SECTION.Find(raw.templateSectionId)?.TEMPLATEID;
+
+                raw.templateDocument = Replace(raw.templateDocument);
+
+                replacedSections.Add(raw);
+                printedDoc = raw.title;
+            }
+
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplatePrinted,
+                STAFFID = staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Printed Document Template '{ printedDoc }' ",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = "localhost",//model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            context.SaveChanges();
+
+            return replacedSections;
+        }
+
+        public LoadedDocumentSectionViewModel GetDocumentSectionConsumerProtection(int staffId, int operationId, int targetId, int sectionId)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+            List<int> sectionIds = new List<int>();
+
+            if (staff != null)
+            {
+                sectionIds = context.TBL_DOC_TEMPLATE_SECTION_ROLE
+                    .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
+                    .Select(x => x.TEMPLATESECTIONID)
+                    .ToList();
+            }
+
+
+            var doc = context.TBL_DOC_TEMPLATE_DETAIL.FirstOrDefault(x => x.OPERATIONID == operationId && x.DOCUMENTDETAILID == sectionId);
+            var section = context.TBL_DOC_TEMPLATE_SECTION.FirstOrDefault(s => s.TEMPLATESECTIONID == doc.TEMPLATESECTIONID);
+            if (doc == null) return new LoadedDocumentSectionViewModel();
+
+            InitForConsumerProtection(targetId);
+
+            return new LoadedDocumentSectionViewModel
+            {
+                sectionId = doc.DOCUMENTDETAILID,
+                title = doc.TITLE,
+                description = doc.DESCRIPTION,
+                templateDocument = Replace(doc.TEMPLATEDOCUMENT),
+                canEdit = section.CANEDIT,
+                editable = section.CANEDIT && sectionIds.Contains(doc.TEMPLATESECTIONID),
+            };
+        }
+
+        //public string GetConsumerProtectionMemoById(int companyId, int consumerProtectionById)
+        //{
+        //    var result = context.TBL_CONSUMER_PROTECTION.Where(O => O.CONSUMERPROTECTIONID == consumerProtectionById).Select(O => new ConsumerProtectionViewModel()
+        //    {
+        //        actualAmountBorrowed = O.ACTUALAMOUNTBORROWED,
+        //        annualInterestRate = O.ANNUALINTERESTRATE,
+        //        consumerProtectionId = O.CONSUMERPROTECTIONID,
+        //        insurance = O.INSURANCE,
+        //        loanAmount = O.LOANAMOUNT,
+        //        loanAPR = O.LOANAPR,
+        //        monthlyPayment = O.MONTHLYPAYMENT,
+        //        termOfLoanInYears = O.TERMOFLOANSINYEARS,
+        //        totalFees = O.TOTALFEES,
+        //        totalFeesAndCharges = O.TOTALFEESANDCHARGES,
+
+        //        branchId = O.BRANCHID,
+        //        companyId = O.COMPANYID,
+
+        //        createdBy = O.CREATEDBY,
+        //        dateTimeCreated = O.DATETIMECREATED,
+        //    }).FirstOrDefault();
+
+        //    var test = LoadConsumerProtectionMemo(result);
+        //    return test;
+        //}
+
+        private string LoadConsumerProtectionMemo(ConsumerProtectionViewModel model)
+        {
+
+            return "";
         }
 
         public bool ReleaseLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null, bool require2FA = true)
@@ -447,5 +586,314 @@ namespace FintrakBanking.Repositories.CASA
             context.SaveChanges();
 
         }
+
+
+
+        private bool InitForConsumerProtection(int consumerProtectionById)
+        {
+            var result = GetConsumerProtectionMemoById(consumerProtectionById);
+
+            // CONSUMER PROTECTION
+            this.consumerProtectionLoanDetailsData = ConsumerProtectionLoanDetailsHtml(result);
+            this.consumerProtectionLoanSpecificInformationData = ConsumerProtectionLoanSpecificInformationHtml(result);
+            this.consumerProtectionRepaymentsData = ConsumerProtectionRepaymentsHtml(result);
+            this.consumerProtectionFeesAndChargesData = ConsumerProtectionFeesAndChargesHtml(result);
+
+            return true;
+        }
+
+        public ConsumerProtectionViewModel GetConsumerProtectionMemoById(int consumerProtectionById)
+        {
+            var result = context.TBL_CONSUMER_PROTECTION.Where(O => O.CONSUMERPROTECTIONID == consumerProtectionById).Select(O => new ConsumerProtectionViewModel()
+            {
+                actualAmountBorrowed = O.ACTUALAMOUNTBORROWED,
+                annualInterestRate = O.ANNUALINTERESTRATE,
+                consumerProtectionId = O.CONSUMERPROTECTIONID,
+                insurance = O.INSURANCE,
+                loanAmount = O.LOANAMOUNT,
+                loanAPR = O.LOANAPR,
+                monthlyPayment = O.MONTHLYPAYMENT,
+                termOfLoanInYears = O.TERMOFLOANSINYEARS,
+                totalFees = O.TOTALFEES,
+                totalFeesAndCharges = O.TOTALFEESANDCHARGES,
+
+                branchId = O.BRANCHID,
+                companyId = O.COMPANYID,
+
+                createdBy = O.CREATEDBY,
+                dateTimeCreated = O.DATETIMECREATED,
+            }).FirstOrDefault();
+
+            return result;
+        }
+
+        public string ConsumerProtectionLoanDetailsHtml(ConsumerProtectionViewModel model)
+        {
+            //var consumer = GetConsumerProtectionMemoById();
+            var result = String.Empty;
+            var n = 0;
+
+            result = result + $@"        
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>
+                            <table style='font face: arial; size:12px' border=1 width=450 cellpadding=10 cellspacing=0>
+                                <tr>
+                                    <th colspan='2'><b>THE LOAN</b></th>
+                                </tr>
+                                <tr>
+                                    <td>Loan amount:</td>
+                                    <td>N { model.loanAmount }</td>
+                                </tr>
+                                <tr>
+                                    <td>Tenor:</td>
+                                    <td>{ model.termOfLoanInYears } months / years <b>(delete whichever is not applicable)</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Interest rate:</td>
+                                    <td>{ model.annualInterestRate } % Variable / Fixed <b>(delete whichever is not applicable)</b></td>
+                                </tr>
+                                <tr>
+                                    <td>Collateral:</td>
+                                    <td>Yes / No <b>(delete whichever is not applicable)</b></td>
+                                </tr>
+                   
+                            </table>
+                        </td>
+
+                        <td>
+                            <table style='font face: arial; size:12px' border=1 width=450 cellpadding=10 cellspacing=0>
+                                <tr>
+                                    <th><b>TOTAL COST TO CONSUMER</b></th>
+                                </tr>
+                                <tr>
+                                    <td>Total amount you will N { model.actualAmountBorrowed } pay back  </td>
+                                </tr>
+                                <tr>
+                                    <td>This means you will N { model.loanAmount } for every N { model.actualAmountBorrowed } pay back borrowed</td>
+                                </tr>
+                                <tr>
+                                    <td>Annual Percentage Rate (APR) {model.loanAPR } % This reflects the total cost of the credit on a yearly basis expressed as percentage, using the information at the disclosure date. It is a useful tool for comparison with similar loans</td>
+                                </tr>
+                   
+                            </table>
+                        </td>
+
+                    </tr>";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string ConsumerProtectionLoanSpecificInformationHtml(ConsumerProtectionViewModel model)
+        {
+            var result = String.Empty;
+            var n = 0;
+
+            result = result + $@"        
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <th colspan='2'>
+                            <b>Specific information about your loan</b>
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Loan received
+                        </td>
+
+                        <td>
+                            N { model.loanAmount }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Interest rate <br/>
+                            <b>(Variable interest rates may change)</b>
+                        </td>
+
+                        <td>
+                            { model.annualInterestRate } %
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Total interest charges (Total interest you will pay) <br/>
+                            <b>(Total interest may increase for variable interest rates)</b>
+                        </td>
+
+                        <td>
+                            N { model.totalFees }
+                        </td>
+                    </td>
+                    <tr>
+                        <td>
+                            Total fees and charges* <br/>
+                            <b>(Total other charges you will pay throughout the duration of the loan)</b>
+                        </td>
+
+                        <td>
+                            N { model.totalFeesAndCharges }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Total cost of credit <br/>
+                            <b>(This is made up of total interest and all other charges  for the tenor of the loan</b>
+
+                        </td>
+
+                        <td>
+                            N { model.totalFeesAndCharges + ((decimal)model.annualInterestRate * model.actualAmountBorrowed) } 
+                        </td>
+                    </tr>";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string ConsumerProtectionRepaymentsHtml(ConsumerProtectionViewModel model)
+        {
+            var result = String.Empty;
+            var n = 0;
+
+            result = result + $@"        
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <th colspan='2'>
+                            Repayments
+                        </th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Repayment amount (see attached repayment schedule)<br/>
+                            <b>Amount you will need to repay on due date</b>
+                        </td>
+
+                        <td>
+                            N { model.loanAmount } month / quarter for tenor of loan
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Date of first repayment
+                        </td>
+
+                        <td>
+                            { model.dateTimeCreated }
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Date on which other repayments are due
+                        </td>
+
+                        <td>
+                            { model.termOfLoanInYears } in each week / month for tenor of loan after the first repayment period 
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Total number of repayments
+                        </td>
+
+                        <td>
+                            { model.termOfLoanInYears }
+                        </td>
+                    </td>
+                    <tr>
+                        <td colspan='2'>
+                            <b>*Note that the amount required to be paid (for each repayment and total) does not include fees which are dependent on events that may not occur (for example, late payment fees)</b>
+                        </td>
+
+                    </tr>";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string ConsumerProtectionFeesAndChargesHtml(ConsumerProtectionViewModel model)
+        {
+            var result = String.Empty;
+            var n = 0;
+
+            result = result + $@"        
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>
+                            <table style='font face: arial; size:12px' border=1 width=445 cellpadding=10 cellspacing=0>
+                                <tr>
+                                    <th colspan='2'><b>(A) credit prover’s fees</b></th>
+                                </tr>
+                               
+                                <tr>
+                                    <td colspan='2'>(List all applicable lending fees)</td>
+                                </tr>
+                                <tr>
+                                    <td>(1)</td>
+                                    <td>N { model.totalFees }</td>
+                                </tr>
+                                <tr>
+                                    <td>(2)</td>
+                                    <td>N { model.totalFees }</td>
+                                </tr>
+
+                                <tr>
+                                    <td><b>Total (A)</b></td>
+                                    <td>N { model.totalFees + model.totalFees }</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Total Fees and charges (A + B)</td>
+                                    <td>N { model.totalFees + model.totalFees }</td>
+                                </tr>
+                   
+                            </table>
+                        </td>
+
+                        <td>
+                            <table style='font face: arial; size:12px' border=1 width=445 cellpadding=10 cellspacing=0>
+                                <tr>
+                                    <th colspan='2'><b>(B) Third party fees/charges</b></th>
+                                </tr>
+                                <tr>
+                                    <td colspan='2'>(List all applicable 3rd party fees)</td>
+                                </tr>
+                                <tr>
+                                    <td>(1)</td>
+                                    <td>N { model.totalFees }</td>
+                                </tr>
+                                <tr>
+                                    <td>(2)</td>
+                                    <td>N { model.totalFees }</td>
+                                </tr>
+                   
+                                <tr>
+                                    <td><b>Total (B)</b></td>
+                                    <td>N { model.totalFees + model.totalFees}</td>
+                                </tr>
+                            </table>
+                        </td>
+
+                    </tr>";
+            result = result + $"</table>";
+            return result;
+        }
+
+        private string Replace(string content) // placeholders replace
+        {
+            // CONSUMER PROTECTION
+            content = content.Replace(consumerProtectionLoanDetailsHolder, consumerProtectionLoanDetailsData);
+            content = content.Replace(consumerProtectionLoanSpecificInformationHolder, consumerProtectionLoanSpecificInformationData);
+            content = content.Replace(consumerProtectionRepaymentsHolder, consumerProtectionRepaymentsData);
+            content = content.Replace(consumerProtectionFeesAndChargesHolder, consumerProtectionFeesAndChargesData);
+
+            return content;
+        }
+
     }
 }

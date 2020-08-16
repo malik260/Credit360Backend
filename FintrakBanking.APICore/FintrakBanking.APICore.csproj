@@ -521,12 +521,12 @@
     <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.designer.cs">
       <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportViews\AllCommercialLoanReport.aspx.cs">
-      <DependentUpon>AllCommercialLoanReport.aspx</DependentUpon>
+    <Compile Include="Reports\ReportViews\AnalystReport.aspx.cs">
+      <DependentUpon>AnalystReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Reports\ReportViews\AllCommercialLoanReport.aspx.designer.cs">
-      <DependentUpon>AllCommercialLoanReport.aspx</DependentUpon>
+    <Compile Include="Reports\ReportViews\AnalystReport.aspx.designer.cs">
+      <DependentUpon>AnalystReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
@@ -1382,7 +1382,7 @@
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
     <Content Include="Reports\ReportViews\AgeAnalysisReport.aspx" />
-    <Content Include="Reports\ReportViews\AllCommercialLoanReport.aspx" />
+    <Content Include="Reports\ReportViews\AnalystReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
@@ -1770,6 +1770,7 @@
     <Content Include="Reports\Report\Blacklist.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\AnalystReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />

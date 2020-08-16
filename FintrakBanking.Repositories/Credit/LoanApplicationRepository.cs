@@ -2695,7 +2695,7 @@ namespace FintrakBanking.Repositories.Credit
 
             }
             //decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
-            var loanStatusId = (short)LoanStatusEnum.Inactive;
+            //var loanStatusId = (short)LoanStatusEnum.Inactive;
 
             if (loan.flowchangeId != null && loan.flowchangeId > 0)
             {
@@ -2987,6 +2987,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
             this.loanData.PRODUCTID = GetWorkflowProductId(facility.APPROVEDPRODUCTID);
             this.loanData.PRODUCTCLASSID = context.TBL_PRODUCT.FirstOrDefault(p => facility.APPROVEDPRODUCTID == p.PRODUCTID).PRODUCTCLASSID;
+            this.loanData.PRODUCT_CLASS_PROCESSID = context.TBL_PRODUCT.FirstOrDefault(p => facility.APPROVEDPRODUCTID == p.PRODUCTID).TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID;
             if (loan.LoanApplicationDetail.Count > 0)
             {
                 var exclusiveOperationId = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(f => f.FLOWCHANGEID == loan.flowchangeId)?.OPERATIONID;

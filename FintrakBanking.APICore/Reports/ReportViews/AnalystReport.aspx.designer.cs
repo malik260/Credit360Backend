@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class AllCommercialLoanReport {
+    public partial class AnalystReport {
         
         /// <summary>
         /// form1 control.

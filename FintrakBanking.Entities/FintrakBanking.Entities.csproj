@@ -87,6 +87,7 @@
     <Compile Include="Models\TBL_CONTRACTOR_CRITERIA_OPTION.cs" />
     <Compile Include="Models\TBL_CONTRACTOR_TIERING.cs" />
     <Compile Include="Models\TBL_CURRENCY_LIMIT.cs" />
+    <Compile Include="Models\TBL_DOCUMENTATION_FILLING_APPROVAL.cs" />
     <Compile Include="Models\TBL_FACILITY_MODIFICATION.cs" />
     <Compile Include="Models\TBL_FACILITY_MOD_DETL_FEE.cs" />
     <Compile Include="Models\TBL_GROUP_LIMIT.cs" />

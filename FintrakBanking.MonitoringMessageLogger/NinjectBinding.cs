@@ -72,9 +72,11 @@ namespace FintrakBanking.MonitoringMessageLogger
     {
         public override void Load()
         {
+            
             Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
             Bind<FinTrakBankingDocumentsContext>().To<FinTrakBankingDocumentsContext>();
             Bind<FinTrakBankingStagingContext>().To<FinTrakBankingStagingContext>();
+            Bind<ICreditDrawdownRepository>().To<CreditDrawdownRepository>();
             Bind<IBulkDisbursementPackageRepository>().To<BulkDisbursementPackageRepository>();
             Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
             Bind<ICashBackRepository>().To<CashBackRepository>();

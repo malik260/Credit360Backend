@@ -923,6 +923,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string apiRequestId { get; set; }
         public int creditAppraisalOperationId { get; set; }
         public int creditAppraisalLoanApplicationId { get; set; }
+        public int documentationFillingId { get; set; }
+        public int requestId { get; set; }
+        public string module { get; set; }
+        public int? flagStatus { get; set; }
+
 
 
         //......End f Loan Relational Table View Mapping Models......//
