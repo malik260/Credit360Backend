@@ -19927,7 +19927,7 @@ namespace FintrakBanking.Repositories.Credit
                             var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE) + ";" + retailEmail.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
 
-                            var customer12 = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
+                            var customer12 = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault()==null ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == lmsApplicationDetail.CUSTOMERID).Select(c => c.GROUPNAME).FirstOrDefault() : context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
                             var alertTemplate = retailEmail.TEMPLATE;
                             alertTemplate = alertTemplate.Replace("@{{customerName}}", customer12);
                             alertTemplate = alertTemplate.Replace("@{{facility}}", facility.PRODUCTNAME);
@@ -29570,7 +29570,7 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            where 
+                            where
                             lp.COMPANYID == companyId
                             && lp.DELETED == false
                             && ln.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
@@ -29656,6 +29656,7 @@ namespace FintrakBanking.Repositories.Credit
                                 principalReductionCount = ln.PRINCIPALREDUCTIONCOUNT,
                                 fixedPrincipal = ln.FIXEDPRINCIPAL,
                                 profileLoan = ln.PROFILELOAN,
+                                flagStatus = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Where(d => d.LOANID == ln.TERMLOANID && d.MODULE.ToLower() == "lms").Select(d => d.LOANID).FirstOrDefault(),
                                 dischargeLetter = ln.DISCHARGELETTER,
                                 suspendInterest = ln.SUSPENDINTEREST,
                                 scheduled = ln.ISSCHEDULEDPREPAYMENT,
@@ -29783,6 +29784,7 @@ namespace FintrakBanking.Repositories.Credit
                                          effectiveDate = ln.EFFECTIVEDATE,
                                          maturityDate = ln.MATURITYDATE,
                                          bookingDate = ln.BOOKINGDATE,
+                                         flagStatus = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Where(d => d.LOANID == ln.REVOLVINGLOANID && d.MODULE.ToLower() == "lms").Select(d=>d.LOANID).FirstOrDefault(),
                                          approvalStatusId = op.APPROVALSTATUSID,
                                          approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                          approvedBy = (int)ln.APPROVEDBY,
@@ -29915,6 +29917,7 @@ namespace FintrakBanking.Repositories.Credit
                                           teamMiscode = ln.TEAMMISCODE,
                                           principalAmount = ln.CONTINGENTAMOUNT,
                                           //interestRate = ln.INTERESTRATE,
+                                          flagStatus = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Where(d => d.LOANID == ln.CONTINGENTLOANID && d.MODULE.ToLower() == "lms").Select(d => d.LOANID).FirstOrDefault(),
                                           effectiveDate = ln.EFFECTIVEDATE,
                                           maturityDate = ln.MATURITYDATE,
                                           bookingDate = ln.BOOKINGDATE,
@@ -30068,6 +30071,7 @@ namespace FintrakBanking.Repositories.Credit
                                        approvalStatusId = atrail.APPROVALSTATUSID,
                                        approvalStatusName = (from y in context.TBL_APPROVAL_STATUS.Where(i => i.APPROVALSTATUSID == m.APPROVALSTATUSID) select y.APPROVALSTATUSNAME).FirstOrDefault(),//atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                        loanApplicationId = m.LOANAPPLICATIONID,
+                                       flagStatus = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Where(d => d.LOANID == a.TERMLOANID && d.MODULE.ToLower() == "los").Select(d => d.LOANID).FirstOrDefault(),
 
                                        loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                        applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
@@ -30162,6 +30166,7 @@ namespace FintrakBanking.Repositories.Credit
                                              customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                                              customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
                                              customerType = cust.TBL_CUSTOMER_TYPE.NAME,
+                                             flagStatus = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Where(d => d.LOANID == a.REVOLVINGLOANID && d.MODULE.ToLower() == "los").Select(d => d.LOANID).FirstOrDefault(),
 
                                              applicationTenor = m.APPLICATIONTENOR,
                                              effectiveDate = (DateTime)d.EFFECTIVEDATE,
@@ -30231,6 +30236,7 @@ namespace FintrakBanking.Repositories.Credit
                                              approvalStatusId = atrail.APPROVALSTATUSID,
                                              approvalStatusName = (from y in context.TBL_APPROVAL_STATUS.Where(i => i.APPROVALSTATUSID == m.APPROVALSTATUSID) select y.APPROVALSTATUSNAME).FirstOrDefault(),//atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                              loanApplicationId = m.LOANAPPLICATIONID,
+                                             flagStatus = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Where(d => d.LOANID == a.CONTINGENTLOANID && d.MODULE.ToLower() == "los").Select(d => d.LOANID).FirstOrDefault(),
 
                                              loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                              applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
@@ -30483,7 +30489,7 @@ namespace FintrakBanking.Repositories.Credit
                                  where m.COMPANYID == companyId
                                  && b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                  && a.ISPRINTED == false
-                                 && b.MODULE == "LOS"
+                                 
                                  
                                  orderby a.DATEAPPROVED descending
                                  select new CamProcessedLoanViewModel()
@@ -30562,7 +30568,7 @@ namespace FintrakBanking.Repositories.Credit
                                       where m.COMPANYID == companyId
                                       && a.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                       && a.ISPRINTED == false
-                                      && b.MODULE == "LOS"
+                                      
 
                                       orderby a.DATEAPPROVED descending
                                       select new CamProcessedLoanViewModel()
@@ -30642,7 +30648,7 @@ namespace FintrakBanking.Repositories.Credit
                                        where m.COMPANYID == companyId
                                        && a.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                        && a.ISPRINTED == false
-                                       && b.MODULE == "LOS"
+                                       
 
                                        orderby a.DATEAPPROVED descending
                                        select new CamProcessedLoanViewModel()
@@ -30715,9 +30721,9 @@ namespace FintrakBanking.Repositories.Credit
             var contingentLoanData = dataContingentLoans.GroupBy(x => x.loanId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var unionAll = termLoanData.Union(revolvingLoanData);
 
-            var data = unionAll.Union(contingentLoanData);
+             allLoans = unionAll.Union(contingentLoanData);
 
-            IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = data;
+            IEnumerable<CamProcessedLoanViewModel> lcyAndFcyLoans = allLoans;
             List<CamProcessedLoanViewModel> lcyLoans = new List<CamProcessedLoanViewModel>();
             List<CamProcessedLoanViewModel> fcyLoans = new List<CamProcessedLoanViewModel>();
 
@@ -32245,7 +32251,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var validate = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Where(x => x.LOANID == model.loanId
-                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Pending
+                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                                           || x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)).FirstOrDefault();
             if (validate != null)
             {
@@ -33189,11 +33195,12 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                var reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Find(entity.requestId);
+                var requestApproval = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Find(entity.targetId);
+                var reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Find(requestApproval.REQUESTID);
                  creditDocumentationDetail = "Documentation for loan ID: " + model?.loanId + " with Reference number: " + model?.applicationReferenceNumber + " " +
                                                               "Product Name: " + model?.productName + ", Customer Name: " + model?.customerName + "(" + model?.customerCode + ")";
 
-                var requestApproval = context.TBL_DOCUMENTATION_FILLING_APPROVAL.Find(entity.targetId);
+                
                 var termLoan = this.context.TBL_LOAN.Find(model.loanId);
                 if (termLoan != null && entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
                 {
@@ -33216,16 +33223,16 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
             }
-            var auditStaff = context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE).FirstOrDefault();
+            var auditStaff = context.TBL_STAFF.Where(x => x.STAFFID == entity.createdBy).Select(x => x.STAFFCODE).FirstOrDefault();
             // Audit Section ---------------------------
             this.auditTrail.AddAuditTrail(new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.CreditDocumentationPrinted,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.BranchId,
                 DETAIL = $"CREDIT DOCUMENTATION '{creditDocumentationDetail}' created by {auditStaff}",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = model.applicationUrl,
+                URL = entity.applicationUrl,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
