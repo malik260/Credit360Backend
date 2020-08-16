@@ -1252,7 +1252,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.skipLimitsCheck == true || IsPresetFinalLevel()) { return; }
             //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
-            if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision())
+            if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision() || CanApproveAndNextIsPostReviewer())
             {
                 
                 if (WithinAllLimits() == true)
@@ -1457,14 +1457,21 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.statusId = (int)ApprovalStatusEnum.Processing; }
         }
 
+        private bool CanApproveAndNextIsPostReviewer()
+        {
+            if (this.fromLevelId > 0 && this.nextLevelId > 0)
+            {
+                var currentLevel = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+                var nextLevel = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
+                return (nextLevel.ISPOSTAPPROVALREVIEWER && currentLevel.CANAPPROVE);
+            }
+            return false;
+        }
+
         private bool ActionIsApprovalDecision()
         {
             //return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved || this.statusId == (int)ApprovalStatusEnum.Authorised);
-            if (this.fromLevelId > 0)
-            {
-                var currentLevel = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
-                return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved || currentLevel.CANAPPROVE);
-            }
+            
             return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved );
         }
 
