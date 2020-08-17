@@ -362,6 +362,107 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
+        public IEnumerable<RelatedPartyLoansViewModel> GetInsiderRelatedLoans(DateTime startDate, DateTime endDate, string loanRefNo)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var termLoans = (from ft in context.TBL_LOAN
+                                 join p in context.TBL_PRODUCT on ft.PRODUCTID equals p.PRODUCTID
+                                 select new
+                                 {
+                                     ft.LOANREFERENCENUMBER,
+                                     ft.PRODUCTID,
+                                     BRANCHCODE = ft.TBL_BRANCH.BRANCHCODE,
+                                     p.PRODUCTCODE,
+                                     p.PRODUCTNAME,
+                                     ft.CUSTOMERID,
+                                     PRINCIPALAMOUNT = ft.PRINCIPALAMOUNT,
+                                     customerName = ft.TBL_CUSTOMER.FIRSTNAME + " " + ft.TBL_CUSTOMER.LASTNAME + " " + ft.TBL_CUSTOMER.MIDDLENAME,
+                                     appDetailId = ft.LOANAPPLICATIONDETAILID,
+                                     appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                     accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                     createdby = ft.TBL_STAFF.FIRSTNAME + " " + ft.TBL_STAFF.MIDDLENAME + " " + ft.TBL_STAFF.LASTNAME,
+                                     ft.LOANSTATUSID,
+                                     accountStatus = ft.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                                     ft.DISBURSEDATE,
+                                     ft.MATURITYDATE,
+                                     ft.DATETIMECREATED
+                                 });
+
+                var revolvingLoans = (from ft in context.TBL_LOAN_REVOLVING
+                                      join p in context.TBL_PRODUCT on ft.PRODUCTID equals p.PRODUCTID
+                                      select new
+                                      {
+                                          ft.LOANREFERENCENUMBER,
+                                          ft.PRODUCTID,
+                                          BRANCHCODE = ft.TBL_BRANCH.BRANCHCODE,
+                                          p.PRODUCTCODE,
+                                          p.PRODUCTNAME,
+                                          ft.CUSTOMERID,
+                                          PRINCIPALAMOUNT = ft.OVERDRAFTLIMIT,
+                                          customerName = ft.TBL_CUSTOMER.FIRSTNAME + " " + ft.TBL_CUSTOMER.LASTNAME + " " + ft.TBL_CUSTOMER.MIDDLENAME,
+                                          appDetailId = ft.LOANAPPLICATIONDETAILID,
+                                          appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                          createdby = ft.TBL_STAFF.FIRSTNAME + " " + ft.TBL_STAFF.MIDDLENAME + " " + ft.TBL_STAFF.LASTNAME,
+                                          ft.LOANSTATUSID,
+                                          accountStatus = ft.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                                          ft.DISBURSEDATE,
+                                          ft.MATURITYDATE,
+                                          ft.DATETIMECREATED
+                                      });
+
+                var contingentLoans = (from ft in context.TBL_LOAN_CONTINGENT
+                                       join p in context.TBL_PRODUCT on ft.PRODUCTID equals p.PRODUCTID
+                                       select new
+                                       {
+                                           ft.LOANREFERENCENUMBER,
+                                           ft.PRODUCTID,
+                                           BRANCHCODE = ft.TBL_BRANCH.BRANCHCODE,
+                                           p.PRODUCTCODE,
+                                           p.PRODUCTNAME,
+                                           ft.CUSTOMERID,
+                                           PRINCIPALAMOUNT = ft.CONTINGENTAMOUNT,
+                                           customerName = ft.TBL_CUSTOMER.FIRSTNAME + " " + ft.TBL_CUSTOMER.LASTNAME + " " + ft.TBL_CUSTOMER.MIDDLENAME,
+                                           appDetailId = ft.LOANAPPLICATIONDETAILID,
+                                           appRef = ft.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                           accountnumber = ft.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                           createdby = ft.TBL_STAFF.FIRSTNAME + " " + ft.TBL_STAFF.MIDDLENAME + " " + ft.TBL_STAFF.LASTNAME,
+                                           ft.LOANSTATUSID,
+                                           accountStatus = ft.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                                           ft.DISBURSEDATE,
+                                           ft.MATURITYDATE,
+                                           ft.DATETIMECREATED
+
+                                       });
+
+                var allLoans = termLoans.Union(revolvingLoans).Union(contingentLoans).Distinct();
+
+                var data = (from a in allLoans
+                            join b in context.TBL_CUSTOMER_RELATED_PARTY on a.CUSTOMERID equals b.CUSTOMERID
+                            join c in context.TBL_COMPANY_DIRECTOR on b.COMPANYDIRECTORID equals c.COMPANYDIRECTORID
+                            where a.DATETIMECREATED >= startDate && a.DATETIMECREATED <= endDate
+                            select new RelatedPartyLoansViewModel
+                            {
+                                loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                solId = a.BRANCHCODE,
+                                customerName = a.customerName,
+                                productName = a.PRODUCTNAME,
+                                accountStatus = a.accountStatus,
+                                principalAmount = a.PRINCIPALAMOUNT,
+                                relatedParty = c.TITLE + " " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                                relationshipType = b.RELATIONSHIPTYPE
+                            }
+                    );
+                if (!String.IsNullOrWhiteSpace(loanRefNo))
+                {
+                    data = data.Where(x => x.loanReferenceNumber == loanRefNo);
+                }
+
+                return data.ToList();
+            }
+        }
+
         public IEnumerable<DisburstLoanViewModel> RunningFacilities(DateTime startDate, DateTime endDate, int companyId, int staffId, string crmSCode)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
