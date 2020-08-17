@@ -5749,7 +5749,7 @@ namespace FintrakBanking.Repositories.Credit
                 || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected
                 || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted
                 )
-                && (reliefStaffIds.Contains(x.CREATEDBY))
+                && ((reliefStaffIds.Contains(x.CREATEDBY)) || (x.OWNEDBY == user.staffId))
                 )
             .Select(x => new LoanApplicationViewModel
             {
