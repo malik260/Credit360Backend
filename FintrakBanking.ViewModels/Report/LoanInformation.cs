@@ -430,4 +430,17 @@ namespace FintrakBanking.ViewModels.Reports
 
     }
 
+    public class RelatedPartyLoansViewModel
+    {
+        public string loanReferenceNumber { get; set; }
+        public string solId { get; set; }
+        public string customerName { get; set; }
+        public string productName { get; set; }
+        public int approvedTenor { get; set; }
+        public decimal principalAmount { get; set; }
+        public string accountStatus { get; set; }
+        public string relatedParty { get; set; }
+        public string relationshipType { get; set; }
+    }
+
 }
