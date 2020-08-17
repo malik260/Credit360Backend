@@ -113,8 +113,14 @@ namespace FintrakBanking.Repositories.CRMS
                     }
                     else
                     {
+                        var saved = context.SaveChanges() > 0;
+                        if (saved)
+                        {
+                            trans.Commit();
+                            return "CRMS Code Captured";
+                        }
                         trans.Rollback();
-                        throw new ConditionNotMetException("There was no pending Job on CRMS CAPTURE Queue");
+                        throw new ConditionNotMetException("An error occured while trying to Capture CRMS CODE!");
                     }
                 }
             }
@@ -157,7 +163,12 @@ namespace FintrakBanking.Repositories.CRMS
                 }
                 else
                 {
-                    throw new ConditionNotMetException("There was no pending Job on LOS CRMS CAPTURE Queue");
+                    var saved = context.SaveChanges() > 0;
+                    if (saved)
+                    {
+                        return "CRMS Code Captured";
+                    }
+                    throw new ConditionNotMetException("An error occured while trying to Capture CRMS CODE!");
                 }
             }
 
