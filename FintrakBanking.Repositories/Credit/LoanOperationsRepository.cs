@@ -30489,6 +30489,7 @@ namespace FintrakBanking.Repositories.Credit
                                  where m.COMPANYID == companyId
                                  && b.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                  && a.ISPRINTED == false
+                                 && b.LOANID == a.TERMLOANID
                                  
                                  
                                  orderby a.DATEAPPROVED descending
@@ -31339,8 +31340,8 @@ namespace FintrakBanking.Repositories.Credit
                             && pr.EXCLUDEFROMLITIGATION == false
                             && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            && (op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecovery
-                            || ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing)
+                            && (ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                            || ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff)
 
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
@@ -31366,6 +31367,7 @@ namespace FintrakBanking.Repositories.Credit
                                 prepaymentAmount = op.PREPAYMENT,
                                 productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
+                                loanCategory = op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff ? "Written Off" : "None Performing",
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                 branchId = ln.BRANCHID,
@@ -31502,8 +31504,8 @@ namespace FintrakBanking.Repositories.Credit
                                      && pr.EXCLUDEFROMLITIGATION == false
                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                     && (op.LOANSYSTEMTYPEID == (int)OperationsEnum.LoanRecoveryApproval
-                                     || ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing)
+                                     && (ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                     || ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff)
 
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
@@ -31546,6 +31548,7 @@ namespace FintrakBanking.Repositories.Credit
                                          effectiveDate = ln.EFFECTIVEDATE,
                                          maturityDate = ln.MATURITYDATE,
                                          bookingDate = ln.BOOKINGDATE,
+                                         loanCategory = op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff ? "Written Off" : "None Performing",
                                          approvalStatusId = op.APPROVALSTATUSID,
                                          approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(f => f.APPROVALSTATUSID == op.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                          approvedBy = (int)ln.APPROVEDBY,
