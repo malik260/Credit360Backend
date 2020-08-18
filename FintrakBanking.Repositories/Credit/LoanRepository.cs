@@ -3213,7 +3213,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             // data = data.Where(x => x.customerAvailableAmount!= null && x.customerAvailableAmount > 0 ).ToList();
-
+            var test = data.Where(d => d.applicationReferenceNumber.Contains("1282210277431")).ToList();
             IEnumerable<LoanViewModel> bookedDataRecord = GetLoanFacilityBookingAwaitingApproval(staffId, companyId).Where(x => x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
             IEnumerable<RevolvingLoanViewModel> revolvingFacilityRecord = GetRevolvingFacilityBookingAwaitingApproval(staffId, companyId).Where(x => x.loanStatusId == (short)LoanStatusEnum.Inactive).ToList();
 
@@ -3263,7 +3263,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            //var books2 = data.Where(d => d.loanBookingRequestId == 1380).ToList();
+            var books2 = data.Where(d => d.loanReferenceNumber != null).ToList();
             return data.Where(x => x.loanReferenceNumber != null); //.Distinct().ToList();
         }
 
@@ -3741,8 +3741,8 @@ namespace FintrakBanking.Repositories.Credit
                                                            })).ToList(),
 
                         }).ToList();
-
-
+            
+            var test = data.Where(d => d.applicationReferenceNumber.Contains("1282210277431")).ToList();
             List<LoanViewModel> lcyLoans = new List<LoanViewModel>();
             List<LoanViewModel> fcyLoans = new List<LoanViewModel>();
 
@@ -3762,7 +3762,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             data = lcyLoans.Union(fcyLoans).ToList();
-
+            var test2 = data.Where(d => d.applicationReferenceNumber.Contains("1282210277431")).ToList();
             return data;
 
 
@@ -3904,6 +3904,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).ToList();
 
+            var test = data.Where(d => d.applicationReferenceNumber.Contains("1282210277431")).ToList();
             List<RevolvingLoanViewModel> lcyLoans = new List<RevolvingLoanViewModel>();
             List<RevolvingLoanViewModel> fcyLoans = new List<RevolvingLoanViewModel>();
 
@@ -3923,6 +3924,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             data = lcyLoans.Union(fcyLoans).ToList();
+            var test2 = data.Where(d => d.applicationReferenceNumber.Contains("1282210277431")).ToList();
 
 
             return data.ToList();
