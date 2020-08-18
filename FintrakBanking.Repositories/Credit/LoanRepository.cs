@@ -1397,7 +1397,8 @@ namespace FintrakBanking.Repositories.Credit
             decimal lineReleasePrincipalAmount = 0;
             if (applicationDetail.ISLINEFACILITY == true)
             {
-                lineReleasePrincipalAmount = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT);
+                var lineFacilities = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).ToList();
+                lineReleasePrincipalAmount = lineFacilities.Count() > 0 ? lineFacilities.Sum(x => x.PRINCIPALAMOUNT) : 0;
             }
             if ((totalPrincipalAmount - (decimal)lineReleasePrincipalAmount) > (decimal)approvedAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");

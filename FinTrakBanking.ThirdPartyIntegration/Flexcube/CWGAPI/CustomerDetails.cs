@@ -327,7 +327,7 @@
                     List<CasaViewModel> casa = new List<CasaViewModel>();
                     responseDateTime = DateTime.Now;
 
-                    if (response.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode && response.Content != null)
                     {
                         var jsonString = await response.Content.ReadAsStringAsync();
                         JObject responseDataJsonString = JObject.Parse(jsonString);
