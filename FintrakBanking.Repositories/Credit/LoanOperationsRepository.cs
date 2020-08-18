@@ -30023,13 +30023,15 @@ namespace FintrakBanking.Repositories.Credit
             var staffs = generalSetup.GetStaffRlieved(staffId);
 
             List<int> levelIds = new List<int>();
-            foreach (var i in operationIds) { levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList()); }
+            foreach (var i in operationIds) {
+                levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, i).ToList());
+            }
 
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.RevolvingLoanBooking).ToList());
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList());
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList());
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList());
-            levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ForeignExchangeLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.RevolvingLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CommercialLoanBooking).ToList());
+            //levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ForeignExchangeLoanBooking).ToList());
 
             var company = context.TBL_COMPANY.Find(companyId);
             IEnumerable<CamProcessedLoanViewModel> allLoans = null;
@@ -30050,7 +30052,7 @@ namespace FintrakBanking.Repositories.Credit
                                    && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && atrail.APPROVALSTATUSID != (short)ApprovalStatusEnum.Finishing &&  !levelIds.Contains((int)atrail.TOAPPROVALLEVELID) 
                                    || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
 
-                                 orderby a.DATEAPPROVED descending
+                                   orderby a.DATEAPPROVED descending
                                    select new CamProcessedLoanViewModel()
                                    {
                                        bookingAmountRequested = s.AMOUNT_REQUESTED,
@@ -30133,7 +30135,7 @@ namespace FintrakBanking.Repositories.Credit
                                              || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Finishing && levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && operationIds.Contains(atrail.OPERATIONID)))
 
 
-                                      orderby a.DATEAPPROVED descending
+                                         orderby a.DATEAPPROVED descending
                                          select new CamProcessedLoanViewModel()
                                          {
                                              bookingAmountRequested = s.AMOUNT_REQUESTED,
@@ -31341,7 +31343,7 @@ namespace FintrakBanking.Repositories.Credit
                             && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && (ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                            || ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff)
+                            || op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff)
 
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
@@ -31505,7 +31507,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && (ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                                     || ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff)
+                                     || op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff)
 
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel

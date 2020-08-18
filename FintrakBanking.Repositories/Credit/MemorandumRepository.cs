@@ -64,6 +64,7 @@ namespace FintrakBanking.Repositories.Credit
         // field variables
         TBL_LOAN_APPLICATION loanApplication = null;
         TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
+        TBL_LMSR_APPLICATION_DETAIL lmsrApplicationDetail = null;
         TBL_LMSR_APPLICATION lmsrApplication = null;
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
         List<TBL_LMSR_APPLICATION_DETAIL> customerFacilitiesLms = null;
@@ -812,12 +813,21 @@ namespace FintrakBanking.Repositories.Credit
         {
             this.targetId = targetId;
             this.operationId = operationId;
-
-            if (loanApplicationDetail == null)
+            var loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
+            if (loanDetail != null)
             {
-                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
-                this.loanApplication = loanApplicationDetail?.TBL_LOAN_APPLICATION;
+                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanDetail.LOANAPPLICATIONDETAILID);
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Where(l=>l.LOANAPPLICATIONID == loanApplicationDetail.LOANAPPLICATIONID).FirstOrDefault();
             }
+            else
+            {
+                var loanDetail2 = context.TBL_LMSR_APPLICATION_DETAIL.Find(targetId);
+                this.lmsrApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(loanDetail2.LOANREVIEWAPPLICATIONID);
+                this.lmsrApplication = context.TBL_LMSR_APPLICATION.Where(l => l.LOANAPPLICATIONID == loanApplicationDetail.LOANAPPLICATIONID).FirstOrDefault();
+
+            }
+
+
             var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.FirstOrDefault(f => f.LOANAPPLICATIONDETAILID == targetId)?.CHARGEFEEID;
 
                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
@@ -835,7 +845,7 @@ namespace FintrakBanking.Repositories.Credit
             this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
             this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.OPERATINGCASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault()?? "N/A";
             this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
-            this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+            this.drawdownAmount = loanApplicationDetail?.APPROVEDAMOUNT.ToString("#,##.00");
             this.tenor = loanApplicationDetail.APPROVEDTENOR;
             this.moratorium = loanApplicationDetail.MORATORIUMDURATION;
             this.principalRepayment = "";
