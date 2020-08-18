@@ -31341,7 +31341,7 @@ namespace FintrakBanking.Repositories.Credit
                             && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             && (ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                            || ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff)
+                            || op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff)
 
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
@@ -31505,7 +31505,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                      && (ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                                     || ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff)
+                                     || op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff)
 
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
