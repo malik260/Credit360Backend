@@ -906,10 +906,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.currentStateId == (int)ApprovalState.Initiation && this.lastOpenRequest == null)
             {
-                var allRelatingRequestsOrdered = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
-                if (allRelatingRequestsOrdered.Count > 0)
+                var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
+                if (allRelatingRequestsDescending.Count > 0)
                 {
-                    var lastActualRequest = allRelatingRequestsOrdered.FirstOrDefault();
+                    var lastActualRequest = allRelatingRequestsDescending.FirstOrDefault();
                     if (lastActualRequest.APPROVALSTATEID == (int)ApprovalState.Ended && IsNormalEnd(lastActualRequest))
                     {
                         new SecureException("The Last Approving Level for this Request has ended the Approval, Kindly refresh your Browser Screen!");
