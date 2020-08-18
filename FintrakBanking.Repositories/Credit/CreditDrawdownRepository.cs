@@ -375,6 +375,13 @@ namespace FintrakBanking.Repositories.Credit
 
                 else
                 {
+                    if (!isContingent && workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
+                        context.SaveChanges();
+                        trans.Commit();
+                        return workflow.Response;
+                    }
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestInitiated;
                     context.SaveChanges();
                     trans.Commit();
@@ -1576,16 +1583,16 @@ namespace FintrakBanking.Repositories.Credit
                 var customerRecord = context.TBL_CUSTOMER.Where(x=>x.CUSTOMERID == request.customerId || x.CUSTOMERID == currentFacility.CUSTOMERID).FirstOrDefault();
                 var customer = customerRecord?.FIRSTNAME + " " + customerRecord?.LASTNAME;
 
-                if(valueTaken >= individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) has already been met."); }
+                if(valueTaken >= individualGlobalLimit && individualGlobalLimit > 0) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) has already been met."); }
 
-                if(request.amount_Requested > lineFacilities.Sum(x => x.APPROVEDAMOUNT)) { throw new ConditionNotMetException($"The request amount is greater than the approved amount."); }
+                if(request.amount_Requested > lineFacilities.Sum(x => x.APPROVEDAMOUNT) ) { throw new ConditionNotMetException($"The request amount is greater than the approved amount."); }
 
                 if(context.TBL_LOAN_BOOKING_REQUEST.Where(x=>x.LOANAPPLICATIONDETAILID == request.loanApplicationDetailId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Any())
                 {
-                    if (request.amount_Requested > currentFacility?.APPROVEDLINELIMIT  ) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded.");  }
+                    if (individualGlobalLimit > 0 && request.amount_Requested > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded.");  }
                 }
 
-                if (individualGlobalLimit != 0 && (valueTaken + request.amount_Requested) > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer."); }
+                if (individualGlobalLimit > 0 && (valueTaken + request.amount_Requested) > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer."); }
             }
         }
 
