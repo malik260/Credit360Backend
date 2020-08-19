@@ -697,6 +697,11 @@ namespace FintrakBanking.Repositories.Credit
             ArchiveLoanApplication(loanApplicationId, (int)OperationsEnum.LoanApplication, 0, accountOfficerId);
             loan.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress;
             loan.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+            var details = loan.TBL_LOAN_APPLICATION_DETAIL.ToList();
+            foreach(var d in details)
+            {
+                d.STATUSID = (short)ApprovalStatusEnum.Processing;
+            }
             return context.SaveChanges() > 0;
         }
 

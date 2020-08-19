@@ -912,7 +912,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var lastActualRequest = allRelatingRequestsDescending.FirstOrDefault();
                     if (lastActualRequest.APPROVALSTATEID == (int)ApprovalState.Ended && IsNormalEnd(lastActualRequest))
                     {
-                        new SecureException("The Last Approving Level for this Request has ended the Approval, Kindly refresh your Browser Screen!");
+                        //new SecureException("The Last Approving Level for this Request has ended the Approval, Kindly refresh your Browser Screen!");
+                        new SecureException("The process is closed!");
                     }
 
                 }
