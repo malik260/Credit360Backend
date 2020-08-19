@@ -445,6 +445,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string listOfAccountsAssigned { get; set; }
         public DateTime? recoveryDate { get; set; }
         public int? flagStatus { get; set; }
+        public List<string> customerAddresses { get; set; }
     }
 
 
