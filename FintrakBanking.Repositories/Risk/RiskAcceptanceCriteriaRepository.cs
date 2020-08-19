@@ -1356,11 +1356,11 @@ namespace FintrakBanking.Repositories.Risk
             entity.LABEL = model.label;
             entity.KEY = model.key;
             entity.ISSYSTEMDEFINED = model.isSystemDefined;
-
+            entity.RACOPTIONID = model.racOptionId;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+           // var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             //this.audit.AddAuditTrail(new TBL_AUDIT
             //{

@@ -104,7 +104,9 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string exchangeRateHolder = "@{{ExchangeRate}}";
         private readonly string groupFacilitySummaryHolder = "@{{GroupFacilitySummary}}";
 
-      
+        private readonly string recoveryAnalysisHolder = "@{{RecoveryAnalysisData}}";
+
+
 
         //private readonly string groupFacilitySummaryFcyHolder = "@{{GroupFacilitySummaryFcy}}";
         //private readonly string directFacilitiesHolder = "@{{DirectFacilities}}";
@@ -428,8 +430,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private string originalDocumentNonCreditProgramData;
         private string originalDocumentCreditProgramData;
+        private string recoveryAnalysisData;
 
-        
 
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
@@ -5879,6 +5881,8 @@ namespace FintrakBanking.Repositories.Credit
 
             content = content.Replace(originalDocumentNonCreditProgramHolder, originalDocumentNonCreditProgramData);
             content = content.Replace(originalDocumentCreditProgramHolder, originalDocumentCreditProgramData);
+
+            content = content.Replace(recoveryAnalysisHolder, recoveryAnalysisData);
 
             return content;
         }
@@ -12222,7 +12226,108 @@ namespace FintrakBanking.Repositories.Credit
             return transactionDynamicsDetails;
         }
 
-        
+        private string GetOutstandingLoans(int accreditedConsultantId)
+        {
+                var dataLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                join ln in context.TBL_LOAN on lr.LOANID equals ln.TERMLOANID
+                                join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                where
+                                lr.ISFULLYRECOVERED == false
+                                && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                && pr.EXCLUDEFROMLITIGATION == false
+                                && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
+                                select new LoanReviewOperationApprovalViewModel
+                                {
+                                    totalAmountRecovery = (decimal)lr.TOTALAMOUNTRECOVERY,
+                                    customerCode = cu.CUSTOMERCODE,
+                                    loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                    customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                    customerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(a => a.CUSTOMERID == cu.CUSTOMERID).Select(a => a.ADDRESS).ToList(),
+                                    branchName = br.BRANCHNAME,
+                                }).ToList();
+
+                var dataRevolvingLoan = (from lr in context.TBL_LOAN_RECOVERY_ASSIGNMENT
+                                         join ln in context.TBL_LOAN_REVOLVING on lr.LOANID equals ln.REVOLVINGLOANID
+                                         join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                                         join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                         join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                                         join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                                         join cu in context.TBL_CUSTOMER on ln.CUSTOMERID equals cu.CUSTOMERID
+                                         join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
+                                         join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
+                                         join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                         where
+                                         lr.ISFULLYRECOVERED == false
+                                         && lr.ACCREDITEDCONSULTANT == accreditedConsultantId
+                                         && pr.EXCLUDEFROMLITIGATION == false
+                                         && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
+                                         select new LoanReviewOperationApprovalViewModel
+                                         {
+                                             totalAmountRecovery = (decimal)lr.TOTALAMOUNTRECOVERY,
+                                             customerCode = cu.CUSTOMERCODE,
+                                             loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                             customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
+                                             customerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(a=>a.CUSTOMERID == cu.CUSTOMERID).Select(a=>a.ADDRESS).ToList(),
+                                             branchName = br.BRANCHNAME,
+                                         }).ToList();
+
+
+                    var data = dataLoan.Union(dataRevolvingLoan);
+                     foreach(var rec in data)
+                    {
+                        foreach(var address in rec.customerAddresses)
+                        {
+                            rec.address = rec.address + " " + address;
+                        }
+                    }
+
+            int i = 0;
+            var result = String.Empty;
+            result = result + $@"
+                <table style='font face: arial; size:12px' border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>Name Of Customer</b></th>
+                        <th><b>Address/GSM No</b></th>
+                        <th><b>Outstanding Exposure</b></th>
+                        <th><b>Branch</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in data)
+            {
+                i++;
+                result = result + $@"
+                    <tr>
+                        <td>{i}</td>
+                        <td>{trail.customerName.ToUpper()}</td>
+                        <td>{trail.address}</td>
+                        <td>{trail.totalAmountRecovery}</td>
+                        <td>{trail.branchName}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
+
+
+        public bool InitRecoveryDate(int accreditedConsultantId)
+        {
+            this.recoveryAnalysisData = GetOutstandingLoans(accreditedConsultantId);
+
+            return true;
+        }
 
     }
 }

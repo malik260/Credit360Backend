@@ -6,6 +6,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICreditTemplateRepository
     {
+        LoadedDocumentSectionViewModel GetRecoveryAnalysisDocumentSection(int staffId, int operationId, int targetId, int sectionId);
         bool LoadDocumentTemplateLMS(DocumentTemplateViewModel entity);
         CreditTemplateViewModel GetCreditTemplate(int creditTemplateId);
 
