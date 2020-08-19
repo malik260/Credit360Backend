@@ -55,7 +55,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                 && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                                                      .Any();
 
-                if(docCheck) throw new SecureException("Collateral Documents is currently undergoing Approval");
+                if(docCheck) throw new SecureException("Collateral Document(s) currently undergoing Approval");
 
                 //check if the document was added to TBL_ORIGINAL_DOCUMENT_RELEASE but not sent for approval
                 var resultCheck = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == mod.documentUploadId
