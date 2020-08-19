@@ -808,10 +808,13 @@ namespace FintrakBanking.Repositories.Credit
             var totaloverdraftLimit = totalPreviouslyBookedAmount + revolvingLoanInput.overdraftLimit;
 
             decimal lineReleasePrincipalAmount = 0;
+
             if (applicationdetail.ISLINEFACILITY == true)
             {
-                lineReleasePrincipalAmount = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT);
+                var lineFacilities = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).ToList();
+                lineReleasePrincipalAmount = lineFacilities.Count() > 0 ? lineFacilities.Sum(x => x.PRINCIPALAMOUNT) : 0;
             }
+
             if ((totaloverdraftLimit - (decimal)lineReleasePrincipalAmount) > (decimal)approvedAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
@@ -1395,11 +1398,13 @@ namespace FintrakBanking.Repositories.Credit
             var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount.ToList().Sum() + (decimal)entity.loanScheduleInput.principalAmount);
 
             decimal lineReleasePrincipalAmount = 0;
+
             if (applicationDetail.ISLINEFACILITY == true)
             {
                 var lineFacilities = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).ToList();
                 lineReleasePrincipalAmount = lineFacilities.Count() > 0 ? lineFacilities.Sum(x => x.PRINCIPALAMOUNT) : 0;
             }
+
             if ((totalPrincipalAmount - (decimal)lineReleasePrincipalAmount) > (decimal)approvedAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
@@ -1721,10 +1726,13 @@ namespace FintrakBanking.Repositories.Credit
             var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.principalAmount);
 
             decimal lineReleasePrincipalAmount = 0;
+
             if (applicationDetail.ISLINEFACILITY == true)
             {
-                lineReleasePrincipalAmount = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT);
+                var lineFacilities = context.TBL_LOAN.Where(a => a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).ToList();
+                lineReleasePrincipalAmount = lineFacilities.Count() > 0 ? lineFacilities.Sum(x => x.PRINCIPALAMOUNT) : 0;
             }
+
             if ((totalPrincipalAmount - (decimal)lineReleasePrincipalAmount) > (decimal)approvedAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the available amount");
 
