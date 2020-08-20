@@ -11499,7 +11499,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   approvalTrailId = t.APPROVALTRAILID,
                                                   currentApprovalLevelId = t.TOAPPROVALLEVELID,
                                                   currentApprovalLevel = t.TBL_APPROVAL_LEVEL1.LEVELNAME,
-                                                  approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                                  approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME.ToUpper(),
                                                   customerName = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.MIDDLENAME + " " + s.TBL_CUSTOMER.LASTNAME,
                                                   swapRef = s.SWAPREF,
                                                   dateTimeCreated = (DateTime)s.DATETIMECREATED
