@@ -11482,7 +11482,7 @@ namespace FintrakBanking.Repositories.Credit
                                                && s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
                                                && t.APPROVALSTATEID != (int)ApprovalState.Ended
                                                && t.RESPONSESTAFFID == null
-                                               && t.LOOPEDSTAFFID == null
+                                               && (t.LOOPEDSTAFFID == null || t.LOOPEDSTAFFID == staffId)
                                                && levelIds.Contains((int)t.TOAPPROVALLEVELID)
                                                && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
                                                )
@@ -11551,6 +11551,47 @@ namespace FintrakBanking.Repositories.Credit
             model.collateralSwapId = swap.COLLATERALSWAPID;
             model.swapRef = reference;
             return model;
+
+        }
+
+        public String ResponseMessage(WorkflowResponse response, string itemHeading)
+        {
+            if (response.stateId != (int)ApprovalState.Ended)
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Referred)
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextLevelName;
+                    }
+                }
+                else
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextLevelName;
+                    }
+                }
+            }
+            else
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    return "The " + itemHeading + " request has been APPROVED successfully";
+                }
+                else
+                {
+                    return "The " + itemHeading + " request has been DISAPPROVED successfully";
+                }
+            }
 
         }
 
