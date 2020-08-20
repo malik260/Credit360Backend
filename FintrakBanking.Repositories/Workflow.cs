@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int statusId = (int)ApprovalStatusEnum.Processing;
         private int groupStatusId = (int)ApprovalStatusEnum.Processing;
         private int? nextLevelId = null; // for refer backs
-        private bool? ignorePostApprovalReviewer = false;
+        private bool ignorePostApprovalReviewer = true;
         private int? finalLevel = null; // preset force to end
         private bool emailNotification = false;
         private bool smsNotification = false;
