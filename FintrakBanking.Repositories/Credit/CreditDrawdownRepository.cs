@@ -365,7 +365,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.SaveChanges();
                     trans.Commit();
-                    if (operationId != (short)OperationsEnum.ContigentLoanBooking)
+                    if (operationId != (short)OperationsEnum.ContigentLoanBooking && workflow.NewState == (int)ApprovalState.Ended)
                     {
                         workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
                     }
@@ -375,6 +375,13 @@ namespace FintrakBanking.Repositories.Credit
 
                 else
                 {
+                    if (!isContingent && workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
+                        context.SaveChanges();
+                        trans.Commit();
+                        return workflow.Response;
+                    }
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestInitiated;
                     context.SaveChanges();
                     trans.Commit();
@@ -1087,9 +1094,9 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
-                var approvedLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.DELETED == false && t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted).Select(t => t.LCISSUANCEID).ToList();
+                var adequateLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.DELETED == false && (t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted || t.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress)).Select(t => t.LCISSUANCEID).ToList();
                 var lcIFFRequests = context.TBL_LC_ISSUANCE.Where(l => l.DELETED == false && l.FUNDSOURCEID == (int)LCFundSource.IFF);
-                var lcapprovedLCIFFs = lcIFFRequests.Where(i => approvedLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT });
+                var lcapprovedLCIFFs = lcIFFRequests.Where(i => adequateLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT });
                 var lcapprovedLCIFFsRecords = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId).ToList();
                 var lcApprovedAmounts = lcapprovedLCIFFsRecords.Count() > 0 ? lcapprovedLCIFFsRecords?.Sum(i => i.LETTEROFCREDITAMOUNT) : 0;
                 var product = context.TBL_PRODUCT.Find(item.productId);
@@ -1557,6 +1564,7 @@ namespace FintrakBanking.Repositories.Credit
         private void ValidateGlobalLimit(List<LoanBookingRequestViewModel> models, List<TBL_LOAN_APPLICATION_DETAIL> lineFacilities)
         {
             var affectedModels = models.Where(x => lineFacilities.Select(c => x.loanApplicationDetailId).Contains(x.loanApplicationDetailId));
+
             foreach(var request in models)
             {
                 var existingLoans = context.TBL_LOAN.Where(x => x.CUSTOMERID == request.customerId && x.LOANAPPLICATIONDETAILID == request.loanApplicationDetailId).ToList();
@@ -1570,12 +1578,21 @@ namespace FintrakBanking.Repositories.Credit
                 var valueTaken = sumOfExistingLoans + sunOfExistingOverdrafts + sumOfExistingLiabilities;
 
                 var currentFacility = lineFacilities.FirstOrDefault(x=>x.LOANAPPLICATIONDETAILID == request.loanApplicationDetailId);
-                var individualGlobalLimit = currentFacility.APPROVEDLINELIMIT;
+                decimal individualGlobalLimit = currentFacility.APPROVEDLINELIMIT ?? 0;
+         
                 var customerRecord = context.TBL_CUSTOMER.Where(x=>x.CUSTOMERID == request.customerId || x.CUSTOMERID == currentFacility.CUSTOMERID).FirstOrDefault();
                 var customer = customerRecord?.FIRSTNAME + " " + customerRecord?.LASTNAME;
 
-                if(valueTaken >= individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) has already been met."); }
-                if (individualGlobalLimit != null && (valueTaken + request.amount_Requested) > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer.") ; }
+                if(valueTaken >= individualGlobalLimit && individualGlobalLimit > 0) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) has already been met."); }
+
+                if(request.amount_Requested > lineFacilities.Sum(x => x.APPROVEDAMOUNT) ) { throw new ConditionNotMetException($"The request amount is greater than the approved amount."); }
+
+                if(context.TBL_LOAN_BOOKING_REQUEST.Where(x=>x.LOANAPPLICATIONDETAILID == request.loanApplicationDetailId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Any())
+                {
+                    if (individualGlobalLimit > 0 && request.amount_Requested > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded.");  }
+                }
+
+                if (individualGlobalLimit > 0 && (valueTaken + request.amount_Requested) > individualGlobalLimit) { throw new ConditionNotMetException($"The Global Limit for customer '{customer}' ({customerRecord?.CUSTOMERCODE}) will be exceeded. {valueTaken} already taken by customer."); }
             }
         }
 
@@ -1706,7 +1723,14 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool AddLoanBookingRequests(int applicationStatusId, LoanBookingRequestViewModel entity)
         {
+            List<LoanBookingRequestViewModel> models = new List<LoanBookingRequestViewModel>();
+            models.Add(entity);
+
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+            var loanApplicationDetailIds = models.Select(p => p.loanApplicationDetailId).ToList();
+            var lineFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.ISLINEFACILITY == true && loanApplicationDetailIds.Contains(x.LOANAPPLICATIONDETAILID)).ToList();
+            if (lineFacilities.Count > 0) { ValidateGlobalLimit(models, lineFacilities); }
+
             if (entity.amount_Requested > loanApplicationDetails.APPROVEDAMOUNT)
             {
                 throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");

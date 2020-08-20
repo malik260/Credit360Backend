@@ -223,7 +223,7 @@ namespace FintrakBanking.Repositories.Customer
             var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(c => c.CUSTOMERCODE.Contains(customerCode)).ToList();
             foreach(var c in collaterals)
             {
-                c.CUSTOMERID = customer.CUSTOMERID;
+                c.CUSTOMERID = customer?.CUSTOMERID;
             }
             var saved = context.SaveChanges() > 0;
         }

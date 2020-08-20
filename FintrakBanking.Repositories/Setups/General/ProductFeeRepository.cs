@@ -482,16 +482,30 @@ namespace FintrakBanking.Repositories.Setups.General
                 });
         }
         
-        public IEnumerable<dynamic> GetSavedFee(int loanApplicationDetailId)
+        public IEnumerable<dynamic> GetSavedFee(int loanApplicationDetailId, bool forModifyFacility)
         {
-            var savedFees = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == loanApplicationDetailId && f.DELETED == false).ToList();
-            return savedFees.Select(c => new
+            if (forModifyFacility)
             {
-                feeId = c.CHARGEFEEID,
-                feeName = c.TBL_CHARGE_FEE.CHARGEFEENAME,
-                rate = c.RECOMMENDED_FEERATEVALUE,
-                feeTypeId = c.TBL_CHARGE_FEE.FEETYPEID
-            });
+                var savedFees = context.TBL_FACILITY_MOD_DETL_FEE.Where(f => f.FACILITYMODIFICATIONID == loanApplicationDetailId).ToList();
+                return savedFees.Select(c => new
+                {
+                    feeId = c.CHARGEFEEID,
+                    feeName = context.TBL_CHARGE_FEE.FirstOrDefault(f => f.CHARGEFEEID == c.CHARGEFEEID).CHARGEFEENAME,
+                    rate = c.RECOMMENDED_FEERATEVALUE,
+                    feeTypeId = context.TBL_CHARGE_FEE.FirstOrDefault(f => f.CHARGEFEEID == c.CHARGEFEEID).FEETYPEID
+                });
+            }
+            else
+            {
+                var savedFees = context.TBL_LOAN_APPLICATION_DETL_FEE.Where(f => f.LOANAPPLICATIONDETAILID == loanApplicationDetailId && f.DELETED == false).ToList();
+                return savedFees.Select(c => new
+                {
+                    feeId = c.CHARGEFEEID,
+                    feeName = c.TBL_CHARGE_FEE.CHARGEFEENAME,
+                    rate = c.RECOMMENDED_FEERATEVALUE,
+                    feeTypeId = c.TBL_CHARGE_FEE.FEETYPEID
+                });
+            }
         }
 
     }
