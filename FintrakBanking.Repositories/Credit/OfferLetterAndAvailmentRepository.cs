@@ -228,9 +228,9 @@ namespace FintrakBanking.Repositories.Credit
                     undergoingConcession = exceptIds.Contains(x.c.a.LOANAPPLICATIONID),
                     apiRequestId = x.c.a.APIREQUESTID,
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
-
                 });
 
+            var testList = data.ToList();
             data = data.Where(x =>
                 x.applicationStatusId == (int)LoanApplicationStatusEnum.OfferLetterGenerationCompleted
                 || x.applicationStatusId == (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
@@ -243,7 +243,7 @@ namespace FintrakBanking.Repositories.Credit
                 .OrderByDescending(c => c.systemArrivalDateTime)
                 ;
             //var testList = data.ToList();
-            //var testCount = data.Count();
+            var testCount = data.Count();
 
             return data;
         }

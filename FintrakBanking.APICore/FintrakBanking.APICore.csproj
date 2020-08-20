@@ -530,13 +530,6 @@
     <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.designer.cs">
       <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportViews\AllCommercialLoanReport.aspx.cs">
-      <DependentUpon>AllCommercialLoanReport.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\ReportViews\AllCommercialLoanReport.aspx.designer.cs">
-      <DependentUpon>AllCommercialLoanReport.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportViews\AnalystReport.aspx.cs">
       <DependentUpon>AnalystReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1412,7 +1405,6 @@
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
     <Content Include="Reports\ReportViews\AgeAnalysisReport.aspx" />
-    <Content Include="Reports\ReportViews\AllCommercialLoanReport.aspx" />
     <Content Include="Reports\ReportViews\AnalystReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx" />
@@ -1581,10 +1573,10 @@
     <Content Include="Reports\Credit\OfferLetterGeneration\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Reports\Credit\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>

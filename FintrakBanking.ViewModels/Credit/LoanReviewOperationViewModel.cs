@@ -422,7 +422,6 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string nameOfRecoveryAgent { get; set; }
         public string address { get; set; }
         public string telephoneNumber { get; set; }
-        public string TelephoneNumber { get; set; }
         public DateTime expectedRecoveryDate { get; set; }
 
         public int periodToRecover { get { return (this.expectedRecoveryDate.Date - this.dateOfAssignment.Date).Days; } }
@@ -445,6 +444,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public decimal? amountToCredit { get; set; }
         public string listOfAccountsAssigned { get; set; }
         public DateTime? recoveryDate { get; set; }
+        public int? flagStatus { get; set; }
+        public List<string> customerAddresses { get; set; }
     }
 
 
@@ -877,6 +878,18 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string Provision { get; set; }
         public double ResidualBalance { get; set; }
         public double MonthlyExpectedPayment { get; set; }
+    }
+
+    public class RepaymentAlertViewModel
+    {
+        public string customerName { get; set; }
+        public string customerEmail { get; set; }
+        public decimal outStandingPrincipal { get; set; }
+        public string guarantorEmail { get; set; }
+        public DateTime paymentDate { get; set; }
+        public decimal periodPaymentAmount { get; set; }
+        public decimal periodPrincipalAmount { get; set; }
+        public decimal endPrincipalAmount { get; set; }
     }
 
 }

@@ -113,8 +113,14 @@ namespace FintrakBanking.Repositories.CRMS
                     }
                     else
                     {
+                        var saved = context.SaveChanges() > 0;
+                        if (saved)
+                        {
+                            trans.Commit();
+                            return "CRMS Code Captured";
+                        }
                         trans.Rollback();
-                        throw new ConditionNotMetException("There was no pending Job on CRMS CAPTURE Queue");
+                        throw new ConditionNotMetException("An error occured while trying to Capture CRMS CODE!");
                     }
                 }
             }
@@ -127,9 +133,14 @@ namespace FintrakBanking.Repositories.CRMS
                     throw new ConditionNotMetException("This Booking Request does not exist");
 
                 param.crmsCode = param.crmsCode.Trim();
-                var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE == param.crmsCode).Any();
+
+                var codeExist = context.TBL_LOAN_BOOKING_REQUEST.Where(x => x.CRMSCODE.Trim() == param.crmsCode).Any();
                 if (codeExist == true)
                     throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+                if (!string.IsNullOrEmpty(loan.CRMSCODE) && !string.IsNullOrWhiteSpace(loan.CRMSCODE) && (loan.CRMSVALIDATED ?? false))
+                {
+                    throw new ConditionNotMetException("CRMS code has already been captured for this request, kindly refresh your screen for confirmation!");
+                }
 
                 loan.CRMSCODE = param.crmsCode;
                 loan.CRMSDATE = DateTime.Now;
@@ -157,7 +168,12 @@ namespace FintrakBanking.Repositories.CRMS
                 }
                 else
                 {
-                    throw new ConditionNotMetException("There was no pending Job on LOS CRMS CAPTURE Queue");
+                    var saved = context.SaveChanges() > 0;
+                    if (saved)
+                    {
+                        return "CRMS Code Captured";
+                    }
+                    throw new ConditionNotMetException("An error occured while trying to Capture CRMS CODE!");
                 }
             }
 
@@ -265,20 +281,20 @@ namespace FintrakBanking.Repositories.CRMS
                 workflow.IsFlowTest = model.isFlowTest;
                 workflow.IsFromPc = model.isFromPc;
                 workflow.Tenor = lmsrDetail.Max(d => d.APPROVEDTENOR);
-                workflow.LevelBusinessRule = new LevelBusinessRule
-                {
-                    Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                    PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
-                    Pep = model.politicallyExposed,
-                    //InsiderRelated = appl.ISRELATEDPARTY ?? false,
-                    ProjectRelated = appl.ISPROJECTRELATED ?? false,
-                    OnLending = appl.ISONLENDING ?? false,
-                    InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
-                    WithInstruction = appl.WITHINSTRUCTION ?? false,
-                    //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
-                    DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
-                    tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
-                };
+                //workflow.LevelBusinessRule = new LevelBusinessRule
+                //{
+                //    Amount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                //    PepAmount = lmsrDetail.Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0, // totalApplicationAmount,
+                //    Pep = model.politicallyExposed,
+                //    //InsiderRelated = appl.ISRELATEDPARTY ?? false,
+                //    ProjectRelated = appl.ISPROJECTRELATED ?? false,
+                //    OnLending = appl.ISONLENDING ?? false,
+                //    InterventionFunds = appl.ISINTERVENTIONFUNDS ?? false,
+                //    WithInstruction = appl.WITHINSTRUCTION ?? false,
+                //    //OrrBasedApproval = appl.ISORRBASEDAPPROVAL ?? false,
+                //    DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE ?? false,
+                //    tenor = lmsrDetail.Max(d => d.APPROVEDTENOR),
+                //};
 
                 if (model.receiverLevelId == 0) workflow.NextLevelId = null;
 
@@ -286,31 +302,31 @@ namespace FintrakBanking.Repositories.CRMS
 
                 List<TBL_LMSR_APPLICATION_DETAIL> items = null;
                 items = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
-                if (model.recommendedChanges != null && model.recommendedChanges.Count() > 0)
-                {
-                    foreach (var changed in model.recommendedChanges)
-                    {
-                        var detail = items.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == changed.detailId);
-                        if (detail != null)
-                        {
-                            detail.APPROVEDAMOUNT = changed.amount;
-                            detail.APPROVEDINTERESTRATE = changed.interestRate;
-                            detail.APPROVEDTENOR = changed.tenor;
-                            detail.APPROVALSTATUSID = changed.statusId;
+                //if (model.recommendedChanges != null && model.recommendedChanges.Count() > 0)
+                //{
+                //    foreach (var changed in model.recommendedChanges)
+                //    {
+                //        var detail = items.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == changed.detailId);
+                //        if (detail != null)
+                //        {
+                //            detail.APPROVEDAMOUNT = changed.amount;
+                //            detail.APPROVEDINTERESTRATE = changed.interestRate;
+                //            detail.APPROVEDTENOR = changed.tenor;
+                //            detail.APPROVALSTATUSID = changed.statusId;
 
-                            if (model.isBusiness)
-                            {
-                                if (detail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
-                                else
-                                {
-                                    detail.PROPOSEDAMOUNT = changed.amount;
-                                    detail.PROPOSEDINTERESTRATE = changed.interestRate;
-                                    detail.PROPOSEDTENOR = changed.tenor;
-                                }
-                            }
-                        }
-                    }
-                }
+                //            if (model.isBusiness)
+                //            {
+                //                if (detail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
+                //                else
+                //                {
+                //                    detail.PROPOSEDAMOUNT = changed.amount;
+                //                    detail.PROPOSEDINTERESTRATE = changed.interestRate;
+                //                    detail.PROPOSEDTENOR = changed.tenor;
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
 
                 //context.SaveChanges();
 

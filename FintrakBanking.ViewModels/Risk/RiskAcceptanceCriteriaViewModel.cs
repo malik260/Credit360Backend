@@ -193,6 +193,7 @@ namespace FintrakBanking.ViewModels.Risk
 
         public bool isSystemDefined { get; set; }
         public string optionName { get; set; }
+        public int racOptionId { get; set; }
     }
 
     public class ConditionalOperatorViewModel : GeneralEntity
