@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int GroupStatusId { get { return groupStatusId; } }
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
-        public bool? IgnorePostApprovalReviewer { get { return ignorePostApprovalReviewer; } set { ignorePostApprovalReviewer = value; } }
+        public bool IgnorePostApprovalReviewer { get { return ignorePostApprovalReviewer; } set { ignorePostApprovalReviewer = value; } }
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
         public TBL_APPROVAL_TRAIL ApprovalTrail { get { return approvalTrail; } set { approvalTrail = value; } }
