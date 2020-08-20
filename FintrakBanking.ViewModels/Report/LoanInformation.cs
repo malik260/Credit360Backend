@@ -51,12 +51,15 @@ namespace FintrakBanking.ViewModels.Reports
     public class DisburstLoanViewModel
     {
         public string loanStatus;
-
-        public decimal  outstandingInterest { get; set; }
+        // public decimal approvedTenor { get; set; }
+        public decimal outstandingInterest { get; set; }
         public double approvedInterestRate { get; set; }
-        private int tenor { get { return (maturitydate - effectiveDate).Days; } }
+        public string disbursedBy { get; set; }
+        public string tenor { get; set; }
+        public int tenornum { get; set; }
+        // private int tenor { get { return (maturitydate - effectiveDate).Days; } }
         public int tenorToDate { get; set; }
-        public int approvedTenor { get { return (int)(Math.Round(tenor * (decimal)(12.0 / 365.0))); } }
+        public int approvedTenor { get { return (int)(Math.Round(tenornum * (decimal)(12.0 / 365.0))); } }
         public double exchangeValue { get; set; }
         public decimal productId { get; set; }
         public string companyName { get; set; }
@@ -64,8 +67,14 @@ namespace FintrakBanking.ViewModels.Reports
         public string productName { get; set; }
         public decimal approvedAmount { get; set; }
         public string applicationReferenceNumber { get; set; }
+        public string solId { get; set; }
+        public string loanrefnum { get; set; }
         public decimal amountDisbursed { get; set; }
+
         public string accountNumber { get; set; }
+        public string disbursementAccount { get; set; }
+        public string disbursedUser { get; set; }
+        public string repaymentAccount { get; set; }
         public decimal outstandingPrincipal { get; set; }
         public DateTime effectiveDate { get; set; }
         public DateTime maturitydate { get; set; }
@@ -82,6 +91,8 @@ namespace FintrakBanking.ViewModels.Reports
         public decimal interest { get; set; }
         public DateTime dealDate { get; set; }
         public string interestType { get; set; }
+        public string interestRepaymentFreq { get; set; }
+        public string principalRepaymentFreq { get; set; }
         public decimal pricipalAmount { get; set; }
         public double rate { get; set; }
         public decimal interestRateChange { get; set; }
@@ -99,7 +110,13 @@ namespace FintrakBanking.ViewModels.Reports
         public string lastName { get; set; }
         public string middleName { get; set; }
         public string staffName { get; set; }
+        public string misCode { get; set; }
+        public string BU { get; set; }
+    }
 
+    public class fullname
+    {
+        public string name { get; set; }
     }
 
     public class DateRange
@@ -128,6 +145,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string referenceNumber { get; set; }
         public int psrReportTypeId { get; set; }
         public int projectSiteReportId { get; set; }
+        public string ReportType { get; set; }
     }
 
     public class ReportSearchEntity
@@ -441,6 +459,92 @@ namespace FintrakBanking.ViewModels.Reports
         public string accountStatus { get; set; }
         public string relatedParty { get; set; }
         public string relationshipType { get; set; }
+    }
+
+    public class MarturedLoansViewModel
+    {
+        public string applicationReferenceNumber { get; set; }
+        public string solId { get; set; }
+        public string customerName { get; set; }
+        public string staffName { get; set; }
+        public int approvedTenor { get; set; }
+        public decimal principalAmount { get; set; }
+        public DateTime? disbursedDate { get; set; }
+        public DateTime? maturityDate { get; set; }
+        public decimal approvedAmount { get; set; }
+        public double exchangeRate { get; set; }
+        public string misCode { get; set; }
+        public string BU { get; set; }
+        public string status { get; set; }
+    }
+
+    public class ApprovedLoansViewModel
+    {
+        public string applicationReferenceNumber { get; set; }
+        public string solId { get; set; }
+        public string customerName { get; set; }
+        public string staffName { get; set; }
+        public string branchName { get; set; }
+        public string GLCode { get; set; }
+        public decimal? manageFee { get; set; }
+        public double interestRate { get; set; }
+        public string product { get; set; }
+        public decimal? utilizedAmount { get; set; }
+        public string disbursedStatus { get; set; }
+        public int approvedTenor { get; set; }
+        public decimal approvedAmount { get; set; }
+        public string currency { get; set; }
+        public double exchangeRate { get; set; }
+        public decimal applicationAmount { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public DateTime? approvedDate { get; set; }
+        public string misCode { get; set; }
+        public string BU { get; set; }
+        public string account { get; set; }
+
+    }
+
+    public class InitiatedLoansViewModel
+    {
+        public string applicationReferenceNumber { get; set; }
+        public string solId { get; set; }
+        public string customerName { get; set; }
+        public string staffName { get; set; }
+        public int approvedTenor { get; set; }
+        public string product { get; set; }
+        public decimal applicationAmount { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public double exchangeRate { get; set; }
+        public decimal proposedAmount { get; set; }
+        public string misCode { get; set; }
+        public string BU { get; set; }
+    }
+
+    public class TerminatedLoansViewModel
+    {
+        public string applicationReferenceNumber { get; set; }
+        public string solId { get; set; }
+        public string customerName { get; set; }
+        public string staffName { get; set; }
+        public int approvedTenor { get; set; }
+        public decimal principalAmount { get; set; }
+        public DateTime? disbursedDate { get; set; }
+        public DateTime maturityDate { get; set; }
+        public string misCode { get; set; }
+        public string BU { get; set; }
+
+    }
+
+    public class CustomerViewModel
+    {
+        public string customerCode { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string solId { get; set; }
+        public string staffname { get; set; }
+        public DateTime dateTimeCreated { get; set; }
+        public string misCode { get; set; }
+        public string BU { get; set; }
     }
 
 }
