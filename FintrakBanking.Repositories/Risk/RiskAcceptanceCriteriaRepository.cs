@@ -1325,6 +1325,7 @@ namespace FintrakBanking.Repositories.Risk
                 LABEL = model.label,
                 KEY = model.key,
                 ISSYSTEMDEFINED = model.isSystemDefined,
+                RACOPTIONID = model.racOptionId,
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -1332,7 +1333,7 @@ namespace FintrakBanking.Repositories.Risk
 
             context.TBL_RAC_OPTION_ITEM.Add(entity);
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             //this.audit.AddAuditTrail(new TBL_AUDIT
             //{
