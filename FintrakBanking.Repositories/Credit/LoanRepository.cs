@@ -18339,10 +18339,10 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
-                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                                          || x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                                                          ).FirstOrDefault();
-            if (validate != null)
+                                                          && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                                          && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                                                          ).ToList();
+            if (validate != null && validate.Count() > 0)
             {
                 throw new SecureException("Request already exist and undergoing approval");
             }
