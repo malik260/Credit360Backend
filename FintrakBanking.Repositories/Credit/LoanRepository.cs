@@ -13972,11 +13972,12 @@ namespace FintrakBanking.Repositories.Credit
                               requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
                               requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
                               TargetId = a.TARGETID,
+                              approvalTrailId = a.APPROVALTRAILID,
                               // operationId = e.OPERATIONID,
                               // operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
                               approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
-                          }).Distinct();
+                          }).OrderByDescending(O => O.approvalTrailId).Distinct();
 
 
             var response = result.ToList();
