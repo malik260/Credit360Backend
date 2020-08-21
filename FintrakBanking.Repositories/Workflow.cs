@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int statusId = (int)ApprovalStatusEnum.Processing;
         private int groupStatusId = (int)ApprovalStatusEnum.Processing;
         private int? nextLevelId = null; // for refer backs
-        private bool? ignorePostApprovalReviewer = false;
+        private bool ignorePostApprovalReviewer = false;
         private int? finalLevel = null; // preset force to end
         private bool emailNotification = false;
         private bool smsNotification = false;
@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int GroupStatusId { get { return groupStatusId; } }
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
-        public bool? IgnorePostApprovalReviewer { get { return ignorePostApprovalReviewer; } set { ignorePostApprovalReviewer = value; } }
+        public bool IgnorePostApprovalReviewer { get { return ignorePostApprovalReviewer; } set { ignorePostApprovalReviewer = value; } }
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
         public TBL_APPROVAL_TRAIL ApprovalTrail { get { return approvalTrail; } set { approvalTrail = value; } }
@@ -1182,7 +1182,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void EndProcess(int status)
         {   
-            if(lastRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastRequest.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
+            if(lastOpenRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastOpenRequest.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
             if (this.nextLevelId > 0)
             {
                 var level = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
