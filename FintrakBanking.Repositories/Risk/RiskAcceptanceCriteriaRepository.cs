@@ -106,6 +106,25 @@ namespace FintrakBanking.Repositories.Risk
                     racDefinition.AddRange(racDefinitionOnEmployer);
                 }
 
+                else if (!isCorporate && model.productClassId == (int)ProductClassEnum.MortgageLoan)
+                {
+                    var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
+                                                                                         && (x.EMPLOYMENTTYPE == "EMPLOYEE")
+                                                                                         && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                         && x.ISACTIVE == true
+                                                                                         && x.DELETED == false).ToList();
+
+                    var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
+                                                                                        && (x.EMPLOYMENTTYPE == "EMPLOYEE")
+                                                                                        && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                        && x.ISACTIVE == true
+                                                                                        && x.DELETED == false).ToList();
+
+                    racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
+
+                    racDefinition.AddRange(racDefinitionOnEmployer);
+                }
+
             }
 
             if (model.isOperationbased || model.searchBasePlaceholder != "CREDITCARD")
