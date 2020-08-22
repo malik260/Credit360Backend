@@ -1142,7 +1142,7 @@ namespace FintrakBanking.Repositories.Media
 
         public RecoveryReportingDocumentViewModel GetRecoveryReportDocument(int loanRecoveryReportApprovalId)
         {
-            return docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Where(x => x.TARGETID == loanRecoveryReportApprovalId)
+            return docContext.TBL_LOAN_RECOVERY_REPORTING_DOCUMENT.Where(x => x.LOANRECOVERYREPORTDOCUMENTID == loanRecoveryReportApprovalId)
                             .Select(x => new RecoveryReportingDocumentViewModel
                             {
                                 fileName = x.FILENAME,
@@ -1152,7 +1152,6 @@ namespace FintrakBanking.Repositories.Media
                                 fileExtension = x.FILEEXTENSION,
                                 fileSize = x.FILESIZE,
                                 fileData = x.FILEDATA,
-                                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == x.CREATEDBY).Select(s => s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME).FirstOrDefault(),
                             }).FirstOrDefault();
         }
 
