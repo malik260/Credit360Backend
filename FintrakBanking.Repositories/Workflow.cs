@@ -42,7 +42,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int groupStatusId = (int)ApprovalStatusEnum.Processing;
         private int? nextLevelId = null; // for refer backs
         private bool ignorePostApprovalReviewer = false;
+        private bool nextIsReviewer = false;
         private int? finalLevel = null; // preset force to end
+        private int? reviewerLevelId = null; // preset force to end
         private bool emailNotification = false;
         private bool smsNotification = false;
         private bool sameDesk = false;
@@ -311,13 +313,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //    this.nextLevelId = reviewers.FirstOrDefault().APPROVALLEVELID;
                 //    StartPostApprovalLevelsReview(reviewers.FirstOrDefault().APPROVALLEVELID);
                 //}
-                if (this.nextLevelId > 0)
+                if (this.reviewerLevelId > 0)
                 {
-                    var level = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
+                    var level = context.TBL_APPROVAL_LEVEL.Find(this.reviewerLevelId);
                     var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
                     if (isReviewer)
                     {
-                        StartPostApprovalLevelsReview(this.nextLevelId ?? 0);
+                        StartPostApprovalLevelsReview(this.reviewerLevelId ?? 0);
                     }
                 }
             }
@@ -752,21 +754,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             else
             {
-                if (isFinishing.Count > 0)
+                if (this.reviewerLevelId > 0 && response.statusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    var finishingTrail = isFinishing.FirstOrDefault();
-                    if (finishingTrail.TOSTAFFID > 0)
-                    {
-                        var toStaff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == finishingTrail.TOSTAFFID);
-                        var nextPersonName = toStaff.FIRSTNAME + " " + toStaff.MIDDLENAME + " " + toStaff.LASTNAME;
-                        return "The " + itemHeading + " request has been APPROVED and SENT to " + nextPersonName;
-                    }
-                    else
-                    {
-                        var toLevel = context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == finishingTrail.TOAPPROVALLEVELID);
-                        var nextLevelName = toLevel.LEVELNAME;
-                        return "The " + itemHeading + " request has been APPROVED and SENT to " + nextLevelName;
-                    }
+                    var toLevel = context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == this.reviewerLevelId);
+                    var nextLevelName = toLevel.LEVELNAME;
+                    return "The " + itemHeading + " request has been APPROVED and SENT to " + nextLevelName;
                 }
                 else
                 {
@@ -1187,9 +1179,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 var level = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
                 var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
-                if (!isReviewer)
+                if (isReviewer)
                 {
-                    this.nextLevelId = null; // even if there are other higher level which have been resolve prior
+                    this.nextIsReviewer = true;
+                    this.reviewerLevelId = this.nextLevelId;
                 }
             }
             else
@@ -1200,11 +1193,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
                     if (isReviewer)
                     {
-                        this.statusId = (int)ApprovalStatusEnum.Finishing;
+                        status = (int)ApprovalStatusEnum.Finishing;
                     }
                 }
             }
             this.statusId = ResolveLastStatus(status);
+            this.nextLevelId = null; // even if there are other higher level which have been resolve prior
             this.newStateId = (int)ApprovalState.Ended;
             this.keepPending = false;
             this.toStaffId = null;
