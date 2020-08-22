@@ -5754,7 +5754,7 @@ namespace FintrakBanking.Repositories.Credit
                 || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected
                 || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted
                 )
-                && (reliefStaffIds.Contains(x.CREATEDBY))
+                && ((reliefStaffIds.Contains(x.CREATEDBY)) || (x.OWNEDBY == user.staffId))
                 )
             .Select(x => new LoanApplicationViewModel
             {
@@ -7234,11 +7234,14 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
-                var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
-                if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+                foreach (var facility in details)
                 {
-                    throw new SecureException("Single Obligor Limit Exceeded");
+                    var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
+                    var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
+                    if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit && facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal && facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
+                    {
+                        throw new SecureException("Single Obligor Limit Exceeded");
+                    }
                 }
             }
             

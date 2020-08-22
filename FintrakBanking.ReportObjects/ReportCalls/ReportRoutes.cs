@@ -778,6 +778,30 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string InsiderRelatedLoansReport(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+
+            path = reportPath + "ReportViews/InsiderRelatedLoansReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&loanRefNo=" + dateRange.loanRefNo + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+
+
+            return path;
+        }
+
+        public string GetLoanStatusReport(DateRange dateRange, int companyId, int staffId)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+
+            path = reportPath + "ReportViews/LoanStatusReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&staffId=" + staffId.ToString() + "&ReportType=" + dateRange.ReportType + "&companyId=" + companyId.ToString() + "&loanRefNo=" + dateRange.loanRefNo + "&branchId=" + dateRange.branchId + "&productClassId=" + dateRange.productClassId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+
+
+            return path;
+        }
+
         public string GetUnearnedLoanInterestReport(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);

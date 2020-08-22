@@ -926,7 +926,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int documentationFillingId { get; set; }
         public int requestId { get; set; }
         public string module { get; set; }
-        
+        public int? flagStatus { get; set; }
+
 
 
         //......End f Loan Relational Table View Mapping Models......//

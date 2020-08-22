@@ -37,6 +37,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public List<AccreditedConsultantStateViewModel> accreditedConsultantStates { get; set; }
         public string consultantType { get; set; }
         public string stateName { get; set; }
+        public string category { get; set; }
+        public DateTime? dateOfEngagement { get; set; }
     }
     public class AccreditedPrincipalsViewModel : GeneralEntity
     {

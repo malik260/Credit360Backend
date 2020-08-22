@@ -1,6 +1,8 @@
-﻿using FintrakBanking.ViewModels.CASA;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.Setups.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +18,7 @@ namespace FintrakBanking.Interfaces.CASA
 
         int AddConsumerProtection(ConsumerProtectionViewModel model);
         IEnumerable<ConsumerProtectionViewModel> GetAllConsumerProtections(int companyId);
+        List<LoadedDocumentSectionViewModel> GetLoadedDocumentationConsumerProtection(int staffId, int operationId, int targetId, UserInfo user);
+        LoadedDocumentSectionViewModel GetDocumentSectionConsumerProtection(int staffId, int operationId, int targetId, int sectionId);
     }
 }

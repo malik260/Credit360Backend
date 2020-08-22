@@ -54,6 +54,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         emailAddress = m.EMAILADDRESS,
                         phoneNumber = m.PHONENUMBER,
                         address = m.ADDRESS,
+                        dateOfEngagement = m.DATEOFENGAGEMENT.Value,
+                        category = m.CATEGORY,
                         coreCompetence = m.CORECOMPETENCE,
                         accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTTYPEID).FirstOrDefault().NAME,
                         accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
@@ -87,6 +89,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             emailAddress = m.EMAILADDRESS,
                             phoneNumber = m.PHONENUMBER,
                             address = m.ADDRESS,
+                            dateOfEngagement = m.DATEOFENGAGEMENT.Value,
+                            category = m.CATEGORY,
                             consultantType = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(t => t.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTTYPEID).Select(t => t.NAME).FirstOrDefault(),
                             coreCompetence = m.CORECOMPETENCE,
                             stateName = context.TBL_STATE.FirstOrDefault(x => x.STATEID == c.STATEID).STATENAME,
@@ -115,6 +119,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             emailAddress = m.EMAILADDRESS,
                             phoneNumber = m.PHONENUMBER,
                             address = m.ADDRESS,
+                            dateOfEngagement = m.DATEOFENGAGEMENT.Value,
+                            category = m.CATEGORY,
                             consultantType = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(t => t.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTTYPEID).Select(t => t.NAME).FirstOrDefault(),
                             coreCompetence = m.CORECOMPETENCE,
                             stateName = (from s in context.TBL_STATE join c in context.TBL_ACCREDITEDCONSULTANT_STATE on s.STATEID equals c.STATEID where c.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID select s.STATENAME).FirstOrDefault(),
@@ -148,6 +154,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                emailAddress = m.EMAILADDRESS,
                                phoneNumber = m.PHONENUMBER,
                                address = m.ADDRESS,
+                               dateOfEngagement = m.DATEOFENGAGEMENT.Value,
+                               category = m.CATEGORY,
                                stateName = (from s in context.TBL_STATE join c in context.TBL_ACCREDITEDCONSULTANT_STATE on s.STATEID equals c.STATEID where c.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID select s.STATENAME).FirstOrDefault(),
                            };
 
@@ -174,6 +182,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             phoneNumber = m.PHONENUMBER,
                             address = m.ADDRESS,
                             coreCompetence = m.CORECOMPETENCE,
+                            dateOfEngagement = m.DATEOFENGAGEMENT.Value,
+                            category = m.CATEGORY,
                             accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
                                new AccreditedConsultantStateViewModel()
                                {
@@ -249,7 +259,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 ISCURRENT = true,
                 OPERATION = "insert",
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                TBL_TEMP_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates
+                TBL_TEMP_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates,
+                DATEOFENGAGEMENT = entity.dateOfEngagement,
+                CATEGORY = entity.category
             };
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
@@ -346,8 +358,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 DELETED = false,
-                TBL_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates
-            };
+                TBL_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates,
+                DATEOFENGAGEMENT = entity.dateOfEngagement,
+                CATEGORY = entity.category
+                };
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
             {
@@ -445,9 +459,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 //tempAccreditedConsultantsToUpdate.PRODUCT_BEHAVIOURID = productModel.productBehaviourId;
                 tempAccreditedConsultantsToUpdate.OPERATION = "update";
                 tempAccreditedConsultantsToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                tempAccreditedConsultantsToUpdate.DATEOFENGAGEMENT = entity.dateOfEngagement;
+                tempAccreditedConsultantsToUpdate.CATEGORY = entity.category;
 
-               
-               
+
+
+
                 context.TBL_TEMP_ACCREDITEDCONSULTANT.Add(tempAccreditedConsultantsToUpdate);
                 context.SaveChanges();
                 //Product Behaviour Update
@@ -495,6 +512,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                     ISCURRENT = true,
                     OPERATION = "update",
+                    DATEOFENGAGEMENT = entity.dateOfEngagement,
+                    CATEGORY = entity.category
                 };              
 
                 context.TBL_TEMP_ACCREDITEDCONSULTANT.Add(tempAccreditedConsultants);
@@ -584,6 +603,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 consultants.PHONENUMBER = entity.phoneNumber;
                 consultants.ADDRESS = entity.address;
                 consultants.CORECOMPETENCE = entity.coreCompetence;
+                consultants.DATEOFENGAGEMENT = entity.dateOfEngagement;
+                consultants.CATEGORY = entity.category;
 
             };
             AccreditedConsultantId = entity.accreditedConsultantId;
@@ -635,6 +656,8 @@ namespace FintrakBanking.Repositories.Setups.General
                               emailAddress = a.EMAILADDRESS,
                               phoneNumber = a.PHONENUMBER,
                               address = a.ADDRESS,
+                              dateOfEngagement = a.DATEOFENGAGEMENT.Value,
+                              category = a.CATEGORY,
                               coreCompetence = a.CORECOMPETENCE,
                               accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(x => x.ACCREDITEDCONSULTANTID == a.ACCREDITEDCONSULTANTTYPEID).FirstOrDefault().NAME,
                               accreditedConsultantStates = context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE.Where(x => x.TEMPACCREDITEDCONSULTANTID == a.TEMPACCREDITEDCONSULTANTID).Select(k =>
@@ -722,6 +745,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingaccreditedConsultant.CREATEDBY = accreditedConsultantModel.CREATEDBY;
                     existingaccreditedConsultant.DATETIMECREATED = DateTime.Now;
                     existingaccreditedConsultant.DELETED = false;
+                    existingaccreditedConsultant.DATEOFENGAGEMENT = accreditedConsultantModel.DATEOFENGAGEMENT;
+                    existingaccreditedConsultant.CATEGORY = accreditedConsultantModel.CATEGORY;
                 }
 
                 accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
@@ -764,6 +789,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         CREATEDBY = accreditedConsultantModel.CREATEDBY,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
                         DELETED = false,
+                        DATEOFENGAGEMENT = accreditedConsultantModel.DATEOFENGAGEMENT,
+                        CATEGORY = accreditedConsultantModel.CATEGORY,
 
                     };
                     accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;

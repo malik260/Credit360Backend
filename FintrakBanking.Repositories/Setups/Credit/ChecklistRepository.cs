@@ -2175,6 +2175,13 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.ProvisionOfDeferredDocument;
                 workflow.ExternalInitialization = true;
+
+                var deferral = (from a in this.context.TBL_LOAN_CONDITION_DEFERRAL where a.LOANCONDITIONID == model.conditionId select a).FirstOrDefault();
+
+                if(deferral != null && deferral.EXCLUDELEGAL != null) {
+                    workflow.LevelBusinessRule = new LevelBusinessRule { excludeLevel = deferral.EXCLUDELEGAL.Value };
+                }
+
                 workflow.LogActivity();
 
                 try
@@ -2182,7 +2189,6 @@ namespace FintrakBanking.Repositories.Credit
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var precedent = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
-                        var deferral = (from a in this.context.TBL_LOAN_CONDITION_DEFERRAL where a.LOANCONDITIONID == model.conditionId select a).FirstOrDefault();
 
                         if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                         {
@@ -2429,7 +2435,6 @@ namespace FintrakBanking.Repositories.Credit
                     if (appl != null) workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
                     workflow.LogActivity();
-
 
                     if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                     {

@@ -55,7 +55,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                 && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                                                      .Any();
 
-                if(docCheck) throw new SecureException("Collateral Documents is currently undergoing Approval");
+                if(docCheck) throw new SecureException("Collateral Document(s) currently undergoing Approval");
 
                 //check if the document was added to TBL_ORIGINAL_DOCUMENT_RELEASE but not sent for approval
                 var resultCheck = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == mod.documentUploadId
@@ -239,7 +239,7 @@ namespace FintrakBanking.Repositories.Credit
                          && atrail.RESPONSESTAFFID == null
                          && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                          && (atrail.TOSTAFFID == null || staffs.Contains((int)atrail.TOSTAFFID))
-                         && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
+                         && (atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease || atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval)
                          select new OriginalDocumentReleaseViewModel
                          {
                              approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
@@ -257,7 +257,7 @@ namespace FintrakBanking.Repositories.Credit
                              customerId = c.CUSTOMERID,
                              collateralCode = cc.COLLATERALCODE,
                              collateralCustomerId = cc.COLLATERALCUSTOMERID,
-                             operationId = (int)OperationsEnum.SecurityRelease,
+                             operationId = atrail.OPERATIONID,
                              perfectionStatusId = dr.PERFECTIONSTATUSID,
                              litigationStatusId = dr.LITIGATIONSTATUSID,
                              isOnAmconList = dr.ISONAMCONLIST
@@ -274,7 +274,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<OriginalDocumentReleaseViewModel> GetRejectedAndReferredSecurityRelease(int staffId)
         {
             //var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();
-            var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.SecurityRelease).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+            var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.SecurityRelease || o.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
 
             var record = (from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
                          join oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL on dr.ORIGINALDOCUMENTAPPROVALID equals oda.ORIGINALDOCUMENTAPPROVALID
@@ -283,7 +283,7 @@ namespace FintrakBanking.Repositories.Credit
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
                          where dr.DELETED == false
-                            && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
+                            && (atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease || atrail.OPERATIONID == (int)OperationsEnum.GuaranteeReleaseApproval)
                             && atrail.TARGETID == dr.ORIGINALDOCUMENTAPPROVALID
                             && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                             && atrail.LOOPEDSTAFFID == initiator) 
@@ -500,8 +500,8 @@ namespace FintrakBanking.Repositories.Credit
                     _workflow.CompanyId = x.companyId;
                     _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                     _workflow.TargetId = x.originalDocumentApprovalId;
-                    _workflow.Comment = "Request for security release approval";
-                    _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
+                    _workflow.Comment = "Request for gurantee security release approval";
+                    _workflow.OperationId = (int)OperationsEnum.GuaranteeReleaseApproval;
                     _workflow.DeferredExecution = true;
                     _workflow.ExternalInitialization = true;
                     _workflow.LogActivity();
@@ -530,7 +530,7 @@ namespace FintrakBanking.Repositories.Credit
                _workflow.StatusId = model.approvalStatusId == (short)ApprovalStatusEnum.Approved ? (short)ApprovalStatusEnum.Processing : model.approvalStatusId;
                _workflow.TargetId = model.originalDocumentApprovalId;
                _workflow.Comment = model.comment;
-                _workflow.OperationId = (int)model.docSubmissionOperationId; //(int)OperationsEnum.SecurityRelease;
+                _workflow.OperationId = (int)model.operationId; //model.docSubmissionOperationId; //(int)OperationsEnum.SecurityRelease;
                _workflow.DeferredExecution = true;
                _workflow.LogActivity();
 

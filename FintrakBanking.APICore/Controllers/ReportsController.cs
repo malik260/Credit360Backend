@@ -1375,6 +1375,52 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("insider-related-loans")]
+        public HttpResponseMessage InsiderRelatedLoansReport(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.InsiderRelatedLoansReport(dateRange);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("monitoring/loan-status-report")]
+        public HttpResponseMessage GetLoanStatusReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+                var data = repo.GetLoanStatusReport(param, token.GetCompanyId, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpPost]
         [ClaimsAuthorization]

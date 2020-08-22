@@ -443,6 +443,17 @@
     <Compile Include="Filters\SecureExceptionFilterAttribute.cs" />
     <Compile Include="Providers\ReportServerCredentials.cs" />
     <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
+    <Compile Include="Reports\Credit\Credit.cs">
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Credit\Credit.designer.cs">
+      <DependentUpon>Credit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Credit\Credit1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\CFLOfferLetter.aspx.cs">
       <DependentUpon>CFLOfferLetter.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -616,6 +627,20 @@
     </Compile>
     <Compile Include="Reports\ReportViews\IdleAssetsSales.aspx.designer.cs">
       <DependentUpon>IdleAssetsSales.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\InsiderRelatedLoansReport.aspx.cs">
+      <DependentUpon>InsiderRelatedLoansReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\InsiderRelatedLoansReport.aspx.designer.cs">
+      <DependentUpon>InsiderRelatedLoansReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanStatusReport.aspx.cs">
+      <DependentUpon>LoanStatusReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanStatusReport.aspx.designer.cs">
+      <DependentUpon>LoanStatusReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\RevalidationOfFullAndFinalSettlement.aspx.cs">
       <DependentUpon>RevalidationOfFullAndFinalSettlement.aspx</DependentUpon>
@@ -1396,6 +1421,8 @@
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\FullAndFinalSettlementAndWaivers.aspx" />
     <Content Include="Reports\ReportViews\IdleAssetsSales.aspx" />
+    <Content Include="Reports\ReportViews\InsiderRelatedLoansReport.aspx" />
+    <Content Include="Reports\ReportViews\LoanStatusReport.aspx" />
     <Content Include="Reports\ReportViews\RevalidationOfFullAndFinalSettlement.aspx" />
     <Content Include="Reports\ReportViews\LitigationRecoveries.aspx" />
     <Content Include="Reports\ReportViews\RecoveryCommission.aspx" />
@@ -1546,7 +1573,18 @@
     <Content Include="Reports\Credit\OfferLetterGeneration\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\Credit\Credit.xsc">
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Reports\Credit\Credit.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\Credit\Credit.xss">
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Content>
     <None Include="Reports\Credit\OfferLetterGeneration\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit.Designer.cs</LastGenOutput>
@@ -1769,9 +1807,11 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AnalystReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ApprovedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CancelledLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashCollaterizedCredits.rdlc" />
@@ -1788,6 +1828,7 @@
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\DeferralWaiver.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DisbursedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\DrawdownMemo.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExcessReport.rdlc" />
@@ -1799,10 +1840,13 @@
     <EmbeddedResource Include="Reports\Report\FullAndFinalSettlementAndWaivers.rdlc" />
     <EmbeddedResource Include="Reports\Report\IdleAssetsSales.rdlc" />
     <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\InitiatedLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\InsiderRelatedLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestIncome.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ListOfCustomers.rdlc" />
     <EmbeddedResource Include="Reports\Report\LitigationRecoveries.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanBookingReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanClassification.rdlc" />
@@ -1822,6 +1866,7 @@
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoggingStatus.rdlc" />
+    <EmbeddedResource Include="Reports\Report\MaturedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\MiddleOfficeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OriginalDocumentSubmission.rdlc" />
@@ -1851,6 +1896,7 @@
     <EmbeddedResource Include="Reports\Report\StaffRoleProfileGroupReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\StalledPerfection.rdlc" />
+    <EmbeddedResource Include="Reports\Report\TerminatedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\TrialBalance.rdlc" />
     <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />
