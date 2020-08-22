@@ -152,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.loanReviewApplicationId) 
+                    .OrderByDescending(x => x.timeIn) 
                     .Skip(page).Take(itemsPerPage).ToList(); ;
             if (data == null)
             {
