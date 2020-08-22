@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels;
+﻿using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -80,7 +81,8 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ChecklistApprovalViewModel> GetDeferralDocumentsAwaitingApproval(int staffId, int companyId);
         IEnumerable<ChecklistApprovalViewModel> GetDeferralExtensionsAwaitingApproval(int staffId, int companyId);
 
-        bool SubmitDeferralDocumentForApproval(ConditionPrecedentViewModel model);
+        String ResponseMessage(WorkflowResponse response, string itemHeading);
+        WorkflowResponse SubmitDeferralDocumentForApproval(ConditionPrecedentViewModel model);
         bool SubmitDeferralExtensionForApproval(ConditionPrecedentViewModel model);
 
 

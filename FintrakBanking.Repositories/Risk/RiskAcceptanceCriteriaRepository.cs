@@ -106,6 +106,25 @@ namespace FintrakBanking.Repositories.Risk
                     racDefinition.AddRange(racDefinitionOnEmployer);
                 }
 
+                else if (!isCorporate && model.productClassId == (int)ProductClassEnum.MortgageLoan)
+                {
+                    var racDefinitionOnEmployeeByProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
+                                                                                         && (x.EMPLOYMENTTYPE == "EMPLOYEE")
+                                                                                         && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                         && x.ISACTIVE == true
+                                                                                         && x.DELETED == false).ToList();
+
+                    var racDefinitionOnEmployeeByProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
+                                                                                        && (x.EMPLOYMENTTYPE == "EMPLOYEE")
+                                                                                        && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                                        && x.ISACTIVE == true
+                                                                                        && x.DELETED == false).ToList();
+
+                    racDefinitionOnEmployer = racDefinitionOnEmployeeByProduct.Count() > 0 ? racDefinitionOnEmployeeByProduct : racDefinitionOnEmployeeByProductClass;
+
+                    racDefinition.AddRange(racDefinitionOnEmployer);
+                }
+
             }
 
             if (model.isOperationbased || model.searchBasePlaceholder != "CREDITCARD")
@@ -1325,6 +1344,7 @@ namespace FintrakBanking.Repositories.Risk
                 LABEL = model.label,
                 KEY = model.key,
                 ISSYSTEMDEFINED = model.isSystemDefined,
+                RACOPTIONID = model.racOptionId,
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -1332,7 +1352,7 @@ namespace FintrakBanking.Repositories.Risk
 
             context.TBL_RAC_OPTION_ITEM.Add(entity);
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             //this.audit.AddAuditTrail(new TBL_AUDIT
             //{
@@ -1356,11 +1376,11 @@ namespace FintrakBanking.Repositories.Risk
             entity.LABEL = model.label;
             entity.KEY = model.key;
             entity.ISSYSTEMDEFINED = model.isSystemDefined;
-
+            entity.RACOPTIONID = model.racOptionId;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+           // var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             //this.audit.AddAuditTrail(new TBL_AUDIT
             //{

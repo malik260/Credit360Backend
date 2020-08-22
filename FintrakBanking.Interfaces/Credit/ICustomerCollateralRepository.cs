@@ -189,7 +189,7 @@ namespace FintrakBanking.Interfaces.Credit
         CollateralInsurancePolicyViewModel GetAddedInsuranceById(int id);
         WorkflowResponse CollateralSwapMemorandum(CollateralSwapViewModel model);
 
-
+        String ResponseMessage(WorkflowResponse response, string itemHeading);
 
 
 
