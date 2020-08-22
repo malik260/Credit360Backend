@@ -335,7 +335,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                 if (workflow.NewState == (int)ApprovalState.Ended && model.isFlowTest == false)
                 {
-                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Closed)
                     {
                         short nextOperatioId = 0;
                         var flowOrder = context.TBL_LMSR_FLOW_ORDER.Where(x => x.OPERATIONID == model.operationId).FirstOrDefault();

@@ -367,7 +367,7 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Commit();
                     if (operationId != (short)OperationsEnum.ContigentLoanBooking && workflow.NewState == (int)ApprovalState.Ended)
                     {
-                        workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
+                        //workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
                     }
                     return workflow.Response;
                     //return 0;
@@ -377,7 +377,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (!isContingent && workflow.NewState == (int)ApprovalState.Ended)
                     {
-                        workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
+                        //workflow.Response.responseMessage += " Proceeding to CRMS Code Capture.";
                         context.SaveChanges();
                         trans.Commit();
                         return workflow.Response;
