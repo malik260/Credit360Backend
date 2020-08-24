@@ -3964,49 +3964,56 @@ namespace FintrakBanking.ReportObjects
 
         public List<DisbursalCreditTurnoverViewModel> DisburseCreditTurnover(DateTime startDate, DateTime endDate, int companyid)
         {
-            List<DisbursalCreditTurnoverViewModel> disburseCreditList;
+            DateTime dateTime = DateTime.Now;
+            //List<DisbursalCreditTurnoverViewModel> disburseCreditList;
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                DateTime dateTime = DateTime.Now;
-                disburseCreditList = (from l in context.TBL_LOAN
-                                      join cu in context.TBL_CUSTOMER on l.CUSTOMERID equals cu.CUSTOMERID
-                                      join br in context.TBL_BRANCH on l.BRANCHID equals br.BRANCHID
-                                      join cas in context.TBL_CASA on l.CASAACCOUNTID equals cas.CASAACCOUNTID
-                                      join lpd in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals lpd.LOANAPPLICATIONDETAILID
-                                      join cusmap in context.TBL_CUSTOMER_GROUP_MAPPING on cu.CUSTOMERID equals cusmap.CUSTOMERID
-                                      join custgr in context.TBL_CUSTOMER_GROUP on cusmap.CUSTOMERGROUPID equals custgr.CUSTOMERGROUPID
-                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
-                                      join lpg in context.TBL_LOAN_PRUDENTIALGUIDELINE on l.USER_PRUDENTIAL_GUIDE_STATUSID equals lpg.PRUDENTIALGUIDELINESTATUSID
-                                      where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
-                                              DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
-                                           && l.COMPANYID == companyid
-                                      orderby l.DATETIMECREATED descending
-                                      select new DisbursalCreditTurnoverViewModel()
-                                      {
-                                          bdo = "",
-                                          customerName = cu.FIRSTNAME + " " + " " + cu.MIDDLENAME + " " + " " + cu.LASTNAME,
-                                          branches = br.BRANCHNAME,
-                                          groupName = custgr.GROUPNAME,
-                                          operativeAcct = cas.PRODUCTACCOUNTNUMBER,
-                                          dateDisbursed = l.DISBURSEDATE,
-                                          expiryDate = l.MATURITYDATE,
-                                          daysPastDue = (int)DbFunctions.DiffDays((l.PASTDUEDATE.Value == null ? default(DateTime) : l.PASTDUEDATE.Value), dateTime),
-                                          status = lpg.STATUSNAME,
-                                          currentBalance = l.PASTDUEPRINCIPAL + l.PRINCIPALAMOUNT,
-                                          excessAboveLimit = "",
-                                          totalExposure = l.PASTDUEINTEREST + cas.AVAILABLEBALANCE,
-                                          crTurnover = "",
-                                          // custId = l.CUSTOMERID,
-                                          sanctionLimit = lpd.APPROVEDAMOUNT,
-                                          schemeCode = l.PRODUCTID.ToString()
 
-                                      }).ToList();
+                var disburseCreditList = (from l in context.TBL_LOAN
+                                          join cu in context.TBL_CUSTOMER on l.CUSTOMERID equals cu.CUSTOMERID
+                                          join br in context.TBL_BRANCH on l.BRANCHID equals br.BRANCHID
+                                          join cas in context.TBL_CASA on l.CASAACCOUNTID equals cas.CASAACCOUNTID
+                                          join lpd in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals lpd.LOANAPPLICATIONDETAILID
+                                          join cusmap in context.TBL_CUSTOMER_GROUP_MAPPING on cu.CUSTOMERID equals cusmap.CUSTOMERID
+                                          join custgr in context.TBL_CUSTOMER_GROUP on cusmap.CUSTOMERGROUPID equals custgr.CUSTOMERGROUPID
+                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                          join lpg in context.TBL_LOAN_PRUDENTIALGUIDELINE on l.USER_PRUDENTIAL_GUIDE_STATUSID equals lpg.PRUDENTIALGUIDELINESTATUSID
 
-                return disburseCreditList.ToList();
+
+                                          where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                                  DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                               && l.COMPANYID == companyid
+                                          orderby l.DATETIMECREATED descending
+
+
+                                          select new DisbursalCreditTurnoverViewModel()
+                                          {
+                                              bdo = "",
+                                              customerName = cu.FIRSTNAME + " " + " " + cu.MIDDLENAME + " " + " " + cu.LASTNAME,
+                                              branches = br.BRANCHNAME,
+                                              groupName = custgr.GROUPNAME,
+                                              operativeAcct = cas.PRODUCTACCOUNTNUMBER,
+                                              dateDisbursed = l.DISBURSEDATE,
+                                              expiryDate = l.MATURITYDATE,
+                                              daysPastDue = (int)DbFunctions.DiffDays((l.PASTDUEDATE.Value == null ? default(DateTime) : l.PASTDUEDATE.Value), dateTime),
+                                              status = lpg.STATUSNAME,
+                                              currentBalance = l.PASTDUEPRINCIPAL + l.PRINCIPALAMOUNT,
+                                              excessAboveLimit = "",
+                                              //totalExposure = l.PASTDUEINTEREST + cas.AVAILABLEBALANCE,
+                                              crTurnover = "",
+                                              // custId = l.CUSTOMERID,
+                                              //sanctionLimit = lpd.APPROVEDAMOUNT,
+                                              schemeCode = l.PRODUCTID.ToString()
+
+                                          }).ToList();
+
+                //return disburseCreditList.ToList();
+                return disburseCreditList;
             }
 
 
         }
+
         public IEnumerable<LoanViewModel> GetLoanBookingReport(int companyId, string searchInfo, DateTime startDate, DateTime endDate)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();

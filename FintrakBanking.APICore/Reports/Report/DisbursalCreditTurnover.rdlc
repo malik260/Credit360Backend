@@ -27,7 +27,7 @@
               <Width>2.5cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.5cm</Width>
+              <Width>3.05563cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>3.55833cm</Width>
@@ -1042,7 +1042,7 @@
         <Top>2.77999cm</Top>
         <Left>2.64266cm</Left>
         <Height>1.2cm</Height>
-        <Width>40.24662cm</Width>
+        <Width>40.80225cm</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1107,11 +1107,18 @@
       </ConnectionProperties>
       <rd:DataSourceID>86043620-970c-4e09-8e36-b642b4cfc1dc</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="LoanDataSet">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>07e12843-b3e3-4f8c-b67e-63db05a98106</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="DisbursalCreditTurnover">
       <Query>
-        <DataSourceName>DisbursalCreditTurnover</DataSourceName>
+        <DataSourceName>LoanDataSet</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -1119,36 +1126,28 @@
           <DataField>bdo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="customerName">
-          <DataField>customerName</DataField>
+        <Field Name="groupName">
+          <DataField>groupName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="branches">
           <DataField>branches</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="groupName">
-          <DataField>groupName</DataField>
+        <Field Name="schemeCode">
+          <DataField>schemeCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="customerName">
+          <DataField>customerName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="operativeAcct">
           <DataField>operativeAcct</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="dateDisbursed">
-          <DataField>dateDisbursed</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="expiryDate">
-          <DataField>expiryDate</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="daysPastDue">
-          <DataField>daysPastDue</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="status">
-          <DataField>status</DataField>
+        <Field Name="sanctionLimit">
+          <DataField>sanctionLimit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="currentBalance">
@@ -1167,18 +1166,26 @@
           <DataField>crTurnover</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="schemeCode">
-          <DataField>schemeCode</DataField>
+        <Field Name="dateDisbursed">
+          <DataField>dateDisbursed</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="sanctionLimit">
-          <DataField>sanctionLimit</DataField>
+        <Field Name="expiryDate">
+          <DataField>expiryDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="daysPastDue">
+          <DataField>daysPastDue</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="status">
+          <DataField>status</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>LoanDataSet</rd:DataSetName>
-        <rd:SchemaPath>C:\FinTrak\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\AccessBankCredit360\main\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
         <rd:TableName>DisbursalCreditTurnover</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />

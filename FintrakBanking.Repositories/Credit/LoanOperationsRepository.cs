@@ -19924,15 +19924,15 @@ namespace FintrakBanking.Repositories.Credit
                             var retailEmail = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "ExtensionReport").FirstOrDefault();
                             var loanDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(p => p.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
                             var facility = context.TBL_PRODUCT.Find(loanDetail.PRODUCTID);
-                            var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE) + ";" + retailEmail.DEFAULTEMAIL;
+                            var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE) + ";" + retailEmail?.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
 
                             var customer12 = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault()==null ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == lmsApplicationDetail.CUSTOMERID).Select(c => c.GROUPNAME).FirstOrDefault() : context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
-                            var alertTemplate = retailEmail.TEMPLATE;
+                            var alertTemplate = retailEmail?.TEMPLATE;
                             alertTemplate = alertTemplate.Replace("@{{customerName}}", customer12);
                             alertTemplate = alertTemplate.Replace("@{{facility}}", facility.PRODUCTNAME);
                             alertTemplate = alertTemplate.Replace("@{{days}}", loanDetail.APPROVEDTENOR.ToString());
-                            LogEmailAlert(alertTemplate, retailEmail.TITLE, alert.receiverEmailList, "10070", 10070, "ExtensionReport");
+                            LogEmailAlert(alertTemplate, retailEmail?.TITLE, alert.receiverEmailList, "10070", 10070, "ExtensionReport");
                         }
                     }
                     if (output == true && result == true)
@@ -32299,17 +32299,19 @@ namespace FintrakBanking.Repositories.Credit
                             where !loansId.Contains(ln.TERMLOANID)
                             && pr.EXCLUDEFROMLITIGATION == false
                             && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                             select new LoanReviewOperationApprovalViewModel
                             {
                                 loanApplicationId = lp.LOANAPPLICATIONID,
                                 currencyId = ld.CURRENCYID,
+                                loanRecoveryReportBatchId = l.LOANRECOVERYREPORTBATCHID,
                                 accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
                                 accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
                                 accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
                                 agentCommission = lr.RECOVEREDAMOUNT * (lr.PERCENTAGECOMMISSION / 100),
                                 percentageCommission = lr.PERCENTAGECOMMISSION,
-                                loanCategory = ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff ? "Written Off" : "Non Performing",
+                                loanCategory = context.TBL_LOAN_REVIEW_OPERATION.Where(l => l.LOANID == ln.TERMLOANID).Select(l => l.OPERATIONTYPEID).FirstOrDefault() == (int)OperationsEnum.CompleteWriteOff ? "Written Off" : "Non Performing",
                                 collateralLiquidationRecoveryId = lr.COLLATERALLIQUIDATIONRECOVERYID,
                                 accreditedConsultant = lr.ACCREDITEDCONSULTANT,
                                 isFullyRecovered = lr.ISFULLYRECOVERED,
@@ -32418,17 +32420,19 @@ namespace FintrakBanking.Repositories.Credit
                                      where !loansId.Contains(ln.REVOLVINGLOANID)
                                      && pr.EXCLUDEFROMLITIGATION == false
                                      && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
 
                                      select new LoanReviewOperationApprovalViewModel
                                      {
                                          loanApplicationId = lp.LOANAPPLICATIONID,
+                                         loanRecoveryReportBatchId = l.LOANRECOVERYREPORTBATCHID,
                                          currencyId = ld.CURRENCYID,
                                          accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.NAME).FirstOrDefault(),
                                          accreditedConsultantCompany = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == lr.ACCREDITEDCONSULTANT).Select(x => x.FIRMNAME).FirstOrDefault(),
                                          accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
                                          agentCommission = lr.RECOVEREDAMOUNT * (lr.PERCENTAGECOMMISSION / 100),
                                          percentageCommission = lr.PERCENTAGECOMMISSION,
-                                         loanCategory = ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff ? "Written Off" : "Non Performing",
+                                         loanCategory = context.TBL_LOAN_REVIEW_OPERATION.Where(l => l.LOANID == ln.REVOLVINGLOANID).Select(l => l.OPERATIONTYPEID).FirstOrDefault() == (int)OperationsEnum.CompleteWriteOff ? "Written Off" : "Non Performing",
                                          collateralLiquidationRecoveryId = lr.COLLATERALLIQUIDATIONRECOVERYID,
                                          accreditedConsultant = lr.ACCREDITEDCONSULTANT,
                                          isFullyRecovered = lr.ISFULLYRECOVERED,
@@ -33649,7 +33653,7 @@ namespace FintrakBanking.Repositories.Credit
                                 accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
                                 agentCommission = lr.RECOVEREDAMOUNT * (lr.PERCENTAGECOMMISSION / 100),
                                 percentageCommission = lr.PERCENTAGECOMMISSION,
-                                loanCategory = ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff ? "Written Off" : "Non Performing",
+                                loanCategory = context.TBL_LOAN_REVIEW_OPERATION.Where(l=>l.LOANID ==ln.TERMLOANID).Select(l=>l.OPERATIONTYPEID).FirstOrDefault() == (int)OperationsEnum.CompleteWriteOff ? "Written Off" : "Non Performing",
                                 collateralLiquidationRecoveryId = lr.COLLATERALLIQUIDATIONRECOVERYID,
                                 accreditedConsultant = lr.ACCREDITEDCONSULTANT,
                                 isFullyRecovered = lr.ISFULLYRECOVERED,
@@ -33768,7 +33772,7 @@ namespace FintrakBanking.Repositories.Credit
                                          accreditedConsultantId = lr.ACCREDITEDCONSULTANT,
                                          agentCommission = lr.RECOVEREDAMOUNT * (lr.PERCENTAGECOMMISSION / 100),
                                          percentageCommission = lr.PERCENTAGECOMMISSION,
-                                         loanCategory = ln.LOANSTATUSID == (int)LoanStatusEnum.WriteOff ? "Written Off" : "Non Performing",
+                                         loanCategory = context.TBL_LOAN_REVIEW_OPERATION.Where(l => l.LOANID == ln.REVOLVINGLOANID).Select(l => l.OPERATIONTYPEID).FirstOrDefault() == (int)OperationsEnum.CompleteWriteOff ? "Written Off" : "Non Performing",
                                          collateralLiquidationRecoveryId = lr.COLLATERALLIQUIDATIONRECOVERYID,
                                          accreditedConsultant = lr.ACCREDITEDCONSULTANT,
                                          isFullyRecovered = lr.ISFULLYRECOVERED,
