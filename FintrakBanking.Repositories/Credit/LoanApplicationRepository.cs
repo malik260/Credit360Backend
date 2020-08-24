@@ -7159,10 +7159,16 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 // branch limits
-                var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
-                decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
-                var branch = context.TBL_BRANCH.Find(branchId);
-                if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+                foreach (var facility in details)
+                {
+                    if (facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal && facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
+                    {
+                        var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
+                        decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
+                        var branch = context.TBL_BRANCH.Find(branchId);
+                        if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+                    }
+                }
             }
 
             if (sectorOverrideRequest != null)
@@ -7207,21 +7213,33 @@ namespace FintrakBanking.Repositories.Credit
 
             if (limitValidation.ValidateIsInsiderCustomer(customerId))
             {
-                var insiderLimit = limitValidation.ValidateNPLByInsiderCustomer();
-                var insiderExposure = insiderLimit.outstandingBalance + (double)applicationAmount;
-                if (insiderExposure >= (double)insiderLimit.maximumAllowedLimit)
+                foreach (var facility in details)
                 {
-                    throw new SecureException("Insider Limit Exceeded");
+                    if (facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal && facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
+                    {
+                        var insiderLimit = limitValidation.ValidateNPLByInsiderCustomer();
+                        var insiderExposure = insiderLimit.outstandingBalance + (double)applicationAmount;
+                        if (insiderExposure >= (double)insiderLimit.maximumAllowedLimit)
+                        {
+                            throw new SecureException("Insider Limit Exceeded");
+                        }
+                    }
                 }
             }
 
             if(limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))
             {
-                var directorLimit = limitValidation.ValidateNPLByDirectors(application);
-                var directorExposure = (double)applicationAmount + directorLimit.outstandingBalance;
-                if (directorExposure >= (double)directorLimit.maximumAllowedLimit)
+                foreach (var facility in details)
                 {
-                    throw new SecureException("Director Limit Exceeded");
+                    if (facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal && facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
+                    {
+                        var directorLimit = limitValidation.ValidateNPLByDirectors(application);
+                        var directorExposure = (double)applicationAmount + directorLimit.outstandingBalance;
+                        if (directorExposure >= (double)directorLimit.maximumAllowedLimit)
+                        {
+                            throw new SecureException("Director Limit Exceeded");
+                        }
+                    }
                 }
 
             }
@@ -7235,13 +7253,17 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var facility in details)
                 {
-                    var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
-                    var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
-                    if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit && facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal && facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
+                    if (facility != null && (facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.Renewal && facility.loanDetailReviewTypeId != (int)LoanDetailReviewTypeEnum.RenewalWithDecrease))
                     {
-                        throw new SecureException("Single Obligor Limit Exceeded");
+                        var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
+                        var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
+                        if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+                        {
+                            throw new SecureException("Single Obligor Limit Exceeded");
+                        }
                     }
                 }
+                
             }
             
             var applications = application.LoanApplicationDetail.FirstOrDefault();
