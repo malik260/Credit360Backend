@@ -13972,11 +13972,12 @@ namespace FintrakBanking.Repositories.Credit
                               requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
                               requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
                               TargetId = a.TARGETID,
+                              approvalTrailId = a.APPROVALTRAILID,
                               // operationId = e.OPERATIONID,
                               // operationName = e.OPERATIONNAME,
                               //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
                               approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
-                          }).Distinct();
+                          }).OrderByDescending(O => O.approvalTrailId).Distinct();
 
 
             var response = result.ToList();
@@ -18339,10 +18340,10 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var validate = context.TBL_LOAN_RECOVERY_ASSIGNMENT.Where(x => x.ACCREDITEDCONSULTANT == accreditedConsultant
-                                                          && (x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                                          || x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                                                          ).FirstOrDefault();
-            if (validate != null)
+                                                          && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                                          && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                                                          ).ToList();
+            if (validate != null && validate.Count() > 0)
             {
                 throw new SecureException("Request already exist and undergoing approval");
             }

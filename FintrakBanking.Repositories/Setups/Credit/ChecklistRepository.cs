@@ -2160,11 +2160,50 @@ namespace FintrakBanking.Repositories.Credit
             return dataLOS;
         }
 
-
-        public bool SubmitDeferralDocumentForApproval(ConditionPrecedentViewModel model)
+        public String ResponseMessage(WorkflowResponse response, string itemHeading)
         {
-            bool response = false;
+            if (response.stateId != (int)ApprovalState.Ended)
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Referred)
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been REFERRED to " + response.nextLevelName;
+                    }
+                }
+                else
+                {
+                    if (response.nextPersonId > 0)
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextPersonName;
+                    }
+                    else
+                    {
+                        return "The " + itemHeading + " request has been SENT to " + response.nextLevelName;
+                    }
+                }
+            }
+            else
+            {
+                if (response.statusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    return "The " + itemHeading + " request has been APPROVED successfully";
+                }
+                else
+                {
+                    return "The " + itemHeading + " request has been DISAPPROVED successfully";
+                }
+            }
 
+        }
+
+        public WorkflowResponse SubmitDeferralDocumentForApproval(ConditionPrecedentViewModel model)
+        {
+            //bool response = false;
             using (var transaction = context.Database.BeginTransaction())
             {
                 workflow.StaffId = model.createdBy;
@@ -2209,9 +2248,9 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
 
-                    response = context.SaveChanges() > 0;
+                    context.SaveChanges();
                     transaction.Commit();
-                    return response;
+                    return workflow.Response;
                 }
                 catch (Exception ex)
                 {
