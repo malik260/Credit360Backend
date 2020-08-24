@@ -492,6 +492,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DeferralWaiver.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\DisbursalCreditTurnover.Designer.cs" />
+    <Compile Include="Reports\ReportDataset\DisbursalCreditTurnover1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DisbursalCreditTurnover.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\DRAWDOWN.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1600,6 +1606,17 @@
     </None>
     <Content Include="Reports\ReportDataset\DeferralWaiver.xss">
       <DependentUpon>DeferralWaiver.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\DisbursalCreditTurnover.xsc">
+      <DependentUpon>DisbursalCreditTurnover.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\DisbursalCreditTurnover.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DisbursalCreditTurnover1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\DisbursalCreditTurnover.xss">
+      <DependentUpon>DisbursalCreditTurnover.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\DRAWDOWN.xsd">
       <Generator>MSDataSetGenerator</Generator>
