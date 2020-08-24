@@ -11460,7 +11460,9 @@ namespace FintrakBanking.Repositories.Credit
                                        customerId = s.CUSTOMERID,
                                        newCollateralId = s.NEWCOLLATERALID,
                                        collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
-                                       swapRef = s.SWAPREF
+                                       swapRef = s.SWAPREF,
+                                       oldCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.OLDCOLLATERALID).COLLATERALCODE,
+                                       newCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.NEWCOLLATERALID).COLLATERALCODE,
                                    }).ToList();
 
             var result = swapsNotStarted.Union(swapsInProgress);
@@ -11638,7 +11640,8 @@ namespace FintrakBanking.Repositories.Credit
 
             // UPDATE APPLICATION
             //cs.APPROVALSTATUSID = (short)workflow.StatusId;
-            cs.COLLATERALSWAPSTATUSID = (int)LoanApplicationStatusEnum.collateralSwapInProgress;
+            if (cs != null) { cs.COLLATERALSWAPSTATUSID = (int)LoanApplicationStatusEnum.collateralSwapInProgress; }
+            
             //if (cs.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { cs.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
 
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
