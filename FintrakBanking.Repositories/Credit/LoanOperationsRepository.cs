@@ -19924,15 +19924,15 @@ namespace FintrakBanking.Repositories.Credit
                             var retailEmail = context.TBL_ALERT_TITLE.Where(a => a.BINDINGMETHOD == "ExtensionReport").FirstOrDefault();
                             var loanDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(p => p.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
                             var facility = context.TBL_PRODUCT.Find(loanDetail.PRODUCTID);
-                            var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE) + ";" + retailEmail.DEFAULTEMAIL;
+                            var emailList = GetBusinessUsersEmailsToGroupHead(staff.MISCODE) + ";" + retailEmail?.DEFAULTEMAIL;
                             alert.receiverEmailList.Add(emailList);
 
                             var customer12 = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault()==null ? context.TBL_CUSTOMER_GROUP.Where(c => c.CUSTOMERGROUPID == lmsApplicationDetail.CUSTOMERID).Select(c => c.GROUPNAME).FirstOrDefault() : context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == lmsApplicationDetail.CUSTOMERID).Select(c => c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME).FirstOrDefault();
-                            var alertTemplate = retailEmail.TEMPLATE;
+                            var alertTemplate = retailEmail?.TEMPLATE;
                             alertTemplate = alertTemplate.Replace("@{{customerName}}", customer12);
                             alertTemplate = alertTemplate.Replace("@{{facility}}", facility.PRODUCTNAME);
                             alertTemplate = alertTemplate.Replace("@{{days}}", loanDetail.APPROVEDTENOR.ToString());
-                            LogEmailAlert(alertTemplate, retailEmail.TITLE, alert.receiverEmailList, "10070", 10070, "ExtensionReport");
+                            LogEmailAlert(alertTemplate, retailEmail?.TITLE, alert.receiverEmailList, "10070", 10070, "ExtensionReport");
                         }
                     }
                     if (output == true && result == true)
