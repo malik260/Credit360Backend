@@ -31325,10 +31325,12 @@ namespace FintrakBanking.Repositories.Credit
             var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID into opr
                             from op in opr.DefaultIfEmpty()
-                            join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
+                            join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID into ttr
+                            from ottp in ttr.DefaultIfEmpty()
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID into atraila
                             from atrail in atraila.DefaultIfEmpty()
-                            join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                            join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID into bbr
+                            from br in bbr.DefaultIfEmpty()
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                             join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
                             join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
@@ -31340,8 +31342,8 @@ namespace FintrakBanking.Repositories.Credit
                             where
                             !loansId.Contains(ln.TERMLOANID)
                             && pr.EXCLUDEFROMLITIGATION == false
-                            && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                            && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && (op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
+                            || ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                             && (ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
                             || op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff)
 
@@ -31504,8 +31506,8 @@ namespace FintrakBanking.Repositories.Credit
                                      where
                                      !loansId.Contains(ln.REVOLVINGLOANID)
                                      && pr.EXCLUDEFROMLITIGATION == false
-                                     && op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                     && ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && (op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     || ln.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                                      && (ln.USER_PRUDENTIAL_GUIDE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
                                      || op.OPERATIONTYPEID == (int)OperationsEnum.CompleteWriteOff)
 
