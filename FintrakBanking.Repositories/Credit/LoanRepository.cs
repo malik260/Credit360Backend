@@ -8515,7 +8515,7 @@ namespace FintrakBanking.Repositories.Credit
 
             List<int> collateralTypesIds = new List<int>();
             collateralTypesIds.Add((int)CollateralTypeEnum.CASA);
-            collateralTypesIds.Add((int)CollateralTypeEnum.TermDeposit);
+            collateralTypesIds.Add((int)CollateralTypeEnum.FixedDeposit);
             //collateralTypesIds.Add((int)CollateralTypeEnum.DomiciliationContract);
             collateralTypesIds.Add((int)CollateralTypeEnum.TreasuryBillsAndBonds);
 
