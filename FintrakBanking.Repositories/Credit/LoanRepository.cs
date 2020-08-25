@@ -16104,7 +16104,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.NextLevelId = model.approvalLevelId;
 
             //workflow.ToStaffId = staffId;
-            //workflow.ToStaffId = model.loopedStaffId;
+            workflow.ToStaffId = model.toStaffId;
             workflow.LoopedStaffId = model.loopedStaffId;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
