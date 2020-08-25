@@ -4511,7 +4511,7 @@ namespace FintrakBanking.Repositories.Credit
                                // && operations.Contains(y.OPERATIONID)
                                //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
                                // && 
-                               (x.APPLICATIONREFERENCENUMBER == searchString
+                               (x.APPLICATIONREFERENCENUMBER.Trim() == searchString
                             || c.FIRSTNAME.ToLower().Contains(searchString)
                             || c.LASTNAME.ToLower().Contains(searchString)
                             || c.MIDDLENAME.ToLower().Contains(searchString)
