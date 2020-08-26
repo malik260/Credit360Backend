@@ -162,6 +162,10 @@ namespace FintrakBanking.Interfaces.Reports
         string GetGeneratedCFLOfferLetter(string applicationRefNumber, string ActionByName);
         string GetTrialBalanceReport(int glAccountId, int currencyCode, int companyId, int staffId);
         string GetInterestIncome(DateTime startDate, DateTime endDate);
+        string GetCreditBureauReport(DateRange dateRange);
+        string GetCollateralPerfection(DateRange dateRange);
+        string GetCollateralRegister(DateRange dateRange);
+        string GetFixedDepositCollaterals(int companyId, string collateralCode, int staffId);
 
     }
 

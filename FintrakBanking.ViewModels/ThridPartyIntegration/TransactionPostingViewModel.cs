@@ -347,5 +347,43 @@ public class LienProcessViewModel //: GeneralEntity
      
     }
 
+    public class LoanPrepaymentViewModel
+    {
+        public string channel_code { get; set; }
+        public string auth_key { get; set; }
+        public DateTime review_date { get; set; }
+        public string user_ref_no { get; set; }
+        public string account_no { get; set; }
+    }
 
+    public class SubResponseLoanPrepaymentViewModel
+    {
+        public string account_number { get; set; }
+        public string customer_acct { get; set; }
+        public DateTime due_date { get; set; }
+        public DateTime paid_date { get; set; }
+        public string branch_code { get; set; }
+        public string component_name { get; set; }
+        public decimal amount_paid { get; set; }
+    }
+
+    public class ResponseLoanPrepaymentViewModel
+    {
+        public string response_code { get; set; }
+        public string response_message { get; set; }
+        public DateTime transaction_date { get; set; }
+        public string account_number { get; set; }
+        public string currency { get; set; }
+        public decimal acct_balance { get; set; }
+        public decimal debit_turnover { get; set; }
+        public decimal credit_turnover { get; set; }
+    }
+
+    public class MainResponseLoanPrepaymentViewModel
+    {
+        public string response_code { get; set; }
+        public string response_message { get; set; }
+        public List<SubResponseLoanPrepaymentViewModel> getrepaymentdetailsresp { get; set; }
+       
+    }
 }
