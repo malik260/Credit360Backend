@@ -104,6 +104,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Flexcube\CWGAPI\LoanPrepayment.cs" />
     <Compile Include="Flexcube\CWGAPI\StaffDetails.cs" />
     <Compile Include="StagingDatabase\Finacle\StaffMIS.cs" />
     <Compile Include="TwoFactorAuthIntegration\TwoFactorAuthIntegrationService.cs" />
