@@ -41,8 +41,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int statusId = (int)ApprovalStatusEnum.Processing;
         private int groupStatusId = (int)ApprovalStatusEnum.Processing;
         private int? nextLevelId = null; // for refer backs
-        private bool? ignorePostApprovalReviewer = false;
+        private bool ignorePostApprovalReviewer = false;
+        private bool nextIsReviewer = false;
         private int? finalLevel = null; // preset force to end
+        private int? reviewerLevelId = null; // preset force to end
         private bool emailNotification = false;
         private bool smsNotification = false;
         private bool sameDesk = false;
@@ -109,7 +111,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int GroupStatusId { get { return groupStatusId; } }
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
-        public bool? IgnorePostApprovalReviewer { get { return ignorePostApprovalReviewer; } set { ignorePostApprovalReviewer = value; } }
+        public bool IgnorePostApprovalReviewer { get { return ignorePostApprovalReviewer; } set { ignorePostApprovalReviewer = value; } }
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
         public TBL_APPROVAL_TRAIL ApprovalTrail { get { return approvalTrail; } set { approvalTrail = value; } }
@@ -266,19 +268,12 @@ namespace FintrakBanking.Repositories.WorkFlow
             SaveFlowLog("Before Final Trail Logging");
             if (this.isFlowTest) return true;
 
-            //if (currentlevel != null)
-            //{
-            //    if (currentlevel?.ISPOSTAPPROVALREVIEWER == true)
-            //    {
-            //        this.statusId = (int)ApprovalStatusEnum.Closed;
-            //    }
-            //}
             //=============
-            if (this.fromLevelId > 0 && this.statusId != (short)ApprovalStatusEnum.Referred)
+            if (this.nextLevelId > 0)
             {
-                var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+                var level = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
                 var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
-                if (isReviewer) { this.statusId = (int)ApprovalStatusEnum.Closed; }
+                if (isReviewer) { this.statusId = (int)ApprovalStatusEnum.Finishing; }
             }
 
 
@@ -306,17 +301,27 @@ namespace FintrakBanking.Repositories.WorkFlow
                 FLOW_LOG = this.flow_log
             });
 
+            //throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
             if (this.ignorePostApprovalReviewer == false && this.approvalTrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)
             {
-                var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
-                var grouplevels = context.TBL_APPROVAL_LEVEL.Where(x => x.GROUPID == currentLevel.GROUPID);
-                var reviewers = grouplevels.Where(x => x.ISPOSTAPPROVALREVIEWER == true && x.ISACTIVE);
+                //var currentLevel = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.fromLevelId).FirstOrDefault();
+                //var grouplevels = context.TBL_APPROVAL_LEVEL.Where(x => x.GROUPID == currentLevel.GROUPID);
+                //var reviewers = grouplevels.Where(x => x.ISPOSTAPPROVALREVIEWER == true && x.ISACTIVE);
 
 
-                if (reviewers.Any() && currentlevel.ISPOSTAPPROVALREVIEWER == false && lastOpenRequest.APPROVALSTATUSID != 10 && terminateOnApproval == false)
+                //if (reviewers.Any() && currentlevel.ISPOSTAPPROVALREVIEWER == false && lastRequest.APPROVALSTATUSID != 10 && terminateOnApproval == false)
+                //{
+                //    this.nextLevelId = reviewers.FirstOrDefault().APPROVALLEVELID;
+                //    StartPostApprovalLevelsReview(reviewers.FirstOrDefault().APPROVALLEVELID);
+                //}
+                if (this.reviewerLevelId > 0)
                 {
-                    this.nextLevelId = reviewers.FirstOrDefault().APPROVALLEVELID;
-                    StartPostApprovalLevelsReview(reviewers.FirstOrDefault().APPROVALLEVELID);
+                    var level = context.TBL_APPROVAL_LEVEL.Find(this.reviewerLevelId);
+                    var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
+                    if (isReviewer)
+                    {
+                        StartPostApprovalLevelsReview(this.reviewerLevelId ?? 0);
+                    }
                 }
             }
 
@@ -750,21 +755,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             else
             {
-                if (isFinishing.Count > 0)
+                if (this.reviewerLevelId > 0 && response.statusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    var finishingTrail = isFinishing.FirstOrDefault();
-                    if (finishingTrail.TOSTAFFID > 0)
-                    {
-                        var toStaff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == finishingTrail.TOSTAFFID);
-                        var nextPersonName = toStaff.FIRSTNAME + " " + toStaff.MIDDLENAME + " " + toStaff.LASTNAME;
-                        return "The " + itemHeading + " request has been APPROVED and SENT to " + nextPersonName;
-                    }
-                    else
-                    {
-                        var toLevel = context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == finishingTrail.TOAPPROVALLEVELID);
-                        var nextLevelName = toLevel.LEVELNAME;
-                        return "The " + itemHeading + " request has been APPROVED and SENT to " + nextLevelName;
-                    }
+                    var toLevel = context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == this.reviewerLevelId);
+                    var nextLevelName = toLevel.LEVELNAME;
+                    return "The " + itemHeading + " request has been APPROVED and SENT to " + nextLevelName;
                 }
                 else
                 {
@@ -904,18 +899,20 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             ValidateDestinationConfiguration();
 
-            if (this.currentStateId == (int)ApprovalState.Initiation && this.lastOpenRequest == null)
+            if (currentStateId != (int)ApprovalState.Initiation || lastOpenRequest != null)
             {
-                var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
-                if (allRelatingRequestsDescending.Count > 0)
+                return;
+            }
+            var allRelatingRequestsDescending = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == this.targetId && t.OPERATIONID == this.operationId).OrderByDescending(t => t.APPROVALTRAILID).ToList();
+            if (allRelatingRequestsDescending.Count > 0)
+            {
+                var lastActualRequest = allRelatingRequestsDescending.FirstOrDefault();
+                if (lastActualRequest.APPROVALSTATEID == (int)ApprovalState.Ended && IsNormalEnd(lastActualRequest))
                 {
-                    var lastActualRequest = allRelatingRequestsDescending.FirstOrDefault();
-                    if (lastActualRequest.APPROVALSTATEID == (int)ApprovalState.Ended && IsNormalEnd(lastActualRequest))
-                    {
-                        new SecureException("The Last Approving Level for this Request has ended the Approval, Kindly refresh your Browser Screen!");
-                    }
-
+                    //new SecureException("The Last Approving Level for this Request has ended the Approval, Kindly refresh your Browser Screen!");
+                    new SecureException("The process is closed!");
                 }
+
             }
         }
 
@@ -1178,21 +1175,59 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.newStateId = (int)ApprovalState.Processing;
         }
 
+        private bool ContainsPostReviewerAsFromApprovalLevel(List<TBL_APPROVAL_TRAIL> trails)
+        {
+            if (trails.Count == 0)
+            {
+                return false;
+            }
+
+            foreach(var t in trails)
+            {
+                if (t.FROMAPPROVALLEVELID == null)
+                {
+                    continue;
+                }
+                if (t.TBL_APPROVAL_LEVEL.ISPOSTAPPROVALREVIEWER)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void EndProcess(int status)
         {   
             if(lastOpenRequest.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && lastOpenRequest.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
-            //if (this.nextLevelId > 0 && this.statusId != (int)ApprovalStatusEnum.Referred)
-            //{
-            //    var nextLevel = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
-            //    if (nextLevel?.ISPOSTAPPROVALREVIEWER == true)
-            //    {
-            //        return;
-            //    }
-            //}
-
+            if (this.statusId != (int)ApprovalStatusEnum.Disapproved && ContainsPostReviewerAsFromApprovalLevel(this.referredLog))
+            {//to prevent duplicate ending of a workflow again when postReviewer refers back
+                return;
+            }
+            if (this.nextLevelId > 0)
+            {//to make sure is reviewer trail is logged
+                var level = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
+                var isReviewer = (level?.ISPOSTAPPROVALREVIEWER ?? false);
+                if (isReviewer)
+                {
+                    this.nextIsReviewer = true;
+                    this.reviewerLevelId = this.nextLevelId;
+                }
+            }
+            else
+            {
+                if (this.fromLevelId > 0)
+                {//to properly convert finishing to closed
+                    var currentLevel = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+                    var isReviewer = (currentLevel?.ISPOSTAPPROVALREVIEWER ?? false);
+                    if (isReviewer)
+                    {
+                        status = (int)ApprovalStatusEnum.Finishing;
+                    }
+                }
+            }
             this.statusId = ResolveLastStatus(status);
-            this.newStateId = (int)ApprovalState.Ended;
             this.nextLevelId = null; // even if there are other higher level which have been resolve prior
+            this.newStateId = (int)ApprovalState.Ended;
             this.keepPending = false;
             this.toStaffId = null;
         }
@@ -1377,7 +1412,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void LastApproverCheck()
         {
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
-            if (IsLastApprover(level) && (this.statusId == (int)ApprovalStatusEnum.Processing || this.statusId == (int)ApprovalStatusEnum.Authorised || this.statusId == (int)ApprovalStatusEnum.Finishing))
+            //if (IsLastApprover(level) && (this.statusId == (int)ApprovalStatusEnum.Processing || this.statusId == (int)ApprovalStatusEnum.Authorised || this.statusId == (int)ApprovalStatusEnum.Finishing))
+            if (IsLastApprover(level) && (this.statusId == (int)ApprovalStatusEnum.Processing || this.statusId == (int)ApprovalStatusEnum.Authorised))
             {
                 this.statusId = (int)ApprovalStatusEnum.Approved;
             }

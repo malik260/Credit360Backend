@@ -55,6 +55,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetLoanCommercialReport(DateRange dateRange, int companyId, int staffId);
         string GetTeamAndRevolving(DateRange dateRange, int companyId, int staffId);
         string InsiderRelatedLoansReport(DateRange dateRange);
+        string GetLoanStatusReport(DateRange dateRange, int companyId, int staffId);
         string GetEarnedUnearnedInterest(DateRange dateRange, int companyId, int staffId);
         string RiskAssets(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string CbnTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);

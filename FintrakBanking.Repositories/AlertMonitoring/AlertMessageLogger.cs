@@ -3268,8 +3268,6 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             {
                 throw new SecureException(ex.Message);
             }
-
-            return 1;
         }
 
         public List<TBL_MONITORING_ALERT_SETUP> getAlertMessageSetting()
